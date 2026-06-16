@@ -10,6 +10,26 @@
 			.features article .icon.fa-leaf:before, .features article .icon.fa-seedling:before, .features article .icon.fa-recycle:before { color: #2e7d32 !important; }
 			.features article .icon.fa-sun:before { color: #4CAF50 !important; }
 			.features article .icon.fa-bug:before { color: #689f38 !important; }
+
+    /* Uniformizar tamanho e suavizar bordas das imagens internas */
+	.image.main {
+    margin-bottom: 2em;
+   	overflow: hidden;
+	}
+
+	.image.main img {
+   	width: 100%;
+    height: 450px; /* Altura fixa para todas as páginas internas */
+    object-fit: cover; /* Mantém a proporção sem distorcer */
+    
+    /* Efeito de bordas ofuscadas (máscara) */
+    mask-image: linear-gradient(to bottom, transparent, black 8%, black 92%, transparent),
+                linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+    -webkit-mask-image: linear-gradient(to bottom, transparent, black 8%, black 92%, transparent),
+                        linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+    mask-composite: intersect;
+    -webkit-mask-composite: source-in;
+	}
 		</style>
 	</head>
 	<body class="is-preload">
@@ -17,57 +37,61 @@
 			<div id="main">
 				<div class="inner">
 					<header id="header">
-						<a href="index.php" class="logo"><strong>Biocultura</strong></a>
+						<a href="index.html" class="logo"><strong>Biocultura</strong></a>
 					</header>
 
-					<!-- INÍCIO DO CONTEÚDO ESPECÍFICO -->
 					<section>
 						<header class="main">
-							<h1>Ligar-se à Biocultura</h1>
+							<h1>Ligar-se à Natureza</h1>
 						</header>
-						<span class="image main"><img src="https://images.unsplash.com/photo-1501854140801-50d01674aa3e?q=80&w=1080" alt="" /></span>
+						<span class="image main">
+                            <img src="https://images.unsplash.com/photo-1501854140801-50d01674aa3e?auto=format&fit=crop&w=1080&q=80" alt="Contacto Biocultura" />
+                        </span>
 						
 						<div class="row">
-							<div class="col-6 col-12-small">
-								<h3>O Desafio Atual</h3>
-								<p>Num mundo hiperconectado, a verdadeira comunicação sobre a terra exige tempo e maturidade. A Biocultura prefere o crescimento orgânico e a preparação rigorosa.</p>
+							<div class="col-8 col-12-small">
+								<h3>O Silêncio da Observação</h3>
+								<p>Enquanto preparamos o terreno para a fase operacional da Biocultura, privilegiamos o contacto orgânico e focado. Se tem dúvidas sobre os sistemas regenerativos, alternativas biológicas ou deseja partilhar um projeto de conservação, estamos disponíveis para ouvir.</p>
+                                
+                                <ul class="contact">
+                                    <li class="icon solid fa-envelope"><a href="mailto:info@biocultura.net">info@biocultura.net</a></li>
+                                    <li class="icon solid fa-home">Portugal<br />Zonas Rurais em Regeneração</li>
+                                </ul>
 							</div>
-							<div class="col-6 col-12-small">
-								<h3>A Alternativa Biocultura</h3>
-								<p>De momento, este portal funciona como um repositório de conhecimento técnico. Estamos a preparar o terreno para, em breve, oferecer serviços de consultoria e implementação de sistemas regenerativos.</p>
+							<div class="col-4 col-12-small">
+								<div class="box">
+									<h4>Aviso de Anonimato</h4>
+									<p>A Biocultura mantém-se, por agora, como um repositório de conhecimento. O nosso foco é a mensagem, não o mensageiro. Responderemos com a brevidade que o ritmo natural permitir.</p>
+								</div>
 							</div>
 						</div>
-						<hr class="major" />
-						<h3>Dicas Práticas e Soluções</h3>
-						<p>Mantém-te atento às atualizações do portal. O anonimato da nossa fase inicial garante que o foco permanece inteiramente na mensagem e nas soluções apresentadas.</p>
 					</section>
-					<!-- FIM DO CONTEÚDO ESPECÍFICO -->
-
 				</div>
 			</div>
 
+			<!-- Sidebar -->
 			<div id="sidebar">
-    		<!-- O conteúdo será carregado aqui pelo script -->
+				<!-- Carregado via Script -->
 			</div>
 		</div>
+
+		<!-- Scripts -->
 		<script src="assets/js/jquery.min.js"></script>
 		<script src="assets/js/browser.min.js"></script>
 		<script src="assets/js/breakpoints.min.js"></script>
 		<script src="assets/js/util.js"></script>
 		<script src="assets/js/main.js"></script>
-	
-<script>
-    // Carrega o menu lateral e reinicia os scripts do template
-    fetch('sidebar-content.html')
-        .then(response => response.text())
-        .then(data => {
-            document.getElementById('sidebar').innerHTML = data;
-            // Importante: Reiniciar o main.js para que os submenus (openers) funcionem
-            var script = document.createElement('script');
-            script.src = 'assets/js/main.js';
-            document.body.appendChild(script);
-        });
-</script>
 
+        <!-- Script de Carregamento Dinâmico do Menu -->
+        <script>
+            fetch('sidebar-content.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('sidebar').innerHTML = data;
+                    var script = document.createElement('script');
+                    script.src = 'assets/js/main.js';
+                    document.body.appendChild(script);
+                });
+        </script>
 	</body>
 </html>
