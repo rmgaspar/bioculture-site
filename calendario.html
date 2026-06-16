@@ -1,0 +1,135 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Calendário Hortícola - Biocultura</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<style>
+			/* Estilos específicos para o Calendário */
+			.day-list { list-style: none; padding: 0; border: 1px solid #efefef; border-radius: 0.375em; }
+			.day-item { padding: 1.5em; border-bottom: 1px solid #efefef; cursor: pointer; transition: background 0.2s; }
+			.day-item:last-child { border-bottom: 0; }
+			.day-item:hover { background: #f4f4f4; }
+			.day-item.active { background: #f4faf4; border-left: 6px solid #2e7d32; }
+			.day-item.active strong { color: #2e7d32; font-size: 1.1em; }
+			.today-label { color: #2e7d32; font-weight: 800; font-size: 0.7em; text-transform: uppercase; display: block; }
+			.moon-phase { font-size: 0.8em; color: #777; margin-top: 0.5em; display: block; }
+			.action-card { background: #fff; border: 1px solid #efefef; border-radius: 0.375em; overflow: hidden; }
+			.action-image img { width: 100%; height: 300px; object-fit: cover; }
+			.action-content { padding: 2em; }
+			.badge-bio { background: #2e7d32; color: white; padding: 0.2em 0.8em; border-radius: 4px; font-size: 0.7em; font-weight: bold; float: right; }
+		</style>
+	</head>
+	<body class="is-preload">
+		<div id="wrapper">
+			<div id="main">
+				<div class="inner">
+
+					<!-- Header -->
+					<header id="header">
+						<a href="index.php" class="logo"><strong>Biocultura</strong> - Calendário Hortícola</a>
+					</header>
+
+					<!-- Seção Calendário -->
+					<section>
+						<header class="main">
+							<h1>Operações da Semana</h1>
+							<p>Siga o ciclo natural para uma quinta regenerativa.</p>
+						</header>
+
+						<div class="row">
+							<!-- Coluna Esquerda: Lista de Dias -->
+							<div class="col-4 col-12-small">
+								<h3>Junho 2026</h3>
+								<input type="date" value="2026-06-14" style="margin-bottom: 1em;">
+								
+								<div class="day-list">
+									<div class="day-item">
+										<span class="date">Seg, 08 Jun</span><br>
+										<span>Sementeira de Alfaces</span>
+									</div>
+									<div class="day-item">
+										<span class="date">Ter, 09 Jun</span><br>
+										<span>Limpeza de Arvoredos</span>
+									</div>
+									<div class="day-item">
+										<span class="date">Qua, 10 Jun</span><br>
+										<span>Tratamento de Solo</span>
+									</div>
+									<!-- DIA ACTUAL -->
+									<div class="day-item active">
+										<span class="today-label">Hoje</span>
+										<strong>Dom, 14 Jun</strong><br>
+										<span>Calda Bordalesa Biológica</span>
+										<span class="moon-phase"><i class="icon solid fa-moon"></i> Lua Nova</span>
+									</div>
+									<div class="day-item">
+										<span class="date">Seg, 15 Jun</span><br>
+										<span>Poda de Verão</span>
+									</div>
+								</div>
+							</div>
+
+							<!-- Coluna Direita: Detalhes da Operação -->
+							<div class="col-8 col-12-small">
+								<div class="action-card">
+									<div class="action-image">
+										<img src="https://images.unsplash.com/photo-1592419044706-39796d40f98c?auto=format&fit=crop&q=80&w=1200" alt="" />
+									</div>
+									<div class="action-content">
+										<span class="badge-bio">Manifesto Bioculture</span>
+										<h2>Aplicação de Calda Bordalesa</h2>
+										<p><strong>Alvo:</strong> Árvores de Fruto (Macieiras e Pereiras)</p>
+										
+										<p>A aplicação da Calda Bordalesa é essencial nesta fase para prevenir o aparecimento de fungos após as primeiras humidades de Verão. Sendo uma alternativa biológica, protege a árvore sem matar a vida microbiana do solo.</p>
+										
+										<hr />
+										
+										<h4>O Guardião do Ecossistema: O Morcego</h4>
+										<div class="box">
+											<p>Enquanto cuidas das árvores, recorda que os <strong>morcegos</strong> são os teus maiores aliados noturnos. Um único morcego come cerca de 3000 insetos por noite, incluindo a traça-da-maçã. 
+											<br /><strong>Dica Biocultura:</strong> Não apliques a calda perto de abrigos de morcegos para não os perturbar.</p>
+											<a href="fauna.php" class="button small">Ver todos os Auxiliares</a>
+										</div>
+
+										<ul class="actions">
+											<li><a href="#" class="button primary">Marcar como Concluído</a></li>
+											<li><a href="#" class="button">Ver Protocolo Técnico</a></li>
+										</ul>
+									</div>
+								</div>
+							</div>
+						</div>
+					</section>
+
+				</div>
+			</div>
+
+			<div id="sidebar">
+    		<!-- O conteúdo será carregado aqui pelo script -->
+			</div>
+		</div>
+
+		<!-- Scripts -->
+		<script src="assets/js/jquery.min.js"></script>
+		<script src="assets/js/browser.min.js"></script>
+		<script src="assets/js/breakpoints.min.js"></script>
+		<script src="assets/js/util.js"></script>
+		<script src="assets/js/main.js"></script>
+	
+<script>
+    // Carrega o menu lateral e reinicia os scripts do template
+    fetch('sidebar-content.html')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('sidebar').innerHTML = data;
+            // Importante: Reiniciar o main.js para que os submenus (openers) funcionem
+            var script = document.createElement('script');
+            script.src = 'assets/js/main.js';
+            document.body.appendChild(script);
+        });
+</script>
+	
+	</body>
+</html>
