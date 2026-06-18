@@ -11,7 +11,11 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="assets/css/main.css" />
 		<style>
-			/* Cores de Natureza para os Ícones */
+			/* Cores de Natureza para os Títulos e Ícones */
+			h1, h2, h3, h3 a { 
+				color: #2e7d32 !important; 
+			}
+
 			.features article .icon.fa-tint:before { color: #0077be !important; }
 			.features article .icon.fa-leaf:before, 
 			.features article .icon.fa-seedling:before,
@@ -20,34 +24,37 @@
 			.features article .icon.fa-sun:before { color: #4CAF50 !important; }
 			.features article .icon.fa-bug:before { color: #689f38 !important; }
             
-		/* Uniformizar imagens na grelha "O Manifesto da Mudança" */
-		.posts article .image img {
-   		 width: 100%;
-    	height: 300px; /* Altura fixa para a grelha da página inicial */
-    	object-fit: cover;
-    
-    	/* Efeito de bordas ofuscadas/suaves */
-    	mask-image: linear-gradient(to bottom, transparent, black 5%, black 95%, transparent),
-                linear-gradient(to right, transparent, black 5%, black 95%, transparent);
-    	-webkit-mask-image: linear-gradient(to bottom, transparent, black 5%, black 95%, transparent),
-                        linear-gradient(to right, transparent, black 5%, black 95%, transparent);
-    	mask-composite: intersect;
-    	-webkit-mask-composite: source-in;	
-		}
+			/* Uniformizar imagens na grelha "O Manifesto da Mudança" */
+			.posts article .image img {
+				width: 100%;
+				height: 300px; 
+				object-fit: cover;
+				mask-image: linear-gradient(to bottom, transparent, black 5%, black 95%, transparent),
+						linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+				-webkit-mask-image: linear-gradient(to bottom, transparent, black 5%, black 95%, transparent),
+								linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+				mask-composite: intersect;
+				-webkit-mask-composite: source-in;	
+			}
 
-		/* Ajuste para que o título fique colado à imagem */
-		.posts article h3 {
-    	margin-top: 1em;
-		}
+			.posts article h3 {
+				margin-top: 1em;
+			}
 
-            /* Ajuste para os links nos títulos não parecerem botões mas serem clicáveis */
             .features h3 a, .posts h3 a {
                 border-bottom: none;
-                color: inherit;
             }
+
             .features h3 a:hover, .posts h3 a:hover {
                 color: #f56a6a !important;
             }
+
+			/* Estilo da Assinatura Biocultura */
+			.biocultura-signature {
+				text-align: center;
+				padding: 4em 0;
+				opacity: 0.9;
+			}
 			
 		</style>
 	</head>
@@ -139,11 +146,11 @@
 						</header>
 						<div class="posts">
 							<article>
-							<a href="agua.html" class="image">
-								<img src="https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=1080&q=80" alt="Água: Sangue da Terra" />
-							</a>
-							<h3><a href="agua.html">Água: Captar vs Desperdiçar</a></h3>
-							<p>Sistemas de design para salvar milhares de litros e proteger a terra da seca.</p>
+								<a href="agua.html" class="image">
+									<img src="https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=1080&q=80" alt="Água: Sangue da Terra" />
+								</a>
+								<h3><a href="agua.html">Água: Captar vs Desperdiçar</a></h3>
+								<p>Sistemas de design para salvar milhares de litros e proteger a terra da seca.</p>
 							</article>
 							<article>
 								<a href="solo.html" class="image">
@@ -153,7 +160,7 @@
 								<p>Como devolver a vida e a estrutura à terra através da biologia e do minhocário.</p>
 							</article>
 							<article>
-							<a href="energia.html" class="image">
+								<a href="energia.html" class="image">
 									<img src="https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?auto=format&fit=crop&w=1080&q=80" alt="Energia Solar Ética" />
 								</a>
 								<h3><a href="energia.html">Energia: O Sol e a Vida</a></h3>
@@ -183,12 +190,33 @@
 						</div>
 					</section>
 
+					<!-- Rodapé com Assinatura (Logotipo A) -->
+					<div class="biocultura-signature">
+						<svg width="80" height="80" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+							<path d="M50 15 A35 35 0 1 0 85 50" stroke="#2e7d32" stroke-width="4" fill="none" />
+							<path d="M85 50 C85 30 70 15 50 15 C60 25 65 40 50 55 C40 45 45 30 50 15" fill="#2e7d32" />
+						</svg>
+						<h2 style="letter-spacing: 4px; margin-top: 15px; font-size: 1.2em;">BIOCULTURA</h2>
+						<p style="font-style: italic; font-size: 0.8em;">Pela Regeneração da Terra</p>
+					</div>
+
 				</div>
 			</div>
 
 			<!-- Sidebar -->
 			<div id="sidebar">
-                <!-- Carregado via Script -->
+				<div class="inner">
+					<!-- Contacto Simplificado -->
+					<section>
+						<header class="major">
+							<h2>Contacto</h2>
+						</header>
+						<p>A Biocultura é um espaço de partilha e regeneração. Se pretendes colaborar ou saber mais sobre as nossas práticas, entra em contacto de forma privada.</p>
+						<ul class="contact">
+							<li class="icon solid fa-comment-dots">Partilha a tua visão connosco.</li>
+						</ul>
+					</section>
+				</div>
 			</div>
 
 		</div>
@@ -204,7 +232,11 @@
             fetch('sidebar-content.html')
                 .then(response => response.text())
                 .then(data => {
-                    document.getElementById('sidebar').innerHTML = data;
+                    // Adiciona o conteúdo mantendo a estrutura da sidebar
+                    const sidebarInner = document.querySelector('#sidebar .inner');
+                    const originalContent = sidebarInner.innerHTML;
+                    sidebarInner.innerHTML = data + originalContent;
+                    
                     var script = document.createElement('script');
                     script.src = 'assets/js/main.js';
                     document.body.appendChild(script);
