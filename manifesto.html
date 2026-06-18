@@ -6,40 +6,28 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="assets/css/main.css" />
 		<style>
-			/* 1. LIMPEZA TOTAL */
 			section, .features, article, hr, .major, #header, .image.main, .major h2, header#header {
-				border: none !important;
-				box-shadow: none !important;
-				padding: 0 !important;
+				border: none !important; box-shadow: none !important; padding: 0 !important;
 			}
-			/* 2. MENU TOGGLE */
 			#header .toggle {
-				background: none !important;
-				box-shadow: none !important;
-				top: 3.5em !important; 
-				left: 2em !important;
-                text-decoration: none !important;
+				background: none !important; box-shadow: none !important;
+				top: 3.5em !important; left: 2em !important; text-decoration: none !important;
 			}
 			#header .toggle:before {
-				content: '\f06c' !important; 
-				font-family: "Font Awesome 5 Free" !important;
-				font-weight: 900;
-				color: #2e7d32 !important;
-				font-size: 1.6em !important;
+				content: '\f06c' !important; font-family: "Font Awesome 5 Free" !important;
+				font-weight: 900; color: #2e7d32 !important; font-size: 1.6em !important;
 			}
             #header .toggle:after { display: none !important; }
-			/* 3. ALINHAMENTO */
 			section { padding-top: 10em !important; margin-bottom: 4em !important; }
             header.main h1 { line-height: 1.1; margin-bottom: 1em !important; color: #2e7d32 !important; }
-			/* 4. IMAGEM NÍTIDA */
 			.image.main img {
 				width: 100% !important; height: 450px !important; object-fit: cover !important;
-                mask-image: none !important; -webkit-mask-image: none !important;
-                border-radius: 4px; margin-bottom: 2em !important;
+                mask-image: none !important; border-radius: 4px; margin-bottom: 2em !important;
 			}
             h2, h3 { color: #2e7d32 !important; }
-            p { color: #000000 !important; }
-			/* 5. ASSINATURA */
+            p { color: #000000 !important; font-size: 0.9em; }
+            .features h3 { font-size: 0.95em !important; margin-bottom: 0.2em !important; font-weight: 600 !important; }
+            .features article .icon:before { color: #2e7d32 !important; }
 			.footer-signature-right { text-align: right; padding: 6em 0 2em 0; opacity: 0.9; }
 		</style>
 	</head>
@@ -53,7 +41,39 @@
 						<span class="image main">
                             <img src="https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?auto=format&fit=crop&w=1080&q=80" alt="Mãos cuidando da terra" />
                         </span>
-                        <p>A bioCultura não é apenas um projeto; é uma resposta técnica e ética aos desafios ambientais modernos. Não basta conservar o que resta; a nossa missão é regenerar ativamente o que foi degradado, devolvendo a autonomia aos ecossistemas e às pessoas.</p>
+                        <p style="font-size: 1.1em; margin-bottom: 3em;">A bioCultura é uma resposta técnica e ética aos desafios ambientais. A nossa missão é regenerar ativamente o que foi degradado, devolvendo a autonomia aos ecossistemas.</p>
+
+                        <h2 style="margin-bottom: 1.5em;">Princípios Fundamentais</h2>
+                        <div class="features">
+                            <article>
+                                <span class="icon solid fa-seedling"></span>
+                                <div class="content">
+                                    <h3>Regeneração Ativa</h3>
+                                    <p>Não basta conservar; é preciso intervir para acelerar a recuperação da biodiversidade.</p>
+                                </div>
+                            </article>
+                            <article>
+                                <span class="icon solid fa-hand-holding-heart"></span>
+                                <div class="content">
+                                    <h3>Ética da Terra</h3>
+                                    <p>Tratamos o solo e a água como membros da nossa comunidade, não como mercadoria.</p>
+                                </div>
+                            </article>
+                            <article>
+                                <span class="icon solid fa-unlock-alt"></span>
+                                <div class="content">
+                                    <h3>Autonomia e Resiliência</h3>
+                                    <p>Criamos sistemas que reduzem a dependência de inputs externos e redes frágeis.</p>
+                                </div>
+                            </article>
+                            <article>
+                                <span class="icon solid fa-users"></span>
+                                <div class="content">
+                                    <h3>Conhecimento Partilhado</h3>
+                                    <p>Acreditamos que a mudança real acontece através da educação e da prática comunitária.</p>
+                                </div>
+                            </article>
+                        </div>
 					</section>
 					<div class="footer-signature-right">
 						<a href="index.html" style="border: none; display: inline-block; text-decoration: none;">
@@ -71,18 +91,19 @@
 			</div>
 			<div id="sidebar"></div>
 		</div>
+
 		<script src="assets/js/jquery.min.js"></script>
-		<script src="assets/js/browser.min.js"></script>
-		<script src="assets/js/breakpoints.min.js"></script>
-		<script src="assets/js/util.js"></script>
-		<script src="assets/js/main.js"></script>
+        <!-- O main.js será carregado dentro do fetch abaixo para garantir que funciona -->
         <script>
-            fetch('sidebar-content.html').then(response => response.text()).then(data => {
-                document.getElementById('sidebar').innerHTML = data;
-                var script = document.createElement('script');
-                script.src = 'assets/js/main.js';
-                document.body.appendChild(script);
-            });
+            fetch('sidebar-content.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('sidebar').innerHTML = data;
+                    // REINICIALIZAÇÃO DO MENU: Carrega o main.js APÓS o HTML entrar na página
+                    var script = document.createElement('script');
+                    script.src = 'assets/js/main.js';
+                    document.body.appendChild(script);
+                });
         </script>
 	</body>
 </html>
