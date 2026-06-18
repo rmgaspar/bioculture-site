@@ -6,23 +6,23 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="assets/css/main.css" />
 		<style>
-			/* 1. LIMPEZA E CORES DOS TÍTULOS */
-			section, .features, .posts, article, hr, .major, #header {
+			/* 1. LIMPEZA TOTAL DE LINHAS E MOLDURAS */
+			section, .features, .posts, article, hr, .major, #header, .posts article .image {
 				border: none !important;
+				box-shadow: none !important;
+				padding: 0 !important;
 			}
-			h1, h2, h3, h3 a { color: #2e7d32 !important; }
-			.features h3 a, .posts h3 a { border-bottom: none !important; }
 
-			/* 2. CABEÇALHO: LINHA VERDE E LOGO NA PONTA DIREITA */
+			/* 2. CABEÇALHO: LOGO LOGO APÓS O TEXTO */
 			header#header {
 				display: flex !important;
-				justify-content: space-between !important;
+				justify-content: flex-start !important; /* Alinha tudo à esquerda */
 				align-items: flex-end !important;
-				border-bottom: solid 1px #2e7d32 !important;
+				border-bottom: solid 1px #2e7d32 !important; /* A linha verde de base */
 				padding: 0 0 0.1em 0 !important;
 				margin: 4.5em 0 3em 0 !important;
-				width: 100% !important;
 			}
+
 			header#header .logo {
 				color: #2e7d32 !important;
 				text-transform: none !important;
@@ -32,25 +32,27 @@
 				line-height: 1 !important;
 				margin: 0 !important;
 			}
-			.header-right-sprout {
+
+			.header-sprout-inline {
+				margin-left: 10px; /* Espaço pequeno após o texto */
 				line-height: 0;
-				margin-bottom: -4px; /* Ajuste para o broto tocar na linha */
+				margin-bottom: -4px; /* Ajuste para pousar na linha */
 			}
-			#header .toggle:before { color: #2e7d32 !important; }
 
-			/* 3. CORES DOS ÍCONES (CAMINHOS) */
-			.features article .icon.fa-tint:before { color: #0077be !important; }
-			.features article .icon.fa-leaf:before, 
-			.features article .icon.fa-seedling:before, 
-			.features article .icon.fa-recycle:before, 
-			.features article .icon.fa-wind:before { color: #2e7d32 !important; }
-			.features article .icon.fa-sun:before { color: #4CAF50 !important; }
+			/* 3. CORES DOS ÍCONES POR TEMA */
+			.features article .icon.fa-leaf:before { color: #2e7d32 !important; }    /* Verde - Pesticidas */
+			.features article .icon.fa-recycle:before { color: #43a047 !important; } /* Verde Médio - Biofossas */
+			.features article .icon.fa-tint:before { color: #0077be !important; }    /* Azul - Água */
+			.features article .icon.fa-seedling:before { color: #8d6e63 !important; } /* Castanho - Terra/Húmus */
+			.features article .icon.fa-wind:before { color: #4db6ac !important; }    /* Água-marinha/Ar - Florestas */
+			.features article .icon.fa-sun:before { color: #fbc02d !important; }     /* Amarelo/Sol - Energia */
 
-			/* 4. UNIFORMIZAÇÃO DAS IMAGENS (MANIFESTO) */
+			/* 4. IMAGENS DO MANIFESTO (Sem border, mesmo tamanho) */
 			.posts article .image img {
 				width: 100% !important;
-				height: 300px !important; /* Força o mesmo tamanho para todas */
+				height: 300px !important;
 				object-fit: cover !important;
+				margin: 0 !important;
 				mask-image: linear-gradient(to bottom, transparent, black 5%, black 95%, transparent);
 				-webkit-mask-image: linear-gradient(to bottom, transparent, black 5%, black 95%, transparent);
 			}
