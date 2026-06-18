@@ -102,12 +102,15 @@
 		<script src="assets/js/jquery.min.js"></script>
 		<script src="assets/js/main.js"></script>
         <script>
-            fetch('sidebar-content.html').then(response => response.text()).then(data => {
-                document.getElementById('sidebar').innerHTML = data;
-                var script = document.createElement('script');
-                script.src = 'assets/js/main.js';
-                document.body.appendChild(script);
-            });
+            fetch('sidebar-content.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('sidebar').innerHTML = data;
+                    // Força a reinicialização dos scripts do menu
+                    var script = document.createElement('script');
+                    script.src = 'assets/js/main.js';
+                    document.body.appendChild(script);
+                });
         </script>
 	</body>
 </html>
