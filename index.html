@@ -6,46 +6,54 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="assets/css/main.css" />
 		<style>
-			/* Limpeza radical de todas as linhas do template */
-			#sidebar, #sidebar .inner, #sidebar nav, #sidebar nav ul, #sidebar nav ul li, 
-			section, article, .major, hr, #header {
+			/* 1. LIMPEZA E CORES DOS TÍTULOS */
+			section, .features, .posts, article, hr, .major, #header {
 				border: none !important;
 			}
+			h1, h2, h3, h3 a { color: #2e7d32 !important; }
+			.features h3 a, .posts h3 a { border-bottom: none !important; }
 
-			/* O Header como a linha verde contínua */
+			/* 2. CABEÇALHO: LINHA VERDE E LOGO NA PONTA DIREITA */
 			header#header {
 				display: flex !important;
-				justify-content: flex-start !important;
-				align-items: flex-end !important; /* Faz o texto "pousar" na linha */
-				border-bottom: solid 1px #2e7d32 !important; /* A linha verde do print */
+				justify-content: space-between !important;
+				align-items: flex-end !important;
+				border-bottom: solid 1px #2e7d32 !important;
 				padding: 0 0 0.1em 0 !important;
-				margin: 4.5em 0 3em 0 !important; /* Alinhamento vertical com o logo da sidebar */
+				margin: 4.5em 0 3em 0 !important;
+				width: 100% !important;
 			}
-
-			/* Ícone do Menu (Hambúrguer) em Verde */
-			#header .toggle:before {
-				color: #2e7d32 !important;
-			}
-
-			/* Texto bioCultura sentado na linha */
 			header#header .logo {
 				color: #2e7d32 !important;
 				text-transform: none !important;
 				font-weight: 300 !important;
 				letter-spacing: 1px;
-				font-size: 1.1em !important;
 				text-decoration: none !important;
 				line-height: 1 !important;
-				margin-left: 1em !important;
+				margin: 0 !important;
 			}
-
-			/* Logo D na ponta direita da linha */
 			.header-right-sprout {
-				margin-left: auto;
 				line-height: 0;
 				margin-bottom: -4px; /* Ajuste para o broto tocar na linha */
 			}
+			#header .toggle:before { color: #2e7d32 !important; }
 
+			/* 3. CORES DOS ÍCONES (CAMINHOS) */
+			.features article .icon.fa-tint:before { color: #0077be !important; }
+			.features article .icon.fa-leaf:before, 
+			.features article .icon.fa-seedling:before, 
+			.features article .icon.fa-recycle:before, 
+			.features article .icon.fa-wind:before { color: #2e7d32 !important; }
+			.features article .icon.fa-sun:before { color: #4CAF50 !important; }
+
+			/* 4. UNIFORMIZAÇÃO DAS IMAGENS (MANIFESTO) */
+			.posts article .image img {
+				width: 100% !important;
+				height: 300px !important; /* Força o mesmo tamanho para todas */
+				object-fit: cover !important;
+				mask-image: linear-gradient(to bottom, transparent, black 5%, black 95%, transparent);
+				-webkit-mask-image: linear-gradient(to bottom, transparent, black 5%, black 95%, transparent);
+			}
 		</style>
 	</head>
 	<body class="is-preload">
@@ -56,7 +64,7 @@
 					<header id="header">
 						<a href="index.html" class="logo">bioCultura</a>
 						<div class="header-right-sprout">
-							<!-- Logo D -->
+							<!-- Logo D na ponta direita -->
 							<svg width="22" height="22" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
 								<path d="M20 80 Q50 75 80 80" stroke="#634832" stroke-width="2" fill="none" opacity="0.4" />
 								<path d="M50 80 C50 60 40 50 50 30 C60 50 50 60 50 80" fill="#2e7d32" />
@@ -64,6 +72,7 @@
 							</svg>
 						</div>
 					</header>
+
 
 					<section id="banner">
 						<div class="content">
