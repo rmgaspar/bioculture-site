@@ -1,155 +1,157 @@
 <!DOCTYPE HTML>
+<!--
+	Editorial by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
 <html>
 	<head>
-		<title>Calendário Hortícola - Biocultura</title>
+		<title>bioCultura - Calendário Hortícola</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="assets/css/main.css" />
 		<style>
-			/* Estilos específicos para o Calendário */
-			.day-list { list-style: none; padding: 0; border: 1px solid #efefef; border-radius: 0.375em; }
-			.day-item { padding: 1.5em; border-bottom: 1px solid #efefef; cursor: pointer; transition: background 0.2s; }
-			.day-item:last-child { border-bottom: 0; }
-			.day-item:hover { background: #f4f4f4; }
-			.day-item.active { background: #f4faf4; border-left: 6px solid #2e7d32; }
-			.day-item.active strong { color: #2e7d32; font-size: 1.1em; }
-			.today-label { color: #2e7d32; font-weight: 800; font-size: 0.7em; text-transform: uppercase; display: block; }
-			.moon-phase { font-size: 0.8em; color: #777; margin-top: 0.5em; display: block; }
-			.action-card { background: #fff; border: 1px solid #efefef; border-radius: 0.375em; overflow: hidden; }
-			.action-image img { width: 100%; height: 300px; object-fit: cover; }
-			.action-content { padding: 2em; }
-			.badge-bio { background: #2e7d32; color: white; padding: 0.2em 0.8em; border-radius: 4px; font-size: 0.7em; font-weight: bold; float: right; }
+			/* 1. LIMPEZA TOTAL DE LINHAS E MOLDURAS */
+			section, .features, article, hr, .major, #header, .image.main, .major h2, header#header { 
+                border: none !important; box-shadow: none !important; padding: 0 !important; 
+            }
 
-	/* Uniformizar tamanho e suavizar bordas das imagens internas */
-	.image.main {
-    margin-bottom: 2em;
-   	overflow: hidden;
-	}
+			/* 2. MENU TOGGLE: FOLHA VERDE */
+			#header .toggle {
+				background: none !important; box-shadow: none !important;
+				top: 3.5em !important; left: 2em !important;
+                border: none !important; text-decoration: none !important;
+			}
+			#header .toggle:before {
+				content: '\f06c' !important; 
+				font-family: "Font Awesome 5 Free" !important;
+				font-weight: 900; color: #2e7d32 !important; font-size: 1.6em !important;
+			}
+            #header .toggle:after { display: none !important; }
 
-	.image.main img {
-   	width: 100%;
-    height: 450px; /* Altura fixa para todas as páginas internas */
-    object-fit: cover; /* Mantém a proporção sem distorcer */
-    
-    /* Efeito de bordas ofuscadas (máscara) */
-    mask-image: linear-gradient(to bottom, transparent, black 8%, black 92%, transparent),
-                linear-gradient(to right, transparent, black 8%, black 92%, transparent);
-    -webkit-mask-image: linear-gradient(to bottom, transparent, black 8%, black 92%, transparent),
-                        linear-gradient(to right, transparent, black 8%, black 92%, transparent);
-    mask-composite: intersect;
-    -webkit-mask-composite: source-in;
-	}
+			/* 3. ALINHAMENTO DO CONTEÚDO */
+			section { padding-top: 10em !important; margin-bottom: 4em !important; }
+            header.main h1 { line-height: 1.1; margin-bottom: 1em !important; color: #2e7d32 !important; }
+			
+            /* 4. ESTILO DA IMAGEM E LEGENDA */
+            .image.main { margin-bottom: 0.3em !important; }
+			.image.main img { 
+                width: 100% !important; height: 450px !important; object-fit: cover !important; 
+                mask-image: none !important; border-radius: 4px; 
+            }
+            .image.main + p { 
+                font-size: 0.85em !important; color: #000000 !important; 
+                font-weight: normal !important; line-height: 1.5 !important; margin-top: 0 !important; 
+            }
+
+            /* 5. CORES DOS ÍCONES POR CONTEXTO */
+            h2 { color: #2e7d32 !important; margin-top: 2em !important; }
+            .features h3 { font-size: 0.95em !important; margin-bottom: 0.2em !important; font-weight: 600 !important; }
+            .features p { font-size: 0.85em !important; color: #000 !important; line-height: 1.6 !important; }
+
+            .icon-plantar:before { color: #2e7d32 !important; }    /* Verde (Plantação) */
+            .icon-solo:before { color: #8d6e63 !important; }       /* Castanho (Solo/Estrume) */
+            .icon-agua:before { color: #0077be !important; }       /* Azul (Rega) */
+            .icon-protecao:before { color: #4db6ac !important; }   /* Teal (Tratamentos) */
+
+			/* 6. ASSINATURA FINAL À DIREITA */
+			.footer-signature-right { text-align: right; padding: 6em 0 2em 0; opacity: 0.9; }
 		</style>
 	</head>
-	<body class="is-preload">
+	<body class="is-preload page-calendario">
 		<div id="wrapper">
 			<div id="main">
 				<div class="inner">
 
-					<!-- Header -->
-					<header id="header">
-						<a href="index.php" class="logo"><strong>Biocultura</strong> - Calendário Hortícola</a>
-					</header>
+					<header id="header" style="height: 0; margin: 0; padding: 0; overflow: hidden;"></header>
 
-					<!-- Seção Calendário -->
 					<section>
 						<header class="main">
-							<h1>Operações da Semana</h1>
-							<p>Siga o ciclo natural para uma quinta regenerativa.</p>
+							<h1>Calendário Hortícola: O Ritmo da Terra</h1>
 						</header>
+						<span class="image main">
+                            <img src="https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?auto=format&fit=crop&w=1080&q=80" alt="Horta biológica e planeamento" />
+                        </span>
+						<p>Cultivar em harmonia com as estações é o primeiro passo para a autonomia alimentar. Este calendário serve como guia para o que, como e quando semear, respeitando os ciclos naturais e a saúde do ecossistema.</p>
 
-						<div class="row">
-							<!-- Coluna Esquerda: Lista de Dias -->
-							<div class="col-4 col-12-small">
-								<h3>Junho 2026</h3>
-								<input type="date" value="2026-06-14" style="margin-bottom: 1em;">
-								
-								<div class="day-list">
-									<div class="day-item">
-										<span class="date">Seg, 08 Jun</span><br>
-										<span>Sementeira de Alfaces</span>
-									</div>
-									<div class="day-item">
-										<span class="date">Ter, 09 Jun</span><br>
-										<span>Limpeza de Arvoredos</span>
-									</div>
-									<div class="day-item">
-										<span class="date">Qua, 10 Jun</span><br>
-										<span>Tratamento de Solo</span>
-									</div>
-									<!-- DIA ACTUAL -->
-									<div class="day-item active">
-										<span class="today-label">Hoje</span>
-										<strong>Dom, 14 Jun</strong><br>
-										<span>Calda Bordalesa Biológica</span>
-										<span class="moon-phase"><i class="icon solid fa-moon"></i> Lua Nova</span>
-									</div>
-									<div class="day-item">
-										<span class="date">Seg, 15 Jun</span><br>
-										<span>Poda de Verão</span>
-									</div>
-								</div>
+                        <h2 style="margin-bottom: 1.5em;">Planeamento e Sementeira</h2>
+                        <div class="features">
+                            <article>
+                                <span class="icon solid fa-seedling icon-plantar"></span>
+                                <div class="content">
+                                    <h3 style="color: #2e7d32;">O Que e Quando</h3>
+                                    <p>Respeitar as épocas de sementeira e transplante garante plantas mais fortes e menos suscetíveis a pragas.</p>
+                                </div>
+                            </article>
+                            <article>
+                                <span class="icon solid fa-mountain icon-solo"></span>
+                                <div class="content">
+                                    <h3 style="color: #8d6e63;">Solo e Adubação</h3>
+                                    <p>Uso exclusivo de estrumes curtidos e adubos verdes. A nutrição deve ser feita para o solo, não apenas para a planta.</p>
+                                </div>
+                            </article>
+                            <article>
+                                <span class="icon solid fa-tint icon-agua"></span>
+                                <div class="content">
+                                    <h3 style="color: #0077be;">Gestão da Água</h3>
+                                    <p>Rega localizada (gota-a-gota) e nas horas de menor evaporação. A quantidade deve acompanhar o ciclo de vida da cultura.</p>
+                                </div>
+                            </article>
+                            <article>
+                                <span class="icon solid fa-flask icon-protecao"></span>
+                                <div class="content">
+                                    <h3 style="color: #4db6ac;">Proteção Biológica</h3>
+                                    <p>Aplicação de Calda Bordalesa e extratos de plantas (urtiga, cavalinha) para prevenção de fungos e doenças.</p>
+                                </div>
+                            </article>
+                        </div>
+
+						<div class="row" style="margin-top: 4em;">
+							<div class="col-6 col-12-small">
+								<h3 style="color: #2e7d32;">Manutenção e Cuidado</h3>
+								<p style="color: #000; font-size: 0.9em;">A monda manual e a cobertura do solo (mulching) são essenciais para manter a humidade e evitar a competição por nutrientes.</p>
 							</div>
-
-							<!-- Coluna Direita: Detalhes da Operação -->
-							<div class="col-8 col-12-small">
-								<div class="action-card">
-									<div class="action-image">
-										<img src="https://images.unsplash.com/photo-1592419044706-39796d40f98c?auto=format&fit=crop&q=80&w=1200" alt="" />
-									</div>
-									<div class="action-content">
-										<span class="badge-bio">Manifesto Bioculture</span>
-										<h2>Aplicação de Calda Bordalesa</h2>
-										<p><strong>Alvo:</strong> Árvores de Fruto (Macieiras e Pereiras)</p>
-										
-										<p>A aplicação da Calda Bordalesa é essencial nesta fase para prevenir o aparecimento de fungos após as primeiras humidades de Verão. Sendo uma alternativa biológica, protege a árvore sem matar a vida microbiana do solo.</p>
-										
-										<hr />
-										
-										<h4>O Guardião do Ecossistema: O Morcego</h4>
-										<div class="box">
-											<p>Enquanto cuidas das árvores, recorda que os <strong>morcegos</strong> são os teus maiores aliados noturnos. Um único morcego come cerca de 3000 insetos por noite, incluindo a traça-da-maçã. 
-											<br /><strong>Dica Biocultura:</strong> Não apliques a calda perto de abrigos de morcegos para não os perturbar.</p>
-											<a href="fauna.php" class="button small">Ver todos os Auxiliares</a>
-										</div>
-
-										<ul class="actions">
-											<li><a href="#" class="button primary">Marcar como Concluído</a></li>
-											<li><a href="#" class="button">Ver Protocolo Técnico</a></li>
-										</ul>
-									</div>
-								</div>
+							<div class="col-6 col-12-small">
+								<h3 style="color: #2e7d32;">Produtos Naturais</h3>
+								<p style="color: #000; font-size: 0.9em;">Privilegiamos soluções que não deixam resíduos: biofertilizantes líquidos, farinha de rocha e sabão potássico.</p>
 							</div>
 						</div>
 					</section>
 
+					<!-- Assinatura Final à Direita -->
+					<div class="footer-signature-right">
+						<a href="index.html" style="border: none; display: inline-block; text-decoration: none;">
+							<div style="font-family: 'Source Sans Pro', sans-serif; font-size: 1.4em; line-height: 1; display: flex; align-items: flex-end; text-transform: none;">
+                                <b style="font-weight: 700; color: #2e7d32; margin-right: -3px; position: relative; z-index: 2;">b</b>
+                                <div style="width: 32px; margin: 0 -7px; position: relative; line-height: 0; transform: translateY(4px); z-index: 1;">
+                                    <svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: auto;">
+                                        <path d="M-20 110 Q50 102 120 110" stroke="#634832" stroke-width="4" fill="none" opacity="0.3" />
+                                        <path d="M50 110 C50 80 35 70 50 45 C65 70 50 80 50 110" fill="#2e7d32" />
+                                        <path d="M50 80 C75 75 85 50 65 40 C50 55 50 65 50 80" fill="#4CAF50" />
+                                    </svg>
+                                </div>
+                                <b style="font-weight: 700; color: #2e7d32; margin-left: -3px; position: relative; z-index: 2;">o</b>
+                                <span style="font-weight: 300; color: #444; margin-left: 2px;">Cultura</span>
+                            </div>
+						</a>
+					</div>
+
 				</div>
 			</div>
-
-			<div id="sidebar">
-    		<!-- O conteúdo será carregado aqui pelo script -->
-			</div>
+			<div id="sidebar"></div>
 		</div>
 
-		<!-- Scripts -->
 		<script src="assets/js/jquery.min.js"></script>
-		<script src="assets/js/browser.min.js"></script>
-		<script src="assets/js/breakpoints.min.js"></script>
-		<script src="assets/js/util.js"></script>
-		<script src="assets/js/main.js"></script>
-	
-<script>
-    // Carrega o menu lateral e reinicia os scripts do template
-    fetch('sidebar-content.html')
-        .then(response => response.text())
-        .then(data => {
-            document.getElementById('sidebar').innerHTML = data;
-            // Importante: Reiniciar o main.js para que os submenus (openers) funcionem
-            var script = document.createElement('script');
-            script.src = 'assets/js/main.js';
-            document.body.appendChild(script);
-        });
-</script>
-	
+        <script src="assets/js/browser.min.js"></script>
+        <script src="assets/js/breakpoints.min.js"></script>
+        <script src="assets/js/util.js"></script>
+        <script>
+            fetch('sidebar-content.html').then(response => response.text()).then(data => {
+                document.getElementById('sidebar').innerHTML = data;
+                var script = document.createElement('script');
+                script.src = 'assets/js/main.js';
+                document.body.appendChild(script);
+            });
+        </script>
 	</body>
 </html>
