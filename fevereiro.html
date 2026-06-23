@@ -20,8 +20,8 @@
 
             /* 2. TIPOGRAFIA MAXIMIZADA */
             header.main h1 { color: #2e7d32 !important; line-height: 1.1; margin-bottom: 0.8em !important; font-size: 4em !important; }
-            p { font-size: 1.3em !important; color: #222 !important; line-height: 1.8 !important; }
-            h2 { color: #2e7d32 !important; margin-top: 2.5em !important; font-size: 2.5em !important; font-weight: 700; }
+            p { font-size: 1.35em !important; color: #222 !important; line-height: 1.8 !important; }
+            h2 { color: #2e7d32 !important; margin-top: 2.5em !important; font-size: 2.6em !important; font-weight: 700; }
             .features h3 { font-size: 1.7em !important; font-weight: 700; margin-bottom: 0.2em !important; }
             .features p { font-size: 1.25em !important; color: #444 !important; line-height: 1.6 !important; }
 
@@ -30,33 +30,39 @@
             .banner-box { flex: 1; min-width: 350px; height: 420px; border-radius: 35px; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.08); }
             .banner-box img { width: 100%; height: 100%; object-fit: cover; }
 
-            /* Calendário Lunar de Alto Impacto */
             .lunar-calendar { background: #eef5ee; display: flex; align-items: center; justify-content: center; padding: 2em; }
             .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 12px; text-align: center; width: 100%; }
             .day-name { font-weight: 900; color: #2e7d32; font-size: 1.1em; opacity: 0.4; padding-bottom: 15px; }
             .day { color: #2e7d32; font-size: 1.4em; font-weight: 600; display: flex; flex-direction: column; align-items: center; justify-content: center; }
             
-            /* Destaque das Luas */
             .moon-highlight { background: white; border-radius: 15px; box-shadow: 0 4px 10px rgba(46, 125, 50, 0.1); padding: 5px 0; }
             .moon-icon { width: 30px; height: 30px; margin-top: 5px; }
             .moon-label { font-size: 0.45em; text-transform: uppercase; font-weight: 900; margin-top: 2px; }
 
-            /* 4. ÍCONES UNÂNIMES (SEM MOLDURAS) */
-            .features article { margin-bottom: 4em !important; }
+            /* 4. ÍCONES EM LOSANGO (IGUAL A JANEIRO) */
             .features article .icon { 
-                border: none !important; width: 70px !important; height: 70px !important; 
-                margin-bottom: 15px !important; display: flex !important; align-items: center; justify-content: center;
+                width: 4.5em !important; height: 4.5em !important; 
+                line-height: 4.5em !important;
+                border: solid 1px #e5e5e5 !important; 
+                transform: rotate(45deg);
+                display: flex !important; align-items: center; justify-content: center;
+                margin-right: 2em !important;
             }
-            .features article .icon:before { font-size: 60px !important; }
-
-            /* Cores Específicas */
-            .cat-horta h3, .cat-horta .icon:before { color: #43a047 !important; }
-            .cat-campo h3, .cat-campo .icon:before { color: #8d6e63 !important; }
-            .cat-pomar h3, .cat-pomar .icon:before { color: #2e7d32 !important; }
-            .cat-adega h3, .cat-adega .icon:before { color: #634832 !important; }
-            .cat-animais h3, .cat-animais .icon:before { color: #fbc02d !important; }
+            .features article .icon:before { 
+                transform: rotate(-45deg); 
+                font-size: 40px !important;
+            }
             
-            .icon-grapes { width: 70px; height: 70px; margin-bottom: 15px; }
+            /* Ajuste para SVG dentro do Losango */
+            .icon-svg-container { transform: rotate(-45deg); width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; }
+
+            /* Cores por Categoria */
+            .cat-horta h3 { color: #43a047 !important; } .cat-horta .icon:before { color: #43a047 !important; }
+            .cat-campo h3 { color: #8d6e63 !important; } .cat-campo .icon:before { color: #8d6e63 !important; }
+            .cat-pomar h3 { color: #2e7d32 !important; } .cat-pomar .icon:before { color: #2e7d32 !important; }
+            .cat-vinha h3 { color: #6a1b9a !important; }
+            .cat-adega h3 { color: #634832 !important; } .cat-adega .icon:before { color: #634832 !important; }
+            .cat-animais h3 { color: #fbc02d !important; } .cat-animais .icon:before { color: #fbc02d !important; }
 
 			.footer-signature-right { text-align: right; padding: 6em 0 2em 0; opacity: 0.9; }
 		</style>
@@ -70,42 +76,20 @@
 						<header class="main"><h1>Fevereiro: A Força da Semente</h1></header>
 						
                         <div class="banner-container">
-                            <!-- Imagem Principal -->
                             <div class="banner-box">
                                 <img src="https://images.unsplash.com/photo-1779622520933-79b2926a97dd?auto=format&fit=crop&w=800&q=80" alt="Sementeiras" />
                             </div>
                             
-                            <!-- Calendário Lunar Fev 2026 -->
                             <div class="banner-box lunar-calendar">
                                 <div class="calendar-grid">
                                     <div class="day-name">D</div><div class="day-name">S</div><div class="day-name">T</div><div class="day-name">Q</div><div class="day-name">Q</div><div class="day-name">S</div><div class="day-name">S</div>
-                                    
-                                    <!-- Semana 1 -->
-                                    <div class="day moon-highlight">1
-                                        <svg class="moon-icon" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="#2e7d32"/></svg>
-                                        <span class="moon-label">Cheia</span>
-                                    </div>
+                                    <div class="day moon-highlight">1<svg class="moon-icon" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="#2e7d32"/></svg><span class="moon-label">Cheia</span></div>
                                     <div class="day">2</div><div class="day">3</div><div class="day">4</div><div class="day">5</div><div class="day">6</div><div class="day">7</div>
-                                    <!-- Semana 2 -->
-                                    <div class="day">8</div>
-                                    <div class="day moon-highlight">9
-                                        <svg class="moon-icon" viewBox="0 0 100 100"><path d="M50,10 A40,40 0 0,0 50,90 Z" fill="#2e7d32"/></svg>
-                                        <span class="moon-label">Minguante</span>
-                                    </div>
+                                    <div class="day">8</div><div class="day moon-highlight">9<svg class="moon-icon" viewBox="0 0 100 100"><path d="M50,10 A40,40 0 0,0 50,90 Z" fill="#2e7d32"/></svg><span class="moon-label">Minguante</span></div>
                                     <div class="day">10</div><div class="day">11</div><div class="day">12</div><div class="day">13</div><div class="day">14</div>
-                                    <!-- Semana 3 -->
-                                    <div class="day">15</div><div class="day">16</div>
-                                    <div class="day moon-highlight">17
-                                        <svg class="moon-icon" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" stroke="#2e7d32" stroke-width="8" fill="none"/></svg>
-                                        <span class="moon-label">Nova</span>
-                                    </div>
+                                    <div class="day">15</div><div class="day">16</div><div class="day moon-highlight">17<svg class="moon-icon" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" stroke="#2e7d32" stroke-width="8" fill="none"/></svg><span class="moon-label">Nova</span></div>
                                     <div class="day">18</div><div class="day">19</div><div class="day">20</div><div class="day">21</div>
-                                    <!-- Semana 4 -->
-                                    <div class="day">22</div><div class="day">23</div>
-                                    <div class="day moon-highlight">24
-                                        <svg class="moon-icon" viewBox="0 0 100 100"><path d="M50,10 A40,40 0 0,1 50,90 Z" fill="#2e7d32"/></svg>
-                                        <span class="moon-label">Crescente</span>
-                                    </div>
+                                    <div class="day">22</div><div class="day">23</div><div class="day moon-highlight">24<svg class="moon-icon" viewBox="0 0 100 100"><path d="M50,10 A40,40 0 0,1 50,90 Z" fill="#2e7d32"/></svg><span class="moon-label">Crescente</span></div>
                                     <div class="day">25</div><div class="day">26</div><div class="day">27</div><div class="day">28</div>
                                 </div>
                             </div>
@@ -140,15 +124,17 @@
                                     <p>Tratamento contra cochonilhas e pedrado. Pulverização com calda bordalesa nas nespereiras e pessegueiros.</p>
                                 </div>
                             </article>
-                            <article>
-                                <div class="icon-grapes">
-                                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                                        <path fill="#6a1b9a" d="M35,35 Q40,25 50,35 Q60,25 65,35 Q75,40 65,50 Q50,60 35,50 Q25,40 35,35 Z M45,50 Q50,40 60,50 Q65,60 50,70 Q35,60 45,50 Z M50,65 Q55,60 60,70 Q55,80 50,90 Q45,80 40,70 Q45,60 50,65 Z" />
-                                        <path d="M50,35 L50,20 Q55,15 60,20" stroke="#2e7d32" stroke-width="4" fill="none" />
-                                    </svg>
-                                </div>
+                            <article class="cat-vinha">
+                                <span class="icon solid">
+                                    <div class="icon-svg-container">
+                                        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                            <path fill="#6a1b9a" d="M35,35 Q40,25 50,35 Q60,25 65,35 Q75,40 65,50 Q50,60 35,50 Q25,40 35,35 Z M45,50 Q50,40 60,50 Q65,60 50,70 Q35,60 45,50 Z M50,65 Q55,60 60,70 Q55,80 50,90 Q45,80 40,70 Q45,60 50,65 Z" />
+                                            <path d="M50,35 L50,20 Q55,15 60,20" stroke="#2e7d32" stroke-width="4" fill="none" />
+                                        </svg>
+                                    </div>
+                                </span>
                                 <div class="content">
-                                    <h3 style="color: #6a1b9a;">Vinha</h3>
+                                    <h3>Vinha</h3>
                                     <p>Reparar bardos e ramadas. Iniciar a enxertia em locais abrigados e cortar raízes acima da soldadura.</p>
                                 </div>
                             </article>
