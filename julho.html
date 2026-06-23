@@ -11,12 +11,12 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="assets/css/main.css" />
 		<style>
-			/* 1. LIMPEZA TOTAL DE LINHAS E MOLDURAS */
-			section, #header, hr, .major, .features article { 
+			/* 1. LIMPEZA TOTAL DE LINHAS, BORDAS E MOLDURAS */
+			section, #header, hr, .major, .features article, .features article .icon { 
                 border: none !important; box-shadow: none !important; padding: 0 !important; 
             }
 
-			/* 2. MENU TOGGLE: FOLHA VERDE */
+			/* 2. MENU TOGGLE: FOLHA VERDE SUBTIL */
 			#header .toggle {
 				background: none !important; top: 3.5em !important; left: 2em !important;
                 border: none !important; text-decoration: none !important;
@@ -29,7 +29,7 @@
             #header .toggle:after { display: none !important; }
 
 			/* 3. ALINHAMENTO E TIPOGRAFIA (1.30em) */
-			section { padding-top: 10em !important; margin-bottom: 4em !important; }
+			section { padding-top: 8em !important; margin-bottom: 4em !important; }
             header.main h1 { color: #2e7d32 !important; line-height: 1.1; margin-bottom: 0.8em !important; font-size: 3.5em !important; }
             p { font-size: 1.30em !important; color: #222 !important; line-height: 1.7 !important; }
             h2 { color: #2e7d32 !important; margin-top: 2.5em !important; font-size: 2.2em !important; font-weight: 700; }
@@ -41,6 +41,7 @@
             .banner-box { flex: 1; min-width: 320px; height: 350px; border-radius: 30px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
             .banner-box img { width: 100%; height: 100%; object-fit: cover; }
 
+            /* Calendário Lunar Julho 2026 */
             .lunar-calendar { background: #eef5ee; display: flex; align-items: center; justify-content: center; padding: 1.5em; }
             .calendar-grid { 
                 display: grid; grid-template-columns: repeat(7, 1fr); grid-auto-rows: 1fr; 
@@ -53,11 +54,23 @@
             .moon-icon { width: 22px; height: 22px; margin-bottom: 2px; }
             .moon-label { font-size: 0.6em; text-transform: uppercase; font-weight: 900; color: #2e7d32; }
 
-            /* 5. ÍCONES PUROS E ALINHADOS */
+            /* 5. ÍCONES PUROS E ALINHADOS (SEM LOSANGOS) */
             .features article .icon { 
-                width: 70px !important; height: 70px !important; line-height: 70px !important;
-                text-align: center !important; border: none !important; background: none !important;
-                margin: 0 1.5em 2em 0 !important; display: block !important; float: left;
+                width: 70px !important; 
+                height: 70px !important; 
+                line-height: 70px !important;
+                text-align: center !important;
+                border: none !important; 
+                background: none !important;
+                box-shadow: none !important;
+                margin: 0 1.5em 2em 0 !important;
+                display: block !important;
+                float: left;
+                transform: none !important;
+            }
+            /* Remove pseudo-elementos que criam o diamante no template original */
+            .features article .icon:before, .features article .icon:after { 
+                border: none !important; box-shadow: none !important; transform: none !important; 
             }
             .features article .icon:before { font-size: 55px !important; }
 
@@ -68,7 +81,6 @@
             .cat-campo h3, .cat-campo .icon:before { color: #8d6e63 !important; }
             .cat-adega h3, .cat-adega .icon:before { color: #634832 !important; }
             .cat-animais h3, .cat-animais .icon:before { color: #fbc02d !important; }
-            .cat-jardim h3, .cat-jardim .icon:before { color: #ec407a !important; }
 
 			.footer-signature-right { text-align: right; padding: 6em 0 2em 0; opacity: 0.9; }
 		</style>
@@ -94,25 +106,19 @@
                                     
                                     <div class="day"></div><div class="day"></div><div class="day"></div><div class="day">1</div><div class="day">2</div><div class="day">3</div><div class="day">4</div>
                                     <div class="day">5</div><div class="day">6</div>
-                                    <!-- Quarto Minguante dia 7 -->
                                     <div class="day moon-day"><svg class="moon-icon" viewBox="0 0 100 100"><path d="M50,10 A40,40 0 0,0 50,90 Z" fill="#2e7d32"/></svg><span class="moon-label">M</span></div>
-                                    <div class="day">8</div><div class="day">9</div><div class="day">10</div><div class="day">11</div>
-                                    <div class="day">12</div><div class="day">13</div>
-                                    <!-- Lua Nova dia 14 -->
+                                    <div class="day">8</div><div class="day">9</div><div class="day">10</div><div class="day">11</div><div class="day">12</div><div class="day">13</div>
                                     <div class="day moon-day"><svg class="moon-icon" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" stroke="#2e7d32" stroke-width="12" fill="none"/></svg><span class="moon-label">LN</span></div>
-                                    <div class="day">15</div><div class="day">16</div><div class="day">17</div><div class="day">18</div>
-                                    <div class="day">19</div><div class="day">20</div>
-                                    <!-- Quarto Crescente dia 21 -->
+                                    <div class="day">15</div><div class="day">16</div><div class="day">17</div><div class="day">18</div><div class="day">19</div><div class="day">20</div>
                                     <div class="day moon-day"><svg class="moon-icon" viewBox="0 0 100 100"><path d="M50,10 A40,40 0 0,1 50,90 Z" fill="#2e7d32"/></svg><span class="moon-label">C</span></div>
                                     <div class="day">22</div><div class="day">23</div><div class="day">24</div><div class="day">25</div><div class="day">26</div><div class="day">27</div><div class="day">28</div>
-                                    <!-- Lua Cheia dia 29 -->
                                     <div class="day moon-day"><svg class="moon-icon" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="#2e7d32"/></svg><span class="moon-label">LC</span></div>
                                     <div class="day">30</div><div class="day">31</div>
                                 </div>
                             </div>
                         </div>
 
-                        <p>Julho exige atenção máxima à rega, que deve ser efetuada à tarde para evitar a evaporação. É o mês da ceifa e da debulha, mas também de preparar a adega para as vindimas que se aproximam.</p>
+                        <p>Julho exige atenção máxima à rega, que deve ser efetuada à tarde para evitar a evaporação. É o mês da ceifa e da debulha, mas também de preparar a adega para as vindimas.</p>
 
                         <h2>Na Horta e Campo</h2>
                         <div class="features">
@@ -120,14 +126,14 @@
                                 <span class="icon solid fa-seedling"></span>
                                 <div class="content">
                                     <h3>Horta</h3>
-                                    <p>Semear acelgas, brócolos tardios, cenouras e repolho de inverno. Regar abundantemente ao final do dia conforme a necessidade.</p>
+                                    <p>Semear acelgas, brócolos tardios e cenouras. Regar abundantemente ao final do dia conforme a necessidade das plantas.</p>
                                 </div>
                             </article>
                             <article class="cat-campo">
                                 <span class="icon solid fa-tractor"></span>
                                 <div class="content">
                                     <h3>Campo</h3>
-                                    <p>Mês da ceifa e debulha. Terminar a colheita da batata precoce. Lavrar os canteiros imediatamente após a colheita para o outono.</p>
+                                    <p>Mês da ceifa e debulha. Terminar a colheita da batata precoce. Lavrar os canteiros após a colheita para preparar o outono.</p>
                                 </div>
                             </article>
                         </div>
@@ -156,14 +162,14 @@
                                 <span class="icon solid fa-wine-glass-alt"></span>
                                 <div class="content">
                                     <h3>Adega</h3>
-                                    <p>Iniciar a preparação de equipamentos e produtos para a vindima. Atestar o vinho e manter a adega arejada e fresca.</p>
+                                    <p>Iniciar a preparação de equipamentos para a vindima. Atestar o vinho e manter a adega arejada e fresca.</p>
                                 </div>
                             </article>
                             <article class="cat-animais">
                                 <span class="icon solid fa-paw"></span>
                                 <div class="content">
                                     <h3>Animais</h3>
-                                    <p>Tosquiar os rebanhos laníferos. Higiene rigorosa nas pocilgas e capoeiras, renovando a água dos bebedouros à sombra.</p>
+                                    <p>Tosquiar os rebanhos laníferos. Higiene rigorosa nas pocilgas, renovando a água dos bebedouros à sombra.</p>
                                 </div>
                             </article>
                         </div>
