@@ -11,65 +11,55 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="assets/css/main.css" />
 		<style>
-			/* 1. LIMPEZA E ESTRUTURA */
+			/* 1. LIMPEZA TOTAL */
 			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
-			#header .toggle { background: none !important; top: 3.5em !important; left: 2em !important; text-decoration: none !important; border: none !important; }
+			#header .toggle { background: none !important; top: 3.5em !important; left: 2em !important; border: none !important; text-decoration: none !important; }
 			#header .toggle:before { content: '\f06c' !important; font-family: "Font Awesome 5 Free" !important; font-weight: 900; color: #2e7d32 !important; font-size: 1.6em !important; }
             #header .toggle:after { display: none !important; }
 			section { padding-top: 8em !important; margin-bottom: 4em !important; }
 
-            /* 2. TIPOGRAFIA MAXIMIZADA */
-            header.main h1 { color: #2e7d32 !important; line-height: 1.1; margin-bottom: 0.8em !important; font-size: 3.5em !important; }
-            p { font-size: 1.25em !important; color: #333 !important; line-height: 1.8 !important; }
-            h2 { color: #2e7d32 !important; margin-top: 2.5em !important; font-size: 2.2em !important; font-weight: 700; }
-            .features h3 { font-size: 1.5em !important; font-weight: 700; margin-bottom: 0.5em !important; }
-            .features p { font-size: 1.2em !important; color: #444 !important; }
+            /* 2. TIPOGRAFIA GRANDE E LEGÍVEL */
+            header.main h1 { color: #2e7d32 !important; line-height: 1.1; margin-bottom: 0.8em !important; font-size: 3.8em !important; }
+            p { font-size: 1.3em !important; color: #333 !important; line-height: 1.8 !important; }
+            h2 { color: #2e7d32 !important; margin-top: 2.5em !important; font-size: 2.4em !important; font-weight: 700; }
+            .features h3 { font-size: 1.6em !important; font-weight: 700; margin-bottom: 0.3em !important; }
+            .features p { font-size: 1.2em !important; color: #444 !important; line-height: 1.6 !important; }
 
-            /* 3. BANNER DUPLO: IMAGEM + CALENDÁRIO SUBTIL */
+            /* 3. BANNER DUPLO */
             .banner-container { display: flex; gap: 20px; margin-bottom: 3em; flex-wrap: wrap; }
-            
-            .banner-box { 
-                flex: 1; min-width: 320px; height: 380px; 
-                border-radius: 30px; overflow: hidden; 
-                box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-            }
-            
+            .banner-box { flex: 1; min-width: 320px; height: 380px; border-radius: 30px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
             .banner-box img { width: 100%; height: 100%; object-fit: cover; }
 
-            /* Calendário Lunar Minimalista (Fundo Verde Sálvia) */
-            .lunar-calendar {
-                background: #eef5ee; /* Tom verde suave com mais impacto que o branco */
-                display: flex; flex-direction: column; padding: 2em 1.5em;
+            /* Calendário Lunar (Fundo Verde Sálvia, sem título) */
+            .lunar-calendar { background: #eef5ee; display: flex; align-items: center; justify-content: center; padding: 1em; }
+            .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; text-align: center; width: 100%; }
+            .day-name { font-weight: 800; color: #2e7d32; font-size: 1em; opacity: 0.5; padding-bottom: 10px; }
+            .day { color: #2e7d32; font-size: 1.2em; font-weight: 600; padding: 5px 0; }
+            .moon-symbol { display: block; font-size: 1.6em; line-height: 1; color: #2e7d32; }
+
+            /* 4. ÍCONES MINIMALISTAS (SEM LOSANGOS) */
+            .features article { margin-bottom: 3em !important; }
+            .features article .icon { 
+                border: none !important; 
+                box-shadow: none !important; 
+                width: 60px !important; 
+                height: 60px !important; 
+                margin-bottom: 10px !important;
+                display: flex !important;
+                align-items: center;
                 justify-content: center;
             }
-            .calendar-grid { 
-                display: grid; grid-template-columns: repeat(7, 1fr); 
-                gap: 8px; text-align: center;
-            }
-            .day-name { font-weight: 800; color: #2e7d32; font-size: 0.9em; padding-bottom: 15px; opacity: 0.6; }
-            .day { padding: 12px 0; border-radius: 12px; color: #2e7d32; font-size: 1.1em; font-weight: 500; }
-            .day.moon-day { background: rgba(46, 125, 50, 0.1); font-weight: 800; }
-            .moon-symbol { display: block; font-size: 1.4em; line-height: 1; margin-top: 4px; }
-
-            /* 4. ÍCONES UNÂNIMES (TODOS NO LOSANGO) */
-            .features article .icon { 
-                width: 4em; height: 4em; line-height: 4em; 
-                border: solid 1px #e5e5e5 !important; 
-            }
+            .features article .icon:before { font-size: 50px !important; } /* Tamanho uniforme */
             
-            /* Ajuste para o Cacho de Uvas SVG dentro do losango */
-            .vinha-icon-fix { 
-                display: flex; align-items: center; justify-content: center;
-                padding: 15px;
-            }
-
-            /* Cores por Categoria */
-            .cat-horta h3, .cat-horta .icon:before { color: #43a047 !important; }
-            .cat-campo h3, .cat-campo .icon:before { color: #8d6e63 !important; }
-            .cat-pomar h3, .cat-pomar .icon:before { color: #2e7d32 !important; }
-            .cat-vinha h3 { color: #6a1b9a !important; }
-            .cat-adega h3, .cat-adega .icon:before { color: #634832 !important; }
-            .cat-animais h3, .cat-animais .icon:before { color: #fbc02d !important; }
+            /* Cores e Ícones Específicos */
+            .cat-horta .icon:before { content: '\f4d8' !important; color: #43a047 !important; } /* Sprout */
+            .cat-campo .icon:before { content: '\f722' !important; color: #8d6e63 !important; } /* Tractor */
+            .cat-pomar .icon:before { content: '\f1bb' !important; color: #2e7d32 !important; } /* Tree */
+            .cat-adega .icon:before { content: '\f72f' !important; color: #634832 !important; } /* Wine Cask */
+            .cat-animais .icon:before { content: '\f6d3' !important; color: #fbc02d !important; } /* Cow */
+            
+            /* Cacho de Uvas SVG para a Vinha */
+            .icon-grapes { width: 60px; height: 60px; }
 
 			.footer-signature-right { text-align: right; padding: 6em 0 2em 0; opacity: 0.9; }
 		</style>
@@ -91,33 +81,33 @@
                                 <div class="calendar-grid">
                                     <div class="day-name">D</div><div class="day-name">S</div><div class="day-name">T</div><div class="day-name">Q</div><div class="day-name">Q</div><div class="day-name">S</div><div class="day-name">S</div>
                                     
-                                    <div class="day moon-day">1<span class="moon-symbol">●</span></div>
+                                    <div class="day">1<span class="moon-symbol">●</span></div>
                                     <div class="day">2</div><div class="day">3</div><div class="day">4</div><div class="day">5</div><div class="day">6</div><div class="day">7</div>
-                                    <div class="day">8</div><div class="day moon-day">9<span class="moon-symbol">◑</span></div>
+                                    <div class="day">8</div><div class="day">9<span class="moon-symbol">◑</span></div>
                                     <div class="day">10</div><div class="day">11</div><div class="day">12</div><div class="day">13</div><div class="day">14</div>
-                                    <div class="day">15</div><div class="day">16</div><div class="day moon-day">17<span class="moon-symbol">○</span></div>
+                                    <div class="day">15</div><div class="day">16</div><div class="day">17<span class="moon-symbol">○</span></div>
                                     <div class="day">18</div><div class="day">19</div><div class="day">20</div><div class="day">21</div>
-                                    <div class="day">22</div><div class="day">23</div><div class="day moon-day">24<span class="moon-symbol">◐</span></div>
+                                    <div class="day">22</div><div class="day">23</div><div class="day">24<span class="moon-symbol">◐</span></div>
                                     <div class="day">25</div><div class="day">26</div><div class="day">27</div><div class="day">28</div>
                                 </div>
                             </div>
                         </div>
 
-                        <p>Mês de preparar camas quentes e intensificar os tratamentos preventivos biológicos. O ciclo lunar deste mês favorece o plantio de culturas de folha na fase crescente.</p>
+                        <p>Mês de preparar camas quentes e intensificar os tratamentos preventivos biológicos. O ciclo lunar favorece o plantio de culturas de folha na fase crescente.</p>
 
                         <h2>Na Horta e Campo</h2>
                         <div class="features">
                             <article class="cat-horta">
-                                <span class="icon solid fa-seedling"></span>
+                                <span class="icon solid"></span>
                                 <div class="content">
-                                    <h3>Horta</h3>
+                                    <h3 style="color: #43a047;">Horta</h3>
                                     <p>Preparar camas quentes para melões e tomates. Semear abóboras, acelgas e nabiças. Plantar batata.</p>
                                 </div>
                             </article>
                             <article class="cat-campo">
-                                <span class="icon solid fa-tractor"></span>
+                                <span class="icon solid"></span>
                                 <div class="content">
-                                    <h3>Campo</h3>
+                                    <h3 style="color: #8d6e63;">Campo</h3>
                                     <p>Lavrar a fundo para enterrar estrumes. Sacha nos ervilhais e sementeiras de cereais de primavera.</p>
                                 </div>
                             </article>
@@ -126,21 +116,22 @@
                         <h2>No Pomar e Vinha</h2>
                         <div class="features">
                             <article class="cat-pomar">
-                                <span class="icon solid fa-tree"></span>
+                                <span class="icon solid"></span>
                                 <div class="content">
-                                    <h3>Pomar</h3>
+                                    <h3 style="color: #2e7d32;">Pomar</h3>
                                     <p>Tratamento de macieiras contra cochonilhas. Calda bordalesa nas nespereiras contra o pedrado.</p>
                                 </div>
                             </article>
-                            <article class="cat-vinha">
-                                <span class="icon solid vinha-icon-fix">
+                            <article>
+                                <!-- Cacho de Uvas SVG Minimalista -->
+                                <div class="icon-grapes">
                                     <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                                         <path fill="#6a1b9a" d="M35,35 Q40,25 50,35 Q60,25 65,35 Q75,40 65,50 Q50,60 35,50 Q25,40 35,35 Z M45,50 Q50,40 60,50 Q65,60 50,70 Q35,60 45,50 Z M50,65 Q55,60 60,70 Q55,80 50,90 Q45,80 40,70 Q45,60 50,65 Z" />
-                                        <path d="M50,35 L50,20 Q55,15 60,20" stroke="#2e7d32" stroke-width="3" fill="none" />
+                                        <path d="M50,35 L50,20 Q55,15 60,20" stroke="#2e7d32" stroke-width="4" fill="none" />
                                     </svg>
-                                </span>
+                                </div>
                                 <div class="content">
-                                    <h3>Vinha</h3>
+                                    <h3 style="color: #6a1b9a;">Vinha</h3>
                                     <p>Reparar bardos e ramadas. Iniciar a enxertia em locais abrigados com castas apropriadas.</p>
                                 </div>
                             </article>
@@ -149,16 +140,16 @@
                         <h2>Outras Tarefas</h2>
                         <div class="features">
                             <article class="cat-adega">
-                                <span class="icon solid fa-wine-bottle"></span>
+                                <span class="icon solid"></span>
                                 <div class="content">
-                                    <h3>Adega</h3>
+                                    <h3 style="color: #634832;">Adega</h3>
                                     <p>Trasfegar vinhos e corrigir defeitos. Manter a adega limpa e caiada com leite de cal.</p>
                                 </div>
                             </article>
                             <article class="cat-animais">
-                                <span class="icon solid fa-cow"></span>
+                                <span class="icon solid"></span>
                                 <div class="content">
-                                    <h3>Animais</h3>
+                                    <h3 style="color: #fbc02d;">Animais</h3>
                                     <p>Limpar e caiar paredes e tetos das capoeiras para garantir a máxima higiene e sanidade.</p>
                                 </div>
                             </article>
@@ -169,7 +160,7 @@
 						<a href="index.html" style="border: none; display: inline-block; text-decoration: none;">
 							<div style="font-family: 'Source Sans Pro', sans-serif; font-size: 1.4em; line-height: 1; display: flex; align-items: flex-end;">
                                 <b style="font-weight: 700; color: #2e7d32; margin-right: -3px; position: relative; z-index: 2;">b</b>
-                                <div style="width: 32px; margin: 0 -7px; position: relative; line-height: 0; transform: translateY(4px); z-index: 1;">
+                                <div style="width: 35px; margin: 0 -8px; position: relative; line-height: 0; transform: translateY(5px); z-index: 1;">
                                     <svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: auto;">
                                         <path d="M-20 110 Q50 102 120 110" stroke="#634832" stroke-width="4" fill="none" opacity="0.3" />
                                         <path d="M50 110 C50 80 35 70 50 45 C65 70 50 80 50 110" fill="#2e7d32" />
