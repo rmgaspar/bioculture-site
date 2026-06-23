@@ -39,12 +39,11 @@
             /* 4. BANNER DUPLO: IMAGEM + CALENDÁRIO COMPACTO */
             .banner-container { display: flex; gap: 20px; margin-bottom: 4em; flex-wrap: wrap; }
             .banner-box { 
-                flex: 1; min-width: 320px; height: 450px; /* Aumentado para ver as últimas linhas */
+                flex: 1; min-width: 320px; height: 450px; 
                 border-radius: 30px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.05); 
             }
             .banner-box img { width: 100%; height: 100%; object-fit: cover; }
 
-            /* Calendário Lunar Agosto 2026 */
             .lunar-calendar { background: #eef5ee; display: flex; align-items: center; justify-content: center; padding: 1.5em; }
             .calendar-grid { 
                 display: grid; grid-template-columns: repeat(7, 1fr); grid-auto-rows: 1fr; 
@@ -57,11 +56,23 @@
             .moon-icon { width: 22px; height: 22px; margin-bottom: 2px; }
             .moon-label { font-size: 0.6em; text-transform: uppercase; font-weight: 900; color: #2e7d32; }
 
-            /* 5. ÍCONES PUROS E ALINHADOS */
+            /* 5. ÍCONES PUROS E ALINHADOS (REMOÇÃO DAS LINHAS) */
             .features article .icon { 
-                width: 70px !important; height: 70px !important; line-height: 70px !important;
-                text-align: center !important; border: none !important; background: none !important;
-                margin: 0 1.5em 2em 0 !important; display: block !important; float: left;
+                width: 70px !important; 
+                height: 70px !important; 
+                line-height: 70px !important;
+                text-align: center !important;
+                border: none !important; 
+                background: none !important;
+                box-shadow: none !important;
+                margin: 0 1.5em 2em 0 !important;
+                display: block !important;
+                float: left;
+                transform: none !important;
+            }
+            /* Mata as linhas e pseudo-elementos que o template Editorial usa para as molduras */
+            .features article .icon:before, .features article .icon:after { 
+                border: none !important; box-shadow: none !important; transform: none !important; background: none !important;
             }
             .features article .icon:before { font-size: 55px !important; }
 
@@ -72,7 +83,6 @@
             .cat-campo h3, .cat-campo .icon:before { color: #8d6e63 !important; }
             .cat-adega h3, .cat-adega .icon:before { color: #634832 !important; }
             .cat-animais h3, .cat-animais .icon:before { color: #fbc02d !important; }
-            .cat-jardim h3, .cat-jardim .icon:before { color: #ec407a !important; }
 
 			.footer-signature-right { text-align: right; padding: 6em 0 2em 0; opacity: 0.9; }
 		</style>
@@ -88,7 +98,6 @@
 						
                         <div class="banner-container">
                             <div class="banner-box">
-                                <!-- Nova imagem estável para Agosto -->
                                 <img src="https://images.unsplash.com/photo-1550989460-0adf9ea622e2?auto=format&fit=crop&w=1080&q=80" alt="Colheita de Agosto" />
                             </div>
                             
@@ -119,7 +128,7 @@
                             </div>
                         </div>
 
-                        <p>Agosto é o mês do calor intenso e da gratidão pela terra. A rega atenta e a recolha de sementes selecionadas são prioritárias. É tempo de preparar a adega para a recepção das uvas e garantir que os animais têm abrigo e água fresca constante.</p>
+                        <p>Agosto exige atenção máxima à rega e à preservação da matéria orgânica. É o mês da gratidão pelos frutos do verão e da recolha cuidadosa de sementes para o próximo ciclo biológico.</p>
 
                         <h2>Na Horta e Campo</h2>
                         <div class="features">
@@ -127,14 +136,14 @@
                                 <span class="icon solid fa-seedling"></span>
                                 <div class="content">
                                     <h3>Horta</h3>
-                                    <p>Preparar o terreno para o outono. Semear cebolas, cenouras, espinafres e favas. Limpar morangueiros e tratar os tomateiros.</p>
+                                    <p>Preparar o terreno para o outono. Semear cebolas, cenouras e espinafres. Limpar morangueiros e tratar tomateiros.</p>
                                 </div>
                             </article>
                             <article class="cat-campo">
                                 <span class="icon solid fa-tractor"></span>
                                 <div class="content">
                                     <h3>Campo</h3>
-                                    <p>Recolha e seleção de sementes para evitar hibridações. Mondar arrozais e regar milharais abundantemente antes das transplantações.</p>
+                                    <p>Recolha e seleção de sementes autóctones. Mondar arrozais e garantir a rega dos milharais nas horas frescas.</p>
                                 </div>
                             </article>
                         </div>
@@ -145,14 +154,14 @@
                                 <span class="icon solid fa-tree"></span>
                                 <div class="content">
                                     <h3>Pomar</h3>
-                                    <p>Enxertar ameixeiras, macieiras e pereiras. Regar citrinos e sachar as caldeiras, cobrindo-as com palha para reter a humidade.</p>
+                                    <p>Enxertar ameixeiras e pessegueiros. Regar citrinos e proteger as caldeiras com palha (mulching).</p>
                                 </div>
                             </article>
                             <article class="cat-vinha">
                                 <span class="icon solid fa-wine-bottle"></span>
                                 <div class="content">
                                     <h3>Vinha</h3>
-                                    <p>Executar a desparra moderada para favorecer a maturação. Iniciar a colheita nas regiões mais quentes e vigiar ataques de míldio.</p>
+                                    <p>Executar desparra moderada. Iniciar a colheita nas regiões quentes e manter vigilância contra o míldio.</p>
                                 </div>
                             </article>
                         </div>
@@ -163,14 +172,14 @@
                                 <span class="icon solid fa-wine-glass-alt"></span>
                                 <div class="content">
                                     <h3>Adega</h3>
-                                    <p>Lavar e desinfetar material de vindima com carbonato de sódio. "Avinhar" vasilhas novas com solução salina a 10%.</p>
+                                    <p>Desinfetar material de vindima. "Avinhar" vasilhas novas e manter o espaço arejado para evitar bolores.</p>
                                 </div>
                             </article>
                             <article class="cat-animais">
                                 <span class="icon solid fa-paw"></span>
                                 <div class="content">
                                     <h3>Animais</h3>
-                                    <p>Combater moscas e parasitas. Fornecer verduras frescas em abundância e garantir higiene rigorosa na capoeira.</p>
+                                    <p>Combater parasitas de verão. Fornecer verduras frescas e garantir que os bebedouros estão sempre à sombra.</p>
                                 </div>
                             </article>
                         </div>
