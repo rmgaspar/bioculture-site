@@ -11,7 +11,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="assets/css/main.css" />
 		<style>
-			/* 1. LIMPEZA TOTAL DE LINHAS E MOLDURAS */
+			/* 1. LIMPEZA TOTAL DE LINHAS, BORDAS E MOLDURAS */
 			section, #header, hr, .major, .features article, .features article .icon { 
                 border: none !important; box-shadow: none !important; padding: 0 !important; 
             }
@@ -38,10 +38,7 @@
 
             /* 4. BANNER DUPLO: IMAGEM + CALENDÁRIO COMPACTO */
             .banner-container { display: flex; gap: 20px; margin-bottom: 4em; flex-wrap: wrap; }
-            .banner-box { 
-                flex: 1; min-width: 320px; height: 420px; 
-                border-radius: 30px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.05); 
-            }
+            .banner-box { flex: 1; min-width: 320px; height: 420px; border-radius: 30px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
             .banner-box img { width: 100%; height: 100%; object-fit: cover; }
 
             .lunar-calendar { background: #eef5ee; display: flex; align-items: center; justify-content: center; padding: 1.5em; }
@@ -56,12 +53,23 @@
             .moon-icon { width: 22px; height: 22px; margin-bottom: 2px; }
             .moon-label { font-size: 0.6em; text-transform: uppercase; font-weight: 900; color: #2e7d32; }
 
-            /* 5. ÍCONES PUROS E ALINHADOS */
-            .features article { margin-bottom: 3em !important; }
+            /* 5. ÍCONES PUROS E ALINHADOS (REMOÇÃO DAS LINHAS/LOSANGOS) */
             .features article .icon { 
-                width: 70px !important; height: 70px !important; line-height: 70px !important;
-                text-align: center !important; border: none !important; background: none !important;
-                margin: 0 1.5em 2em 0 !important; display: block !important; float: left;
+                width: 70px !important; 
+                height: 70px !important; 
+                line-height: 70px !important;
+                text-align: center !important;
+                border: none !important; 
+                background: none !important;
+                box-shadow: none !important;
+                margin: 0 1.5em 2em 0 !important;
+                display: block !important;
+                float: left;
+                transform: none !important;
+            }
+            /* Mata as linhas e pseudo-elementos que criam o diamante */
+            .features article .icon:before, .features article .icon:after { 
+                border: none !important; box-shadow: none !important; transform: none !important; background: none !important;
             }
             .features article .icon:before { font-size: 55px !important; }
 
@@ -114,7 +122,7 @@
                             </div>
                         </div>
 
-                        <p>Setembro é o mês do equilíbrio. As temperaturas baixam e as regas tornam-se menos frequentes. É tempo de vindimas, de preparar os canteiros para o ciclo de Outono-Inverno e de recolher as sementes que garantirão a biodiversidade do próximo ano.</p>
+                        <p>Setembro marca o equilíbrio entre o calor que se despede e as chuvas que preparam a terra. É tempo de vindimas, de recolher sementes e de preparar os canteiros para o ciclo de Outono-Inverno.</p>
 
                         <h2>Na Horta e Campo</h2>
                         <div class="features">
@@ -122,14 +130,14 @@
                                 <span class="icon solid fa-seedling"></span>
                                 <div class="content">
                                     <h3>Horta</h3>
-                                    <p>Semear agriões, alfaces, cebolas, espinafres e favas. Efetuar cavas fundas e enterrar estrume para preparar o solo de inverno.</p>
+                                    <p>Semear agriões, alfaces, cebolas e espinafres. Efetuar cavas fundas e enterrar estrume para nutrir o solo de inverno.</p>
                                 </div>
                             </article>
                             <article class="cat-campo">
                                 <span class="icon solid fa-tractor"></span>
                                 <div class="content">
                                     <h3>Campo</h3>
-                                    <p>Prosseguir as lavouras de alqueiva. Limpeza final de valas e drenos para evitar excessos de água nas chuvas que se aproximam.</p>
+                                    <p>Prosseguir as lavouras de alqueiva. Limpar valas e drenos para garantir o bom escoamento das águas pluviais.</p>
                                 </div>
                             </article>
                         </div>
@@ -140,14 +148,14 @@
                                 <span class="icon solid fa-tree"></span>
                                 <div class="content">
                                     <h3>Pomar</h3>
-                                    <p>Iniciar a poda e limpeza das árvores após a colheita. Concluir enxertias de "olho dormente" em macieiras e pessegueiros.</p>
+                                    <p>Iniciar a poda de limpeza após a colheita. Concluir enxertias de "olho dormente" em macieiras e pessegueiros.</p>
                                 </div>
                             </article>
                             <article class="cat-vinha">
                                 <span class="icon solid fa-wine-bottle"></span>
                                 <div class="content">
                                     <h3>Vinha</h3>
-                                    <p>É tempo de vindima. Marcar as melhores cepas para fornecer garfos para futuras enxertias. Desfolhar se a maturação estiver atrasada.</p>
+                                    <p>Mês de vindima. Marcar as melhores cepas para enxertia e desfolhar se a maturação das uvas estiver atrasada.</p>
                                 </div>
                             </article>
                         </div>
@@ -158,7 +166,7 @@
                                 <span class="icon solid fa-leaf"></span>
                                 <div class="content">
                                     <h3>Jardim</h3>
-                                    <p>Enterrar bolbos de tulipas e narcisos. Semear amores-perfeitos e margaridas. Retirar flores murchas para fortalecer as plantas.</p>
+                                    <p>Enterrar bolbos de tulipas e narcisos. Semear amores-perfeitos e retirar flores murchas para fortalecer as plantas.</p>
                                 </div>
                             </article>
                         </div>
