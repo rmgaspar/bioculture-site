@@ -1,9 +1,4 @@
 <!DOCTYPE HTML>
-<!--
-	Editorial by HTML5 UP
-	html5up.net | @ajlkn
-	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
--->
 <html>
 	<head>
 		<title>bioCultura - Calendário Hortícola</title>
@@ -11,105 +6,45 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="assets/css/main.css" />
 		<style>
-			/* 1. LIMPEZA TOTAL E ALINHAMENTO */
-			section, #header, .major, hr, article { border: none !important; box-shadow: none !important; }
+			/* 1. RESTAURAR A ESTRUTURA DO TEMPLATE */
+			#header, .major, hr, section { border: none !important; box-shadow: none !important; }
 			
-			/* Ajuste do Header para Mobile e PC */
-			#header {
-                border: none !important;
-                background: transparent !important;
-                height: 3.5em !important; /* Altura necessária para o botão no telemóvel */
-                margin: 0 !important;
-                padding: 0 !important;
-                display: flex !important;
-                align-items: center;
-            }
+            /* 2. ALINHAMENTO DO CONTEÚDO AO TOPO */
+			#main > .inner { padding-top: 2.5em !important; }
+            h1 { color: #2e7d32 !important; margin-bottom: 1.2em !important; font-size: 3em !important; }
 
-			/* Botão do Menu (Folha Verde) */
-			#header .toggle {
-				background: none !important;
-				top: 2em !important; 
-				left: 2em !important;
-                border: none !important;
-                display: block !important;
-                visibility: visible !important;
-                text-decoration: none !important;
-                z-index: 10001;
-			}
-			#header .toggle:before {
-				content: '\f06c' !important; 
-				font-family: "Font Awesome 5 Free";
-				font-weight: 900;
-				color: #2e7d32 !important;
-				font-size: 1.5em;
-			}
-            #header .toggle:after { display: none !important; }
-
-			/* Alinhamento do Título (Identado com a Sidebar no PC) */
-			section { padding-top: 2.5em !important; }
-            h1 { color: #2e7d32 !important; margin-bottom: 1.2em !important; font-size: 3em !important; letter-spacing: -1px; }
-
-			/* 2. GRELHA DOS 12 MESES (ESTILO GALERIA) */
+			/* 3. GRELHA DOS 12 MESES */
 			.month-grid { 
                 display: grid; 
                 grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); 
                 gap: 1.5em; 
-                margin-top: 0; 
+                margin-top: 1em; 
             }
 
 			.month-card { 
-                position: relative !important;
+                position: relative;
                 background: #f4f4f4; 
-                border-radius: 20px !important; 
-                overflow: hidden !important; 
+                border-radius: 20px; 
+                overflow: hidden; 
                 text-decoration: none !important; 
-                transition: transform 0.3s ease, box-shadow 0.3s ease; 
-                height: 240px !important;
-                display: block !important;
+                transition: transform 0.3s ease; 
+                height: 240px;
+                display: block;
                 border: none !important;
             }
 
-			.month-card:hover { 
-                transform: translateY(-8px); 
-                box-shadow: 0 15px 30px rgba(46, 125, 50, 0.2) !important;
-            }
+			.month-card:hover { transform: translateY(-8px); box-shadow: 0 15px 30px rgba(46, 125, 50, 0.2); }
+			.month-card img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
-			.month-card img { 
-                width: 100%; 
-                height: 100%; 
-                object-fit: cover; 
-                display: block;
-                transition: filter 0.4s ease;
-            }
-
-            /* Overlay para o texto não "desaparecer" na imagem */
             .month-card::after {
-                content: '';
-                position: absolute;
-                bottom: 0; left: 0; right: 0;
-                height: 40%;
-                background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);
-                transition: opacity 0.3s ease;
+                content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 50%;
+                background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
             }
 
-            .month-card:hover img { filter: brightness(0.8); }
-
-            /* Nome do mês minimalista dentro da imagem */
 			.month-card h3 { 
-                position: absolute !important;
-                bottom: 20px !important;
-                left: 0;
-                right: 0;
-                text-align: center !important; 
-                margin: 0 !important; 
-                color: #ffffff !important; 
-                letter-spacing: 3px !important; 
-                text-transform: uppercase !important; 
-                font-size: 0.85em !important; 
-                font-weight: 700 !important;
-                z-index: 10;
-                pointer-events: none;
-                text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+                position: absolute; bottom: 20px; left: 0; right: 0; text-align: center; 
+                color: #ffffff !important; letter-spacing: 3px; text-transform: uppercase; 
+                font-size: 0.85em; font-weight: 700; z-index: 10; text-shadow: 0 2px 4px rgba(0,0,0,0.5);
             }
 		</style>
 	</head>
@@ -117,68 +52,60 @@
 		<div id="wrapper">
 			<div id="main">
 				<div class="inner">
-
-					<header id="header">
-                        <!-- Botão Toggle injetado aqui -->
-                    </header>
-
+					<header id="header" style="height: 0; margin: 0; padding: 0; overflow: hidden;"></header>
 					<section>
-						<header class="main">
-							<h1>Calendário Hortícola</h1>
-						</header>
-
+						<h1>Calendário Hortícola</h1>
 						<div class="month-grid">
-							<a href="calendario/janeiro.html" class="month-card">
-								<img src="https://images.unsplash.com/photo-1542840843-331d9f27ad6c?w=800&q=80" alt="Janeiro" />
+							<a href="calendario/01-janeiro.html" class="month-card">
+								<img src="https://images.unsplash.com/photo-1542840843-331d9f27ad6c?w=600" alt="Janeiro" />
 								<h3>Janeiro</h3>
 							</a>
-							<a href="calendario/fevereiro.html" class="month-card">
-								<img src="https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?w=800&q=80" alt="Fevereiro" />
+							<a href="calendario/02-fevereiro.html" class="month-card">
+								<img src="https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?w=600" alt="Fevereiro" />
 								<h3>Fevereiro</h3>
 							</a>
-							<a href="calendario/marco.html" class="month-card">
-								<img src="https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?w=800&q=80" alt="Março" />
+							<a href="calendario/03-marco.html" class="month-card">
+								<img src="https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?w=600" alt="Março" />
 								<h3>Março</h3>
 							</a>
-							<a href="calendario/abril.html" class="month-card">
-								<img src="https://images.unsplash.com/photo-1560493676-04071c5f467b?w=800&q=80" alt="Abril" />
+							<a href="calendario/04-abril.html" class="month-card">
+								<img src="https://images.unsplash.com/photo-1560493676-04071c5f467b?w=600" alt="Abril" />
 								<h3>Abril</h3>
 							</a>
-							<a href="calendario/maio.html" class="month-card">
-								<img src="https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=800&q=80" alt="Maio" />
+							<a href="calendario/05-maio.html" class="month-card">
+								<img src="https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=600" alt="Maio" />
 								<h3>Maio</h3>
 							</a>
-							<a href="calendario/junho.html" class="month-card">
-								<img src="https://images.unsplash.com/photo-1589923188900-85dae523342b?w=800&q=80" alt="Junho" />
+							<a href="calendario/06-junho.html" class="month-card">
+								<img src="https://images.unsplash.com/photo-1589923188900-85dae523342b?w=600" alt="Junho" />
 								<h3>Junho</h3>
 							</a>
-							<a href="calendario/julho.html" class="month-card">
-								<img src="https://images.unsplash.com/photo-1471193945509-9ad0617afabf?w=800&q=80" alt="Julho" />
+							<a href="calendario/07-julho.html" class="month-card">
+								<img src="https://images.unsplash.com/photo-1471193945509-9ad0617afabf?w=600" alt="Julho" />
 								<h3>Julho</h3>
 							</a>
-							<a href="calendario/agosto.html" class="month-card">
-								<img src="https://images.unsplash.com/photo-1753172433718-d0c2a99443d8?w=800&q=80" alt="Agosto" />
+							<a href="calendario/08-agosto.html" class="month-card">
+								<img src="https://images.unsplash.com/photo-1753172433718-d0c2a99443d8?w=600" alt="Agosto" />
 								<h3>Agosto</h3>
 							</a>
-							<a href="calendario/setembro.html" class="month-card">
-								<img src="https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?w=800&q=80" alt="Setembro" />
+							<a href="calendario/09-setembro.html" class="month-card">
+								<img src="https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?w=600" alt="Setembro" />
 								<h3>Setembro</h3>
 							</a>
-							<a href="calendario/outubro.html" class="month-card">
-								<img src="https://images.unsplash.com/photo-1508739773434-c26b3d09e071?w=800&q=80" alt="Outubro" />
+							<a href="calendario/10-outubro.html" class="month-card">
+								<img src="https://images.unsplash.com/photo-1508739773434-c26b3d09e071?w=600" alt="Outubro" />
 								<h3>Outubro</h3>
 							</a>
-							<a href="calendario/novembro.html" class="month-card">
-								<img src="https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?w=800&q=80" alt="Novembro" />
+							<a href="calendario/11-novembro.html" class="month-card">
+								<img src="https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?w=600" alt="Novembro" />
 								<h3>Novembro</h3>
 							</a>
-							<a href="calendario/dezembro.html" class="month-card">
-								<img src="https://images.unsplash.com/photo-1416870262648-25133b188555?w=800&q=80" alt="Dezembro" />
+							<a href="calendario/12-dezembro.html" class="month-card">
+								<img src="https://images.unsplash.com/photo-1416870262648-25133b188555?w=600" alt="Dezembro" />
 								<h3>Dezembro</h3>
 							</a>
 						</div>
 					</section>
-
 				</div>
 			</div>
 			<div id="sidebar"></div>
