@@ -9,92 +9,83 @@
 		<title>bioCultura - Calendário Hortícola</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-		<link rel="stylesheet" href="../assets/css/main.css" />
+		<link rel="stylesheet" href="assets/css/main.css" />
 		<style>
-			/* 1. LIMPEZA TOTAL E ALINHAMENTO AO TOPO */
-			section, #header, .major, hr, article { border: none !important; box-shadow: none !important; }
+			/* 1. LIMPEZA TOTAL E AJUSTE MOBILE */
+			section, .major, hr, article { border: none !important; box-shadow: none !important; }
 			
-			/* 2. MENU TOGGLE: FOLHA VERDE */
+			#header {
+                border: none !important;
+                background: transparent !important;
+                height: 3.5em !important; /* Espaço para o botão no telemóvel */
+                margin: 0 !important;
+                padding: 0 !important;
+                display: flex !important;
+                align-items: center;
+            }
+
 			#header .toggle {
 				background: none !important;
-				box-shadow: none !important;
 				top: 2em !important; 
 				left: 2em !important;
                 border: none !important;
+                display: block !important;
+                visibility: visible !important;
+                text-decoration: none !important;
 			}
 			#header .toggle:before {
 				content: '\f06c' !important; 
 				font-family: "Font Awesome 5 Free";
 				font-weight: 900;
 				color: #2e7d32 !important;
-				font-size: 1.6em !important;
+				font-size: 1.5em;
 			}
             #header .toggle:after { display: none !important; }
 
-			/* Margem idêntica à da sidebar para o título */
+			/* 2. ALINHAMENTO AO TOPO (IDENTADO COM SIDEBAR) */
 			section { padding-top: 2.5em !important; }
-            h1 { color: #2e7d32 !important; margin-bottom: 1.2em !important; font-size: 3em !important; letter-spacing: -1px; }
+            h1 { color: #2e7d32 !important; margin-bottom: 1.2em !important; font-size: 3em !important; }
 
 			/* 3. GRELHA DOS 12 MESES (ESTILO GALERIA) */
 			.month-grid { 
                 display: grid; 
                 grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); 
                 gap: 1.5em; 
-                margin-top: 0; 
+                margin-top: 2em; 
             }
 
 			.month-card { 
-                position: relative !important;
+                position: relative;
                 background: #f4f4f4; 
-                border-radius: 20px !important; 
-                overflow: hidden !important; 
+                border-radius: 25px; 
+                overflow: hidden; 
                 text-decoration: none !important; 
-                transition: transform 0.3s ease, box-shadow 0.3s ease; 
-                height: 240px !important;
-                display: block !important;
+                transition: transform 0.3s ease; 
+                height: 240px;
+                display: block;
                 border: none !important;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.05);
             }
 
 			.month-card:hover { 
                 transform: translateY(-8px); 
-                box-shadow: 0 15px 30px rgba(46, 125, 50, 0.2) !important;
+                box-shadow: 0 12px 25px rgba(46, 125, 50, 0.2);
             }
 
-			.month-card img { 
-                width: 100%; 
-                height: 100%; 
-                object-fit: cover; 
-                display: block;
-                transition: filter 0.4s ease;
-            }
-
-            /* Overlay escuro subtil para o texto ler-se melhor */
-            .month-card::after {
-                content: '';
-                position: absolute;
-                bottom: 0; left: 0; right: 0;
-                height: 40%;
-                background: linear-gradient(to top, rgba(0,0,0,0.5), transparent);
-                transition: opacity 0.3s ease;
-            }
-
+			.month-card img { width: 100%; height: 100%; object-fit: cover; transition: filter 0.3s ease; }
             .month-card:hover img { filter: brightness(0.8); }
 
-            /* Nome do mês minimalista sobre a imagem */
+            /* Overlay para leitura do nome do mês */
+            .month-card::after {
+                content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 40%;
+                background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);
+            }
+
 			.month-card h3 { 
-                position: absolute !important;
-                bottom: 20px !important;
-                left: 0;
-                right: 0;
-                text-align: center !important; 
-                margin: 0 !important; 
-                color: #ffffff !important; 
-                letter-spacing: 3px !important; 
-                text-transform: uppercase !important; 
-                font-size: 0.85em !important; 
-                font-weight: 700 !important;
-                z-index: 10;
-                pointer-events: none;
+                position: absolute; bottom: 20px; left: 0; right: 0; text-align: center; 
+                color: #ffffff !important; letter-spacing: 4px; text-transform: uppercase; 
+                font-size: 0.8em; font-weight: 700; z-index: 10; pointer-events: none;
+                text-shadow: 0 2px 4px rgba(0,0,0,0.5);
             }
 		</style>
 	</head>
@@ -103,7 +94,9 @@
 			<div id="main">
 				<div class="inner">
 
-					<header id="header" style="height: 0; margin: 0; padding: 0; overflow: hidden;"></header>
+					<header id="header">
+                        <!-- O botão toggle é injetado aqui pelo main.js -->
+                    </header>
 
 					<section>
 						<header class="main">
@@ -111,54 +104,19 @@
 						</header>
 
 						<div class="month-grid">
-							<a href="01-janeiro.html" class="month-card">
-								<img src="https://images.unsplash.com/photo-1607240204413-e51a4afa6f12?q=80&w=1987&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Janeiro" />
-								<h3>Janeiro</h3>
-							</a>
-							<a href="02-fevereiro.html" class="month-card">
-								<img src="https://images.unsplash.com/photo-1779622520933-79b2926a97dd?auto=format&fit=crop&w=800&q=80" alt="Fevereiro" />
-								<h3>Fevereiro</h3>
-							</a>
-							<a href="03-marco.html" class="month-card">
-								<img src="https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?w=800&q=80" alt="Março" />
-								<h3>Março</h3>
-							</a>
-							<a href="04-abril.html" class="month-card">
-								<img src="https://images.unsplash.com/photo-1560493676-04071c5f467b?w=800&q=80" alt="Abril" />
-								<h3>Abril</h3>
-							</a>
-							<a href="05-maio.html" class="month-card">
-								<img src="https://plus.unsplash.com/premium_photo-1661962692059-55d5a4319814?q=80&w=1674&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Maio" />
-								<h3>Maio</h3>
-							</a>
-							<a href="06-junho.html" class="month-card">
-								<img src="https://images.unsplash.com/photo-1589923188900-85dae523342b?w=800&q=80" alt="Junho" />
-								<h3>Junho</h3>
-							</a>
-							<a href="07-julho.html" class="month-card">
-								<img src="https://images.unsplash.com/photo-1580733101505-0950b0d24a73?q=80&w=2531&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Julho" />
-								<h3>Julho</h3>
-							</a>
-							<a href="08-agosto.html" class="month-card">
-								<img src="https://images.unsplash.com/photo-1753172433718-d0c2a99443d8?w=800&q=80" alt="Agosto" />
-								<h3>Agosto</h3>
-							</a>
-							<a href="09-setembro.html" class="month-card">
-								<img src="https://images.unsplash.com/photo-1605673349837-1d83a7740e30?q=80&w=3270&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Setembro" />
-								<h3>Setembro</h3>
-							</a>
-							<a href="10-outubro.html" class="month-card">
-								<img src="https://images.unsplash.com/photo-1633443429820-e67b0a355812?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Outubro" />
-								<h3>Outubro</h3>
-							</a>
-							<a href="11-novembro.html" class="month-card">
-								<img src="https://images.unsplash.com/photo-1585034368427-5471b6805907?q=80&w=2073&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Novembro" />
-								<h3>Novembro</h3>
-							</a>
-							<a href="12-dezembro.html" class="month-card">
-								<img src="https://plus.unsplash.com/premium_photo-1661811860830-ba25d94af541?q=80&w=3005&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Dezembro" />
-								<h3>Dezembro</h3>
-							</a>
+                            <!-- Links apontando para a pasta 'calendario/' -->
+							<a href="calendario/janeiro.html" class="month-card"><img src="https://images.unsplash.com/photo-1542840843-331d9f27ad6c?w=600" /><h3>Janeiro</h3></a>
+							<a href="calendario/fevereiro.html" class="month-card"><img src="https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?w=600" /><h3>Fevereiro</h3></a>
+							<a href="calendario/marco.html" class="month-card"><img src="https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?w=600" /><h3>Março</h3></a>
+							<a href="calendario/abril.html" class="month-card"><img src="https://images.unsplash.com/photo-1560493676-04071c5f467b?w=600" /><h3>Abril</h3></a>
+							<a href="calendario/maio.html" class="month-card"><img src="https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=600" /><h3>Maio</h3></a>
+							<a href="calendario/junho.html" class="month-card"><img src="https://images.unsplash.com/photo-1589923188900-85dae523342b?w=600" /><h3>Junho</h3></a>
+							<a href="calendario/julho.html" class="month-card"><img src="https://images.unsplash.com/photo-1471193945509-9ad0617afabf?w=600" /><h3>Julho</h3></a>
+							<a href="calendario/agosto.html" class="month-card"><img src="https://images.unsplash.com/photo-1753172433718-d0c2a99443d8?w=600" /><h3>Agosto</h3></a>
+							<a href="calendario/setembro.html" class="month-card"><img src="https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?w=600" /><h3>Setembro</h3></a>
+							<a href="calendario/outubro.html" class="month-card"><img src="https://images.unsplash.com/photo-1508739773434-c26b3d09e071?w=600" /><h3>Outubro</h3></a>
+							<a href="calendario/novembro.html" class="month-card"><img src="https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?w=600" /><h3>Novembro</h3></a>
+							<a href="calendario/dezembro.html" class="month-card"><img src="https://images.unsplash.com/photo-1416870262648-25133b188555?w=600" /><h3>Dezembro</h3></a>
 						</div>
 					</section>
 
@@ -167,25 +125,17 @@
 			<div id="sidebar"></div>
 		</div>
 
-		<!-- Scripts -->
-		<script src="../assets/js/jquery.min.js"></script>
-        <script src="../assets/js/browser.min.js"></script>
-        <script src="../assets/js/breakpoints.min.js"></script>
-        <script src="../assets/js/util.js"></script>
-        <!-- main.js REMOVIDO DAQUI E PASSADO PARA DENTRO DO FETCH -->
-        
+		<script src="assets/js/jquery.min.js"></script>
+        <script src="assets/js/browser.min.js"></script>
+        <script src="assets/js/breakpoints.min.js"></script>
+        <script src="assets/js/util.js"></script>
         <script>
-            fetch('../sidebar-content.html')
-                .then(response => response.text())
-                .then(data => {
-                    document.getElementById('sidebar').innerHTML = data;
-                    
-                    // REINICIALIZAÇÃO CRÍTICA DO MENU
-                    // Criamos o elemento script apenas depois de o menu estar no DOM
-                    var script = document.createElement('script');
-                    script.src = '../assets/js/main.js';
-                    document.body.appendChild(script);
-                });
+            fetch('sidebar-content.html').then(response => response.text()).then(data => {
+                document.getElementById('sidebar').innerHTML = data;
+                var script = document.createElement('script');
+                script.src = 'assets/js/main.js';
+                document.body.appendChild(script);
+            });
         </script>
 	</body>
 </html>
