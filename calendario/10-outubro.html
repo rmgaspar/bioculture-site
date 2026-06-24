@@ -11,61 +11,51 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="../assets/css/main.css" />
 		<style>
-			/* 1. LIMPEZA TOTAL DE LINHAS E MOLDURAS */
-			section, #header, hr, .major, .features article, .features article .icon { 
-                border: none !important; box-shadow: none !important; padding: 0 !important; 
-            }
-
-			/* 2. MENU TOGGLE: FOLHA VERDE SUBTIL */
-			#header .toggle {
-				background: none !important; top: 3.5em !important; left: 2em !important;
-                border: none !important; text-decoration: none !important;
-			}
-			#header .toggle:before {
-				content: '\f06c' !important; 
-				font-family: "Font Awesome 5 Free" !important;
-				font-weight: 900; color: #2e7d32 !important; font-size: 1.6em !important;
-			}
+			/* 1. LIMPEZA E ESTRUTURA */
+			section, #header, hr, .major, .features article { border: none !important; box-shadow: none !important; padding: 0 !important; }
+			#header .toggle { background: none !important; top: 3.5em !important; left: 2em !important; border: none !important; text-decoration: none !important; }
+			#header .toggle:before { content: '\f06c' !important; font-family: "Font Awesome 5 Free" !important; font-weight: 900; color: #2e7d32 !important; font-size: 1.6em !important; }
             #header .toggle:after { display: none !important; }
-
-			/* 3. ALINHAMENTO E TIPOGRAFIA (1.30em) */
 			section { padding-top: 8em !important; margin-bottom: 4em !important; }
-            header.main h1 { color: #2e7d32 !important; line-height: 1.1; margin-bottom: 0.8em !important; font-size: 3.5em !important; }
+
+            /* 2. TIPOGRAFIA (1.30em) */
+            header.main h1 { color: #d84315 !important; line-height: 1.1; margin-bottom: 0.8em !important; font-size: 3.5em !important; }
             p { font-size: 1.30em !important; color: #222 !important; line-height: 1.7 !important; }
             h2 { color: #2e7d32 !important; margin-top: 2.5em !important; font-size: 2.2em !important; font-weight: 700; }
             .features h3 { font-size: 1.6em !important; font-weight: 700; margin-bottom: 0.2em !important; }
             .features p { font-size: 1.15em !important; color: #444 !important; line-height: 1.6 !important; }
+            .lembrete-mes { font-size: 0.9em !important; color: #666; font-style: italic; margin-bottom: 2em; display: block; }
 
-            /* 4. BANNER DUPLO: IMAGEM + CALENDÁRIO COMPACTO */
+            /* 3. BANNER DUPLO: IMAGEM + CALENDÁRIO */
             .banner-container { display: flex; gap: 20px; margin-bottom: 4em; flex-wrap: wrap; }
             .banner-box { flex: 1; min-width: 320px; height: 350px; border-radius: 30px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
             .banner-box img { width: 100%; height: 100%; object-fit: cover; }
 
-            .lunar-calendar { background: #eef5ee; display: flex; align-items: center; justify-content: center; padding: 1.5em; }
+            /* Calendário Lunar: Início à Segunda, Outubro 2026 */
+            .lunar-calendar { background: #fdf5f2; display: flex; align-items: center; justify-content: center; padding: 1.5em; }
             .calendar-grid { 
                 display: grid; grid-template-columns: repeat(7, 1fr); grid-auto-rows: 1fr; 
                 gap: 5px; text-align: center; width: 100%; aspect-ratio: 1 / 0.8;
             }
-            .day-name { font-weight: 900; color: #2e7d32; font-size: 0.8em; opacity: 0.4; display: flex; align-items: center; justify-content: center; }
-            .day { color: #2e7d32; font-size: 1em; font-weight: 600; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+            .day-name { font-weight: 800 !important; color: #d84315; font-size: 0.9em; display: flex; align-items: center; justify-content: center; }
+            .day { color: #d84315; font-size: 1em; font-weight: 600; display: flex; flex-direction: column; align-items: center; justify-content: center; }
             
-            .moon-day { background: rgba(255,255,255,0.6); border-radius: 12px; }
-            .moon-icon { width: 22px; height: 22px; margin-bottom: 2px; }
-            .moon-label { font-size: 0.6em; text-transform: uppercase; font-weight: 900; color: #2e7d32; }
+            .weekend { color: #bf360c !important; background: rgba(0,0,0,0.02); border-radius: 10px; opacity: 0.8; }
 
-            /* 5. ÍCONES PUROS E ALINHADOS */
+            .moon-day { background: rgba(255,255,255,0.9); border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+            .moon-icon { width: 22px; height: 22px; margin-bottom: 2px; }
+            .moon-label { font-size: 0.6em; text-transform: uppercase; font-weight: 900; color: #d84315; }
+
+            /* 4. ÍCONES PUROS */
             .features article .icon { 
-                width: 70px !important; height: 70px !important; line-height: 70px !important;
-                text-align: center !important; border: none !important; background: none !important;
-                margin: 0 1.5em 2em 0 !important; display: block !important; float: left;
-                transform: none !important;
-            }
-            .features article .icon:before, .features article .icon:after { 
-                border: none !important; box-shadow: none !important; transform: none !important; background: none !important;
+                width: auto !important; height: auto !important; line-height: 1 !important;
+                background: none !important; transform: none !important;
+                margin-bottom: 0.5em !important; display: block !important;
             }
             .features article .icon:before { font-size: 55px !important; }
+            .features article .icon:after { display: none !important; }
 
-            /* Cores Contextuais */
+            /* Cores das Operações */
             .cat-pomar h3, .cat-pomar .icon:before { color: #2e7d32 !important; }
             .cat-vinha h3, .cat-vinha .icon:before { color: #6a1b9a !important; }
             .cat-horta h3, .cat-horta .icon:before { color: #2e7d32 !important; }
@@ -84,94 +74,93 @@
 					<header id="header" style="height: 0; margin: 0; padding: 0; overflow: hidden;"></header>
 					
                     <section>
-						<header class="main"><h1>Outubro: Preparar o Repouso</h1></header>
+						<header class="main"><h1>Outubro</h1></header>
 						
                         <div class="banner-container">
                             <div class="banner-box">
-                                <img src="https://images.unsplash.com/photo-1633443429820-e67b0a355812?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Outubro Natureza" />
+                                <img src="https://images.unsplash.com/photo-1508739773434-c26b3d09e071?auto=format&fit=crop&w=1080&q=80" alt="Outono bioCultura" />
                             </div>
                             
                             <!-- Calendário Lunar Outubro 2026 -->
                             <div class="banner-box lunar-calendar">
                                 <div class="calendar-grid">
-                                    <div class="day-name">D</div><div class="day-name">S</div><div class="day-name">T</div><div class="day-name">Q</div><div class="day-name">Q</div><div class="day-name">S</div><div class="day-name">S</div>
+                                    <div class="day-name">S</div><div class="day-name">T</div><div class="day-name">Q</div><div class="day-name">Q</div><div class="day-name">S</div><div class="day-name">S</div><div class="day-name">D</div>
                                     
                                     <div class="day"></div><div class="day"></div><div class="day"></div><div class="day">1</div><div class="day">2</div>
                                     <!-- Quarto Minguante dia 3 -->
-                                    <div class="day moon-day"><svg class="moon-icon" viewBox="0 0 100 100"><path d="M50,10 A40,40 0 0,0 50,90 Z" fill="#2e7d32"/></svg><span class="moon-label">M</span></div>
-                                    <div class="day">4</div><div class="day">5</div><div class="day">6</div><div class="day">7</div><div class="day">8</div><div class="day">9</div>
+                                    <div class="day moon-day weekend"><svg class="moon-icon" viewBox="0 0 100 100"><path d="M50,10 A40,40 0 0,0 50,90 Z" fill="#d84315"/></svg><span class="moon-label">M</span></div>
+                                    <div class="day weekend">4</div>
+                                    
+                                    <div class="day">5</div><div class="day">6</div><div class="day">7</div><div class="day">8</div><div class="day">9</div>
                                     <!-- Lua Nova dia 10 -->
-                                    <div class="day moon-day"><svg class="moon-icon" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" stroke="#2e7d32" stroke-width="12" fill="none"/></svg><span class="moon-label">LN</span></div>
-                                    <div class="day">11</div><div class="day">12</div><div class="day">13</div><div class="day">14</div><div class="day">15</div><div class="day">16</div><div class="day">17</div>
+                                    <div class="day moon-day weekend"><svg class="moon-icon" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" stroke="#d84315" stroke-width="12" fill="none"/></svg><span class="moon-label">LN</span></div>
+                                    <div class="day weekend">11</div>
+                                    
+                                    <div class="day">12</div><div class="day">13</div><div class="day">14</div><div class="day">15</div><div class="day">16</div><div class="day weekend">17</div>
                                     <!-- Quarto Crescente dia 18 -->
-                                    <div class="day moon-day"><svg class="moon-icon" viewBox="0 0 100 100"><path d="M50,10 A40,40 0 0,1 50,90 Z" fill="#2e7d32"/></svg><span class="moon-label">C</span></div>
-                                    <div class="day">19</div><div class="day">20</div><div class="day">21</div><div class="day">22</div><div class="day">23</div><div class="day">24</div>
+                                    <div class="day moon-day weekend">
+                                        <svg class="moon-icon" viewBox="0 0 100 100"><path d="M50,10 A40,40 0 0,1 50,90 Z" fill="#d84315"/></svg><span class="moon-label">C</span>
+                                    </div>
+                                    
+                                    <div class="day">19</div><div class="day">20</div><div class="day">21</div><div class="day">22</div><div class="day">23</div><div class="day weekend">24</div>
                                     <!-- Lua Cheia dia 25 -->
-                                    <div class="day moon-day"><svg class="moon-icon" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="#2e7d32"/></svg><span class="moon-label">LC</span></div>
-                                    <div class="day">26</div><div class="day">27</div><div class="day">28</div><div class="day">29</div><div class="day">30</div><div class="day">31</div>
+                                    <div class="day moon-day weekend"><svg class="moon-icon" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="#d84315"/></svg><span class="moon-label">LC</span></div>
+                                    
+                                    <div class="day">26</div><div class="day">27</div><div class="day">28</div><div class="day">29</div><div class="day">30</div><div class="day weekend">31</div>
                                 </div>
                             </div>
                         </div>
 
-                        <p>Outubro marca a transição definitiva para o ciclo de Inverno. É o mês de terminar as colheitas tardias, proteger as hortaliças das primeiras geadas com coberturas naturais e iniciar a plantação de alhos e morangueiros.</p>
+                        <span class="lembrete-mes">Este mês, não se esqueça de...</span>
 
-                        <h2>Na Horta e Campo</h2>
                         <div class="features">
                             <article class="cat-horta">
                                 <span class="icon solid fa-seedling"></span>
                                 <div class="content">
                                     <h3>Horta</h3>
-                                    <p>Semear ervilhas, favas, lentilhas e espinafres. Plantar beterraba, beterrabas e alhos (usar cinzas de lenha). Proteger contra geadas com palha ou feno.</p>
+                                    <p>Semear ervilhas, favas, lentilhas e espinafres. Plantar morangueiros e alhos (usar cinzas de lenha). Proteger contra as primeiras geadas.</p>
                                 </div>
                             </article>
                             <article class="cat-campo">
                                 <span class="icon solid fa-tractor"></span>
                                 <div class="content">
                                     <h3>Campo</h3>
-                                    <p>Terminar as colheitas de milho e feijão. Concluir a preparação das terras para as sementeiras de outono-inverno.</p>
+                                    <p>Terminar colheitas de milho e feijão. Concluir a preparação das terras para as sementeiras de outono-inverno.</p>
                                 </div>
                             </article>
-                        </div>
-
-                        <h2>No Pomar e Vinha</h2>
-                        <div class="features">
                             <article class="cat-pomar">
                                 <span class="icon solid fa-tree"></span>
                                 <div class="content">
                                     <h3>Pomar</h3>
-                                    <p>Abrir covas para novas plantações. Adubar e estrumar. Logo que as folhas caiam, tratar pessegueiros contra a lepra e pedrado.</p>
+                                    <p>Abrir covas para novas fruteiras. Aplicar tratamentos de queda de folha nos pessegueiros contra a lepra e pedrado.</p>
                                 </div>
                             </article>
                             <article class="cat-vinha">
                                 <span class="icon solid fa-wine-bottle"></span>
                                 <div class="content">
                                     <h3>Vinha</h3>
-                                    <p>Concluir as vindimas. Marcar as cepas mais produtivas e saudáveis para fornecer garfos para as próximas enxertias.</p>
+                                    <p>Concluir as vindimas tardias. Marcar as cepas mais produtivas para fornecer garfos para as enxertias de primavera.</p>
                                 </div>
                             </article>
-                        </div>
-
-                        <h2>Outras Tarefas</h2>
-                        <div class="features">
                             <article class="cat-adega">
                                 <span class="icon solid fa-wine-glass-alt"></span>
                                 <div class="content">
                                     <h3>Adega</h3>
-                                    <p>Trasfegar vinhos tintos 15 dias após a encuba. Queimar bagaços para obter aguardente e aproveitar subprodutos para os animais.</p>
+                                    <p>Fazer vinhos brancos e trasfegar tintos 15 dias após a encuba. Queimar bagaços e aproveitar subprodutos para os animais.</p>
                                 </div>
                             </article>
                             <article class="cat-animais">
                                 <span class="icon solid fa-paw"></span>
                                 <div class="content">
                                     <h3>Animais</h3>
-                                    <p>Mês favorável para a cobrição de porcas. Iniciar iluminação artificial na capoeira e colocar camas de palha limpa.</p>
+                                    <p>Cobrição de porcas. Iniciar iluminação artificial na capoeira e colocar camas de palha limpa para as frangas.</p>
                                 </div>
                             </article>
                             <article class="cat-jardim">
                                 <span class="icon solid fa-leaf"></span>
                                 <div class="content">
                                     <h3>Jardim</h3>
-                                    <p>Semear amores-perfeitos e papoilas. Plantar jacintos, túlipas e narcisos para a próxima primavera.</p>
+                                    <p>Semear amores-perfeitos e papoilas. Plantar bolbos de jacintos, túlipas e narcisos para a próxima estação.</p>
                                 </div>
                             </article>
                         </div>
@@ -197,6 +186,9 @@
 			<div id="sidebar"></div>
 		</div>
 		<script src="../assets/js/jquery.min.js"></script>
+        <script src="../assets/js/browser.min.js"></script>
+        <script src="../assets/js/breakpoints.min.js"></script>
+        <script src="../assets/js/util.js"></script>
         <script>
             fetch('../sidebar-content.html').then(response => response.text()).then(data => {
                 document.getElementById('sidebar').innerHTML = data;
