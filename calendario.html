@@ -14,6 +14,7 @@
 			/* 1. LIMPEZA TOTAL E ALINHAMENTO AO TOPO */
 			section, #header, .major, hr, article { border: none !important; box-shadow: none !important; }
 			
+			/* 2. MENU TOGGLE: FOLHA VERDE */
 			#header .toggle {
 				background: none !important;
 				box-shadow: none !important;
@@ -34,7 +35,7 @@
 			section { padding-top: 2.5em !important; }
             h1 { color: #2e7d32 !important; margin-bottom: 1.2em !important; font-size: 3em !important; letter-spacing: -1px; }
 
-			/* 2. GRELHA DOS 12 MESES (ESTILO GALERIA) */
+			/* 3. GRELHA DOS 12 MESES (ESTILO GALERIA) */
 			.month-grid { 
                 display: grid; 
                 grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); 
@@ -115,7 +116,7 @@
 								<h3>Janeiro</h3>
 							</a>
 							<a href="fevereiro.html" class="month-card">
-								<img src="https://images.unsplash.com/photo-1779622520933-79b2926a97dd?auto=format&fit=crop&w=800&q=80" alt="Fevereiro" />
+								<img src="https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?w=800&q=80" alt="Fevereiro" />
 								<h3>Fevereiro</h3>
 							</a>
 							<a href="marco.html" class="month-card">
@@ -166,14 +167,25 @@
 			<div id="sidebar"></div>
 		</div>
 
+		<!-- Scripts -->
 		<script src="assets/js/jquery.min.js"></script>
+        <script src="assets/js/browser.min.js"></script>
+        <script src="assets/js/breakpoints.min.js"></script>
+        <script src="assets/js/util.js"></script>
+        <!-- main.js REMOVIDO DAQUI E PASSADO PARA DENTRO DO FETCH -->
+        
         <script>
-            fetch('sidebar-content.html').then(response => response.text()).then(data => {
-                document.getElementById('sidebar').innerHTML = data;
-                var script = document.createElement('script');
-                script.src = 'assets/js/main.js';
-                document.body.appendChild(script);
-            });
+            fetch('sidebar-content.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('sidebar').innerHTML = data;
+                    
+                    // REINICIALIZAÇÃO CRÍTICA DO MENU
+                    // Criamos o elemento script apenas depois de o menu estar no DOM
+                    var script = document.createElement('script');
+                    script.src = 'assets/js/main.js';
+                    document.body.appendChild(script);
+                });
         </script>
 	</body>
 </html>
