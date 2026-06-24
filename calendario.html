@@ -11,10 +11,9 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="assets/css/main.css" />
 		<style>
-			/* 1. LIMPEZA TOTAL */
-			section, #header, .major, hr { border: none !important; box-shadow: none !important; }
+			/* 1. LIMPEZA TOTAL E ALINHAMENTO AO TOPO */
+			section, #header, .major, hr, article { border: none !important; box-shadow: none !important; }
 			
-			/* 2. MENU TOGGLE: FOLHA VERDE */
 			#header .toggle {
 				background: none !important;
 				box-shadow: none !important;
@@ -31,64 +30,73 @@
 			}
             #header .toggle:after { display: none !important; }
 
-			/* 3. ALINHAMENTO AO TOPO */
+			/* Margem idêntica à da sidebar para o título */
 			section { padding-top: 2.5em !important; }
-            h1 { color: #2e7d32 !important; margin-bottom: 1em !important; font-size: 3em !important; }
+            h1 { color: #2e7d32 !important; margin-bottom: 1.2em !important; font-size: 3em !important; letter-spacing: -1px; }
 
-			/* 4. GRELHA DOS 12 MESES (ESTILO MINIMALISTA) */
+			/* 2. GRELHA DOS 12 MESES (ESTILO GALERIA) */
 			.month-grid { 
                 display: grid; 
                 grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); 
                 gap: 1.5em; 
-                margin-top: 2em; 
+                margin-top: 0; 
             }
 
 			.month-card { 
-                position: relative;
-                background: #fff; 
-                border-radius: 25px; 
-                overflow: hidden; 
+                position: relative !important;
+                background: #f4f4f4; 
+                border-radius: 20px !important; 
+                overflow: hidden !important; 
                 text-decoration: none !important; 
-                transition: all 0.3s ease; 
+                transition: transform 0.3s ease, box-shadow 0.3s ease; 
+                height: 240px !important;
+                display: block !important;
                 border: none !important;
-                height: 200px;
-                box-shadow: 0 4px 15px rgba(0,0,0,0.05);
             }
 
 			.month-card:hover { 
                 transform: translateY(-8px); 
-                box-shadow: 0 12px 25px rgba(46, 125, 50, 0.2);
+                box-shadow: 0 15px 30px rgba(46, 125, 50, 0.2) !important;
             }
 
 			.month-card img { 
                 width: 100%; 
                 height: 100%; 
                 object-fit: cover; 
-                transition: filter 0.3s ease;
+                display: block;
+                transition: filter 0.4s ease;
             }
 
-            .month-card:hover img {
-                filter: brightness(0.8);
-            }
-
-            /* Nome do mês subtil sobre a imagem */
-			.month-card h3 { 
+            /* Overlay escuro subtil para o texto ler-se melhor */
+            .month-card::after {
+                content: '';
                 position: absolute;
-                bottom: 15px;
+                bottom: 0; left: 0; right: 0;
+                height: 40%;
+                background: linear-gradient(to top, rgba(0,0,0,0.5), transparent);
+                transition: opacity 0.3s ease;
+            }
+
+            .month-card:hover img { filter: brightness(0.8); }
+
+            /* Nome do mês minimalista sobre a imagem */
+			.month-card h3 { 
+                position: absolute !important;
+                bottom: 20px !important;
                 left: 0;
                 right: 0;
-                text-align: center; 
-                margin: 0; 
+                text-align: center !important; 
+                margin: 0 !important; 
                 color: #ffffff !important; 
-                letter-spacing: 4px; 
-                text-transform: uppercase; 
-                font-size: 0.75em; 
-                font-weight: 700;
-                text-shadow: 0 2px 4px rgba(0,0,0,0.5); /* Garante visibilidade */
+                letter-spacing: 3px !important; 
+                text-transform: uppercase !important; 
+                font-size: 0.85em !important; 
+                font-weight: 700 !important;
+                z-index: 10;
                 pointer-events: none;
             }
 
-			/* 5. ASSINATURA FINAL À DIREITA */
+			/* 3. ASSINATURA bioCULTURA */
 			.footer-signature-right { 
                 text-align: right; 
                 padding: 6em 0 2em 0; 
@@ -110,51 +118,51 @@
 
 						<div class="month-grid">
 							<a href="janeiro.html" class="month-card">
-								<img src="https://images.unsplash.com/photo-1599939575322-792a12657d72?auto=format&fit=crop&w=600&q=80" alt="Janeiro" />
+								<img src="https://images.unsplash.com/photo-1542840843-331d9f27ad6c?w=800&q=80" alt="Janeiro" />
 								<h3>Janeiro</h3>
 							</a>
 							<a href="fevereiro.html" class="month-card">
-								<img src="https://images.unsplash.com/photo-1779622520933-79b2926a97dd?auto=format&fit=crop&w=600&q=80" alt="Fevereiro" />
+								<img src="https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?w=800&q=80" alt="Fevereiro" />
 								<h3>Fevereiro</h3>
 							</a>
 							<a href="marco.html" class="month-card">
-								<img src="https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?auto=format&fit=crop&w=600&q=80" alt="Março" />
+								<img src="https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?w=800&q=80" alt="Março" />
 								<h3>Março</h3>
 							</a>
 							<a href="abril.html" class="month-card">
-								<img src="https://images.unsplash.com/photo-1560493676-04071c5f467b?auto=format&fit=crop&w=600&q=80" alt="Abril" />
+								<img src="https://images.unsplash.com/photo-1560493676-04071c5f467b?w=800&q=80" alt="Abril" />
 								<h3>Abril</h3>
 							</a>
 							<a href="maio.html" class="month-card">
-								<img src="https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?auto=format&fit=crop&w=600&q=80" alt="Maio" />
+								<img src="https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=800&q=80" alt="Maio" />
 								<h3>Maio</h3>
 							</a>
 							<a href="junho.html" class="month-card">
-								<img src="https://images.unsplash.com/photo-1589923188900-85dae523342b?auto=format&fit=crop&w=600&q=80" alt="Junho" />
+								<img src="https://images.unsplash.com/photo-1589923188900-85dae523342b?w=800&q=80" alt="Junho" />
 								<h3>Junho</h3>
 							</a>
 							<a href="julho.html" class="month-card">
-								<img src="https://images.unsplash.com/photo-1471193945509-9ad0617afabf?auto=format&fit=crop&w=600&q=80" alt="Julho" />
+								<img src="https://images.unsplash.com/photo-1471193945509-9ad0617afabf?w=800&q=80" alt="Julho" />
 								<h3>Julho</h3>
 							</a>
 							<a href="agosto.html" class="month-card">
-								<img src="https://images.unsplash.com/photo-1753172433718-d0c2a99443d8?auto=format&fit=crop&w=600&q=80" alt="Agosto" />
+								<img src="https://images.unsplash.com/photo-1753172433718-d0c2a99443d8?w=800&q=80" alt="Agosto" />
 								<h3>Agosto</h3>
 							</a>
 							<a href="setembro.html" class="month-card">
-								<img src="https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?auto=format&fit=crop&w=600&q=80" alt="Setembro" />
+								<img src="https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?w=800&q=80" alt="Setembro" />
 								<h3>Setembro</h3>
 							</a>
 							<a href="outubro.html" class="month-card">
-								<img src="https://images.unsplash.com/photo-1508739773434-c26b3d09e071?auto=format&fit=crop&w=600&q=80" alt="Outubro" />
+								<img src="https://images.unsplash.com/photo-1508739773434-c26b3d09e071?w=800&q=80" alt="Outubro" />
 								<h3>Outubro</h3>
 							</a>
 							<a href="novembro.html" class="month-card">
-								<img src="https://images.unsplash.com/photo-1473973266408-ed4e27abdd47?auto=format&fit=crop&w=600&q=80" alt="Novembro" />
+								<img src="https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?w=800&q=80" alt="Novembro" />
 								<h3>Novembro</h3>
 							</a>
 							<a href="dezembro.html" class="month-card">
-								<img src="https://images.unsplash.com/photo-1663090129112-800d462c4fce?auto=format&fit=crop&w=600&q=80" alt="Dezembro" />
+								<img src="https://images.unsplash.com/photo-1416870262648-25133b188555?w=800&q=80" alt="Dezembro" />
 								<h3>Dezembro</h3>
 							</a>
 						</div>
