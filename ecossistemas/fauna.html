@@ -11,15 +11,14 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="../assets/css/main.css" />
 		<style>
-			/* 1. LIMPEZA TOTAL DE LINHAS E MOLDURAS */
-			section, .features, article, hr, .major, #header, .image.main, .major h2, header#header { 
+			/* 1. LIMPEZA TOTAL DE LINHAS, BORDAS E MOLDURAS */
+			section, #header, hr, .major, .features article, .features article .icon { 
                 border: none !important; box-shadow: none !important; padding: 0 !important; 
             }
 
 			/* 2. MENU TOGGLE: FOLHA VERDE SUBTIL */
 			#header .toggle {
-				background: none !important; box-shadow: none !important;
-				top: 3.5em !important; left: 2em !important;
+				background: none !important; top: 2.2em !important; left: 2em !important;
                 border: none !important; text-decoration: none !important;
 			}
 			#header .toggle:before {
@@ -29,11 +28,12 @@
 			}
             #header .toggle:after { display: none !important; }
 
-			/* 3. ALINHAMENTO DO CONTEÚDO */
-			section { padding-top: 10em !important; margin-bottom: 4em !important; }
-            header.main h1 { line-height: 1.1; margin-bottom: 1em !important; color: #2e7d32 !important; }
+			/* 3. ALINHAMENTO E TIPOGRAFIA (1.30em UNÂNIME) */
+			section { padding-top: 2.5em !important; margin-bottom: 4em !important; }
+            header.main h1 { line-height: 1.1; margin-bottom: 1em !important; color: #2e7d32 !important; font-size: 3.5em !important; }
+            p { font-size: 1.30em !important; color: #222 !important; line-height: 1.7 !important; }
 			
-            /* 4. ESTILO DA IMAGEM E LEGENDA */
+            /* 4. IMAGEM E LEGENDA */
             .image.main { margin-bottom: 0.3em !important; }
 			.image.main img { 
                 width: 100% !important; height: 450px !important; object-fit: cover !important; 
@@ -44,25 +44,33 @@
                 font-weight: normal !important; line-height: 1.5 !important; margin-top: 0 !important; 
             }
 
-            /* 5. CORES CONTEXTUAIS - ALIADOS */
-            h2 { color: #2e7d32 !important; }
-            .features h3 { font-size: 0.95em !important; margin-bottom: 0.2em !important; font-weight: 600 !important; }
-            .features p { font-size: 0.85em !important; color: #000 !important; line-height: 1.6 !important; }
-
-            /* Polinizadores: Amarelo/Ouro */
-            .aliado-polinizador h3, .aliado-polinizador .icon:before { color: #fbc02d !important; }
-            /* Controladores: Verde Balanço */
-            .aliado-pragas h3, .aliado-pragas .icon:before { color: #43a047 !important; }
-            /* Engenheiros: Castanho Terra */
-            .aliado-solo h3, .aliado-solo .icon:before { color: #8d6e63 !important; }
-            /* Dispersores: Teal/Ar */
-            .aliado-sementes h3, .aliado-sementes .icon:before { color: #4db6ac !important; }
-
-            /* 6. DESAFIO E SOLUÇÃO (CORES E ÍCONES) */
-            .danger-zone h3 { color: #d32f2f !important; } /* Vermelho Perigo */
-            .danger-zone .icon { color: #d32f2f !important; margin-right: 0.5em; }
+            /* 5. ÍCONES PUROS E CORES CONTEXTUAIS (FAUNA) */
+            h2 { color: #2e7d32 !important; margin-top: 3em !important; font-size: 2.2em !important; font-weight: 700; }
+            .features h3 { font-size: 1.25em !important; font-weight: 700; margin-bottom: 0.2em !important; }
             
-            .solution-zone h3 { color: #2e7d32 !important; } /* Verde bioCultura */
+            .features article .icon { 
+                width: 70px !important; height: 70px !important; line-height: 70px !important;
+                text-align: center !important; border: none !important; background: none !important;
+                margin: 0 1.5em 2em 0 !important; display: block !important; float: left;
+            }
+            .features article .icon:before, .features article .icon:after { 
+                border: none !important; box-shadow: none !important; transform: none !important; background: none !important;
+            }
+            .features article .icon:before { font-size: 55px !important; }
+            
+            .features p { font-size: 1.15em !important; color: #444 !important; line-height: 1.6 !important; }
+
+            /* Cores Sugestivas para a Fauna */
+            .icon-pollin:before { color: #fbc02d !important; }   /* Amarelo (Abelhas) */
+            .icon-pest:before { color: #43a047 !important; }     /* Verde (Controladores) */
+            .icon-soil:before { color: #8d6e63 !important; }     /* Castanho (Minhocas) */
+            .icon-birds:before { color: #4db6ac !important; }    /* Teal (Aves) */
+
+            /* 6. DESAFIO E SOLUÇÃO COM MAIS ESPAÇAMENTO */
+            .row-impacto { margin-top: 7em !important; }
+            .danger-zone h3 { color: #d32f2f !important; } 
+            .danger-zone .icon { color: #d32f2f !important; margin-right: 0.5em; }
+            .solution-zone h3 { color: #2e7d32 !important; } 
             .solution-zone .icon { color: #2e7d32 !important; margin-right: 0.5em; }
 
 			/* 7. ASSINATURA FINAL À DIREITA */
@@ -71,8 +79,7 @@
 	</head>
 	<body class="is-preload page-fauna">
 		<div id="wrapper">
-			<div id="main">
-				<div class="inner">
+			<div id="main"><div class="inner">
 
 					<header id="header" style="height: 0; margin: 0; padding: 0; overflow: hidden;"></header>
 
@@ -81,70 +88,72 @@
 							<h1>Fauna: Aliados Invisíveis</h1>
 						</header>
 						<span class="image main">
-                            <img src="https://images.unsplash.com/photo-1722454763924-243b4c4f28eb?auto=format&fit=crop&w=1080&q=80" alt="Abelha polinizando" />
+                            <img src="https://images.unsplash.com/photo-1473973266408-ed4e27abdd47?auto=format&fit=crop&w=1080&q=80" alt="Fauna bioCultura" />
                         </span>
-						<p>A fauna desempenha um papel duplo: é o motor que sustenta a produtividade das colheitas e, ao mesmo tempo, a principal vítima da agricultura intensiva. Para garantir que temos comida no prato, contamos com "trabalhadores" especializados que mantêm o equilíbrio do ecossistema.</p>
+						<p>A fauna é o motor funcional dos ecossistemas. Dos polinizadores que garantem a nossa comida aos microrganismos que processam a vida no solo, cada ser desempenha um papel crítico na regeneração da paisagem.</p>
 
-                        <h2 style="margin-bottom: 1.5em; margin-top: 3em;">Os Principais Aliados</h2>
+                        <h2>Os Nossos Aliados</h2>
                         <div class="features">
-                            <article class="aliado-polinizador">
-                                <span class="icon solid fa-bug"></span>
+                            <article>
+                                <span class="icon solid fa-bug icon-pollin"></span>
                                 <div class="content">
-                                    <h3>Polinizadores</h3>
-                                    <p>Abelhas e borboletas garantem a reprodução de 90% das plantas com flor e a produtividade das nossas colheitas.</p>
+                                    <h3 style="color: #fbc02d;">Polinizadores Ativos</h3>
+                                    <p>Abelhas e outros insetos garantem a reprodução de 90% das plantas com flor e a produtividade das nossas colheitas.</p>
                                 </div>
                             </article>
-                            <article class="aliado-pragas">
-                                <span class="icon solid fa-dove"></span>
+                            <article>
+                                <span class="icon solid fa-frog icon-pest"></span>
                                 <div class="content">
-                                    <h3>Controladores de Pragas</h3>
-                                    <p>Aves, morcegos e sapos atuam como pesticidas naturais, mantendo as populações de insetos em equilíbrio.</p>
+                                    <h3 style="color: #43a047;">Controlo Biológico</h3>
+                                    <p>Anfíbios e pequenos predadores mantêm as populações de insetos em equilíbrio, eliminando a necessidade de venenos.</p>
                                 </div>
                             </article>
-                            <article class="aliado-solo">
-                                <span class="icon solid fa-seedling"></span>
+                            <article>
+                                <span class="icon solid fa-worm icon-soil"></span>
                                 <div class="content">
-                                    <h3>Engenheiros do Solo</h3>
-                                    <p>Minhocas e microrganismos decompõem matéria orgânica e arejam a terra, tornando-a fértil e viva.</p>
+                                    <h3 style="color: #8d6e63;">Engenheiros do Solo</h3>
+                                    <p>Minhocas e vida microbiana decompõem matéria orgânica, arejam a terra e reciclam nutrientes essenciais.</p>
                                 </div>
                             </article>
-                            <article class="aliado-sementes">
-                                <span class="icon solid fa-leaf"></span>
+                            <article>
+                                <span class="icon solid fa-dove icon-birds"></span>
                                 <div class="content">
-                                    <h3>Dispersores de Sementes</h3>
-                                    <p>Pequenos mamíferos e pássaros espalham sementes que regeneram as florestas nativas e protegem a água.</p>
+                                    <h3 style="color: #4db6ac;">Aves e Dispersão</h3>
+                                    <p>As aves nativas atuam como semeadoras naturais, transportando a vida e garantindo a diversidade das florestas.</p>
                                 </div>
                             </article>
                         </div>
 
-						<div class="row" style="margin-top: 5em;">
+						<div class="row row-impacto">
 							<div class="col-6 col-12-small danger-zone">
 								<h3><span class="icon solid fa-exclamation-triangle"></span> O Desafio da Sobrevivência</h3>
-								<p style="color: #000; font-size: 0.9em;">Agroquímicos e a destruição de habitats estão a dizimar os nossos aliados. Sem eles, o ciclo da vida e a nossa segurança alimentar interrompem-se.</p>
+								<p style="color: #000; font-size: 0.95em;">Agroquímicos e a destruição de habitats estão a dizimar os nossos aliados, interrompendo o ciclo da vida.</p>
 							</div>
 							<div class="col-6 col-12-small solution-zone">
-								<h3><span class="icon solid fa-leaf"></span> A Solução Biocultura</h3>
-								<p style="color: #000; font-size: 0.9em;">Criamos corredores ecológicos e refúgios seguros. Regenerar a terra é, acima de tudo, convidar a vida a regressar e devolver a autonomia aos ecossistemas.</p>
+								<h3><span class="icon solid fa-leaf"></span> A Solução bioCultura</h3>
+								<p style="color: #000; font-size: 0.95em;">Criamos corredores ecológicos e refúgios seguros para convidar a biodiversidade a regressar ao território.</p>
 							</div>
 						</div>
 					</section>
 
-					<!-- Assinatura Final -->
 					<div class="footer-signature-right">
-						<a href="index.html" style="border: none; display: inline-block; text-decoration: none;">
-							<svg width="55" height="55" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="display: block; margin-left: auto; margin-bottom: -5px;">
-								<path d="M20 95 Q50 90 80 95" stroke="#634832" stroke-width="2" fill="none" opacity="0.3" />
-								<path d="M50 95 C50 75 40 65 50 45 C60 65 50 75 50 95" fill="#2e7d32" />
-								<path d="M50 70 C65 65 75 50 60 40 C50 50 50 60 50 70" fill="#4CAF50" />
-							</svg>
-							<div style="color: #444; font-family: 'Source Sans Pro', sans-serif; letter-spacing: 3px; font-weight: 300; font-size: 1.3em; line-height: 1;">
-								<b style="font-weight: 700; color: #2e7d32;">bio</b>Cultura
-							</div>
+						<a href="../index.html" style="border: none; display: inline-block; text-decoration: none;">
+							<div style="font-family: 'Source Sans Pro', sans-serif; font-size: 1.4em; line-height: 1; display: flex; align-items: flex-end; text-transform: none;">
+                                <b style="font-weight: 700; color: #2e7d32; margin-right: -3px; position: relative; z-index: 2;">b</b>
+                                <div style="width: 32px; margin: 0 -7px; position: relative; line-height: 0; transform: translateY(4px); z-index: 1;">
+                                    <svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: auto;">
+                                        <path d="M-20 110 Q50 102 120 110" stroke="#634832" stroke-width="4" fill="none" opacity="0.3" />
+                                        <path d="M50 110 C50 80 35 70 50 45 C65 70 50 80 50 110" fill="#2e7d32" />
+                                        <path d="M50 80 C75 75 85 50 65 40 C50 55 50 65 50 80" fill="#4CAF50" />
+                                    </svg>
+                                </div>
+                                <b style="font-weight: 700; color: #2e7d32; margin-left: -3px; position: relative; z-index: 2;">o</b>
+                                <span style="font-weight: 300; color: #444; margin-left: 2px;">Cultura</span>
+                            </div>
 						</a>
 					</div>
 
-				</div>
-			</div>
+				</div></div>
 			<div id="sidebar"></div>
 		</div>
 
