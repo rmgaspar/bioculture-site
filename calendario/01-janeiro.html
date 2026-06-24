@@ -11,25 +11,37 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="assets/css/main.css" />
 		<style>
-			/* 1. LIMPEZA TOTAL DE LINHAS E BORDAS */
-			section, #header, hr, .major, .features article { border: none !important; box-shadow: none !important; padding: 0 !important; }
-			#header .toggle { background: none !important; top: 3.5em !important; left: 2em !important; border: none !important; text-decoration: none !important; }
-			#header .toggle:before { content: '\f06c' !important; font-family: "Font Awesome 5 Free" !important; font-weight: 900; color: #2e7d32 !important; font-size: 1.6em !important; }
-            #header .toggle:after { display: none !important; }
-			section { padding-top: 8em !important; margin-bottom: 4em !important; }
+			/* 1. LIMPEZA TOTAL DE LINHAS E MOLDURAS */
+			section, #header, hr, .major, .features article, .features article .icon { 
+                border: none !important; box-shadow: none !important; padding: 0 !important; 
+            }
 
-            /* 2. TIPOGRAFIA (1.30em) */
+			/* 2. MENU TOGGLE: FOLHA VERDE */
+			#header .toggle {
+				background: none !important; top: 3.5em !important; left: 2em !important;
+                border: none !important; text-decoration: none !important;
+			}
+			#header .toggle:before {
+				content: '\f06c' !important; 
+				font-family: "Font Awesome 5 Free" !important;
+				font-weight: 900; color: #2e7d32 !important; font-size: 1.6em !important;
+			}
+            #header .toggle:after { display: none !important; }
+
+			/* 3. ALINHAMENTO E TIPOGRAFIA (1.30em) */
+			section { padding-top: 8em !important; margin-bottom: 4em !important; }
             header.main h1 { color: #2e7d32 !important; line-height: 1.1; margin-bottom: 0.8em !important; font-size: 3.5em !important; }
             p { font-size: 1.30em !important; color: #222 !important; line-height: 1.7 !important; }
             h2 { color: #2e7d32 !important; margin-top: 2.5em !important; font-size: 2.2em !important; font-weight: 700; }
             .features h3 { font-size: 1.6em !important; font-weight: 700; margin-bottom: 0.2em !important; }
             .features p { font-size: 1.15em !important; color: #444 !important; line-height: 1.6 !important; }
 
-            /* 3. BANNER DUPLO: IMAGEM + CALENDÁRIO */
+            /* 4. BANNER DUPLO: IMAGEM + CALENDÁRIO COMPACTO */
             .banner-container { display: flex; gap: 20px; margin-bottom: 4em; flex-wrap: wrap; }
             .banner-box { flex: 1; min-width: 320px; height: 350px; border-radius: 30px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
             .banner-box img { width: 100%; height: 100%; object-fit: cover; }
 
+            /* Calendário Lunar Janeiro 2026 */
             .lunar-calendar { background: #eef5ee; display: flex; align-items: center; justify-content: center; padding: 1.5em; }
             .calendar-grid { 
                 display: grid; grid-template-columns: repeat(7, 1fr); grid-auto-rows: 1fr; 
@@ -42,27 +54,19 @@
             .moon-icon { width: 22px; height: 22px; margin-bottom: 2px; }
             .moon-label { font-size: 0.6em; text-transform: uppercase; font-weight: 900; color: #2e7d32; }
 
-            /* 4. REMOÇÃO DEFINITIVA DOS LOSANGOS/BORDAS DOS ÍCONES */
+            /* 5. ÍCONES PUROS E ALINHADOS */
             .features article .icon { 
-                width: auto !important; 
-                height: auto !important; 
-                line-height: 1 !important;
-                border: none !important; 
-                background: none !important;
-                transform: none !important; /* Remove a rotação de 45 graus */
-                margin-bottom: 0.5em !important;
-                display: block !important;
-                box-shadow: none !important;
+                width: 70px !important; height: 70px !important; line-height: 70px !important;
+                text-align: center !important; border: none !important; background: none !important;
+                margin: 0 1.5em 2em 0 !important; display: block !important; float: left;
+                transform: none !important;
             }
-            .features article .icon:before { 
-                font-size: 55px !important; 
-                border: none !important;
-                box-shadow: none !important;
+            .features article .icon:before, .features article .icon:after { 
+                border: none !important; box-shadow: none !important; transform: none !important; background: none !important;
             }
-            /* Remove pseudo-elementos que o template usa para criar a moldura */
-            .features article .icon:after { display: none !important; }
+            .features article .icon:before { font-size: 55px !important; }
 
-            /* Cores Contextuais */
+            /* Cores Contextuais Solicitadas */
             .cat-pomar h3, .cat-pomar .icon:before { color: #2e7d32 !important; }    /* Verde */
             .cat-vinha h3, .cat-vinha .icon:before { color: #6a1b9a !important; }    /* Roxo */
             .cat-horta h3, .cat-horta .icon:before { color: #2e7d32 !important; }    /* Verde */
@@ -84,19 +88,25 @@
 						
                         <div class="banner-container">
                             <div class="banner-box">
-                                <img src="https://images.unsplash.com/photo-1607240204413-e51a4afa6f12?q=80&w=1987&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Poda de Janeiro" />
+                                <img src="https://images.unsplash.com/photo-1542840843-331d9f27ad6c?w=800&q=80" alt="Poda de Janeiro" />
                             </div>
                             
+                            <!-- Calendário Lunar Janeiro 2026 (Sem números nos dias de Lua) -->
                             <div class="banner-box lunar-calendar">
                                 <div class="calendar-grid">
                                     <div class="day-name">D</div><div class="day-name">S</div><div class="day-name">T</div><div class="day-name">Q</div><div class="day-name">Q</div><div class="day-name">S</div><div class="day-name">S</div>
+                                    
                                     <div class="day"></div><div class="day"></div><div class="day"></div><div class="day">1</div><div class="day">2</div>
+                                    <!-- Lua Cheia dia 3 -->
                                     <div class="day moon-day"><svg class="moon-icon" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="#2e7d32"/></svg><span class="moon-label">LC</span></div>
                                     <div class="day">4</div><div class="day">5</div><div class="day">6</div><div class="day">7</div><div class="day">8</div><div class="day">9</div>
+                                    <!-- Quarto Minguante dia 10 -->
                                     <div class="day moon-day"><svg class="moon-icon" viewBox="0 0 100 100"><path d="M50,10 A40,40 0 0,0 50,90 Z" fill="#2e7d32"/></svg><span class="moon-label">M</span></div>
                                     <div class="day">11</div><div class="day">12</div><div class="day">13</div><div class="day">14</div><div class="day">15</div><div class="day">16</div><div class="day">17</div>
+                                    <!-- Lua Nova dia 18 -->
                                     <div class="day moon-day"><svg class="moon-icon" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" stroke="#2e7d32" stroke-width="12" fill="none"/></svg><span class="moon-label">LN</span></div>
                                     <div class="day">19</div><div class="day">20</div><div class="day">21</div><div class="day">22</div><div class="day">23</div><div class="day">24</div><div class="day">25</div>
+                                    <!-- Quarto Crescente dia 26 -->
                                     <div class="day moon-day"><svg class="moon-icon" viewBox="0 0 100 100"><path d="M50,10 A40,40 0 0,1 50,90 Z" fill="#2e7d32"/></svg><span class="moon-label">C</span></div>
                                     <div class="day">27</div><div class="day">28</div><div class="day">29</div><div class="day">30</div><div class="day">31</div>
                                 </div>
@@ -133,7 +143,7 @@
                                 </div>
                             </article>
                             <article class="cat-campo">
-                                <span class="icon solid fa-mountain"></span>
+                                <span class="icon solid fa-tractor"></span>
                                 <div class="content">
                                     <h3>Solo</h3>
                                     <p>Incorporar matéria orgânica (estrume curtido ou húmus) sem danificar as raízes das plantas em repouso.</p>
