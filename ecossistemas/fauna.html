@@ -12,103 +12,98 @@
 		<link rel="stylesheet" href="../assets/css/main.css" />
 		<style>
 			/* 1. LIMPEZA TOTAL DE LINHAS E MOLDURAS */
-			section, #header, hr, .major, .features article, .features article .icon { 
-                border: none !important; box-shadow: none !important; padding: 0 !important; 
-            }
+			section, .features, .posts, article, hr, .major, #header, 
+            .posts article, .posts article .image, .major h2, header#header {
+				border: none !important;
+				box-shadow: none !important;
+				padding: 0 !important;
+                outline: none !important;
+			}
 
 			/* 2. MENU TOGGLE: FOLHA VERDE SUBTIL */
 			#header .toggle {
-				background: none !important; top: 2.2em !important; left: 2em !important;
-                border: none !important; text-decoration: none !important;
+				background: none !important;
+				box-shadow: none !important;
+				top: 2em !important; 
+				left: 2em !important;
+                border: none !important;
+                text-decoration: none !important;
 			}
 			#header .toggle:before {
 				content: '\f06c' !important; 
 				font-family: "Font Awesome 5 Free" !important;
-				font-weight: 900; color: #2e7d32 !important; font-size: 1.6em !important;
+				font-weight: 900;
+				color: #2e7d32 !important;
+				font-size: 1.6em !important;
 			}
             #header .toggle:after { display: none !important; }
 
-			/* 3. TIPOGRAFIA (1.30em UNÂNIME) */
-            h2 { color: #2e7d32 !important; margin-top: 3em !important; font-size: 2.2em !important; font-weight: 700; }
-            .features h3 { font-size: 1.25em !important; font-weight: 700; margin-bottom: 0.2em !important; }
-            .features p { font-size: 1.15em !important; color: #444 !important; line-height: 1.6 !important; }
+			/* 3. ALINHAMENTO AO TOPO (MESMA MARGEM DA SIDEBAR) */
+			#banner {
+				padding-top: 2.5em !important; 
+				margin-bottom: 6em !important;
+			}
+            #banner h1 { line-height: 1.1; margin-bottom: 0.5em; color: #2e7d32 !important; font-size: 3.5em !important; }
+            section + section { margin-top: 8em !important; }
 
-            /* 4. AJUSTE DO BANNER (ESTILO INDEX) */
-            #banner {
-                display: flex !important;
-                flex-direction: row !important;
-                align-items: center !important;
-                justify-content: space-between !important;
-                gap: 4em !important;
-                padding-top: 4em !important; 
-                margin-bottom: 4em !important;
+			/* 4. ÍCONES PUROS (REMOÇÃO DOS LOSANGOS) */
+			.features article .icon { 
+                width: auto !important; 
+                height: auto !important; 
+                line-height: 1 !important;
+                border: none !important; 
+                background: none !important;
+                transform: none !important; 
+                margin-bottom: 0.5em !important;
+                display: block !important;
             }
-
-            #banner .content {
-                flex: 1 !important;
-                text-align: left !important;
+            .features article .icon:before { 
+                font-size: 55px !important; 
+                border: none !important;
             }
+            .features article .icon:after { display: none !important; }
 
-            #banner .image.object {
-                flex: 1 !important;
-                max-width: 50% !important;
-            }
+			/* 5. CORES CONTEXTUAIS E ESTILOS */
+            .major h2 { display: inline-block; margin-bottom: 2em !important; color: #2e7d32 !important; text-transform: none !important; letter-spacing: 1px; }
+            
+            .features h3 { margin-bottom: 0.5em !important; font-size: 1.2em !important; }
+            .features article:nth-child(1) h3, .features article:nth-child(1) .icon:before { color: #2e7d32 !important; } 
+            .features article:nth-child(2) h3, .features article:nth-child(2) .icon:before { color: #43a047 !important; } 
+            .features article:nth-child(3) h3, .features article:nth-child(3) .icon:before { color: #0077be !important; } 
+            .features article:nth-child(4) h3, .features article:nth-child(4) .icon:before { color: #8d6e63 !important; } 
+            .features article:nth-child(5) h3, .features article:nth-child(5) .icon:before { color: #4db6ac !important; } 
+            .features article:nth-child(6) h3, .features article:nth-child(6) .icon:before { color: #fbc02d !important; }
 
-            #banner .image.object img {
-                border-radius: 25px !important; 
-                width: 100% !important;
-                height: 400px !important;
-                object-fit: cover !important;
-            }
+			/* 6. MANIFESTO DA MUDANÇA: LEGENDAS EM PRETO */
+			.posts article .image { margin-bottom: 0.3em !important; }
+            .posts article .image img { width: 100% !important; height: 300px !important; object-fit: cover !important; border-radius: 4px; }
+            .posts article h3 { margin: 0 !important; padding: 0 !important; font-size: 0.85em !important; font-weight: 400 !important; text-transform: none !important; }
+			.posts article h3 a { color: #000000 !important; border-bottom: none !important; }
 
-            /* 5. ÍCONES E CORES CONTEXTUAIS */
-            .features article .icon { 
-                width: 70px !important; height: 70px !important; line-height: 70px !important;
-                text-align: center !important; border: none !important; background: none !important;
-                margin: 0 1.5em 2em 0 !important; display: block !important; float: left;
-            }
-            .features article .icon:before { font-size: 55px !important; }
-            .icon-pollin:before { color: #fbc02d !important; }
-            .icon-pest:before { color: #43a047 !important; }
-            .icon-birds:before { color: #4db6ac !important; }
-            .icon-worm-custom { display: flex !important; align-items: center; justify-content: center; }
-
-            /* 6. DESAFIO E SOLUÇÃO */
-            .row-impacto { margin-top: 7em !important; }
-            .danger-zone h3 { color: #d32f2f !important; } 
-            .danger-zone .icon { color: #d32f2f !important; margin-right: 0.5em; }
-            .solution-zone h3 { color: #2e7d32 !important; } 
-            .solution-zone .icon { color: #2e7d32 !important; margin-right: 0.5em; }
-
+			/* 7. ASSINATURA FINAL À DIREITA */
 			.footer-signature-right { text-align: right; padding: 6em 0 2em 0; opacity: 0.9; }
-
-            @media screen and (max-width: 736px) {
-                #banner { flex-direction: column-reverse !important; padding-top: 6em !important; }
-                #banner .image.object { max-width: 100% !important; }
-                #banner .image.object img { height: 250px !important; }
-            }
 		</style>
 	</head>
-	<body class="is-preload page-fauna">
+	<body class="is-preload">
 		<div id="wrapper">
-			<div id="main"><div class="inner">
+			<div id="main">
+				<div class="inner">
 
 					<header id="header" style="height: 0; margin: 0; padding: 0; overflow: hidden;"></header>
 
-					<!-- BANNER REESTRUTURADO (ESTILO INDEX) -->
+					<!-- Banner Principal (Subido para o topo) -->
 					<section id="banner">
 						<div class="content">
 							<header>
-								<h1 style="color: #2e7d32; font-size: 3.5em;">Fauna: Aliados Invisíveis</h1>
-								<p style="color: #8d6e63; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; font-size: 0.8em;">Equilíbrio e Regeneração</p>
+								<h1>Fauna: Aliados Invisíveis</h1>
+								<p style="color: #8d6e63; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; font-size: 0.8em;">Equilíbrio Biológico</p>
 							</header>
-							<p style="font-size: 1.30em; color: #222; line-height: 1.7;">A fauna é o motor funcional dos ecossistemas. Dos polinizadores que garantem a nossa comida aos microrganismos que processam a vida no solo, cada ser desempenha um papel crítico na regeneração da paisagem.</p>
+							<p>A fauna é o motor funcional dos ecossistemas. Dos polinizadores que garantem a nossa comida aos microrganismos que processam a vida no solo, cada ser desempenha um papel crítico na regeneração da paisagem.</p>
 						</div>
 						<span class="image object">
-                            <img src="https://images.unsplash.com/photo-1473973266408-ed4e27abdd47?auto=format&fit=crop&w=1080&q=80" alt="Fauna bioCultura" />
+                            <img src="https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=1080&q=80" alt="" />
                         </span>
 					</section>
-
                     <h2 style="margin-bottom: 1.5em;">Os Nossos Aliados</h2>
                     <div class="features">
                         <article>
