@@ -12,112 +12,97 @@
 		<link rel="stylesheet" href="../assets/css/main.css" />
 		<style>
 			/* 1. LIMPEZA TOTAL DE LINHAS E MOLDURAS */
-			section, .features, .posts, article, hr, .major, #header, 
-            .posts article, .posts article .image, .major h2, header#header {
-				border: none !important;
-				box-shadow: none !important;
-				padding: 0 !important;
-                outline: none !important;
-			}
+			section, #header, hr, .major, .features article, .features article .icon { 
+                border: none !important; box-shadow: none !important; padding: 0 !important; 
+            }
 
 			/* 2. MENU TOGGLE: FOLHA VERDE SUBTIL */
-			#header .toggle {
-				background: none !important;
-				box-shadow: none !important;
-				top: 2em !important; 
-				left: 2em !important;
-                border: none !important;
-                text-decoration: none !important;
-			}
-			#header .toggle:before {
-				content: '\f06c' !important; 
-				font-family: "Font Awesome 5 Free" !important;
-				font-weight: 900;
-				color: #2e7d32 !important;
-				font-size: 1.6em !important;
-			}
+			#header { height: 3.5em !important; display: flex !important; align-items: center; background: transparent !important; }
+			#header .toggle { background: none !important; top: 2em !important; left: 2em !important; border: none !important; text-decoration: none !important; }
+			#header .toggle:before { content: '\f06c' !important; font-family: "Font Awesome 5 Free" !important; font-weight: 900; color: #2e7d32 !important; font-size: 1.6em !important; }
             #header .toggle:after { display: none !important; }
 
-			/* 3. ALINHAMENTO AO TOPO (MESMA MARGEM DA SIDEBAR) */
-			#banner {
-				padding-top: 2.5em !important; 
-				margin-bottom: 6em !important;
-			}
-            #banner h1 { line-height: 1.1; margin-bottom: 0.5em; color: #2e7d32 !important; font-size: 3.5em !important; }
-            section + section { margin-top: 8em !important; }
+			/* 3. ALINHAMENTO DO BANNER (ESTILO INDEX) */
+			#banner { display: flex !important; align-items: center; justify-content: space-between !important; gap: 4em !important; padding-top: 2.5em !important; margin-bottom: 5em !important; }
+            #banner h1 { font-weight: 300 !important; font-size: 2.8em !important; margin-top: 1.2em !important; color: #2e7d32 !important; line-height: 1.2 !important; }
+            #banner p { font-size: 1.25em !important; color: #333 !important; line-height: 1.7 !important; }
+            #banner .image.object img { border-radius: 25px !important; height: 450px !important; width: 100% !important; object-fit: cover !important; }
 
-			/* 4. ÍCONES PUROS (REMOÇÃO DOS LOSANGOS) */
-			.features article .icon { 
-                width: auto !important; 
-                height: auto !important; 
-                line-height: 1 !important;
-                border: none !important; 
-                background: none !important;
-                transform: none !important; 
-                margin-bottom: 0.5em !important;
-                display: block !important;
-            }
-            .features article .icon:before { 
-                font-size: 55px !important; 
-                border: none !important;
-            }
-            .features article .icon:after { display: none !important; }
+            /* 4. TIPOGRAFIA E CORES CONTEXTUAIS */
+            h2 { color: #2e7d32 !important; margin-top: 3em !important; font-size: 2.2em !important; font-weight: 700; }
+            .features h3 { font-size: 1.25em !important; font-weight: 700; margin-bottom: 0.2em !important; }
+            .features p { font-size: 1.10em !important; color: #444 !important; line-height: 1.6 !important; }
 
-			/* 5. CORES CONTEXTUAIS E ESTILOS */
-            .major h2 { display: inline-block; margin-bottom: 2em !important; color: #2e7d32 !important; text-transform: none !important; letter-spacing: 1px; }
+            /* Alinhamento rigoroso dos ícones (70px fixos) */
+            .features article .icon { 
+                width: 70px !important; height: 70px !important; line-height: 70px !important;
+                text-align: center !important; display: block !important; float: left; margin: 0 1.5em 2em 0 !important; 
+            }
+            .features article .icon:before { font-size: 50px !important; }
+
+            /* Cores dos Aliados */
+            .icon-pollin:before { color: #fbc02d !important; }   /* Amarelo - Polinizadores */
+            .icon-umbela:before { color: #43a047 !important; }   /* Verde - Erva-Doce */
+            .icon-rabbit:before { color: #8d6e63 !important; }   /* Castanho - Coelho */
+            .icon-worm-custom { display: flex !important; align-items: center; justify-content: center; }
+
+            /* 5. DESAFIO E SOLUÇÃO (CORES E ALINHAMENTO) */
+            .row-impacto { margin-top: 7em !important; }
             
-            .features h3 { margin-bottom: 0.5em !important; font-size: 1.2em !important; }
-            .features article:nth-child(1) h3, .features article:nth-child(1) .icon:before { color: #2e7d32 !important; } 
-            .features article:nth-child(2) h3, .features article:nth-child(2) .icon:before { color: #43a047 !important; } 
-            .features article:nth-child(3) h3, .features article:nth-child(3) .icon:before { color: #0077be !important; } 
-            .features article:nth-child(4) h3, .features article:nth-child(4) .icon:before { color: #8d6e63 !important; } 
-            .features article:nth-child(5) h3, .features article:nth-child(5) .icon:before { color: #4db6ac !important; } 
-            .features article:nth-child(6) h3, .features article:nth-child(6) .icon:before { color: #fbc02d !important; }
+            .danger-zone .icon-box, .solution-zone .icon-box { width: 70px; float: left; margin-right: 1.5em; text-align: center; }
+            
+            .danger-zone h3 { color: #d32f2f !important; font-size: 1.5em !important; font-weight: 700 !important; } 
+            .danger-zone .icon:before { color: #d32f2f !important; font-size: 50px !important; }
+            
+            .solution-zone h3 { color: #2e7d32 !important; font-size: 1.5em !important; font-weight: 700 !important; } 
+            .solution-zone .icon:before { color: #2e7d32 !important; font-size: 50px !important; }
 
-			/* 6. MANIFESTO DA MUDANÇA: LEGENDAS EM PRETO */
-			.posts article .image { margin-bottom: 0.3em !important; }
-            .posts article .image img { width: 100% !important; height: 300px !important; object-fit: cover !important; border-radius: 4px; }
-            .posts article h3 { margin: 0 !important; padding: 0 !important; font-size: 0.85em !important; font-weight: 400 !important; text-transform: none !important; }
-			.posts article h3 a { color: #000000 !important; border-bottom: none !important; }
-
-			/* 7. ASSINATURA FINAL À DIREITA */
 			.footer-signature-right { text-align: right; padding: 6em 0 2em 0; opacity: 0.9; }
+
+            @media screen and (max-width: 736px) {
+                #banner { flex-direction: column-reverse !important; padding-top: 6em !important; }
+                #banner .image.object img { height: 300px !important; }
+            }
 		</style>
 	</head>
-	<body class="is-preload">
+	<body class="is-preload page-fauna">
 		<div id="wrapper">
-			<div id="main">
-				<div class="inner">
+			<div id="main"><div class="inner">
 
-					<header id="header" style="height: 0; margin: 0; padding: 0; overflow: hidden;"></header>
-
-					<!-- Banner Principal (Subido para o topo) -->
+					<header id="header"></header>
+					
 					<section id="banner">
 						<div class="content">
 							<header>
 								<h1>Fauna: Aliados Invisíveis</h1>
-								<p style="color: #8d6e63; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; font-size: 0.8em;">Equilíbrio Biológico</p>
+								<p style="color: #8d6e63; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; font-size: 0.75em;">Equilíbrio e Regeneração</p>
 							</header>
-							<p>A fauna é o motor funcional dos ecossistemas. Dos polinizadores que garantem a nossa comida aos microrganismos que processam a vida no solo, cada ser desempenha um papel crítico na regeneração da paisagem.</p>
+							<p>A fauna é o motor funcional dos ecossistemas. A bioCultura promove o equilíbrio entre espécies, reconhecendo que cada ser vivo desempenha um papel crítico na manutenção da paisagem e na produtividade da terra.</p>
 						</div>
-						<span class="image object">
-                            <img src="https://images.unsplash.com/photo-1761424628421-3675628cf04f?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Fauna" />
-                        </span>
+						<span class="image object"><img src="https://images.unsplash.com/photo-1473973266408-ed4e27abdd47?auto=format&fit=crop&w=1080&q=80" alt="Fauna" /></span>
 					</section>
-                    <h2 style="margin-bottom: 1.5em;">Os Nossos Aliados</h2>
+
+                    <h2>Engenheiros e Guardiões</h2>
                     <div class="features">
                         <article>
                             <span class="icon solid fa-bug icon-pollin"></span>
                             <div class="content">
-                                <h3>Polinizadores Ativos</h3>
-                                <p>Abelhas e outros insetos garantem a reprodução de 90% das plantas com flor e a produtividade das nossas colheitas.</p>
+                                <h3 style="color: #fbc02d;">Polinizadores Diversos</h3>
+                                <p>Além das abelhas, moscas-pairideiras e mariposas nocturnas são aliadas fundamentais, interpretando mensagens químicas e padrões UV das flores.</p>
                             </div>
                         </article>
                         <article>
-                            <span class="icon solid fa-frog icon-pest"></span>
+                            <span class="icon solid fa-seedling icon-umbela"></span>
                             <div class="content">
-                                <h3>Controlo Biológico</h3>
-                                <p>Anfíbios e pequenos predadores mantêm as populações de insetos em equilíbrio, eliminando a necessidade de venenos.</p>
+                                <h3 style="color: #43a047;">Erva-Doce: Atração Útil</h3>
+                                <p>A sua flor em umbela atrai vespas predadoras que caçam activamente pulgões, funcionando como uma central de biodiversidade útil na horta.</p>
+                            </div>
+                        </article>
+                        <article>
+                            <span class="icon solid fa-paw icon-rabbit"></span>
+                            <div class="content">
+                                <h3 style="color: #8d6e63;">Coelho-bravo: O Gestor</h3>
+                                <p>Através da pastagem selectiva, mantém o matagal curto e cria espaço para plantas rasteiras, servindo de base crítica na cadeia alimentar ibérica.</p>
                             </div>
                         </article>
                         <article>
@@ -129,28 +114,27 @@
                             </span>
                             <div class="content">
                                 <h3 style="color: #8d6e63;">Engenheiros do Solo</h3>
-                                <p>Minhocas e vida microbiana decompõem matéria orgânica, arejam a terra e reciclam nutrientes essenciais.</p>
-                            </div>
-                        </article>
-                        <article>
-                            <span class="icon solid fa-dove icon-birds"></span>
-                            <div class="content">
-                                <h3>Aves e Dispersão</h3>
-                                <p>As aves nativas atuam como semeadoras naturais, transportando a vida e garantindo a diversidade das nossas florestas.</p>
+                                <p>As minhocas reciclam matéria orgânica e produzem húmus rico em NPK, aumentando a porosidade do solo em 40% gratuitamente.</p>
                             </div>
                         </article>
                     </div>
 
-                    <div class="row row-impacto">
-                        <div class="col-6 col-12-small danger-zone">
-                            <h3><span class="icon solid fa-exclamation-triangle"></span> O Desafio da Sobrevivência</h3>
-                            <p style="color: #000; font-size: 0.95em;">Agroquímicos e a destruição de habitats estão a dizimar os nossos aliados, interrompendo o ciclo da vida.</p>
-                        </div>
-                        <div class="col-6 col-12-small solution-zone">
-                            <h3><span class="icon solid fa-leaf"></span> A Solução bioCultura</h3>
-                            <p style="color: #000; font-size: 0.95em;">Criamos corredores ecológicos e refúgios seguros para convidar a biodiversidade a regressar ao território.</p>
-                        </div>
-                    </div>
+					<div class="row row-impacto">
+						<div class="col-6 col-12-small danger-zone">
+                            <div class="icon-box"><span class="icon solid fa-exclamation-triangle"></span></div>
+							<div class="content">
+                                <h3>O Desafio da Sobrevivência</h3>
+							    <p style="color: #000; font-size: 0.95em;">Agroquímicos e a destruição de habitats dizimam os nossos aliados, interrompendo o ciclo da vida e a segurança alimentar.</p>
+                            </div>
+						</div>
+						<div class="col-6 col-12-small solution-zone">
+                            <div class="icon-box"><span class="icon solid fa-leaf"></span></div>
+							<div class="content">
+                                <h3>A Solução bioCultura</h3>
+							    <p style="color: #000; font-size: 0.95em;">Criamos corredores ecológicos e refúgios seguros, devolvendo a autonomia biológica ao território e convidando a vida a regressar.</p>
+                            </div>
+						</div>
+					</div>
 
 					<div class="footer-signature-right">
 						<a href="../index.html" style="border: none; display: inline-block; text-decoration: none;">
@@ -168,11 +152,9 @@
                             </div>
 						</a>
 					</div>
-
 				</div></div>
 			<div id="sidebar"></div>
 		</div>
-
 		<script src="../assets/js/jquery.min.js"></script>
         <script src="../assets/js/browser.min.js"></script>
         <script src="../assets/js/breakpoints.min.js"></script>
