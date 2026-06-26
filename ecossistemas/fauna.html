@@ -12,76 +12,98 @@
 		<link rel="stylesheet" href="../assets/css/main.css" />
 		<style>
 			/* 1. LIMPEZA TOTAL DE LINHAS E MOLDURAS */
-			section, #header, hr, .major, .features article, .features article .icon { 
-                border: none !important; box-shadow: none !important; padding: 0 !important; 
-            }
+			section, .features, .posts, article, hr, .major, #header, 
+            .posts article, .posts article .image, .major h2, header#header {
+				border: none !important;
+				box-shadow: none !important;
+				padding: 0 !important;
+                outline: none !important;
+			}
 
 			/* 2. MENU TOGGLE: FOLHA VERDE SUBTIL */
-			#header { height: 3.5em !important; display: flex !important; align-items: center; background: transparent !important; }
-			#header .toggle { background: none !important; top: 2em !important; left: 2em !important; border: none !important; text-decoration: none !important; }
-			#header .toggle:before { content: '\f06c' !important; font-family: "Font Awesome 5 Free" !important; font-weight: 900; color: #2e7d32 !important; font-size: 1.6em !important; }
+			#header .toggle {
+				background: none !important;
+				box-shadow: none !important;
+				top: 2em !important; 
+				left: 2em !important;
+                border: none !important;
+                text-decoration: none !important;
+			}
+			#header .toggle:before {
+				content: '\f06c' !important; 
+				font-family: "Font Awesome 5 Free" !important;
+				font-weight: 900;
+				color: #2e7d32 !important;
+				font-size: 1.6em !important;
+			}
             #header .toggle:after { display: none !important; }
 
-			/* 3. ALINHAMENTO DO BANNER (ESTILO INDEX) */
-			#banner { display: flex !important; align-items: center; justify-content: space-between !important; gap: 4em !important; padding-top: 2.5em !important; margin-bottom: 5em !important; }
-            #banner h1 { font-weight: 300 !important; font-size: 2.8em !important; margin-top: 1.2em !important; color: #2e7d32 !important; line-height: 1.2 !important; }
-            #banner p { font-size: 1.25em !important; color: #333 !important; line-height: 1.7 !important; }
-            #banner .image.object img { border-radius: 25px !important; height: 450px !important; width: 100% !important; object-fit: cover !important; }
+			/* 3. ALINHAMENTO AO TOPO (MESMA MARGEM DA SIDEBAR) */
+			#banner {
+				padding-top: 2.5em !important; 
+				margin-bottom: 6em !important;
+			}
+            #banner h1 { line-height: 1.1; margin-bottom: 0.5em; color: #2e7d32 !important; font-size: 3.5em !important; }
+            section + section { margin-top: 8em !important; }
 
-            /* 4. TIPOGRAFIA E CORES CONTEXTUAIS */
-            h2 { color: #2e7d32 !important; margin-top: 3em !important; font-size: 2.2em !important; font-weight: 700; }
-            .features h3 { font-size: 1.25em !important; font-weight: 700; margin-bottom: 0.2em !important; }
-            .features p { font-size: 1.10em !important; color: #444 !important; line-height: 1.6 !important; }
-
-            /* Alinhamento rigoroso dos ícones (70px fixos) */
-            .features article .icon { 
-                width: 70px !important; height: 70px !important; line-height: 70px !important;
-                text-align: center !important; display: block !important; float: left; margin: 0 1.5em 2em 0 !important; 
+			/* 4. ÍCONES PUROS (REMOÇÃO DOS LOSANGOS) */
+			.features article .icon { 
+                width: auto !important; 
+                height: auto !important; 
+                line-height: 1 !important;
+                border: none !important; 
+                background: none !important;
+                transform: none !important; 
+                margin-bottom: 0.5em !important;
+                display: block !important;
             }
-            .features article .icon:before { font-size: 50px !important; }
+            .features article .icon:before { 
+                font-size: 55px !important; 
+                border: none !important;
+            }
+            .features article .icon:after { display: none !important; }
 
-            /* Cores dos Aliados */
-            .icon-pollin:before { color: #fbc02d !important; }   /* Amarelo - Polinizadores */
-            .icon-umbela:before { color: #43a047 !important; }   /* Verde - Erva-Doce */
-            .icon-rabbit:before { color: #8d6e63 !important; }   /* Castanho - Coelho */
-            .icon-worm-custom { display: flex !important; align-items: center; justify-content: center; }
+			/* 5. CORES CONTEXTUAIS E ESTILOS */
+            .major h2 { display: inline-block; margin-bottom: 2em !important; color: #2e7d32 !important; text-transform: none !important; letter-spacing: 1px; }
+            
+            .features h3 { margin-bottom: 0.5em !important; font-size: 1.2em !important; }
+            .features article:nth-child(1) h3, .features article:nth-child(1) .icon:before { color: #2e7d32 !important; } 
+            .features article:nth-child(2) h3, .features article:nth-child(2) .icon:before { color: #43a047 !important; } 
+            .features article:nth-child(3) h3, .features article:nth-child(3) .icon:before { color: #0077be !important; } 
+            .features article:nth-child(4) h3, .features article:nth-child(4) .icon:before { color: #8d6e63 !important; } 
+            .features article:nth-child(5) h3, .features article:nth-child(5) .icon:before { color: #4db6ac !important; } 
+            .features article:nth-child(6) h3, .features article:nth-child(6) .icon:before { color: #fbc02d !important; }
 
-            /* 5. DESAFIO E SOLUÇÃO (CORES E ALINHAMENTO) */
-            .row-impacto { margin-top: 7em !important; }
-            
-            .danger-zone .icon-box, .solution-zone .icon-box { width: 70px; float: left; margin-right: 1.5em; text-align: center; }
-            
-            .danger-zone h3 { color: #d32f2f !important; font-size: 1.5em !important; font-weight: 700 !important; } 
-            .danger-zone .icon:before { color: #d32f2f !important; font-size: 50px !important; }
-            
-            .solution-zone h3 { color: #2e7d32 !important; font-size: 1.5em !important; font-weight: 700 !important; } 
-            .solution-zone .icon:before { color: #2e7d32 !important; font-size: 50px !important; }
+			/* 6. MANIFESTO DA MUDANÇA: LEGENDAS EM PRETO */
+			.posts article .image { margin-bottom: 0.3em !important; }
+            .posts article .image img { width: 100% !important; height: 300px !important; object-fit: cover !important; border-radius: 4px; }
+            .posts article h3 { margin: 0 !important; padding: 0 !important; font-size: 0.85em !important; font-weight: 400 !important; text-transform: none !important; }
+			.posts article h3 a { color: #000000 !important; border-bottom: none !important; }
 
+			/* 7. ASSINATURA FINAL À DIREITA */
 			.footer-signature-right { text-align: right; padding: 6em 0 2em 0; opacity: 0.9; }
-
-            @media screen and (max-width: 736px) {
-                #banner { flex-direction: column-reverse !important; padding-top: 6em !important; }
-                #banner .image.object img { height: 300px !important; }
-            }
 		</style>
 	</head>
-	<body class="is-preload page-fauna">
+	<body class="is-preload">
 		<div id="wrapper">
-			<div id="main"><div class="inner">
+			<div id="main">
+				<div class="inner">
 
-					<header id="header"></header>
-					
+					<header id="header" style="height: 0; margin: 0; padding: 0; overflow: hidden;"></header>
+
+					<!-- Banner Principal (Subido para o topo) -->
 					<section id="banner">
 						<div class="content">
 							<header>
-								<h1>Fauna: Aliados Invisíveis</h1>
-								<p style="color: #8d6e63; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; font-size: 0.75em;">Equilíbrio e Regeneração</p>
+								<h1>Flora: Identidade Nativa</h1>
+								<p style="color: #8d6e63; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; font-size: 0.8em;">Resiliência Ecológica</p>
 							</header>
-							<p>A fauna é o motor funcional dos ecossistemas. A bioCultura promove o equilíbrio entre espécies, reconhecendo que cada ser vivo desempenha um papel crítico na manutenção da paisagem e na produtividade da terra.</p>
+							<p>A flora é o rosto da biodiversidade. Num cenário de mudanças climáticas, a nossa missão é promover a resiliência dos ecossistemas através da conservação e restauração das espécies nativas.</p>
 						</div>
-						<span class="image object"><img src="https://images.unsplash.com/photo-1473973266408-ed4e27abdd47?auto=format&fit=crop&w=1080&q=80" alt="Fauna" /></span>
+						<span class="image object">
+                            <img src="https://plus.unsplash.com/premium_photo-1661963661518-5d1e2f4d8b81?q=80&w=2072&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Flora Nativa" />
+                        </span>
 					</section>
-
                     <h2>Engenheiros e Guardiões</h2>
                     <div class="features">
                         <article>
