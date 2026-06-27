@@ -298,12 +298,23 @@
         <script src="../assets/js/breakpoints.min.js"></script>
         <script src="../assets/js/util.js"></script>
         <script>
-            fetch('../sidebar-content.html').then(response => response.text()).then(data => {
-                document.getElementById('sidebar').innerHTML = data;
-                var script = document.createElement('script');
-                script.src = '../assets/js/main.js';
-                document.body.appendChild(script);
-            });
-        </script>
+			fetch('../sidebar-content.html') // Ajustar caminho conforme a pasta
+				.then(response => response.text())
+				.then(data => {
+					document.getElementById('sidebar').innerHTML = data;
+					
+					// Injeta o título da página atual na sidebar
+					const pageTitle = document.title.replace('bioCultura - ', '');
+					const titleContainer = document.getElementById('sidebar-page-title');
+					if (titleContainer) {
+						titleContainer.innerText = pageTitle;
+					}
+
+					var script = document.createElement('script');
+					script.src = '../assets/js/main.js'; // Ajustar caminho conforme a pasta
+					document.body.appendChild(script);
+				});
+		</script>
+
 	</body>
 </html>
