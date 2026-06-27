@@ -11,7 +11,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="assets/css/main.css" />
 		<style>
-			/* 1. AJUSTE AO ECRÃ (SEM SCROLL GLOBAL) */
+			/* 1. AJUSTE AO ECRÃ (ESTILO ONE-SCREEN) */
 			html, body, #wrapper {
 				height: 100vh;
 				overflow: hidden;
@@ -19,17 +19,18 @@
 
 			#main {
 				height: 100vh;
-				overflow-y: auto;
+				overflow-y: auto; /* Scroll apenas se o ecrã for muito pequeno */
 				display: flex;
 				flex-direction: column;
 			}
 
 			#main > .inner {
-				padding-top: 2em !important; /* Alinhamento exato com o topo do logo da sidebar */
+				padding-top: 2em !important; /* Alinhamento exato com o logo lateral */
+				padding-bottom: 1em !important;
 				flex-grow: 1;
 			}
 
-			/* 2. REMOÇÃO DE TÍTULO E ALINHAMENTO AO TOPO DA IMAGEM */
+			/* 2. BANNER: REMOÇÃO DE TÍTULO E AJUSTE DE ALTURA */
 			.page-index #banner h1 {
 				display: none !important;
 			}
@@ -37,8 +38,9 @@
             .page-index #banner {
                 margin-top: 0 !important;
                 padding-top: 0 !important;
+                margin-bottom: 1.5em !important; /* Espaço reduzido para subir o que está abaixo */
                 display: flex !important;
-                align-items: flex-start !important; /* Alinha o texto e imagem pelo topo */
+                align-items: flex-start !important;
                 border: none !important;
             }
 
@@ -55,31 +57,32 @@
                 font-weight: bold;
                 letter-spacing: 1px;
                 text-transform: uppercase;
-                font-size: 0.8em;
+                font-size: 0.85em;
             }
 
-			/* 3. LIMPEZA TOTAL DE LINHAS E MOLDURAS */
+            #banner .image.object img {
+                border-radius: 25px !important; 
+                height: 380px !important; /* Altura ajustada para caber no ecrã com os ícones abaixo */
+                width: 100% !important;
+                object-fit: cover !important;
+            }
+
+			/* 3. LIMPEZA TOTAL DE LINHAS */
 			section, .features, .posts, article, hr, .major, #header, 
             .posts article, .posts article .image, .major h2, header#header {
 				border: none !important;
 				box-shadow: none !important;
                 text-decoration: none !important;
 			}
-
             .major h2:after { display: none !important; }
 
-			/* 4. MENU TOGGLE (MOBILE) */
-			#header { height: 0 !important; visibility: hidden; }
-            
-            @media screen and (max-width: 736px) {
-                #header { height: 3.5em !important; visibility: visible; display: flex !important; align-items: center; }
-                #header .toggle { background: none !important; top: 2em !important; left: 2em !important; border: none !important; }
-                #header .toggle:before { content: '\f06c' !important; font-family: "Font Awesome 5 Free" !important; font-weight: 900; color: #2e7d32 !important; font-size: 1.6em !important; }
-            }
+			/* 4. ÍCONES E CAMINHOS (MAIS JUSTOS) */
+            .major { margin-bottom: 1em !important; }
+            .major h2 { font-size: 1.8em !important; color: #2e7d32 !important; margin-bottom: 0.5em !important; }
 
-			/* 5. ÍCONES PUROS (REMOÇÃO DOS LOSANGOS) */
-            .features article .icon { width: auto !important; height: auto !important; line-height: 1 !important; background: none !important; transform: none !important; margin-bottom: 0.5em !important; display: block !important; }
-            .features article .icon:before { font-size: 55px !important; }
+            .features article { margin-bottom: 1em !important; }
+            .features article .icon { width: auto !important; height: auto !important; line-height: 1 !important; background: none !important; transform: none !important; margin-bottom: 0.3em !important; display: block !important; }
+            .features article .icon:before { font-size: 45px !important; }
             .features article .icon:after { display: none !important; }
             
             /* Cores dos Ícones */
@@ -90,18 +93,15 @@
             .features article:nth-child(5) .icon:before { color: #2d34fb !important; } 
             .features article:nth-child(6) .icon:before { color: #d32f2f !important; }
 
-            /* 6. ESTILO PARA O TÍTULO DINÂMICO NA SIDEBAR */
-			#sidebar-page-title {
-				font-family: 'Source Sans Pro', sans-serif;
-				font-size: 0.85em;
-				font-weight: 700;
-				text-transform: uppercase;
-				letter-spacing: 2px;
-				color: #2e7d32;
-				margin-top: 1.5em;
-			}
+            /* 5. MENU TOGGLE (MOBILE) */
+			#header { height: 0 !important; visibility: hidden; }
+            @media screen and (max-width: 736px) {
+                #header { height: 3.5em !important; visibility: visible; display: flex !important; }
+                #header .toggle { background: none !important; top: 2em !important; left: 2em !important; border: none !important; }
+                #header .toggle:before { content: '\f06c' !important; font-family: "Font Awesome 5 Free" !important; font-weight: 900; color: #2e7d32 !important; font-size: 1.6em !important; }
+            }
 
-			.footer-signature-right { text-align: right; padding: 6em 0 2em 0; opacity: 0.9; }
+			.footer-signature-right { text-align: right; padding: 2em 0 1em 0; opacity: 0.9; }
 		</style>
 	</head>
 	<body class="is-preload page-index">
@@ -111,23 +111,23 @@
 
 					<header id="header"></header>
 
-					<!-- Banner Principal (Totalmente alinhado ao topo) -->
+					<!-- Banner Principal -->
 					<section id="banner">
 						<div class="content">
 							<header>
 								<p>DO CONSUMO À REGENERAÇÃO</p>
 							</header>
-							<p style="margin-top: 1.5em; font-size: 1.1em; color: #444;">Não basta conservar; é preciso regenerar. A Biocultura nasce como uma resposta técnica e ética aos desafios ambientais modernos. Focamos em soluções que eliminam a dependência de químicos e devolvem a autonomia aos ecossistemas.</p>
+							<p style="margin-top: 1em; font-size: 1.1em; color: #444; line-height: 1.6;">Não basta conservar; é preciso regenerar. A Biocultura nasce como uma resposta técnica e ética aos desafios ambientais modernos. Focamos em soluções que eliminam a dependência de químicos e devolvem a autonomia aos ecossistemas.</p>
 						</div>
-						<span class="image object" style="margin-top: 0; padding-top: 0;">
-                            <img src="https://images.unsplash.com/photo-1472313420546-a46e561861d8?q=80&w=1974&auto=format&fit=crop" style="border-radius: 25px; height: 450px; object-fit: cover;" alt="" />
+						<span class="image object">
+                            <img src="https://images.unsplash.com/photo-1472313420546-a46e561861d8?q=80&w=1974&auto=format&fit=crop" alt="" />
                         </span>
 					</section>
 
-					<!-- Caminhos para a Sustentabilidade -->
-					<section style="margin-top: 2em;">
+					<!-- Caminhos para a Sustentabilidade (Justo ao Banner) -->
+					<section>
 						<header class="major">
-                            <h2 style="color: #2e7d32 !important; font-size: 2em !important; margin-bottom: 1em !important;">Caminhos para a Sustentabilidade</h2>
+                            <h2>Caminhos para a Sustentabilidade</h2>
                         </header>
 						<div class="features">
 							<article><span class="icon solid fa-skull"></span><div class="content"><h3><a href="ecossistemas/flora.html" style="text-decoration:none; border:none; color:inherit;">Toxicidade e Dependência</a></h3><p>O uso sistemático de químicos esteriliza a terra.</p></div></article>
@@ -141,17 +141,16 @@
 
 					<div class="footer-signature-right">
 						<a href="index.html" style="border: none; display: inline-block; text-decoration: none;">
-							<div style="font-family: 'Source Sans Pro', sans-serif; font-size: 1.4em; line-height: 1; display: flex; align-items: flex-end;">
+							<div style="font-family: 'Source Sans Pro', sans-serif; font-size: 1.2em; line-height: 1; display: flex; align-items: flex-end;">
                                 <b style="font-weight: 700; color: #2e7d32; margin-right: -3px; position: relative; z-index: 2;">b</b>
-                                <div style="width: 32px; margin: 0 -7px; position: relative; line-height: 0; transform: translateY(4px); z-index: 1;">
+                                <div style="width: 28px; margin: 0 -6px; position: relative; line-height: 0; transform: translateY(4px); z-index: 1;">
                                     <svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: auto;">
                                         <path d="M-20 110 Q50 102 120 110" stroke="#634832" stroke-width="4" fill="none" opacity="0.3" />
                                         <path d="M50 110 C50 80 35 70 50 45 C65 70 50 80 50 110" fill="#2e7d32" />
                                         <path d="M50 80 C75 75 85 50 65 40 C50 55 50 65 50 80" fill="#4CAF50" />
                                     </svg>
                                 </div>
-                                <b style="font-weight: 700; color: #2e7d32; margin-left: -3px; position: relative; z-index: 2;">o</b>
-                                <span style="font-weight: 300; color: #444; margin-left: 2px;">Cultura</span>
+                                <b style="font-weight: 700; color: #2e7d32; margin-left: -3px;">o</b><span style="font-weight: 300; color: #444; margin-left: 2px;">Cultura</span>
                             </div>
 						</a>
 					</div>
