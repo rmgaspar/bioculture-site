@@ -1,4 +1,9 @@
 <!DOCTYPE HTML>
+<!--
+	Editorial by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
 <html>
 	<head>
 		<title>bioCultura - A Alternativa Sustentável</title>
@@ -6,67 +11,69 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="assets/css/main.css" />
 		<style>
-			/* 1. SUBIR O CONTEÚDO GLOBAL */
-#main > .inner {
-    padding-top: 1.5em !important; /* Aproxima o banner do topo */
-}
+			/* 1. AJUSTE AO ECRÃ (SEM SCROLL GLOBAL) */
+			html, body, #wrapper {
+				height: 100vh;
+				overflow: hidden;
+			}
 
-#banner {
-    margin-bottom: 2em !important; /* Aproxima o banner da secção seguinte */
-}
+			#main {
+				height: 100vh;
+				overflow-y: auto;
+				display: flex;
+				flex-direction: column;
+			}
 
-/* 2. SUBIR TÍTULO "CAMINHOS" E ÍCONES */
-.major {
-    margin-bottom: 1.5em !important; /* Reduz o espaço acima do título "Caminhos" */
-}
+			#main > .inner {
+				padding-top: 2em !important; /* Alinhamento com o topo da sidebar */
+				flex-grow: 1;
+			}
 
-.major h2 {
-    margin-bottom: 1em !important; /* Aproxima o título dos ícones */
-}
+			/* 2. REMOÇÃO DE TÍTULO E ALINHAMENTO DO SUBTÍTULO AO TOPO DA IMAGEM */
+			.page-index #banner h1 {
+				display: none !important;
+			}
+            
+            .page-index #banner .content {
+                padding-top: 0 !important;
+                margin-top: 0 !important;
+            }
 
-/* 3. REMOÇÃO TOTAL E DEFINITIVA DOS LOSANGOS */
-.features article .icon {
-    width: auto !important;
-    height: auto !important;
-    line-height: 1 !important;
-    border: none !important;
-    background: none !important;
-    transform: none !important; /* Remove a rotação de 45º */
-    margin-bottom: 0.5em !important;
-    display: block !important;
-    box-shadow: none !important;
-}
+            .page-index #banner header p {
+                margin-top: 0 !important;
+                padding-top: 0 !important;
+                line-height: 1 !important;
+            }
 
-/* Esconde as linhas que o template Editorial usa para criar o diamante */
-.features article .icon:before, 
-.features article .icon:after {
-    border: none !important;
-    box-shadow: none !important;
-    transform: none !important;
-    background: none !important;
-}
+			/* 3. LIMPEZA TOTAL DE LINHAS (TOP, BOTTOM, DIVISÓRIAS E SUB-LINHADOS) */
+			section, .features, .posts, article, hr, .major, #header, 
+            .posts article, .posts article .image, .major h2, header#header, #banner {
+				border: none !important;
+				box-shadow: none !important;
+				padding-bottom: 0 !important;
+                text-decoration: none !important;
+			}
 
-.features article .icon:before {
-    font-size: 50px !important; /* Ajuste do tamanho do ícone puro */
-}
+            /* Remove a linha vermelha/salmão por baixo dos títulos major */
+            .major h2:after {
+                display: none !important;
+            }
 
-/* 4. AJUSTE DO TÍTULO NA SIDEBAR (Reforço no CSS) */
-#sidebar-page-title {
-    font-weight: 700 !important;
-    color: #2e7d32 !important;
-    font-size: 0.85em !important;
-}
+			/* 4. MENU TOGGLE (MOBILE) */
+			#header { height: 0 !important; visibility: hidden; } /* Escondido no PC */
+            
+            @media screen and (max-width: 736px) {
+                #header { height: 3.5em !important; visibility: visible; display: flex !important; align-items: center; }
+                #header .toggle { background: none !important; top: 2em !important; left: 2em !important; border: none !important; }
+                #header .toggle:before { content: '\f06c' !important; font-family: "Font Awesome 5 Free" !important; font-weight: 900; color: #2e7d32 !important; font-size: 1.6em !important; }
+            }
 
-			/* 5. MENU TOGGLE (MOBILE) */
-			#header { height: 3.5em !important; display: flex !important; align-items: center; }
-			#header .toggle { background: none !important; top: 2em !important; left: 2em !important; border: none !important; }
-			#header .toggle:before { content: '\f06c' !important; font-family: "Font Awesome 5 Free" !important; font-weight: 900; color: #2e7d32 !important; font-size: 1.6em !important; }
-            #header .toggle:after { display: none !important; }
-
-			/* 6. ÍCONES E CORES */
+			/* 5. ÍCONES PUROS (REMOÇÃO DOS LOSANGOS) */
             .features article .icon { width: auto !important; height: auto !important; line-height: 1 !important; background: none !important; transform: none !important; margin-bottom: 0.5em !important; display: block !important; }
             .features article .icon:before { font-size: 55px !important; }
+            .features article .icon:after { display: none !important; }
             
+            /* Cores dos Ícones */
             .features article:nth-child(1) .icon:before { color: #810909 !important; } 
             .features article:nth-child(2) .icon:before { color: #43a047 !important; } 
             .features article:nth-child(3) .icon:before { color: #0077be !important; } 
@@ -74,45 +81,69 @@
             .features article:nth-child(5) .icon:before { color: #2d34fb !important; } 
             .features article:nth-child(6) .icon:before { color: #d32f2f !important; }
 
+            /* 6. ESTILO PARA O TÍTULO DINÂMICO NA SIDEBAR */
+			#sidebar-page-title {
+				font-family: 'Source Sans Pro', sans-serif;
+				font-size: 0.85em;
+				font-weight: 700;
+				text-transform: uppercase;
+				letter-spacing: 2px;
+				color: #2e7d32;
+				margin-top: 1.5em;
+				padding-bottom: 1em;
+			}
+
 			.footer-signature-right { text-align: right; padding: 6em 0 2em 0; opacity: 0.9; }
 		</style>
 	</head>
-	<body class="is-preload page-index"> <!-- ADICIONADA CLASSE page-index -->
+	<body class="is-preload page-index">
 		<div id="wrapper">
 			<div id="main">
 				<div class="inner">
+
 					<header id="header"></header>
+
+					<!-- Banner Principal (Subido para o topo) -->
 					<section id="banner">
 						<div class="content">
 							<header>
-								<h1>A Alternativa Sustentável</h1>
-								<p style="color: #8d6e63; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; font-size: 0.8em;">DO CONSUMO À REGENERAÇÃO</p>
+								<p style="color: #8d6e63; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; font-size: 0.8em; margin-top: 0;">DO CONSUMO À REGENERAÇÃO</p>
 							</header>
-							<p>Não basta conservar; é preciso regenerar. A Biocultura nasce como uma resposta técnica e ética aos desafios ambientais modernos. Focamos em soluções que eliminam a dependência de químicos e devolvem a autonomia aos ecossistemas.</p>
+							<p style="margin-top: 1.5em;">Não basta conservar; é preciso regenerar. A Biocultura nasce como uma resposta técnica e ética aos desafios ambientais modernos. Focamos em soluções que eliminam a dependência de químicos e devolvem a autonomia aos ecossistemas.</p>
 						</div>
 						<span class="image object">
                             <img src="https://images.unsplash.com/photo-1472313420546-a46e561861d8?q=80&w=1974&auto=format&fit=crop" alt="" />
                         </span>
 					</section>
 
+					<!-- Caminhos para a Sustentabilidade (Sem Linhas) -->
 					<section>
-						<header class="major"><h2>Caminhos para a Sustentabilidade</h2></header>
+						<header class="major">
+                            <h2 style="color: #2e7d32 !important; font-size: 2em !important; margin-bottom: 1em !important;">Caminhos para a Sustentabilidade</h2>
+                        </header>
 						<div class="features">
-							<article><span class="icon solid fa-skull"></span><div class="content"><h3><a href="ecossistemas/flora.html">Toxicidade e Dependência</a></h3><p>O uso sistemático de químicos esteriliza a terra.</p></div></article>
-							<article><span class="icon solid fa-recycle"></span><div class="content"><h3><a href="recursos/solo.html">Desperdício de Nutrientes</a></h3><p>Tratamos resíduos como lixo em vez de fertilidade.</p></div></article>
-							<article><span class="icon solid fa-faucet"></span><div class="content"><h3><a href="recursos/agua.html">Escassez e Má Gestão</a></h3><p>Aprende a captar a abundância da chuva.</p></div></article>
-							<article><span class="icon solid fa-tree"></span><div class="content"><h3><a href="recursos/ar.html">Saturação de Carbono</a></h3><p>Entende o papel das espécies nativas.</p></div></article>
-							<article><span class="icon solid fa-solar-panel"></span><div class="content"><h3><a href="energia/energia.html">Dependência Energética</a></h3><p>Explora a rentabilidade da micro-geração solar.</p></div></article>
-							<article><span class="icon solid fa-exclamation-triangle"></span><div class="content"><h3><a href="energia/mineracao.html">O Custo da Extração</a></h3><p>Analisamos o dilema do Lítio.</p></div></article>
+							<article><span class="icon solid fa-skull"></span><div class="content"><h3><a href="ecossistemas/flora.html" style="text-decoration:none; border:none; color:inherit;">Toxicidade e Dependência</a></h3><p>O uso sistemático de químicos esteriliza a terra.</p></div></article>
+							<article><span class="icon solid fa-recycle"></span><div class="content"><h3><a href="recursos/solo.html" style="text-decoration:none; border:none; color:inherit;">Desperdício de Nutrientes</a></h3><p>Tratamos resíduos como lixo em vez de fertilidade.</p></div></article>
+							<article><span class="icon solid fa-faucet"></span><div class="content"><h3><a href="recursos/agua.html" style="text-decoration:none; border:none; color:inherit;">Escassez e Má Gestão</a></h3><p>Aprende a captar a abundância da chuva.</p></div></article>
+							<article><span class="icon solid fa-tree"></span><div class="content"><h3><a href="recursos/ar.html" style="text-decoration:none; border:none; color:inherit;">Saturação de Carbono</a></h3><p>Entende o papel das espécies nativas.</p></div></article>
+							<article><span class="icon solid fa-solar-panel"></span><div class="content"><h3><a href="energia/energia.html" style="text-decoration:none; border:none; color:inherit;">Dependência Energética</a></h3><p>Explora a rentabilidade da micro-geração solar.</p></div></article>
+							<article><span class="icon solid fa-exclamation-triangle"></span><div class="content"><h3><a href="energia/mineracao.html" style="text-decoration:none; border:none; color:inherit;">O Custo da Extração</a></h3><p>Analisamos o dilema do Lítio.</p></div></article>
 						</div>
 					</section>
 
 					<div class="footer-signature-right">
 						<a href="index.html" style="border: none; display: inline-block; text-decoration: none;">
 							<div style="font-family: 'Source Sans Pro', sans-serif; font-size: 1.4em; line-height: 1; display: flex; align-items: flex-end;">
-                                <b style="font-weight: 700; color: #2e7d32; margin-right: -3px;">b</b>
-                                <div style="width: 32px; margin: 0 -7px; position: relative; line-height: 0; transform: translateY(4px);"><svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: auto;"><path d="M-20 110 Q50 102 120 110" stroke="#634832" stroke-width="4" fill="none" opacity="0.3" /><path d="M50 110 C50 80 35 70 50 45 C65 70 50 80 50 110" fill="#2e7d32" /><path d="M50 80 C75 75 85 50 65 40 C50 55 50 65 50 80" fill="#4CAF50" /></svg></div>
-                                <b style="font-weight: 700; color: #2e7d32; margin-left: -3px;">o</b><span style="font-weight: 300; color: #444; margin-left: 2px;">Cultura</span>
+                                <b style="font-weight: 700; color: #2e7d32; margin-right: -3px; position: relative; z-index: 2;">b</b>
+                                <div style="width: 32px; margin: 0 -7px; position: relative; line-height: 0; transform: translateY(4px); z-index: 1;">
+                                    <svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: auto;">
+                                        <path d="M-20 110 Q50 102 120 110" stroke="#634832" stroke-width="4" fill="none" opacity="0.3" />
+                                        <path d="M50 110 C50 80 35 70 50 45 C65 70 50 80 50 110" fill="#2e7d32" />
+                                        <path d="M50 80 C75 75 85 50 65 40 C50 55 50 65 50 80" fill="#4CAF50" />
+                                    </svg>
+                                </div>
+                                <b style="font-weight: 700; color: #2e7d32; margin-left: -3px; position: relative; z-index: 2;">o</b>
+                                <span style="font-weight: 300; color: #444; margin-left: 2px;">Cultura</span>
                             </div>
 						</a>
 					</div>
@@ -125,24 +156,18 @@
         <script src="assets/js/browser.min.js"></script>
         <script src="assets/js/breakpoints.min.js"></script>
         <script src="assets/js/util.js"></script>
-       <script>
-    fetch('sidebar-content.html')
-        .then(response => response.text())
-        .then(data => {
-            document.getElementById('sidebar').innerHTML = data;
-            
-            // Pega no título da aba e limpa o prefixo
-            const pageTitle = document.title.replace('bioCultura - ', '');
-            const titleContainer = document.getElementById('sidebar-page-title');
-            if (titleContainer) {
-                titleContainer.innerText = pageTitle;
-            }
-
-            var script = document.createElement('script');
-            script.src = 'assets/js/main.js';
-            document.body.appendChild(script);
-        });
-</script>
-
+        <script>
+            fetch('sidebar-content.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('sidebar').innerHTML = data;
+                    const pageTitle = document.title.replace('bioCultura - ', '');
+                    const titleContainer = document.getElementById('sidebar-page-title');
+                    if (titleContainer) { titleContainer.innerText = pageTitle; }
+                    var script = document.createElement('script');
+                    script.src = 'assets/js/main.js';
+                    document.body.appendChild(script);
+                });
+        </script>
 	</body>
 </html>
