@@ -125,18 +125,24 @@
         <script src="assets/js/browser.min.js"></script>
         <script src="assets/js/breakpoints.min.js"></script>
         <script src="assets/js/util.js"></script>
-        <script>
-            fetch('sidebar-content.html')
-                .then(response => response.text())
-                .then(data => {
-                    document.getElementById('sidebar').innerHTML = data;
-                    const pageTitle = document.title.replace('bioCultura - ', '');
-                    const titleContainer = document.getElementById('sidebar-page-title');
-                    if (titleContainer) { titleContainer.innerText = pageTitle; }
-                    var script = document.createElement('script');
-                    script.src = 'assets/js/main.js';
-                    document.body.appendChild(script);
-                });
-        </script>
+       <script>
+    fetch('sidebar-content.html')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('sidebar').innerHTML = data;
+            
+            // Pega no título da aba e limpa o prefixo
+            const pageTitle = document.title.replace('bioCultura - ', '');
+            const titleContainer = document.getElementById('sidebar-page-title');
+            if (titleContainer) {
+                titleContainer.innerText = pageTitle;
+            }
+
+            var script = document.createElement('script');
+            script.src = 'assets/js/main.js';
+            document.body.appendChild(script);
+        });
+</script>
+
 	</body>
 </html>
