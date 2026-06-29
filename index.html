@@ -11,7 +11,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="assets/css/main.css" />
 		<style>
-			/* 1. AJUSTE AO ECRÃ (ONE-SCREEN) */
+			/* 1. AJUSTE AO ECRÃ E REMOÇÃO DE SCROLL GLOBAL */
 			html, body, #wrapper {
 				height: 100vh;
 				overflow: hidden;
@@ -25,30 +25,29 @@
 			}
 
 			#main > .inner {
-				padding-top: 2em !important; /* Alinhamento exato com o topo do logo da sidebar */
+				padding-top: 0.5em !important; /* SUBIDA MÁXIMA: Alinhamento com o topo do logo lateral */
 				flex-grow: 1;
 			}
 
-			/* 2. BANNER: REMOÇÃO DE TÍTULO E ALINHAMENTO DE TOPO */
+			/* 2. BANNER: REMOÇÃO DE TÍTULO E RESTAURO DE TAMANHO */
 			.page-index #banner h1 {
 				display: none !important;
 			}
             
             .page-index #banner {
-                margin: 0 !important;
-                padding: 0 !important;
+                margin-top: 0 !important;
+                padding-top: 0 !important;
                 display: flex !important;
-                align-items: flex-start !important; /* Alinha texto e imagem pelo topo */
+                align-items: flex-start !important; /* Alinhamento pelo topo */
                 border: none !important;
             }
 
             .page-index #banner .content {
                 padding-top: 0 !important;
                 margin-top: 0 !important;
-                flex: 1;
             }
 
-            /* Subtítulo "DO CONSUMO À REGENERAÇÃO" no topo */
+            /* Subtítulo no topo absoluto */
             .page-index #banner header p {
                 margin: 0 !important;
                 padding: 0 !important;
@@ -60,18 +59,17 @@
                 font-size: 0.85em;
             }
 
-            /* IMAGEM: MANTER TAMANHO ORIGINAL (450px) */
+            /* IMAGEM: RESTAURADA PARA 450PX */
             #banner .image.object {
                 margin: 0 0 0 4em !important;
                 padding: 0 !important;
-                flex: 0 0 auto !important; /* Impede a imagem de crescer */
-                width: 45% !important; /* Mantém a largura proporcional */
+                flex: 0 0 auto !important;
             }
 
             #banner .image.object img {
                 border-radius: 25px !important; 
-                height: 450px !important; /* Tamanho fixo original */
-                width: 100% !important;
+                height: 450px !important; /* Tamanho anterior restaurado */
+                width: auto !important;
                 object-fit: cover !important;
             }
 
@@ -124,9 +122,9 @@
 			<div id="main">
 				<div class="inner">
 
-					<header id="header" style="height: 0; visibility: hidden;"></header>
+					<header id="header" style="height: 0; visibility: hidden; margin: 0; padding: 0;"></header>
 
-					<!-- Banner Principal -->
+					<!-- Banner Principal (Mais alto e imagem original) -->
 					<section id="banner">
 						<div class="content">
 							<header>
