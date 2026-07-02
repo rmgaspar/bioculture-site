@@ -6,95 +6,56 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="assets/css/main.css" />
 		<style>
-			/* 1. ESTRUTURA FLUIDA E LIMPA */
+			/* 1. ESTRUTURA E LIMPEZA */
 			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
 			#header .toggle { background: none !important; top: 2em !important; left: 2em !important; border: none !important; text-decoration: none !important; }
 			#header .toggle:before { content: '\f06c' !important; font-family: "Font Awesome 5 Free" !important; font-weight: 900; color: #2e7d32 !important; font-size: 1.6em !important; }
             #header .toggle:after { display: none !important; }
-            
             section { padding-top: 2em !important; }
 
-            /* 2. HERO SECTION (O IMPACTO INICIAL) */
-            .hero-section {
-                position: relative;
+            /* 2. HERO BANNER (ESTREITO) */
+            .hero-banner {
                 width: 100%;
-                height: 80vh;
-                min-height: 500px;
+                height: 45vh;
+                min-height: 350px;
                 border-radius: 40px;
                 overflow: hidden;
-                margin-bottom: 4em;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                box-shadow: 0 30px 60px rgba(0,0,0,0.1);
+                position: relative;
+                margin-bottom: 6em;
+                box-shadow: 0 20px 50px rgba(0,0,0,0.1);
             }
-            .hero-image {
-                position: absolute;
-                top: 0; left: 0; width: 100%; height: 100%;
-                background-image: url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2071&auto=format&fit=crop');
-                background-size: cover;
-                background-position: center;
-                z-index: 1;
-            }
+            .hero-banner img { width: 100%; height: 100%; object-fit: cover; }
             .hero-overlay {
-                position: absolute;
-                top: 0; left: 0; width: 100%; height: 100%;
-                background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.5));
-                z-index: 2;
+                position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+                background: linear-gradient(to right, rgba(255,255,255,0.9), transparent);
+                display: flex; align-items: center; padding-left: 10%;
             }
-            .hero-content {
-                position: relative;
-                z-index: 3;
-                text-align: center;
-                color: #fff;
-                padding: 2em;
-                max-width: 800px;
-            }
-            .hero-content h1 { 
-                color: #fff !important; 
-                font-size: 4.5em !important; 
-                font-weight: 300 !important; 
-                line-height: 1;
-                margin-bottom: 0.2em !important;
-                letter-spacing: -2px;
-            }
-            .hero-content p { color: #fff !important; font-size: 1.5em !important; opacity: 0.9; font-style: italic; }
+            .hero-content h1 { font-size: 4em !important; color: #2e7d32 !important; font-weight: 300 !important; margin: 0; letter-spacing: -2px; }
 
-            /* 3. NARRATIVA VERTICAL (OS PILARES) */
-            .pillar-row {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                text-align: center;
-                gap: 2em;
-                margin-bottom: 10em;
-                padding: 0 10%;
-            }
-            .pillar-row h2 { font-size: 2.5em !important; color: #2e7d32 !important; font-weight: 700; margin-bottom: 0.5em; }
-            .pillar-row p { font-size: 1.4em !important; color: #555 !important; line-height: 1.6; max-width: 900px; margin-bottom: 2em; }
-            
-            .pillar-image {
-                width: 100%;
-                height: 500px;
-                border-radius: 40px;
-                overflow: hidden;
-                box-shadow: 0 20px 50px rgba(0,0,0,0.08);
-            }
-            .pillar-image img { width: 100%; height: 100%; object-fit: cover; transition: transform 1s ease; }
-            .pillar-image:hover img { transform: scale(1.05); }
+            /* 3. COMPOSIÇÃO DE FRAMES */
+            .section-container { margin-bottom: 12em; text-align: center; }
+            .section-container h2 { font-size: 2.5em !important; color: #2e7d32 !important; margin-bottom: 1em; }
+            .section-container p { max-width: 800px; margin: 0 auto 3em auto; font-size: 1.35em !important; line-height: 1.6; color: #555; }
 
-            /* 4. BOTÃO CTA (SUBTIL) */
+            /* Frames Verticais (Recursos Vitais) */
+            .vertical-frames { display: flex; gap: 15px; height: 550px; margin-bottom: 3em; }
+            .v-frame { flex: 1; border-radius: 40px; overflow: hidden; transition: flex 0.8s ease; box-shadow: 0 15px 35px rgba(0,0,0,0.08); }
+            .v-frame img { width: 100%; height: 100%; object-fit: cover; }
+            .v-frame:hover { flex: 1.5; }
+
+            /* Frames Horizontais (Ecossistemas) */
+            .horizontal-stack { display: flex; flex-direction: column; gap: 15px; }
+            .h-frame { width: 100%; height: 220px; border-radius: 40px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+            .h-frame img { width: 100%; height: 100%; object-fit: cover; }
+
+            /* Botão Subtil */
             .button.primary {
                 background-color: #2e7d32 !important;
-                box-shadow: none !important;
                 border-radius: 50px;
-                padding: 0 2.5em;
-                height: 3.5em;
-                line-height: 3.5em;
-                font-weight: 700;
-                letter-spacing: 2px;
-                text-transform: uppercase;
+                padding: 0 3em;
                 font-size: 0.8em;
+                letter-spacing: 2px;
+                margin-top: 2em;
             }
 
 			.footer-signature-right { text-align: right; padding: 4em 0 2em 0; opacity: 0.9; }
@@ -106,50 +67,50 @@
 					<header id="header" style="height: 0; margin: 0; padding: 0; overflow: hidden;"></header>
 					
                     <section>
-                        <!-- HERO SECTION: O Impacto Inicial -->
-                        <div class="hero-section">
-                            <div class="hero-image"></div>
-                            <div class="hero-overlay"></div>
-                            <div class="hero-content">
-                                <h1>bioCultura</h1>
-                                <p>Soluções técnicas e éticas para um futuro natural.</p>
+                        <!-- HERO BANNER -->
+                        <div class="hero-banner">
+                            <img src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2071&auto=format&fit=crop" alt="bioCultura" />
+                            <div class="hero-overlay">
+                                <div class="hero-content">
+                                    <h1>bioCultura</h1>
+                                    <p style="font-style: italic; color: #2e7d32;">Soluções para um futuro natural.</p>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- PILLAR 1: ÁGUA -->
-                        <div class="pillar-row">
-                            <div class="content">
-                                <h2>Recursos Vitais</h2>
-                                <p>Gerimos a água e o solo como o sangue e o filtro da terra. Desenhamos sistemas que retêm a abundância e regeneram a vida.</p>
-                                <a href="recursos/agua.html" class="button primary">Explorar Ciclo Hídrico</a>
+                        <!-- SEÇÃO 1: VERTICAL FRAMES (RECURSOS) -->
+                        <div class="section-container">
+                            <h2>Recursos Vitais</h2>
+                            <p>Gerimos a água e o solo como o sangue e o filtro da terra. Desenhamos sistemas que retêm a abundância e regeneram a vida.</p>
+                            
+                            <div class="vertical-frames">
+                                <div class="v-frame"><img src="https://images.unsplash.com/photo-1535868118629-f37bcd69ff59?q=80&w=2076&auto=format&fit=crop" alt="Água" /></div>
+                                <div class="v-frame"><img src="https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?q=80&w=2000&auto=format&fit=crop" alt="Solo" /></div>
+                                <div class="v-frame"><img src="https://images.unsplash.com/photo-1464226184884-fa280b87c399?q=80&w=2000&auto=format&fit=crop" alt="Regeneração" /></div>
                             </div>
-                            <div class="pillar-image">
-                                <img src="https://images.unsplash.com/photo-1535868118629-f37bcd69ff59?q=80&w=2076&auto=format&fit=crop" alt="Água" />
-                            </div>
+                            <a href="recursos/agua.html" class="button primary">Explorar Ciclos</a>
                         </div>
 
-                        <!-- PILLAR 2: ECOSSISTEMAS -->
-                        <div class="pillar-row">
-                            <div class="content">
-                                <h2>Vida e Ecossistemas</h2>
-                                <p>Protegemos a biodiversidade funcional. Criamos habitats para aliados invisíveis, garantindo que fauna e flora prosperam em uníssono.</p>
-                                <a href="ecossistemas/fauna.html" class="button primary">Conhecer Aliados</a>
+                        <!-- SEÇÃO 2: HORIZONTAL SLICES (ECOSSISTEMAS) -->
+                        <div class="section-container">
+                            <h2>Vida e Ecossistemas</h2>
+                            <p>Protegemos a biodiversidade funcional. Criamos habitats para aliados invisíveis, garantindo que fauna e flora prosperam em uníssono.</p>
+                            
+                            <div class="horizontal-stack">
+                                <div class="h-frame"><img src="https://images.unsplash.com/photo-1470615619213-fdd3985a40e0?q=80&w=2054&auto=format&fit=crop" alt="Fauna" /></div>
+                                <div class="h-frame"><img src="https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?q=80&w=2000&auto=format&fit=crop" alt="Flora" /></div>
                             </div>
-                            <div class="pillar-image">
-                                <img src="https://images.unsplash.com/photo-1470615619213-fdd3985a40e0?q=80&w=2054&auto=format&fit=crop" alt="Ecossistemas" />
-                            </div>
+                            <a href="ecossistemas/fauna.html" class="button primary">Conhecer Aliados</a>
                         </div>
 
-                        <!-- PILLAR 3: ENERGIA -->
-                        <div class="pillar-row">
-                            <div class="content">
-                                <h2>Energia Ética</h2>
-                                <p>Promovemos a soberania energética através da micro-geração, privilegiando a durabilidade e a utilização racional.</p>
-                                <a href="energia/energia.html" class="button primary">Soberania Energética</a>
+                        <!-- SEÇÃO 3: ENERGIA (ASYMMETRIC) -->
+                        <div class="section-container">
+                            <h2>Energia Ética</h2>
+                            <p>Promovemos a soberania energética através da micro-geração, privilegiando a durabilidade e a utilização racional.</p>
+                            <div style="width: 100%; height: 500px; border-radius: 40px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.08);">
+                                <img src="https://images.unsplash.com/photo-1509391366360-2e959784a276?q=80&w=2072&auto=format&fit=crop" style="width: 100%; height: 100%; object-fit: cover;" alt="Energia" />
                             </div>
-                            <div class="pillar-image">
-                                <img src="https://images.unsplash.com/photo-1509391366360-2e959784a276?q=80&w=2072&auto=format&fit=crop" alt="Energia" />
-                            </div>
+                            <a href="energia/energia.html" class="button primary">Soberania Energética</a>
                         </div>
 
 					</section>
