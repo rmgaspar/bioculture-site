@@ -1,5 +1,3 @@
-Aqui tens o código completo para a página agua.html.
-Apliquei a estrutura de layout alternado (imagem/texto) para os novos conteúdos, alinhei os ícones dos sistemas e refinei as cores das zonas de "Desafio" e "Solução", integrando os textos sobre caleiras, rega profunda por tipo de solo e a questão ética das faturas de saneamento.
 <!DOCTYPE HTML>
 <html>
 	<head>
@@ -14,23 +12,44 @@ Apliquei a estrutura de layout alternado (imagem/texto) para os novos conteúdos
 			#header .toggle:before { content: '\f06c' !important; font-family: "Font Awesome 5 Free" !important; font-weight: 900; color: #2e7d32 !important; font-size: 1.6em !important; }
             #header .toggle:after { display: none !important; }
 			
+            /* Alinhamento com o topo da sidebar */
             section { padding-top: 2em !important; margin-bottom: 4em !important; }
 
             /* 2. TIPOGRAFIA */
-            header.main h1 { color: #2e7d32 !important; line-height: 1.1; margin-bottom: 0.5em !important; font-size: 3em !important; font-weight: 300; }
             p { font-size: 1.25em !important; color: #222 !important; line-height: 1.7 !important; }
             h2 { color: #2e7d32 !important; margin-top: 2em !important; margin-bottom: 1.5em !important; font-size: 2em !important; font-weight: 700; }
-            .features h3 { font-size: 1.4em !important; font-weight: 700; margin-bottom: 0.5em !important; }
-            .features p { font-size: 1.1em !important; color: #444 !important; line-height: 1.6 !important; }
+            .features h3 { font-size: 1.6em !important; font-weight: 700; margin-bottom: 0.5em !important; }
+            .features p { font-size: 1.15em !important; color: #444 !important; line-height: 1.6 !important; }
 
-            /* 3. SISTEMAS (GRID DE ÍCONES ALINHADOS) */
-            .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 3em 2em; margin-bottom: 4em; }
-            .features article { display: flex; align-items: flex-start; gap: 1.5em; }
-            .features article .icon { 
-                flex-shrink: 0; width: 60px !important; height: 60px !important; line-height: 60px !important; 
-                text-align: center; background: none !important; border: none !important; display: block !important; 
+            /* 3. BANNER DUPLO (INTRO BOX + IMAGEM) */
+            .banner-container { display: flex; gap: 20px; margin-bottom: 6em; flex-wrap: wrap; }
+            .banner-box { flex: 1; min-width: 320px; height: 450px; border-radius: 30px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+            
+            .intro-box {
+                background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+                display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 3em; text-align: center; position: relative; border: 1px solid rgba(33, 150, 243, 0.1);
             }
-            .features article .icon:before { font-size: 45px !important; display: block; }
+            .intro-tag { position: absolute; top: 30px; font-size: 0.8em; font-weight: 900; letter-spacing: 5px; color: #0277bd; text-transform: uppercase; opacity: 0.6; }
+            .intro-title { font-family: 'Source Sans Pro', sans-serif; font-size: 2.2em !important; color: #01579b !important; font-weight: 300 !important; margin-bottom: 0.5em !important; }
+            .intro-text { font-size: 1.1em !important; color: #0277bd !important; line-height: 1.6 !important; font-style: italic; }
+            .banner-box img { width: 100%; height: 100%; object-fit: cover; }
+
+            /* 4. LAYOUT ALTERNADO (SISTEMAS HIDRÁULICOS) */
+            .features { display: flex; flex-direction: column; gap: 6em; }
+            .feature-row { display: flex; align-items: center; gap: 4em; flex-wrap: wrap; }
+            .feature-row:nth-child(even) { flex-direction: row-reverse; }
+            
+            .feature-content { flex: 1; min-width: 300px; }
+            .feature-image { flex: 1; min-width: 300px; height: 350px; border-radius: 40px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.08); }
+            .feature-image img { width: 100%; height: 100%; object-fit: cover; }
+
+            .feature-header { display: flex; align-items: center; gap: 1em; margin-bottom: 1em; }
+            .feature-header .icon { 
+                width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; 
+                background: none !important; border: none !important; transform: none !important; 
+            }
+            .feature-header .icon:before { font-size: 45px !important; display: block; border: none !important; }
+            .feature-header .icon:after { display: none !important; }
 
             /* Cores dos Sistemas */
             .sys-raiz .icon:before, .sys-raiz h3 { color: #8d6e63 !important; }
@@ -38,16 +57,8 @@ Apliquei a estrutura de layout alternado (imagem/texto) para os novos conteúdos
             .sys-azul .icon:before, .sys-azul h3 { color: #0277bd !important; }
             .sys-filt .icon:before, .sys-filt h3 { color: #4db6ac !important; }
 
-            /* 4. LAYOUT ALTERNADO (CONTEÚDO NOVO) */
-            .content-rows { display: flex; flex-direction: column; gap: 5em; margin: 4em 0; }
-            .row-item { display: flex; align-items: center; gap: 4em; flex-wrap: wrap; }
-            .row-item:nth-child(even) { flex-direction: row-reverse; }
-            .row-text { flex: 1; min-width: 300px; }
-            .row-image { flex: 1; min-width: 300px; height: 350px; border-radius: 30px; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
-            .row-image img { width: 100%; height: 100%; object-fit: cover; }
-
-            /* 5. ZONAS DE IMPACTO (CORES AJUSTADAS) */
-            .impact-zones { display: grid; grid-template-columns: 1fr 1fr; gap: 2em; margin-top: 4em; }
+            /* 5. ZONAS DE IMPACTO */
+            .impact-zones { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2em; margin-top: 4em; }
             .zone { padding: 2.5em; border-radius: 25px; }
             .danger-zone { background: #fff5f5; border: 1px solid #feb2b2; }
             .danger-zone h3 { color: #c53030 !important; }
@@ -62,86 +73,93 @@ Apliquei a estrutura de layout alternado (imagem/texto) para os novos conteúdos
 			<div id="main"><div class="inner">
 					<header id="header" style="height: 0; margin: 0; padding: 0; overflow: hidden;"></header>
 					
-                    <section id="banner">
-						<div class="content">
-							<header>
-								<h1>Água: Sangue da Terra</h1>
-								<p style="color: #8d6e63; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; font-size: 0.85em;">Gerir a abundância, respeitar a escassez</p>
-							</header>
-							<p>A água não é um bem de consumo, é o veículo da vida. Na bioCultura, desenhamos sistemas que captam, retêm e purificam este recurso, transformando cada gota num agente de regeneração do ecossistema.</p>
-						</div>
-						<span class="image object">
-                            <img src="https://images.unsplash.com/photo-1535868118629-f37bcd69ff59?q=80&w=2076&auto=format&fit=crop" alt="Água e Natureza" />
-                        </span>
+                    <section>
+                        <!-- Banner Superior: Box de Intro + Imagem -->
+                        <div class="banner-container">
+                            <div class="banner-box intro-box">
+                                <div class="intro-tag">Recursos Vitais</div>
+                                <h1 class="intro-title">Água: Sangue da Terra</h1>
+                                <p class="intro-text">A água não é um bem de consumo, é o veículo da vida. Na bioCultura, desenhamos sistemas que captam e purificam este recurso sagrado.</p>
+                            </div>
+                            <div class="banner-box">
+                                <img src="https://images.unsplash.com/photo-1535868118629-f37bcd69ff59?q=80&w=2076&auto=format&fit=crop" alt="Água e Natureza" />
+                            </div>
+                        </div>
+
+                        <h2>Sistemas de Gestão Hidráulica</h2>
+                        <div class="features">
+                            
+                            <!-- 1. ÂNFORAS -->
+                            <div class="feature-row sys-raiz">
+                                <div class="feature-content">
+                                    <div class="feature-header">
+                                        <span class="icon solid fa-vihara"></span>
+                                        <h3>Eficiência na Raiz</h3>
+                                    </div>
+                                    <p>Utilizamos a técnica milenar de Ânforas de barro para rega subterrânea lenta. A porosidade do barro responde diretamente à sede da planta, eliminando a evaporação superficial e reduzindo o consumo em 70%.</p>
+                                </div>
+                                <div class="feature-image">
+                                    <img src="https://images.unsplash.com/photo-1558905619-17254263246a?q=80&w=2000&auto=format&fit=crop" alt="Irrigação por Ânfora" />
+                                </div>
+                            </div>
+
+                            <!-- 2. CIRCULAÇÃO -->
+                            <div class="feature-row sys-circ">
+                                <div class="feature-content">
+                                    <div class="feature-header">
+                                        <span class="icon solid fa-sync-alt"></span>
+                                        <h3>Circulação Inteligente</h3>
+                                    </div>
+                                    <p>A mecânica dos fluidos aplicada à sustentabilidade. Bombas de alta eficiência e purgadores automáticos garantem que o fluxo hídrico e térmico seja contínuo, prevenindo a oxidação e o desperdício de energia.</p>
+                                </div>
+                                <div class="feature-image">
+                                    <img src="https://images.unsplash.com/photo-1581094288338-2314dddb7bc3?q=80&w=2000&auto=format&fit=crop" alt="Hidráulica bioCultura" />
+                                </div>
+                            </div>
+
+                            <!-- 3. ENERGIA AZUL -->
+                            <div class="feature-row sys-azul">
+                                <div class="feature-content">
+                                    <div class="feature-header">
+                                        <span class="icon solid fa-water"></span>
+                                        <h3>Energia Azul</h3>
+                                    </div>
+                                    <p>Portugal possui um potencial vasto no aproveitamento da força das marés e micro-geração hídrica. Promovemos fontes de energia descentralizadas que respeitam a integridade dos ecossistemas ribeirinhos e costeiros.</p>
+                                </div>
+                                <div class="feature-image">
+                                    <img src="https://images.unsplash.com/photo-1439066615861-d1af74d74000?q=80&w=2000&auto=format&fit=crop" alt="Energia das Marés" />
+                                </div>
+                            </div>
+
+                            <!-- 4. FILTRAGEM -->
+                            <div class="feature-row sys-filt">
+                                <div class="feature-content">
+                                    <div class="feature-header">
+                                        <span class="icon solid fa-filter"></span>
+                                        <h3>Filtragem Biológica</h3>
+                                    </div>
+                                    <p>Através de Humedais Artificiais e fitodepuração, transformamos águas cinzentas em recursos seguros para rega. As plantas aquáticas atuam como filtros vivos, fechando o ciclo hídrico dentro da própria propriedade.</p>
+                                </div>
+                                <div class="feature-image">
+                                    <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=2000&auto=format&fit=crop" alt="Filtragem Natural" />
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="impact-zones">
+                            <div class="zone danger-zone">
+                                <h3><span class="icon solid fa-exclamation-triangle"></span> O Desafio Ético</h3>
+                                <p>Pagamos faturas elevadas por um saneamento que trata a água como um resíduo a esconder. Este modelo convencional polui rios e seca os aquíferos que pertencem a todos.</p>
+                            </div>
+                            <div class="zone solution-zone">
+                                <h3><span class="icon solid fa-leaf"></span> A Solução bioCultura</h3>
+                                <p>As <strong>Biofossas</strong> e a regeneração do solo permitem gerir os resíduos localmente, devolvendo nutrientes à terra e eliminando a dependência de redes municipais ineficientes.</p>
+                            </div>
+                        </div>
 					</section>
 
-                    <h2>Sistemas de Gestão e Hidráulica</h2>
-                    <div class="features">
-                        <article class="sys-raiz">
-                            <span class="icon solid fa-vihara"></span>
-                            <div class="content">
-                                <h3>Eficiência na Raiz</h3>
-                                <p>Técnica de Ânforas de barro para rega subterrânea lenta, respondendo à sede da planta sem evaporação.</p>
-                            </div>
-                        </article>
-                        <article class="sys-circ">
-                            <span class="icon solid fa-sync-alt"></span>
-                            <div class="content">
-                                <h3>Circulação Inteligente</h3>
-                                <p>Bombas de alta eficiência e purgadores que garantem o fluxo contínuo e evitam a corrosão dos sistemas.</p>
-                            </div>
-                        </article>
-                        <article class="sys-azul">
-                            <span class="icon solid fa-water"></span>
-                            <div class="content">
-                                <h3>Energia Azul</h3>
-                                <p>Micro-geração hídrica e aproveitamento de marés como fontes descentralizadas e soberanas.</p>
-                            </div>
-                        </article>
-                        <article class="sys-filt">
-                            <span class="icon solid fa-filter"></span>
-                            <div class="content">
-                                <h3>Filtragem Biológica</h3>
-                                <p>Humedais artificiais que utilizam plantas aquáticas para limpar águas cinzentas domésticas.</p>
-                            </div>
-                        </article>
-                    </div>
-
-                    <div class="content-rows">
-                        <!-- ROW 1: CALEIRAS -->
-                        <div class="row-item">
-                            <div class="row-text">
-                                <h3>Recolha Passiva: O Telhado como Mina</h3>
-                                <p>O primeiro passo da resiliência doméstica é a recolha pluvial. Sistemas de caleiras e algerozes bem dimensionados transformam a cobertura da casa num captador de milhares de litros de água pura, isenta de cloro e com pH equilibrado, ideal para a horta.</p>
-                            </div>
-                            <div class="row-image">
-                                <img src="https://images.unsplash.com/photo-1558905619-17254263246a?q=80&w=2000&auto=format&fit=crop" alt="Recolha de Água Pluvial" />
-                            </div>
-                        </div>
-
-                        <!-- ROW 2: REGA POR SOLO -->
-                        <div class="row-item">
-                            <div class="row-text">
-                                <h3>Hidratar vs. Molhar: A Inteligência do Solo</h3>
-                                <p>A rega profunda obriga as raízes a procurar humidade no subsolo, criando plantas resistentes. Adaptamos a técnica ao terreno: solos <strong>arenosos</strong> exigem regas curtas e frequentes; solos <strong>argilosos</strong> pedem regas lentas e espaçadas para evitar a saturação e asfixia radicular.</p>
-                            </div>
-                            <div class="row-image">
-                                <img src="https://images.unsplash.com/photo-1464226184884-fa280b87c399?q=80&w=2000&auto=format&fit=crop" alt="Solo e Humidade" />
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="impact-zones">
-                        <div class="zone danger-zone">
-                            <h3><span class="icon solid fa-exclamation-triangle"></span> O Desafio Ético</h3>
-                            <p>Pagamos faturas elevadíssimas por um "tratamento de resíduos" muitas vezes ineficiente. O saneamento convencional trata a água como um lixo que deve ser escondido, secando os aquíferos e poluindo rios.</p>
-                        </div>
-                        <div class="zone solution-zone">
-                            <h3><span class="icon solid fa-leaf"></span> A Solução bioCultura</h3>
-                            <p>As <strong>Biofossas</strong> fecham o ciclo localmente. Através de filtragem biológica, devolvemos os nutrientes ao solo e a água ao ciclo natural, eliminando a dependência de redes municipais obsoletas e caras.</p>
-                        </div>
-                    </div>
-
+					<!-- LOGÓTIPO NO FUNDO - DIREITA -->
 					<div class="footer-signature-right">
 						<a href="../index.html" style="border: none; display: inline-block; text-decoration: none;">
 							<div style="font-family: 'Source Sans Pro', sans-serif; font-size: 1.4em; line-height: 1; display: flex; align-items: flex-end; justify-content: flex-end;">
