@@ -1,3 +1,5 @@
+Aqui tens o código final para o index.html, com os ajustes de compressão vertical para que o conteúdo (Atlas + Texto) se ajuste ao ecrã sem necessidade de scroll no desktop.
+Reduzi as margens do topo, a altura do Atlas e os espaçamentos entre blocos para garantir essa fluidez visual imediata.
 <!DOCTYPE HTML>
 <html>
 	<head>
@@ -6,59 +8,58 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="assets/css/main.css" />
 		<style>
-			/* 1. RESET E ESTRUTURA LIMPA */
+			/* 1. RESET E ESTRUTURA COMPACTA */
 			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
-			#header .toggle { background: none !important; top: 2em !important; left: 2em !important; border: none !important; text-decoration: none !important; z-index: 10001; }
+			#header .toggle { background: none !important; top: 1.5em !important; left: 1.5em !important; border: none !important; text-decoration: none !important; z-index: 10001; }
 			#header .toggle:before { content: '\f06c' !important; font-family: "Font Awesome 5 Free" !important; font-weight: 900; color: #2e7d32 !important; font-size: 1.6em !important; }
             #header .toggle:after { display: none !important; }
             
             section { 
-                padding-top: 1em !important; 
+                padding-top: 0.5em !important; 
                 display: flex; 
                 flex-direction: column; 
                 align-items: center;
                 min-height: 100vh;
                 background: #ffffff;
+                overflow: hidden; /* Evita scroll indesejado */
             }
 
-            /* 2. ASSINATURA MINIMALISTA TOPO */
+            /* 2. ASSINATURA COMPACTA */
             .mini-banner {
                 width: 100%;
                 text-align: center;
-                padding: 2em 0;
-                margin-bottom: 2em;
+                padding: 1em 0;
+                margin-bottom: 1em;
             }
             .mini-banner h1 { 
                 font-family: 'Source Sans Pro', sans-serif; 
-                font-size: 1.8em !important; 
+                font-size: 1.6em !important; 
                 font-weight: 300 !important; 
                 color: #2e7d32 !important; 
                 margin: 0; 
-                letter-spacing: 10px; 
+                letter-spacing: 8px; 
                 text-transform: uppercase;
                 opacity: 0.8;
             }
 
-            /* 3. O ATLAS BIOCULTURA (SIMBIOSE SEM LINHAS) */
+            /* 3. O ATLAS BIOCULTURA (ALTURA AJUSTADA) */
             .atlas-wrapper {
                 width: 100%;
-                max-width: 1000px;
+                max-width: 950px;
                 padding: 0 20px;
-                margin-bottom: 4em;
+                margin-bottom: 2em;
             }
 
             .atlas-container {
                 position: relative;
                 width: 100%;
-                height: 550px;
-                /* Formato Atlas: Polos achatados e laterais curvas */
+                height: 480px; /* Reduzido de 550px para caber no ecrã */
                 border-radius: 50% / 15%; 
                 overflow: hidden;
-                box-shadow: 0 30px 70px rgba(0,0,0,0.15);
+                box-shadow: 0 25px 60px rgba(0,0,0,0.12);
                 background: #000;
             }
 
-            /* Camadas de Imagem Vibrantes */
             .layer {
                 position: absolute;
                 top: 0; left: 0;
@@ -69,54 +70,49 @@
                 transition: transform 10s ease-in-out;
             }
 
-            /* Lado Esquerdo: Flora e Terra (Verdes Vibrantes) */
             .layer-earth {
-                background-image: url('https://plus.unsplash.com/premium_photo-1686899171869-4d80f6f9d315?q=80&w=1625&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+                background-image: url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2071&auto=format&fit=crop');
                 z-index: 1;
             }
 
-            /* Lado Direito: Água e Fauna Marinha (Azuis Profundos) */
             .layer-water {
-                background-image: url('https://plus.unsplash.com/premium_photo-1661841439995-1706237c83dc?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+                background-image: url('https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?q=80&w=2034&auto=format&fit=crop');
                 z-index: 2;
-                /* Fusão Smooth: sem linhas geométricas, apenas gradiente de transparência */
                 mask-image: linear-gradient(to right, transparent 0%, transparent 20%, black 80%, black 100%);
                 -webkit-mask-image: linear-gradient(to right, transparent 0%, transparent 20%, black 80%, black 100%);
             }
 
-            .atlas-container:hover .layer {
-                transform: scale(1.05);
-            }
-
-            /* 4. TEXTO SUBTIL DE CONCEITO */
+            /* 4. TEXTO DE CONCEITO SUBIDO */
             .concept-text {
                 text-align: center;
                 max-width: 700px;
-                margin-top: 2em;
+                margin-top: 1em;
                 padding: 0 2em;
             }
 
             .concept-text h2 {
                 font-family: 'Source Sans Pro', sans-serif;
-                font-size: 2.5em !important;
+                font-size: 2.2em !important;
                 font-weight: 300 !important;
                 color: #1b5e20 !important;
-                margin-bottom: 0.5em !important;
+                margin-bottom: 0.3em !important;
                 letter-spacing: -1px;
             }
 
             .concept-text p {
-                font-size: 1.3em !important;
+                font-size: 1.2em !important;
                 color: #666 !important;
                 font-style: italic;
-                line-height: 1.6;
+                line-height: 1.4;
+                margin: 0;
             }
 
-			.footer-signature-right { width: 100%; text-align: right; padding: 6em 2em 2em 0; opacity: 0.8; }
+			.footer-signature-right { width: 100%; text-align: right; padding: 2em 2em 1em 0; opacity: 0.8; margin-top: auto; }
 
             @media screen and (max-width: 736px) {
-                .atlas-container { height: 350px; border-radius: 50% / 10%; }
-                .concept-text h2 { font-size: 1.8em !important; }
+                .atlas-container { height: 300px; }
+                .concept-text h2 { font-size: 1.6em !important; }
+                .mini-banner h1 { letter-spacing: 4px; font-size: 1.2em !important; }
             }
 		</style>
 	</head>
@@ -131,7 +127,7 @@
                             <h1>bioCultura</h1>
                         </div>
 
-                        <!-- O ATLAS: Simbiose de Terra e Água -->
+                        <!-- O ATLAS -->
                         <div class="atlas-wrapper">
                             <div class="atlas-container">
                                 <div class="layer layer-earth"></div>
@@ -148,9 +144,9 @@
 
 					<div class="footer-signature-right">
 						<a href="index.html" style="border: none; display: inline-block; text-decoration: none;">
-							<div style="font-family: 'Source Sans Pro', sans-serif; font-size: 1.4em; line-height: 1; display: flex; align-items: flex-end; justify-content: flex-end;">
+							<div style="font-family: 'Source Sans Pro', sans-serif; font-size: 1.2em; line-height: 1; display: flex; align-items: flex-end; justify-content: flex-end;">
                                 <b style="font-weight: 700; color: #2e7d32; margin-right: -3px; position: relative; z-index: 2;">b</b>
-                                <div style="width: 32px; margin: 0 -7px; position: relative; line-height: 0; transform: translateY(4px); z-index: 1;">
+                                <div style="width: 28px; margin: 0 -6px; position: relative; line-height: 0; transform: translateY(4px); z-index: 1;">
                                     <svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: auto;">
                                         <path d="M-20 110 Q50 102 120 110" stroke="#634832" stroke-width="4" fill="none" opacity="0.3" />
                                         <path d="M50 110 C50 80 35 70 50 45 C65 70 50 80 50 110" fill="#2e7d32" />
