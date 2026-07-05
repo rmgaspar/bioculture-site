@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<title>bioCultura - Ecossistema Integrado</title>
+		<title>bioCultura - Ecossistema em Comunhão</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="assets/css/main.css" />
@@ -13,157 +13,129 @@
             #header .toggle:after { display: none !important; }
             section { padding-top: 1em !important; }
 
-            /* 2. ASSINATURA TOPO */
-            .mini-banner { width: 100%; text-align: center; padding: 2em 0; margin-bottom: 1em; }
-            .mini-banner h1 { font-family: 'Source Sans Pro', sans-serif; font-size: 2.2em !important; font-weight: 300 !important; color: #2e7d32 !important; margin: 0; letter-spacing: 4px; }
+            /* 2. MINI-BANNER ASSINATURA */
+            .mini-banner { width: 100%; text-align: center; padding: 2em 0; margin-bottom: 2em; }
+            .mini-banner h1 { font-family: 'Source Sans Pro', sans-serif; font-size: 2.5em !important; font-weight: 300 !important; color: #2e7d32 !important; margin: 0; letter-spacing: 5px; }
             .mini-banner b { font-weight: 700; }
 
-            /* 3. O PUZZLE REAL (3x2) */
-            .puzzle-container {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                padding: 40px 20px;
-                margin-bottom: 4em;
-            }
-
-            .puzzle-grid {
+            /* 3. MOSAICO ORGÂNICO (O "TCHARAN") */
+            .mosaic-container {
                 display: grid;
-                grid-template-columns: repeat(3, 260px);
-                grid-template-rows: repeat(2, 260px);
-                gap: 0;
+                grid-template-columns: repeat(6, 1fr);
+                grid-template-rows: repeat(2, 300px);
+                gap: 20px;
+                max-width: 1200px;
+                margin: 0 auto 6em auto;
+                padding: 0 20px;
             }
 
-            .piece {
+            .cell {
                 position: relative;
-                width: 325px; /* Ligeiramente maior para a aba respirar */
-                height: 325px;
+                overflow: hidden;
                 cursor: pointer;
-                transition: all 0.3s ease;
-                filter: saturate(0.8);
-                z-index: 1;
+                transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+                box-shadow: 0 15px 40px rgba(0,0,0,0.1);
             }
 
-            .piece img {
+            .cell img {
                 width: 100%;
                 height: 100%;
                 object-fit: cover;
-                pointer-events: none;
+                transition: transform 1.2s ease;
+                filter: brightness(0.9) saturate(0.8);
             }
 
-            .piece:hover {
-                filter: saturate(1.2) brightness(1.1);
-                transform: scale(1.03);
-                z-index: 100 !important;
-                filter: drop-shadow(0 15px 30px rgba(0,0,0,0.4));
+            .cell:hover {
+                transform: translateY(-10px) scale(1.02);
+                box-shadow: 0 30px 60px rgba(46, 125, 50, 0.2);
+                z-index: 10;
             }
 
-            /* Labels dos Elementos */
-            .piece-label {
+            .cell:hover img {
+                transform: scale(1.1);
+                filter: brightness(1.1) saturate(1.2);
+            }
+
+            /* Formas Assimétricas e Smooth (Estilo bioCultura) */
+            .c-ar      { grid-column: span 3; border-radius: 80px 20px 100px 30px; }
+            .c-fauna   { grid-column: span 3; border-radius: 20px 100px 30px 120px; }
+            .c-agua    { grid-column: span 2; border-radius: 100px 30px 120px 40px; }
+            .c-flora   { grid-column: span 2; border-radius: 30px 120px 40px 100px; }
+            .c-energia { grid-column: span 1; border-radius: 120px 40px 100px 30px; }
+            .c-terra   { grid-column: span 1; border-radius: 40px 100px 30px 120px; }
+
+            /* Labels Vibrantes */
+            .cell-label {
                 position: absolute;
-                top: 50%; left: 50%;
-                transform: translate(-50%, -50%);
+                bottom: 30px; left: 30px;
                 color: #fff; font-weight: 800; text-transform: uppercase;
-                letter-spacing: 4px; font-size: 1.1em;
-                text-shadow: 0 2px 10px rgba(0,0,0,0.8);
-                pointer-events: none;
-                z-index: 101;
+                letter-spacing: 4px; font-size: 1.2em;
+                text-shadow: 0 2px 15px rgba(0,0,0,0.6);
+                z-index: 2;
             }
 
-            /* POSICIONAMENTO E ENCAIXE (CLIP-PATH) */
-            .p-ar      { grid-column: 1; grid-row: 1; clip-path: url(#clip-p1); }
-            .p-fauna   { grid-column: 2; grid-row: 1; margin-left: -65px; clip-path: url(#clip-p2); }
-            .p-agua    { grid-column: 3; grid-row: 1; margin-left: -130px; clip-path: url(#clip-p3); }
-            .p-flora   { grid-column: 1; grid-row: 2; margin-top: -65px; clip-path: url(#clip-p4); }
-            .p-energia { grid-column: 2; grid-row: 2; margin-left: -65px; margin-top: -65px; clip-path: url(#clip-p5); }
-            .p-terra   { grid-column: 3; grid-row: 2; margin-left: -130px; margin-top: -65px; clip-path: url(#clip-p6); }
-
-            /* 4. TEXTO FINAL */
+            /* 4. TEXTO DE TRANSIÇÃO */
             .intro-text-smooth { text-align: center; padding: 0 10%; margin-bottom: 8em; }
-            .intro-text-smooth h2 { color: #2e7d32; font-size: 2.2em; font-weight: 700; margin-bottom: 0.8em; }
-            .intro-text-smooth p { font-size: 1.35em; line-height: 1.6; color: #555; max-width: 800px; margin: 0 auto; font-style: italic; }
+            .intro-text-smooth h2 { color: #2e7d32; font-size: 2.5em; font-weight: 700; margin-bottom: 1em; letter-spacing: -1px; }
+            .intro-text-smooth p { font-size: 1.4em; line-height: 1.6; color: #444; max-width: 900px; margin: 0 auto; font-style: italic; }
 
 			.footer-signature-right { text-align: right; padding: 4em 0 2em 0; opacity: 0.9; }
 
-            @media screen and (max-width: 1000px) {
-                .puzzle-grid { display: flex; flex-direction: column; align-items: center; gap: 20px; }
-                .piece { clip-path: none !important; width: 90%; height: 250px; border-radius: 30px; margin: 0 !important; }
+            /* Responsividade */
+            @media screen and (max-width: 980px) {
+                .mosaic-container { grid-template-columns: repeat(2, 1fr); grid-template-rows: auto; gap: 15px; }
+                .cell { grid-column: span 1 !important; height: 250px; border-radius: 40px !important; }
             }
 		</style>
 	</head>
 	<body class="is-preload">
-
-        <!-- MÁSCARAS DE PUZZLE REAIS (SVG) -->
-        <svg width="0" height="0" style="position:absolute;">
-            <defs>
-                <!-- P1: Ar (Aba Direita, Aba Baixo) -->
-                <clipPath id="clip-p1" clipPathUnits="objectBoundingBox">
-                    <path d="M0,0 H0.8 V0.4 C0.8,0.4 0.9,0.4 0.9,0.5 C0.9,0.6 0.8,0.6 0.8,0.6 V1 H0.4 C0.4,1 0.4,0.9 0.5,0.9 C0.6,0.9 0.6,0.8 0.5,0.8 C0.4,0.8 0.4,0.9 0.4,0.9 H0 V0 Z"></path>
-                </clipPath>
-                <!-- P2: Fauna (Cava Esquerda, Aba Direita, Aba Baixo) -->
-                <clipPath id="clip-p2" clipPathUnits="objectBoundingBox">
-                    <path d="M0.2,0 H0.8 V0.4 C0.8,0.4 0.9,0.4 0.9,0.5 C0.9,0.6 0.8,0.6 0.8,0.6 V1 H0.4 C0.4,1 0.4,0.9 0.5,0.9 C0.6,0.9 0.6,0.8 0.5,0.8 C0.4,0.8 0.4,0.9 0.4,0.9 H0.2 V0.6 C0.2,0.6 0.3,0.6 0.3,0.5 C0.3,0.4 0.2,0.4 0.2,0.4 V0 Z"></path>
-                </clipPath>
-                <!-- P3: Água (Cava Esquerda, Aba Baixo) -->
-                <clipPath id="clip-p3" clipPathUnits="objectBoundingBox">
-                    <path d="M0.2,0 H1 V1 H0.4 C0.4,1 0.4,0.9 0.5,0.9 C0.6,0.9 0.6,0.8 0.5,0.8 C0.4,0.8 0.4,0.9 0.4,0.9 H0.2 V0.6 C0.2,0.6 0.3,0.6 0.3,0.5 C0.3,0.4 0.2,0.4 0.2,0.4 V0 Z"></path>
-                </clipPath>
-                <!-- P4: Flora (Cava Cima, Aba Direita) -->
-                <clipPath id="clip-p4" clipPathUnits="objectBoundingBox">
-                    <path d="M0,0.2 H0.4 C0.4,0.2 0.4,0.3 0.5,0.3 C0.6,0.3 0.6,0.2 0.5,0.2 C0.4,0.2 0.4,0.3 0.4,0.3 H0.8 V0.6 C0.8,0.6 0.9,0.6 0.9,0.7 C0.9,0.8 0.8,0.8 0.8,0.7 V1 H0 V0.2 Z"></path>
-                </clipPath>
-                <!-- P5: Energia (Cava Cima, Cava Esquerda, Aba Direita) -->
-                <clipPath id="clip-p5" clipPathUnits="objectBoundingBox">
-                    <path d="M0.2,0.2 H0.4 C0.4,0.2 0.4,0.3 0.5,0.3 C0.6,0.3 0.6,0.2 0.5,0.2 C0.4,0.2 0.4,0.3 0.4,0.3 H0.8 V0.6 C0.8,0.6 0.9,0.6 0.9,0.7 C0.9,0.8 0.8,0.8 0.8,0.7 V1 H0.2 V0.8 C0.2,0.8 0.3,0.8 0.3,0.7 C0.3,0.6 0.2,0.6 0.2,0.7 V0.2 Z"></path>
-                </clipPath>
-                <!-- P6: Terra (Cava Cima, Cava Esquerda) -->
-                <clipPath id="clip-p6" clipPathUnits="objectBoundingBox">
-                    <path d="M0.2,0.2 H0.4 C0.4,0.2 0.4,0.3 0.5,0.3 C0.6,0.3 0.6,0.2 0.5,0.2 C0.4,0.2 0.4,0.3 0.4,0.3 H1 V1 H0.2 V0.8 C0.2,0.8 0.3,0.8 0.3,0.7 C0.3,0.6 0.2,0.6 0.2,0.7 V0.2 Z"></path>
-                </clipPath>
-            </defs>
-        </svg>
-
 		<div id="wrapper">
 			<div id="main"><div class="inner">
 					<header id="header" style="height: 0; margin: 0; padding: 0; overflow: hidden;"></header>
 					
                     <section>
+                        <!-- ASSINATURA -->
                         <div class="mini-banner">
                             <h1><b>b</b>io<b>C</b>ultura</h1>
                         </div>
 
-                        <div class="puzzle-container">
-                            <div class="puzzle-grid">
-                                <div class="piece p-ar" onclick="location.href='recursos/ar.html'">
-                                    <img src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2071&auto=format&fit=crop" alt="Ar" />
-                                    <div class="piece-label">Ar</div>
-                                </div>
-                                <div class="piece p-fauna" onclick="location.href='ecossistemas/fauna.html'">
-                                    <img src="https://images.unsplash.com/photo-1470615619213-fdd3985a40e0?q=80&w=2054&auto=format&fit=crop" alt="Fauna" />
-                                    <div class="piece-label">Fauna</div>
-                                </div>
-                                <div class="piece p-agua" onclick="location.href='recursos/agua.html'">
-                                    <img src="https://images.unsplash.com/photo-1535868118629-f37bcd69ff59?q=80&w=2076&auto=format&fit=crop" alt="Água" />
-                                    <div class="piece-label">Água</div>
-                                </div>
-                                <div class="piece p-flora" onclick="location.href='ecossistemas/flora.html'">
-                                    <img src="https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?q=80&w=2000&auto=format&fit=crop" alt="Flora" />
-                                    <div class="piece-label">Flora</div>
-                                </div>
-                                <div class="piece p-energia" onclick="location.href='energia/energia.html'">
-                                    <img src="https://images.unsplash.com/photo-1509391366360-2e959784a276?q=80&w=2072&auto=format&fit=crop" alt="Energia" />
-                                    <div class="piece-label">Energia</div>
-                                </div>
-                                <div class="piece p-terra" onclick="location.href='recursos/solo.html'">
-                                    <img src="https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?q=80&w=2000&auto=format&fit=crop" alt="Terra" />
-                                    <div class="piece-label">Terra</div>
-                                </div>
+                        <!-- MOSAICO DE CÉLULAS EM COMUNHÃO -->
+                        <div class="mosaic-container">
+                            <!-- Ar -->
+                            <div class="cell c-ar" onclick="location.href='recursos/ar.html'">
+                                <img src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2071&auto=format&fit=crop" alt="Ar" />
+                                <div class="cell-label">Ar</div>
+                            </div>
+                            <!-- Fauna -->
+                            <div class="cell c-fauna" onclick="location.href='ecossistemas/fauna.html'">
+                                <img src="https://images.unsplash.com/photo-1470615619213-fdd3985a40e0?q=80&w=2054&auto=format&fit=crop" alt="Fauna" />
+                                <div class="cell-label">Fauna</div>
+                            </div>
+                            <!-- Água -->
+                            <div class="cell c-agua" onclick="location.href='recursos/agua.html'">
+                                <img src="https://images.unsplash.com/photo-1535868118629-f37bcd69ff59?q=80&w=2076&auto=format&fit=crop" alt="Água" />
+                                <div class="cell-label">Água</div>
+                            </div>
+                            <!-- Flora -->
+                            <div class="cell c-flora" onclick="location.href='ecossistemas/flora.html'">
+                                <img src="https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?q=80&w=2000&auto=format&fit=crop" alt="Flora" />
+                                <div class="cell-label">Flora</div>
+                            </div>
+                            <!-- Energia -->
+                            <div class="cell c-energia" onclick="location.href='energia/energia.html'">
+                                <img src="https://images.unsplash.com/photo-1509391366360-2e959784a276?q=80&w=2072&auto=format&fit=crop" alt="Energia" />
+                                <div class="cell-label">Energia</div>
+                            </div>
+                            <!-- Terra -->
+                            <div class="cell c-terra" onclick="location.href='recursos/solo.html'">
+                                <img src="https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?q=80&w=2000&auto=format&fit=crop" alt="Terra" />
+                                <div class="cell-label">Terra</div>
                             </div>
                         </div>
 
                         <div class="intro-text-smooth">
-                            <h2>Tudo está ligado.</h2>
-                            <p>"Na natureza, nada existe isoladamente. A nossa missão é unir a técnica e a ética para que cada peça do ecossistema encontre o seu lugar na regeneração da vida."</p>
+                            <h2>O Todo é maior que a soma das partes.</h2>
+                            <p>"Na bioCultura, não vemos elementos isolados. Vemos um fluxo constante onde a água nutre a terra, o ar protege a vida e a energia ética sustenta o amanhã. Tudo está em comunhão."</p>
                             <a href="manifesto.html" class="button primary" style="margin-top: 3.5em; border-radius: 50px; background-color: #2e7d32 !important;">O Nosso Compromisso</a>
                         </div>
 					</section>
