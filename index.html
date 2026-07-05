@@ -1,77 +1,106 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<title>bioCultura - A Alternativa Sustentável</title>
+		<title>bioCultura - Ecossistema em Comunhão</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="assets/css/main.css" />
 		<style>
-			/* 1. ESTRUTURA E LIMPEZA */
+			/* 1. ESTRUTURA BASE */
 			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
-			#header .toggle { background: none !important; top: 2em !important; left: 2em !important; border: none !important; text-decoration: none !important; }
+			#header .toggle { background: none !important; top: 2em !important; left: 2em !important; border: none !important; text-decoration: none !important; z-index: 10001; }
 			#header .toggle:before { content: '\f06c' !important; font-family: "Font Awesome 5 Free" !important; font-weight: 900; color: #2e7d32 !important; font-size: 1.6em !important; }
             #header .toggle:after { display: none !important; }
             section { padding-top: 2em !important; }
 
-            /* 2. HERO BANNER (ESTREITO COM TEXTO BRANCO) */
-            .hero-banner {
-                width: 100%;
-                height: 40vh;
-                min-height: 300px;
-                border-radius: 40px;
-                overflow: hidden;
+            /* 2. O ECOSSISTEMA EM COMUNHÃO (O "TCHARAN") */
+            .communion-container {
                 position: relative;
+                width: 100%;
+                height: 700px;
+                margin-bottom: 4em;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                overflow: hidden;
+                border-radius: 40px;
+                background: #fdfdfd;
+            }
+
+            .communion-center {
+                position: relative;
+                z-index: 10;
+                text-align: center;
+                max-width: 500px;
+                background: rgba(255, 255, 255, 0.8);
+                padding: 3em;
+                border-radius: 100%;
+                backdrop-filter: blur(10px);
+                box-shadow: 0 0 50px rgba(0,0,0,0.05);
+            }
+            .communion-center h1 { color: #2e7d32 !important; font-size: 3.5em !important; font-weight: 300 !important; margin: 0; letter-spacing: -2px; }
+            .communion-center p { font-style: italic; color: #555; margin-top: 0.5em; font-size: 1.2em; }
+
+            /* Blobs de Imagens (Os Elementos) */
+            .element-blob {
+                position: absolute;
+                overflow: hidden;
+                box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+                transition: all 1s ease-in-out;
+                animation: float 6s ease-in-out infinite;
+            }
+            .element-blob img { width: 100%; height: 100%; object-fit: cover; opacity: 0.9; }
+
+            /* Fauna - Canto Superior Esquerdo */
+            .fauna-blob {
+                top: 5%; left: 5%; width: 300px; height: 300px;
+                border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+            }
+            /* Flora - Canto Superior Direito */
+            .flora-blob {
+                top: -5%; right: 5%; width: 350px; height: 350px;
+                border-radius: 30% 70% 70% 30% / 50% 30% 70% 50%;
+                animation-delay: 1s;
+            }
+            /* Água - Fundo Esquerdo */
+            .agua-blob {
+                bottom: 5%; left: -2%; width: 320px; height: 320px;
+                border-radius: 50% 50% 20% 80% / 25% 80% 20% 75%;
+                animation-delay: 2s;
+            }
+            /* Terra - Fundo Direito */
+            .terra-blob {
+                bottom: 0%; right: 0%; width: 400px; height: 300px;
+                border-radius: 80% 20% 50% 50% / 50% 50% 80% 20%;
+                animation-delay: 3s;
+            }
+            /* Ar - Topo Centro */
+            .ar-blob {
+                top: -10%; left: 35%; width: 250px; height: 200px;
+                border-radius: 40% 60% 40% 60% / 40% 40% 60% 60%;
+                opacity: 0.6;
+                animation-delay: 4s;
+            }
+            /* Energia - Fundo Centro */
+            .energia-blob {
+                bottom: -5%; left: 30%; width: 280px; height: 250px;
+                border-radius: 20% 80% 40% 60% / 70% 30% 70% 30%;
+                animation-delay: 5s;
+            }
+
+            @keyframes float {
+                0%, 100% { transform: translateY(0) scale(1); }
+                50% { transform: translateY(-20px) scale(1.02); }
+            }
+
+            /* 3. TEXTO DE TRANSIÇÃO */
+            .intro-text-smooth {
+                text-align: center;
+                padding: 4em 10%;
                 margin-bottom: 6em;
-                box-shadow: 0 20px 50px rgba(0,0,0,0.15);
             }
-            .hero-banner img { width: 100%; height: 100%; object-fit: cover; }
-            .hero-overlay {
-                position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-                background: linear-gradient(to right, rgba(0,0,0,0.7), transparent);
-                display: flex; align-items: center; padding-left: 8%;
-            }
-            .hero-content h1 { font-size: 4.5em !important; color: #ffffff !important; font-weight: 300 !important; margin: 0; letter-spacing: -2px; }
-            .hero-content p { color: #ffffff !important; font-size: 1.4em; opacity: 0.9; font-style: italic; margin-top: 0.5em; }
-
-            /* 3. COMPOSIÇÃO DE FRAMES */
-            .section-container { margin-bottom: 12em; text-align: center; padding: 0 5%; }
-            .section-container h2 { font-size: 2.8em !important; font-weight: 700; margin-bottom: 0.8em; letter-spacing: -1px; }
-            .section-container p { max-width: 850px; margin: 0 auto 3.5em auto; font-size: 1.35em !important; line-height: 1.6; color: #444; }
-
-            /* Frames Verticais (Recursos Vitais - AZUL) */
-            .recursos-title { color: #0277bd !important; }
-            .vertical-frames { display: flex; gap: 20px; height: 550px; margin-bottom: 3em; }
-            .v-frame { flex: 1; border-radius: 40px; overflow: hidden; transition: flex 0.8s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
-            .v-frame img { width: 100%; height: 100%; object-fit: cover; }
-            .v-frame:hover { flex: 1.8; }
-            .btn-recursos { background-color: #0277bd !important; }
-
-            /* Frames Horizontais (Ecossistemas - AMBAR) */
-            .ecossistemas-title { color: #ef6c00 !important; }
-            .horizontal-stack { display: flex; flex-direction: column; gap: 20px; }
-            .h-frame { width: 100%; height: 250px; border-radius: 40px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-            .h-frame img { width: 100%; height: 100%; object-fit: cover; }
-            .btn-ecossistemas { background-color: #ef6c00 !important; }
-
-            /* Energia Ética (INDIGO) */
-            .energia-title { color: #1a237e !important; }
-            .full-frame { width: 100%; height: 500px; border-radius: 40px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.12); }
-            .full-frame img { width: 100%; height: 100%; object-fit: cover; }
-            .btn-energia { background-color: #1a237e !important; }
-
-            /* Botão Global */
-            .button.primary {
-                border-radius: 50px;
-                padding: 0 3.5em;
-                font-size: 0.85em;
-                font-weight: 700;
-                letter-spacing: 2px;
-                text-transform: uppercase;
-                margin-top: 2.5em;
-                box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
-                transition: all 0.3s ease;
-            }
-            .button.primary:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(0,0,0,0.15) !important; }
+            .intro-text-smooth h2 { color: #2e7d32; font-size: 2.5em; font-weight: 700; margin-bottom: 1em; }
+            .intro-text-smooth p { font-size: 1.4em; line-height: 1.6; color: #444; max-width: 900px; margin: 0 auto; }
 
 			.footer-signature-right { text-align: right; padding: 4em 0 2em 0; opacity: 0.9; }
 		</style>
@@ -82,50 +111,30 @@
 					<header id="header" style="height: 0; margin: 0; padding: 0; overflow: hidden;"></header>
 					
                     <section>
-                        <!-- HERO BANNER COM TEXTO BRANCO -->
-                        <div class="hero-banner">
-                            <img src="https://plus.unsplash.com/premium_photo-1747132586869-195ed644c814?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="bioCultura" />
-                            <div class="hero-overlay">
-                                <div class="hero-content">
-                                    <h1>bioCultura</h1>
-                                    <p>Regenerar a terra, assegurar o futuro.</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- SEÇÃO 1: RECURSOS VITAIS (TEMA AZUL) -->
-                        <div class="section-container">
-                            <h2 class="recursos-title">Recursos Vitais</h2>
-                            <p>A água e o solo são o sangue e o filtro do nosso ecossistema. Desenhamos sistemas hidráulicos inteligentes que retêm a abundância e combatem a escassez.</p>
+                        <!-- COMUNHÃO VISUAL: Onde os elementos se fundem -->
+                        <div class="communion-container">
                             
-                            <div class="vertical-frames">
-                                <div class="v-frame"><img src="https://images.unsplash.com/photo-1535868118629-f37bcd69ff59?q=80&w=2076&auto=format&fit=crop" alt="Água" /></div>
-                                <div class="v-frame"><img src="https://images.unsplash.com/photo-1774526380611-d056d8c946dc?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Solo" /></div>
-                                <div class="v-frame"><img src="https://plus.unsplash.com/premium_photo-1664525633027-59a11eb4e95e?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Hidráulica" /></div>
+                            <!-- Imagens em Blobs Orgânicos -->
+                            <div class="element-blob fauna-blob"><img src="https://images.unsplash.com/photo-1470615619213-fdd3985a40e0?q=80&w=2054&auto=format&fit=crop" alt="Fauna" /></div>
+                            <div class="element-blob flora-blob"><img src="https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?q=80&w=2000&auto=format&fit=crop" alt="Flora" /></div>
+                            <div class="element-blob agua-blob"><img src="https://images.unsplash.com/photo-1535868118629-f37bcd69ff59?q=80&w=2076&auto=format&fit=crop" alt="Água" /></div>
+                            <div class="element-blob terra-blob"><img src="https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?q=80&w=2000&auto=format&fit=crop" alt="Terra" /></div>
+                            <div class="element-blob ar-blob"><img src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2071&auto=format&fit=crop" alt="Ar" /></div>
+                            <div class="element-blob energia-blob"><img src="https://images.unsplash.com/photo-1509391366360-2e959784a276?q=80&w=2072&auto=format&fit=crop" alt="Energia" /></div>
+
+                            <!-- Centro do Ecossistema -->
+                            <div class="communion-center">
+                                <h1>bioCultura</h1>
+                                <p>Onde a tecnologia e a vida respiram em uníssono.</p>
+                                <div style="width: 40px; height: 2px; background: #2e7d32; margin: 1.5em auto; opacity: 0.3;"></div>
                             </div>
-                            <a href="recursos/agua.html" class="button primary btn-recursos">Explorar Ciclos</a>
                         </div>
 
-                        <!-- SEÇÃO 2: ECOSSISTEMAS (TEMA AMBAR/VIDA) -->
-                        <div class="section-container">
-                            <h2 class="ecossistemas-title">Vida e Ecossistemas</h2>
-                            <p>Onde a fauna e a flora comunicam. Protegemos a biodiversidade funcional para criar sistemas agrícolas resilientes, livres de dependência química.</p>
-                            
-                            <div class="horizontal-stack">
-                                <div class="h-frame"><img src="https://plus.unsplash.com/premium_photo-1661963661518-5d1e2f4d8b81?q=80&w=2072&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Fauna" /></div>
-                                <div class="h-frame"><img src="https://plus.unsplash.com/premium_photo-1687428554453-357a0bfcd46f?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Flora" /></div>
-                            </div>
-                            <a href="ecossistemas/fauna.html" class="button primary btn-ecossistemas">Conhecer Aliados</a>
-                        </div>
-
-                        <!-- SEÇÃO 3: ENERGIA ÉTICA (TEMA INDIGO) -->
-                        <div class="section-container">
-                            <h2 class="energia-title">Energia Ética</h2>
-                            <p>Soberania energética através da micro-geração solar e eólica. Priorizamos a durabilidade mineral e a utilização racional de cada watt gerado.</p>
-                            <div class="full-frame">
-                                <img src="https://plus.unsplash.com/premium_photo-1764687680461-36419620b490?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Energia" />
-                            </div>
-                            <a href="energia/energia.html" class="button primary btn-energia">Soberania Energética</a>
+                        <!-- MENSAGEM DE BOAS-VINDAS -->
+                        <div class="intro-text-smooth">
+                            <h2>Equilíbrio Regenerativo</h2>
+                            <p>Não basta conservar, é preciso integrar. Na bioCultura, a nossa engenharia nasce da observação da fauna, da flora, da água e do solo, criando sistemas onde a energia flui de forma ética e natural.</p>
+                            <a href="manifesto.html" class="button primary" style="margin-top: 3em; border-radius: 50px; background-color: #2e7d32 !important;">O Nosso Compromisso</a>
                         </div>
 
 					</section>
