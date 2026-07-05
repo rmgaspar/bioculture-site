@@ -6,85 +6,124 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="assets/css/main.css" />
 		<style>
-			/* 1. ESTRUTURA E LIMPEZA */
+			/* 1. ESTRUTURA MINIMALISTA */
 			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
 			#header .toggle { background: none !important; top: 2em !important; left: 2em !important; border: none !important; text-decoration: none !important; z-index: 10001; }
 			#header .toggle:before { content: '\f06c' !important; font-family: "Font Awesome 5 Free" !important; font-weight: 900; color: #2e7d32 !important; font-size: 1.6em !important; }
             #header .toggle:after { display: none !important; }
-            section { padding-top: 1em !important; }
+            section { padding-top: 1em !important; display: flex; flex-direction: column; align-items: center; }
 
-            /* 2. MINI-BANNER ASSINATURA */
-            .mini-banner { width: 100%; text-align: center; padding: 2em 0; margin-bottom: 2em; }
-            .mini-banner h1 { font-family: 'Source Sans Pro', sans-serif; font-size: 2.5em !important; font-weight: 300 !important; color: #2e7d32 !important; margin: 0; letter-spacing: 5px; }
+            /* 2. ASSINATURA TOPO */
+            .mini-banner {
+                width: 100%;
+                text-align: center;
+                padding: 3em 0 1em 0;
+            }
+            .mini-banner h1 { 
+                font-family: 'Source Sans Pro', sans-serif; 
+                font-size: 2.2em !important; 
+                font-weight: 300 !important; 
+                color: #2e7d32 !important; 
+                margin: 0; 
+                letter-spacing: 6px; 
+                text-transform: none;
+            }
             .mini-banner b { font-weight: 700; }
 
-            /* 3. MOSAICO ORGÂNICO (O "TCHARAN") */
-            .mosaic-container {
-                display: grid;
-                grid-template-columns: repeat(6, 1fr);
-                grid-template-rows: repeat(2, 300px);
-                gap: 20px;
-                max-width: 1200px;
-                margin: 0 auto 6em auto;
-                padding: 0 20px;
-            }
-
-            .cell {
+            /* 3. O GLOBO DA VIDA (O MOMENTO WOW) */
+            .wow-wrapper {
                 position: relative;
-                overflow: hidden;
-                cursor: pointer;
-                transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
-                box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+                width: 550px;
+                height: 550px;
+                margin: 2em 0 5em 0;
+                display: flex;
+                justify-content: center;
+                align-items: center;
             }
 
-            .cell img {
+            /* Aura de Energia/Ar */
+            .wow-wrapper::before {
+                content: '';
+                position: absolute;
+                width: 110%;
+                height: 110%;
+                border-radius: 50%;
+                background: radial-gradient(circle, rgba(46, 125, 50, 0.1) 0%, transparent 70%);
+                animation: pulse 8s infinite ease-in-out;
+            }
+
+            .globe-main {
+                position: relative;
                 width: 100%;
                 height: 100%;
-                object-fit: cover;
-                transition: transform 1.2s ease;
-                filter: brightness(0.9) saturate(0.8);
+                border-radius: 50%;
+                overflow: hidden;
+                box-shadow: 0 40px 100px rgba(0,0,0,0.2);
+                background: #000;
+                transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
             }
 
-            .cell:hover {
-                transform: translateY(-10px) scale(1.02);
-                box-shadow: 0 30px 60px rgba(46, 125, 50, 0.2);
-                z-index: 10;
+            .globe-main:hover {
+                transform: scale(1.02);
             }
 
-            .cell:hover img {
-                transform: scale(1.1);
-                filter: brightness(1.1) saturate(1.2);
-            }
-
-            /* Formas Assimétricas e Smooth (Estilo bioCultura) */
-            .c-ar      { grid-column: span 3; border-radius: 80px 20px 100px 30px; }
-            .c-fauna   { grid-column: span 3; border-radius: 20px 100px 30px 120px; }
-            .c-agua    { grid-column: span 2; border-radius: 100px 30px 120px 40px; }
-            .c-flora   { grid-column: span 2; border-radius: 30px 120px 40px 100px; }
-            .c-energia { grid-column: span 1; border-radius: 120px 40px 100px 30px; }
-            .c-terra   { grid-column: span 1; border-radius: 40px 100px 30px 120px; }
-
-            /* Labels Vibrantes */
-            .cell-label {
+            /* Metade Superior: Terrestre (Flora/Fauna) */
+            .terrestrial {
                 position: absolute;
-                bottom: 30px; left: 30px;
-                color: #fff; font-weight: 800; text-transform: uppercase;
-                letter-spacing: 4px; font-size: 1.2em;
-                text-shadow: 0 2px 15px rgba(0,0,0,0.6);
+                top: 0; width: 100%; height: 50%;
+                background-image: url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2071&auto=format&fit=crop');
+                background-size: cover;
+                background-position: center bottom;
+                border-bottom: 2px solid rgba(255,255,255,0.2);
                 z-index: 2;
             }
 
+            /* Metade Inferior: Marinha (Água/Fauna) */
+            .marine {
+                position: absolute;
+                bottom: 0; width: 100%; height: 50%;
+                background-image: url('https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?q=80&w=2034&auto=format&fit=crop');
+                background-size: cover;
+                background-position: center top;
+                z-index: 1;
+            }
+
+            /* Divisor Smooth */
+            .globe-divider {
+                position: absolute;
+                top: 50%; left: 0; width: 100%; height: 1px;
+                background: linear-gradient(to right, transparent, rgba(255,255,255,0.5), transparent);
+                z-index: 3;
+                transform: translateY(-50%);
+            }
+
+            @keyframes pulse {
+                0%, 100% { transform: scale(1); opacity: 0.5; }
+                50% { transform: scale(1.05); opacity: 0.8; }
+            }
+
             /* 4. TEXTO DE TRANSIÇÃO */
-            .intro-text-smooth { text-align: center; padding: 0 10%; margin-bottom: 8em; }
-            .intro-text-smooth h2 { color: #2e7d32; font-size: 2.5em; font-weight: 700; margin-bottom: 1em; letter-spacing: -1px; }
-            .intro-text-smooth p { font-size: 1.4em; line-height: 1.6; color: #444; max-width: 900px; margin: 0 auto; font-style: italic; }
+            .intro-text-smooth {
+                text-align: center;
+                max-width: 800px;
+                margin-bottom: 8em;
+            }
+            .intro-text-smooth h2 { color: #2e7d32; font-size: 2.2em; font-weight: 700; margin-bottom: 1em; letter-spacing: -1px; }
+            .intro-text-smooth p { font-size: 1.4em; line-height: 1.6; color: #555; font-style: italic; }
 
-			.footer-signature-right { text-align: right; padding: 4em 0 2em 0; opacity: 0.9; }
+            .button.primary {
+                background-color: #2e7d32 !important;
+                border-radius: 50px;
+                padding: 0 3.5em;
+                margin-top: 3em;
+            }
 
-            /* Responsividade */
-            @media screen and (max-width: 980px) {
-                .mosaic-container { grid-template-columns: repeat(2, 1fr); grid-template-rows: auto; gap: 15px; }
-                .cell { grid-column: span 1 !important; height: 250px; border-radius: 40px !important; }
+			.footer-signature-right { width: 100%; text-align: right; padding: 4em 0 2em 0; opacity: 0.9; }
+
+            /* Mobile */
+            @media screen and (max-width: 736px) {
+                .wow-wrapper { width: 320px; height: 320px; }
+                .mini-banner h1 { font-size: 1.6em !important; }
             }
 		</style>
 	</head>
@@ -94,49 +133,25 @@
 					<header id="header" style="height: 0; margin: 0; padding: 0; overflow: hidden;"></header>
 					
                     <section>
-                        <!-- ASSINATURA -->
+                        <!-- ASSINATURA NO TOPO -->
                         <div class="mini-banner">
                             <h1><b>b</b>io<b>C</b>ultura</h1>
                         </div>
 
-                        <!-- MOSAICO DE CÉLULAS EM COMUNHÃO -->
-                        <div class="mosaic-container">
-                            <!-- Ar -->
-                            <div class="cell c-ar" onclick="location.href='recursos/ar.html'">
-                                <img src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2071&auto=format&fit=crop" alt="Ar" />
-                                <div class="cell-label">Ar</div>
-                            </div>
-                            <!-- Fauna -->
-                            <div class="cell c-fauna" onclick="location.href='ecossistemas/fauna.html'">
-                                <img src="https://images.unsplash.com/photo-1470615619213-fdd3985a40e0?q=80&w=2054&auto=format&fit=crop" alt="Fauna" />
-                                <div class="cell-label">Fauna</div>
-                            </div>
-                            <!-- Água -->
-                            <div class="cell c-agua" onclick="location.href='recursos/agua.html'">
-                                <img src="https://images.unsplash.com/photo-1535868118629-f37bcd69ff59?q=80&w=2076&auto=format&fit=crop" alt="Água" />
-                                <div class="cell-label">Água</div>
-                            </div>
-                            <!-- Flora -->
-                            <div class="cell c-flora" onclick="location.href='ecossistemas/flora.html'">
-                                <img src="https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?q=80&w=2000&auto=format&fit=crop" alt="Flora" />
-                                <div class="cell-label">Flora</div>
-                            </div>
-                            <!-- Energia -->
-                            <div class="cell c-energia" onclick="location.href='energia/energia.html'">
-                                <img src="https://images.unsplash.com/photo-1509391366360-2e959784a276?q=80&w=2072&auto=format&fit=crop" alt="Energia" />
-                                <div class="cell-label">Energia</div>
-                            </div>
-                            <!-- Terra -->
-                            <div class="cell c-terra" onclick="location.href='recursos/solo.html'">
-                                <img src="https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?q=80&w=2000&auto=format&fit=crop" alt="Terra" />
-                                <div class="cell-label">Terra</div>
+                        <!-- O GLOBO: Comunhão Terrestre e Marítima -->
+                        <div class="wow-wrapper">
+                            <div class="globe-main">
+                                <div class="terrestrial"></div>
+                                <div class="globe-divider"></div>
+                                <div class="marine"></div>
                             </div>
                         </div>
 
+                        <!-- MENSAGEM FINAL -->
                         <div class="intro-text-smooth">
-                            <h2>O Todo é maior que a soma das partes.</h2>
-                            <p>"Na bioCultura, não vemos elementos isolados. Vemos um fluxo constante onde a água nutre a terra, o ar protege a vida e a energia ética sustenta o amanhã. Tudo está em comunhão."</p>
-                            <a href="manifesto.html" class="button primary" style="margin-top: 3.5em; border-radius: 50px; background-color: #2e7d32 !important;">O Nosso Compromisso</a>
+                            <h2>Um Ecossistema, Uma Vida.</h2>
+                            <p>"Da raiz profunda ao oceano imenso, a bioCultura une a fauna, a flora e os recursos vitais num único ciclo de regeneração ética."</p>
+                            <a href="manifesto.html" class="button primary">O Nosso Compromisso</a>
                         </div>
 					</section>
 
