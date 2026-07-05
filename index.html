@@ -18,84 +18,84 @@
                 width: 100%;
                 text-align: center;
                 padding: 2em 0;
-                margin-bottom: 2em;
+                margin-bottom: 1em;
             }
             .mini-banner h1 { 
                 font-family: 'Source Sans Pro', sans-serif; 
-                font-size: 2em !important; 
+                font-size: 2.2em !important; 
                 font-weight: 300 !important; 
                 color: #2e7d32 !important; 
                 margin: 0; 
-                letter-spacing: 3px; 
+                letter-spacing: 4px; 
+                text-transform: none;
             }
             .mini-banner b { font-weight: 700; }
 
-            /* 3. O PUZZLE BIOCULTURA */
-            .puzzle-board {
+            /* 3. O PUZZLE BIOCULTURA (ESTILO ARREDONDADO) */
+            .puzzle-container {
+                max-width: 1100px;
+                margin: 0 auto 6em auto;
                 display: grid;
                 grid-template-columns: repeat(3, 1fr);
-                grid-template-rows: repeat(2, 300px);
-                gap: 10px; /* Espaço mínimo para ver o encaixe */
-                max-width: 1000px;
-                margin: 0 auto 6em auto;
-                padding: 10px;
+                gap: -15px; /* Sobreposição ligeira para o encaixe */
+                padding: 20px;
             }
 
             .piece {
                 position: relative;
-                width: 100%;
-                height: 100%;
-                overflow: hidden;
-                transition: all 0.5s ease;
-                filter: grayscale(0.3) brightness(0.9);
+                aspect-ratio: 1 / 1;
                 cursor: pointer;
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                filter: saturate(0.7) brightness(0.9);
+                margin: -10px; /* Garante o "toque" entre peças */
             }
 
             .piece img {
                 width: 100%;
                 height: 100%;
                 object-fit: cover;
-                transition: transform 0.8s ease;
+                /* O segredo do puzzle arredondado está no mask-image */
+                mask-size: contain;
+                mask-repeat: no-repeat;
+                -webkit-mask-size: contain;
+                -webkit-mask-repeat: no-repeat;
             }
 
             .piece:hover {
-                filter: grayscale(0) brightness(1);
-                z-index: 10;
+                filter: saturate(1.1) brightness(1);
                 transform: scale(1.05);
+                z-index: 20;
             }
 
-            .piece:hover img {
-                transform: scale(1.1);
+            /* Definição das Máscaras (Tabs e Blanks Arredondados) */
+            .p1 img { -webkit-mask-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M0,0 H85 A15,15 0 0,1 85,30 A15,15 0 0,1 85,0 H100 V100 H0 Z" /></svg>'); }
+            
+            /* Usamos classes simplificadas para garantir o encaixe visual suave */
+            .piece-rounded {
+                border-radius: 40px; /* Base arredondada bioCultura */
+                overflow: hidden;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+                border: 4px solid #fff; /* Linha de encaixe branca */
             }
 
-            /* Formas de Puzzle (Clip-path) */
-            /* Peça 1: Canto Superior Esquerdo */
-            .p1 { clip-path: polygon(0% 0%, 80% 0%, 80% 15%, 100% 15%, 100% 35%, 80% 35%, 80% 100%, 0% 100%); }
-            /* Peça 2: Topo Centro */
-            .p2 { clip-path: polygon(0% 15%, 20% 15%, 20% 0%, 40% 0%, 40% 15%, 100% 15%, 100% 100%, 0% 100%); }
-            /* Peça 3: Canto Superior Direito */
-            .p3 { clip-path: polygon(0% 15%, 60% 15%, 60% 0%, 80% 0%, 80% 15%, 100% 15%, 100% 100%, 0% 100%); }
-            /* Peça 4: Baixo Esquerdo */
-            .p4 { clip-path: polygon(0% 0%, 100% 0%, 100% 65%, 80% 65%, 80% 85%, 100% 85%, 100% 100%, 0% 100%); }
-            /* Peça 5: Baixo Centro */
-            .p5 { clip-path: polygon(0% 0%, 100% 0%, 100% 85%, 80% 85%, 80% 100%, 60% 100%, 60% 85%, 0% 85%); }
-            /* Peça 6: Baixo Direito */
-            .p6 { clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 85%, 20% 85%, 20% 65%, 0% 65%); }
-
-            /* Legendas das Peças */
             .piece-label {
                 position: absolute;
-                bottom: 20px;
-                left: 20px;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
                 color: #fff;
-                font-weight: 700;
+                font-weight: 800;
                 text-transform: uppercase;
                 letter-spacing: 2px;
-                font-size: 0.7em;
-                background: rgba(46, 125, 50, 0.8);
-                padding: 5px 12px;
-                border-radius: 4px;
+                font-size: 0.9em;
+                text-shadow: 0 2px 10px rgba(0,0,0,0.5);
                 pointer-events: none;
+                opacity: 0;
+                transition: opacity 0.3s ease;
+            }
+
+            .piece:hover .piece-label {
+                opacity: 1;
             }
 
             /* 4. TEXTO DE TRANSIÇÃO */
@@ -109,10 +109,10 @@
 
 			.footer-signature-right { text-align: right; padding: 4em 0 2em 0; opacity: 0.9; }
 
-            /* Mobile Adjustments */
+            /* Mobile */
             @media screen and (max-width: 736px) {
-                .puzzle-board { grid-template-columns: 1fr 1fr; grid-template-rows: repeat(3, 200px); }
-                .piece { clip-path: none !important; border-radius: 15px; } /* Simplifica no mobile */
+                .puzzle-container { grid-template-columns: 1fr 1fr; }
+                .mini-banner h1 { font-size: 1.6em !important; }
             }
 		</style>
 	</head>
@@ -122,46 +122,46 @@
 					<header id="header" style="height: 0; margin: 0; padding: 0; overflow: hidden;"></header>
 					
                     <section>
-                        <!-- MINI-BANNER ASSINATURA -->
+                        <!-- MINI-BANNER NO TOPO -->
                         <div class="mini-banner">
                             <h1><b>b</b>io<b>C</b>ultura</h1>
                         </div>
 
-                        <!-- O PUZZLE: 6 Peças que se completam -->
-                        <div class="puzzle-board">
+                        <!-- PUZZLE ARREDONDADO -->
+                        <div class="puzzle-container">
                             <!-- Ar -->
-                            <div class="piece p1" onclick="location.href='recursos/ar.html'">
+                            <div class="piece piece-rounded" onclick="location.href='recursos/ar.html'">
                                 <img src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2071&auto=format&fit=crop" alt="Ar" />
                                 <div class="piece-label">Ar</div>
                             </div>
                             <!-- Fauna -->
-                            <div class="piece p2" onclick="location.href='ecossistemas/fauna.html'">
+                            <div class="piece piece-rounded" onclick="location.href='ecossistemas/fauna.html'">
                                 <img src="https://images.unsplash.com/photo-1470615619213-fdd3985a40e0?q=80&w=2054&auto=format&fit=crop" alt="Fauna" />
                                 <div class="piece-label">Fauna</div>
                             </div>
                             <!-- Água -->
-                            <div class="piece p3" onclick="location.href='recursos/agua.html'">
+                            <div class="piece piece-rounded" onclick="location.href='recursos/agua.html'">
                                 <img src="https://images.unsplash.com/photo-1535868118629-f37bcd69ff59?q=80&w=2076&auto=format&fit=crop" alt="Água" />
                                 <div class="piece-label">Água</div>
                             </div>
                             <!-- Flora -->
-                            <div class="piece p4" onclick="location.href='ecossistemas/flora.html'">
+                            <div class="piece piece-rounded" onclick="location.href='ecossistemas/flora.html'">
                                 <img src="https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?q=80&w=2000&auto=format&fit=crop" alt="Flora" />
                                 <div class="piece-label">Flora</div>
                             </div>
                             <!-- Energia -->
-                            <div class="piece p5" onclick="location.href='energia/energia.html'">
+                            <div class="piece piece-rounded" onclick="location.href='energia/energia.html'">
                                 <img src="https://images.unsplash.com/photo-1509391366360-2e959784a276?q=80&w=2072&auto=format&fit=crop" alt="Energia" />
                                 <div class="piece-label">Energia</div>
                             </div>
                             <!-- Terra -->
-                            <div class="piece p6" onclick="location.href='recursos/solo.html'">
+                            <div class="piece piece-rounded" onclick="location.href='recursos/solo.html'">
                                 <img src="https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?q=80&w=2000&auto=format&fit=crop" alt="Terra" />
                                 <div class="piece-label">Terra</div>
                             </div>
                         </div>
 
-                        <!-- MENSAGEM FINAL -->
+                        <!-- MENSAGEM INTEGRADA -->
                         <div class="intro-text-smooth">
                             <h2>Tudo está ligado.</h2>
                             <p>"Na natureza, nada existe isoladamente. A nossa missão é unir a técnica e a ética para que cada peça do ecossistema encontre o seu lugar na regeneração da vida."</p>
