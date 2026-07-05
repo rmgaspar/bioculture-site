@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<title>bioCultura - Ecossistema em Comunhão</title>
+		<title>bioCultura - Ecossistema Integrado</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="assets/css/main.css" />
@@ -13,74 +13,89 @@
             #header .toggle:after { display: none !important; }
             section { padding-top: 1em !important; }
 
-            /* 2. MINI-BANNER TOPO */
+            /* 2. MINI-BANNER ASSINATURA */
             .mini-banner {
                 width: 100%;
                 text-align: center;
-                padding: 1.5em 0;
-                margin-bottom: 3em;
-                background: linear-gradient(to right, transparent, rgba(46, 125, 50, 0.05), transparent);
-                border-radius: 50px;
+                padding: 2em 0;
+                margin-bottom: 2em;
             }
             .mini-banner h1 { 
                 font-family: 'Source Sans Pro', sans-serif; 
-                font-size: 1.8em !important; 
+                font-size: 2em !important; 
                 font-weight: 300 !important; 
                 color: #2e7d32 !important; 
                 margin: 0; 
-                letter-spacing: 2px; 
-                text-transform: none;
+                letter-spacing: 3px; 
             }
             .mini-banner b { font-weight: 700; }
 
-            /* 3. O GLOBO BIOCULTURA (A COMUNHÃO) */
-            .globe-wrapper {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                margin-bottom: 6em;
-                perspective: 1000px;
-            }
-
-            .globe-container {
-                position: relative;
-                width: 600px;
-                height: 600px;
-                border-radius: 50%;
-                overflow: hidden;
-                box-shadow: 0 40px 100px rgba(0,0,0,0.15);
+            /* 3. O PUZZLE BIOCULTURA */
+            .puzzle-board {
                 display: grid;
-                grid-template-columns: 1fr 1fr;
-                grid-template-rows: 1fr 1fr 1fr;
-                transform: rotate(-15deg); /* Inclinação do eixo da terra */
-                transition: transform 1s ease-out;
+                grid-template-columns: repeat(3, 1fr);
+                grid-template-rows: repeat(2, 300px);
+                gap: 10px; /* Espaço mínimo para ver o encaixe */
+                max-width: 1000px;
+                margin: 0 auto 6em auto;
+                padding: 10px;
             }
 
-            .globe-container:hover {
-                transform: rotate(0deg) scale(1.02);
-            }
-
-            /* Segmentos do Globo */
-            .globe-slice {
+            .piece {
                 position: relative;
+                width: 100%;
+                height: 100%;
                 overflow: hidden;
-                transition: filter 0.5s ease;
-                filter: saturate(0.8);
+                transition: all 0.5s ease;
+                filter: grayscale(0.3) brightness(0.9);
+                cursor: pointer;
             }
-            .globe-slice:hover { filter: saturate(1.2); }
-            .globe-slice img {
+
+            .piece img {
                 width: 100%;
                 height: 100%;
                 object-fit: cover;
-                transform: rotate(15deg); /* Compensa a rotação do container */
+                transition: transform 0.8s ease;
             }
 
-            /* Overlay de fusão entre fatias */
-            .globe-slice::after {
-                content: '';
+            .piece:hover {
+                filter: grayscale(0) brightness(1);
+                z-index: 10;
+                transform: scale(1.05);
+            }
+
+            .piece:hover img {
+                transform: scale(1.1);
+            }
+
+            /* Formas de Puzzle (Clip-path) */
+            /* Peça 1: Canto Superior Esquerdo */
+            .p1 { clip-path: polygon(0% 0%, 80% 0%, 80% 15%, 100% 15%, 100% 35%, 80% 35%, 80% 100%, 0% 100%); }
+            /* Peça 2: Topo Centro */
+            .p2 { clip-path: polygon(0% 15%, 20% 15%, 20% 0%, 40% 0%, 40% 15%, 100% 15%, 100% 100%, 0% 100%); }
+            /* Peça 3: Canto Superior Direito */
+            .p3 { clip-path: polygon(0% 15%, 60% 15%, 60% 0%, 80% 0%, 80% 15%, 100% 15%, 100% 100%, 0% 100%); }
+            /* Peça 4: Baixo Esquerdo */
+            .p4 { clip-path: polygon(0% 0%, 100% 0%, 100% 65%, 80% 65%, 80% 85%, 100% 85%, 100% 100%, 0% 100%); }
+            /* Peça 5: Baixo Centro */
+            .p5 { clip-path: polygon(0% 0%, 100% 0%, 100% 85%, 80% 85%, 80% 100%, 60% 100%, 60% 85%, 0% 85%); }
+            /* Peça 6: Baixo Direito */
+            .p6 { clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 85%, 20% 85%, 20% 65%, 0% 65%); }
+
+            /* Legendas das Peças */
+            .piece-label {
                 position: absolute;
-                top: 0; left: 0; width: 100%; height: 100%;
-                box-shadow: inset 0 0 50px rgba(0,0,0,0.2);
+                bottom: 20px;
+                left: 20px;
+                color: #fff;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 2px;
+                font-size: 0.7em;
+                background: rgba(46, 125, 50, 0.8);
+                padding: 5px 12px;
+                border-radius: 4px;
+                pointer-events: none;
             }
 
             /* 4. TEXTO DE TRANSIÇÃO */
@@ -89,15 +104,15 @@
                 padding: 0 10%;
                 margin-bottom: 8em;
             }
-            .intro-text-smooth h2 { color: #2e7d32; font-size: 2.2em; font-weight: 700; margin-bottom: 0.8em; letter-spacing: -1px; }
+            .intro-text-smooth h2 { color: #2e7d32; font-size: 2.2em; font-weight: 700; margin-bottom: 0.8em; }
             .intro-text-smooth p { font-size: 1.35em; line-height: 1.6; color: #555; max-width: 800px; margin: 0 auto; font-style: italic; }
 
 			.footer-signature-right { text-align: right; padding: 4em 0 2em 0; opacity: 0.9; }
 
             /* Mobile Adjustments */
             @media screen and (max-width: 736px) {
-                .globe-container { width: 320px; height: 320px; }
-                .mini-banner h1 { font-size: 1.4em !important; }
+                .puzzle-board { grid-template-columns: 1fr 1fr; grid-template-rows: repeat(3, 200px); }
+                .piece { clip-path: none !important; border-radius: 15px; } /* Simplifica no mobile */
             }
 		</style>
 	</head>
@@ -107,45 +122,49 @@
 					<header id="header" style="height: 0; margin: 0; padding: 0; overflow: hidden;"></header>
 					
                     <section>
-                        <!-- MINI-BANNER NO TOPO -->
+                        <!-- MINI-BANNER ASSINATURA -->
                         <div class="mini-banner">
                             <h1><b>b</b>io<b>C</b>ultura</h1>
                         </div>
 
-                        <!-- O GLOBO: Comunhão dos 6 Elementos -->
-                        <div class="globe-wrapper">
-                            <div class="globe-container">
-                                <!-- Ar -->
-                                <div class="globe-slice" title="Ar">
-                                    <img src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2071&auto=format&fit=crop" alt="Ar" />
-                                </div>
-                                <!-- Fauna -->
-                                <div class="globe-slice" title="Fauna">
-                                    <img src="https://images.unsplash.com/photo-1470615619213-fdd3985a40e0?q=80&w=2054&auto=format&fit=crop" alt="Fauna" />
-                                </div>
-                                <!-- Água -->
-                                <div class="globe-slice" title="Água">
-                                    <img src="https://images.unsplash.com/photo-1535868118629-f37bcd69ff59?q=80&w=2076&auto=format&fit=crop" alt="Água" />
-                                </div>
-                                <!-- Flora -->
-                                <div class="globe-slice" title="Flora">
-                                    <img src="https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?q=80&w=2000&auto=format&fit=crop" alt="Flora" />
-                                </div>
-                                <!-- Energia -->
-                                <div class="globe-slice" title="Energia">
-                                    <img src="https://images.unsplash.com/photo-1509391366360-2e959784a276?q=80&w=2072&auto=format&fit=crop" alt="Energia" />
-                                </div>
-                                <!-- Terra -->
-                                <div class="globe-slice" title="Terra">
-                                    <img src="https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?q=80&w=2000&auto=format&fit=crop" alt="Terra" />
-                                </div>
+                        <!-- O PUZZLE: 6 Peças que se completam -->
+                        <div class="puzzle-board">
+                            <!-- Ar -->
+                            <div class="piece p1" onclick="location.href='recursos/ar.html'">
+                                <img src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2071&auto=format&fit=crop" alt="Ar" />
+                                <div class="piece-label">Ar</div>
+                            </div>
+                            <!-- Fauna -->
+                            <div class="piece p2" onclick="location.href='ecossistemas/fauna.html'">
+                                <img src="https://images.unsplash.com/photo-1470615619213-fdd3985a40e0?q=80&w=2054&auto=format&fit=crop" alt="Fauna" />
+                                <div class="piece-label">Fauna</div>
+                            </div>
+                            <!-- Água -->
+                            <div class="piece p3" onclick="location.href='recursos/agua.html'">
+                                <img src="https://images.unsplash.com/photo-1535868118629-f37bcd69ff59?q=80&w=2076&auto=format&fit=crop" alt="Água" />
+                                <div class="piece-label">Água</div>
+                            </div>
+                            <!-- Flora -->
+                            <div class="piece p4" onclick="location.href='ecossistemas/flora.html'">
+                                <img src="https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?q=80&w=2000&auto=format&fit=crop" alt="Flora" />
+                                <div class="piece-label">Flora</div>
+                            </div>
+                            <!-- Energia -->
+                            <div class="piece p5" onclick="location.href='energia/energia.html'">
+                                <img src="https://images.unsplash.com/photo-1509391366360-2e959784a276?q=80&w=2072&auto=format&fit=crop" alt="Energia" />
+                                <div class="piece-label">Energia</div>
+                            </div>
+                            <!-- Terra -->
+                            <div class="piece p6" onclick="location.href='recursos/solo.html'">
+                                <img src="https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?q=80&w=2000&auto=format&fit=crop" alt="Terra" />
+                                <div class="piece-label">Terra</div>
                             </div>
                         </div>
 
-                        <!-- MENSAGEM INTEGRADA -->
+                        <!-- MENSAGEM FINAL -->
                         <div class="intro-text-smooth">
-                            <h2>Um Ecossistema em Comunhão</h2>
-                            <p>"A terra não é um suporte inerte, nem a água um resíduo. Somos parte de um organismo vivo onde cada elemento respira em conjunto."</p>
+                            <h2>Tudo está ligado.</h2>
+                            <p>"Na natureza, nada existe isoladamente. A nossa missão é unir a técnica e a ética para que cada peça do ecossistema encontre o seu lugar na regeneração da vida."</p>
                             <a href="manifesto.html" class="button primary" style="margin-top: 3.5em; border-radius: 50px; background-color: #2e7d32 !important;">O Nosso Compromisso</a>
                         </div>
 
