@@ -27,75 +27,83 @@
                 color: #2e7d32 !important; 
                 margin: 0; 
                 letter-spacing: 4px; 
-                text-transform: none;
             }
             .mini-banner b { font-weight: 700; }
 
-            /* 3. O PUZZLE BIOCULTURA (ESTILO ARREDONDADO) */
-            .puzzle-container {
-                max-width: 1100px;
-                margin: 0 auto 6em auto;
+            /* 3. O PUZZLE BIOCULTURA (6 PEÇAS INTERLIGADAS) */
+            .puzzle-board {
                 display: grid;
-                grid-template-columns: repeat(3, 1fr);
-                gap: -15px; /* Sobreposição ligeira para o encaixe */
-                padding: 20px;
+                grid-template-columns: repeat(3, 300px);
+                grid-template-rows: repeat(2, 300px);
+                justify-content: center;
+                margin: 4em auto 8em auto;
+                /* Gap negativo para as abas encaixarem umas nas outras */
+                gap: -40px; 
             }
 
             .piece {
                 position: relative;
-                aspect-ratio: 1 / 1;
+                width: 380px; /* Maior que a célula da grid para permitir a aba */
+                height: 380px;
                 cursor: pointer;
                 transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-                filter: saturate(0.7) brightness(0.9);
-                margin: -10px; /* Garante o "toque" entre peças */
+                filter: saturate(0.6) brightness(0.9);
+                z-index: 1;
             }
 
             .piece img {
                 width: 100%;
                 height: 100%;
                 object-fit: cover;
-                /* O segredo do puzzle arredondado está no mask-image */
-                mask-size: contain;
-                mask-repeat: no-repeat;
-                -webkit-mask-size: contain;
-                -webkit-mask-repeat: no-repeat;
+                pointer-events: none;
             }
 
             .piece:hover {
-                filter: saturate(1.1) brightness(1);
+                filter: saturate(1.2) brightness(1);
                 transform: scale(1.05);
-                z-index: 20;
+                z-index: 100 !important;
+                filter: drop-shadow(0 20px 30px rgba(0,0,0,0.3));
             }
 
-            /* Definição das Máscaras (Tabs e Blanks Arredondados) */
-            .p1 img { -webkit-mask-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M0,0 H85 A15,15 0 0,1 85,30 A15,15 0 0,1 85,0 H100 V100 H0 Z" /></svg>'); }
-            
-            /* Usamos classes simplificadas para garantir o encaixe visual suave */
-            .piece-rounded {
-                border-radius: 40px; /* Base arredondada bioCultura */
-                overflow: hidden;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-                border: 4px solid #fff; /* Linha de encaixe branca */
+            /* MÁSCARAS DE PUZZLE (SVG CLIP-PATH) */
+            /* Peça 1: Canto Superior Esquerdo (Aba Direita, Aba Baixo) */
+            .p1 { 
+                grid-column: 1; grid-row: 1;
+                clip-path: url(#puzzle-p1);
+            }
+            /* Peça 2: Topo Centro (Cava Esquerda, Aba Direita, Aba Baixo) */
+            .p2 { 
+                grid-column: 2; grid-row: 1; margin-left: -80px;
+                clip-path: url(#puzzle-p2);
+            }
+            /* Peça 3: Canto Superior Direito (Cava Esquerda, Aba Baixo) */
+            .p3 { 
+                grid-column: 3; grid-row: 1; margin-left: -160px;
+                clip-path: url(#puzzle-p3);
+            }
+            /* Peça 4: Baixo Esquerdo (Cava Cima, Aba Direita) */
+            .p4 { 
+                grid-column: 1; grid-row: 2; margin-top: -80px;
+                clip-path: url(#puzzle-p4);
+            }
+            /* Peça 5: Baixo Centro (Cava Esquerda, Cava Cima, Aba Direita) */
+            .p5 { 
+                grid-column: 2; grid-row: 2; margin-left: -80px; margin-top: -80px;
+                clip-path: url(#puzzle-p5);
+            }
+            /* Peça 6: Baixo Direito (Cava Esquerda, Cava Cima) */
+            .p6 { 
+                grid-column: 3; grid-row: 2; margin-left: -160px; margin-top: -80px;
+                clip-path: url(#puzzle-p6);
             }
 
             .piece-label {
                 position: absolute;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                color: #fff;
-                font-weight: 800;
-                text-transform: uppercase;
-                letter-spacing: 2px;
-                font-size: 0.9em;
+                top: 40%; left: 40%;
+                color: #fff; font-weight: 800; text-transform: uppercase;
+                letter-spacing: 2px; font-size: 0.9em;
                 text-shadow: 0 2px 10px rgba(0,0,0,0.5);
                 pointer-events: none;
-                opacity: 0;
-                transition: opacity 0.3s ease;
-            }
-
-            .piece:hover .piece-label {
-                opacity: 1;
             }
 
             /* 4. TEXTO DE TRANSIÇÃO */
@@ -109,65 +117,88 @@
 
 			.footer-signature-right { text-align: right; padding: 4em 0 2em 0; opacity: 0.9; }
 
-            /* Mobile */
-            @media screen and (max-width: 736px) {
-                .puzzle-container { grid-template-columns: 1fr 1fr; }
-                .mini-banner h1 { font-size: 1.6em !important; }
+            /* Mobile: No telemóvel as peças tornam-se cartões normais */
+            @media screen and (max-width: 1000px) {
+                .puzzle-board { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+                .piece { clip-path: none !important; width: 90%; height: 250px; border-radius: 30px; margin: 0 !important; }
+                .piece-label { top: 50%; left: 50%; transform: translate(-50%, -50%); }
             }
 		</style>
 	</head>
 	<body class="is-preload">
+
+        <!-- DEFINIÇÃO DAS FORMAS DE PUZZLE (Invisível no ecrã) -->
+        <svg width="0" height="0">
+            <defs>
+                <clipPath id="puzzle-p1" clipPathUnits="objectBoundingBox">
+                    <path d="M0,0 H0.75 C0.75,0.1 0.85,0.15 0.85,0.25 C0.85,0.35 0.75,0.4 0.75,0.5 V0.75 C0.65,0.75 0.6,0.85 0.6,0.85 C0.6,0.95 0.65,1 0.75,1 H0 V0 Z"></path>
+                </clipPath>
+                <clipPath id="puzzle-p2" clipPathUnits="objectBoundingBox">
+                    <path d="M0.25,0 H0.75 C0.75,0.1 0.85,0.15 0.85,0.25 C0.85,0.35 0.75,0.4 0.75,0.5 V0.75 C0.65,0.75 0.6,0.85 0.6,0.85 C0.6,0.95 0.65,1 0.75,1 H0.25 C0.25,0.9 0.15,0.85 0.15,0.75 C0.15,0.65 0.25,0.6 0.25,0.5 V0 Z"></path>
+                </clipPath>
+                <clipPath id="puzzle-p3" clipPathUnits="objectBoundingBox">
+                    <path d="M0.25,0 H1 V0.75 C0.9,0.75 0.85,0.85 0.85,0.85 C0.85,0.95 0.9,1 1,1 H0.25 C0.25,0.9 0.15,0.85 0.15,0.75 C0.15,0.65 0.25,0.6 0.25,0.5 V0 Z"></path>
+                </clipPath>
+                <clipPath id="puzzle-p4" clipPathUnits="objectBoundingBox">
+                    <path d="M0,0.25 H0.75 C0.75,0.35 0.85,0.4 0.85,0.5 C0.85,0.6 0.75,0.65 0.75,0.75 V1 H0 V0.25 Z"></path>
+                </clipPath>
+                <clipPath id="puzzle-p5" clipPathUnits="objectBoundingBox">
+                    <path d="M0.25,0.25 H0.75 C0.75,0.35 0.85,0.4 0.85,0.5 C0.85,0.6 0.75,0.65 0.75,0.75 V1 H0.25 C0.25,0.9 0.15,0.85 0.15,0.75 C0.15,0.65 0.25,0.6 0.25,0.5 V0.25 Z"></path>
+                </clipPath>
+                <clipPath id="puzzle-p6" clipPathUnits="objectBoundingBox">
+                    <path d="M0.25,0.25 H1 V1 H0.25 C0.25,0.9 0.15,0.85 0.15,0.75 C0.15,0.65 0.25,0.6 0.25,0.5 V0.25 Z"></path>
+                </clipPath>
+            </defs>
+        </svg>
+
 		<div id="wrapper">
 			<div id="main"><div class="inner">
 					<header id="header" style="height: 0; margin: 0; padding: 0; overflow: hidden;"></header>
 					
                     <section>
-                        <!-- MINI-BANNER NO TOPO -->
                         <div class="mini-banner">
                             <h1><b>b</b>io<b>C</b>ultura</h1>
                         </div>
 
-                        <!-- PUZZLE ARREDONDADO -->
-                        <div class="puzzle-container">
+                        <!-- O PUZZLE INTERLIGADO -->
+                        <div class="puzzle-board">
                             <!-- Ar -->
-                            <div class="piece piece-rounded" onclick="location.href='recursos/ar.html'">
+                            <div class="piece p1" onclick="location.href='recursos/ar.html'" style="z-index: 6;">
                                 <img src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2071&auto=format&fit=crop" alt="Ar" />
                                 <div class="piece-label">Ar</div>
                             </div>
                             <!-- Fauna -->
-                            <div class="piece piece-rounded" onclick="location.href='ecossistemas/fauna.html'">
+                            <div class="piece p2" onclick="location.href='ecossistemas/fauna.html'" style="z-index: 5;">
                                 <img src="https://images.unsplash.com/photo-1470615619213-fdd3985a40e0?q=80&w=2054&auto=format&fit=crop" alt="Fauna" />
                                 <div class="piece-label">Fauna</div>
                             </div>
                             <!-- Água -->
-                            <div class="piece piece-rounded" onclick="location.href='recursos/agua.html'">
+                            <div class="piece p3" onclick="location.href='recursos/agua.html'" style="z-index: 4;">
                                 <img src="https://images.unsplash.com/photo-1535868118629-f37bcd69ff59?q=80&w=2076&auto=format&fit=crop" alt="Água" />
                                 <div class="piece-label">Água</div>
                             </div>
                             <!-- Flora -->
-                            <div class="piece piece-rounded" onclick="location.href='ecossistemas/flora.html'">
+                            <div class="piece p4" onclick="location.href='ecossistemas/flora.html'" style="z-index: 3;">
                                 <img src="https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?q=80&w=2000&auto=format&fit=crop" alt="Flora" />
                                 <div class="piece-label">Flora</div>
                             </div>
                             <!-- Energia -->
-                            <div class="piece piece-rounded" onclick="location.href='energia/energia.html'">
+                            <div class="piece p5" onclick="location.href='energia/energia.html'" style="z-index: 2;">
                                 <img src="https://images.unsplash.com/photo-1509391366360-2e959784a276?q=80&w=2072&auto=format&fit=crop" alt="Energia" />
                                 <div class="piece-label">Energia</div>
                             </div>
                             <!-- Terra -->
-                            <div class="piece piece-rounded" onclick="location.href='recursos/solo.html'">
+                            <div class="piece p6" onclick="location.href='recursos/solo.html'" style="z-index: 1;">
                                 <img src="https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?q=80&w=2000&auto=format&fit=crop" alt="Terra" />
                                 <div class="piece-label">Terra</div>
                             </div>
                         </div>
 
-                        <!-- MENSAGEM INTEGRADA -->
                         <div class="intro-text-smooth">
                             <h2>Tudo está ligado.</h2>
                             <p>"Na natureza, nada existe isoladamente. A nossa missão é unir a técnica e a ética para que cada peça do ecossistema encontre o seu lugar na regeneração da vida."</p>
                             <a href="manifesto.html" class="button primary" style="margin-top: 3.5em; border-radius: 50px; background-color: #2e7d32 !important;">O Nosso Compromisso</a>
                         </div>
-
 					</section>
 
 					<div class="footer-signature-right">
