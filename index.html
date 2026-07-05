@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<title>bioCultura - Simbiose Regenerativa</title>
+		<title>bioCultura - Ecossistema Integrado</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="assets/css/main.css" />
@@ -13,7 +13,7 @@
             #header .toggle:after { display: none !important; }
             
             section { 
-                padding-top: 2em !important; 
+                padding-top: 1em !important; 
                 display: flex; 
                 flex-direction: column; 
                 align-items: center;
@@ -21,104 +21,102 @@
                 background: #ffffff;
             }
 
-            /* 2. ASSINATURA MINIMALISTA (SEM LINHAS) */
+            /* 2. ASSINATURA MINIMALISTA TOPO */
             .mini-banner {
                 width: 100%;
                 text-align: center;
-                padding: 1em 0;
-                margin-bottom: 3em;
-                background: transparent; /* Removida a linha/fundo que causava o corte */
+                padding: 2em 0;
+                margin-bottom: 2em;
             }
             .mini-banner h1 { 
                 font-family: 'Source Sans Pro', sans-serif; 
-                font-size: 1.5em !important; 
+                font-size: 1.8em !important; 
                 font-weight: 300 !important; 
                 color: #2e7d32 !important; 
                 margin: 0; 
-                letter-spacing: 8px; 
+                letter-spacing: 10px; 
                 text-transform: uppercase;
-                opacity: 0.6;
+                opacity: 0.8;
             }
 
-            /* 3. A SIMBIOSE (FOCO TOTAL NA IMAGEM) */
-            .symbiosis-container {
-                position: relative;
+            /* 3. O ATLAS BIOCULTURA (SIMBIOSE SEM LINHAS) */
+            .atlas-wrapper {
                 width: 100%;
                 max-width: 1000px;
-                height: 650px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                margin-bottom: 2em;
-                /* Máscara suave para evitar bordas quadradas sem esconder a imagem */
-                mask-image: radial-gradient(circle, black 40%, rgba(0,0,0,0.4) 70%, transparent 95%);
-                -webkit-mask-image: radial-gradient(circle, black 40%, rgba(0,0,0,0.4) 70%, transparent 95%);
+                padding: 0 20px;
+                margin-bottom: 4em;
             }
 
+            .atlas-container {
+                position: relative;
+                width: 100%;
+                height: 550px;
+                /* Formato Atlas: Polos achatados e laterais curvas */
+                border-radius: 50% / 15%; 
+                overflow: hidden;
+                box-shadow: 0 30px 70px rgba(0,0,0,0.15);
+                background: #000;
+            }
+
+            /* Camadas de Imagem Vibrantes */
             .layer {
                 position: absolute;
+                top: 0; left: 0;
                 width: 100%;
                 height: 100%;
                 background-size: cover;
                 background-position: center;
-                mix-blend-mode: multiply; /* Permite a fusão das cores */
-                opacity: 0.8;
-                transition: all 2s ease;
+                transition: transform 10s ease-in-out;
             }
 
-            .layer-flora {
-                background-image: url('https://images.unsplash.com/photo-1503785332284-319726bb6705?q=80&w=2070&auto=format&fit=crop');
-                animation: float-slow 20s infinite alternate;
+            /* Lado Esquerdo: Flora e Terra (Verdes Vibrantes) */
+            .layer-earth {
+                background-image: url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2071&auto=format&fit=crop');
+                z-index: 1;
             }
 
+            /* Lado Direito: Água e Fauna Marinha (Azuis Profundos) */
             .layer-water {
-                background-image: url('https://images.unsplash.com/photo-1500375592092-40eb2168fd21?q=80&w=2000&auto=format&fit=crop');
-                mask-image: radial-gradient(circle at 70% 40%, black 10%, transparent 70%);
-                -webkit-mask-image: radial-gradient(circle at 70% 40%, black 10%, transparent 70%);
-                animation: float-slow 25s infinite alternate-reverse;
+                background-image: url('https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?q=80&w=2034&auto=format&fit=crop');
+                z-index: 2;
+                /* Fusão Smooth: sem linhas geométricas, apenas gradiente de transparência */
+                mask-image: linear-gradient(to right, transparent 0%, transparent 20%, black 80%, black 100%);
+                -webkit-mask-image: linear-gradient(to right, transparent 0%, transparent 20%, black 80%, black 100%);
             }
 
-            .layer-fauna {
-                background-image: url('https://images.unsplash.com/photo-1456348830699-7f939bc077e0?q=80&w=2070&auto=format&fit=crop');
-                mask-image: radial-gradient(circle at 30% 60%, black 5%, transparent 60%);
-                -webkit-mask-image: radial-gradient(circle at 30% 60%, black 5%, transparent 60%);
-                opacity: 0.6;
+            .atlas-container:hover .layer {
+                transform: scale(1.05);
             }
 
-            /* 4. BOTÃO CENTRAL (ÚNICO ELEMENTO SOBREPOSTO) */
-            .core-cta {
-                position: relative;
-                z-index: 100;
+            /* 4. TEXTO SUBTIL DE CONCEITO */
+            .concept-text {
                 text-align: center;
+                max-width: 700px;
+                margin-top: 2em;
+                padding: 0 2em;
             }
 
-            .button.primary {
-                background-color: #2e7d32 !important;
-                border-radius: 50px;
-                padding: 0 4em;
-                height: 4em;
-                line-height: 4em;
-                font-size: 0.9em;
-                letter-spacing: 4px;
-                text-transform: uppercase;
-                font-weight: 700;
-                box-shadow: 0 20px 40px rgba(0,0,0,0.2) !important;
-                transition: all 0.3s ease;
-            }
-            .button.primary:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 25px 50px rgba(46, 125, 50, 0.4) !important;
+            .concept-text h2 {
+                font-family: 'Source Sans Pro', sans-serif;
+                font-size: 2.5em !important;
+                font-weight: 300 !important;
+                color: #1b5e20 !important;
+                margin-bottom: 0.5em !important;
+                letter-spacing: -1px;
             }
 
-            @keyframes float-slow {
-                from { transform: scale(1); }
-                to { transform: scale(1.15); }
+            .concept-text p {
+                font-size: 1.3em !important;
+                color: #666 !important;
+                font-style: italic;
+                line-height: 1.6;
             }
 
-			.footer-signature-right { width: 100%; text-align: right; padding: 4em 2em 2em 0; opacity: 0.8; }
+			.footer-signature-right { width: 100%; text-align: right; padding: 6em 2em 2em 0; opacity: 0.8; }
 
             @media screen and (max-width: 736px) {
-                .symbiosis-container { height: 450px; }
+                .atlas-container { height: 350px; border-radius: 50% / 10%; }
+                .concept-text h2 { font-size: 1.8em !important; }
             }
 		</style>
 	</head>
@@ -128,27 +126,23 @@
 					<header id="header" style="height: 0; margin: 0; padding: 0; overflow: hidden;"></header>
 					
                     <section>
-                        <!-- ASSINATURA LIMPA -->
+                        <!-- ASSINATURA -->
                         <div class="mini-banner">
                             <h1>bioCultura</h1>
                         </div>
 
-                        <!-- A SIMBIOSE: Sem letras, apenas o compromisso -->
-                        <div class="symbiosis-container">
-                            <div class="layer layer-flora"></div>
-                            <div class="layer layer-water"></div>
-                            <div class="layer layer-fauna"></div>
-
-                            <div class="core-cta">
-                                <a href="manifesto.html" class="button primary">O Nosso Compromisso</a>
+                        <!-- O ATLAS: Simbiose de Terra e Água -->
+                        <div class="atlas-wrapper">
+                            <div class="atlas-container">
+                                <div class="layer layer-earth"></div>
+                                <div class="layer layer-water"></div>
                             </div>
                         </div>
 
-                        <!-- TEXTO SUBTIL DE APOIO NO FUNDO -->
-                        <div style="text-align: center; max-width: 600px; margin-top: 3em; padding: 0 2em;">
-                            <p style="font-size: 1.1em !important; color: #888 !important; font-style: italic; letter-spacing: 1px;">
-                                Onde a tecnologia e a vida respiram em uníssono.
-                            </p>
+                        <!-- CONCEITO -->
+                        <div class="concept-text">
+                            <h2>A Vida não se divide.</h2>
+                            <p>Onde a tecnologia e a natureza respiram em uníssono,<br>fechando o ciclo da regeneração ética.</p>
                         </div>
 					</section>
 
