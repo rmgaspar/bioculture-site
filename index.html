@@ -18,6 +18,7 @@
                 flex-direction: column; 
                 align-items: center;
                 min-height: 100vh;
+                background: #ffffff;
             }
 
             /* 2. MINI-BANNER ASSINATURA */
@@ -25,7 +26,7 @@
                 width: 100%;
                 text-align: center;
                 padding: 1em 0;
-                margin-bottom: 4em;
+                margin-bottom: 2em;
             }
             .mini-banner h1 { 
                 font-family: 'Source Sans Pro', sans-serif; 
@@ -35,110 +36,117 @@
                 margin: 0; 
                 letter-spacing: 8px; 
                 text-transform: uppercase;
-                opacity: 0.8;
+                opacity: 0.6;
             }
 
-            /* 3. A SIMBIOSE (O CENTRO VISUAL) */
+            /* 3. A SIMBIOSE (SEM CONTORNOS DEFINIDOS) */
             .symbiosis-container {
                 position: relative;
                 width: 100%;
-                max-width: 900px;
-                height: 600px;
+                max-width: 1100px;
+                height: 700px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                margin-bottom: 4em;
+                margin-bottom: 2em;
+                /* O segredo do "rasgo" orgânico: máscara de gradiente radial complexa */
+                mask-image: radial-gradient(circle at center, black 30%, rgba(0,0,0,0.8) 50%, transparent 75%);
+                -webkit-mask-image: radial-gradient(circle at center, black 30%, rgba(0,0,0,0.8) 50%, transparent 75%);
+                overflow: visible;
             }
 
-            /* As camadas de imagem que se fundem */
             .layer {
                 position: absolute;
                 width: 100%;
                 height: 100%;
                 background-size: cover;
                 background-position: center;
-                /* O segredo da simbiose: máscaras radiais e blend modes */
-                mask-image: radial-gradient(circle, black 20%, transparent 70%);
-                -webkit-mask-image: radial-gradient(circle, black 20%, transparent 70%);
                 mix-blend-mode: multiply;
-                opacity: 0.8;
+                opacity: 0.7;
                 transition: all 2s ease-in-out;
+                /* Desfoca as bordas de cada camada individualmente */
+                filter: blur(2px);
             }
 
             .layer-flora {
-                background-image: url('https://plus.unsplash.com/premium_photo-1661963774520-d5edf06bb573?q=80&w=3205&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
-                animation: float-slow 10s infinite alternate;
+                background-image: url('https://images.unsplash.com/photo-1503785332284-319726bb6705?q=80&w=2070&auto=format&fit=crop');
+                animation: float-slow 15s infinite alternate;
+                mask-image: radial-gradient(circle at 40% 40%, black 20%, transparent 70%);
+                -webkit-mask-image: radial-gradient(circle at 40% 40%, black 20%, transparent 70%);
             }
 
             .layer-water {
-                background-image: url('https://plus.unsplash.com/premium_photo-1661841439995-1706237c83dc?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
-                mask-image: radial-gradient(circle at 70% 50%, black 10%, transparent 60%);
-                -webkit-mask-image: radial-gradient(circle at 70% 50%, black 10%, transparent 60%);
-                animation: float-slow 12s infinite alternate-reverse;
+                background-image: url('https://images.unsplash.com/photo-1500375592092-40eb2168fd21?q=80&w=2000&auto=format&fit=crop');
+                mask-image: radial-gradient(circle at 70% 60%, black 20%, transparent 80%);
+                -webkit-mask-image: radial-gradient(circle at 70% 60%, black 20%, transparent 80%);
+                animation: float-slow 18s infinite alternate-reverse;
             }
 
             .layer-fauna {
-                background-image: url('https://plus.unsplash.com/premium_photo-1661883642449-ba33bbfdf42e?q=80&w=3028&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
-                mask-image: radial-gradient(circle at 30% 60%, black 5%, transparent 50%);
-                -webkit-mask-image: radial-gradient(circle at 30% 60%, black 5%, transparent 50%);
-                opacity: 0.6;
+                background-image: url('https://images.unsplash.com/photo-1456348830699-7f939bc077e0?q=80&w=2070&auto=format&fit=crop');
+                mask-image: radial-gradient(circle at 50% 50%, black 10%, transparent 60%);
+                -webkit-mask-image: radial-gradient(circle at 50% 50%, black 10%, transparent 60%);
+                opacity: 0.5;
             }
 
-            /* 4. CONTEÚDO TIPOGRÁFICO (SOBREPOSTO) */
+            /* 4. CONTEÚDO TIPOGRÁFICO (LEGIBILIDADE MELHORADA) */
             .core-message {
                 position: relative;
-                z-index: 10;
+                z-index: 100;
                 text-align: center;
-                max-width: 650px;
-                padding: 2em;
+                max-width: 700px;
+                padding: 3em;
+                /* Glow subtil atrás do texto para destacar das imagens */
+                background: rgba(255, 255, 255, 0.2);
+                backdrop-filter: blur(4px);
+                border-radius: 100%;
             }
 
             .core-message h2 {
                 font-family: 'Source Sans Pro', sans-serif;
-                font-size: 3.5em !important;
+                font-size: 3.8em !important;
                 font-weight: 300 !important;
                 color: #1b5e20 !important;
-                line-height: 1.1 !important;
-                margin-bottom: 0.5em !important;
-                letter-spacing: -1px;
+                line-height: 1 !important;
+                margin-bottom: 0.4em !important;
+                letter-spacing: -2px;
+                text-shadow: 0 0 20px rgba(255,255,255,0.8);
             }
 
             .core-message p {
-                font-size: 1.4em !important;
+                font-size: 1.5em !important;
                 color: #2e7d32 !important;
                 font-style: italic;
-                font-weight: 400;
-                opacity: 0.9;
+                font-weight: 600;
+                text-shadow: 0 0 15px rgba(255,255,255,0.9);
             }
 
-            /* Animação subtil de respiração */
             @keyframes float-slow {
-                from { transform: scale(1) translate(0, 0); }
-                to { transform: scale(1.1) translate(10px, 10px); }
+                from { transform: scale(1.1) translate(-10px, -10px); }
+                to { transform: scale(1.2) translate(10px, 10px); }
             }
 
             /* 5. BOTÃO E RODAPÉ */
             .button-container {
-                margin-top: 2em;
-                z-index: 20;
+                margin-top: 2.5em;
             }
             .button.primary {
                 background-color: #2e7d32 !important;
                 border-radius: 50px;
                 padding: 0 4em;
-                height: 3.5em;
-                line-height: 3.5em;
-                font-size: 0.8em;
+                height: 3.8em;
+                line-height: 3.8em;
+                font-size: 0.85em;
                 letter-spacing: 3px;
                 text-transform: uppercase;
-                box-shadow: 0 10px 20px rgba(46, 125, 50, 0.2) !important;
+                box-shadow: 0 15px 30px rgba(46, 125, 50, 0.3) !important;
             }
 
-			.footer-signature-right { width: 100%; text-align: right; padding: 6em 2em 2em 0; opacity: 0.8; }
+			.footer-signature-right { width: 100%; text-align: right; padding: 4em 2em 2em 0; opacity: 0.8; }
 
             @media screen and (max-width: 736px) {
-                .core-message h2 { font-size: 2.2em !important; }
-                .symbiosis-container { height: 400px; }
+                .core-message h2 { font-size: 2.5em !important; }
+                .symbiosis-container { height: 500px; mask-image: radial-gradient(circle, black 40%, transparent 90%); }
             }
 		</style>
 	</head>
@@ -148,12 +156,12 @@
 					<header id="header" style="height: 0; margin: 0; padding: 0; overflow: hidden;"></header>
 					
                     <section>
-                        <!-- ASSINATURA MINIMALISTA -->
+                        <!-- ASSINATURA -->
                         <div class="mini-banner">
                             <h1>bioCultura</h1>
                         </div>
 
-                        <!-- O VÓRTICE: Simbiose Imperceptível -->
+                        <!-- O VÓRTICE: Rasgo Orgânico e Simbiose -->
                         <div class="symbiosis-container">
                             <div class="layer layer-flora"></div>
                             <div class="layer layer-water"></div>
@@ -161,7 +169,7 @@
 
                             <div class="core-message">
                                 <h2>A Vida não se divide.</h2>
-                                <p>Na bioCultura, a tecnologia não imita a natureza. Ela torna-se parte dela.</p>
+                                <p>Na bioCultura, a tecnologia não imita a natureza.<br>Ela funde-se nela.</p>
                                 
                                 <div class="button-container">
                                     <a href="manifesto.html" class="button primary">O Nosso Compromisso</a>
@@ -169,9 +177,9 @@
                             </div>
                         </div>
 
-                        <!-- CONTEÚDO ADICIONAL SUBTIL -->
-                        <div style="text-align: center; max-width: 700px; margin-top: 2em;">
-                            <p style="font-size: 1.1em !important; color: #666 !important;">
+                        <!-- TEXTO SUBTIL DE APOIO -->
+                        <div style="text-align: center; max-width: 650px; margin-top: 1em; padding: 0 2em;">
+                            <p style="font-size: 1.1em !important; color: #777 !important; line-height: 1.6 !important;">
                                 Da inteligência do solo à pureza do ar, desenhamos sistemas onde a energia flui de forma ética, fechando o ciclo da regeneração.
                             </p>
                         </div>
