@@ -6,103 +6,99 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="assets/css/main.css" />
 		<style>
-			/* 1. ESTRUTURA BASE */
+			/* 1. ESTRUTURA E LIMPEZA */
 			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
 			#header .toggle { background: none !important; top: 2em !important; left: 2em !important; border: none !important; text-decoration: none !important; z-index: 10001; }
 			#header .toggle:before { content: '\f06c' !important; font-family: "Font Awesome 5 Free" !important; font-weight: 900; color: #2e7d32 !important; font-size: 1.6em !important; }
             #header .toggle:after { display: none !important; }
-            section { padding-top: 2em !important; }
+            section { padding-top: 1em !important; }
 
-            /* 2. O ECOSSISTEMA EM COMUNHÃO (O "TCHARAN") */
-            .communion-container {
-                position: relative;
+            /* 2. MINI-BANNER TOPO */
+            .mini-banner {
                 width: 100%;
-                height: 700px;
-                margin-bottom: 4em;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                overflow: hidden;
-                border-radius: 40px;
-                background: #fdfdfd;
-            }
-
-            .communion-center {
-                position: relative;
-                z-index: 10;
                 text-align: center;
-                max-width: 500px;
-                background: rgba(255, 255, 255, 0.8);
-                padding: 3em;
-                border-radius: 100%;
-                backdrop-filter: blur(10px);
-                box-shadow: 0 0 50px rgba(0,0,0,0.05);
+                padding: 1.5em 0;
+                margin-bottom: 3em;
+                background: linear-gradient(to right, transparent, rgba(46, 125, 50, 0.05), transparent);
+                border-radius: 50px;
             }
-            .communion-center h1 { color: #2e7d32 !important; font-size: 3.5em !important; font-weight: 300 !important; margin: 0; letter-spacing: -2px; }
-            .communion-center p { font-style: italic; color: #555; margin-top: 0.5em; font-size: 1.2em; }
+            .mini-banner h1 { 
+                font-family: 'Source Sans Pro', sans-serif; 
+                font-size: 1.8em !important; 
+                font-weight: 300 !important; 
+                color: #2e7d32 !important; 
+                margin: 0; 
+                letter-spacing: 2px; 
+                text-transform: none;
+            }
+            .mini-banner b { font-weight: 700; }
 
-            /* Blobs de Imagens (Os Elementos) */
-            .element-blob {
-                position: absolute;
+            /* 3. O GLOBO BIOCULTURA (A COMUNHÃO) */
+            .globe-wrapper {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                margin-bottom: 6em;
+                perspective: 1000px;
+            }
+
+            .globe-container {
+                position: relative;
+                width: 600px;
+                height: 600px;
+                border-radius: 50%;
                 overflow: hidden;
-                box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-                transition: all 1s ease-in-out;
-                animation: float 6s ease-in-out infinite;
-            }
-            .element-blob img { width: 100%; height: 100%; object-fit: cover; opacity: 0.9; }
-
-            /* Fauna - Canto Superior Esquerdo */
-            .fauna-blob {
-                top: 5%; left: 5%; width: 300px; height: 300px;
-                border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
-            }
-            /* Flora - Canto Superior Direito */
-            .flora-blob {
-                top: -5%; right: 5%; width: 350px; height: 350px;
-                border-radius: 30% 70% 70% 30% / 50% 30% 70% 50%;
-                animation-delay: 1s;
-            }
-            /* Água - Fundo Esquerdo */
-            .agua-blob {
-                bottom: 5%; left: -2%; width: 320px; height: 320px;
-                border-radius: 50% 50% 20% 80% / 25% 80% 20% 75%;
-                animation-delay: 2s;
-            }
-            /* Terra - Fundo Direito */
-            .terra-blob {
-                bottom: 0%; right: 0%; width: 400px; height: 300px;
-                border-radius: 80% 20% 50% 50% / 50% 50% 80% 20%;
-                animation-delay: 3s;
-            }
-            /* Ar - Topo Centro */
-            .ar-blob {
-                top: -10%; left: 35%; width: 250px; height: 200px;
-                border-radius: 40% 60% 40% 60% / 40% 40% 60% 60%;
-                opacity: 0.6;
-                animation-delay: 4s;
-            }
-            /* Energia - Fundo Centro */
-            .energia-blob {
-                bottom: -5%; left: 30%; width: 280px; height: 250px;
-                border-radius: 20% 80% 40% 60% / 70% 30% 70% 30%;
-                animation-delay: 5s;
+                box-shadow: 0 40px 100px rgba(0,0,0,0.15);
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                grid-template-rows: 1fr 1fr 1fr;
+                transform: rotate(-15deg); /* Inclinação do eixo da terra */
+                transition: transform 1s ease-out;
             }
 
-            @keyframes float {
-                0%, 100% { transform: translateY(0) scale(1); }
-                50% { transform: translateY(-20px) scale(1.02); }
+            .globe-container:hover {
+                transform: rotate(0deg) scale(1.02);
             }
 
-            /* 3. TEXTO DE TRANSIÇÃO */
+            /* Segmentos do Globo */
+            .globe-slice {
+                position: relative;
+                overflow: hidden;
+                transition: filter 0.5s ease;
+                filter: saturate(0.8);
+            }
+            .globe-slice:hover { filter: saturate(1.2); }
+            .globe-slice img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transform: rotate(15deg); /* Compensa a rotação do container */
+            }
+
+            /* Overlay de fusão entre fatias */
+            .globe-slice::after {
+                content: '';
+                position: absolute;
+                top: 0; left: 0; width: 100%; height: 100%;
+                box-shadow: inset 0 0 50px rgba(0,0,0,0.2);
+            }
+
+            /* 4. TEXTO DE TRANSIÇÃO */
             .intro-text-smooth {
                 text-align: center;
-                padding: 4em 10%;
-                margin-bottom: 6em;
+                padding: 0 10%;
+                margin-bottom: 8em;
             }
-            .intro-text-smooth h2 { color: #2e7d32; font-size: 2.5em; font-weight: 700; margin-bottom: 1em; }
-            .intro-text-smooth p { font-size: 1.4em; line-height: 1.6; color: #444; max-width: 900px; margin: 0 auto; }
+            .intro-text-smooth h2 { color: #2e7d32; font-size: 2.2em; font-weight: 700; margin-bottom: 0.8em; letter-spacing: -1px; }
+            .intro-text-smooth p { font-size: 1.35em; line-height: 1.6; color: #555; max-width: 800px; margin: 0 auto; font-style: italic; }
 
 			.footer-signature-right { text-align: right; padding: 4em 0 2em 0; opacity: 0.9; }
+
+            /* Mobile Adjustments */
+            @media screen and (max-width: 736px) {
+                .globe-container { width: 320px; height: 320px; }
+                .mini-banner h1 { font-size: 1.4em !important; }
+            }
 		</style>
 	</head>
 	<body class="is-preload">
@@ -111,30 +107,46 @@
 					<header id="header" style="height: 0; margin: 0; padding: 0; overflow: hidden;"></header>
 					
                     <section>
-                        <!-- COMUNHÃO VISUAL: Onde os elementos se fundem -->
-                        <div class="communion-container">
-                            
-                            <!-- Imagens em Blobs Orgânicos -->
-                            <div class="element-blob fauna-blob"><img src="https://images.unsplash.com/photo-1470615619213-fdd3985a40e0?q=80&w=2054&auto=format&fit=crop" alt="Fauna" /></div>
-                            <div class="element-blob flora-blob"><img src="https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?q=80&w=2000&auto=format&fit=crop" alt="Flora" /></div>
-                            <div class="element-blob agua-blob"><img src="https://images.unsplash.com/photo-1535868118629-f37bcd69ff59?q=80&w=2076&auto=format&fit=crop" alt="Água" /></div>
-                            <div class="element-blob terra-blob"><img src="https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?q=80&w=2000&auto=format&fit=crop" alt="Terra" /></div>
-                            <div class="element-blob ar-blob"><img src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2071&auto=format&fit=crop" alt="Ar" /></div>
-                            <div class="element-blob energia-blob"><img src="https://images.unsplash.com/photo-1509391366360-2e959784a276?q=80&w=2072&auto=format&fit=crop" alt="Energia" /></div>
+                        <!-- MINI-BANNER NO TOPO -->
+                        <div class="mini-banner">
+                            <h1><b>b</b>io<b>C</b>ultura</h1>
+                        </div>
 
-                            <!-- Centro do Ecossistema -->
-                            <div class="communion-center">
-                                <h1>bioCultura</h1>
-                                <p>Onde a tecnologia e a vida respiram em uníssono.</p>
-                                <div style="width: 40px; height: 2px; background: #2e7d32; margin: 1.5em auto; opacity: 0.3;"></div>
+                        <!-- O GLOBO: Comunhão dos 6 Elementos -->
+                        <div class="globe-wrapper">
+                            <div class="globe-container">
+                                <!-- Ar -->
+                                <div class="globe-slice" title="Ar">
+                                    <img src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2071&auto=format&fit=crop" alt="Ar" />
+                                </div>
+                                <!-- Fauna -->
+                                <div class="globe-slice" title="Fauna">
+                                    <img src="https://images.unsplash.com/photo-1470615619213-fdd3985a40e0?q=80&w=2054&auto=format&fit=crop" alt="Fauna" />
+                                </div>
+                                <!-- Água -->
+                                <div class="globe-slice" title="Água">
+                                    <img src="https://images.unsplash.com/photo-1535868118629-f37bcd69ff59?q=80&w=2076&auto=format&fit=crop" alt="Água" />
+                                </div>
+                                <!-- Flora -->
+                                <div class="globe-slice" title="Flora">
+                                    <img src="https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?q=80&w=2000&auto=format&fit=crop" alt="Flora" />
+                                </div>
+                                <!-- Energia -->
+                                <div class="globe-slice" title="Energia">
+                                    <img src="https://images.unsplash.com/photo-1509391366360-2e959784a276?q=80&w=2072&auto=format&fit=crop" alt="Energia" />
+                                </div>
+                                <!-- Terra -->
+                                <div class="globe-slice" title="Terra">
+                                    <img src="https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?q=80&w=2000&auto=format&fit=crop" alt="Terra" />
+                                </div>
                             </div>
                         </div>
 
-                        <!-- MENSAGEM DE BOAS-VINDAS -->
+                        <!-- MENSAGEM INTEGRADA -->
                         <div class="intro-text-smooth">
-                            <h2>Equilíbrio Regenerativo</h2>
-                            <p>Não basta conservar, é preciso integrar. Na bioCultura, a nossa engenharia nasce da observação da fauna, da flora, da água e do solo, criando sistemas onde a energia flui de forma ética e natural.</p>
-                            <a href="manifesto.html" class="button primary" style="margin-top: 3em; border-radius: 50px; background-color: #2e7d32 !important;">O Nosso Compromisso</a>
+                            <h2>Um Ecossistema em Comunhão</h2>
+                            <p>"A terra não é um suporte inerte, nem a água um resíduo. Somos parte de um organismo vivo onde cada elemento respira em conjunto."</p>
+                            <a href="manifesto.html" class="button primary" style="margin-top: 3.5em; border-radius: 50px; background-color: #2e7d32 !important;">O Nosso Compromisso</a>
                         </div>
 
 					</section>
