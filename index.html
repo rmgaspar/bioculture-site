@@ -1,129 +1,144 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<title>bioCultura - Ecossistema em Comunhão</title>
+		<title>bioCultura - Simbiose Regenerativa</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="assets/css/main.css" />
 		<style>
-			/* 1. ESTRUTURA MINIMALISTA */
+			/* 1. RESET E ESTRUTURA LIMPA */
 			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
 			#header .toggle { background: none !important; top: 2em !important; left: 2em !important; border: none !important; text-decoration: none !important; z-index: 10001; }
 			#header .toggle:before { content: '\f06c' !important; font-family: "Font Awesome 5 Free" !important; font-weight: 900; color: #2e7d32 !important; font-size: 1.6em !important; }
             #header .toggle:after { display: none !important; }
-            section { padding-top: 1em !important; display: flex; flex-direction: column; align-items: center; }
+            
+            section { 
+                padding-top: 2em !important; 
+                display: flex; 
+                flex-direction: column; 
+                align-items: center;
+                min-height: 100vh;
+            }
 
-            /* 2. ASSINATURA TOPO */
+            /* 2. MINI-BANNER ASSINATURA */
             .mini-banner {
                 width: 100%;
                 text-align: center;
-                padding: 3em 0 1em 0;
+                padding: 1em 0;
+                margin-bottom: 4em;
             }
             .mini-banner h1 { 
                 font-family: 'Source Sans Pro', sans-serif; 
-                font-size: 2.2em !important; 
+                font-size: 1.5em !important; 
                 font-weight: 300 !important; 
                 color: #2e7d32 !important; 
                 margin: 0; 
-                letter-spacing: 6px; 
-                text-transform: none;
-            }
-            .mini-banner b { font-weight: 700; }
-
-            /* 3. O GLOBO DA VIDA (O MOMENTO WOW) */
-            .wow-wrapper {
-                position: relative;
-                width: 550px;
-                height: 550px;
-                margin: 2em 0 5em 0;
-                display: flex;
-                justify-content: center;
-                align-items: center;
+                letter-spacing: 8px; 
+                text-transform: uppercase;
+                opacity: 0.8;
             }
 
-            /* Aura de Energia/Ar */
-            .wow-wrapper::before {
-                content: '';
-                position: absolute;
-                width: 110%;
-                height: 110%;
-                border-radius: 50%;
-                background: radial-gradient(circle, rgba(46, 125, 50, 0.1) 0%, transparent 70%);
-                animation: pulse 8s infinite ease-in-out;
-            }
-
-            .globe-main {
+            /* 3. A SIMBIOSE (O CENTRO VISUAL) */
+            .symbiosis-container {
                 position: relative;
                 width: 100%;
+                max-width: 900px;
+                height: 600px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-bottom: 4em;
+            }
+
+            /* As camadas de imagem que se fundem */
+            .layer {
+                position: absolute;
+                width: 100%;
                 height: 100%;
-                border-radius: 50%;
-                overflow: hidden;
-                box-shadow: 0 40px 100px rgba(0,0,0,0.2);
-                background: #000;
-                transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
-            }
-
-            .globe-main:hover {
-                transform: scale(1.02);
-            }
-
-            /* Metade Superior: Terrestre (Flora/Fauna) */
-            .terrestrial {
-                position: absolute;
-                top: 0; width: 100%; height: 50%;
-                background-image: url('https://images.unsplash.com/photo-1705765913823-c97aefa6e9c6?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
                 background-size: cover;
-                background-position: center bottom;
-                border-bottom: 2px solid rgba(255,255,255,0.2);
-                z-index: 2;
+                background-position: center;
+                /* O segredo da simbiose: máscaras radiais e blend modes */
+                mask-image: radial-gradient(circle, black 20%, transparent 70%);
+                -webkit-mask-image: radial-gradient(circle, black 20%, transparent 70%);
+                mix-blend-mode: multiply;
+                opacity: 0.8;
+                transition: all 2s ease-in-out;
             }
 
-            /* Metade Inferior: Marinha (Água/Fauna) */
-            .marine {
-                position: absolute;
-                bottom: 0; width: 100%; height: 50%;
-                background-image: url('https://plus.unsplash.com/premium_photo-1661841439995-1706237c83dc?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
-                background-size: cover;
-                background-position: center top;
-                z-index: 1;
+            .layer-flora {
+                background-image: url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2071&auto=format&fit=crop');
+                animation: float-slow 10s infinite alternate;
             }
 
-            /* Divisor Smooth */
-            .globe-divider {
-                position: absolute;
-                top: 50%; left: 0; width: 100%; height: 1px;
-                background: linear-gradient(to right, transparent, rgba(255,255,255,0.5), transparent);
-                z-index: 3;
-                transform: translateY(-50%);
+            .layer-water {
+                background-image: url('https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?q=80&w=2034&auto=format&fit=crop');
+                mask-image: radial-gradient(circle at 70% 50%, black 10%, transparent 60%);
+                -webkit-mask-image: radial-gradient(circle at 70% 50%, black 10%, transparent 60%);
+                animation: float-slow 12s infinite alternate-reverse;
             }
 
-            @keyframes pulse {
-                0%, 100% { transform: scale(1); opacity: 0.5; }
-                50% { transform: scale(1.05); opacity: 0.8; }
+            .layer-fauna {
+                background-image: url('https://images.unsplash.com/photo-1470615619213-fdd3985a40e0?q=80&w=2054&auto=format&fit=crop');
+                mask-image: radial-gradient(circle at 30% 60%, black 5%, transparent 50%);
+                -webkit-mask-image: radial-gradient(circle at 30% 60%, black 5%, transparent 50%);
+                opacity: 0.6;
             }
 
-            /* 4. TEXTO DE TRANSIÇÃO */
-            .intro-text-smooth {
+            /* 4. CONTEÚDO TIPOGRÁFICO (SOBREPOSTO) */
+            .core-message {
+                position: relative;
+                z-index: 10;
                 text-align: center;
-                max-width: 800px;
-                margin-bottom: 8em;
+                max-width: 650px;
+                padding: 2em;
             }
-            .intro-text-smooth h2 { color: #2e7d32; font-size: 2.2em; font-weight: 700; margin-bottom: 1em; letter-spacing: -1px; }
-            .intro-text-smooth p { font-size: 1.4em; line-height: 1.6; color: #555; font-style: italic; }
 
+            .core-message h2 {
+                font-family: 'Source Sans Pro', sans-serif;
+                font-size: 3.5em !important;
+                font-weight: 300 !important;
+                color: #1b5e20 !important;
+                line-height: 1.1 !important;
+                margin-bottom: 0.5em !important;
+                letter-spacing: -1px;
+            }
+
+            .core-message p {
+                font-size: 1.4em !important;
+                color: #2e7d32 !important;
+                font-style: italic;
+                font-weight: 400;
+                opacity: 0.9;
+            }
+
+            /* Animação subtil de respiração */
+            @keyframes float-slow {
+                from { transform: scale(1) translate(0, 0); }
+                to { transform: scale(1.1) translate(10px, 10px); }
+            }
+
+            /* 5. BOTÃO E RODAPÉ */
+            .button-container {
+                margin-top: 2em;
+                z-index: 20;
+            }
             .button.primary {
                 background-color: #2e7d32 !important;
                 border-radius: 50px;
-                padding: 0 3.5em;
-                margin-top: 3em;
+                padding: 0 4em;
+                height: 3.5em;
+                line-height: 3.5em;
+                font-size: 0.8em;
+                letter-spacing: 3px;
+                text-transform: uppercase;
+                box-shadow: 0 10px 20px rgba(46, 125, 50, 0.2) !important;
             }
 
-			.footer-signature-right { width: 100%; text-align: right; padding: 4em 0 2em 0; opacity: 0.9; }
+			.footer-signature-right { width: 100%; text-align: right; padding: 6em 2em 2em 0; opacity: 0.8; }
 
-            /* Mobile */
             @media screen and (max-width: 736px) {
-                .wow-wrapper { width: 320px; height: 320px; }
-                .mini-banner h1 { font-size: 1.6em !important; }
+                .core-message h2 { font-size: 2.2em !important; }
+                .symbiosis-container { height: 400px; }
             }
 		</style>
 	</head>
@@ -133,25 +148,32 @@
 					<header id="header" style="height: 0; margin: 0; padding: 0; overflow: hidden;"></header>
 					
                     <section>
-                        <!-- ASSINATURA NO TOPO -->
+                        <!-- ASSINATURA MINIMALISTA -->
                         <div class="mini-banner">
-                            <h1><b>b</b>io<b>C</b>ultura</h1>
+                            <h1>bioCultura</h1>
                         </div>
 
-                        <!-- O GLOBO: Comunhão Terrestre e Marítima -->
-                        <div class="wow-wrapper">
-                            <div class="globe-main">
-                                <div class="terrestrial"></div>
-                                <div class="globe-divider"></div>
-                                <div class="marine"></div>
+                        <!-- O VÓRTICE: Simbiose Imperceptível -->
+                        <div class="symbiosis-container">
+                            <div class="layer layer-flora"></div>
+                            <div class="layer layer-water"></div>
+                            <div class="layer layer-fauna"></div>
+
+                            <div class="core-message">
+                                <h2>A Vida não se divide.</h2>
+                                <p>Na bioCultura, a tecnologia não imita a natureza. Ela torna-se parte dela.</p>
+                                
+                                <div class="button-container">
+                                    <a href="manifesto.html" class="button primary">O Nosso Compromisso</a>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- MENSAGEM FINAL -->
-                        <div class="intro-text-smooth">
-                            <h2>Um Ecossistema, Uma Vida.</h2>
-                            <p>"Da raiz profunda ao oceano imenso, a bioCultura une a fauna, a flora e os recursos vitais num único ciclo de regeneração ética."</p>
-                            <a href="manifesto.html" class="button primary">O Nosso Compromisso</a>
+                        <!-- CONTEÚDO ADICIONAL SUBTIL -->
+                        <div style="text-align: center; max-width: 700px; margin-top: 2em;">
+                            <p style="font-size: 1.1em !important; color: #666 !important;">
+                                Da inteligência do solo à pureza do ar, desenhamos sistemas onde a energia flui de forma ética, fechando o ciclo da regeneração.
+                            </p>
                         </div>
 					</section>
 
