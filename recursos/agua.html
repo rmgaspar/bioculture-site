@@ -124,53 +124,77 @@
 			<div id="sidebar"></div>
 		</div>
 
-		<script src="/assets/js/jquery.min.js"></script>
-        <script>
-            fetch('/data/bioregioes.json')
-                .then(r => r.json())
-                .then(data => {
-                    const savedRegion = localStorage.getItem('biocultura_region');
-                    if (savedRegion && data[savedRegion]) {
-                        const info = data[savedRegion];
-                        document.getElementById('no-gps-warning').style.display = 'none';
-                        document.getElementById('water-dashboard').style.display = 'grid';
+		<script>
+    console.log("Observatório bioCultura: A carregar dados hídricos...");
 
-                        // Injeção Segura de Dados
-                        if(info.titulo) document.getElementById('reg-name').innerText = info.titulo;
-                        if(info.recursos_hidricos) {
-                            document.getElementById('val-ph').innerText = info.recursos_hidricos.ph_agua || '--';
-                            document.getElementById('val-dureza').innerText = info.recursos_hidricos.dureza_fr || '--';
-                            document.getElementById('reg-obs').href = info.recursos_hidricos.observatorio || '#';
-                            
-                            // Gráfico
-                            const chart = document.getElementById('temp-chart');
-                            const temps = info.recursos_hidricos.temp_media_agua || [];
-                            const months = ['J','F','M','A','M','J','J','A','S','O','N','D'];
-                            chart.innerHTML = '';
-                            temps.forEach((t, i) => {
-                                const bar = document.createElement('div');
-                                bar.className = 'temp-bar';
-                                bar.style.height = (t * 4) + 'px';
-                                bar.setAttribute('data-temp', t);
-                                const lbl = document.createElement('span');
-                                lbl.innerText = months[i];
-                                lbl.style.cssText = "font-size:0.6em; position:absolute; bottom:-22px; left:50%; transform:translateX(-50%); color:#888; font-weight:700;";
-                                bar.appendChild(lbl);
-                                chart.appendChild(bar);
-                            });
-                        }
-                        if(info.agua) {
-                            document.getElementById('reg-reserves').innerText = info.agua.reservas || '';
-                            document.getElementById('reg-aquifer').innerText = info.agua.aquiferos || '';
-                            document.getElementById('reg-note').innerText = info.agua.nota || '';
-                        }
+    fetch('/data/bioregioes.json')
+        .then(response => {
+            if (!response.ok) throw new Error("Ficheiro JSON não encontrado.");
+            return response.json();
+        })
+        .then(data => {
+            const savedRegion = localStorage.getItem('biocultura_region');
+            console.log("Região ativa:", savedRegion);
+
+            if (savedRegion && data[savedRegion]) {
+                const info = data[savedRegion];
+                
+                // 1. Mostrar Dashboard
+                document.getElementById('no-gps-warning').style.display = 'none';
+                document.getElementById('water-dashboard').style.display = 'grid';
+
+                // 2. Injetar Nome da Região
+                if(info.titulo) document.getElementById('reg-name').innerText = info.titulo;
+
+                // 3. Injetar Perfil Químico
+                if(info.recursos_hidricos) {
+                    document.getElementById('val-ph').innerText = info.recursos_hidricos.ph_agua || '--';
+                    document.getElementById('val-dureza').innerText = info.recursos_hidricos.dureza_fr || '--';
+                    
+                    // Link ERSAR
+                    const obsLink = document.getElementById('reg-obs');
+                    if(obsLink) {
+                        obsLink.href = info.recursos_hidricos.observatorio || 'https://www.ersar.pt';
                     }
-                });
 
-            fetch('/sidebar-content.html').then(r => r.text()).then(html => {
-                document.getElementById('sidebar').innerHTML = html;
-                var s = document.createElement('script'); s.src = '/assets/js/main.js'; document.body.appendChild(s);
-            });
-        </script>
+                    // Gráfico de Temperatura
+                    const chart = document.getElementById('temp-chart');
+                    const temps = info.recursos_hidricos.temp_media_agua || [];
+                    const months = ['J','F','M','A','M','J','J','A','S','O','N','D'];
+                    chart.innerHTML = '';
+                    temps.forEach((t, i) => {
+                        const bar = document.createElement('div');
+                        bar.className = 'temp-bar';
+                        bar.style.height = (t * 4) + 'px';
+                        bar.setAttribute('data-temp', t);
+                        const lbl = document.createElement('span');
+                        lbl.innerText = months[i];
+                        lbl.style.cssText = "font-size:0.6em; position:absolute; bottom:-22px; left:50%; transform:translateX(-50%); color:#888; font-weight:700;";
+                        bar.appendChild(lbl);
+                        chart.appendChild(bar);
+                    });
+                }
+
+                // 4. Injetar Disponibilidade e Reservas (CORREÇÃO AQUI)
+                if(info.agua) {
+                    document.getElementById('reg-reserves').innerText = info.agua.reservas || 'Dados não disponíveis';
+                    document.getElementById('reg-aquifer').innerText = info.agua.aquiferos || 'Informação de aquíferos em atualização';
+                    document.getElementById('reg-note').innerText = info.agua.nota || '';
+                } else {
+                    console.warn("Objeto 'agua' não encontrado para esta região no JSON.");
+                }
+
+            } else {
+                console.log("Aguardando seleção de região no mapa/sidebar.");
+            }
+        })
+        .catch(err => console.error("Erro no carregamento:", err));
+
+    // Sidebar
+    fetch('/sidebar-content.html').then(r => r.text()).then(html => {
+        document.getElementById('sidebar').innerHTML = html;
+        var s = document.createElement('script'); s.src = '/assets/js/main.js'; document.body.appendChild(s);
+    });
+</script>
 	</body>
 </html>
