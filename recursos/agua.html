@@ -250,5 +250,77 @@
                 var s = document.createElement('script'); s.src = '/assets/js/main.js'; document.body.appendChild(s);
             });
         </script>
+       
+       <!-- SCRIPTS DE INTELIGÊNCIA REGIONAL -->
+        <script src="/assets/js/jquery.min.js"></script>
+        <script>
+            console.log("bioCultura: A iniciar sistema regional...");
+
+            // 1. Lógica do Dashboard de Água
+            fetch('/data/bioregioes.json')
+                .then(response => {
+                    if (!response.ok) throw new Error("Ficheiro JSON não encontrado.");
+                    return response.json();
+                })
+                .then(data => {
+                    const savedRegion = localStorage.getItem('biocultura_region');
+                    console.log("Região na memória:", savedRegion);
+
+                    if (savedRegion && data[savedRegion]) {
+                        const info = data[savedRegion];
+                        
+                        // Mostrar Dashboard e esconder aviso de GPS
+                        const dashboard = document.getElementById('water-dashboard');
+                        const warning = document.getElementById('no-gps-warning');
+                        if (dashboard) dashboard.style.display = 'grid';
+                        if (warning) warning.style.display = 'none';
+
+                        // Injetar Dados nos IDs correspondentes
+                        if (document.getElementById('reg-name')) document.getElementById('reg-name').innerText = info.titulo;
+                        if (document.getElementById('val-ph')) document.getElementById('val-ph').innerText = info.recursos_hidricos.ph_agua;
+                        if (document.getElementById('val-dureza')) document.getElementById('val-dureza').innerText = info.recursos_hidricos.dureza_fr;
+                        if (document.getElementById('reg-reserves')) document.getElementById('reg-reserves').innerText = info.agua.reservas;
+                        if (document.getElementById('reg-aquifer')) document.getElementById('reg-aquifer').innerText = info.agua.aquiferos;
+                        if (document.getElementById('reg-note')) document.getElementById('reg-note').innerText = info.agua.nota;
+                        if (document.getElementById('reg-obs')) document.getElementById('reg-obs').href = info.recursos_hidricos.observatorio;
+
+                        // Gerar Gráfico de Temperatura Mensal
+                        const chart = document.getElementById('temp-chart');
+                        if (chart) {
+                            chart.innerHTML = ''; // Limpar gráfico anterior
+                            const temps = info.recursos_hidricos.temp_media_agua;
+                            const months = ['J','F','M','A','M','J','J','A','S','O','N','D'];
+                            
+                            temps.forEach((t, i) => {
+                                const bar = document.createElement('div');
+                                bar.className = 'temp-bar';
+                                bar.style.height = (t * 4) + 'px'; // Escala para o gráfico
+                                bar.setAttribute('data-temp', t);
+                                
+                                const label = document.createElement('span');
+                                label.innerText = months[i];
+                                label.style.cssText = "font-size:0.6em; position:absolute; bottom:-22px; left:50%; transform:translateX(-50%); color:#888; font-weight:700;";
+                                
+                                bar.appendChild(label);
+                                chart.appendChild(bar);
+                            });
+                        }
+                        console.log("Dashboard atualizado com sucesso.");
+                    } else {
+                        console.log("Aguardando sincronização de localização.");
+                    }
+                })
+                .catch(err => console.error("Erro ao carregar dados regionais:", err));
+
+            // 2. Carregamento da Sidebar (Caminho absoluto para evitar erros)
+            fetch('/sidebar-content.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('sidebar').innerHTML = data;
+                    var script = document.createElement('script');
+                    script.src = '/assets/js/main.js';
+                    document.body.appendChild(script);
+                });
+        </script>
 	</body>
 </html>
