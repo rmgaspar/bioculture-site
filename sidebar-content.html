@@ -18,6 +18,27 @@
         </a>
     </div>
 
+    <!-- Seletor de Localização Smooth -->
+    <div style="padding: 0 0 2em 0; border-bottom: 1px solid rgba(0,0,0,0.05); margin-bottom: 2em;">
+        <button onclick="detectLocation()" style="background: none; border: 1px solid #2e7d32; color: #2e7d32; border-radius: 50px; font-size: 0.7em; padding: 5px 15px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: 700;">
+            <i class="fas fa-location-arrow"></i> <span id="loc-text">Sincronizar Localização</span>
+        </button>
+    </div>
+
+    <script>
+    function detectLocation() {
+        if (!navigator.geolocation) return;
+        navigator.geolocation.getCurrentPosition((pos) => {
+            const lat = pos.coords.latitude;
+            let region = lat < 37.5 ? "algarve" : lat < 39.0 ? "alentejo" : lat < 40.8 ? "centro" : "norte";
+            localStorage.setItem('biocultura_region', region);
+            document.getElementById('loc-text').innerText = "Região Ativa";
+            location.reload(); // Recarrega para aplicar a inteligência regional
+        });
+    }
+    </script>
+
+
     <!-- Menu Ultra-Clean e Compacto -->
     <nav id="menu" style="border: none;">
         <ul style="list-style: none; padding: 0; margin: 0;">
