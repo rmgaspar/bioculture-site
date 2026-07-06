@@ -12,10 +12,12 @@
             #header .toggle:after { display: none !important; }
             section { padding-top: 2em !important; }
 
+            /* DASHBOARD */
             .water-dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 4em; }
-            .data-card { background: #fff; border-radius: 35px; padding: 2.5em; box-shadow: 0 20px 50px rgba(0,0,0,0.04); border: 1px solid #f0f7ff; position: relative; overflow: hidden; min-height: 320px; }
+            .data-card { background: #fff; border-radius: 35px; padding: 2.5em; box-shadow: 0 20px 50px rgba(0,0,0,0.04); border: 1px solid #f0f7ff; position: relative; overflow: hidden; min-height: 350px; }
             .data-card h4 { color: #0277bd; text-transform: uppercase; letter-spacing: 2px; font-size: 0.75em; margin-bottom: 1.5em; font-weight: 800; }
             
+            /* GRÁFICO */
             .temp-chart { display: flex; align-items: flex-end; justify-content: space-between; height: 120px; margin-top: 2em; gap: 4px; padding-bottom: 20px; }
             .temp-bar { background: linear-gradient(to top, #42a5f5, #90caf9); width: 100%; border-radius: 4px 4px 0 0; position: relative; min-height: 2px; }
             .temp-bar:hover::after { content: attr(data-temp) "°"; position: absolute; top: -25px; left: 50%; transform: translateX(-50%); font-size: 0.7em; font-weight: 800; color: #0277bd; }
@@ -25,6 +27,7 @@
             .metric-val { font-size: 2.2em; font-weight: 300; color: #01579b; display: block; line-height: 1; }
             .metric-label { font-size: 0.7em; color: #888; text-transform: uppercase; font-weight: 700; margin-top: 5px; display: block; }
 
+            /* LAYOUT ZIGUEZAGUE */
             .features-flow { display: flex; flex-direction: column; gap: 7em; margin-top: 6em; }
             .feature-row { display: flex; align-items: center; gap: 5em; flex-wrap: wrap; flex-direction: row-reverse; } 
             .feature-row:nth-child(even) { flex-direction: row; } 
@@ -33,9 +36,7 @@
             .feature-image img { width: 100%; height: 100%; object-fit: cover; }
 
             .cta-box { background: #01579b; border-radius: 40px; padding: 4em; text-align: center; color: #fff; margin: 6em 0; }
-            .cta-box h2 { color: #fff !important; font-size: 2.5em; font-weight: 300; }
             .button.white { background: #fff !important; color: #01579b !important; border-radius: 50px; font-weight: 700; padding: 0 4em; margin-top: 2em; }
-
 			.footer-signature-right { text-align: right; padding: 4em 2em 2em 0; opacity: 0.8; }
 		</style>
 	</head>
@@ -80,7 +81,7 @@
                                 <h4>Disponibilidade e Reservas</h4>
                                 <p id="reg-reserves" style="font-size: 1.1em; font-weight: 700; color: #01579b; margin-bottom: 10px;"></p>
                                 <p id="reg-aquifer" style="font-size: 0.9em; color: #666;"></p>
-                                <a id="reg-obs" href="#" target="_blank" style="font-size: 0.7em; color: #42a5f5; font-weight: 800; text-transform: uppercase; margin-top: 2em; display: block;">
+                                <a id="reg-obs" href="https://www.ersar.pt" target="_blank" style="font-size: 0.7em; color: #42a5f5; font-weight: 800; text-transform: uppercase; margin-top: 2em; display: block; border-top: 1px solid #eee; padding-top: 1em;">
                                     <i class="fas fa-external-link-alt"></i> Observatório ERSAR
                                 </a>
                             </div>
@@ -124,77 +125,57 @@
 			<div id="sidebar"></div>
 		</div>
 
-		<script>
-    console.log("Observatório bioCultura: A carregar dados hídricos...");
+		<script src="/assets/js/jquery.min.js"></script>
+        <script>
+            fetch('/data/bioregioes.json')
+                .then(r => r.json())
+                .then(data => {
+                    const savedRegion = localStorage.getItem('biocultura_region');
+                    if (savedRegion && data[savedRegion]) {
+                        const info = data[savedRegion];
+                        document.getElementById('no-gps-warning').style.display = 'none';
+                        document.getElementById('water-dashboard').style.display = 'grid';
 
-    fetch('/data/bioregioes.json')
-        .then(response => {
-            if (!response.ok) throw new Error("Ficheiro JSON não encontrado.");
-            return response.json();
-        })
-        .then(data => {
-            const savedRegion = localStorage.getItem('biocultura_region');
-            console.log("Região ativa:", savedRegion);
+                        // Nome
+                        document.getElementById('reg-name').innerText = info.titulo || 'Região Desconhecida';
 
-            if (savedRegion && data[savedRegion]) {
-                const info = data[savedRegion];
-                
-                // 1. Mostrar Dashboard
-                document.getElementById('no-gps-warning').style.display = 'none';
-                document.getElementById('water-dashboard').style.display = 'grid';
+                        // Química
+                        if(info.recursos_hidricos) {
+                            document.getElementById('val-ph').innerText = info.recursos_hidricos.ph_agua || '--';
+                            document.getElementById('val-dureza').innerText = info.recursos_hidricos.dureza_fr || '--';
+                            document.getElementById('reg-obs').href = info.recursos_hidricos.observatorio || 'https://www.ersar.pt';
+                            
+                            const chart = document.getElementById('temp-chart');
+                            const temps = info.recursos_hidricos.temp_media_agua || [];
+                            const months = ['J','F','M','A','M','J','J','A','S','O','N','D'];
+                            chart.innerHTML = '';
+                            temps.forEach((t, i) => {
+                                const bar = document.createElement('div');
+                                bar.className = 'temp-bar';
+                                bar.style.height = (t * 4) + 'px';
+                                bar.setAttribute('data-temp', t);
+                                const lbl = document.createElement('span');
+                                lbl.innerText = months[i];
+                                lbl.style.cssText = "font-size:0.6em; position:absolute; bottom:-22px; left:50%; transform:translateX(-50%); color:#888; font-weight:700;";
+                                bar.appendChild(lbl);
+                                chart.appendChild(bar);
+                            });
+                        }
 
-                // 2. Injetar Nome da Região
-                if(info.titulo) document.getElementById('reg-name').innerText = info.titulo;
-
-                // 3. Injetar Perfil Químico
-                if(info.recursos_hidricos) {
-                    document.getElementById('val-ph').innerText = info.recursos_hidricos.ph_agua || '--';
-                    document.getElementById('val-dureza').innerText = info.recursos_hidricos.dureza_fr || '--';
-                    
-                    // Link ERSAR
-                    const obsLink = document.getElementById('reg-obs');
-                    if(obsLink) {
-                        obsLink.href = info.recursos_hidricos.observatorio || 'https://www.ersar.pt';
+                        // Reservas (FORÇADO)
+                        if(info.agua) {
+                            console.log("Dados de água encontrados:", info.agua);
+                            document.getElementById('reg-reserves').innerText = info.agua.reservas || 'Sem dados de reservas';
+                            document.getElementById('reg-aquifer').innerText = info.agua.aquiferos || 'Sem dados de aquíferos';
+                            document.getElementById('reg-note').innerText = info.agua.nota || '';
+                        }
                     }
+                });
 
-                    // Gráfico de Temperatura
-                    const chart = document.getElementById('temp-chart');
-                    const temps = info.recursos_hidricos.temp_media_agua || [];
-                    const months = ['J','F','M','A','M','J','J','A','S','O','N','D'];
-                    chart.innerHTML = '';
-                    temps.forEach((t, i) => {
-                        const bar = document.createElement('div');
-                        bar.className = 'temp-bar';
-                        bar.style.height = (t * 4) + 'px';
-                        bar.setAttribute('data-temp', t);
-                        const lbl = document.createElement('span');
-                        lbl.innerText = months[i];
-                        lbl.style.cssText = "font-size:0.6em; position:absolute; bottom:-22px; left:50%; transform:translateX(-50%); color:#888; font-weight:700;";
-                        bar.appendChild(lbl);
-                        chart.appendChild(bar);
-                    });
-                }
-
-                // 4. Injetar Disponibilidade e Reservas (CORREÇÃO AQUI)
-                if(info.agua) {
-                    document.getElementById('reg-reserves').innerText = info.agua.reservas || 'Dados não disponíveis';
-                    document.getElementById('reg-aquifer').innerText = info.agua.aquiferos || 'Informação de aquíferos em atualização';
-                    document.getElementById('reg-note').innerText = info.agua.nota || '';
-                } else {
-                    console.warn("Objeto 'agua' não encontrado para esta região no JSON.");
-                }
-
-            } else {
-                console.log("Aguardando seleção de região no mapa/sidebar.");
-            }
-        })
-        .catch(err => console.error("Erro no carregamento:", err));
-
-    // Sidebar
-    fetch('/sidebar-content.html').then(r => r.text()).then(html => {
-        document.getElementById('sidebar').innerHTML = html;
-        var s = document.createElement('script'); s.src = '/assets/js/main.js'; document.body.appendChild(s);
-    });
-</script>
+            fetch('/sidebar-content.html').then(r => r.text()).then(html => {
+                document.getElementById('sidebar').innerHTML = html;
+                var s = document.createElement('script'); s.src = '/assets/js/main.js'; document.body.appendChild(s);
+            });
+        </script>
 	</body>
 </html>
