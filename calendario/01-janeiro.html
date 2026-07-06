@@ -152,6 +152,33 @@
                             </div>
                         </div>
 
+                    <!-- Bloco de Dica Regional Dinâmica -->
+                    <div id="dica-regional-container" style="display:none; margin-bottom: 3em;">
+                        <div style="background: #f1f8e9; border-left: 5px solid #2e7d32; padding: 1.5em; border-radius: 0 20px 20px 0;">
+                            <h4 style="color: #2e7d32; text-transform: uppercase; letter-spacing: 2px; font-size: 0.8em; margin-bottom: 0.5em;">
+                                <i class="fas fa-map-marker-alt"></i> Nota para o <span id="nome-da-regiao">...</span>
+                            </h4>
+                            <p id="texto-da-dica" style="margin: 0; font-style: italic; color: #444;"></p>
+                        </div>
+                    </div>
+
+                    <script>
+                        // Script para ler a região e injetar a dica
+                        fetch('../data/bioregioes.json')
+                            .then(response => response.json())
+                            .then(data => {
+                                const savedRegion = localStorage.getItem('biocultura_region');
+                                const mesAtual = "janeiro"; // Altera isto em cada página (fevereiro, etc.)
+
+                                if (savedRegion && data[savedRegion] && data[savedRegion].dicas[mesAtual]) {
+                                    document.getElementById('nome-da-regiao').innerText = data[savedRegion].titulo;
+                                    document.getElementById('texto-da-dica').innerText = data[savedRegion].dicas[mesAtual];
+                                    document.getElementById('dica-regional-container').style.display = 'block';
+                                }
+                            });
+                    </script>
+
+
                         <span class="lembrete-mes">Este mês, não se esqueça de...</span>
 
                         <div class="features">
