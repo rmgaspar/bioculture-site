@@ -14,35 +14,32 @@
             section { padding-top: 2em !important; }
 
             /* 2. DASHBOARD ATMOSFÉRICO */
-            .air-dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-bottom: 4em; }
+            .air-dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-bottom: 2em; }
             .data-card { background: #fff; border-radius: 35px; padding: 2.5em; box-shadow: 0 20px 50px rgba(0,0,0,0.04); border: 1px solid #f0f4f8; position: relative; overflow: hidden; min-height: 350px; display: flex; flex-direction: column; }
             .data-card h4 { color: #607d8b; text-transform: uppercase; letter-spacing: 2px; font-size: 0.75em; margin-bottom: 1.5em; font-weight: 800; }
             
-            /* GRÁFICO TEMPERATURA */
             .temp-chart { display: flex; align-items: flex-end; justify-content: space-between; height: 120px; margin-top: 2em; gap: 4px; padding-bottom: 20px; }
             .temp-bar { background: linear-gradient(to top, #ff9800, #ffcc80); width: 100%; border-radius: 4px 4px 0 0; position: relative; min-height: 2px; }
             .temp-bar:hover::after { content: attr(data-temp) "°"; position: absolute; top: -25px; left: 50%; transform: translateX(-50%); font-size: 0.7em; font-weight: 800; color: #ef6c00; }
 
-            /* MÉTRICAS E CORES QUALAR */
             .quality-grid { display: flex; gap: 2em; margin-top: 1em; flex-wrap: wrap; }
             .metric { text-align: center; flex: 1; min-width: 100px; }
-            .metric-val { font-size: 2.5em; font-weight: 800; display: block; line-height: 1; transition: color 0.5s ease; }
+            .metric-val { font-size: 2.5em; font-weight: 800; display: block; line-height: 1; }
             .metric-label { font-size: 0.7em; color: #888; text-transform: uppercase; font-weight: 700; margin-top: 8px; display: block; }
 
-            /* Classes de Cores para Qualidade do Ar */
+            /* CORES QUALIDADE DO AR */
             .aq-muitobom { color: #1b5e20 !important; }
             .aq-bom { color: #4caf50 !important; }
             .aq-medio { color: #fbc02d !important; }
             .aq-fraco { color: #f44336 !important; }
-            .aq-mau { color: #b71c1c !important; }
 
             .anomaly-box { margin-top: 2em; padding: 1em; border-radius: 15px; background: #fff5f5; border: 1px solid #fee2e2; text-align: center; }
             .anomaly-val { color: #c53030; font-weight: 800; font-size: 1.2em; }
 
-            .source-note { font-size: 0.65em; color: #aaa; text-transform: uppercase; letter-spacing: 1px; margin-top: auto; padding-top: 1.5em; border-top: 1px solid #f9f9f9; }
+            /* 3. RELATÓRIO DE IMPACTO (O ALERTA) */
+            #climate-report { display:none; margin: 2em 0 6em 0; padding: 2.5em; background: #fff; border-radius: 30px; border-left: 8px solid #f87171; box-shadow: 0 15px 40px rgba(0,0,0,0.03); }
 
-            /* 3. LAYOUT ZIGUEZAGUE */
-            .features-flow { display: flex; flex-direction: column; gap: 8em; margin-top: 6em; }
+            .features-flow { display: flex; flex-direction: column; gap: 8em; }
             .feature-row { display: flex; align-items: center; gap: 5em; flex-wrap: wrap; flex-direction: row-reverse; } 
             .feature-row:nth-child(even) { flex-direction: row; } 
             .feature-content { flex: 1.2; min-width: 300px; }
@@ -64,10 +61,8 @@
                             <p style="font-style: italic; color: #888;">Monitorização atmosférica em: <strong id="reg-name" style="color:#607d8b">...</strong></p>
                         </div>
 
-                        <!-- DASHBOARD REGIONAL -->
+                        <!-- DASHBOARD -->
                         <div class="air-dashboard" id="air-dashboard" style="display:none;">
-                            
-                            <!-- Card 1: Normal Climatológica (Últimos 30 anos) -->
                             <div class="data-card">
                                 <h4>Normal Climatológica (°C)</h4>
                                 <div class="temp-chart" id="temp-chart"></div>
@@ -75,12 +70,10 @@
                                     <span style="font-size: 0.7em; text-transform: uppercase; color: #777; display: block;">Anomalia Pré-Industrial</span>
                                     <span class="anomaly-val" id="val-anomalia">--</span>
                                 </div>
-                                <div class="source-note">Fonte: Copernicus / IPMA (1991-2020)</div>
                             </div>
 
-                            <!-- Card 2: Qualidade e Dinâmica -->
                             <div class="data-card">
-                                <h4>Índice de Qualidade do Ar</h4>
+                                <h4>Qualidade do Ar</h4>
                                 <div class="quality-grid">
                                     <div class="metric">
                                         <span class="metric-val" id="val-ar">--</span>
@@ -91,34 +84,31 @@
                                         <span class="metric-label">Vento (m/s)</span>
                                     </div>
                                 </div>
-                                <div class="source-note">Fonte: APA / QualAr</div>
                             </div>
+                        </div>
 
+                        <!-- RELATÓRIO DE IMPACTO -->
+                        <div id="climate-report">
+                            <h4 style="color: #c53030; text-transform: uppercase; letter-spacing: 2px; font-size: 0.75em; margin-bottom: 1em; font-weight: 800;">
+                                <i class="fas fa-exclamation-circle"></i> Relatório de Impacto: <span id="report-reg-name">...</span>
+                            </h4>
+                            <p style="font-size: 1.2em !important; line-height: 1.6 !important; color: #444 !important; font-style: italic; margin: 0;">
+                                A anomalia térmica registada nesta região confirma uma pressão crescente sobre a biodiversidade local. Estes indicadores não são apenas estatísticas; são um alerta para a urgência em restaurar o coberto vegetal nativo, a única infraestrutura capaz de mitigar o aquecimento e filtrar as partículas que comprometem a pureza do nosso ar.
+                            </p>
                         </div>
 
                         <div id="no-gps-warning" style="text-align: center; padding: 4em; background: #f4f7fb; border-radius: 40px; margin-bottom: 4em;">
-                            <p>Sincronize a sua localização para carregar os indicadores climáticos da sua região.</p>
+                            <p>Sincronize a sua localização na barra lateral para carregar os indicadores climáticos.</p>
                         </div>
 
-                        <!-- CONTEÚDO EDITORIAL -->
                         <div class="features-flow">
                             <div class="feature-row">
                                 <div class="feature-content">
                                     <h3>Arrefecimento Natural</h3>
-                                    <p>Uma árvore adulta transpira até 450 litros de água por dia. Este processo retira calor do ar circundante, baixando a temperatura entre 3 a 7 graus. É o sistema de climatização mais eficiente e ético do planeta.</p>
+                                    <p>Uma árvore adulta transpira até 450 litros de água por dia. Este processo retira calor do ar circundante, baixando a temperatura entre 3 a 7 graus.</p>
                                 </div>
                                 <div class="feature-image">
                                     <img src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2071&auto=format&fit=crop" alt="Floresta" />
-                                </div>
-                            </div>
-
-                            <div class="feature-row">
-                                <div class="feature-content">
-                                    <h3>Líquenes: O Certificado de Pureza</h3>
-                                    <p>Não são doenças, são bioindicadores. Os líquenes apenas prosperam onde o ar está livre de contaminação química. A sua presença nos troncos é o selo de garantia da qualidade do ar que respira.</p>
-                                </div>
-                                <div class="feature-image">
-                                    <img src="https://images.unsplash.com/photo-1501769752-a59f9215c325?q=80&w=2070&auto=format&fit=crop" alt="Líquenes" />
                                 </div>
                             </div>
                         </div>
@@ -150,25 +140,22 @@
                         const info = data[savedRegion];
                         document.getElementById('no-gps-warning').style.display = 'none';
                         document.getElementById('air-dashboard').style.display = 'grid';
+                        document.getElementById('climate-report').style.display = 'block';
 
                         document.getElementById('reg-name').innerText = info.titulo;
+                        document.getElementById('report-reg-name').innerText = info.titulo;
                         document.getElementById('val-vento').innerText = info.atmosfera.vento_medio_ms;
+                        document.getElementById('val-anomalia').innerText = info.atmosfera.anomalia_pre_industrial || "+1.1°C";
                         
-                        // 1. Lógica de Cores para Qualidade do Ar
                         const arVal = document.getElementById('val-ar');
                         const statusAr = info.atmosfera.qualidade_ar;
                         arVal.innerText = statusAr;
                         
-                        // Mapeamento de Cores Smooth
                         if (statusAr === "Muito Boa") arVal.className = "metric-val aq-muitoboa";
                         else if (statusAr === "Boa") arVal.className = "metric-val aq-bom";
                         else if (statusAr === "Média") arVal.className = "metric-val aq-medio";
                         else if (statusAr === "Fraca") arVal.className = "metric-val aq-fraco";
 
-                        // 2. Anomalia Térmica (Exemplo: +1.2°C)
-                        document.getElementById('val-anomalia').innerText = info.atmosfera.anomalia_pre_industrial || "+1.1°C";
-
-                        // 3. Gráfico de Temperatura Climatológica
                         const chart = document.getElementById('temp-chart');
                         const temps = info.atmosfera.temp_media_ar || [];
                         const months = ['J','F','M','A','M','J','J','A','S','O','N','D'];
