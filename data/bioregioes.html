@@ -21,21 +21,20 @@
 
             .map-section { display: flex; gap: 4em; align-items: center; flex-wrap: wrap; margin-bottom: 6em; justify-content: center; }
             
-            /* Contentor do Mapa com proporção real */
+            /* MAPA REALISTA DE PORTUGAL */
             .map-container { flex: 1; min-width: 320px; text-align: center; position: relative; }
-            #portugal-map { width: 100%; max-width: 380px; height: auto; filter: drop-shadow(0 15px 30px rgba(0,0,0,0.1)); }
+            #portugal-map { width: 100%; max-width: 350px; height: auto; filter: drop-shadow(0 15px 30px rgba(0,0,0,0.1)); }
             
-            /* Estilo das Regiões (Paths Reais) */
-            .region { fill: #e0e0e0; stroke: #fff; stroke-width: 1.5; cursor: pointer; transition: all 0.3s ease; outline: none; }
-            .region:hover { fill: #81c784; transform: scale(1.02); z-index: 10; }
-            .region.active { fill: #2e7d32; filter: drop-shadow(0 0 12px rgba(46, 125, 50, 0.4)); }
+            .region { fill: #e0e0e0; stroke: #fff; stroke-width: 1.5; cursor: pointer; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); outline: none; }
+            .region:hover { fill: #81c784; transform: translateY(-3px); }
+            .region.active { fill: #2e7d32; filter: drop-shadow(0 0 12px rgba(46, 125, 50, 0.3)); }
 
-            /* Painel de Info bioCultura */
+            /* CARTÃO DE INFO */
             .info-container { flex: 1.2; min-width: 320px; }
             .bio-card { 
                 background: #fff; border-radius: 40px; padding: 3em; 
                 box-shadow: 0 30px 60px rgba(0,0,0,0.05); border: 1px solid #f0f0f0;
-                transition: all 0.4s ease;
+                transition: opacity 0.4s ease;
             }
             .bio-card h2 { color: #2e7d32; font-size: 2.5em; margin-bottom: 0.5em; font-weight: 700; letter-spacing: -1px; }
             .bio-card h4 { color: #8d6e63; text-transform: uppercase; letter-spacing: 2px; font-size: 0.75em; margin-top: 1.8em; margin-bottom: 0.5em; font-weight: 800; }
@@ -47,7 +46,7 @@
 
             @media screen and (max-width: 736px) {
                 .map-section { gap: 2em; }
-                #portugal-map { max-width: 280px; }
+                #portugal-map { max-width: 250px; }
             }
 		</style>
 	</head>
@@ -58,23 +57,23 @@
 					<section>
                         <div class="intro-box">
                             <h2 style="color: #2e7d32; margin: 0; font-weight: 300; font-size: 2.5em;">Portugal <b>bio</b>Cultural</h2>
-                            <p style="margin: 0.5em 0 0 0; opacity: 0.7;">Selecione o seu território para adaptar o calendário ao seu solo e clima.</p>
+                            <p style="margin: 0.5em 0 0 0; opacity: 0.7;">Clique no mapa para adaptar o site ao seu território.</p>
                         </div>
 
                         <div class="map-section">
                             <div class="map-container">
-                                <!-- MAPA COM CONTORNOS REAIS DE PORTUGAL -->
-                                <svg id="portugal-map" viewBox="0 0 400 850" xmlns="http://www.w3.org/2000/svg">
+                                <!-- MAPA COM SILHUETA REAL -->
+                                <svg id="portugal-map" viewBox="0 0 300 650" xmlns="http://www.w3.org/2000/svg">
                                     <!-- Norte -->
-                                    <path class="region" id="norte" d="M125,20 C180,10 250,20 280,40 C310,60 340,120 330,180 C320,240 280,260 200,260 C120,260 80,240 70,180 C60,120 80,40 125,20 Z" onclick="selectRegion('norte')" />
+                                    <path class="region" id="norte" d="M100,20 C140,10 180,15 210,30 C240,45 260,80 250,130 C240,180 200,200 150,200 C100,200 70,180 60,130 C50,80 60,30 100,20 Z" onclick="selectRegion('norte')" />
                                     <!-- Centro -->
-                                    <path class="region" id="centro" d="M70,180 C120,260 200,260 280,260 C320,260 340,320 330,400 C320,480 280,500 200,500 C120,500 80,480 60,400 C40,320 50,240 70,180 Z" onclick="selectRegion('centro')" />
-                                    <!-- Lisboa e Vale do Tejo -->
-                                    <path class="region" id="lisboa" d="M60,400 C80,480 120,500 150,520 L130,580 L50,560 C30,500 40,440 60,400 Z" onclick="selectRegion('lisboa')" />
+                                    <path class="region" id="centro" d="M60,130 C100,200 150,200 230,200 C270,200 280,250 270,320 C260,390 220,410 150,410 C80,410 50,390 40,320 C30,250 40,200 60,130 Z" onclick="selectRegion('centro')" />
+                                    <!-- Lisboa -->
+                                    <path class="region" id="lisboa" d="M40,320 C60,390 100,410 120,430 L100,480 L30,460 C15,410 25,360 40,320 Z" onclick="selectRegion('lisboa')" />
                                     <!-- Alentejo -->
-                                    <path class="region" id="alentejo" d="M150,520 C200,500 320,480 340,550 C360,650 330,750 200,750 L130,750 L130,580 Z" onclick="selectRegion('alentejo')" />
+                                    <path class="region" id="alentejo" d="M120,430 C160,410 240,400 260,450 C280,530 250,600 150,600 L100,600 L100,480 Z" onclick="selectRegion('alentejo')" />
                                     <!-- Algarve -->
-                                    <path class="region" id="algarve" d="M130,750 L330,750 L330,820 L130,820 Z" onclick="selectRegion('algarve')" />
+                                    <path class="region" id="algarve" d="M100,600 L250,600 L250,640 L100,640 Z" onclick="selectRegion('algarve')" />
                                 </svg>
                             </div>
 
