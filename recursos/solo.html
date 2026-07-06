@@ -19,7 +19,7 @@
             .features p { font-size: 1.20em !important; max-width: 100%; }
 
             /* 3. DASHBOARD REGIONAL */
-            .soil-dashboard { display: flex; justify-content: center; margin-bottom: 4em; }
+            .soil-dashboard { display: none; justify-content: center; margin-bottom: 4em; }
             .data-card { background: #fff; border-radius: 35px; padding: 2.5em; box-shadow: 0 20px 50px rgba(0,0,0,0.04); border: 1px solid #efebe9; position: relative; overflow: hidden; width: 100%; max-width: 500px; text-align: center; }
             .data-card h4 { color: #8d6e63; text-transform: uppercase; letter-spacing: 2px; font-size: 0.75em; margin-bottom: 1.5em; font-weight: 800; }
             
@@ -66,7 +66,7 @@
                         </div>
 
                         <!-- DASHBOARD REGIONAL -->
-                        <div class="soil-dashboard" id="soil-dashboard" style="display:none;">
+                        <div class="soil-dashboard" id="soil-dashboard">
                             <div class="data-card">
                                 <h4>Perfil de Acidez e Textura</h4>
                                 <div class="quality-grid">
@@ -83,12 +83,8 @@
                             </div>
                         </div>
 
+                        <!-- AVISO GPS (display:none por defeito) -->
                         <div id="no-gps-warning" style="display: none; text-align: center; padding: 4em; background: #fdfaf9; border-radius: 40px; margin-bottom: 4em;">
-                            <p>Sincronize a sua localização na barra lateral para carregar os dados geológicos.</p>
-                        </div>
-
-
-                        <div id="no-gps-warning" style="text-align: center; padding: 4em; background: #fdfaf9; border-radius: 40px; margin-bottom: 4em;">
                             <p>Sincronize a sua localização na barra lateral para carregar os dados geológicos.</p>
                         </div>
 
@@ -104,7 +100,7 @@
                             </div>
                         </div>
 
-                        <!-- Conteúdo Principal em Fluxo -->
+                        <!-- Conteúdo Principal -->
                         <div class="features-flow">
                             <div class="feature-row">
                                 <div class="feature-content">
@@ -150,7 +146,7 @@
                         <div id="identificar">
                             <header class="major" style="text-align: center; margin-bottom: 5em;">
                                 <h2>Como identificar o seu solo?</h2>
-                                <p>Três testes sensoriais essenciais para conhecer a sua terra.</p>
+                                <p>Três testes sensoriais essenciais para conhecer a sua terra antes de intervir.</p>
                             </header>
 
                             <div class="features-flow">
@@ -187,7 +183,6 @@
                         </div>
 					</section>
 
-					<!-- Rodapé -->
 					<div class="footer-signature-right">
 						<a href="/index.html" style="border: none; display: inline-block; text-decoration: none;">
 							<div style="font-family: 'Source Sans Pro', sans-serif; font-size: 1.4em; line-height: 1; display: flex; align-items: flex-end; justify-content: flex-end;">
@@ -207,23 +202,19 @@
 		<script src="/assets/js/jquery.min.js"></script>
         <script>
             fetch('/data/bioregioes.json')
-             .then(r => r.json())
-             .then(data => {
-        const savedRegion = localStorage.getItem('biocultura_region');
-        
-        if (savedRegion && data[savedRegion]) {
-            // Se existir região, mostra o dashboard
-            const info = data[savedRegion];
-            document.getElementById('soil-dashboard').style.display = 'flex';
-            document.getElementById('reg-name').innerText = info.titulo;
-            document.getElementById('val-ph-solo').innerText = info.biomas.ph_solo || '--';
-            document.getElementById('val-tipo-solo').innerText = info.biomas.solo || '--';
-             } else {
-            // SE NÃO EXISTIR região, é que mostramos o aviso
-            document.getElementById('no-gps-warning').style.display = 'block';
-             }
-          });
-
+                .then(r => r.json())
+                .then(data => {
+                    const savedRegion = localStorage.getItem('biocultura_region');
+                    if (savedRegion && data[savedRegion]) {
+                        const info = data[savedRegion];
+                        document.getElementById('soil-dashboard').style.display = 'flex';
+                        document.getElementById('reg-name').innerText = info.titulo;
+                        document.getElementById('val-ph-solo').innerText = info.biomas.ph_solo || '--';
+                        document.getElementById('val-tipo-solo').innerText = info.biomas.solo || '--';
+                    } else {
+                        document.getElementById('no-gps-warning').style.display = 'block';
+                    }
+                });
 
             fetch('/sidebar-content.html').then(r => r.text()).then(html => {
                 document.getElementById('sidebar').innerHTML = html;
