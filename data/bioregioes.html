@@ -14,23 +14,36 @@
 
             .intro-box {
                 background: linear-gradient(135deg, #f1f8e9 0%, #dcedc8 100%);
-                padding: 2em; text-align: center; border-radius: 30px; margin-bottom: 3em;
+                padding: 2.5em; text-align: center; border-radius: 30px; margin-bottom: 3em;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.05);
             }
 
-            .map-section { display: flex; gap: 4em; align-items: flex-start; flex-wrap: wrap; margin-bottom: 6em; }
-            .map-container { flex: 1; min-width: 300px; text-align: center; }
+            .map-section { display: flex; gap: 4em; align-items: center; flex-wrap: wrap; margin-bottom: 6em; justify-content: center; }
             
-            /* Estilo do Mapa */
-            #portugal-map { width: 100%; max-width: 300px; height: auto; }
-            .region { fill: #e0e0e0; stroke: #fff; stroke-width: 2; cursor: pointer; transition: all 0.3s ease; }
-            .region:hover { fill: #a5d6a7; }
-            .region.active { fill: #2e7d32; }
+            /* Contentor do Mapa */
+            .map-container { flex: 1; min-width: 320px; text-align: center; position: relative; }
+            #portugal-map { width: 100%; max-width: 380px; height: auto; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.1)); }
+            
+            /* Estilo das Regiões */
+            .region { fill: #e0e0e0; stroke: #fff; stroke-width: 1.5; cursor: pointer; transition: all 0.3s ease; outline: none; }
+            .region:hover { fill: #81c784; transform: scale(1.01); }
+            .region.active { fill: #2e7d32; filter: drop-shadow(0 0 8px rgba(46, 125, 50, 0.4)); }
 
+            /* Painel de Info */
+            .info-container { flex: 1.2; min-width: 320px; }
             .bio-card { 
-                flex: 1.5; min-width: 320px; background: #fff; border-radius: 30px; padding: 2em; 
+                background: #fff; border-radius: 30px; padding: 2.5em; 
                 box-shadow: 0 20px 50px rgba(0,0,0,0.05); border: 1px solid #eee;
+                transition: opacity 0.3s ease;
             }
-            .tag { background: #f1f8e9; color: #2e7d32; padding: 5px 12px; border-radius: 50px; font-size: 0.8em; font-weight: 700; margin-right: 5px; display: inline-block; }
+            .bio-card h2 { color: #2e7d32; font-size: 2.2em; margin-bottom: 0.5em; }
+            .bio-card h4 { color: #8d6e63; text-transform: uppercase; letter-spacing: 2px; font-size: 0.75em; margin-top: 1.5em; margin-bottom: 0.5em; }
+            .tag { background: #f1f8e9; color: #2e7d32; padding: 6px 14px; border-radius: 50px; font-size: 0.8em; font-weight: 700; margin: 4px; display: inline-block; }
+            
+            @media screen and (max-width: 736px) {
+                .map-section { gap: 2em; }
+                #portugal-map { max-width: 250px; }
+            }
 		</style>
 	</head>
 	<body class="is-preload">
@@ -39,24 +52,32 @@
 					<header id="header"></header>
 					<section>
                         <div class="intro-box">
-                            <h2 style="color: #2e7d32;">Selecione a sua Bio-Região</h2>
-                            <p>Clique no mapa para personalizar as dicas de cultivo do seu calendário.</p>
+                            <h2 style="color: #2e7d32; margin: 0;">Bio-Mapa de Portugal</h2>
+                            <p style="margin: 0.5em 0 0 0;">Clique na sua região para sincronizar o calendário com o seu clima e solo.</p>
                         </div>
 
                         <div class="map-section">
                             <div class="map-container">
-                                <!-- MAPA SIMPLIFICADO -->
-                                <svg id="portugal-map" viewBox="0 0 300 600">
-                                    <path class="region" id="norte-litoral" d="M80,20 L150,20 L150,150 L60,150 Z" onclick="selectRegion('norte-litoral')" />
-                                    <path class="region" id="norte-interior" d="M150,20 L240,20 L240,150 L150,150 Z" onclick="selectRegion('norte-interior')" />
-                                    <path class="region" id="centro" d="M60,150 L240,150 L240,300 L50,300 Z" onclick="selectRegion('centro')" />
-                                    <path class="region" id="alentejo" d="M50,300 L240,300 L240,500 L60,500 Z" onclick="selectRegion('alentejo')" />
-                                    <path class="region" id="algarve" d="M60,500 L240,500 L240,580 L60,580 Z" onclick="selectRegion('algarve')" />
+                                <!-- MAPA REAL DE PORTUGAL (5 REGIÕES) -->
+                                <svg id="portugal-map" viewBox="0 0 350 750">
+                                    <!-- Norte -->
+                                    <path class="region" id="norte" d="M120,20 L230,30 L260,100 L240,220 L100,210 L80,100 Z" onclick="selectRegion('norte')" />
+                                    <!-- Centro -->
+                                    <path class="region" id="centro" d="M100,210 L240,220 L260,350 L200,420 L80,400 L60,300 Z" onclick="selectRegion('centro')" />
+                                    <!-- Lisboa e Vale do Tejo -->
+                                    <path class="region" id="lisboa" d="M80,400 L140,410 L150,480 L70,480 L50,440 Z" onclick="selectRegion('lisboa')" />
+                                    <!-- Alentejo -->
+                                    <path class="region" id="alentejo" d="M140,410 L200,420 L280,450 L260,650 L100,650 L150,480 Z" onclick="selectRegion('alentejo')" />
+                                    <!-- Algarve -->
+                                    <path class="region" id="algarve" d="M100,650 L260,650 L260,720 L100,720 Z" onclick="selectRegion('algarve')" />
                                 </svg>
                             </div>
 
-                            <div class="bio-card" id="info-display">
-                                <p>Aguardando seleção...</p>
+                            <div class="info-container" id="info-display">
+                                <div class="bio-card">
+                                    <h2 style="font-weight: 300;">Selecione o seu território</h2>
+                                    <p>As dicas do calendário bioCultura serão ajustadas às características da região selecionada.</p>
+                                </div>
                             </div>
                         </div>
 					</section>
@@ -66,35 +87,47 @@
 
 		<script src="../assets/js/jquery.min.js"></script>
         <script>
-            let data = {};
+            let bioregioesData = {};
 
-            // Carrega o JSON que está na mesma pasta
+            // Carrega o JSON
             fetch('bioregioes.json')
                 .then(r => r.json())
                 .then(json => { 
-                    data = json; 
-                    // Se já existir região gravada, mostra-a
+                    bioregioesData = json; 
                     const current = localStorage.getItem('biocultura_region');
                     if(current) selectRegion(current);
                 });
 
             function selectRegion(id) {
+                const reg = bioregioesData[id];
+                if(!reg) return;
+
                 localStorage.setItem('biocultura_region', id);
                 document.querySelectorAll('.region').forEach(r => r.classList.remove('active'));
-                document.getElementById(id).classList.add('active');
+                const el = document.getElementById(id);
+                if(el) el.classList.add('active');
 
-                const reg = data[id];
-                document.getElementById('info-display').innerHTML = `
-                    <h2 style="color:#2e7d32">${reg.titulo}</h2>
-                    <p><strong>Clima:</strong> ${reg.clima}</p>
-                    <p><strong>Solo:</strong> ${reg.solo}</p>
-                    <p><em>${reg.contexto}</em></p>
-                    <div style="margin-top:1em">
-                        ${reg.especies.map(s => `<span class="tag">${s}</span>`).join('')}
-                    </div>
-                    <hr>
-                    <a href="../calendario/01-janeiro.html" class="button primary small">Ver Janeiro para esta região</a>
-                `;
+                const display = document.getElementById('info-display');
+                display.style.opacity = 0;
+
+                setTimeout(() => {
+                    display.innerHTML = `
+                        <div class="bio-card">
+                            <h2>${reg.titulo}</h2>
+                            <h4>Clima</h4>
+                            <p>${reg.clima}</p>
+                            <h4>Solo Predominante</h4>
+                            <p>${reg.solo}</p>
+                            <h4>Espécies Autóctones</h4>
+                            <div style="margin-top:0.5em">
+                                ${reg.especies.map(s => `<span class="tag">${s}</span>`).join('')}
+                            </div>
+                            <hr style="margin: 2em 0; border: none; border-top: 1px solid #eee;">
+                            <a href="../calendario/01-janeiro.html" class="button primary fit">Ver Janeiro nesta Região</a>
+                        </div>
+                    `;
+                    display.style.opacity = 1;
+                }, 200);
             }
 
             // Sidebar
