@@ -1,86 +1,98 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<title>bioCultura - Selecionar Bio-Região</title>
+		<title>bioCultura - Configurar Bio-Região</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="../assets/css/main.css" />
 		<style>
-			/* 1. ESTRUTURA E LIMPEZA */
+			/* 1. ESTRUTURA LIMPA */
 			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
 			#header .toggle { background: none !important; top: 2em !important; left: 2em !important; border: none !important; text-decoration: none !important; z-index: 10001; }
 			#header .toggle:before { content: '\f06c' !important; font-family: "Font Awesome 5 Free" !important; font-weight: 900; color: #2e7d32 !important; font-size: 1.6em !important; }
             #header .toggle:after { display: none !important; }
             section { padding-top: 2em !important; }
 
-            .intro-box {
-                background: linear-gradient(135deg, #f1f8e9 0%, #dcedc8 100%);
-                padding: 2.5em; text-align: center; border-radius: 30px; margin-bottom: 3em;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            .config-container { display: flex; gap: 3em; flex-wrap: wrap; margin-bottom: 6em; }
+            
+            /* 2. PAINEL DE CONFIGURAÇÃO */
+            .setup-panel { flex: 1; min-width: 320px; background: #f4f7fb; padding: 2.5em; border-radius: 35px; }
+            .setup-panel h3 { color: #2e7d32; margin-bottom: 1.5em; font-size: 1.4em; }
+            
+            .control-group { margin-bottom: 2em; }
+            .control-group label { display: block; font-weight: 700; text-transform: uppercase; font-size: 0.75em; letter-spacing: 1px; color: #888; margin-bottom: 0.8em; }
+            
+            select { background: #fff !important; border: 1px solid #ddd !important; border-radius: 15px !important; padding: 0 1em !important; height: 3em !important; }
+
+            .btn-gps { 
+                width: 100%; background-color: #2e7d32 !important; color: white !important; 
+                border-radius: 50px; font-weight: 700; margin-bottom: 2em;
+                display: flex; align-items: center; justify-content: center; gap: 10px;
             }
 
-            .map-section { display: flex; gap: 4em; align-items: center; flex-wrap: wrap; margin-bottom: 6em; justify-content: center; }
-            
-            /* MAPA REALISTA DE PORTUGAL */
-            .map-container { flex: 1; min-width: 320px; text-align: center; position: relative; }
-            #portugal-map { width: 100%; max-width: 350px; height: auto; filter: drop-shadow(0 15px 30px rgba(0,0,0,0.1)); }
-            
-            .region { fill: #e0e0e0; stroke: #fff; stroke-width: 1.5; cursor: pointer; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); outline: none; }
-            .region:hover { fill: #81c784; transform: translateY(-3px); }
-            .region.active { fill: #2e7d32; filter: drop-shadow(0 0 12px rgba(46, 125, 50, 0.3)); }
-
-            /* CARTÃO DE INFO */
-            .info-container { flex: 1.2; min-width: 320px; }
+            /* 3. CARTÃO DE RESULTADO (BIO-CARD) */
+            .result-panel { flex: 1.2; min-width: 320px; }
             .bio-card { 
                 background: #fff; border-radius: 40px; padding: 3em; 
                 box-shadow: 0 30px 60px rgba(0,0,0,0.05); border: 1px solid #f0f0f0;
-                transition: opacity 0.4s ease;
+                display: none; /* Só aparece após deteção/seleção */
             }
-            .bio-card h2 { color: #2e7d32; font-size: 2.5em; margin-bottom: 0.5em; font-weight: 700; letter-spacing: -1px; }
-            .bio-card h4 { color: #8d6e63; text-transform: uppercase; letter-spacing: 2px; font-size: 0.75em; margin-top: 1.8em; margin-bottom: 0.5em; font-weight: 800; }
-            .bio-card p { font-size: 1.15em; line-height: 1.7; color: #444; }
-            .tag { background: #f1f8e9; color: #2e7d32; padding: 8px 18px; border-radius: 50px; font-size: 0.85em; font-weight: 700; margin: 5px; display: inline-block; }
-            
-            .btn-view { margin-top: 2.5em; background-color: #f87171 !important; color: white !important; border-radius: 50px; font-weight: 700; transition: all 0.3s ease; }
-            .btn-view:hover { background-color: #ef4444 !important; transform: translateY(-3px); }
+            .bio-card h2 { color: #2e7d32; font-size: 2.5em; margin-bottom: 0.5em; }
+            .tag { background: #f1f8e9; color: #2e7d32; padding: 6px 16px; border-radius: 50px; font-size: 0.8em; font-weight: 700; margin: 4px; display: inline-block; }
 
-            @media screen and (max-width: 736px) {
-                .map-section { gap: 2em; }
-                #portugal-map { max-width: 250px; }
-            }
+            .status-msg { font-size: 0.9em; color: #666; font-style: italic; margin-top: 1em; text-align: center; }
 		</style>
 	</head>
 	<body class="is-preload">
 		<div id="wrapper">
 			<div id="main"><div class="inner">
 					<header id="header"></header>
-					<section>
-                        <div class="intro-box">
-                            <h2 style="color: #2e7d32; margin: 0; font-weight: 300; font-size: 2.5em;">Portugal <b>bio</b>Cultural</h2>
-                            <p style="margin: 0.5em 0 0 0; opacity: 0.7;">Clique no mapa para adaptar o site ao seu território.</p>
-                        </div>
+					
+                    <section>
+                        <header class="major">
+                            <h2 style="color: #2e7d32; text-transform: none;">Configuração de Bio-Região</h2>
+                            <p>Sincronize o site com a localização e o perfil do seu terreno.</p>
+                        </header>
 
-                        <div class="map-section">
-                            <div class="map-container">
-                                <!-- MAPA COM SILHUETA REAL -->
-                                <svg id="portugal-map" viewBox="0 0 300 650" xmlns="http://www.w3.org/2000/svg">
-                                    <!-- Norte -->
-                                    <path class="region" id="norte" d="M100,20 C140,10 180,15 210,30 C240,45 260,80 250,130 C240,180 200,200 150,200 C100,200 70,180 60,130 C50,80 60,30 100,20 Z" onclick="selectRegion('norte')" />
-                                    <!-- Centro -->
-                                    <path class="region" id="centro" d="M60,130 C100,200 150,200 230,200 C270,200 280,250 270,320 C260,390 220,410 150,410 C80,410 50,390 40,320 C30,250 40,200 60,130 Z" onclick="selectRegion('centro')" />
-                                    <!-- Lisboa -->
-                                    <path class="region" id="lisboa" d="M40,320 C60,390 100,410 120,430 L100,480 L30,460 C15,410 25,360 40,320 Z" onclick="selectRegion('lisboa')" />
-                                    <!-- Alentejo -->
-                                    <path class="region" id="alentejo" d="M120,430 C160,410 240,400 260,450 C280,530 250,600 150,600 L100,600 L100,480 Z" onclick="selectRegion('alentejo')" />
-                                    <!-- Algarve -->
-                                    <path class="region" id="algarve" d="M100,600 L250,600 L250,640 L100,640 Z" onclick="selectRegion('algarve')" />
-                                </svg>
+                        <div class="config-container">
+                            <!-- PAINEL DE CONTROLO -->
+                            <div class="setup-panel">
+                                <button class="button primary btn-gps" onclick="detectLocation()">
+                                    <i class="fas fa-location-arrow"></i> Detetar Localização
+                                </button>
+                                <div id="gps-status" class="status-msg">Clique para detetar automaticamente</div>
+
+                                <hr style="margin: 2em 0;">
+
+                                <h3>Perfil do Terreno</h3>
+                                <div class="control-group">
+                                    <label>Tipo de Solo</label>
+                                    <select id="soil-type" onchange="updateProfile()">
+                                        <option value="padrao">Padrão da Região</option>
+                                        <option value="arenoso">Arenoso (Leve)</option>
+                                        <option value="argiloso">Argiloso (Barro/Pesado)</option>
+                                        <option value="calcario">Calcário</option>
+                                    </select>
+                                </div>
+
+                                <div class="control-group">
+                                    <label>Exposição Solar</label>
+                                    <select id="sun-exposure" onchange="updateProfile()">
+                                        <option value="pleno">Sol Pleno</option>
+                                        <option value="meia">Meia-sombra</option>
+                                        <option value="sombra">Sombra/Norte</option>
+                                    </select>
+                                </div>
                             </div>
 
-                            <div class="info-container" id="info-display">
-                                <div class="bio-card">
-                                    <h2 style="font-weight: 300;">Selecione uma região</h2>
-                                    <p>Clique no mapa para visualizar os dados de solo, clima e flora autóctone.</p>
+                            <!-- PAINEL DE RESULTADO -->
+                            <div class="result-panel" id="result-container">
+                                <div class="bio-card" id="bio-card-content">
+                                    <!-- Injetado via JS -->
+                                </div>
+                                <div id="empty-state" style="text-align: center; padding-top: 4em; opacity: 0.5;">
+                                    <i class="fas fa-seedling fa-4x" style="color: #ddd; margin-bottom: 0.5em;"></i>
+                                    <p>Detete a sua localização para ver os detalhes da sua região.</p>
                                 </div>
                             </div>
                         </div>
@@ -97,41 +109,71 @@
                 .then(r => r.json())
                 .then(json => { 
                     bioregioesData = json; 
-                    const current = localStorage.getItem('biocultura_region');
-                    if(current) selectRegion(current);
+                    // Carregar perfil salvo se existir
+                    const saved = localStorage.getItem('biocultura_region');
+                    if(saved) updateUI(saved);
                 });
 
-            function selectRegion(id) {
+            function detectLocation() {
+                const status = document.getElementById('gps-status');
+                status.innerText = "A localizar...";
+
+                if (!navigator.geolocation) {
+                    status.innerText = "GPS não suportado pelo browser.";
+                    return;
+                }
+
+                navigator.geolocation.getCurrentPosition((position) => {
+                    const lat = position.coords.latitude;
+                    let region = "";
+
+                    // Lógica simples de mapeamento de Latitude para Portugal
+                    if (lat < 37.5) region = "algarve";
+                    else if (lat < 39.0) region = "alentejo";
+                    else if (lat < 39.7) region = "lisboa";
+                    else if (lat < 40.8) region = "centro";
+                    else region = "norte";
+
+                    status.innerText = "Localizado com sucesso!";
+                    updateUI(region);
+                }, () => {
+                    status.innerText = "Acesso ao GPS negado.";
+                });
+            }
+
+            function updateProfile() {
+                const region = localStorage.getItem('biocultura_region');
+                const soil = document.getElementById('soil-type').value;
+                const sun = document.getElementById('sun-exposure').value;
+                
+                localStorage.setItem('biocultura_soil', soil);
+                localStorage.setItem('biocultura_sun', sun);
+                
+                if(region) updateUI(region);
+            }
+
+            function updateUI(id) {
                 const reg = bioregioesData[id];
                 if(!reg) return;
 
                 localStorage.setItem('biocultura_region', id);
-                document.querySelectorAll('.region').forEach(r => r.classList.remove('active'));
-                const el = document.getElementById(id);
-                if(el) el.classList.add('active');
+                document.getElementById('empty-state').style.display = 'none';
+                const card = document.getElementById('bio-card-content');
+                card.style.display = 'block';
 
-                const display = document.getElementById('info-display');
-                display.style.opacity = 0;
-
-                setTimeout(() => {
-                    display.innerHTML = `
-                        <div class="bio-card">
-                            <h2>${reg.titulo}</h2>
-                            <h4>Clima</h4>
-                            <p>${reg.clima}</p>
-                            <h4>Solo Predominante</h4>
-                            <p>${reg.solo}</p>
-                            <h4>Espécies Autóctones</h4>
-                            <div style="margin-top:0.5em">
-                                ${reg.especies.map(s => `<span class="tag">${s}</span>`).join('')}
-                            </div>
-                            <a href="../calendario/01-janeiro.html" class="button primary btn-view fit">Ver Janeiro nesta Região</a>
-                        </div>
-                    `;
-                    display.style.opacity = 1;
-                }, 200);
+                card.innerHTML = `
+                    <h4 style="margin:0; opacity:0.6">A sua Bio-Região:</h4>
+                    <h2>${reg.titulo}</h2>
+                    <p><strong>Clima:</strong> ${reg.clima}</p>
+                    <p><strong>Solo Base:</strong> ${reg.solo}</p>
+                    <h4>Espécies Recomendadas</h4>
+                    <div>${reg.especies.map(s => `<span class="tag">${s}</span>`).join('')}</div>
+                    <hr style="margin: 2em 0">
+                    <a href="../calendario/01-janeiro.html" class="button primary fit">Ver Calendário Personalizado</a>
+                `;
             }
 
+            // Sidebar
             fetch('../sidebar-content.html').then(r => r.text()).then(html => {
                 document.getElementById('sidebar').innerHTML = html;
                 var s = document.createElement('script'); s.src = '../assets/js/main.js'; document.body.appendChild(s);
