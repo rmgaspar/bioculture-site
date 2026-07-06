@@ -1,76 +1,107 @@
-<script>
-    let bioregioesData = {};
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>bioCultura - Selecionar Bio-Região</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../assets/css/main.css" />
+		<style>
+			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
+			#header .toggle { background: none !important; top: 2em !important; left: 2em !important; border: none !important; text-decoration: none !important; z-index: 10001; }
+			#header .toggle:before { content: '\f06c' !important; font-family: "Font Awesome 5 Free" !important; font-weight: 900; color: #2e7d32 !important; font-size: 1.6em !important; }
+            #header .toggle:after { display: none !important; }
+            section { padding-top: 2em !important; }
 
-    // 1. Carregar os dados do ficheiro JSON
-    fetch('/data/bioregioes.json')
-        .then(response => {
-            if (!response.ok) throw new Error('Erro ao carregar JSON');
-            return response.json();
-        })
-        .then(data => {
-            bioregioesData = data;
-            console.log('Dados das bio-regiões carregados.');
-            
-            // Verificar se o utilizador já tinha escolhido uma região antes
-            const savedRegion = localStorage.getItem('biocultura_region');
-            if (savedRegion) {
-                // Se sim, destacar no mapa e mostrar a info
-                const path = document.querySelector(`path[onclick*="${savedRegion}"]`);
-                if (path) showRegion(savedRegion, path);
+            .intro-box {
+                background: linear-gradient(135deg, #f1f8e9 0%, #dcedc8 100%);
+                padding: 2em; text-align: center; border-radius: 30px; margin-bottom: 3em;
             }
-        })
-        .catch(error => console.error('Erro:', error));
 
-    // 2. Função para mostrar a região e salvar a escolha
-    function showRegion(regionId, element) {
-        const data = bioregioesData[regionId];
-        if (!data) return;
+            .map-section { display: flex; gap: 4em; align-items: flex-start; flex-wrap: wrap; margin-bottom: 6em; }
+            .map-container { flex: 1; min-width: 300px; text-align: center; }
+            
+            /* Estilo do Mapa */
+            #portugal-map { width: 100%; max-width: 300px; height: auto; }
+            .region { fill: #e0e0e0; stroke: #fff; stroke-width: 2; cursor: pointer; transition: all 0.3s ease; }
+            .region:hover { fill: #a5d6a7; }
+            .region.active { fill: #2e7d32; }
 
-        // Guardar a escolha no "post-it" do browser (Memória)
-        localStorage.setItem('biocultura_region', regionId);
+            .bio-card { 
+                flex: 1.5; min-width: 320px; background: #fff; border-radius: 30px; padding: 2em; 
+                box-shadow: 0 20px 50px rgba(0,0,0,0.05); border: 1px solid #eee;
+            }
+            .tag { background: #f1f8e9; color: #2e7d32; padding: 5px 12px; border-radius: 50px; font-size: 0.8em; font-weight: 700; margin-right: 5px; display: inline-block; }
+		</style>
+	</head>
+	<body class="is-preload">
+		<div id="wrapper">
+			<div id="main"><div class="inner">
+					<header id="header"></header>
+					<section>
+                        <div class="intro-box">
+                            <h2 style="color: #2e7d32;">Selecione a sua Bio-Região</h2>
+                            <p>Clique no mapa para personalizar as dicas de cultivo do seu calendário.</p>
+                        </div>
 
-        // Atualizar o estado visual do mapa
-        document.querySelectorAll('.region').forEach(r => r.classList.remove('active'));
-        if (element) {
-            element.classList.add('active');
-        } else {
-            // Caso venha do carregamento automático, procurar o elemento
-            const targetPath = document.querySelector(`path[onclick*="${regionId}"]`);
-            if (targetPath) targetPath.classList.add('active');
-        }
+                        <div class="map-section">
+                            <div class="map-container">
+                                <!-- MAPA SIMPLIFICADO -->
+                                <svg id="portugal-map" viewBox="0 0 300 600">
+                                    <path class="region" id="norte-litoral" d="M80,20 L150,20 L150,150 L60,150 Z" onclick="selectRegion('norte-litoral')" />
+                                    <path class="region" id="norte-interior" d="M150,20 L240,20 L240,150 L150,150 Z" onclick="selectRegion('norte-interior')" />
+                                    <path class="region" id="centro" d="M60,150 L240,150 L240,300 L50,300 Z" onclick="selectRegion('centro')" />
+                                    <path class="region" id="alentejo" d="M50,300 L240,300 L240,500 L60,500 Z" onclick="selectRegion('alentejo')" />
+                                    <path class="region" id="algarve" d="M60,500 L240,500 L240,580 L60,580 Z" onclick="selectRegion('algarve')" />
+                                </svg>
+                            </div>
 
-        // Injetar a informação no Bio-Card com efeito Smooth
-        const container = document.getElementById('region-info');
-        container.style.opacity = 0; // Começa fade-out
+                            <div class="bio-card" id="info-display">
+                                <p>Aguardando seleção...</p>
+                            </div>
+                        </div>
+					</section>
+				</div></div>
+			<div id="sidebar"></div>
+		</div>
 
-        setTimeout(() => {
-            container.innerHTML = `
-                <div class="bio-card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1em;">
-                        <h2 style="margin: 0;">${data.titulo}</h2>
-                        <span style="font-size: 0.7em; background: #2e7d32; color: #fff; padding: 4px 10px; border-radius: 5px;">ATIVO</span>
+		<script src="../assets/js/jquery.min.js"></script>
+        <script>
+            let data = {};
+
+            // Carrega o JSON que está na mesma pasta
+            fetch('bioregioes.json')
+                .then(r => r.json())
+                .then(json => { 
+                    data = json; 
+                    // Se já existir região gravada, mostra-a
+                    const current = localStorage.getItem('biocultura_region');
+                    if(current) selectRegion(current);
+                });
+
+            function selectRegion(id) {
+                localStorage.setItem('biocultura_region', id);
+                document.querySelectorAll('.region').forEach(r => r.classList.remove('active'));
+                document.getElementById(id).classList.add('active');
+
+                const reg = data[id];
+                document.getElementById('info-display').innerHTML = `
+                    <h2 style="color:#2e7d32">${reg.titulo}</h2>
+                    <p><strong>Clima:</strong> ${reg.clima}</p>
+                    <p><strong>Solo:</strong> ${reg.solo}</p>
+                    <p><em>${reg.contexto}</em></p>
+                    <div style="margin-top:1em">
+                        ${reg.especies.map(s => `<span class="tag">${s}</span>`).join('')}
                     </div>
-                    <h4>Clima Predominante</h4>
-                    <p>${data.clima}</p>
-                    <h4>Tipo de Solo</h4>
-                    <p>${data.solo}</p>
-                    <h4>Contexto bioCultura</h4>
-                    <p>${data.contexto}</p>
-                    <h4>Flora Recomendada</h4>
-                    <div class="species-tags">
-                        ${data.especies.map(s => `<span class="tag">${s}</span>`).join('')}
-                    </div>
-                </div>
-            `;
-            container.style.opacity = 1; // Termina fade-in
-        }, 200);
-    }
+                    <hr>
+                    <a href="../calendario/01-janeiro.html" class="button primary small">Ver Janeiro para esta região</a>
+                `;
+            }
 
-    // Script da Sidebar (mantém o que já tinhas)
-    fetch('sidebar-content.html').then(response => response.text()).then(data => {
-        document.getElementById('sidebar').innerHTML = data;
-        var script = document.createElement('script');
-        script.src = 'assets/js/main.js';
-        document.body.appendChild(script);
-    });
-</script>
+            // Sidebar
+            fetch('../sidebar-content.html').then(r => r.text()).then(html => {
+                document.getElementById('sidebar').innerHTML = html;
+                var s = document.createElement('script'); s.src = '../assets/js/main.js'; document.body.appendChild(s);
+            });
+        </script>
+	</body>
+</html>
