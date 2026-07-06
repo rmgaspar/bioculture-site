@@ -18,8 +18,10 @@
             .features h3 { font-size: 1.8em !important; font-weight: 700; color: #3e2723 !important; margin-bottom: 0.5em !important; }
             .features p { font-size: 1.20em !important; max-width: 100%; }
 
-            /* 3. DASHBOARD REGIONAL */
-            .soil-dashboard { display: none; justify-content: center; margin-bottom: 4em; }
+            /* 3. ÁREA DINÂMICA (DASHBOARD / AVISO) */
+            .dynamic-zone { min-height: 350px; display: flex; align-items: center; justify-content: center; margin-bottom: 4em; }
+            
+            .soil-dashboard { display: none; width: 100%; justify-content: center; }
             .data-card { background: #fff; border-radius: 35px; padding: 2.5em; box-shadow: 0 20px 50px rgba(0,0,0,0.04); border: 1px solid #efebe9; position: relative; overflow: hidden; width: 100%; max-width: 500px; text-align: center; }
             .data-card h4 { color: #8d6e63; text-transform: uppercase; letter-spacing: 2px; font-size: 0.75em; margin-bottom: 1.5em; font-weight: 800; }
             
@@ -27,6 +29,8 @@
             .metric { text-align: center; flex: 1; }
             .metric-val { font-size: 2.5em; font-weight: 300; color: #5d4037; display: block; line-height: 1; }
             .metric-label { font-size: 0.7em; color: #888; text-transform: uppercase; font-weight: 700; margin-top: 8px; display: block; }
+
+            #no-gps-warning { display: none; text-align: center; padding: 4em; background: #fdfaf9; border-radius: 40px; width: 100%; }
 
             /* 4. TRANSIÇÃO: MANIFESTO FLOW */
             .manifesto-flow { display: flex; gap: 4em; margin-bottom: 8em; padding: 4em 0 0 0; border-top: 1px solid rgba(0,0,0,0.05); }
@@ -47,7 +51,7 @@
             .feature-header .icon { color: #5d4037; font-size: 2em; border: none !important; background: none !important; }
 
             /* 6. SECÇÃO IDENTIFICAR */
-            #identificar { background: #fdfaf9; margin: 4em -10vw 0 -10vw; padding: 6em 10vw !important; border-top: 1px solid #efebe9 !important; }
+            #identificar { background: #f9f9f9; margin: 4em -10vw 0 -10vw; padding: 6em 10vw !important; border-top: 1px solid #efebe9 !important; }
 
 			.footer-signature-right { text-align: right; padding: 6em 2em 2em 0; opacity: 0.8; }
 		</style>
@@ -65,27 +69,30 @@
                             <p style="font-style: italic; color: #888;">Análise técnica em: <strong id="reg-name" style="color:#8d6e63">...</strong></p>
                         </div>
 
-                        <!-- DASHBOARD REGIONAL -->
-                        <div class="soil-dashboard" id="soil-dashboard">
-                            <div class="data-card">
-                                <h4>Perfil de Acidez e Textura</h4>
-                                <div class="quality-grid">
-                                    <div class="metric">
-                                        <span class="metric-val" id="val-ph-solo">--</span>
-                                        <span class="metric-label">pH do Solo</span>
+                        <!-- ZONA DINÂMICA (Evita o salto de layout) -->
+                        <div class="dynamic-zone">
+                            <!-- DASHBOARD -->
+                            <div class="soil-dashboard" id="soil-dashboard">
+                                <div class="data-card">
+                                    <h4>Perfil de Acidez e Textura</h4>
+                                    <div class="quality-grid">
+                                        <div class="metric">
+                                            <span class="metric-val" id="val-ph-solo">--</span>
+                                            <span class="metric-label">pH do Solo</span>
+                                        </div>
+                                        <div class="metric">
+                                            <span class="metric-val" id="val-tipo-solo" style="font-size: 1.2em; font-weight: 700; text-transform: uppercase;">--</span>
+                                            <span class="metric-label">Textura Base</span>
+                                        </div>
                                     </div>
-                                    <div class="metric">
-                                        <span class="metric-val" id="val-tipo-solo" style="font-size: 1.2em; font-weight: 700; text-transform: uppercase;">--</span>
-                                        <span class="metric-label">Textura Base</span>
-                                    </div>
+                                    <p style="font-size: 0.65em; color: #aaa; text-transform: uppercase; letter-spacing: 1px; margin-top: auto; padding-top: 2em; border-top: 1px solid #f9f9f9;">Dados bioCultura para Regeneração</p>
                                 </div>
-                                <p style="font-size: 0.65em; color: #aaa; text-transform: uppercase; letter-spacing: 1px; margin-top: auto; padding-top: 2em; border-top: 1px solid #f9f9f9;">Dados bioCultura para Regeneração</p>
                             </div>
-                        </div>
 
-                        <!-- AVISO GPS (display:none por defeito) -->
-                        <div id="no-gps-warning" style="display: none; text-align: center; padding: 4em; background: #fdfaf9; border-radius: 40px; margin-bottom: 4em;">
-                            <p>Sincronize a sua localização na barra lateral para carregar os dados geológicos.</p>
+                            <!-- AVISO GPS -->
+                            <div id="no-gps-warning">
+                                <p>Sincronize a sua localização na barra lateral para carregar os dados geológicos.</p>
+                            </div>
                         </div>
 
                         <!-- Manifesto -->
@@ -100,7 +107,7 @@
                             </div>
                         </div>
 
-                        <!-- Conteúdo Principal -->
+                        <!-- Conteúdo em Fluxo -->
                         <div class="features-flow">
                             <div class="feature-row">
                                 <div class="feature-content">
@@ -125,19 +132,6 @@
                                 </div>
                                 <div class="feature-image">
                                     <img src="https://images.unsplash.com/photo-1464226184884-fa280b87c399?q=80&w=2000&auto=format&fit=crop" alt="Solo e clima" />
-                                </div>
-                            </div>
-
-                            <div class="feature-row">
-                                <div class="feature-content">
-                                    <div class="feature-header">
-                                        <span class="icon solid fa-project-diagram"></span>
-                                        <h3>A Arquitetura Invisível</h3>
-                                    </div>
-                                    <p>Debaixo dos nossos pés existem redes fúngicas (micorrizas) que trocam carbono por fósforo e azoto. Preservar esta arquitetura é o segredo da fertilidade sem químicos.</p>
-                                </div>
-                                <div class="feature-image">
-                                    <img src="https://images.unsplash.com/photo-1602773276588-5c0b05f9d325?q=80&w=2070&auto=format&fit=crop" alt="Micorrizas" />
                                 </div>
                             </div>
                         </div>
@@ -169,16 +163,6 @@
                                         <img src="https://images.unsplash.com/photo-1615485290382-441e4d049cb5?q=80&w=2000&auto=format&fit=crop" alt="Teste de pH" />
                                     </div>
                                 </div>
-
-                                <div class="feature-row">
-                                    <div class="feature-content">
-                                        <h3>3. Teste de Infiltração</h3>
-                                        <p>Observe a velocidade com que a água desaparece num pequeno buraco. Menos de 10 minutos indica um solo drenante. Mais de uma hora revela um solo compacto.</p>
-                                    </div>
-                                    <div class="feature-image">
-                                        <img src="https://images.unsplash.com/photo-1535868118629-f37bcd69ff59?q=80&w=2000&auto=format&fit=crop" alt="Teste de infiltração" />
-                                    </div>
-                                </div>
                             </div>
                         </div>
 					</section>
@@ -205,13 +189,16 @@
                 .then(r => r.json())
                 .then(data => {
                     const savedRegion = localStorage.getItem('biocultura_region');
+                    
                     if (savedRegion && data[savedRegion]) {
                         const info = data[savedRegion];
                         document.getElementById('soil-dashboard').style.display = 'flex';
+                        document.getElementById('no-gps-warning').style.display = 'none';
                         document.getElementById('reg-name').innerText = info.titulo;
                         document.getElementById('val-ph-solo').innerText = info.biomas.ph_solo || '--';
                         document.getElementById('val-tipo-solo').innerText = info.biomas.solo || '--';
                     } else {
+                        document.getElementById('soil-dashboard').style.display = 'none';
                         document.getElementById('no-gps-warning').style.display = 'block';
                     }
                 });
