@@ -6,30 +6,29 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
 		<style>
-			/* 1. ESTRUTURA E LIMPEZA */
+			/* 1. ESTILO BASE E LIMPEZA */
 			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
 			#header .toggle { background: none !important; top: 2em !important; left: 2em !important; border: none !important; text-decoration: none !important; z-index: 10001; }
 			#header .toggle:before { content: '\f06c' !important; font-family: "Font Awesome 5 Free" !important; font-weight: 900; color: #2e7d32 !important; font-size: 1.6em !important; }
             #header .toggle:after { display: none !important; }
             section { padding-top: 2em !important; }
 
-            /* 2. DASHBOARD DE DADOS (SMOOTH) */
+            /* 2. DASHBOARD DE DADOS */
             .water-dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-bottom: 4em; }
             .data-card { background: #fff; border-radius: 35px; padding: 2.5em; box-shadow: 0 20px 50px rgba(0,0,0,0.04); border: 1px solid #f0f7ff; position: relative; overflow: hidden; min-height: 380px; display: flex; flex-direction: column; }
             .data-card h4 { color: #0277bd; text-transform: uppercase; letter-spacing: 2px; font-size: 0.75em; margin-bottom: 1.5em; font-weight: 800; }
             
-            /* GRÁFICO TEMPERATURA */
+            /* GRÁFICO */
             .temp-chart { display: flex; align-items: flex-end; justify-content: space-between; height: 120px; margin-top: 2em; gap: 4px; padding-bottom: 20px; }
             .temp-bar { background: linear-gradient(to top, #42a5f5, #90caf9); width: 100%; border-radius: 4px 4px 0 0; position: relative; min-height: 2px; }
             .temp-bar:hover::after { content: attr(data-temp) "°"; position: absolute; top: -25px; left: 50%; transform: translateX(-50%); font-size: 0.7em; font-weight: 800; color: #0277bd; }
 
-            /* MÉTRICAS QUÍMICAS */
+            /* MÉTRICAS */
             .quality-grid { display: flex; gap: 2em; margin-top: 1em; }
             .metric { text-align: center; flex: 1; }
             .metric-val { font-size: 2.5em; font-weight: 300; color: #01579b; display: block; line-height: 1; }
             .metric-label { font-size: 0.7em; color: #888; text-transform: uppercase; font-weight: 700; margin-top: 8px; display: block; }
 
-            /* NOTA DE RODAPÉ DO CARD */
             .source-note { font-size: 0.65em; color: #aaa; text-transform: uppercase; letter-spacing: 1px; margin-top: auto; padding-top: 2em; border-top: 1px solid #f9f9f9; }
 
             /* LAYOUT ZIGUEZAGUE */
@@ -61,7 +60,7 @@
                             <div class="data-card">
                                 <h4>Temperatura Média da Água (°C)</h4>
                                 <div class="temp-chart" id="temp-chart"></div>
-                                <div class="source-note">Dados Médios Regionais para AQS</div>
+                                <div class="source-note">Dados bioCultura para dimensionamento AQS</div>
                             </div>
 
                             <!-- Card 2: Química -->
@@ -78,7 +77,7 @@
                                     </div>
                                 </div>
                                 <p id="reg-note" style="font-size: 0.9em; font-style: italic; color: #666; margin-top: 2em;"></p>
-                                <div class="source-note">Fonte: ERSAR / bioCultura</div>
+                                <div class="source-note">Fonte: ERSAR</div>
                             </div>
 
                             <!-- Card 3: Reservas -->
@@ -88,7 +87,7 @@
                                     <p id="reg-reserves" style="font-size: 1.1em; font-weight: 700; color: #01579b; margin: 0;"></p>
                                     <p id="reg-aquifer" style="font-size: 0.9em; color: #666; margin-top: 5px;"></p>
                                 </div>
-                                <div class="source-note">Monitorização ERSAR</div>
+                                <div class="source-note">Fonte: ERSAR</div>
                             </div>
 
                         </div>
@@ -128,7 +127,7 @@
 
 		<script src="/assets/js/jquery.min.js"></script>
         <script>
-            // SCRIPT DE INJEÇÃO DIRETA DE DADOS
+            // SCRIPT DE INJEÇÃO CORRIGIDO
             fetch('/data/bioregioes.json')
                 .then(r => r.json())
                 .then(data => {
@@ -138,13 +137,14 @@
                         document.getElementById('no-gps-warning').style.display = 'none';
                         document.getElementById('water-dashboard').style.display = 'grid';
 
-                        // 1. Nome e Química
+                        // 1. Nome
                         document.getElementById('reg-name').innerText = info.titulo;
+
+                        // 2. Recursos Hídricos (Química e Gráfico)
                         if(info.recursos_hidricos) {
-                            document.getElementById('val-ph').innerText = info.recursos_hidricos.ph_agua;
-                            document.getElementById('val-dureza').innerText = info.recursos_hidricos.dureza_fr;
+                            document.getElementById('val-ph').innerText = info.recursos_hidricos.ph_agua || '--';
+                            document.getElementById('val-dureza').innerText = info.recursos_hidricos.dureza_fr || '--';
                             
-                            // 2. Gráfico
                             const chart = document.getElementById('temp-chart');
                             const temps = info.recursos_hidricos.temp_media_agua || [];
                             const months = ['J','F','M','A','M','J','J','A','S','O','N','D'];
@@ -162,16 +162,15 @@
                             });
                         }
 
-                        // 3. Reservas e Disponibilidade (Direto na página)
+                        // 3. Água (Reservas e Aquíferos)
                         if(info.agua) {
-                            document.getElementById('reg-reserves').innerText = info.agua.reservas || 'Sem dados';
-                            document.getElementById('reg-aquifer').innerText = info.agua.aquiferos || '';
+                            document.getElementById('reg-reserves').innerText = info.agua.reservas || 'Sem dados de reservas';
+                            document.getElementById('reg-aquifer').innerText = info.agua.aquiferos || 'Sem dados de aquíferos';
                             document.getElementById('reg-note').innerText = info.agua.nota || '';
                         }
                     }
                 });
 
-            // Sidebar
             fetch('/sidebar-content.html').then(r => r.text()).then(html => {
                 document.getElementById('sidebar').innerHTML = html;
                 var s = document.createElement('script'); s.src = '/assets/js/main.js'; document.body.appendChild(s);
