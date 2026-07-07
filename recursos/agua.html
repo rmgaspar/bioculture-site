@@ -15,39 +15,56 @@
             /* DASHBOARD REGIONAL */
             .water-dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-bottom: 4em; }
             .data-card { background: #fff; border-radius: 35px; padding: 2.5em; box-shadow: 0 20px 50px rgba(0,0,0,0.04); border: 1px solid #f0f7ff; position: relative; overflow: hidden; min-height: 280px; display: flex; flex-direction: column; }
-            .data-card h4 { color: #0277bd; text-transform: uppercase; letter-spacing: 2px; font-size: 0.75em; margin-bottom: 1.5em; font-weight: 800; }
+            .data-card h4 { color: #0277bd; text-transform: uppercase; letter-spacing: 2px; font-size: 0.75em; margin-bottom: 1.5em; font-weight: 800; text-align: center; }
             
-            .quality-grid { display: flex; gap: 2em; margin-top: 1em; }
-            .metric { text-align: center; flex: 1; }
-            .metric-val { font-size: 2.5em; font-weight: 300; color: #01579b; display: block; line-height: 1; }
-            .metric-label { font-size: 0.7em; color: #888; text-transform: uppercase; font-weight: 700; margin-top: 8px; display: block; }
+            .quality-grid { display: flex; gap: 2em; margin-top: 1em; justify-content: center; }
+            
+            /* ESTILO DOS BARÓMETROS (CÍRCULOS) */
+            .metric { 
+                display: flex; 
+                flex-direction: column; 
+                align-items: center; 
+                justify-content: center; 
+                width: 130px; 
+                height: 130px; 
+                border-radius: 50%; 
+                border: 6px solid #eee; 
+                transition: all 0.5s ease;
+                text-align: center;
+            }
+            .metric-val { font-size: 2.2em; font-weight: 300; color: #333; display: block; line-height: 1; }
+            .metric-label { font-size: 0.65em; color: #888; text-transform: uppercase; font-weight: 700; margin-top: 5px; display: block; }
+
+            /* CORES DINÂMICAS */
+            .status-acid { border-color: #ffd54f !important; color: #f57f17 !important; }    /* Amarelo */
+            .status-neutral { border-color: #81c784 !important; color: #2e7d32 !important; } /* Verde */
+            .status-alkaline { border-color: #4fc3f7 !important; color: #01579b !important; }/* Azul */
+
+            .status-soft { border-color: #4fc3f7 !important; }   /* Macia (Azul) */
+            .status-medium { border-color: #ffb74d !important; } /* Média (Laranja) */
+            .status-hard { border-color: #ef5350 !important; }   /* Dura (Vermelha) */
+
+            .temp-badge { background: #e1f5fe; color: #0277bd; padding: 8px 20px; border-radius: 25px; font-size: 0.9em; font-weight: 700; display: inline-block; margin-bottom: 15px; }
 
             /* INDICADORES NACIONAIS */
             .national-stats { display: flex; gap: 20px; margin-bottom: 6em; flex-wrap: wrap; }
-            .stat-box { 
-                flex: 1; min-width: 300px; background: #f8f9fa; border-radius: 30px; padding: 3em; 
-                text-align: center; border: 1px solid #eee; transition: transform 0.3s ease;
-            }
+            .stat-box { flex: 1; min-width: 300px; background: #f8f9fa; border-radius: 30px; padding: 3em; text-align: center; border: 1px solid #eee; }
             .stat-box i { font-size: 3em; color: #42a5f5; margin-bottom: 0.5em; display: block; }
             .stat-box h2 { font-size: 2.5em !important; color: #0277bd !important; margin-bottom: 0.2em !important; font-weight: 800; }
-            .stat-box p { font-size: 1em !important; line-height: 1.4; color: #555; font-weight: 600; }
 
-            /* LAYOUT ZIGUEZAGUE */
             .features-flow { display: flex; flex-direction: column; gap: 8em; margin-top: 4em; }
             .feature-row { display: flex; align-items: center; gap: 5em; flex-wrap: wrap; flex-direction: row-reverse; } 
             .feature-row:nth-child(even) { flex-direction: row; } 
-            .feature-content { flex: 1.2; min-width: 300px; }
-            .feature-image { flex: 1; min-width: 300px; height: 380px; border-radius: 40px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.06); }
+            .feature-image { flex: 1; min-width: 300px; height: 380px; border-radius: 40px; overflow: hidden; }
             .feature-image img { width: 100%; height: 100%; object-fit: cover; }
-
-            .source-note { font-size: 0.65em; color: #aaa; text-transform: uppercase; letter-spacing: 1px; margin-top: auto; padding-top: 1.5em; border-top: 1px solid #f9f9f9; }
 
 			.footer-signature-right { text-align: right; padding: 4em 2em 2em 0; opacity: 0.8; }
 		</style>
 	</head>
 	<body class="is-preload">
 		<div id="wrapper">
-			<div id="main"><div class="inner">
+			<div id="main">
+                <div class="inner">
 					<header id="header" style="height: 0; margin: 0; padding: 0; overflow: hidden;"></header>
 					
                     <section>
@@ -62,43 +79,26 @@
                             <div class="data-card">
                                 <h4>Perfil Químico</h4>
                                 <div class="quality-grid">
-                                    <div class="metric">
+                                    <div class="metric" id="container-ph">
                                         <span class="metric-val" id="val-ph">--</span>
                                         <span class="metric-label">pH Médio</span>
                                     </div>
-                                    <div class="metric">
+                                    <div class="metric" id="container-dureza">
                                         <span class="metric-val" id="val-dureza">--</span>
                                         <span class="metric-label">Dureza (ºf)</span>
                                     </div>
                                 </div>
-                                <p id="reg-note" style="font-size: 0.9em; font-style: italic; color: #666; margin-top: 2em;"></p>
-                                <div class="source-note">Fonte: ERSAR</div>
+                                <p id="reg-note" style="font-size: 0.9em; font-style: italic; color: #666; margin-top: 2em; text-align: center;"></p>
+                                <div class="source-note" style="text-align: center; font-size: 0.7em; color: #ccc; margin-top: 10px;">Fonte: ERSAR</div>
                             </div>
 
                             <div class="data-card">
                                 <h4>Disponibilidade e Reservas</h4>
-                                <div style="margin-bottom: 1.5em;">
+                                <div style="margin-bottom: 1.5em;" id="reserves-content">
                                     <p id="reg-reserves" style="font-size: 1.1em; font-weight: 700; color: #01579b; margin: 0;"></p>
                                     <p id="reg-aquifer" style="font-size: 0.9em; color: #666; margin-top: 5px;"></p>
                                 </div>
-                                <div class="source-note">Fonte: ERSAR / bioCultura</div>
-                            </div>
-                        </div>
-
-                        <!-- O CENÁRIO EM PORTUGAL -->
-                        <div style="text-align: center; margin-bottom: 3em;">
-                            <h3 style="color: #01579b; font-weight: 300;">O Desafio do Saneamento</h3>
-                        </div>
-                        <div class="national-stats">
-                            <div class="stat-box">
-                                <i class="fas fa-faucet"></i>
-                                <h2>197 Litros</h2>
-                                <p>Consumo médio diário de água por habitante</p>
-                            </div>
-                            <div class="stat-box">
-                                <i class="fas fa-trash-alt"></i>
-                                <h2>1,46 KG</h2>
-                                <p>Produção diária de resíduos urbanos por habitante</p>
+                                <div class="source-note" style="margin-top: auto; font-size: 0.7em; color: #ccc;">Fonte: ERSAR / bioCultura</div>
                             </div>
                         </div>
 
@@ -106,9 +106,8 @@
                             <p>Sincronize a sua localização na barra lateral para carregar os dados diretos da sua região.</p>
                         </div>
 
-                        <!-- CONTEÚDO TÉCNICO EM ZIGUEZAGUE -->
+                        <!-- CONTEÚDO TÉCNICO -->
                         <div class="features-flow">
-                            <!-- BLOCO 1: CALEIRAS -->
                             <div class="feature-row">
                                 <div class="feature-content">
                                     <h3>Recolha Passiva: O Telhado como Mina</h3>
@@ -116,28 +115,6 @@
                                 </div>
                                 <div class="feature-image">
                                     <img src="https://images.unsplash.com/photo-1558905619-17254263246a?q=80&w=2000&auto=format&fit=crop" alt="Recolha pluvial" />
-                                </div>
-                            </div>
-
-                            <!-- BLOCO 2: BIOFOSSAS (ADICIONADO AQUI) -->
-                            <div class="feature-row">
-                                <div class="feature-content">
-                                    <h3>Biofossas: Saneamento Biológico</h3>
-                                    <p>As Biofossas utilizam a força das plantas e microrganismos para purificar águas residuais. É a alternativa ética que elimina maus cheiros, reduz faturas e devolve água segura para a rega e nutrientes para a terra.</p>
-                                </div>
-                                <div class="feature-image">
-                                    <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=2000&auto=format&fit=crop" alt="Fitodepuração" />
-                                </div>
-                            </div>
-
-                            <!-- BLOCO 3: ÂNFORAS -->
-                            <div class="feature-row">
-                                <div class="feature-content">
-                                    <h3>Eficiência na Raiz: Ânforas</h3>
-                                    <p>Utilizamos potes de barro porosos enterrados junto às plantas. A água transpassa as paredes apenas quando o solo está seco, eliminando a evaporação e estimulando raízes profundas.</p>
-                                </div>
-                                <div class="feature-image">
-                                    <img src="https://images.unsplash.com/photo-1581094288338-2314dddb7bc3?q=80&w=2000&auto=format&fit=crop" alt="Ânfora" />
                                 </div>
                             </div>
                         </div>
@@ -161,125 +138,101 @@
                             </div>
 						</a>
 					</div>
-				</div></div>
+				</div>
+            </div>
 			<div id="sidebar"></div>
 		</div>
-            <script src="/assets/js/jquery.min.js"></script>
-         <script>
-        // 1. Função para calcular distância (Haversine)
-        function calcularDistancia(lat1, lon1, lat2, lon2) {
-            const R = 6371;
-            const dLat = (lat2 - lat1) * Math.PI / 180;
-            const dLon = (lon2 - lon1) * Math.PI / 180;
-            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-                    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
-                    Math.sin(dLon/2) * Math.sin(dLon/2);
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-            return R * c;
-        }
 
-        async function inicializar() {
-            try {
-                const response = await fetch('/data/bioregioes.json');
-                if (!response.ok) throw new Error("Não encontrei o ficheiro JSON");
-                const data = await response.json();
-                
-                let savedId = localStorage.getItem('biocultura_region');
-                // Procura o concelho no JSON. Se for "centro", info será null (correto)
-                let info = data.find(item => item.id === savedId);
-
-                if (!info) {
-                    console.log("A localizar concelho mais próximo...");
-                    localizarMaisProximo(data);
-                } else {
-                    renderWaterDashboard(info);
-                }
-            } catch (err) {
-                console.error("Erro:", err);
-            }
-        }
-
-        function localizarMaisProximo(data) {
-            if (!navigator.geolocation) {
-                alert("O seu navegador não suporta localização.");
-                return;
+		<script src="/assets/js/jquery.min.js"></script>
+        <script>
+            // Função Haversine para encontrar o concelho mais próximo
+            function calcularDistancia(lat1, lon1, lat2, lon2) {
+                const R = 6371;
+                const dLat = (lat2 - lat1) * Math.PI / 180;
+                const dLon = (lon2 - lon1) * Math.PI / 180;
+                const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
+                return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
             }
 
-            navigator.geolocation.getCurrentPosition(pos => {
-                const userLat = pos.coords.latitude;
-                const userLon = pos.coords.longitude;
+            async function inicializarPagina() {
+                try {
+                    const r = await fetch('/data/bioregioes.json');
+                    const data = await r.json();
+                    
+                    const savedRegionId = localStorage.getItem('biocultura_region');
+                    let info = data.find(item => item.id === savedRegionId);
 
-                let maisProximo = null;
-                let menorDistancia = Infinity;
-
-                data.forEach(concelho => {
-                    if (concelho.lat && concelho.lon) {
-                        const d = calcularDistancia(userLat, userLon, concelho.lat, concelho.lon);
-                        if (d < menorDistancia) {
-                            menorDistancia = d;
-                            maisProximo = concelho;
-                        }
+                    if (!info && navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition(pos => {
+                            let minD = Infinity;
+                            data.forEach(c => {
+                                if(c.lat && c.lon) {
+                                    let d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon);
+                                    if(d < minD) { minD = d; info = c; }
+                                }
+                            });
+                            if(info) {
+                                localStorage.setItem('biocultura_region', info.id);
+                                renderWaterDashboard(info);
+                            }
+                        });
+                    } else if (info) {
+                        renderWaterDashboard(info);
                     }
-                });
-
-                if (maisProximo) {
-                    localStorage.setItem('biocultura_region', maisProximo.id);
-                    // Limpar cache antiga para forçar atualização
-                    sessionStorage.removeItem('biocultura_data_cache');
-                    renderWaterDashboard(maisProximo);
-                }
-            }, error => {
-                alert("Erro ao obter localização. Por favor, permita o acesso ao GPS.");
-            });
-        }
-
-        function renderWaterDashboard(info) {
-            const dashboard = document.getElementById('water-dashboard');
-            const warning = document.getElementById('no-gps-warning');
-            
-            if (!dashboard || !warning) return;
-
-            warning.style.display = 'none';
-            dashboard.style.display = 'grid';
-            document.getElementById('reg-name').innerText = info.titulo;
-
-            if (info.recursos_hidricos) {
-                document.getElementById('val-ph').innerText = info.recursos_hidricos.ph_agua || '--';
-                document.getElementById('val-dureza').innerText = info.recursos_hidricos.dureza_fr || '--';
-                document.getElementById('reg-note').innerText = (info.recursos_hidricos.qualidade ? "Qualidade: " + info.recursos_hidricos.qualidade + ". " : "") + (info.agua?.nota || "");
+                } catch(e) { console.error("Erro ao carregar dados", e); }
             }
 
-            if (info.agua) {
-                document.getElementById('reg-reserves').innerText = info.agua.reservas || 'Informação local';
-                document.getElementById('reg-aquifer').innerHTML = `<strong>Aquífero:</strong> ${info.agua.aquiferos || 'N/A'}`;
-                
-                // Mostrar barragens se existirem no JSON
-                if (info.agua.barragens_proximas && info.agua.barragens_proximas.length > 0) {
-                    const existingDams = document.getElementById('temp-dams');
-                    if (existingDams) existingDams.remove();
+            function renderWaterDashboard(info) {
+                document.getElementById('no-gps-warning').style.display = 'none';
+                document.getElementById('water-dashboard').style.display = 'grid';
+                document.getElementById('reg-name').innerText = info.titulo;
 
-                    const damsList = info.agua.barragens_proximas.join(', ');
-                    const damsElement = document.createElement('p');
-                    damsElement.id = 'temp-dams';
-                    damsElement.innerHTML = `<strong>Barragens:</strong> ${damsList}`;
-                    damsElement.style.fontSize = "0.9em";
-                    damsElement.style.marginTop = "10px";
-                    document.getElementById('reg-aquifer').parentNode.appendChild(damsElement);
+                if (info.recursos_hidricos) {
+                    const ph = parseFloat(info.recursos_hidricos.ph_agua);
+                    const dureza = parseFloat(info.recursos_hidricos.dureza_fr);
+                    
+                    // Barómetro pH
+                    const phCont = document.getElementById('container-ph');
+                    document.getElementById('val-ph').innerText = ph;
+                    phCont.className = 'metric';
+                    if (ph < 6.5) phCont.classList.add('status-acid');
+                    else if (ph <= 8.5) phCont.classList.add('status-neutral');
+                    else phCont.classList.add('status-alkaline');
+
+                    // Barómetro Dureza
+                    const durCont = document.getElementById('container-dureza');
+                    document.getElementById('val-dureza').innerText = dureza;
+                    durCont.className = 'metric';
+                    if (dureza < 15) durCont.classList.add('status-soft');
+                    else if (dureza <= 30) durCont.classList.add('status-medium');
+                    else durCont.classList.add('status-hard');
+
+                    // Temperatura e Notas
+                    const mes = new Date().getMonth();
+                    const temp = info.recursos_hidricos.temp_media_agua ? info.recursos_hidricos.temp_media_agua[mes] : '--';
+                    document.getElementById('reg-note').innerHTML = `<div class="temp-badge">Água hoje: ${temp}ºC</div><br>` + 
+                        (info.recursos_hidricos.qualidade ? `<strong>Qualidade:</strong> ${info.recursos_hidricos.qualidade}. ` : "") + (info.agua?.nota || "");
+                }
+
+                if (info.agua) {
+                    document.getElementById('reg-reserves').innerText = info.agua.reservas || 'Informação local';
+                    document.getElementById('reg-aquifer').innerHTML = `<strong>Aquífero:</strong> ${info.agua.aquiferos || 'N/A'}`;
+                    
+                    if (info.agua.barragens_proximas?.length > 0) {
+                        const p = document.createElement('p');
+                        p.innerHTML = `<strong>Barragens:</strong> ${info.agua.barragens_proximas.join(', ')}`;
+                        p.style.fontSize = "0.9em";
+                        document.getElementById('reserves-content').appendChild(p);
+                    }
                 }
             }
-        }
 
-        // Executar
-        inicializar();
-
-        // Carregar Sidebar
-        fetch('/sidebar-content.html').then(r => r.text()).then(html => {
-            const sidebar = document.getElementById('sidebar');
-            if (sidebar) {
-                sidebar.innerHTML = html;
+            // Carregar Sidebar e Iniciar
+            fetch('/sidebar-content.html').then(r => r.text()).then(html => {
+                document.getElementById('sidebar').innerHTML = html;
                 var s = document.createElement('script'); s.src = '/assets/js/main.js'; document.body.appendChild(s);
-            }
-        });
-    </script>
+                inicializarPagina();
+            });
+        </script>
 	</body>
 </html>
