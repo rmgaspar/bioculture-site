@@ -169,11 +169,10 @@
                     const savedRegionId = localStorage.getItem('biocultura_region');
                     const cachedData = sessionStorage.getItem('biocultura_data_cache');
 
-                    // Se já temos os dados deste concelho em "cache", usamos logo
+                    // 1. Lógica de Cache para os dados da região
                     if (cachedData && JSON.parse(cachedData).id === savedRegionId) {
                         renderWaterDashboard(JSON.parse(cachedData));
                     } else {
-                        // Se não, vamos buscar ao ficheiro grande (apenas uma vez)
                         fetch('/data/bioregioes.json')
                             .then(r => r.json())
                             .then(data => {
@@ -182,12 +181,18 @@
                                     sessionStorage.setItem('biocultura_data_cache', JSON.stringify(info));
                                     renderWaterDashboard(info);
                                 }
-                            });
+                            })
+                            .catch(err => console.error("Erro ao carregar bioregiões:", err));
                     }
 
                     function renderWaterDashboard(info) {
-                        document.getElementById('no-gps-warning').style.display = 'none';
-                        document.getElementById('water-dashboard').style.display = 'grid';
+                        const dashboard = document.getElementById('water-dashboard');
+                        const warning = document.getElementById('no-gps-warning');
+                        
+                        if (!dashboard || !warning) return;
+
+                        warning.style.display = 'none';
+                        dashboard.style.display = 'grid';
                         document.getElementById('reg-name').innerText = info.titulo;
 
                         if(info.recursos_hidricos) {
@@ -202,7 +207,6 @@
                             document.getElementById('reg-aquifer').innerHTML = `<strong>Aquífero:</strong> ${info.agua.aquiferos || 'N/A'}`;
                             
                             if(info.agua.barragens_proximas && info.agua.barragens_proximas.length > 0) {
-                                // Limpar se já existir para não duplicar
                                 const oldDams = document.getElementById('dams-list');
                                 if(oldDams) oldDams.remove();
 
@@ -216,6 +220,20 @@
                             }
                         }
                     }
+
+                    // 2. Lógica para carregar a Sidebar (que estava em falta)
+                    fetch('/sidebar-content.html')
+                        .then(r => r.text())
+                        .then(html => {
+                            const sidebarEl = document.getElementById('sidebar');
+                            if (sidebarEl) {
+                                sidebarEl.innerHTML = html;
+                                // Reinicializa o JS do template para a sidebar funcionar
+                                var s = document.createElement('script'); 
+                                s.src = '/assets/js/main.js'; 
+                                document.body.appendChild(s);
+                            }
+                        });
                 </script>
 	</body>
 </html>
