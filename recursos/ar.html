@@ -136,8 +136,9 @@
                 .then(r => r.json())
                 .then(data => {
                     const savedRegion = localStorage.getItem('biocultura_region');
-                    if (savedRegion && data[savedRegion]) {
-                        const info = data[savedRegion];
+                    const info = data.find(item => item.id === savedRegion);
+
+                    if (savedRegion && info) {
                         document.getElementById('no-gps-warning').style.display = 'none';
                         document.getElementById('air-dashboard').style.display = 'grid';
                         document.getElementById('climate-report').style.display = 'block';
@@ -151,7 +152,7 @@
                         const statusAr = info.atmosfera.qualidade_ar;
                         arVal.innerText = statusAr;
                         
-                        if (statusAr === "Muito Boa") arVal.className = "metric-val aq-muitoboa";
+                        if (statusAr === "Muito Boa") arVal.className = "metric-val aq-muitobom";
                         else if (statusAr === "Boa") arVal.className = "metric-val aq-bom";
                         else if (statusAr === "Média") arVal.className = "metric-val aq-medio";
                         else if (statusAr === "Fraca") arVal.className = "metric-val aq-fraco";
@@ -171,6 +172,9 @@
                             bar.appendChild(lbl);
                             chart.appendChild(bar);
                         });
+                    } else {
+                        document.getElementById('no-gps-warning').style.display = 'block';
+                        document.getElementById('climate-report').style.display = 'none';
                     }
                 });
 
