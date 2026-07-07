@@ -18,15 +18,21 @@
             .features h3 { font-size: 1.8em !important; font-weight: 700; color: #3e2723 !important; margin-bottom: 0.5em !important; }
             .features p { font-size: 1.20em !important; max-width: 100%; }
 
-            /* 3. DASHBOARD REGIONAL (2 BOXES COMO NA ÁGUA) */
+            /* 3. DASHBOARD REGIONAL */
             .soil-dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-bottom: 4em; }
-            .data-card { background: #fff; border-radius: 35px; padding: 2.5em; box-shadow: 0 20px 50px rgba(0,0,0,0.04); border: 1px solid #efebe9; position: relative; overflow: hidden; min-height: 320px; display: flex; flex-direction: column; }
+            .data-card { background: #fff; border-radius: 35px; padding: 2.5em; box-shadow: 0 20px 50px rgba(0,0,0,0.04); border: 1px solid #efebe9; position: relative; overflow: hidden; min-height: 350px; display: flex; flex-direction: column; }
             .data-card h4 { color: #8d6e63; text-transform: uppercase; letter-spacing: 2px; font-size: 0.75em; margin-bottom: 1.5em; font-weight: 800; }
             
             .quality-grid { display: flex; gap: 2em; margin-top: 1em; }
             .metric { text-align: center; flex: 1; }
-            .metric-val { font-size: 2.5em; font-weight: 300; color: #5d4037; display: block; line-height: 1; }
+            .metric-val { font-size: 2.5em; font-weight: 300; display: block; line-height: 1; transition: color 0.5s ease; }
             .metric-label { font-size: 0.7em; color: #888; text-transform: uppercase; font-weight: 700; margin-top: 8px; display: block; }
+
+            /* CORES DINÂMICAS PARA OS VALORES */
+            .val-neutral { color: #2e7d32 !important; } /* Verde bioCultura */
+            .val-acid { color: #e67e22 !important; }    /* Laranja */
+            .val-alkaline { color: #2980b9 !important; } /* Azul */
+            .val-alert { color: #c53030 !important; }    /* Vermelho */
 
             .source-note { font-size: 0.65em; color: #aaa; text-transform: uppercase; letter-spacing: 1px; margin-top: auto; padding-top: 1.5em; border-top: 1px solid #f9f9f9; }
 
@@ -38,8 +44,8 @@
             .compromisso h4 { color: #2e7d32; }
             .manifesto-item p { font-size: 1.1em !important; font-style: italic; color: #555 !important; }
 
-            /* 5. LAYOUT EM FLUXO (ZIGUEZAGUE) */
-            .features-flow { display: flex; flex-direction: column; gap: 8em; margin-bottom: 6em; }
+            /* 5. LAYOUT EM FLUXO */
+            .features-flow { display: flex; flex-direction: column; gap: 6em; margin-bottom: 6em; }
             .feature-row { display: flex; align-items: center; gap: 4em; flex-wrap: wrap; }
             .feature-row:nth-child(even) { flex-direction: row-reverse; }
             .feature-content { flex: 1.2; min-width: 300px; }
@@ -49,7 +55,7 @@
             .feature-header .icon { color: #5d4037; font-size: 2em; border: none !important; background: none !important; }
 
             /* 6. SECÇÃO IDENTIFICAR */
-            #identificar { background: #f9f9f9; margin: 4em -10vw 0 -10vw; padding: 6em 10vw !important; border-top: 1px solid #efebe9 !important; }
+            #identificar { background: #fdfaf9; margin: 4em -10vw 0 -10vw; padding: 6em 10vw !important; border-top: 1px solid #efebe9 !important; }
 
 			.footer-signature-right { text-align: right; padding: 6em 2em 2em 0; opacity: 0.8; }
 		</style>
@@ -60,16 +66,14 @@
 					<header id="header" style="height: 0; margin: 0; padding: 0; overflow: hidden;"></header>
 					
                     <section>
-                        <!-- Cabeçalho -->
                         <div style="text-align: center; margin-bottom: 5em;">
                             <h4 style="letter-spacing: 5px; color: #8d6e63; text-transform: uppercase; font-size: 0.8em; opacity: 0.6;">Recursos Vitais</h4>
                             <h1 style="font-size: 3.5em; font-weight: 300; color: #3e2723; letter-spacing: -2px;">Solo: O Filtro e a Esponja</h1>
                             <p style="font-style: italic; color: #888;">Análise técnica em: <strong id="reg-name" style="color:#8d6e63">...</strong></p>
                         </div>
 
-                        <!-- DASHBOARD REGIONAL (2 CAIXAS) -->
+                        <!-- DASHBOARD REGIONAL -->
                         <div class="soil-dashboard" id="soil-dashboard" style="display:none;">
-                            <!-- Card 1: Química -->
                             <div class="data-card">
                                 <h4>Perfil de Acidez e Textura</h4>
                                 <div class="quality-grid">
@@ -78,18 +82,17 @@
                                         <span class="metric-label">pH do Solo</span>
                                     </div>
                                     <div class="metric">
-                                        <span class="metric-val" id="val-tipo-solo" style="font-size: 1.2em; font-weight: 700; text-transform: uppercase;">--</span>
+                                        <span class="metric-val" id="val-tipo-solo" style="font-size: 1.2em; font-weight: 700; text-transform: uppercase; color: #5d4037;">--</span>
                                         <span class="metric-label">Textura Base</span>
                                     </div>
                                 </div>
                                 <div class="source-note">Dados bioCultura para Regeneração</div>
                             </div>
 
-                            <!-- Card 2: Geologia e Uso (Fonte DGADR) -->
                             <div class="data-card">
                                 <h4>Capacidade de Uso e Drenagem</h4>
                                 <div style="margin-bottom: 1.5em;">
-                                    <p id="reg-contexto" style="font-size: 1.1em; font-weight: 700; color: #5d4037; margin: 0;"></p>
+                                    <p id="reg-contexto" style="font-size: 1.1em; font-weight: 700; margin: 0;"></p>
                                     <p style="font-size: 0.95em; color: #666; margin-top: 10px;">Análise de permeabilidade e risco de erosão do território.</p>
                                 </div>
                                 <div class="source-note">Fonte: DGADR / SNISolos</div>
@@ -139,28 +142,13 @@
                                     <img src="https://images.unsplash.com/photo-1464226184884-fa280b87c399?q=80&w=2000&auto=format&fit=crop" alt="Solo e clima" />
                                 </div>
                             </div>
-
-                            <div class="feature-row">
-                                <div class="feature-content">
-                                    <div class="feature-header">
-                                        <span class="icon solid fa-project-diagram"></span>
-                                        <h3>A Arquitetura Invisível</h3>
-                                    </div>
-                                    <p>Debaixo dos nossos pés existem redes fúngicas (micorrizas) que trocam carbono por fósforo e azoto. Preservar esta arquitetura é o segredo da fertilidade sem químicos.</p>
-                                </div>
-                                <div class="feature-image">
-                                    <img src="https://images.unsplash.com/photo-1602773276588-5c0b05f9d325?q=80&w=2070&auto=format&fit=crop" alt="Micorrizas" />
-                                </div>
-                            </div>
                         </div>
 
-                        <!-- SECÇÃO IDENTIFICAR -->
                         <div id="identificar">
                             <header class="major" style="text-align: center; margin-bottom: 5em;">
                                 <h2>Como identificar o seu solo?</h2>
-                                <p>Três testes sensoriais essenciais para conhecer a sua terra antes de intervir.</p>
+                                <p>Três testes sensoriais essenciais para conhecer a sua terra.</p>
                             </header>
-
                             <div class="features-flow">
                                 <div class="feature-row">
                                     <div class="feature-content">
@@ -168,27 +156,16 @@
                                         <p>Molhe um pouco de terra e tente moldar uma pequena minhoca. Se esfarelar, o solo é <strong>Arenoso</strong>. Se for moldável como plasticina, é <strong>Argiloso</strong>.</p>
                                     </div>
                                     <div class="feature-image">
-                                        <img src="https://images.unsplash.com/photo-1581578017093-cd30fce4eeb7?q=80&w=2000&auto=format&fit=crop" alt="Teste de textura" />
+                                        <img src="https://images.unsplash.com/photo-1581578017093-cd30fce4eeb7?q=80&w=2000&auto=format&fit=crop" alt="Teste textura" />
                                     </div>
                                 </div>
-
                                 <div class="feature-row">
                                     <div class="feature-content">
                                         <h3>2. Teste de pH Caseiro</h3>
                                         <p>Use vinagre sobre uma amostra seca. A efervescência indica um solo <strong>Alcalino</strong>. A ausência de reação sugere um solo <strong>Ácido</strong>.</p>
                                     </div>
                                     <div class="feature-image">
-                                        <img src="https://images.unsplash.com/photo-1615485290382-441e4d049cb5?q=80&w=2000&auto=format&fit=crop" alt="Teste de pH" />
-                                    </div>
-                                </div>
-
-                                <div class="feature-row">
-                                    <div class="feature-content">
-                                        <h3>3. Teste de Infiltração</h3>
-                                        <p>Observe a velocidade com que a água desaparece num pequeno buraco. Menos de 10 minutos indica um solo drenante. Mais de uma hora revela um solo compacto.</p>
-                                    </div>
-                                    <div class="feature-image">
-                                        <img src="https://images.unsplash.com/photo-1535868118629-f37bcd69ff59?q=80&w=2000&auto=format&fit=crop" alt="Teste de infiltração" />
+                                        <img src="https://images.unsplash.com/photo-1615485290382-441e4d049cb5?q=80&w=2000&auto=format&fit=crop" alt="Teste pH" />
                                     </div>
                                 </div>
                             </div>
@@ -216,25 +193,42 @@
             fetch('/data/bioregioes.json')
                 .then(r => r.json())
                 .then(data => {
-                   const savedRegion = localStorage.getItem('biocultura_region');
-const info = data.find(item => item.id === savedRegion);
+                    const savedRegion = localStorage.getItem('biocultura_region');
+                    const info = data.find(item => item.id === savedRegion);
 
-                if (savedRegion && info) {
-                    document.getElementById('soil-dashboard').style.display = 'grid';
-                    document.getElementById('no-gps-warning').style.display = 'none';
-                    document.getElementById('reg-name').innerText = info.titulo;
-                    document.getElementById('val-ph-solo').innerText = info.biomas.ph_solo || '--';
-                    document.getElementById('val-tipo-solo').innerText = info.biomas.solo || '--';
-                    
-                    // Se tiveres o campo de contexto/reservas no solo
-                    if (document.getElementById('reg-contexto')) {
-                        document.getElementById('reg-contexto').innerText = info.contexto || 'Análise regional em curso';
+                    if (savedRegion && info) {
+                        document.getElementById('soil-dashboard').style.display = 'grid';
+                        document.getElementById('no-gps-warning').style.display = 'none';
+                        document.getElementById('reg-name').innerText = info.titulo;
+                        
+                        // Lógica de Cores para o pH
+                        const phVal = info.biomas.ph_solo || '7.0';
+                        const phElem = document.getElementById('val-ph-solo');
+                        phElem.innerText = phVal;
+                        const phNum = parseFloat(phVal);
+
+                        if (phNum < 6.0) phElem.className = "metric-val val-acid";
+                        else if (phNum > 7.5) phElem.className = "metric-val val-alkaline";
+                        else phElem.className = "metric-val val-neutral";
+
+                        document.getElementById('val-tipo-solo').innerText = info.biomas.solo || '--';
+                        
+                        // Lógica de Cores para Capacidade de Uso / Drenagem
+                        const ctxElem = document.getElementById('reg-contexto');
+                        const contexto = info.contexto || 'Análise regional em curso';
+                        ctxElem.innerText = contexto;
+
+                        if (contexto.includes("Escassez") || contexto.includes("crítica")) {
+                            ctxElem.className = "val-alert";
+                        } else if (contexto.includes("Equilíbrio") || contexto.includes("Ideal")) {
+                            ctxElem.className = "val-neutral";
+                        } else {
+                            ctxElem.style.color = "#5d4037";
+                        }
+                    } else {
+                        document.getElementById('soil-dashboard').style.display = 'none';
+                        document.getElementById('no-gps-warning').style.display = 'block';
                     }
-                } else {
-                    document.getElementById('soil-dashboard').style.display = 'none';
-                    document.getElementById('no-gps-warning').style.display = 'block';
-                }
-
                 });
 
             fetch('/sidebar-content.html').then(r => r.text()).then(html => {
