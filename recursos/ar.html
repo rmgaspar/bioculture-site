@@ -34,6 +34,7 @@
             .info-badge { padding: 8px 20px; border-radius: 25px; font-size: 0.85em; font-weight: 700; display: inline-block; margin-bottom: 10px; margin-right: 5px; }
             .pollen-badge { background: #fff3e0; color: #e65100; border: 1px solid #ffe0b2; }
             .temp-badge { background: #e3f2fd; color: #1565c0; border: 1px solid #bbdefb; }
+            .climate-badge { background: #fce4ec; color: #c2185b; border: 1px solid #f8bbd0; width: 100%; text-align: center; margin-top: 10px; }
 
             .features-flow { display: flex; flex-direction: column; gap: 8em; margin-top: 4em; }
             .feature-row { display: flex; align-items: center; gap: 5em; flex-wrap: wrap; flex-direction: row-reverse; } 
@@ -77,12 +78,18 @@
                             </div>
 
                             <div class="data-card">
-                                <h4>Alertas de Pólen</h4>
-                                <div id="pollen-content">
-                                    <p id="pollen-status" style="font-size: 1.1em; font-weight: 700; color: #e65100; margin-bottom: 10px;"></p>
-                                    <p id="pollen-species" style="font-size: 0.9em; color: #666; line-height: 1.6;"></p>
+                                <h4>Impacto e Recurso</h4>
+                                <div id="climate-content" style="text-align: center;">
+                                    <div style="margin-bottom: 1.5em;">
+                                        <span style="font-size: 0.7em; color: #888; text-transform: uppercase; font-weight: 700;">Aquecimento Local</span>
+                                        <h2 id="val-anomaly" style="font-size: 2.8em; color: #c62828; margin: 0; font-weight: 300;">--</h2>
+                                        <p style="font-size: 0.8em; color: #999; margin: 0;">Anomalia vs. Era Pré-Industrial</p>
+                                    </div>
+                                    <div class="climate-badge info-badge">
+                                        <i class="fas fa-sun"></i> Sol: <span id="val-sun">--</span>h / ano
+                                    </div>
                                 </div>
-                                <div class="source-note" style="margin-top: auto; font-size: 0.7em; color: #ccc;">Fonte: Rede Portuguesa de Aerobiologia</div>
+                                <div class="source-note" style="margin-top: auto; font-size: 0.7em; color: #ccc; text-align: center;">Dados: bioCultura / Copernicus</div>
                             </div>
                         </div>
 
@@ -203,11 +210,9 @@
                         <div class="info-badge pollen-badge"><i class="fas fa-seedling"></i> Pólen: ${polenTexto}</div>
                     `;
 
-                    // 4. Detalhe Pólen
-                    document.getElementById('pollen-status').innerText = `Nível de Pólen: ${polenTexto}`;
-                    if(info.atmosfera.polen_especies) {
-                        document.getElementById('pollen-species').innerHTML = `<strong>Espécies predominantes:</strong><br>${info.atmosfera.polen_especies.join(', ')}`;
-                    }
+                    // 4. Impacto Climático e Sol
+                    document.getElementById('val-anomaly').innerText = info.atmosfera.anomalia_pre_industrial || 'N/A';
+                    document.getElementById('val-sun').innerText = info.atmosfera.sol_h_anual || '--';
                 }
             }
 
