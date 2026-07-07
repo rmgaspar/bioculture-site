@@ -1,11 +1,11 @@
-<div class="inner" style="display: flex; flex-direction: column; height: 100%; border: none; min-height: 100vh; padding: 2em 1.5em;">
+<div class="inner" style="display: flex; flex-direction: column; height: 100%; border: none; min-height: 100vh; padding: 2.5em 1.8em;">
     
     <!-- Logótipo bioCultura -->
-    <div style="margin-bottom: 2.5em; text-align: left;">
+    <div style="margin-bottom: 3em; text-align: left;">
         <a href="/index.html" style="border: none; display: inline-block; text-decoration: none;">
-            <div style="font-family: 'Source Sans Pro', sans-serif; font-size: 1.6em; line-height: 1; display: flex; align-items: flex-end; text-transform: none;">
+            <div style="font-family: 'Source Sans Pro', sans-serif; font-size: 1.8em; line-height: 1; display: flex; align-items: flex-end; text-transform: none;">
                 <b style="font-weight: 700; color: #2e7d32; margin-right: -4px; position: relative; z-index: 2;">b</b>
-                <div style="width: 35px; margin: 0 -8px; position: relative; line-height: 0; transform: translateY(5px); z-index: 1;">
+                <div style="width: 38px; margin: 0 -8px; position: relative; line-height: 0; transform: translateY(5px); z-index: 1;">
                     <svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: auto;">
                         <path d="M-20 110 Q50 102 120 110" stroke="#634832" stroke-width="4" fill="none" opacity="0.3" />
                         <path d="M50 110 C50 80 35 70 50 45 C65 70 50 80 50 110" fill="#2e7d32" />
@@ -18,104 +18,168 @@
         </a>
     </div>
 
-    <!-- Seletor de Localização Smooth -->
-    <div style="padding: 0 0 2em 0; border-bottom: 1px solid rgba(0,0,0,0.05); margin-bottom: 2em;">
-        <button onclick="detectLocation()" style="background: none; border: 1px solid #2e7d32; color: #2e7d32; border-radius: 50px; font-size: 0.7em; padding: 5px 15px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: 700;">
-            <i class="fas fa-location-arrow"></i> <span id="loc-text">Sincronizar Localização</span>
+    <!-- Seletor de Localização Inteligente -->
+    <div style="padding: 0 0 2.5em 0; border-bottom: 1px solid rgba(0,0,0,0.05); margin-bottom: 2.5em;">
+        <button id="btn-location" onclick="detectLocation()" style="width: 100%; background: #f1f8e9; border: 1px solid #c8e6c9; color: #2e7d32; border-radius: 12px; font-size: 0.75em; padding: 12px 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: 700; transition: all 0.3s ease;">
+            <i class="fas fa-location-arrow" style="font-size: 0.9em;"></i> 
+            <span id="loc-text">Sincronizar Localização</span>
         </button>
+        <p id="active-city" style="font-size: 0.65em; color: #999; text-align: center; margin-top: 8px; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; display: none;">
+            <i class="fas fa-map-marker-alt"></i> <span id="city-name">...</span>
+        </p>
     </div>
 
-    <script>
-    function detectLocation() {
-        if (!navigator.geolocation) return;
-        navigator.geolocation.getCurrentPosition((pos) => {
-            const lat = pos.coords.latitude;
-            let region = lat < 37.5 ? "algarve" : lat < 39.0 ? "alentejo" : lat < 40.8 ? "centro" : "norte";
-            localStorage.setItem('biocultura_region', region);
-            document.getElementById('loc-text').innerText = "Região Ativa";
-            location.reload(); // Recarrega para aplicar a inteligência regional
-        });
-    }
-    </script>
-
-
-    <!-- Menu Ultra-Clean e Compacto -->
+    <!-- Menu Principal -->
     <nav id="menu" style="border: none;">
         <ul style="list-style: none; padding: 0; margin: 0;">
             
-            <!-- Manifesto -->
-            <li style="margin-bottom: 1.2em;">
-                <a href="/manifesto.html" style="font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: #444; font-size: 0.8em; text-decoration: none; border: none !important;">O nosso compromisso</a>
+            <li class="menu-section">
+                <a href="/manifesto.html" class="main-link">
+                    <i class="fas fa-leaf"></i> O nosso compromisso
+                </a>
             </li>
 
-            <!-- Recursos Vitais -->
-            <li style="margin-bottom: 1.2em;">
-                <span style="font-weight: 800; text-transform: uppercase; letter-spacing: 2px; color: #2e7d32; font-size: 0.7em; display: block; margin-bottom: 0.3em; opacity: 0.9;">Recursos Vitais</span>
-                <ul style="list-style: none; padding-left: 0.5em; margin: 0;">
-                    <li style="margin: 0.1em 0;"><a href="/recursos/agua.html" style="color: #666; text-decoration: none; font-size: 0.9em; border: none !important;">Água</a></li>
-                    <li style="margin: 0.1em 0;"><a href="/recursos/solo.html" style="color: #666; text-decoration: none; font-size: 0.9em; border: none !important;">Terra</a></li>
-                    <li style="margin: 0.1em 0;"><a href="/recursos/ar.html" style="color: #666; text-decoration: none; font-size: 0.9em; border: none !important;">Ar</a></li>
+            <li class="menu-section">
+                <span class="section-title">Recursos Vitais</span>
+                <ul class="sub-menu">
+                    <li><a href="/recursos/agua.html"><i class="fas fa-tint"></i> Água</a></li>
+                    <li><a href="/recursos/solo.html"><i class="fas fa-mountain"></i> Terra</a></li>
+                    <li><a href="/recursos/ar.html"><i class="fas fa-wind"></i> Ar</a></li>
                 </ul>
             </li>
 
-            <!-- Vida & Ecossistemas -->
-            <li style="margin-bottom: 1.2em;">
-                <span style="font-weight: 800; text-transform: uppercase; letter-spacing: 2px; color: #2e7d32; font-size: 0.7em; display: block; margin-bottom: 0.3em; opacity: 0.9;">Vida & Ecossistemas</span>
-                <ul style="list-style: none; padding-left: 0.5em; margin: 0;">
-                    <li style="margin: 0.1em 0;"><a href="/ecossistemas/fauna.html" style="color: #666; text-decoration: none; font-size: 0.9em; border: none !important;">Fauna</a></li>
-                    <li style="margin: 0.1em 0;"><a href="/ecossistemas/flora.html" style="color: #666; text-decoration: none; font-size: 0.9em; border: none !important;">Flora</a></li>
+            <li class="menu-section">
+                <span class="section-title">Vida & Ecossistemas</span>
+                <ul class="sub-menu">
+                    <!-- Substituído Fauna e Flora por Biodiversidade -->
+                    <li><a href="/ecossistemas/biodiversidade.html"><i class="fas fa-seedling"></i> Biodiversidade</a></li>
                 </ul>
             </li>
 
-            <!-- Engenharia & Soluções -->
-            <li style="margin-bottom: 1.2em;">
-                <span style="font-weight: 800; text-transform: uppercase; letter-spacing: 2px; color: #2e7d32; font-size: 0.7em; display: block; margin-bottom: 0.3em; opacity: 0.9;">Engenharia & Soluções</span>
-                <ul style="list-style: none; padding-left: 0.5em; margin: 0;">
-                    <li style="margin: 0.1em 0;"><a href="/energia/energia.html" style="color: #666; text-decoration: none; font-size: 0.9em; border: none !important;">Energia Ética</a></li>
-                    <li style="margin: 0.1em 0;"><a href="/energia/mineracao.html" style="color: #666; text-decoration: none; font-size: 0.9em; border: none !important;">Mineração</a></li>
-                    <li style="margin: 0.1em 0;"><a href="/servicos/bioenergia.html" style="color: #666; text-decoration: none; font-size: 0.9em; border: none !important;">Serviços bioCultura</a></li>
+            <li class="menu-section">
+                <span class="section-title">Engenharia & Soluções</span>
+                <ul class="sub-menu">
+                    <li><a href="/energia/energia.html"><i class="fas fa-bolt"></i> Energia Ética</a></li>
+                    <li><a href="/energia/mineracao.html"><i class="fas fa-hammer"></i> Mineração</a></li>
+                    <li><a href="/servicos/bioenergia.html"><i class="fas fa-tools"></i> Serviços bioCultura</a></li>
                 </ul>
             </li>
 
-            <!-- Calendário -->
-            <li style="margin-top: 0.5em;">
-                <a href="/calendario/calendario.html" style="font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: #444; font-size: 0.8em; text-decoration: none; border: none !important;">Calendário Hortícola</a>
+            <li class="menu-section">
+                <a href="/calendario/calendario.html" class="main-link">
+                    <i class="fas fa-calendar-alt"></i> Calendário Hortícola
+                </a>
             </li>
         </ul>
     </nav>
 
-    <!-- Footer fixado no fundo -->
-    <footer style="margin-top: auto; padding-top: 2em;">
+    <!-- Footer -->
+    <footer style="margin-top: auto; padding-top: 3em;">
         <p style="margin: 0;">
-            <a href="/contactos.html" style="font-size: 0.65em; color: #2e7d32 !important; text-decoration: none; border: none !important; opacity: 0.6;">
-                © bioCultura. Soluções para um futuro natural.
+            <a href="/contactos.html" style="font-size: 0.65em; color: #2e7d32; text-decoration: none; border: none; opacity: 0.5; font-weight: 600; letter-spacing: 0.5px;">
+                © bioCultura 2026<br>Soluções para um futuro natural.
             </a>
         </p>
     </footer>
 </div>
 
 <style>
-    /* Reset total de bordas e ajustes de visibilidade */
-    #menu, #menu ul, #menu li, #menu a {
+    /* Estética Profissional bioCultura */
+    .menu-section { margin-bottom: 2em; }
+    
+    .section-title {
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: #2e7d32;
+        font-size: 0.68em;
+        display: block;
+        margin-bottom: 0.8em;
+        opacity: 0.8;
+    }
+
+    .main-link {
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: #444 !important;
+        font-size: 0.75em;
+        text-decoration: none;
         border: none !important;
-        box-shadow: none !important;
+        display: flex;
+        align-items: center;
+        gap: 10px;
     }
-    #menu ul ul {
-        display: block !important;
-        opacity: 1 !important;
-        visibility: visible !important;
-        margin: 0 !important;
-        padding: 0 !important;
+
+    .sub-menu {
+        list-style: none;
+        padding-left: 0.2em;
+        margin: 0;
     }
-    #menu a {
-        transition: color 0.3s ease, padding-left 0.3s ease;
+
+    .sub-menu li a {
+        color: #666 !important;
+        text-decoration: none;
+        font-size: 0.9em;
+        border: none !important;
+        padding: 6px 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        transition: all 0.3s ease;
     }
-    #menu a:hover {
+
+    .sub-menu li a i {
+        width: 15px;
+        font-size: 0.8em;
+        opacity: 0.5;
+        color: #2e7d32;
+    }
+
+    .sub-menu li a:hover {
         color: #2e7d32 !important;
-        padding-left: 3px;
+        padding-left: 5px;
     }
-    /* Garantir que o template Editorial não insira linhas ou setas */
-    #menu .opener:before, #menu .opener:after, #menu li:before {
-        display: none !important;
+
+    .sub-menu li a:hover i {
+        opacity: 1;
     }
+
+    #btn-location:hover {
+        background: #e8f5e9;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 10px rgba(46, 125, 50, 0.1);
+    }
+
+    /* Reset de Template */
+    #menu, #menu ul, #menu li, #menu a { border: none !important; box-shadow: none !important; }
+    #menu .opener:before, #menu .opener:after { display: none !important; }
 </style>
+
+<script>
+    // Mostrar a localidade ativa se existir em cache
+    const cache = sessionStorage.getItem('biocultura_data_cache');
+    if(cache) {
+        const info = JSON.parse(cache);
+        document.getElementById('city-name').innerText = info.titulo;
+        document.getElementById('active-city').style.display = 'block';
+        document.getElementById('loc-text').innerText = "Localização Ativa";
+    }
+
+    function detectLocation() {
+        if (!navigator.geolocation) return;
+        document.getElementById('loc-text').innerText = "A localizar...";
+        
+        navigator.geolocation.getCurrentPosition((pos) => {
+            // Limpamos a cache para forçar a nova pesquisa por proximidade no bioregioes.json
+            sessionStorage.removeItem('biocultura_data_cache');
+            localStorage.removeItem('biocultura_region'); // Removemos o ID antigo (ex: "centro")
+            
+            // Recarregamos a página. O script de proximidade que fizemos nas páginas 
+            // vai detetar que o ID é null e encontrar o concelho mais perto.
+            location.reload();
+        }, (err) => {
+            document.getElementById('loc-text').innerText = "Erro no GPS";
+        });
+    }
+</script>
