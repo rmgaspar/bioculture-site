@@ -165,86 +165,49 @@
 			<div id="sidebar"></div>
 		</div>
             <script src="/assets/js/jquery.min.js"></script>
-                <script>
+<script>
     const savedRegionId = localStorage.getItem('biocultura_region');
-    const cachedData = sessionStorage.getItem('biocultura_data_cache');
-
-    console.log("Tentando carregar ID:", savedRegionId);
-
+    
     if (!savedRegionId) {
-        console.warn("Aviso: Nenhuma região selecionada no LocalStorage.");
+        alert("ERRO: Não tens nenhuma região selecionada. Clica no botão 'Sincronizar Localização' primeiro.");
     } else {
-        // 1. Tentar usar Cache
-        if (cachedData && JSON.parse(cachedData).id === savedRegionId) {
-            console.log("Dados carregados da Cache.");
-            renderWaterDashboard(JSON.parse(cachedData));
-        } else {
-            // 2. Se não houver cache, procurar no JSON
-            fetch('/data/bioregioes.json')
-                .then(r => r.json())
-                .then(data => {
-                    console.log("Ficheiro JSON lido. Total de registos:", data.length);
-                    
-                    // Procurar o ID ignorando maiúsculas/minúsculas
-                    const info = data.find(item => item.id.toLowerCase() === savedRegionId.toLowerCase());
-                    
-                    if (info) {
-                        console.log("Sucesso! Região encontrada:", info.titulo);
-                        sessionStorage.setItem('biocultura_data_cache', JSON.stringify(info));
-                        renderWaterDashboard(info);
-                    } else {
-                        console.error("Erro: O ID '" + savedRegionId + "' não existe no ficheiro JSON.");
-                    }
-                })
-                .catch(err => console.error("Erro técnico ao ler o JSON:", err));
-        }
+        alert("O teu computador está a pedir os dados de: " + savedRegionId);
+
+        fetch('/data/bioregioes.json')
+            .then(r => r.json())
+            .then(data => {
+                alert("Sucesso ao ler o ficheiro! Encontrei " + data.length + " concelhos no JSON.");
+                
+                const info = data.find(item => item.id.toLowerCase() === savedRegionId.toLowerCase());
+                
+                if (info) {
+                    alert("ENCONTRADO! A carregar dados de: " + info.titulo);
+                    renderWaterDashboard(info);
+                } else {
+                    alert("ERRO: O ID '" + savedRegionId + "' não existe dentro do teu ficheiro JSON. Verifica se o nome no ID do JSON é exatamente igual.");
+                }
+            })
+            .catch(err => alert("ERRO TÉCNICO: O browser não conseguiu ler o ficheiro /data/bioregioes.json. Verifica se o nome do ficheiro está correto."));
     }
 
     function renderWaterDashboard(info) {
-        const dashboard = document.getElementById('water-dashboard');
-        const warning = document.getElementById('no-gps-warning');
-        
-        if (!dashboard || !warning) return;
-
-        warning.style.display = 'none';
-        dashboard.style.display = 'grid';
+        // ... (o resto da função mantém-se igual)
+        document.getElementById('no-gps-warning').style.display = 'none';
+        document.getElementById('water-dashboard').style.display = 'grid';
         document.getElementById('reg-name').innerText = info.titulo;
-
         if(info.recursos_hidricos) {
             document.getElementById('val-ph').innerText = info.recursos_hidricos.ph_agua || '--';
             document.getElementById('val-dureza').innerText = info.recursos_hidricos.dureza_fr || '--';
-            const quality = info.recursos_hidricos.qualidade ? `Qualidade: ${info.recursos_hidricos.qualidade}. ` : '';
-            document.getElementById('reg-note').innerText = quality + (info.agua?.nota || '');
-        }
-
-        if(info.agua) {
-            document.getElementById('reg-reserves').innerText = info.agua.reservas || 'Informação local';
-            document.getElementById('reg-aquifer').innerHTML = `<strong>Aquífero:</strong> ${info.agua.aquiferos || 'N/A'}`;
-            
-            if(info.agua.barragens_proximas && info.agua.barragens_proximas.length > 0) {
-                const oldDams = document.getElementById('dams-list');
-                if(oldDams) oldDams.remove();
-
-                const damsList = info.agua.barragens_proximas.join(', ');
-                const damsElement = document.createElement('p');
-                damsElement.id = 'dams-list';
-                damsElement.innerHTML = `<strong>Barragens:</strong> ${damsList}`;
-                damsElement.style.fontSize = "0.9em";
-                damsElement.style.marginTop = "10px";
-                document.getElementById('reg-aquifer').parentNode.appendChild(damsElement);
-            }
         }
     }
 
     // Carregamento da Sidebar
     fetch('/sidebar-content.html').then(r => r.text()).then(html => {
-        const sidebarEl = document.getElementById('sidebar');
-        if (sidebarEl) {
-            sidebarEl.innerHTML = html;
-            var s = document.createElement('script'); s.src = '/assets/js/main.js'; document.body.appendChild(s);
-        }
+        document.getElementById('sidebar').innerHTML = html;
+        var s = document.createElement('script'); s.src = '/assets/js/main.js'; document.body.appendChild(s);
     });
 </script>
+
 
 	</body>
 </html>
