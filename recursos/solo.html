@@ -216,19 +216,25 @@
             fetch('/data/bioregioes.json')
                 .then(r => r.json())
                 .then(data => {
-                    const savedRegion = localStorage.getItem('biocultura_region');
-                    if (savedRegion && data[savedRegion]) {
-                        const info = data[savedRegion];
-                        document.getElementById('no-gps-warning').style.display = 'none';
-                        document.getElementById('soil-dashboard').style.display = 'grid';
+                   const savedRegion = localStorage.getItem('biocultura_region');
+const info = data.find(item => item.id === savedRegion);
 
-                        document.getElementById('reg-name').innerText = info.titulo;
-                        document.getElementById('val-ph-solo').innerText = info.biomas.ph_solo || '--';
-                        document.getElementById('val-tipo-solo').innerText = info.biomas.solo || '--';
+                if (savedRegion && info) {
+                    document.getElementById('soil-dashboard').style.display = 'grid';
+                    document.getElementById('no-gps-warning').style.display = 'none';
+                    document.getElementById('reg-name').innerText = info.titulo;
+                    document.getElementById('val-ph-solo').innerText = info.biomas.ph_solo || '--';
+                    document.getElementById('val-tipo-solo').innerText = info.biomas.solo || '--';
+                    
+                    // Se tiveres o campo de contexto/reservas no solo
+                    if (document.getElementById('reg-contexto')) {
                         document.getElementById('reg-contexto').innerText = info.contexto || 'Análise regional em curso';
-                    } else {
-                        document.getElementById('no-gps-warning').style.display = 'block';
                     }
+                } else {
+                    document.getElementById('soil-dashboard').style.display = 'none';
+                    document.getElementById('no-gps-warning').style.display = 'block';
+                }
+
                 });
 
             fetch('/sidebar-content.html').then(r => r.text()).then(html => {
