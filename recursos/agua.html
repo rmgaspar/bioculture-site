@@ -164,9 +164,8 @@
 				</div></div>
 			<div id="sidebar"></div>
 		</div>
-
-		<script src="/assets/js/jquery.min.js"></script>
-        <script>
+            <script src="/assets/js/jquery.min.js"></script>
+                <script>
             fetch('/data/bioregioes.json')
                 .then(r => r.json())
                 .then(data => {
@@ -174,23 +173,43 @@
                     const info = data.find(item => item.id === savedRegion);
 
                     if (savedRegion && info) {
-
+                        // Esconder aviso e mostrar dashboard
                         document.getElementById('no-gps-warning').style.display = 'none';
                         document.getElementById('water-dashboard').style.display = 'grid';
 
+                        // Título da Localidade
                         document.getElementById('reg-name').innerText = info.titulo;
+
+                        // Perfil Químico e Qualidade
                         if(info.recursos_hidricos) {
                             document.getElementById('val-ph').innerText = info.recursos_hidricos.ph_agua || '--';
                             document.getElementById('val-dureza').innerText = info.recursos_hidricos.dureza_fr || '--';
+                            
+                            // Adicionar nota de qualidade se existir
+                            const quality = info.recursos_hidricos.qualidade ? `Qualidade: ${info.recursos_hidricos.qualidade}. ` : '';
+                            document.getElementById('reg-note').innerText = quality + (info.agua?.nota || '');
                         }
+
+                        // Reservas, Aquíferos e Barragens
                         if(info.agua) {
-                            document.getElementById('reg-reserves').innerText = info.agua.reservas || 'Sem dados';
-                            document.getElementById('reg-aquifer').innerText = info.agua.aquiferos || '';
-                            document.getElementById('reg-note').innerText = info.agua.nota || '';
+                            document.getElementById('reg-reserves').innerText = info.agua.reservas || 'Informação local';
+                            document.getElementById('reg-aquifer').innerHTML = `<strong>Aquífero:</strong> ${info.agua.aquiferos || 'N/A'}`;
+                            
+                            // Lógica para listar Barragens Próximas (novo campo do JSON)
+                            if(info.agua.barragens_proximas && info.agua.barragens_proximas.length > 0) {
+                                const damsList = info.agua.barragens_proximas.join(', ');
+                                const damsElement = document.createElement('p');
+                                damsElement.innerHTML = `<strong>Barragens:</strong> ${damsList}`;
+                                damsElement.style.fontSize = "0.9em";
+                                damsElement.style.marginTop = "10px";
+                                document.getElementById('reg-aquifer').parentNode.appendChild(damsElement);
+                            }
                         }
                     }
-                });
+                })
+                .catch(err => console.error("Erro ao carregar bioregiões:", err));
 
+            // Carregamento da Sidebar
             fetch('/sidebar-content.html').then(r => r.text()).then(html => {
                 document.getElementById('sidebar').innerHTML = html;
                 var s = document.createElement('script'); s.src = '/assets/js/main.js'; document.body.appendChild(s);
