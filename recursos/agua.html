@@ -165,101 +165,121 @@
 			<div id="sidebar"></div>
 		</div>
             <script src="/assets/js/jquery.min.js"></script>
-                <script>
-                    // Função para calcular distância entre dois pontos (Haversine)
-                    function calcularDistancia(lat1, lon1, lat2, lon2) {
-                        const R = 6371; // Raio da Terra em km
-                        const dLat = (lat2 - lat1) * Math.PI / 180;
-                        const dLon = (lon2 - lon1) * Math.PI / 180;
-                        const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-                                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
-                                Math.sin(dLon/2) * Math.sin(dLon/2);
-                        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-                        return R * c;
-                    }
+         <script>
+        // 1. Função para calcular distância (Haversine)
+        function calcularDistancia(lat1, lon1, lat2, lon2) {
+            const R = 6371;
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+                    Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
 
-                    async function carregarBioregiaos() {
-                        try {
-                            const response = await fetch('/data/bioregioes.json');
-                            const data = await response.json();
-                            
-                            let savedId = localStorage.getItem('biocultura_region');
-                            let info = data.find(item => item.id === savedId);
+        async function inicializar() {
+            try {
+                const response = await fetch('/data/bioregioes.json');
+                if (!response.ok) throw new Error("Não encontrei o ficheiro JSON");
+                const data = await response.json();
+                
+                let savedId = localStorage.getItem('biocultura_region');
+                // Procura o concelho no JSON. Se for "centro", info será null (correto)
+                let info = data.find(item => item.id === savedId);
 
-                            // SE NÃO ENCONTRAR O ID (ex: "centro"), procura o mais próximo
-                            if (!info) {
-                                console.log("ID não encontrado ou antigo. A procurar concelho mais próximo...");
-                                
-                                navigator.geolocation.getCurrentPosition(pos => {
-                                    const userLat = pos.coords.latitude;
-                                    const userLon = pos.coords.longitude;
+                if (!info) {
+                    console.log("A localizar concelho mais próximo...");
+                    localizarMaisProximo(data);
+                } else {
+                    renderWaterDashboard(info);
+                }
+            } catch (err) {
+                console.error("Erro:", err);
+            }
+        }
 
-                                    let maisProximo = null;
-                                    let menorDistancia = Infinity;
+        function localizarMaisProximo(data) {
+            if (!navigator.geolocation) {
+                alert("O seu navegador não suporta localização.");
+                return;
+            }
 
-                                    data.forEach(concelho => {
-                                        if (concelho.lat && concelhon.lon) {
-                                            const d = calcularDistancia(userLat, userLon, concelho.lat, concelho.lon);
-                                            if (d < menorDistancia) {
-                                                menorDistancia = d;
-                                                maisProximo = concelho;
-                                            }
-                                        }
-                                    });
+            navigator.geolocation.getCurrentPosition(pos => {
+                const userLat = pos.coords.latitude;
+                const userLon = pos.coords.longitude;
 
-                                    if (maisProximo) {
-                                        localStorage.setItem('biocultura_region', maisProximo.id);
-                                        renderWaterDashboard(maisProximo);
-                                        alert("Localização ajustada para o concelho mais próximo: " + maisProximo.titulo);
-                                    }
-                                }, error => {
-                                    alert("Por favor, ativa o GPS para encontrarmos a tua localização.");
-                                });
-                            } else {
-                                renderWaterDashboard(info);
-                            }
-                        } catch (err) {
-                            console.error("Erro ao carregar dados:", err);
+                let maisProximo = null;
+                let menorDistancia = Infinity;
+
+                data.forEach(concelho => {
+                    if (concelho.lat && concelho.lon) {
+                        const d = calcularDistancia(userLat, userLon, concelho.lat, concelho.lon);
+                        if (d < menorDistancia) {
+                            menorDistancia = d;
+                            maisProximo = concelho;
                         }
                     }
+                });
 
-                    function renderWaterDashboard(info) {
-                        const dashboard = document.getElementById('water-dashboard');
-                        const warning = document.getElementById('no-gps-warning');
-                        if (!dashboard || !warning) return;
+                if (maisProximo) {
+                    localStorage.setItem('biocultura_region', maisProximo.id);
+                    // Limpar cache antiga para forçar atualização
+                    sessionStorage.removeItem('biocultura_data_cache');
+                    renderWaterDashboard(maisProximo);
+                }
+            }, error => {
+                alert("Erro ao obter localização. Por favor, permita o acesso ao GPS.");
+            });
+        }
 
-                        warning.style.display = 'none';
-                        dashboard.style.display = 'grid';
-                        document.getElementById('reg-name').innerText = info.titulo;
+        function renderWaterDashboard(info) {
+            const dashboard = document.getElementById('water-dashboard');
+            const warning = document.getElementById('no-gps-warning');
+            
+            if (!dashboard || !warning) return;
 
-                        if (info.recursos_hidricos) {
-                            document.getElementById('val-ph').innerText = info.recursos_hidricos.ph_agua || '--';
-                            document.getElementById('val-dureza').innerText = info.recursos_hidricos.dureza_fr || '--';
-                            document.getElementById('reg-note').innerText = (info.recursos_hidricos.qualidade ? "Qualidade: " + info.recursos_hidricos.qualidade + ". " : "") + (info.agua?.nota || "");
-                        }
+            warning.style.display = 'none';
+            dashboard.style.display = 'grid';
+            document.getElementById('reg-name').innerText = info.titulo;
 
-                        if (info.agua) {
-                            document.getElementById('reg-reserves').innerText = info.agua.reservas || 'Informação local';
-                            document.getElementById('reg-aquifer').innerHTML = `<strong>Aquífero:</strong> ${info.agua.aquiferos || 'N/A'}`;
-                            
-                            if (info.agua.barragens_proximas && info.agua.barragens_proximas.length > 0) {
-                                const damsList = info.agua.barragens_proximas.join(', ');
-                                const damsElement = document.createElement('p');
-                                damsElement.innerHTML = `<strong>Barragens:</strong> ${damsList}`;
-                                damsElement.style.fontSize = "0.9em";
-                                document.getElementById('reg-aquifer').parentNode.appendChild(damsElement);
-                            }
-                        }
-                    }
+            if (info.recursos_hidricos) {
+                document.getElementById('val-ph').innerText = info.recursos_hidricos.ph_agua || '--';
+                document.getElementById('val-dureza').innerText = info.recursos_hidricos.dureza_fr || '--';
+                document.getElementById('reg-note').innerText = (info.recursos_hidricos.qualidade ? "Qualidade: " + info.recursos_hidricos.qualidade + ". " : "") + (info.agua?.nota || "");
+            }
 
-                    // Iniciar
-                    carregarBioregiaos();
+            if (info.agua) {
+                document.getElementById('reg-reserves').innerText = info.agua.reservas || 'Informação local';
+                document.getElementById('reg-aquifer').innerHTML = `<strong>Aquífero:</strong> ${info.agua.aquiferos || 'N/A'}`;
+                
+                // Mostrar barragens se existirem no JSON
+                if (info.agua.barragens_proximas && info.agua.barragens_proximas.length > 0) {
+                    const existingDams = document.getElementById('temp-dams');
+                    if (existingDams) existingDams.remove();
 
-                    // Sidebar
-                    fetch('/sidebar-content.html').then(r => r.text()).then(html => {
-                        document.getElementById('sidebar').innerHTML = html;
-                        var s = document.createElement('script'); s.src = '/assets/js/main.js'; document.body.appendChild(s);
-                    });
-                </script>
+                    const damsList = info.agua.barragens_proximas.join(', ');
+                    const damsElement = document.createElement('p');
+                    damsElement.id = 'temp-dams';
+                    damsElement.innerHTML = `<strong>Barragens:</strong> ${damsList}`;
+                    damsElement.style.fontSize = "0.9em";
+                    damsElement.style.marginTop = "10px";
+                    document.getElementById('reg-aquifer').parentNode.appendChild(damsElement);
+                }
+            }
+        }
+
+        // Executar
+        inicializar();
+
+        // Carregar Sidebar
+        fetch('/sidebar-content.html').then(r => r.text()).then(html => {
+            const sidebar = document.getElementById('sidebar');
+            if (sidebar) {
+                sidebar.innerHTML = html;
+                var s = document.createElement('script'); s.src = '/assets/js/main.js'; document.body.appendChild(s);
+            }
+        });
+    </script>
 	</body>
 </html>
