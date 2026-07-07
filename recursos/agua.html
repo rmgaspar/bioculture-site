@@ -171,8 +171,10 @@
                 .then(r => r.json())
                 .then(data => {
                     const savedRegion = localStorage.getItem('biocultura_region');
-                    if (savedRegion && data[savedRegion]) {
-                       const info = data.find(item => item.id === savedRegion); // Isto procura o ID na lista
+                    const info = data.find(item => item.id === savedRegion);
+
+                    if (savedRegion && info) {
+
                         document.getElementById('no-gps-warning').style.display = 'none';
                         document.getElementById('water-dashboard').style.display = 'grid';
 
