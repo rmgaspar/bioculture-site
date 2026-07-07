@@ -1,4 +1,4 @@
-<div class="inner" style="display: flex; flex-direction: column; height: 100%; border: none; min-height: 100vh; padding: 2.5em 1.8em;">
+<div class="inner" style="display: flex; flex-direction: column; height: 100%; border: none; min-height: 100vh; padding: 2.5em 1.8em; background: #fff;">
     
     <!-- Logótipo bioCultura -->
     <div style="margin-bottom: 3em; text-align: left;">
@@ -18,55 +18,60 @@
         </a>
     </div>
 
-    <!-- Seletor de Localização Inteligente -->
+    <!-- Botão de Localização Moderno & Smooth -->
     <div style="padding: 0 0 2.5em 0; border-bottom: 1px solid rgba(0,0,0,0.05); margin-bottom: 2.5em;">
-        <button id="btn-location" onclick="detectLocation()" style="width: 100%; background: #f1f8e9; border: 1px solid #c8e6c9; color: #2e7d32; border-radius: 12px; font-size: 0.75em; padding: 12px 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: 700; transition: all 0.3s ease;">
-            <i class="fas fa-location-arrow" style="font-size: 0.9em;"></i> 
+        <button id="btn-location" onclick="detectLocation()" class="btn-modern-loc">
+            <div class="pulse-icon"></div>
+            <i class="fas fa-location-arrow"></i> 
             <span id="loc-text">Sincronizar Localização</span>
         </button>
-        <p id="active-city" style="font-size: 0.65em; color: #999; text-align: center; margin-top: 8px; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; display: none;">
+        <div id="active-city-box" class="active-city-tag" style="display: none;">
             <i class="fas fa-map-marker-alt"></i> <span id="city-name">...</span>
-        </p>
+        </div>
     </div>
 
-    <!-- Menu Principal -->
-    <nav id="menu" style="border: none;">
-        <ul style="list-style: none; padding: 0; margin: 0;">
+    <!-- Menu Principal (Garantindo todos os itens) -->
+    <nav id="menu">
+        <ul class="main-menu-list">
             
-            <li class="menu-section">
-                <a href="/manifesto.html" class="main-link">
-                    <i class="fas fa-leaf"></i> O nosso compromisso
+            <!-- Secção 1 -->
+            <li class="menu-group">
+                <a href="/manifesto.html" class="group-header no-sub">
+                    <i class="fas fa-leaf"></i> O Nosso Compromisso
                 </a>
             </li>
 
-            <li class="menu-section">
-                <span class="section-title">Recursos Vitais</span>
-                <ul class="sub-menu">
+            <!-- Secção 2 -->
+            <li class="menu-group">
+                <span class="group-title">Recursos Vitais</span>
+                <ul class="sub-list">
                     <li><a href="/recursos/agua.html"><i class="fas fa-tint"></i> Água</a></li>
                     <li><a href="/recursos/solo.html"><i class="fas fa-mountain"></i> Terra</a></li>
                     <li><a href="/recursos/ar.html"><i class="fas fa-wind"></i> Ar</a></li>
                 </ul>
             </li>
 
-            <li class="menu-section">
-                <span class="section-title">Vida & Ecossistemas</span>
-                <ul class="sub-menu">
-                    <!-- Substituído Fauna e Flora por Biodiversidade -->
+            <!-- Secção 3 -->
+            <li class="menu-group">
+                <span class="group-title">Vida & Ecossistemas</span>
+                <ul class="sub-list">
                     <li><a href="/ecossistemas/biodiversidade.html"><i class="fas fa-seedling"></i> Biodiversidade</a></li>
                 </ul>
             </li>
 
-            <li class="menu-section">
-                <span class="section-title">Engenharia & Soluções</span>
-                <ul class="sub-menu">
+            <!-- Secção 4 -->
+            <li class="menu-group">
+                <span class="group-title">Engenharia & Soluções</span>
+                <ul class="sub-list">
                     <li><a href="/energia/energia.html"><i class="fas fa-bolt"></i> Energia Ética</a></li>
                     <li><a href="/energia/mineracao.html"><i class="fas fa-hammer"></i> Mineração</a></li>
                     <li><a href="/servicos/bioenergia.html"><i class="fas fa-tools"></i> Serviços bioCultura</a></li>
                 </ul>
             </li>
 
-            <li class="menu-section">
-                <a href="/calendario/calendario.html" class="main-link">
+            <!-- Secção 5 -->
+            <li class="menu-group">
+                <a href="/calendario/calendario.html" class="group-header no-sub">
                     <i class="fas fa-calendar-alt"></i> Calendário Hortícola
                 </a>
             </li>
@@ -75,111 +80,150 @@
 
     <!-- Footer -->
     <footer style="margin-top: auto; padding-top: 3em;">
-        <p style="margin: 0;">
-            <a href="/contactos.html" style="font-size: 0.65em; color: #2e7d32; text-decoration: none; border: none; opacity: 0.5; font-weight: 600; letter-spacing: 0.5px;">
-                © bioCultura 2026<br>Soluções para um futuro natural.
-            </a>
-        </p>
+        <a href="/contactos.html" style="font-size: 0.65em; color: #2e7d32; text-decoration: none; border: none; opacity: 0.5; font-weight: 600;">
+            © bioCultura 2026<br>Futuro Natural.
+        </a>
     </footer>
 </div>
 
 <style>
-    /* Estética Profissional bioCultura */
-    .menu-section { margin-bottom: 2em; }
+    /* RESET E ESTRUTURA */
+    #menu ul { list-style: none; padding: 0; margin: 0; border: none !important; }
+    #menu li { border: none !important; }
     
-    .section-title {
-        font-weight: 800;
-        text-transform: uppercase;
-        letter-spacing: 1.5px;
-        color: #2e7d32;
-        font-size: 0.68em;
-        display: block;
-        margin-bottom: 0.8em;
-        opacity: 0.8;
+    /* BOTÃO MODERNO */
+    .btn-modern-loc {
+        width: 100%;
+        background: linear-gradient(135deg, #2e7d32 0%, #43a047 100%);
+        color: #fff !important;
+        border: none;
+        border-radius: 14px;
+        padding: 14px 20px;
+        font-size: 0.75em;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 10px 20px rgba(46, 125, 50, 0.15);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
-    .main-link {
+    .btn-modern-loc:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 25px rgba(46, 125, 50, 0.25);
+        filter: brightness(1.1);
+    }
+
+    .pulse-icon {
+        width: 6px;
+        height: 6px;
+        background: #fff;
+        border-radius: 50%;
+        box-shadow: 0 0 0 rgba(255,255,255, 0.4);
+        animation: pulse-animation 2s infinite;
+    }
+
+    @keyframes pulse-animation {
+        0% { box-shadow: 0 0 0 0 rgba(255,255,255, 0.7); }
+        70% { box-shadow: 0 0 0 10px rgba(255,255,255, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(255,255,255, 0); }
+    }
+
+    .active-city-tag {
+        background: #f8f9fa;
+        color: #2e7d32;
+        font-size: 0.65em;
+        text-align: center;
+        margin-top: 12px;
+        padding: 6px;
+        border-radius: 8px;
+        text-transform: uppercase;
+        font-weight: 800;
+        letter-spacing: 1px;
+    }
+
+    /* MENU ESTÉTICA */
+    .menu-group { margin-bottom: 2.2em; }
+    
+    .group-title {
+        color: #2e7d32;
+        font-size: 0.68em;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        display: block;
+        margin-bottom: 1em;
+        opacity: 0.9;
+    }
+
+    .group-header.no-sub {
+        color: #444 !important;
+        font-size: 0.78em;
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 1.5px;
-        color: #444 !important;
-        font-size: 0.75em;
-        text-decoration: none;
-        border: none !important;
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 12px;
+        text-decoration: none;
     }
 
-    .sub-menu {
-        list-style: none;
-        padding-left: 0.2em;
-        margin: 0;
-    }
-
-    .sub-menu li a {
+    .sub-list li a {
         color: #666 !important;
-        text-decoration: none;
-        font-size: 0.9em;
-        border: none !important;
-        padding: 6px 0;
+        font-size: 0.92em;
+        padding: 8px 0;
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 12px;
+        text-decoration: none;
         transition: all 0.3s ease;
     }
 
-    .sub-menu li a i {
-        width: 15px;
+    .sub-list li a i {
         font-size: 0.8em;
-        opacity: 0.5;
         color: #2e7d32;
+        opacity: 0.4;
     }
 
-    .sub-menu li a:hover {
+    .sub-list li a:hover {
         color: #2e7d32 !important;
-        padding-left: 5px;
+        padding-left: 8px;
     }
 
-    .sub-menu li a:hover i {
-        opacity: 1;
-    }
-
-    #btn-location:hover {
-        background: #e8f5e9;
-        transform: translateY(-1px);
-        box-shadow: 0 4px 10px rgba(46, 125, 50, 0.1);
-    }
-
-    /* Reset de Template */
-    #menu, #menu ul, #menu li, #menu a { border: none !important; box-shadow: none !important; }
-    #menu .opener:before, #menu .opener:after { display: none !important; }
+    .sub-list li a:hover i { opacity: 1; }
 </style>
 
 <script>
-    // Mostrar a localidade ativa se existir em cache
-    const cache = sessionStorage.getItem('biocultura_data_cache');
-    if(cache) {
-        const info = JSON.parse(cache);
+    // Recuperar localidade da cache para feedback visual
+    const cityCache = sessionStorage.getItem('biocultura_data_cache');
+    if(cityCache) {
+        const info = JSON.parse(cityCache);
         document.getElementById('city-name').innerText = info.titulo;
-        document.getElementById('active-city').style.display = 'block';
+        document.getElementById('active-city-box').style.display = 'block';
         document.getElementById('loc-text').innerText = "Localização Ativa";
     }
 
     function detectLocation() {
-        if (!navigator.geolocation) return;
+        if (!navigator.geolocation) {
+            alert("O seu browser não suporta GPS.");
+            return;
+        }
+        
         document.getElementById('loc-text').innerText = "A localizar...";
         
         navigator.geolocation.getCurrentPosition((pos) => {
-            // Limpamos a cache para forçar a nova pesquisa por proximidade no bioregioes.json
+            // Limpa dados antigos para forçar nova detetação por proximidade
             sessionStorage.removeItem('biocultura_data_cache');
-            localStorage.removeItem('biocultura_region'); // Removemos o ID antigo (ex: "centro")
-            
-            // Recarregamos a página. O script de proximidade que fizemos nas páginas 
-            // vai detetar que o ID é null e encontrar o concelho mais perto.
+            localStorage.removeItem('biocultura_region');
             location.reload();
         }, (err) => {
-            document.getElementById('loc-text').innerText = "Erro no GPS";
+            document.getElementById('loc-text').innerText = "Erro de GPS";
+            console.error(err);
         });
     }
 </script>
