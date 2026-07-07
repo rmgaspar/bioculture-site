@@ -6,44 +6,39 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
 		<style>
-			/* 1. ESTILO BASE E LIMPEZA */
 			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
 			#header .toggle { background: none !important; top: 2em !important; left: 2em !important; border: none !important; text-decoration: none !important; z-index: 10001; }
 			#header .toggle:before { content: '\f06c' !important; font-family: "Font Awesome 5 Free" !important; font-weight: 900; color: #2e7d32 !important; font-size: 1.6em !important; }
             #header .toggle:after { display: none !important; }
             section { padding-top: 2em !important; }
 
-            /* 2. DASHBOARD ATMOSFÉRICO */
-            .air-dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-bottom: 2em; }
-            .data-card { background: #fff; border-radius: 35px; padding: 2.5em; box-shadow: 0 20px 50px rgba(0,0,0,0.04); border: 1px solid #f0f4f8; position: relative; overflow: hidden; min-height: 350px; display: flex; flex-direction: column; }
-            .data-card h4 { color: #607d8b; text-transform: uppercase; letter-spacing: 2px; font-size: 0.75em; margin-bottom: 1.5em; font-weight: 800; }
+            /* DASHBOARD REGIONAL */
+            .air-dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-bottom: 4em; }
+            .data-card { background: #fff; border-radius: 35px; padding: 2.5em; box-shadow: 0 20px 50px rgba(0,0,0,0.04); border: 1px solid #f0f7ff; position: relative; overflow: hidden; min-height: 280px; display: flex; flex-direction: column; }
+            .data-card h4 { color: #0277bd; text-transform: uppercase; letter-spacing: 2px; font-size: 0.75em; margin-bottom: 1.5em; font-weight: 800; text-align: center; }
             
-            .temp-chart { display: flex; align-items: flex-end; justify-content: space-between; height: 120px; margin-top: 2em; gap: 4px; padding-bottom: 20px; }
-            .temp-bar { background: linear-gradient(to top, #ff9800, #ffcc80); width: 100%; border-radius: 4px 4px 0 0; position: relative; min-height: 2px; }
-            .temp-bar:hover::after { content: attr(data-temp) "°"; position: absolute; top: -25px; left: 50%; transform: translateX(-50%); font-size: 0.7em; font-weight: 800; color: #ef6c00; }
+            .quality-grid { display: flex; gap: 2em; margin-top: 1em; justify-content: center; }
+            
+            /* BARÓMETROS */
+            .metric { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 130px; height: 130px; border-radius: 50%; border: 6px solid #eee; transition: all 0.5s ease; text-align: center; }
+            .metric-val { font-size: 1.4em; font-weight: 700; color: #333; display: block; line-height: 1.2; padding: 0 10px; }
+            .metric-label { font-size: 0.65em; color: #888; text-transform: uppercase; font-weight: 700; margin-top: 5px; display: block; }
 
-            .quality-grid { display: flex; gap: 2em; margin-top: 1em; flex-wrap: wrap; }
-            .metric { text-align: center; flex: 1; min-width: 100px; }
-            .metric-val { font-size: 2.5em; font-weight: 800; display: block; line-height: 1; }
-            .metric-label { font-size: 0.7em; color: #888; text-transform: uppercase; font-weight: 700; margin-top: 8px; display: block; }
+            /* CORES QUALIDADE AR */
+            .air-excelente { border-color: #81c784 !important; color: #2e7d32 !important; }
+            .air-boa { border-color: #aed581 !important; color: #558b2f !important; }
+            .air-moderada { border-color: #ffd54f !important; color: #f57f17 !important; }
+            .air-fraca { border-color: #ef5350 !important; color: #c62828 !important; }
 
-            /* CORES QUALIDADE DO AR */
-            .aq-muitobom { color: #1b5e20 !important; }
-            .aq-bom { color: #4caf50 !important; }
-            .aq-medio { color: #fbc02d !important; }
-            .aq-fraco { color: #f44336 !important; }
+            /* BADGES */
+            .info-badge { padding: 8px 20px; border-radius: 25px; font-size: 0.85em; font-weight: 700; display: inline-block; margin-bottom: 10px; margin-right: 5px; }
+            .pollen-badge { background: #fff3e0; color: #e65100; border: 1px solid #ffe0b2; }
+            .temp-badge { background: #e3f2fd; color: #1565c0; border: 1px solid #bbdefb; }
 
-            .anomaly-box { margin-top: 2em; padding: 1em; border-radius: 15px; background: #fff5f5; border: 1px solid #fee2e2; text-align: center; }
-            .anomaly-val { color: #c53030; font-weight: 800; font-size: 1.2em; }
-
-            /* 3. RELATÓRIO DE IMPACTO (O ALERTA) */
-            #climate-report { display:none; margin: 2em 0 6em 0; padding: 2.5em; background: #fff; border-radius: 30px; border-left: 8px solid #f87171; box-shadow: 0 15px 40px rgba(0,0,0,0.03); }
-
-            .features-flow { display: flex; flex-direction: column; gap: 8em; }
+            .features-flow { display: flex; flex-direction: column; gap: 8em; margin-top: 4em; }
             .feature-row { display: flex; align-items: center; gap: 5em; flex-wrap: wrap; flex-direction: row-reverse; } 
             .feature-row:nth-child(even) { flex-direction: row; } 
-            .feature-content { flex: 1.2; min-width: 300px; }
-            .feature-image { flex: 1; min-width: 300px; height: 380px; border-radius: 40px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.06); }
+            .feature-image { flex: 1; min-width: 300px; height: 380px; border-radius: 40px; overflow: hidden; }
             .feature-image img { width: 100%; height: 100%; object-fit: cover; }
 
 			.footer-signature-right { text-align: right; padding: 4em 2em 2em 0; opacity: 0.8; }
@@ -51,64 +46,59 @@
 	</head>
 	<body class="is-preload">
 		<div id="wrapper">
-			<div id="main"><div class="inner">
+			<div id="main">
+                <div class="inner">
 					<header id="header" style="height: 0; margin: 0; padding: 0; overflow: hidden;"></header>
 					
                     <section>
                         <div style="text-align: center; margin-bottom: 5em;">
-                            <h4 style="letter-spacing: 5px; color: #607d8b; text-transform: uppercase; font-size: 0.8em; opacity: 0.6;">Recursos Vitais</h4>
-                            <h1 style="font-size: 3.5em; font-weight: 300; color: #455a64; letter-spacing: -2px;">Ar: O Sopro da Vida</h1>
-                            <p style="font-style: italic; color: #888;">Monitorização atmosférica em: <strong id="reg-name" style="color:#607d8b">...</strong></p>
+                            <h4 style="letter-spacing: 5px; color: #0277bd; text-transform: uppercase; font-size: 0.8em; opacity: 0.6;">Atmosfera e Clima</h4>
+                            <h1 style="font-size: 3.5em; font-weight: 300; color: #01579b; letter-spacing: -2px;">Ar: O Sopro da Vida</h1>
+                            <p style="font-style: italic; color: #888;">Monitorização da região: <strong id="reg-name" style="color:#01579b">...</strong></p>
                         </div>
 
-                        <!-- DASHBOARD -->
+                        <!-- DASHBOARD REGIONAL -->
                         <div class="air-dashboard" id="air-dashboard" style="display:none;">
                             <div class="data-card">
-                                <h4>Normal Climatológica (°C)</h4>
-                                <div class="temp-chart" id="temp-chart"></div>
-                                <div class="anomaly-box">
-                                    <span style="font-size: 0.7em; text-transform: uppercase; color: #777; display: block;">Anomalia Pré-Industrial</span>
-                                    <span class="anomaly-val" id="val-anomalia">--</span>
-                                </div>
-                            </div>
-
-                            <div class="data-card">
-                                <h4>Qualidade do Ar</h4>
+                                <h4>Qualidade e Vento</h4>
                                 <div class="quality-grid">
-                                    <div class="metric">
+                                    <div class="metric" id="container-ar">
                                         <span class="metric-val" id="val-ar">--</span>
-                                        <span class="metric-label">Estado Atual</span>
+                                        <span class="metric-label">Qualidade</span>
                                     </div>
-                                    <div class="metric">
-                                        <span class="metric-val" id="val-vento" style="color: #455a64;">--</span>
+                                    <div class="metric" id="container-vento">
+                                        <span class="metric-val" id="val-vento">--</span>
                                         <span class="metric-label">Vento (m/s)</span>
                                     </div>
                                 </div>
+                                <div style="margin-top: 2em; text-align: center;" id="air-badges">
+                                    <!-- Badges de Temp e Pólen entram aqui -->
+                                </div>
+                            </div>
+
+                            <div class="data-card">
+                                <h4>Alertas de Pólen</h4>
+                                <div id="pollen-content">
+                                    <p id="pollen-status" style="font-size: 1.1em; font-weight: 700; color: #e65100; margin-bottom: 10px;"></p>
+                                    <p id="pollen-species" style="font-size: 0.9em; color: #666; line-height: 1.6;"></p>
+                                </div>
+                                <div class="source-note" style="margin-top: auto; font-size: 0.7em; color: #ccc;">Fonte: Rede Portuguesa de Aerobiologia</div>
                             </div>
                         </div>
 
-                        <!-- RELATÓRIO DE IMPACTO -->
-                        <div id="climate-report">
-                            <h4 style="color: #c53030; text-transform: uppercase; letter-spacing: 2px; font-size: 0.75em; margin-bottom: 1em; font-weight: 800;">
-                                <i class="fas fa-exclamation-circle"></i> Relatório de Impacto: <span id="report-reg-name">...</span>
-                            </h4>
-                            <p style="font-size: 1.2em !important; line-height: 1.6 !important; color: #444 !important; font-style: italic; margin: 0;">
-                                A anomalia térmica registada nesta região confirma uma pressão crescente sobre a biodiversidade local. Estes indicadores não são apenas estatísticas; são um alerta para a urgência em restaurar o coberto vegetal nativo, a única infraestrutura capaz de mitigar o aquecimento e filtrar as partículas que comprometem a pureza do nosso ar.
-                            </p>
-                        </div>
-
                         <div id="no-gps-warning" style="text-align: center; padding: 4em; background: #f4f7fb; border-radius: 40px; margin-bottom: 4em;">
-                            <p>Sincronize a sua localização na barra lateral para carregar os indicadores climáticos.</p>
+                            <p>Sincronize a sua localização na barra lateral para carregar os dados atmosféricos da sua região.</p>
                         </div>
 
+                        <!-- CONTEÚDO TÉCNICO -->
                         <div class="features-flow">
                             <div class="feature-row">
                                 <div class="feature-content">
-                                    <h3>Arrefecimento Natural</h3>
-                                    <p>Uma árvore adulta transpira até 450 litros de água por dia. Este processo retira calor do ar circundante, baixando a temperatura entre 3 a 7 graus.</p>
+                                    <h3>Purificação Natural</h3>
+                                    <p>As florestas autóctones funcionam como pulmões regionais, filtrando partículas em suspensão e regulando a humidade do ar que respiramos.</p>
                                 </div>
                                 <div class="feature-image">
-                                    <img src="https://images.unsplash.com/photo-1677607221452-dc9291daf28d?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Floresta" />
+                                    <img src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2000&auto=format&fit=crop" alt="Floresta" />
                                 </div>
                             </div>
                         </div>
@@ -126,61 +116,105 @@
                             </div>
 						</a>
 					</div>
-				</div></div>
+				</div>
+            </div>
 			<div id="sidebar"></div>
 		</div>
 
 		<script src="/assets/js/jquery.min.js"></script>
         <script>
-            fetch('/data/bioregioes.json')
-                .then(r => r.json())
-                .then(data => {
-                    const savedRegion = localStorage.getItem('biocultura_region');
-                    const info = data.find(item => item.id === savedRegion);
+            function calcularDistancia(lat1, lon1, lat2, lon2) {
+                const R = 6371;
+                const dLat = (lat2 - lat1) * Math.PI / 180;
+                const dLon = (lon2 - lon1) * Math.PI / 180;
+                const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
+                return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+            }
 
-                    if (savedRegion && info) {
-                        document.getElementById('no-gps-warning').style.display = 'none';
-                        document.getElementById('air-dashboard').style.display = 'grid';
-                        document.getElementById('climate-report').style.display = 'block';
+            async function inicializarPagina() {
+                const savedRegionId = localStorage.getItem('biocultura_region');
+                const cachedData = sessionStorage.getItem('biocultura_data_cache');
 
-                        document.getElementById('reg-name').innerText = info.titulo;
-                        document.getElementById('report-reg-name').innerText = info.titulo;
-                        document.getElementById('val-vento').innerText = info.atmosfera.vento_medio_ms;
-                        document.getElementById('val-anomalia').innerText = info.atmosfera.anomalia_pre_industrial || "+1.1°C";
-                        
-                        const arVal = document.getElementById('val-ar');
-                        const statusAr = info.atmosfera.qualidade_ar;
-                        arVal.innerText = statusAr;
-                        
-                        if (statusAr === "Muito Boa") arVal.className = "metric-val aq-muitobom";
-                        else if (statusAr === "Boa") arVal.className = "metric-val aq-bom";
-                        else if (statusAr === "Média") arVal.className = "metric-val aq-medio";
-                        else if (statusAr === "Fraca") arVal.className = "metric-val aq-fraco";
+                if (cachedData && JSON.parse(cachedData).id === savedRegionId) {
+                    renderAirDashboard(JSON.parse(cachedData));
+                } else {
+                    try {
+                        const r = await fetch('/data/bioregioes.json');
+                        const data = await r.json();
+                        let info = data.find(item => item.id === savedRegionId);
 
-                        const chart = document.getElementById('temp-chart');
-                        const temps = info.atmosfera.temp_media_ar || [];
-                        const months = ['J','F','M','A','M','J','J','A','S','O','N','D'];
-                        chart.innerHTML = '';
-                        temps.forEach((t, i) => {
-                            const bar = document.createElement('div');
-                            bar.className = 'temp-bar';
-                            bar.style.height = (t * 3.5) + 'px';
-                            bar.setAttribute('data-temp', t);
-                            const lbl = document.createElement('span');
-                            lbl.innerText = months[i];
-                            lbl.style.cssText = "font-size:0.6em; position:absolute; bottom:-22px; left:50%; transform:translateX(-50%); color:#888; font-weight:700;";
-                            bar.appendChild(lbl);
-                            chart.appendChild(bar);
-                        });
-                    } else {
-                        document.getElementById('no-gps-warning').style.display = 'block';
-                        document.getElementById('climate-report').style.display = 'none';
+                        if (!info && navigator.geolocation) {
+                            navigator.geolocation.getCurrentPosition(pos => {
+                                let minD = Infinity;
+                                data.forEach(c => {
+                                    if(c.lat && c.lon) {
+                                        let d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon);
+                                        if(d < minD) { minD = d; info = c; }
+                                    }
+                                });
+                                if(info) {
+                                    localStorage.setItem('biocultura_region', info.id);
+                                    sessionStorage.setItem('biocultura_data_cache', JSON.stringify(info));
+                                    renderAirDashboard(info);
+                                }
+                            });
+                        } else if (info) {
+                            sessionStorage.setItem('biocultura_data_cache', JSON.stringify(info));
+                            renderAirDashboard(info);
+                        }
+                    } catch(e) { console.error("Erro ao carregar dados", e); }
+                }
+            }
+
+            function renderAirDashboard(info) {
+                document.getElementById('no-gps-warning').style.display = 'none';
+                document.getElementById('air-dashboard').style.display = 'grid';
+                document.getElementById('reg-name').innerText = info.titulo;
+
+                if (info.atmosfera) {
+                    const mes = new Date().getMonth();
+                    
+                    // 1. Qualidade do Ar (Barómetro)
+                    const arVal = info.atmosfera.qualidade_ar;
+                    const arCont = document.getElementById('container-ar');
+                    document.getElementById('val-ar').innerText = arVal;
+                    arCont.className = 'metric';
+                    if (arVal === "Excelente" || arVal === "Muito Boa") arCont.classList.add('air-excelente');
+                    else if (arVal === "Boa") arCont.classList.add('air-boa');
+                    else if (arVal === "Moderada") arCont.classList.add('air-moderada');
+                    else arCont.classList.add('air-fraca');
+
+                    // 2. Vento (Barómetro)
+                    const vento = info.atmosfera.vento_medio_ms;
+                    document.getElementById('val-vento').innerText = vento;
+                    const ventoCont = document.getElementById('container-vento');
+                    ventoCont.className = 'metric';
+                    if (vento < 3) ventoCont.style.borderColor = "#b3e5fc";
+                    else if (vento < 8) ventoCont.style.borderColor = "#81c784";
+                    else ventoCont.style.borderColor = "#ef5350";
+
+                    // 3. Badges (Temperatura e Pólen)
+                    const temp = info.atmosfera.temp_media_ar ? info.atmosfera.temp_media_ar[mes] : '--';
+                    const polenNivel = info.atmosfera.polen_nivel_mensal ? info.atmosfera.polen_nivel_mensal[mes] : 1;
+                    const polenTexto = ["Baixo", "Moderado", "Alto", "Muito Alto"][polenNivel - 1];
+                    
+                    document.getElementById('air-badges').innerHTML = `
+                        <div class="info-badge temp-badge"><i class="fas fa-thermometer-half"></i> Temp. Ar: ${temp}ºC</div>
+                        <div class="info-badge pollen-badge"><i class="fas fa-seedling"></i> Pólen: ${polenTexto}</div>
+                    `;
+
+                    // 4. Detalhe Pólen
+                    document.getElementById('pollen-status').innerText = `Nível de Pólen: ${polenTexto}`;
+                    if(info.atmosfera.polen_especies) {
+                        document.getElementById('pollen-species').innerHTML = `<strong>Espécies predominantes:</strong><br>${info.atmosfera.polen_especies.join(', ')}`;
                     }
-                });
+                }
+            }
 
             fetch('/sidebar-content.html').then(r => r.text()).then(html => {
                 document.getElementById('sidebar').innerHTML = html;
                 var s = document.createElement('script'); s.src = '/assets/js/main.js'; document.body.appendChild(s);
+                inicializarPagina();
             });
         </script>
 	</body>
