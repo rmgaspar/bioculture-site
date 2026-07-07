@@ -169,44 +169,45 @@
     const savedRegionId = localStorage.getItem('biocultura_region');
     
     if (!savedRegionId) {
-        alert("ERRO: Não tens nenhuma região selecionada. Clica no botão 'Sincronizar Localização' primeiro.");
+        alert("Aviso: Nenhuma região selecionada.");
     } else {
-        alert("O teu computador está a pedir os dados de: " + savedRegionId);
-
         fetch('/data/bioregioes.json')
-            .then(r => r.json())
-            .then(data => {
-                alert("Sucesso ao ler o ficheiro! Encontrei " + data.length + " concelhos no JSON.");
-                
-                const info = data.find(item => item.id.toLowerCase() === savedRegionId.toLowerCase());
-                
-                if (info) {
-                    alert("ENCONTRADO! A carregar dados de: " + info.titulo);
-                    renderWaterDashboard(info);
-                } else {
-                    alert("ERRO: O ID '" + savedRegionId + "' não existe dentro do teu ficheiro JSON. Verifica se o nome no ID do JSON é exatamente igual.");
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("O ficheiro NÃO FOI ENCONTRADO (Erro " + response.status + "). Verifica se o nome está correto na pasta /data/.");
+                }
+                return response.text(); // Lemos como texto primeiro para ver se é válido
+            })
+            .then(text => {
+                try {
+                    const data = JSON.parse(text);
+                    alert("Sucesso! Ficheiro lido e JSON é válido. Concelhos: " + data.length);
+                    // Procura o concelho
+                    const info = data.find(item => item.id.toLowerCase() === savedRegionId.toLowerCase());
+                    if (info) { renderWaterDashboard(info); } 
+                    else { alert("ID '" + savedRegionId + "' não encontrado no JSON."); }
+                } catch (e) {
+                    alert("ERRO DE SINTAXE: O ficheiro existe, mas tem um erro de escrita (vírgula ou chaveta mal posta). Erro: " + e.message);
                 }
             })
-            .catch(err => alert("ERRO TÉCNICO: O browser não conseguiu ler o ficheiro /data/bioregioes.json. Verifica se o nome do ficheiro está correto."));
+            .catch(err => {
+                alert("ERRO DE REDE: " + err.message);
+            });
     }
 
     function renderWaterDashboard(info) {
-        // ... (o resto da função mantém-se igual)
         document.getElementById('no-gps-warning').style.display = 'none';
         document.getElementById('water-dashboard').style.display = 'grid';
         document.getElementById('reg-name').innerText = info.titulo;
-        if(info.recursos_hidricos) {
-            document.getElementById('val-ph').innerText = info.recursos_hidricos.ph_agua || '--';
-            document.getElementById('val-dureza').innerText = info.recursos_hidricos.dureza_fr || '--';
-        }
+        // ... restante lógica
     }
 
-    // Carregamento da Sidebar
     fetch('/sidebar-content.html').then(r => r.text()).then(html => {
         document.getElementById('sidebar').innerHTML = html;
         var s = document.createElement('script'); s.src = '/assets/js/main.js'; document.body.appendChild(s);
     });
 </script>
+
 
 
 	</body>
