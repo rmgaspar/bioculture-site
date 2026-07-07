@@ -151,26 +151,28 @@
                 .then(r => r.json())
                 .then(data => {
                     const savedRegion = localStorage.getItem('biocultura_region');
+                    
+                    // Procura o item correto na LISTA
                     const info = data.find(item => item.id === savedRegion);
 
                     if (savedRegion && info && info.fauna) {
                         document.getElementById('no-gps-warning').style.display = 'none';
                         document.getElementById('fauna-dashboard').style.display = 'grid';
-                        document.getElementById('reg-name').innerText = info.titulo;
 
-                        // Injeção da lista de autóctones
+                        document.getElementById('reg-name').innerText = info.titulo;
+                        
+                        // Injetar Lista de Autóctones
                         const listAuto = document.getElementById('list-autoctone');
                         listAuto.innerHTML = info.fauna.autoctone.map(s => `<li>${s}</li>`).join('');
-
-                        // Injeção de estatuto de conservação
+                        
+                        // Injetar Conservação
                         document.getElementById('species-danger').innerText = info.fauna.perigo.join(', ') || 'Nenhuma registada';
                         document.getElementById('species-protected').innerText = info.fauna.protegida.join(', ') || 'Nenhuma registada';
-                    } else {
-                        document.getElementById('fauna-dashboard').style.display = 'none';
-                        document.getElementById('no-gps-warning').style.display = 'block';
                     }
-                });
+                })
+                .catch(err => console.error("Erro ao sincronizar fauna:", err));
 
+            // Sidebar
             fetch('/sidebar-content.html').then(r => r.text()).then(html => {
                 document.getElementById('sidebar').innerHTML = html;
                 var s = document.createElement('script'); s.src = '/assets/js/main.js'; document.body.appendChild(s);
