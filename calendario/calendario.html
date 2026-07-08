@@ -33,31 +33,28 @@
             /* TASKS GRID */
             .tasks-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 4em; }
             .task-card { 
-                background: #fff; border-radius: 30px; padding: 2em; 
+                background: #fff; border-radius: 30px; padding: 2.2em; 
                 border: 1px solid #f0f4f0; box-shadow: 0 15px 35px rgba(0,0,0,0.03);
                 transition: all 0.3s ease;
-                border-top-width: 6px !important; /* Destaque na cor superior */
+                border-top: 8px solid #eee;
             }
             .task-card:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.06); }
             .task-card i { font-size: 1.8em; margin-bottom: 15px; display: block; }
-            .task-card h4 { font-size: 0.75em; text-transform: uppercase; letter-spacing: 1px; color: #999; margin-bottom: 10px; font-weight: 800; }
-            .task-text { font-size: 0.95em; color: #444; line-height: 1.6; font-weight: 600; }
+            .task-card h4 { font-size: 0.75em; text-transform: uppercase; letter-spacing: 1px; color: #999; margin-bottom: 15px; font-weight: 800; }
+            .task-text { font-size: 0.95em; color: #444; line-height: 1.6; font-weight: 600; margin-bottom: 15px; }
+            
+            /* DETALHE EXTRA (SMART HINT) */
+            .smart-hint { 
+                font-size: 0.8em; background: #f9f9f9; padding: 12px; border-radius: 12px; 
+                color: #666; border-left: 3px solid #ddd; font-style: italic;
+            }
 
-            /* CORES ESPECÍFICAS POR CATEGORIA */
-            .card-pomar { border-top-color: #ff9800 !important; }
-            .card-pomar i { color: #ff9800; }
-            
-            .card-vinha { border-top-color: #9c27b0 !important; }
-            .card-vinha i { color: #9c27b0; }
-            
-            .card-jardim { border-top-color: #e91e63 !important; }
-            .card-jardim i { color: #e91e63; }
-            
-            .card-adega { border-top-color: #795548 !important; }
-            .card-adega i { color: #795548; }
-            
-            .card-sementeiras { border-top-color: #4caf50 !important; }
-            .card-sementeiras i { color: #4caf50; }
+            /* CORES POR CATEGORIA */
+            .card-pomar { border-top-color: #ff9800 !important; } .card-pomar i { color: #ff9800; }
+            .card-vinha { border-top-color: #9c27b0 !important; } .card-vinha i { color: #9c27b0; }
+            .card-jardim { border-top-color: #e91e63 !important; } .card-jardim i { color: #e91e63; }
+            .card-adega { border-top-color: #795548 !important; } .card-adega i { color: #795548; }
+            .card-sementeiras { border-top-color: #4caf50 !important; } .card-sementeiras i { color: #4caf50; }
 
 			.footer-signature-right { text-align: right; padding: 4em 2em 2em 0; opacity: 0.8; }
 		</style>
@@ -87,11 +84,31 @@
                         </div>
 
                         <div class="tasks-grid" id="tasks-container" style="display:none;">
-                            <div class="task-card card-pomar"><i class="fas fa-apple-alt"></i><h4>Pomar</h4><p class="task-text" id="task-pomar">--</p></div>
-                            <div class="task-card card-vinha"><i class="fas fa-wine-glass-alt"></i><h4>Vinha</h4><p class="task-text" id="task-vinha">--</p></div>
-                            <div class="task-card card-jardim"><i class="fas fa-spa"></i><h4>Jardim</h4><p class="task-text" id="task-jardim">--</p></div>
-                            <div class="task-card card-adega"><i class="fas fa-dungeon"></i><h4>Adega</h4><p class="task-text" id="task-adega">--</p></div>
-                            <div class="task-card card-sementeiras"><i class="fas fa-seedling"></i><h4>Sementeiras</h4><p class="task-text" id="task-sementeiras">--</p></div>
+                            <div class="task-card card-pomar">
+                                <i class="fas fa-apple-alt"></i><h4>Pomar</h4>
+                                <p class="task-text" id="task-pomar">--</p>
+                                <div class="smart-hint" id="hint-pomar"></div>
+                            </div>
+                            <div class="task-card card-vinha">
+                                <i class="fas fa-wine-glass-alt"></i><h4>Vinha</h4>
+                                <p class="task-text" id="task-vinha">--</p>
+                                <div class="smart-hint" id="hint-vinha"></div>
+                            </div>
+                            <div class="task-card card-jardim">
+                                <i class="fas fa-spa"></i><h4>Jardim</h4>
+                                <p class="task-text" id="task-jardim">--</p>
+                                <div class="smart-hint" id="hint-jardim"></div>
+                            </div>
+                            <div class="task-card card-adega">
+                                <i class="fas fa-dungeon"></i><h4>Adega</h4>
+                                <p class="task-text" id="task-adega">--</p>
+                                <div class="smart-hint" id="hint-adega"></div>
+                            </div>
+                            <div class="task-card card-sementeiras">
+                                <i class="fas fa-seedling"></i><h4>Sementeiras</h4>
+                                <p class="task-text" id="task-sementeiras">--</p>
+                                <div class="smart-hint" id="hint-sementeiras"></div>
+                            </div>
                         </div>
 
                         <div id="no-gps-warning" style="text-align: center; padding: 4em; background: #f4f7fb; border-radius: 40px; margin-bottom: 4em;">
@@ -126,20 +143,49 @@
 
             document.getElementById('display-month').innerText = mesesFull[mesIndex];
 
+            // 1. Lógica Lunar
             function getLunarPhase() {
                 const lp = 2551443; 
                 const new_moon = new Date(1970, 0, 7, 20, 35, 0);
                 const phase = ((dataAtual.getTime() - new_moon.getTime()) / 1000) % lp;
                 const res = Math.floor(phase / (24 * 3600)) + 1;
-                if (res <= 7) return { name: "Quarto Crescente", tip: "Ideal para semear frutos e flores." };
-                if (res <= 14) return { name: "Lua Cheia", tip: "Fase de colheita e podas de crescimento." };
-                if (res <= 21) return { name: "Quarto Minguante", tip: "Semear raízes (batata, cenoura) e limpar ervas." };
-                return { name: "Lua Nova", tip: "Evitar sementeiras; bom para adubar a terra." };
+                if (res <= 7) return { name: "Quarto Crescente", tip: "Crescimento: Semear flores e frutos." };
+                if (res <= 14) return { name: "Lua Cheia", tip: "Força: Ideal para colher e podar." };
+                if (res <= 21) return { name: "Quarto Minguante", tip: "Raiz: Plantar batatas, cenouras e limpar mato." };
+                return { name: "Lua Nova", tip: "Repouso: Evitar sementeiras, preparar solo." };
             }
-
             const moon = getLunarPhase();
             document.getElementById('lunar-phase-name').innerText = moon.name;
             document.getElementById('lunar-tip').innerText = moon.tip;
+
+            // 2. Inteligência de Detalhes Extras (Smart Hints)
+            function getSmartHints(mes, solo) {
+                const hints = {
+                    "jul": {
+                        "pomar": "Colha agora: Pêssegos, Ameixas, Alperces e as primeiras Maçãs temporãs. Vigie a mosca da fruta.",
+                        "jardim": "Stress Hídrico: Regue ao amanhecer. Use 'Mulching' (palha ou casca) para manter as raízes frescas.",
+                        "vinha": "Poda em Verde: Remova rebentos ladrões para concentrar a energia nos cachos.",
+                        "sementeiras": "Semeie para o Inverno: Couves, Brócolos e Alfaces resistentes ao calor."
+                    },
+                    "ago": {
+                        "pomar": "Época das Peras (Rocha) e Figos. Comece a preparar a colheita de Amêndoa no Algarve/Douro.",
+                        "jardim": "Recolha sementes de flores secas para o próximo ano. Pode as sebes.",
+                        "vinha": "Maturação: Evite regas excessivas para não diluir os açúcares da uva.",
+                        "sementeiras": "Plante Morangueiros para frutificarem na próxima primavera."
+                    }
+                };
+                
+                // Dica baseada no solo
+                let soilHint = "";
+                if(solo.includes("Arenoso")) soilHint = "Solo Arenoso: Regas curtas mas mais frequentes, pois a água drena rápido.";
+                if(solo.includes("Argiloso")) soilHint = "Solo Argiloso: Evite regar em excesso para não asfixiar as raízes no calor.";
+                if(solo.includes("Granítico")) soilHint = "Solo Ácido: Bom momento para reforçar o cálcio se notar podridão apical nos tomates.";
+
+                return { 
+                    tasks: hints[mes] || {}, 
+                    soil: soilHint 
+                };
+            }
 
             async function inicializarPagina() {
                 const savedRegionId = localStorage.getItem('biocultura_region');
@@ -162,14 +208,31 @@
                 document.getElementById('tasks-container').style.display = 'grid';
                 document.getElementById('soil-card').style.display = 'flex';
                 document.getElementById('reg-name').innerText = info.titulo;
-                document.getElementById('soil-type').innerText = info.biomas?.solo || "N/A";
+                const soloDetectado = info.biomas?.solo || "N/A";
+                document.getElementById('soil-type').innerText = soloDetectado;
+
+                const hints = getSmartHints(mesKey, soloDetectado);
 
                 if (info.calendario) {
-                    document.getElementById('task-pomar').innerText = info.calendario.pomar[mesKey] || "Sem tarefas específicas.";
-                    document.getElementById('task-vinha').innerText = info.calendario.vinha[mesKey] || "Sem tarefas específicas.";
-                    document.getElementById('task-jardim').innerText = info.calendario.jardim[mesKey] || "Sem tarefas específicas.";
-                    document.getElementById('task-adega').innerText = info.calendario.adega[mesKey] || "Sem tarefas específicas.";
-                    document.getElementById('task-sementeiras').innerText = info.calendario.sementeiras[mesKey] || "Sem tarefas específicas.";
+                    // Pomar
+                    document.getElementById('task-pomar').innerText = info.calendario.pomar[mesKey] || "Manutenção geral.";
+                    document.getElementById('hint-pomar').innerText = hints.tasks.pomar || "Vigie pragas sazonais.";
+                    
+                    // Vinha
+                    document.getElementById('task-vinha').innerText = info.calendario.vinha[mesKey] || "Acompanhar maturação.";
+                    document.getElementById('hint-vinha').innerText = hints.tasks.vinha || "Mantenha o solo limpo.";
+
+                    // Jardim
+                    document.getElementById('task-jardim').innerText = info.calendario.jardim[mesKey] || "Rega controlada.";
+                    document.getElementById('hint-jardim').innerText = hints.tasks.jardim || "Proteja as plantas sensíveis do sol direto.";
+
+                    // Adega
+                    document.getElementById('task-adega').innerText = info.calendario.adega[mesKey] || "Preparação de equipamentos.";
+                    document.getElementById('hint-adega').innerText = "Dica: Higienize bem as cubas antes da vindima.";
+
+                    // Sementeiras
+                    document.getElementById('task-sementeiras').innerText = info.calendario.sementeiras[mesKey] || "Semear hortícolas da época.";
+                    document.getElementById('hint-sementeiras').innerText = hints.soil; // Aqui usamos a dica de solo!
                 }
             }
 
