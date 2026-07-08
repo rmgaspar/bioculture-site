@@ -47,28 +47,30 @@
     </div>
 
     <!-- PARTE INFERIOR: LOCALIZAÇÃO E FOOTER -->
-    <div style="padding-bottom: 2em; border-top: 1px solid #f2f2f2; padding-top: 2em;">
-        <!-- BOTÃO LOCALIZAÇÃO (LIMPO COM SETA) -->
+    <div style="padding-bottom: 2em; border-top: 1px solid #f2f2f2; padding-top: 2.5em;">
+        
+        <!-- SECÇÃO LOCALIZAÇÃO -->
         <div style="text-align: left;">
             <button id="btn-location" onclick="detectLocation()" class="custom-btn-loc">
+                <!-- Seta de localização SVG -->
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px; transform: rotate(-15deg);"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
                 <span id="loc-text">Localização</span>
             </button>
-            <p id="loc-sub" style="font-size: 0.6em; color: #bbb; margin: 5px 0 0 0; line-height: 1.2; text-align: left;">Sincronize para resultados à sua medida.</p>
+            <p id="loc-sub" style="font-size: 0.65em; color: #bbb; margin: 8px 0 0 0; line-height: 1.4; text-align: left; font-weight: 400 !important;">Sincronize para resultados à sua medida.</p>
             
-            <div id="active-city-box" class="city-label" style="display: none; margin-top: 8px;">
+            <div id="active-city-box" class="city-label" style="display: none; margin-top: 12px;">
                  <span id="city-name">...</span>
             </div>
         </div>
 
-        <footer style="margin-top: 2.5em;">
+        <footer style="margin-top: 3em;">
             <span style="font-size: 0.6em; color: #ccc; font-weight: 700; letter-spacing: 1px;">© BIOCULTURA 2026</span>
         </footer>
     </div>
 </div>
 
 <style>
-    /* RESET TOTAL */
+    /* RESET TOTAL DE ESTILOS DO TEMPLATE */
     #sidebar * { 
         font-family: 'Source Sans Pro', sans-serif !important; 
         border: none !important; 
@@ -77,11 +79,11 @@
         font-weight: 400 !important; 
     }
 
-    /* PESOS ESPECÍFICOS */
+    /* PESOS ESPECÍFICOS PARA HEADERS */
     .menu-header { font-weight: 900 !important; }
-    .city-label { font-weight: 700 !important; }
+    #sidebar b { font-weight: 900 !important; }
 
-    /* BOTÃO LOCALIZAÇÃO */
+    /* BOTÃO LOCALIZAÇÃO (ESTILO LIMPO) */
     .custom-btn-loc {
         background: none !important;
         color: #888 !important;
@@ -96,7 +98,7 @@
     }
     .custom-btn-loc:hover { color: #2e7d32 !important; }
 
-    /* MENU */
+    /* ESTRUTURA DO MENU */
     .menu-section { margin-bottom: 2.2em; display: flex; flex-direction: column; }
     
     .menu-header {
@@ -112,20 +114,26 @@
         color: #888 !important; 
         padding: 5px 0 !important;
         display: block !important;
+        text-transform: none !important; /* Respeita a primeira letra maiúscula do HTML */
         transition: all 0.2s ease !important;
     }
     
-    .menu-item:hover { color: #2e7d32 !important; padding-left: 5px !important; }
+    .menu-item:hover { 
+        color: #2e7d32 !important; 
+        padding-left: 5px !important;
+    }
 
     .city-label { 
         font-size: 0.65em !important; 
         color: #2e7d32 !important; 
+        font-weight: 700 !important; 
         text-transform: uppercase; 
+        text-align: left;
     }
 </style>
 
 <script>
-    // Mostrar localidade ativa se existir
+    // 1. Mostrar localidade ativa se existir em cache
     const cacheBio = sessionStorage.getItem('biocultura_data_cache');
     if(cacheBio) {
         const info = JSON.parse(cacheBio);
@@ -135,25 +143,25 @@
         document.getElementById('loc-sub').innerText = "Resultados otimizados para si.";
     }
 
+    // 2. Função Vassoura Total para limpar Porto de Mós e o GPS
     function detectLocation() {
-    if (!navigator.geolocation) {
-        alert("O seu browser não suporta GPS.");
-        return;
+        if (!navigator.geolocation) {
+            alert("O seu browser não suporta GPS.");
+            return;
+        }
+        
+        document.getElementById('loc-text').innerText = "A restaurar...";
+        
+        // LIMPEZA ABSOLUTA DE MEMÓRIA
+        localStorage.clear(); 
+        sessionStorage.clear();
+
+        navigator.geolocation.getCurrentPosition((pos) => {
+            // REDIRECIONAR PARA A PÁGINA LIMPA (Remove o ?region=porto-de-mos da URL)
+            window.location.href = window.location.pathname;
+        }, (err) => {
+            alert("Por favor, ative o GPS para detetarmos a sua zona real.");
+            window.location.href = window.location.pathname;
+        });
     }
-    
-    // 1. LIMPEZA ABSOLUTA DE TUDO O QUE FOI GRAVADO
-    localStorage.clear(); 
-    sessionStorage.clear();
-
-    // 2. PEDIR GPS E REFRESH LIMPO
-    navigator.geolocation.getCurrentPosition((pos) => {
-        // Redireciona para a página atual sem o "?region=..." no link
-        window.location.href = window.location.pathname;
-    }, (err) => {
-        alert("Por favor, ative o GPS para detetarmos a sua zona real.");
-        window.location.href = window.location.pathname;
-    });
-}
-
-
 </script>
