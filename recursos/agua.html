@@ -6,17 +6,21 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
 		<style>
+            /* --- ESTRUTURA GLOBAL & TIPOGRAFIA --- */
             body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
 			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
             section { padding-top: 4em !important; }
 
+            /* SIDEBAR FIXA */
             #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
             #wrapper { padding-left: 18em !important; }
 
+            /* CABEÇALHOS CINZENTOS */
             .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; color: #bbb; margin-bottom: 10px; display: block; }
             .card-title { font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin-bottom: 2em; text-align: center; }
 
-            .water-dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px; margin-bottom: 4em; }
+            /* DASHBOARD */
+            .water-dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 30px; margin-bottom: 4em; }
             .data-card { background: #fff; border-radius: 35px; padding: 3em; box-shadow: 0 15px 45px rgba(0,0,0,0.03); border: 1px solid #f8f8f8; display: flex; flex-direction: column; }
             
             .quality-grid { display: flex; gap: 2em; justify-content: center; align-items: center; margin-bottom: 2em; }
@@ -27,9 +31,11 @@
             .status-acid { border-color: #ffd54f !important; }
             .status-neutral { border-color: #81c784 !important; }
             .status-alkaline { border-color: #4fc3f7 !important; }
-            .status-soft { border-color: #4fc3f7 !important; }
-            .status-medium { border-color: #ffb74d !important; }
-            .status-hard { border-color: #ef5350 !important; }
+
+            /* ALERTAS DE IMPACTO (PROBLEMAS) */
+            .alert-card { background: #fff5f5; border-left: 6px solid #c62828; padding: 2em; border-radius: 0 25px 25px 0; margin-top: 1.5em; }
+            .alert-card h5 { color: #c62828; text-transform: uppercase; font-size: 0.7em; letter-spacing: 1px; margin-bottom: 8px; font-weight: 900; }
+            .alert-card p { color: #7f1d1d; font-size: 0.9em; margin: 0; line-height: 1.5; font-weight: 600; }
 
             .tech-info { background: #f9fbf9; padding: 1.5em; border-radius: 20px; margin-top: 1em; flex-grow: 1; }
             .tech-item { margin-bottom: 1em; }
@@ -51,14 +57,15 @@
 					<header id="header" style="height: 0; margin: 0; padding: 0; overflow: hidden;"></header>
 					
                     <section>
-                        <div style="text-align: center; margin-bottom: 4em;">
+                        <div style="text-align: center; margin-bottom: 5em;">
                             <span class="category-label">Recursos Vitais</span>
                             <h1 style="font-size: 3.5em; font-weight: 300; color: #1a1a1a; letter-spacing: -2px;">Água: O Sangue da Terra</h1>
                             <p style="font-style: italic; color: #999;">Análise técnica: <strong id="reg-name" style="color:#2e7d32">...</strong></p>
                         </div>
 
                         <div class="water-dashboard" id="water-dashboard" style="display:none;">
-                            <!-- PERFIL QUÍMICO -->
+                            
+                            <!-- COLUNA 1: QUALIDADE E BENEFÍCIOS -->
                             <div class="data-card">
                                 <h4 class="card-title">Perfil Químico</h4>
                                 <div class="quality-grid">
@@ -66,22 +73,41 @@
                                     <div class="metric" id="container-dureza"><span class="metric-val" id="val-dureza">--</span><span class="metric-label">ºf</span></div>
                                 </div>
                                 <div class="tech-info">
-                                    <div class="tech-item"><h5>Vantagens e Utilidade</h5><p id="water-advantages">A analisar...</p></div>
-                                    <div class="tech-item"><h5>Gestão de Solo</h5><p id="soil-utility">--</p></div>
+                                    <div class="tech-item">
+                                        <h5>Potencial de Regadio</h5>
+                                        <p id="water-advantages">A analisar composição...</p>
+                                    </div>
+                                    <div class="tech-item">
+                                        <h5>Aptidão de Cultivo</h5>
+                                        <p id="soil-utility">--</p>
+                                    </div>
                                 </div>
                             </div>
 
-                            <!-- DISPONIBILIDADE -->
+                            <!-- COLUNA 2: RESERVAS E AMEAÇAS -->
                             <div class="data-card">
-                                <h4 class="card-title">Disponibilidade e Reservas</h4>
+                                <h4 class="card-title">Estado do Recurso</h4>
+                                
+                                <!-- SECÇÃO DE PROBLEMAS (DINÂMICA) -->
+                                <div id="impact-alert" class="alert-card" style="display:none;">
+                                    <h5>Alerta de Vulnerabilidade</h5>
+                                    <p id="impact-text"></p>
+                                </div>
+
                                 <div class="tech-info" style="background: #f4f7fb;">
-                                    <div class="tech-item"><h5>Aquífero Local</h5><p id="reg-aquifer">--</p></div>
+                                    <div class="tech-item"><h5>Origem / Aquífero</h5><p id="reg-aquifer">--</p></div>
                                     <div class="tech-item"><h5>Infraestrutura Hídrica</h5><p id="reg-dams">--</p></div>
-                                    <div id="dam-details" class="tech-item" style="border-top: 1px solid #e1e8ed; padding-top: 1em; display: none;">
-                                        <h5>Capacidade e Potência</h5><p id="val-dam-power"></p>
+                                </div>
+                                
+                                <div id="temp-container" style="text-align: center; margin-top: 15px;"></div>
+
+                                <!-- ASSINATURA -->
+                                <div class="footer-signature-right" style="padding: 2em 0 0 0; margin-top: auto;">
+                                    <div style="display: flex; align-items: center; justify-content: flex-end; gap: 8px; opacity: 0.3;">
+                                        <span style="font-size: 0.8em; font-weight: 900;">bioCultura</span>
+                                        <svg width="18" height="18" viewBox="0 0 100 100"><path d="M50 5 L89 27.5 L89 72.5 L50 95 L11 72.5 L11 27.5 Z" fill="#333" /><path d="M50 20 C50 20 75 45 75 70 C75 85 65 85 50 85 C35 85 25 85 25 70 C25 45 50 20 50 20Z" fill="#fff" /></svg>
                                     </div>
                                 </div>
-                                <div id="temp-container" style="text-align: center; margin-top: 15px;"></div>
                             </div>
                         </div>
 
@@ -108,20 +134,18 @@
                 try {
                     const r = await fetch('/data/bioregioes.json');
                     const data = await r.json();
-                    
                     const urlParams = new URLSearchParams(window.location.search);
                     const regionParam = urlParams.get('region');
                     const savedRegionId = regionParam || localStorage.getItem('biocultura_region');
-                    
                     let info = data.find(item => item.id === savedRegionId);
 
                     if (regionParam && info) {
                         localStorage.setItem('biocultura_region', info.id);
+                        sessionStorage.removeItem('biocultura_data_cache');
                     }
 
-                    if (info) {
-                        renderWaterDashboard(info);
-                    } else if (navigator.geolocation) {
+                    if (info) renderWaterDashboard(info);
+                    else if (navigator.geolocation) {
                         navigator.geolocation.getCurrentPosition(pos => {
                             let minD = Infinity; let closest = null;
                             data.forEach(c => {
@@ -130,10 +154,7 @@
                                     if(d < minD) { minD = d; closest = c; }
                                 }
                             });
-                            if(closest) {
-                                localStorage.setItem('biocultura_region', closest.id);
-                                renderWaterDashboard(closest);
-                            }
+                            if(closest) { localStorage.setItem('biocultura_region', closest.id); renderWaterDashboard(closest); }
                         });
                     }
                 } catch(e) { console.error("Erro:", e); }
@@ -143,8 +164,9 @@
                 if(!info) return;
                 document.getElementById('no-gps-warning').style.display = 'none';
                 document.getElementById('water-dashboard').style.display = 'grid';
-                document.getElementById('reg-name').innerText = info.titulo || "Região Desconhecida";
+                document.getElementById('reg-name').innerText = info.titulo;
 
+                // 1. Lógica de Qualidade e Benefícios
                 if (info.recursos_hidricos) {
                     const ph = parseFloat(info.recursos_hidricos.ph_agua) || 7.0;
                     const dur = parseFloat(info.recursos_hidricos.dureza_fr) || 10;
@@ -163,21 +185,32 @@
                     else if (dur <= 30) durCont.classList.add('status-medium');
                     else durCont.classList.add('status-hard');
 
-                    document.getElementById('water-advantages').innerText = ph < 7 ? "Água ligeiramente ácida: Ideal para a absorção de micronutrientes." : "Água equilibrada: Rica em carbonatos, excelente para neutralizar solos ácidos.";
-                    document.getElementById('soil-utility').innerText = ph < 7 ? "Perfeita para mirtilos e batatas." : "Benéfica para leguminosas e vinhas.";
+                    document.getElementById('water-advantages').innerText = ph < 7 ? "Água ligeiramente ácida: Ideal para a absorção de micronutrientes como Ferro e Zinco." : "Água equilibrada: Rica em carbonatos, excelente para neutralizar solos ácidos.";
+                    document.getElementById('soil-utility').innerText = ph < 7 ? "Favorece mirtilos, batatas e hortênsias." : "Favorece leguminosas, vinhas e oliveiras.";
 
                     const mes = new Date().getMonth();
                     const temp = (info.recursos_hidricos.temp_media_agua && info.recursos_hidricos.temp_media_agua[mes]) ? info.recursos_hidricos.temp_media_agua[mes] : '--';
                     document.getElementById('temp-container').innerHTML = `<div class="temp-badge"><i class="fas fa-thermometer-half"></i> Água hoje: ${temp}ºC</div>`;
                 }
 
+                // 2. Lógica de Problemas e Ameaças (PORTO DE MÓS / ALVIELA)
                 if (info.agua) {
                     document.getElementById('reg-aquifer').innerText = info.agua.aquiferos || "Em levantamento.";
                     document.getElementById('reg-dams').innerText = (info.agua.barragens_proximas && Array.isArray(info.agua.barragens_proximas)) ? info.agua.barragens_proximas.join(', ') : "Sem barragens próximas.";
                     
-                    if(info.id === "proenca-a-nova" || info.id === "serta") {
-                        document.getElementById('dam-details').style.display = 'block';
-                        document.getElementById('val-dam-power').innerHTML = "<strong>Castelo de Bode:</strong> 155 MW. Alimenta Lisboa e gera energia.";
+                    const impactAlert = document.getElementById('impact-alert');
+                    const impactText = document.getElementById('impact-text');
+
+                    // Se for Porto de Mós ou se a nota contiver palavras críticas, mostra o alerta vermelho
+                    const nota = info.agua.nota || "";
+                    if (info.id === "porto-de-mos" || nota.toLowerCase().includes("poluição") || nota.toLowerCase().includes("contaminação") || nota.toLowerCase().includes("escassez")) {
+                        impactAlert.style.display = 'block';
+                        // Texto específico para Porto de Mós ou genérico da nota
+                        impactText.innerText = info.id === "porto-de-mos" 
+                            ? "A poluição industrial e a extração descontrolada ameaçam a integridade deste aquífero, que é uma reserva estratégica vital." 
+                            : nota;
+                    } else {
+                        impactAlert.style.display = 'none';
                     }
                 }
             }
