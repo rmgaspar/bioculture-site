@@ -129,32 +129,31 @@
                 try {
                     const r = await fetch('/data/bioregioes.json');
                     const data = await r.json();
+                    
                     const urlParams = new URLSearchParams(window.location.search);
                     const regionParam = urlParams.get('region');
                     
+                    // 1. PRIORIDADE MÁXIMA: Link direto (?region=...)
+                    // Apenas mostra, NÃO GRAVA no localStorage
                     if (regionParam) {
                         const info = data.find(item => item.id === regionParam);
                         if (info) {
-                            sessionStorage.setItem('biocultura_exploration_id', info.id);
                             renderWaterDashboard(info);
-                            return;
+                            return; // Para aqui, não executa mais nada
                         }
                     }
 
-                    const explorationId = sessionStorage.getItem('biocultura_exploration_id');
-                    if (explorationId) {
-                        const info = data.find(item => item.id === explorationId);
-                        if (info) { renderWaterDashboard(info); return; }
-                    }
-
+                    // 2. SEGUNDA PRIORIDADE: Localização real do utilizador (Casa)
                     const savedRegionId = localStorage.getItem('biocultura_region');
                     let info = data.find(item => item.id === savedRegionId);
 
                     if (info) {
                         renderWaterDashboard(info);
                     } else if (navigator.geolocation) {
+                        // 3. ÚLTIMO RECURSO: GPS para encontrar a zona real
                         navigator.geolocation.getCurrentPosition(pos => {
-                            let minD = Infinity; let closest = null;
+                            let minD = Infinity;
+                            let closest = null;
                             data.forEach(c => {
                                 if(c.lat && c.lon) {
                                     let d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon);
@@ -167,7 +166,7 @@
                             }
                         });
                     }
-                } catch(e) { console.error("Erro:", e); }
+                } catch(e) { console.error("Erro no carregamento:", e); }
             }
 
             function renderWaterDashboard(info) {
