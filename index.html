@@ -47,6 +47,42 @@
                 font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px;
             }
 
+            /* --- SIDEBAR FIXA E COMPACTA --- */
+            #sidebar {
+                position: fixed !important;
+                top: 0;
+                left: 0;
+                height: 100vh !important;
+                width: 18em !important; /* Largura reduzida para ser mais elegante */
+                overflow: hidden !important;
+                z-index: 10000;
+                background: #fff;
+                border-right: 1px solid #f0f0f0 !important;
+            }
+
+            #sidebar > .inner {
+                height: 100% !important;
+                overflow-y: auto !important; /* Permite scroll interno apenas se os itens não couberem */
+                scrollbar-width: none; /* Esconde a barra no Firefox */
+            }
+
+            #sidebar > .inner::-webkit-scrollbar { display: none; } /* Esconde a barra no Chrome/Safari */
+
+            #wrapper {
+                padding-left: 18em !important; /* Ajuste para o conteúdo não ficar por baixo da sidebar */
+            }
+
+            /* Ajuste para tablets e telemóveis */
+            @media screen and (max-width: 1280px) {
+                #sidebar {
+                    position: relative !important;
+                    width: 100% !important;
+                    height: auto !important;
+                    overflow: visible !important;
+                }
+                #wrapper { padding-left: 0 !important; }
+            }
+
             /* CALL TO ACTION */
             .cta-section { 
                 background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%); 
