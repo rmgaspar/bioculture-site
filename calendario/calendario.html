@@ -1,197 +1,193 @@
 <!DOCTYPE HTML>
-<!--
-	Editorial by HTML5 UP
-	html5up.net | @ajlkn
-	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
--->
 <html>
 	<head>
 		<title>bioCultura - Calendário Hortícola</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-		<link rel="stylesheet" href="../assets/css/main.css" />
+		<link rel="stylesheet" href="/assets/css/main.css" />
 		<style>
-			/* 1. LIMPEZA E ESTRUTURA PARA "NO SCROLL" */
-			section, #header, .major, hr, article { border: none !important; box-shadow: none !important; }
-			
-			#header {
-                border: none !important;
-                background: transparent !important;
-                height: 2em !important; 
-                margin: 0 !important;
-                padding: 0 !important;
-            }
-
-			/* Botão do Menu (Folha Verde) */
-			#header .toggle {
-				background: none !important;
-				top: 1.5em !important; 
-				left: 1.5em !important;
-                border: none !important;
-                text-decoration: none !important;
-                z-index: 10001;
-			}
-			#header .toggle:before {
-				content: '\f06c' !important; 
-				font-family: "Font Awesome 5 Free";
-				font-weight: 900;
-				color: #2e7d32 !important;
-				font-size: 1.5em;
-			}
+			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
+			#header .toggle { background: none !important; top: 2em !important; left: 2em !important; border: none !important; text-decoration: none !important; z-index: 10001; }
+			#header .toggle:before { content: '\f06c' !important; font-family: "Font Awesome 5 Free" !important; font-weight: 900; color: #2e7d32 !important; font-size: 1.6em !important; }
             #header .toggle:after { display: none !important; }
+            section { padding-top: 2em !important; }
 
-			/* Subir o conteúdo ao máximo */
-			section { padding: 1em 0 0 0 !important; }
-
-			/* 2. GRELHA COMPACTA (4 colunas x 3 linhas) */
-			.month-grid { 
-                display: grid; 
-                grid-template-columns: repeat(4, 1fr); 
-                gap: 10px; 
-                width: 100%;
-                height: auto;
+            /* HEADER CALENDÁRIO */
+            .calendar-header { text-align: center; margin-bottom: 4em; }
+            .month-indicator { 
+                display: inline-block; background: #2e7d32; color: #fff; 
+                padding: 10px 30px; border-radius: 50px; font-weight: 800; 
+                text-transform: uppercase; letter-spacing: 3px; font-size: 0.9em;
+                margin-bottom: 1.5em; box-shadow: 0 10px 20px rgba(46, 125, 50, 0.2);
             }
 
-			.month-card { 
-                position: relative !important;
-                background: #f4f4f4; 
-                border-radius: 20px !important; 
-                overflow: hidden !important; 
-                text-decoration: none !important; 
-                transition: transform 0.3s ease; 
-                height: 26vh !important; /* Altura baseada na altura da janela */
-                min-height: 150px;
-                display: block !important;
-                box-shadow: 0 4px 10px rgba(0,0,0,0.05) !important;
+            /* GRID DE TAREFAS */
+            .tasks-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 4em; }
+            .task-card { 
+                background: #fff; border-radius: 30px; padding: 2em; 
+                border: 1px solid #f0f4f0; box-shadow: 0 15px 35px rgba(0,0,0,0.03);
+                transition: transform 0.3s ease; display: flex; flex-direction: column;
             }
+            .task-card:hover { transform: translateY(-5px); border-color: #2e7d32; }
+            .task-card i { font-size: 2em; color: #2e7d32; margin-bottom: 0.8em; }
+            .task-card h4 { font-size: 0.8em; text-transform: uppercase; letter-spacing: 1px; color: #888; margin-bottom: 1em; }
+            .task-text { font-size: 1em; color: #444; line-height: 1.5; font-weight: 600; }
 
-			.month-card:hover { 
-                transform: scale(1.02);
-                box-shadow: 0 10px 20px rgba(46, 125, 50, 0.15) !important;
+            /* INFO SOLO */
+            .soil-context { 
+                background: #fdf5e6; padding: 2em; border-radius: 25px; 
+                margin-bottom: 4em; border-left: 5px solid #d4a373;
+                display: flex; align-items: center; gap: 20px;
             }
+            .soil-context i { font-size: 2.5em; color: #d4a373; }
 
-			.month-card img { 
-                width: 100%; 
-                height: 100%; 
-                object-fit: cover; 
-                display: block;
-            }
-
-            .month-card::after {
-                content: '';
-                position: absolute;
-                bottom: 0; left: 0; right: 0;
-                height: 50%;
-                background: linear-gradient(to top, rgba(0,0,0,0.5), transparent);
-            }
-
-            /* Nome do mês mais pequeno e subido */
-			.month-card h3 { 
-                position: absolute !important;
-                bottom: 15px !important;
-                left: 0;
-                right: 0;
-                text-align: center !important; 
-                margin: 0 !important; 
-                color: #ffffff !important; 
-                letter-spacing: 3px !important; 
-                text-transform: uppercase !important; 
-                font-size: 0.75em !important; 
-                font-weight: 700 !important;
-                z-index: 10;
-                text-shadow: 0 2px 4px rgba(0,0,0,0.4) !important;
-            }
-
-            /* Ajuste para ecrãs pequenos (Tablets) */
-            @media screen and (max-width: 1280px) {
-                .month-grid { grid-template-columns: repeat(3, 1fr); }
-                .month-card { height: 22vh !important; }
-            }
-
-            /* Ajuste para Telemóvel (onde o scroll é inevitável) */
-            @media screen and (max-width: 736px) {
-                .month-grid { grid-template-columns: repeat(2, 1fr); }
-                .month-card { height: 180px !important; }
-                section { padding-top: 4em !important; }
-            }
+			.footer-signature-right { text-align: right; padding: 4em 2em 2em 0; opacity: 0.8; }
 		</style>
 	</head>
 	<body class="is-preload">
 		<div id="wrapper">
 			<div id="main">
-				<div class="inner">
+                <div class="inner">
+					<header id="header" style="height: 0; margin: 0; padding: 0; overflow: hidden;"></header>
+					
+                    <section>
+                        <div class="calendar-header">
+                            <div class="month-indicator" id="current-month-name">Mês Atual</div>
+                            <h1 style="font-size: 3.5em; font-weight: 300; color: #1b5e20; letter-spacing: -2px;">O Ritmo da Terra</h1>
+                            <p style="font-style: italic; color: #888;">Tarefas para a região de: <strong id="reg-name" style="color:#2e7d32">...</strong></p>
+                        </div>
 
-					<header id="header"></header>
+                        <!-- CONTEXTO DO SOLO -->
+                        <div id="soil-info-box" class="soil-context" style="display:none;">
+                            <i class="fas fa-seedling"></i>
+                            <div>
+                                <span style="font-size: 0.7em; text-transform: uppercase; font-weight: 800; color: #a67c52;">Aptidão do Terreno</span>
+                                <p style="margin:0; color: #5d4037; font-size: 0.95em;">O seu solo é <strong><span id="soil-type">...</span></strong>. As tarefas abaixo foram ajustadas para esta composição pedológica.</p>
+                            </div>
+                        </div>
 
-					<section>
-						<div class="month-grid">
-							<a href="/calendario/01-janeiro.html" class="month-card">
-								<img src="https://images.unsplash.com/photo-1607240204413-e51a4afa6f12?q=80&w=1987&auto=format&fit=crop" alt="Janeiro" />
-								<h3>Janeiro</h3>
-							</a>
-							<a href="/calendario/02-fevereiro.html" class="month-card">
-								<img src="https://images.unsplash.com/photo-1586771107445-d3ca888129ff?q=80&w=2072&auto=format&fit=crop" alt="Fevereiro" />
-								<h3>Fevereiro</h3>
-							</a>
-							<a href="/calendario/03-marco.html" class="month-card">
-								<img src="https://images.unsplash.com/photo-1750265888614-ec8f500880d1?q=80&w=1974&auto=format&fit=crop" alt="Março" />
-								<h3>Março</h3>
-							</a>
-							<a href="/calendario/04-abril.html" class="month-card">
-								<img src="https://images.unsplash.com/photo-1560493676-04071c5f467b?w=800&q=80" alt="Abril" />
-								<h3>Abril</h3>
-							</a>
-							<a href="/calendario/05-maio.html" class="month-card">
-								<img src="https://images.unsplash.com/photo-1611843467160-25afb8df1074?q=80&w=2070&auto=format&fit=crop" alt="Maio" />
-								<h3>Maio</h3>
-							</a>
-							<a href="/calendario/06-junho.html" class="month-card">
-								<img src="https://images.unsplash.com/photo-1589923188900-85dae523342b?w=800&q=80" alt="Junho" />
-								<h3>Junho</h3>
-							</a>
-							<a href="/calendario/07-julho.html" class="month-card">
-								<img src="https://revistajardins.pt/wp-content/uploads/2022/08/shutterstock_146112383-720x480.jpg" alt="Julho" />
-								<h3>Julho</h3>
-							</a>
-							<a href="/calendario/08-agosto.html" class="month-card">
-								<img src="https://images.unsplash.com/photo-1753172433718-d0c2a99443d8?w=800&q=80" alt="Agosto" />
-								<h3>Agosto</h3>
-							</a>
-							<a href="/calendario/09-setembro.html" class="month-card">
-								<img src="https://images.unsplash.com/photo-1605673349837-1d83a7740e30?q=80&w=2070&auto=format&fit=crop" alt="Setembro" />
-								<h3>Setembro</h3>
-							</a>
-							<a href="/calendario/10-outubro.html" class="month-card">
-								<img src="https://plus.unsplash.com/premium_photo-1661962468966-1e8d6424997e?q=80&w=2070&auto=format&fit=crop" alt="Outubro" />
-								<h3>Outubro</h3>
-							</a>
-							<a href="/calendario/11-novembro.html" class="month-card">
-								<img src="https://images.unsplash.com/photo-1618100790047-3da47dcd5727?q=80&w=2067&auto=format&fit=crop" alt="Novembro" />
-								<h3>Novembro</h3>
-							</a>
-							<a href="/calendario/12-dezembro.html" class="month-card">
-								<img src="https://www.hortasbiologicas.pt/wp-content/uploads/2022/10/tarefas-horta.jpg.webp" alt="Dezembro" />
-								<h3>Dezembro</h3>
-							</a>
-						</div>
+                        <!-- DASHBOARD DE TAREFAS -->
+                        <div class="tasks-grid" id="tasks-container" style="display:none;">
+                            <div class="task-card">
+                                <i class="fas fa-apple-alt"></i>
+                                <h4>Pomar</h4>
+                                <p class="task-text" id="task-pomar">--</p>
+                            </div>
+                            <div class="task-card">
+                                <i class="fas fa-wine-glass-alt"></i>
+                                <h4>Vinha</h4>
+                                <p class="task-text" id="task-vinha">--</p>
+                            </div>
+                            <div class="task-card">
+                                <i class="fas fa-spa"></i>
+                                <h4>Jardim</h4>
+                                <p class="task-text" id="task-jardim">--</p>
+                            </div>
+                            <div class="task-card">
+                                <i class="fas fa-dungeon"></i>
+                                <h4>Adega</h4>
+                                <p class="task-text" id="task-adega">--</p>
+                            </div>
+                            <div class="task-card" style="grid-column: span 1;">
+                                <i class="fas fa-seedling"></i>
+                                <h4>Sementeiras</h4>
+                                <p class="task-text" id="task-sementeiras">--</p>
+                            </div>
+                        </div>
+
+                        <div id="no-gps-warning" style="text-align: center; padding: 4em; background: #f4f7fb; border-radius: 40px; margin-bottom: 4em;">
+                            <p>Sincronize a sua localização na barra lateral para carregar o calendário personalizado.</p>
+                        </div>
 					</section>
 
+					<div class="footer-signature-right">
+						<a href="/index.html" style="border: none; display: inline-block; text-decoration: none;">
+							<div style="font-family: 'Source Sans Pro', sans-serif; font-size: 1.4em; line-height: 1; display: flex; align-items: flex-end; justify-content: flex-end;">
+                                <b style="font-weight: 700; color: #2e7d32; margin-right: -3px; position: relative; z-index: 2;">b</b>
+                                <div style="width: 32px; margin: 0 -7px; position: relative; line-height: 0; transform: translateY(4px); z-index: 1;">
+                                    <svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: auto;"><path d="M-20 110 Q50 102 120 110" stroke="#634832" stroke-width="4" fill="none" opacity="0.3" /><path d="M50 110 C50 80 35 70 50 45 C65 70 50 80 50 110" fill="#2e7d32" /><path d="M50 80 C75 75 85 50 65 40 C50 55 50 65 50 80" fill="#4CAF50" /></svg>
+                                </div>
+                                <b style="font-weight: 700; color: #2e7d32; margin-left: -3px; position: relative; z-index: 2;">o</b>
+                                <span style="font-weight: 300; color: #444; margin-left: 2px;">Cultura</span>
+                            </div>
+						</a>
+					</div>
 				</div>
-			</div>
+            </div>
 			<div id="sidebar"></div>
 		</div>
 
-		<!-- Scripts -->
-		<script src="../assets/js/jquery.min.js"></script>
-        <script src="../assets/js/browser.min.js"></script>
-        <script src="../assets/js/breakpoints.min.js"></script>
-        <script src="../assets/js/util.js"></script>
+		<script src="/assets/js/jquery.min.js"></script>
         <script>
-            fetch('../sidebar-content.html').then(response => response.text()).then(data => {
-                document.getElementById('sidebar').innerHTML = data;
-                var script = document.createElement('script');
-                script.src = '../assets/js/main.js';
-                document.body.appendChild(script);
+            const meses = ["janeiro", "fevereiro", "marco", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
+            const dataAtual = new Date();
+            const mesNome = meses[dataAtual.getMonth()];
+
+            // Atualiza o nome do mês no topo
+            document.getElementById('current-month-name').innerText = mesNome;
+
+            function calcularDistancia(lat1, lon1, lat2, lon2) {
+                const R = 6371;
+                const dLat = (lat2 - lat1) * Math.PI / 180;
+                const dLon = (lon2 - lon1) * Math.PI / 180;
+                const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
+                return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+            }
+
+            async function inicializarPagina() {
+                const savedRegionId = localStorage.getItem('biocultura_region');
+                const cachedData = sessionStorage.getItem('biocultura_data_cache');
+
+                if (cachedData && JSON.parse(cachedData).id === savedRegionId) {
+                    renderCalendar(JSON.parse(cachedData));
+                } else {
+                    try {
+                        const r = await fetch('/data/bioregioes.json');
+                        const data = await r.json();
+                        let info = data.find(item => item.id === savedRegionId);
+
+                        if (!info && navigator.geolocation) {
+                            navigator.geolocation.getCurrentPosition(pos => {
+                                let minD = Infinity;
+                                data.forEach(c => {
+                                    if(c.lat && c.lon) {
+                                        let d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon);
+                                        if(d < minD) { minD = d; info = c; }
+                                    }
+                                });
+                                if(info) {
+                                    localStorage.setItem('biocultura_region', info.id);
+                                    sessionStorage.setItem('biocultura_data_cache', JSON.stringify(info));
+                                    renderCalendar(info);
+                                }
+                            });
+                        } else if (info) {
+                            renderCalendar(info);
+                        }
+                    } catch(e) { console.error("Erro ao carregar", e); }
+                }
+            }
+
+            function renderCalendar(info) {
+                document.getElementById('no-gps-warning').style.display = 'none';
+                document.getElementById('tasks-container').style.display = 'grid';
+                document.getElementById('soil-info-box').style.display = 'flex';
+                document.getElementById('reg-name').innerText = info.titulo;
+                document.getElementById('soil-type').innerText = info.biomas?.solo || "N/A";
+
+                if (info.calendario) {
+                    document.getElementById('task-pomar').innerText = info.calendario.pomar[mesNome] || "Sem tarefas específicas.";
+                    document.getElementById('task-vinha').innerText = info.calendario.vinha[mesNome] || "Sem tarefas específicas.";
+                    document.getElementById('task-jardim').innerText = info.calendario.jardim[mesNome] || "Sem tarefas específicas.";
+                    document.getElementById('task-adega').innerText = info.calendario.adega[mesNome] || "Sem tarefas específicas.";
+                    document.getElementById('task-sementeiras').innerText = info.calendario.sementeiras[mesNome] || "Sem tarefas específicas.";
+                }
+            }
+
+            fetch('/sidebar-content.html').then(r => r.text()).then(html => {
+                document.getElementById('sidebar').innerHTML = html;
+                var s = document.createElement('script'); s.src = '/assets/js/main.js'; document.body.appendChild(s);
+                inicializarPagina();
             });
         </script>
 	</body>
