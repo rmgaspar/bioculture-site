@@ -141,18 +141,19 @@
         return;
     }
     
-    // LIMPEZA ABSOLUTA
+    // 1. LIMPEZA ABSOLUTA DE TUDO O QUE FOI GRAVADO
     localStorage.clear(); 
     sessionStorage.clear();
 
+    // 2. PEDIR GPS E REFRESH LIMPO
     navigator.geolocation.getCurrentPosition((pos) => {
-        // Grava a nova posição real detetada
-        // O sistema de proximidade das páginas vai tratar do resto
-        window.location.href = "/index.html"; 
+        // Redireciona para a página atual sem o "?region=..." no link
+        window.location.href = window.location.pathname;
     }, (err) => {
-        alert("Por favor, ative o GPS.");
-        window.location.href = "/index.html";
+        alert("Por favor, ative o GPS para detetarmos a sua zona real.");
+        window.location.href = window.location.pathname;
     });
 }
+
 
 </script>
