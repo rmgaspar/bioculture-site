@@ -10,7 +10,7 @@
             body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
             
 			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
-            section { padding-top: 4em !important; }
+            section { padding-top: 4em !important; min-height: 100vh; display: flex; flex-direction: column; }
 
             /* SIDEBAR FIXA */
             #sidebar {
@@ -48,16 +48,22 @@
             .alert-strip p { color: #7f1d1d; font-size: 0.9em; margin: 0; line-height: 1.4; font-weight: 600; }
 
             /* INFO TÉCNICA */
-            .tech-info { background: #f9fbf9; padding: 2em; border-radius: 20px; margin-top: 1.5em; }
+            .tech-info { background: #f9fbf9; padding: 2em; border-radius: 20px; margin-top: 1.5em; flex-grow: 1; }
             .tech-item { margin-bottom: 1.5em; }
-            .tech-item h5 { font-size: 0.7em; font-weight: 900; text-transform: uppercase; color: #2e7d32; margin-bottom: 5px; }
-            .tech-item p { font-size: 0.9em; margin: 0; line-height: 1.5; color: #666; }
+            .tech-item h5 { font-size: 0.7em; font-weight: 900; text-transform: uppercase; color: #bbb; margin-bottom: 5px; }
+            .tech-item p { font-size: 0.9em; margin: 0; line-height: 1.5; color: #444; }
+
+            /* CORES DE RISCO */
+            .risk-critical { color: #c62828 !important; font-weight: 700 !important; }
 
             /* SECÇÃO PARADOXO */
             .paradox-section { background: #fafafa; border-radius: 40px; padding: 4em; margin-bottom: 4em; border: 1px solid #eee; }
             .paradox-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; margin-top: 2em; }
             .paradox-item h4 { color: #1b5e20; font-size: 1.1em; font-weight: 700; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
             .paradox-item p { font-size: 0.9em; color: #666; line-height: 1.6; text-align: justify; }
+
+            /* FOOTER NO FUNDO DA PÁGINA */
+            .page-footer { margin-top: auto; padding: 2em 0; }
 
             @media screen and (max-width: 1280px) {
                 #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
@@ -81,19 +87,17 @@
 
                         <div class="impact-dashboard" id="impact-dashboard" style="display:none;">
                             
-                            <!-- COLUNA ENERGIA (SILÍCIO) -->
+                            <!-- COLUNA ENERGIA -->
                             <div class="data-card">
                                 <h4 class="card-title">Infraestrutura Fotovoltaica</h4>
-                                
                                 <div id="energy-alert" class="alert-strip" style="display:none;">
                                     <h5>Alerta de Ecossistema</h5>
                                     <p id="energy-alert-text"></p>
                                 </div>
-
                                 <div class="tech-info">
                                     <div class="tech-item">
                                         <h5>Parques de Larga Escala</h5>
-                                        <p id="solar-list" style="font-weight: 600; color: #444;"></p>
+                                        <p id="solar-list" style="font-weight: 600;"></p>
                                     </div>
                                     <div class="tech-item">
                                         <h5>Capacidade Instalada</h5>
@@ -102,15 +106,13 @@
                                 </div>
                             </div>
 
-                            <!-- COLUNA MINERAÇÃO (LÍTIO) -->
+                            <!-- COLUNA MINERAÇÃO -->
                             <div class="data-card">
                                 <h4 class="card-title">Recursos Geológicos & Lítio</h4>
-                                
                                 <div id="mining-alert" class="alert-strip" style="display:none;">
                                     <h5>Conflito de Mineração</h5>
                                     <p id="mining-alert-text"></p>
                                 </div>
-
                                 <div class="tech-info" style="background: #fdfaf5;">
                                     <div class="tech-item">
                                         <h5>Zonas de Prospeção Ativas</h5>
@@ -119,13 +121,6 @@
                                     <div class="tech-item">
                                         <h5>Risco de Incêndio Estatístico</h5>
                                         <p id="val-fire-risk">--</p>
-                                    </div>
-                                </div>
-
-                                <div class="footer-signature-right" style="padding: 2em 0 0 0;">
-                                    <div style="display: flex; align-items: center; justify-content: flex-end; gap: 8px; opacity: 0.4;">
-                                        <span style="font-size: 0.8em; font-weight: 900;">bioCultura</span>
-                                        <svg width="15" height="15" viewBox="0 0 100 100"><path d="M50 5 L89 27.5 L89 72.5 L50 95 L11 72.5 L11 27.5 Z" fill="#333" /><path d="M50 20 C50 20 75 45 75 70 C75 85 65 85 50 85 C35 85 25 85 25 70 C25 45 50 20 50 20Z" fill="#fff" /></svg>
                                     </div>
                                 </div>
                             </div>
@@ -137,17 +132,25 @@
                             <div class="paradox-grid">
                                 <div class="paradox-item">
                                     <h4><i class="fas fa-microchip"></i> O Custo do Silício</h4>
-                                    <p>A instalação de parques fotovoltaicos de larga escala exige frequentemente a desflorestação e a impermeabilização de solos férteis. O silício, embora abundante, requer processos de purificação químicos altamente poluentes e uma pegada hídrica invisível que compromete a biodiversidade local sob o pretexto de reduzir emissões de CO2.</p>
+                                    <p>A instalação de parques fotovoltaicos de larga escala exige frequentemente a desflorestação e a impermeabilização de solos férteis. O silício, embora abundante, requer processos de purificação químicos altamente poluentes.</p>
                                 </div>
                                 <div class="paradox-item">
                                     <h4><i class="fas fa-car-battery"></i> A Ilusão das Baterias</h4>
-                                    <p>O armazenamento de energia em baterias de lítio mascara a destruição de ecossistemas remotos. A extração mineira consome milhões de litros de água doce, baixando o nível dos aquíferos e sufocando a fauna e flora endémicas. Na bioCultura, questionamos a ética de salvar o clima à custa da destruição da vida local.</p>
+                                    <p>O armazenamento de energia em baterias de lítio mascara a destruição de ecossistemas remotos. A extração mineira consome milhões de litros de água doce, baixando o nível dos aquíferos e sufocando a vida local.</p>
                                 </div>
                             </div>
                         </div>
 
                         <div id="no-gps-warning" style="text-align: center; padding: 4em; background: #f4f7fb; border-radius: 40px;">
-                            <p>Sincronize a sua localização para detetar ameaças e infraestruturas energéticas na sua região.</p>
+                            <p>Sincronize a sua localização para detetar ameaças energéticas.</p>
+                        </div>
+
+                        <!-- RODAPÉ DA PÁGINA (LOGÓTIPO NO FUNDO) -->
+                        <div class="page-footer">
+                            <div style="display: flex; align-items: center; justify-content: flex-end; gap: 8px; opacity: 0.3;">
+                                <span style="font-size: 0.8em; font-weight: 900; color: #333;">bioCultura</span>
+                                <svg width="18" height="18" viewBox="0 0 100 100"><path d="M50 5 L89 27.5 L89 72.5 L50 95 L11 72.5 L11 27.5 Z" fill="#333" /><path d="M50 20 C50 20 75 45 75 70 C75 85 65 85 50 85 C35 85 25 85 25 70 C25 45 50 20 50 20Z" fill="#fff" /></svg>
+                            </div>
                         </div>
 					</section>
 				</div>
@@ -160,7 +163,6 @@
             async function inicializarPagina() {
                 const savedRegionId = localStorage.getItem('biocultura_region');
                 const cachedData = sessionStorage.getItem('biocultura_data_cache');
-
                 if (cachedData && JSON.parse(cachedData).id === savedRegionId) {
                     renderImpactDashboard(JSON.parse(cachedData));
                 } else {
@@ -178,23 +180,28 @@
                 document.getElementById('impact-dashboard').style.display = 'grid';
                 document.getElementById('reg-name').innerText = info.titulo;
 
-                // 1. Lógica de Energia
                 if (info.energia_etica) {
                     document.getElementById('val-energy-mw').innerText = info.energia_etica.exploracao_atual_mw || '0';
                     const solarParks = info.energia_etica.parques_solares || [];
                     document.getElementById('solar-list').innerText = solarParks.length > 0 ? solarParks.join(', ') : "Sem registo de parques industriais.";
-                    
                     if(info.energia_etica.alerta_impacto && info.energia_etica.alerta_impacto !== "N/A") {
                         document.getElementById('energy-alert').style.display = 'block';
                         document.getElementById('energy-alert-text').innerText = info.energia_etica.alerta_impacto;
                     }
                 }
 
-                // 2. Lógica de Mineração
                 if (info.mineracao) {
                     const prospects = info.mineracao.zonas_prospeccao || [];
                     document.getElementById('prospect-list').innerText = prospects.length > 0 ? prospects.join(', ') : "Sem prospeção ativa detetada.";
-                    document.getElementById('val-fire-risk').innerText = info.mineracao.risco_incendio_estatistico || "Moderado";
+                    
+                    const riskEl = document.getElementById('val-fire-risk');
+                    const riskVal = info.mineracao.risco_incendio_estatistico || "Moderado";
+                    riskEl.innerText = riskVal;
+                    
+                    // AJUSTE DE COR: Risco Elevado em Vermelho
+                    if(riskVal.includes("Elevado")) {
+                        riskEl.classList.add('risk-critical');
+                    }
 
                     if(info.mineracao.conflito_litio && info.mineracao.conflito_litio !== "N/A") {
                         document.getElementById('mining-alert').style.display = 'block';
