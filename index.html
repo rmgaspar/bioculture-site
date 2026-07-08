@@ -1,117 +1,78 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<title>bioCultura - Regeneração Ética do Planeta</title>
+		<title>bioCultura - Inteligência e Regeneração Planetária</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
 		<style>
+            /* --- ESTRUTURA GLOBAL & TIPOGRAFIA --- */
+            body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
+            
 			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
-			#header .toggle { background: none !important; top: 2em !important; left: 2em !important; border: none !important; text-decoration: none !important; z-index: 10001; }
-			#header .toggle:before { content: '\f06c' !important; font-family: "Font Awesome 5 Free" !important; font-weight: 900; color: #2e7d32 !important; font-size: 1.6em !important; }
-            #header .toggle:after { display: none !important; }
+            section { padding-top: 8em !important; }
 
-            /* HERO SECTION */
-            .hero { 
-                text-align: center; 
-                padding: 8em 0 6em 0; /* Aumentado de 4em para 8em para baixar o texto */
-                max-width: 900px; 
-                margin: 0 auto; 
-            }
-
-            /* IMAGEM PRINCIPAL SMOOTH */
-            .main-image-container { 
-                width: 100%; max-height: 500px; border-radius: 60px; overflow: hidden; 
-                box-shadow: 0 30px 60px rgba(0,0,0,0.1); margin-bottom: 6em;
-            }
-            .main-image-container img { width: 100%; height: 100%; object-fit: cover; }
-
-            /* PILARES DA MISSÃO */
-            .mission-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; margin-bottom: 6em; }
-            .pillar { padding: 2em; background: #fff; border-radius: 40px; border: 1px solid #f0f7f0; transition: all 0.3s ease; }
-            .pillar:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.04); }
-            .pillar i { font-size: 2.5em; color: #2e7d32; margin-bottom: 0.8em; display: block; }
-            .pillar h3 { font-size: 1.2em; color: #1b5e20; font-weight: 800; margin-bottom: 1em; text-transform: uppercase; letter-spacing: 1px; }
-            .pillar p { font-size: 0.95em; color: #555; line-height: 1.6; margin: 0; }
-
-            /* ALERT SECTION (MINERAÇÃO) */
-            .alert-box { 
-                background: #fff5f5; border: 2px solid #fee2e2; border-radius: 45px; 
-                padding: 4em; text-align: center; margin-bottom: 6em; position: relative;
-            }
-            .alert-box h2 { color: #c62828; font-size: 2.2em; font-weight: 300; margin-bottom: 0.5em; }
-            .alert-box p { color: #7f1d1d; max-width: 700px; margin: 0 auto 2em auto; font-weight: 600; }
-            .alert-tag { 
-                position: absolute; top: -15px; left: 50%; transform: translateX(-50%);
-                background: #c62828; color: #fff; padding: 5px 20px; border-radius: 20px;
-                font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px;
-            }
-
-            /* --- SIDEBAR FIXA E COMPACTA --- */
+            /* SIDEBAR FIXA */
             #sidebar {
                 position: fixed !important;
-                top: 0;
-                left: 0;
+                top: 0; left: 0;
                 height: 100vh !important;
-                width: 18em !important; /* Largura reduzida para ser mais elegante */
+                width: 18em !important;
                 overflow: hidden !important;
                 z-index: 10000;
                 background: #fff;
-                border-right: 1px solid #f0f0f0 !important;
+                border-right: 1px solid #f2f2f2 !important;
+            }
+            #wrapper { padding-left: 18em !important; }
+
+            /* CABEÇALHOS CINZENTOS */
+            .category-label { 
+                font-size: 0.65em; font-weight: 900; text-transform: uppercase; 
+                letter-spacing: 3px; color: #bbb; margin-bottom: 10px; display: block; 
             }
 
-            #sidebar > .inner {
-                height: 100% !important;
-                overflow-y: auto !important; /* Permite scroll interno apenas se os itens não couberem */
-                scrollbar-width: none; /* Esconde a barra no Firefox */
+            /* HERO SECTION */
+            .hero { text-align: center; margin-bottom: 6em; max-width: 900px; margin-left: auto; margin-right: auto; }
+            .hero h1 { font-size: 4.5em; font-weight: 300; color: #1a1a1a; letter-spacing: -3px; line-height: 1; margin-bottom: 0.5em; }
+            .hero p { font-size: 1.4em; color: #888; font-style: italic; line-height: 1.6; }
+
+            /* IMAGEM IMPACTO */
+            .main-image-container { 
+                width: 100%; max-height: 550px; border-radius: 60px; overflow: hidden; 
+                box-shadow: 0 30px 60px rgba(0,0,0,0.08); margin-bottom: 6em;
             }
+            .main-image-container img { width: 100%; height: 100%; object-fit: cover; }
 
-            #sidebar > .inner::-webkit-scrollbar { display: none; } /* Esconde a barra no Chrome/Safari */
+            /* MENSAGEM DE ALERTA (O PROBLEMA) */
+            .problem-section { margin-bottom: 8em; }
+            .problem-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; }
+            .problem-card { background: #fff; padding: 3em; border-radius: 40px; border: 1px solid #f8f8f8; box-shadow: 0 10px 30px rgba(0,0,0,0.02); }
+            .problem-card h3 { font-size: 1.1em; font-weight: 800; color: #1a1a1a; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1.2em; display: flex; align-items: center; gap: 15px; }
+            .problem-card h3 i { color: #c62828; }
+            .problem-card p { font-size: 0.95em; color: #666; line-height: 1.7; text-align: justify; }
 
-            #wrapper {
-                padding-left: 18em !important; /* Ajuste para o conteúdo não ficar por baixo da sidebar */
+            /* CTA SECTION */
+            .cta-box { 
+                background: #1b5e20; border-radius: 50px; padding: 5em; text-align: center; color: #fff; 
+                margin-bottom: 6em; position: relative; overflow: hidden;
             }
+            .cta-box h2 { color: #fff !important; font-size: 2.8em; font-weight: 300; margin-bottom: 0.5em; }
+            .cta-box p { opacity: 0.8; font-size: 1.1em; margin-bottom: 2.5em; }
+            .btn-sync { 
+                background: #fff; color: #1b5e20 !important; border: none; padding: 18px 45px; 
+                border-radius: 50px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; 
+                cursor: pointer; transition: all 0.3s ease; 
+            }
+            .btn-sync:hover { transform: scale(1.05); box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
 
-            /* Ajuste para tablets e telemóveis */
+            /* RODAPÉ */
+            .page-footer { padding: 4em 0 2em 0; border-top: 1px solid #f2f2f2; }
+
             @media screen and (max-width: 1280px) {
-                #sidebar {
-                    position: relative !important;
-                    width: 100% !important;
-                    height: auto !important;
-                    overflow: visible !important;
-                }
+                #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
                 #wrapper { padding-left: 0 !important; }
+                .hero h1 { font-size: 3em; }
             }
-
-            /* --- REMOVER LINHAS CINZENTAS DO MENU --- */
-            #menu ul, 
-            #menu li, 
-            #menu a, 
-            #menu .opener {
-                border: none !important;
-                border-top: none !important;
-                border-bottom: none !important;
-                box-shadow: none !important;
-            }
-
-            /* Ajuste de espaçamento para compensar a falta de linhas */
-            .menu-group {
-                margin-bottom: 2.5em !important;
-            }
-
-            .sub-list-force li {
-                margin: 2px 0 !important; /* Aproxima os sub-itens para um look mais denso */
-            }
-
-            /* CALL TO ACTION */
-            .cta-section { 
-                background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%); 
-                border-radius: 50px; padding: 5em; text-align: center; color: #fff;
-            }
-            .cta-section h2 { color: #fff !important; font-size: 2.5em; font-weight: 300; }
-            .cta-section .button.white { background: #fff; color: #1b5e20 !important; border: none; font-weight: 800; border-radius: 50px; padding: 0 40px; height: 3.5em; line-height: 3.5em; }
-
-			.footer-signature-right { text-align: right; padding: 4em 2em 2em 0; opacity: 0.8; }
 		</style>
 	</head>
 	<body class="is-preload">
@@ -122,67 +83,59 @@
 					
                     <!-- HERO -->
                     <section class="hero">
-                        <div class="month-indicator" style="font-size: 0.7em; letter-spacing: 4px; color: #2e7d32; text-transform: uppercase; font-weight: 800; margin-bottom: 1em; opacity: 0.6;">Manifesto bioCultura</div>
+                        <span class="category-label">bioCultura Global</span>
                         <h1>A Vida não se divide.</h1>
-                        <p>Onde a tecnologia e a natureza respiram em uníssono, fechando o ciclo da regeneração ética.</p>
+                        <p>Onde a tecnologia e a natureza respiram em uníssono para regenerar o que é de todos.</p>
                     </section>
 
-                    <!-- IMAGEM IMPACTO -->
+                    <!-- IMAGEM DE IMPACTO -->
                     <div class="main-image-container">
-                        <img src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?q=80&w=2000&auto=format&fit=crop" alt="Natureza e Preservação" />
+                        <img src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?q=80&w=2000&auto=format&fit=crop" alt="Regeneração Planetária" />
                     </div>
 
-                    <!-- PILARES DA MISSÃO -->
-                    <div class="mission-grid">
-                        <div class="pillar">
-                            <i class="fas fa-ban"></i>
-                            <h3>Zero Pesticidas</h3>
-                            <p>Promovemos tratamentos biológicos e a saúde do solo. Alimento limpo é um direito, não um luxo. Acabar com a química é devolver a vida à terra.</p>
+                    <!-- OS PROBLEMAS DA ACTUALIDADE -->
+                    <section class="problem-section">
+                        <div style="text-align: center; margin-bottom: 4em;">
+                            <h2 style="font-size: 2.2em; font-weight: 300; color: #1a1a1a;">O que estamos a enfrentar?</h2>
+                            <p style="color: #999;">A falsa sustentabilidade está a mascarar a destruição silenciosa dos nossos recursos.</p>
                         </div>
-                        <div class="pillar">
-                            <i class="fas fa-frog"></i>
-                            <h3>Biodiversidade</h3>
-                            <p>Preservar a fauna e flora local é proteger a nossa própria sobrevivência. Monitorizamos espécies para garantir que o equilíbrio não se quebra.</p>
-                        </div>
-                        <div class="pillar">
-                            <i class="fas fa-tint"></i>
-                            <h3>Recursos Vitais</h3>
-                            <p>Água pura e ar limpo. Reduzimos a pegada carbónica através de dados precisos, incentivando a poupança e a fitodepuração.</p>
-                        </div>
-                        <div class="pillar">
-                            <i class="fas fa-bolt"></i>
-                            <h3>Energia Ética</h3>
-                            <p>A transição energética não pode destruir ecossistemas. Defendemos soluções renováveis que respeitem o território e as comunidades.</p>
-                        </div>
-                    </div>
 
-                    <!-- ALERTA MINERAÇÃO -->
-                    <div class="alert-box">
-                        <div class="alert-tag">Alerta Crítico</div>
-                        <h2>A Ameaça sob os nossos pés.</h2>
-                        <p>A mineração de lítio e outros minérios nocivos em áreas sensíveis é uma agressão direta à nossa biodiversidade. A bioCultura monitoriza zonas de prospeção para alertar e proteger o que é de todos.</p>
-                        <i class="fas fa-exclamation-triangle" style="color: #c62828; font-size: 1.5em;"></i>
-                    </div>
-
-                    <!-- CTA FINAL -->
-                    <div class="cta-section">
-                        <h2>Pronto para conhecer a sua região?</h2>
-                        <p style="margin-bottom: 2.5em; opacity: 0.9;">Aceda a dados em tempo real sobre o solo, ar e água da sua localidade.</p>
-                        <button onclick="detectLocation()" class="button white large">Sincronizar Localização</button>
-                    </div>
-
-					<div class="footer-signature-right">
-						<a href="/index.html" style="border: none; display: inline-block; text-decoration: none;">
-							<div style="font-family: 'Source Sans Pro', sans-serif; font-size: 1.4em; line-height: 1; display: flex; align-items: flex-end; justify-content: flex-end;">
-                                <b style="font-weight: 700; color: #2e7d32; margin-right: -3px; position: relative; z-index: 2;">b</b>
-                                <div style="width: 32px; margin: 0 -7px; position: relative; line-height: 0; transform: translateY(4px); z-index: 1;">
-                                    <svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: auto;"><path d="M-20 110 Q50 102 120 110" stroke="#634832" stroke-width="4" fill="none" opacity="0.3" /><path d="M50 110 C50 80 35 70 50 45 C65 70 50 80 50 110" fill="#2e7d32" /><path d="M50 80 C75 75 85 50 65 40 C50 55 50 65 50 80" fill="#4CAF50" /></svg>
-                                </div>
-                                <b style="font-weight: 700; color: #2e7d32; margin-left: -3px; position: relative; z-index: 2;">o</b>
-                                <span style="font-weight: 300; color: #444; margin-left: 2px;">Cultura</span>
+                        <div class="problem-grid">
+                            <div class="problem-card">
+                                <h3><i class="fas fa-vial"></i> Dependência Química</h3>
+                                <p>O uso sistemático de pesticidas e herbicidas não só contamina os alimentos, como aniquila a microbiota do solo. Um solo morto não sequestra carbono e exige cada vez mais química, num ciclo vicioso que a bioCultura pretende quebrar através de tratamentos biológicos e regeneração pedológica.</p>
                             </div>
-						</a>
-					</div>
+                            <div class="problem-card">
+                                <h3><i class="fas fa-exclamation-triangle"></i> O Mito das Baterias</h3>
+                                <p>A transição energética atual foca-se na redução de CO2 nas cidades, mas ignora a destruição de ecossistemas remotos. A extração de Lítio e Silício consome milhões de litros de água, baixa o nível dos aquíferos e ameaça a biodiversidade local. É uma troca ética que raramente é discutida.</p>
+                            </div>
+                            <div class="problem-card">
+                                <h3><i class="fas fa-tint-slash"></i> Escassez Silenciosa</h3>
+                                <p>A água é o sangue da terra, mas os nossos aquíferos estão a ser drenados e contaminados a um ritmo insustentável. A falta de dados locais precisos impede uma gestão ética. Monitorizar a qualidade e a reserva hídrica da sua região é o primeiro passo para a autonomia.</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- CALL TO ACTION -->
+                    <div class="cta-box">
+                        <h2>Conheça o seu território.</h2>
+                        <p>Não tome decisões baseadas em dados globais. Aceda à inteligência específica da sua localidade.</p>
+                        <button onclick="detectLocation()" class="btn-sync">Sincronizar Localização</button>
+                    </div>
+
+                    <!-- FOOTER COM LOGÓTIPO -->
+                    <footer class="page-footer">
+                        <div style="display: flex; align-items: center; justify-content: flex-end; gap: 10px; opacity: 0.3;">
+                            <div style="text-align: right; line-height: 1;">
+                                <span style="display: block; font-size: 0.9em; font-weight: 900; color: #333;">bioCultura</span>
+                                <span style="display: block; font-size: 0.5em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Global Regeneration</span>
+                            </div>
+                            <svg width="25" height="25" viewBox="0 0 100 100">
+                                <path d="M50 5 L89 27.5 L89 72.5 L50 95 L11 72.5 L11 27.5 Z" fill="#333" />
+                                <path d="M50 20 C50 20 75 45 75 70 C75 85 65 85 50 85 C35 85 25 85 25 70 C25 45 50 20 50 20Z" fill="#fff" />
+                            </svg>
+                        </div>
+                    </footer>
 				</div>
             </div>
 			<div id="sidebar"></div>
@@ -190,7 +143,6 @@
 
 		<script src="/assets/js/jquery.min.js"></script>
         <script>
-            // Função para o botão de sincronizar (igual à da sidebar)
             function detectLocation() {
                 if (!navigator.geolocation) return;
                 navigator.geolocation.getCurrentPosition((pos) => {
