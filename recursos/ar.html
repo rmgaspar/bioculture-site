@@ -34,7 +34,7 @@
             .status-warn { border-color: #ffd54f !important; color: #f57f17 !important; }
             .status-danger { border-color: #ef5350 !important; color: #c62828 !important; }
 
-            /* ALERTAS DE IMPACTO (PROBLEMAS) */
+            /* ALERTAS DE IMPACTO */
             .alert-card { background: #fff5f5; border-left: 6px solid #c62828; padding: 2em; border-radius: 0 25px 25px 0; margin-bottom: 2em; }
             .alert-card h5 { color: #c62828; text-transform: uppercase; font-size: 0.7em; letter-spacing: 1px; margin-bottom: 8px; font-weight: 900; }
             .alert-card p { color: #7f1d1d; font-size: 0.9em; margin: 0; line-height: 1.5; font-weight: 600; }
@@ -44,8 +44,7 @@
             .tech-item h5 { font-size: 0.65em; font-weight: 900; text-transform: uppercase; color: #bbb; margin-bottom: 5px; }
             .tech-item p { font-size: 0.85em; margin: 0; line-height: 1.5; color: #444; }
 
-            /* RODAPÉ DA PÁGINA */
-            .page-footer { margin-top: auto; padding: 2em 0; border-top: 1px solid #f2f2f2; }
+            .page-footer { margin-top: auto; padding: 4em 0 2em 0; border-top: 1px solid #f2f2f2; }
 
             @media screen and (max-width: 1280px) {
                 #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
@@ -91,7 +90,6 @@
                             <div class="data-card">
                                 <h4 class="card-title">Radar de Impacto</h4>
                                 
-                                <!-- ALERTA DE PROBLEMAS -->
                                 <div id="air-impact-alert" class="alert-card" style="display:none;">
                                     <h5>Alerta de Emissões</h5>
                                     <p id="air-impact-text"></p>
@@ -107,11 +105,10 @@
 
                                 <div class="tech-info" style="background: #f4f7fb; margin-top: 15px;">
                                     <div class="tech-item">
-                                        <h5>Horas de Sol / Ano</h5>
+                                        <h5>Exposição Solar Anual</h5>
                                         <p id="val-sun-hours" style="font-size: 1.1em; font-weight: 700; color: #0277bd;"></p>
                                     </div>
                                 </div>
-
                             </div>
                         </div>
 
@@ -120,7 +117,7 @@
                         </div>
 
                         <!-- FOOTER -->
-                        <div class="page-footer">
+                        <footer class="page-footer">
                             <div style="display: flex; align-items: center; justify-content: flex-end; gap: 10px; opacity: 0.3;">
                                 <div style="text-align: right; line-height: 1;">
                                     <span style="display: block; font-size: 0.85em; font-weight: 900; color: #333;">bioCultura</span>
@@ -131,7 +128,7 @@
                                     <path d="M50 20 C50 20 75 45 75 70 C75 85 65 85 50 85 C35 85 25 85 25 70 C25 45 50 20 50 20Z" fill="#fff" />
                                 </svg>
                             </div>
-                        </div>
+                        </footer>
 					</section>
 				</div>
             </div>
@@ -157,37 +154,41 @@
                     
                     if (regionParam) {
                         const info = data.find(item => item.id === regionParam);
-                        if (info) { sessionStorage.setItem('biocultura_exploration_id', info.id); renderAirDashboard(info); return; }
+                        if (info) {
+                            sessionStorage.setItem('biocultura_exploration_id', info.id);
+                            renderAirDashboard(info);
+                            return;
+                        }
                     }
+
                     const explorationId = sessionStorage.getItem('biocultura_exploration_id');
                     if (explorationId) {
                         const info = data.find(item => item.id === explorationId);
                         if (info) { renderAirDashboard(info); return; }
                     }
+
                     const savedRegionId = localStorage.getItem('biocultura_region');
                     let info = data.find(item => item.id === savedRegionId);
-                    if (info) { renderAirDashboard(info); } 
-                    else if (navigator.geolocation) {
+
+                    if (info) {
+                        renderAirDashboard(info);
+                    } else if (navigator.geolocation) {
                         navigator.geolocation.getCurrentPosition(pos => {
                             let minD = Infinity; let closest = null;
-                            data.forEach(c => { if(c.lat && c.lon) { let d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon); if(d < minD) { minD = d; closest = c; } } });
-                            if(closest) { localStorage.setItem('biocultura_region', closest.id); renderAirDashboard(closest); }
+                            data.forEach(c => {
+                                if(c.lat && c.lon) {
+                                    let d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon);
+                                    if(d < minD) { minD = d; closest = c; }
+                                }
+                            });
+                            if(closest) {
+                                localStorage.setItem('biocultura_region', closest.id);
+                                renderAirDashboard(closest);
+                            }
                         });
                     }
-                } catch(e) { console.error(e); }
+                } catch(e) { console.error("Erro:", e); }
             }
-            // ... manter a função renderAirDashboard que já tens ...
-        </script>
-
-
-            // ... (Mantém a tua função renderAirDashboard igual) ...
-
-            fetch('/sidebar-content.html').then(r => r.text()).then(html => {
-                document.getElementById('sidebar').innerHTML = html;
-                var s = document.createElement('script'); s.src = '/assets/js/main.js'; document.body.appendChild(s);
-                inicializarPagina();
-            });
-        </script>
 
             function renderAirDashboard(info) {
                 if(!info) return;
@@ -196,51 +197,43 @@
                 document.getElementById('reg-name').innerText = info.titulo;
 
                 if (info.atmosfera) {
-                    // 1. Qualidade do Ar
                     const arStatus = info.atmosfera.qualidade_ar || "Moderada";
                     const arCont = document.getElementById('container-ar');
                     document.getElementById('val-ar').innerText = arStatus;
                     arCont.className = 'metric';
                     if (arStatus.includes("Excelente") || arStatus.includes("Muito Boa")) arCont.classList.add('status-excellent');
                     else if (arStatus.includes("Boa")) arCont.classList.add('status-good');
-                    else if (arStatus.includes("Moderada")) arCont.classList.add('status-warn');
-                    else arCont.classList.add('status-danger');
+                    else arCont.classList.add('status-warn');
 
-                    // 2. Vento
                     const vento = parseFloat(info.atmosfera.vento_medio_ms) || 0;
                     document.getElementById('val-vento').innerText = vento + " m/s";
                     const ventoCont = document.getElementById('container-vento');
                     ventoCont.className = 'metric';
                     if(vento > 5) ventoCont.classList.add('status-good');
 
-                    // 3. Lógica Técnica e Ameaças
                     const impactAlert = document.getElementById('air-impact-alert');
                     const impactText = document.getElementById('air-impact-text');
-                    
                     let health = ""; let wind = "";
                     
                     if(arStatus.includes("Excelente")) {
                         health = "Ar de elevada pureza. Ideal para a oxigenação profunda e regeneração celular.";
                         impactAlert.style.display = 'none';
                     } else {
-                        health = "Qualidade urbana. Recomendamos o uso de barreiras vegetais (flora autóctone) para filtrar micropartículas.";
+                        health = "Qualidade urbana. Recomendamos o uso de barreiras vegetais nativas para filtrar micropartículas.";
                         impactAlert.style.display = 'block';
-                        impactText.innerText = "A concentração de poluentes (PM10/NO2) nesta zona exige monitorização. Evite a exposição em horas de tráfego intenso.";
+                        impactText.innerText = "A concentração de poluentes exige monitorização. Evite a exposição prolongada em horas de pico.";
                     }
 
-                    // Caso específico Sines ou áreas industriais
                     if(info.id === "sines" || info.id === "estarreja" || info.id === "matosinhos") {
                         impactAlert.style.display = 'block';
-                        impactText.innerText = "Zona de forte pressão industrial. As emissões de SO2 e NOx podem comprometer a saúde respiratória e a biodiversidade envolvente.";
+                        impactText.innerText = "Zona de forte pressão industrial. As emissões podem comprometer a saúde e a biodiversidade local.";
                     }
 
-                    if(vento > 4.5) wind = "Potencial eólico elevado: Viabilidade para micro-geração doméstica e autonomia energética.";
-                    else wind = "Ventos estáveis: Ideal para sistemas de ventilação passiva e polinização natural.";
+                    if(vento > 4.5) wind = "Potencial eólico elevado: Viabilidade para micro-geração doméstica e autonomia.";
+                    else wind = "Ventos estáveis: Ideal para sistemas de ventilação passiva.";
                     
                     document.getElementById('air-health-note').innerText = health;
                     document.getElementById('wind-potential').innerText = wind;
-
-                    // 4. Clima e Sol
                     document.getElementById('val-anomaly').innerText = info.atmosfera.anomalia_pre_industrial || "+0.0°C";
                     document.getElementById('val-sun-hours').innerText = (info.atmosfera.sol_h_anual || "---") + " h";
                 }
