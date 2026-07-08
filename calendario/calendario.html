@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<title>bioCultura - Calendário Hortícola & Lunar</title>
+		<title>bioCultura - Calendário Hortícola & Tratamentos Bio</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
@@ -18,7 +18,7 @@
                 display: inline-block; background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%); color: #fff; 
                 padding: 12px 35px; border-radius: 50px; font-weight: 800; 
                 text-transform: uppercase; letter-spacing: 3px; font-size: 0.9em;
-                margin-bottom: 1.5em; box-shadow: 0 10px 25px rgba(46, 125, 50, 0.2);
+                margin-bottom: 1.5em; box-shadow: 0 10px 25px rgba(46, 125, 50, 0.1);
             }
 
             /* INFO ROW */
@@ -31,39 +31,23 @@
             .info-card .val { font-size: 1em; color: #333; font-weight: 700; }
 
             /* TASKS GRID */
-            .tasks-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; margin-bottom: 4em; }
-            
+            .tasks-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; margin-bottom: 3em; }
             .task-card { 
-                background: #fff; border-radius: 35px; padding: 2.5em; 
-                border: 1px solid #f2f2f2; box-shadow: 0 15px 45px rgba(0,0,0,0.02);
-                transition: all 0.4s ease;
-                position: relative; overflow: hidden; /* Importante para a imagem de fundo */
-                border-top: 8px solid #eee;
+                background: #fff; border-radius: 30px; padding: 2.2em; 
+                border: 1px solid #f2f2f2; box-shadow: 0 10px 30px rgba(0,0,0,0.02);
+                transition: all 0.3s ease; border-top: 8px solid #eee;
             }
-            .task-card:hover { transform: translateY(-8px); box-shadow: 0 25px 50px rgba(0,0,0,0.06); }
+            .task-card:hover { transform: translateY(-5px); box-shadow: 0 15px 40px rgba(0,0,0,0.05); }
+            .task-card i { font-size: 1.8em; margin-bottom: 15px; display: block; }
+            .task-card h4 { font-size: 0.75em; text-transform: uppercase; letter-spacing: 1.5px; color: #999; margin-bottom: 15px; font-weight: 800; }
+            .task-text { font-size: 1em; color: #333; line-height: 1.6; font-weight: 600; margin-bottom: 15px; }
+            .smart-hint { font-size: 0.8em; background: rgba(0,0,0,0.02); padding: 15px; border-radius: 15px; color: #666; border-left: 3px solid #ddd; font-style: italic; }
 
-            /* IMAGEM ILUSTRATIVA EM MARCA D'ÁGUA */
-            .task-illustration {
-                position: absolute;
-                right: -10px;
-                top: -10px;
-                width: 120px;
-                height: 120px;
-                opacity: 0.08; /* Muito suave para não distrair */
-                pointer-events: none;
-                filter: grayscale(100%);
-                transition: all 0.4s ease;
-            }
-            .task-card:hover .task-illustration { opacity: 0.15; transform: scale(1.1) rotate(-5deg); filter: grayscale(0%); }
-
-            .task-card i { font-size: 1.8em; margin-bottom: 15px; display: block; position: relative; z-index: 2; }
-            .task-card h4 { font-size: 0.75em; text-transform: uppercase; letter-spacing: 1.5px; color: #999; margin-bottom: 15px; font-weight: 800; position: relative; z-index: 2; }
-            .task-text { font-size: 1em; color: #333; line-height: 1.6; font-weight: 600; margin-bottom: 15px; position: relative; z-index: 2; }
-            
-            .smart-hint { 
-                font-size: 0.8em; background: rgba(0,0,0,0.02); padding: 15px; border-radius: 15px; 
-                color: #666; border-left: 3px solid #ddd; font-style: italic; position: relative; z-index: 2;
-            }
+            /* SECÇÃO TRATAMENTOS BIO */
+            .bio-lab { background: #f1f8e9; border-radius: 35px; padding: 3em; margin-bottom: 4em; border: 1px solid #dcedc8; }
+            .bio-lab h3 { color: #33691e; display: flex; align-items: center; gap: 15px; font-size: 1.5em; }
+            .treatment-card { background: #fff; border-radius: 20px; padding: 1.5em; margin-top: 1.5em; border: 1px solid #e0eadd; }
+            .treatment-name { color: #558b2f; font-weight: 800; text-transform: uppercase; font-size: 0.8em; letter-spacing: 1px; display: block; margin-bottom: 5px; }
 
             /* CORES POR CATEGORIA */
             .card-pomar { border-top-color: #ff9800 !important; } .card-pomar i { color: #ff9800; }
@@ -99,44 +83,23 @@
                             </div>
                         </div>
 
-                        <!-- TAREFAS COM ILUSTRAÇÕES -->
+                        <!-- TAREFAS -->
                         <div class="tasks-grid" id="tasks-container" style="display:none;">
-                            
-                            <div class="task-card card-pomar">
-                                <img src="https://images.unsplash.com/photo-1615485290382-441e4d049cb5?q=80&w=200&auto=format&fit=crop" class="task-illustration">
-                                <i class="fas fa-apple-alt"></i><h4>Pomar</h4>
-                                <p class="task-text" id="task-pomar">--</p>
-                                <div class="smart-hint" id="hint-pomar"></div>
-                            </div>
+                            <div class="task-card card-pomar"><i class="fas fa-apple-alt"></i><h4>Pomar</h4><p class="task-text" id="task-pomar">--</p><div class="smart-hint" id="hint-pomar"></div></div>
+                            <div class="task-card card-vinha"><i class="fas fa-wine-glass-alt"></i><h4>Vinha</h4><p class="task-text" id="task-vinha">--</p><div class="smart-hint" id="hint-vinha"></div></div>
+                            <div class="task-card card-jardim"><i class="fas fa-spa"></i><h4>Jardim</h4><p class="task-text" id="task-jardim">--</p><div class="smart-hint" id="hint-jardim"></div></div>
+                            <div class="task-card card-adega"><i class="fas fa-dungeon"></i><h4>Adega</h4><p class="task-text" id="task-adega">--</p><div class="smart-hint" id="hint-adega"></div></div>
+                            <div class="task-card card-sementeiras"><i class="fas fa-seedling"></i><h4>Sementeiras</h4><p class="task-text" id="task-sementeiras">--</p><div class="smart-hint" id="hint-sementeiras"></div></div>
+                        </div>
 
-                            <div class="task-card card-vinha">
-                                <img src="https://images.unsplash.com/photo-1506377295352-e3154d43ea9e?q=80&w=200&auto=format&fit=crop" class="task-illustration">
-                                <i class="fas fa-wine-glass-alt"></i><h4>Vinha</h4>
-                                <p class="task-text" id="task-vinha">--</p>
-                                <div class="smart-hint" id="hint-vinha"></div>
+                        <!-- LABORATÓRIO BIO (TRATAMENTOS NATURAIS) -->
+                        <div class="bio-lab" id="bio-lab" style="display:none;">
+                            <h3><i class="fas fa-flask"></i> Laboratório Bio: Alternativas Éticas</h3>
+                            <p style="font-size: 0.9em; color: #555;">Substitua os pesticidas químicos por soluções vivas e seguras para a sua família e para o solo.</p>
+                            <div class="treatment-card">
+                                <span class="treatment-name" id="treatment-title">A carregar tratamento...</span>
+                                <p id="treatment-desc" style="font-size: 0.95em; color: #444; margin: 0; line-height: 1.5;"></p>
                             </div>
-
-                            <div class="task-card card-jardim">
-                                <img src="https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?q=80&w=200&auto=format&fit=crop" class="task-illustration">
-                                <i class="fas fa-spa"></i><h4>Jardim</h4>
-                                <p class="task-text" id="task-jardim">--</p>
-                                <div class="smart-hint" id="hint-jardim"></div>
-                            </div>
-
-                            <div class="task-card card-adega">
-                                <img src="https://images.unsplash.com/photo-1516594915697-87eb3b1c14ea?q=80&w=200&auto=format&fit=crop" class="task-illustration">
-                                <i class="fas fa-dungeon"></i><h4>Adega</h4>
-                                <p class="task-text" id="task-adega">--</p>
-                                <div class="smart-hint" id="hint-adega"></div>
-                            </div>
-
-                            <div class="task-card card-sementeiras">
-                                <img src="https://images.unsplash.com/photo-1592419044706-39796d40f98c?q=80&w=200&auto=format&fit=crop" class="task-illustration">
-                                <i class="fas fa-seedling"></i><h4>Sementeiras</h4>
-                                <p class="task-text" id="task-sementeiras">--</p>
-                                <div class="smart-hint" id="hint-sementeiras"></div>
-                            </div>
-
                         </div>
 
                         <div id="no-gps-warning" style="text-align: center; padding: 4em; background: #f4f7fb; border-radius: 40px; margin-bottom: 4em;">
@@ -171,6 +134,7 @@
 
             document.getElementById('display-month').innerText = mesesFull[mesIndex];
 
+            // 1. Lógica Lunar
             function getLunarPhase() {
                 const lp = 2551443; 
                 const new_moon = new Date(1970, 0, 7, 20, 35, 0);
@@ -185,6 +149,17 @@
             document.getElementById('lunar-phase-name').innerText = moon.name;
             document.getElementById('lunar-tip').innerText = moon.tip;
 
+            // 2. Base de Dados de Tratamentos Bio
+            function getBioTreatment(mes) {
+                const library = {
+                    "jul": { title: "Infusão de Alho (Repelente)", desc: "Eficaz contra afídeos e ácaros no pomar. Ferva 5 dentes de alho em 1L de água, deixe repousar 24h e pulverize as folhas ao entardecer." },
+                    "ago": { title: "Sabão de Potássio", desc: "Ideal para limpar a melada deixada pela mosca branca. Misture 20g de sabão neutro em 1L de água morna e aplique nas zonas afetadas." },
+                    "set": { title: "Bicarbonato de Sódio (Fungicida)", desc: "Proteja as suas roseiras e vinha do Oídio. Misture 1 colher de chá em 1L de água com um fio de azeite e borrife preventivamente." },
+                    "out": { title: "Chorume de Urtiga", desc: "Excelente fertilizante e preventivo de pragas. Deixe urtigas em água 15 dias, dilua (1:10) e regue a base das plantas para fortalecer antes do inverno." }
+                };
+                return library[mes] || { title: "Calda Bordalesa (Inverno)", desc: "Tratamento clássico à base de cobre para proteger árvores de fruto contra fungos durante o repouso vegetativo." };
+            }
+
             function getSmartHints(mes, solo) {
                 const hints = {
                     "jul": {
@@ -192,26 +167,17 @@
                         "jardim": "Stress Hídrico: Regue ao amanhecer. Use 'Mulching' para manter a frescura.",
                         "vinha": "Poda em Verde: Remova rebentos ladrões para fortalecer os cachos.",
                         "sementeiras": "Resistência: Semeie Couves e Alfaces resistentes ao calor."
-                    },
-                    "ago": {
-                        "pomar": "Época das Peras e Figos. Prepare a colheita de Amêndoa.",
-                        "jardim": "Recolha sementes de flores secas. Pode as sebes.",
-                        "vinha": "Maturação: Evite regas excessivas para concentrar o açúcar.",
-                        "sementeiras": "Morangueiros: Altura ideal para plantar novas mudas."
                     }
                 };
                 let soilHint = "";
                 if(solo.includes("Arenoso")) soilHint = "Solo Arenoso: Regas curtas mas mais frequentes.";
                 if(solo.includes("Argiloso")) soilHint = "Solo Argiloso: Evite encharcar no calor para não asfixiar as raízes.";
-                if(solo.includes("Granítico")) soilHint = "Solo Ácido: Bom momento para reforçar a matéria orgânica.";
-
                 return { tasks: hints[mes] || {}, soil: soilHint };
             }
 
             async function inicializarPagina() {
                 const savedRegionId = localStorage.getItem('biocultura_region');
                 const cachedData = sessionStorage.getItem('biocultura_data_cache');
-
                 if (cachedData && JSON.parse(cachedData).id === savedRegionId) {
                     renderCalendar(JSON.parse(cachedData));
                 } else {
@@ -228,11 +194,16 @@
                 document.getElementById('no-gps-warning').style.display = 'none';
                 document.getElementById('tasks-container').style.display = 'grid';
                 document.getElementById('soil-card').style.display = 'flex';
+                document.getElementById('bio-lab').style.display = 'block';
                 document.getElementById('reg-name').innerText = info.titulo;
                 const soloDetectado = info.biomas?.solo || "N/A";
                 document.getElementById('soil-type').innerText = soloDetectado;
 
                 const hints = getSmartHints(mesKey, soloDetectado);
+                const treatment = getBioTreatment(mesKey);
+
+                document.getElementById('treatment-title').innerText = treatment.title;
+                document.getElementById('treatment-desc').innerText = treatment.desc;
 
                 if (info.calendario) {
                     document.getElementById('task-pomar').innerText = info.calendario.pomar[mesKey] || "Manutenção.";
@@ -244,7 +215,7 @@
                     document.getElementById('task-adega').innerText = info.calendario.adega[mesKey] || "Preparação.";
                     document.getElementById('hint-adega').innerText = "Dica: Higienize bem as cubas.";
                     document.getElementById('task-sementeiras').innerText = info.calendario.sementeiras[mesKey] || "Semear da época.";
-                    document.getElementById('hint-sementeiras').innerText = hints.soil;
+                    document.getElementById('hint-sementeiras').innerText = hints.soil || "Mantenha a humidade.";
                 }
             }
 
