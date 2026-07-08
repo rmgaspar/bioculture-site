@@ -1,199 +1,132 @@
-<!DOCTYPE HTML>
-<html>
-	<head>
-		<title>bioCultura - Observatório da Água</title>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-		<link rel="stylesheet" href="/assets/css/main.css" />
-		<style>
-            /* --- ESTRUTURA GLOBAL & TIPOGRAFIA --- */
-            body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
+<script>
+    // 1. Função Haversine para encontrar o concelho mais próximo via GPS
+    function calcularDistancia(lat1, lon1, lat2, lon2) {
+        const R = 6371;
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLon = (lon2 - lon1) * Math.PI / 180;
+        const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                  Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+                  Math.sin(dLon/2) * Math.sin(dLon/2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        return R * c;
+    }
+
+    // 2. Inicialização Inteligente (URL -> LocalStorage -> GPS)
+    async function inicializarPagina() {
+        try {
+            const response = await fetch('/data/bioregioes.json');
+            const data = await response.json();
+
+            // Verificar se existe parâmetro na URL (ex: ?region=boticas)
+            const urlParams = new URLSearchParams(window.location.search);
+            const regionParam = urlParams.get('region');
             
-			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
-            section { padding-top: 4em !important; }
+            // Definir o ID a carregar (Prioridade: URL > LocalStorage)
+            const targetId = regionParam || localStorage.getItem('biocultura_region');
+            let info = data.find(item => item.id === targetId);
 
-            /* SIDEBAR FIXA */
-            #sidebar {
-                position: fixed !important;
-                top: 0; left: 0;
-                height: 100vh !important;
-                width: 18em !important;
-                overflow: hidden !important;
-                z-index: 10000;
-                background: #fff;
-                border-right: 1px solid #f2f2f2 !important;
+            if (regionParam && info) {
+                // Se veio por link, atualizamos o sistema para esta nova região
+                localStorage.setItem('biocultura_region', info.id);
+                sessionStorage.removeItem('biocultura_data_cache');
+                renderWaterDashboard(info);
+            } else if (info) {
+                // Se já existia no sistema, carrega normalmente
+                renderWaterDashboard(info);
+            } else if (navigator.geolocation) {
+                // Se não há nada, tenta encontrar o mais próximo via GPS
+                navigator.geolocation.getCurrentPosition(pos => {
+                    let minD = Infinity;
+                    let closest = null;
+                    data.forEach(c => {
+                        if(c.lat && c.lon) {
+                            let d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon);
+                            if(d < minD) { minD = d; closest = c; }
+                        }
+                    });
+                    if(closest) {
+                        localStorage.setItem('biocultura_region', closest.id);
+                        renderWaterDashboard(closest);
+                    }
+                });
             }
-            #wrapper { padding-left: 18em !important; }
+        } catch(e) { console.error("Erro ao processar dados hídricos:", e); }
+    }
 
-            /* CABEÇALHOS CINZENTOS (ESTILO SIDEBAR) */
-            .category-label { 
-                font-size: 0.65em; font-weight: 900; text-transform: uppercase; 
-                letter-spacing: 3px; color: #bbb; margin-bottom: 10px; display: block; 
-            }
-            .card-title { 
-                font-size: 0.7em; font-weight: 900; text-transform: uppercase; 
-                letter-spacing: 2px; color: #bbb; margin-bottom: 2em; text-align: center; 
-            }
+    // 3. Renderização Técnica do Dashboard
+    function renderWaterDashboard(info) {
+        document.getElementById('no-gps-warning').style.display = 'none';
+        document.getElementById('water-dashboard').style.display = 'grid';
+        document.getElementById('reg-name').innerText = info.titulo;
 
-            /* DASHBOARD */
-            .water-dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 30px; margin-bottom: 4em; }
-            .data-card { background: #fff; border-radius: 35px; padding: 3em; box-shadow: 0 15px 45px rgba(0,0,0,0.03); border: 1px solid #f8f8f8; }
+        if (info.recursos_hidricos) {
+            const ph = parseFloat(info.recursos_hidricos.ph_agua);
+            const dur = parseFloat(info.recursos_hidricos.dureza_fr);
             
-            .quality-grid { display: flex; gap: 2em; justify-content: center; align-items: center; margin-bottom: 2em; }
-            .metric { display: flex; flex-direction: column; align-items: center; width: 120px; height: 120px; border-radius: 50%; border: 5px solid #eee; justify-content: center; }
-            .metric-val { font-size: 2.2em; font-weight: 300; color: #222; }
-            .metric-label { font-size: 0.6em; font-weight: 800; text-transform: uppercase; color: #aaa; }
+            // Atualizar Valores e Cores dos Barómetros
+            const phEl = document.getElementById('val-ph');
+            const phCont = phEl.parentElement;
+            phEl.innerText = ph;
+            phCont.className = 'metric';
+            if (ph < 6.5) phCont.classList.add('status-acid');
+            else if (ph <= 8.5) phCont.classList.add('status-neutral');
+            else phCont.classList.add('status-alkaline');
 
-            /* CORES MÉTRICAS */
-            .status-neutral { border-color: #81c784 !important; }
-            .status-soft { border-color: #4fc3f7 !important; }
+            const durEl = document.getElementById('val-dureza');
+            const durCont = durEl.parentElement;
+            durEl.innerText = dur;
+            durCont.className = 'metric';
+            if (dur < 15) durCont.classList.add('status-soft');
+            else if (dur <= 30) durCont.classList.add('status-medium');
+            else durCont.classList.add('status-hard');
 
-            /* INFO TÉCNICA */
-            .tech-info { background: #f9fbf9; padding: 2em; border-radius: 20px; margin-top: 1.5em; }
-            .tech-item { margin-bottom: 1.5em; }
-            .tech-item h5 { font-size: 0.7em; font-weight: 900; text-transform: uppercase; color: #2e7d32; margin-bottom: 5px; }
-            .tech-item p { font-size: 0.9em; margin: 0; line-height: 1.5; color: #666; }
-
-            @media screen and (max-width: 1280px) {
-                #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
-                #wrapper { padding-left: 0 !important; }
+            // Lógica de Vantagens e Utilidade (Baseada no pH)
+            let adv = ""; let soil = "";
+            if(ph < 7) {
+                adv = "Água ligeiramente ácida: Ideal para a absorção de micronutrientes como Ferro e Zinco.";
+                soil = "Evita a alcalinização do solo. Perfeita para culturas como mirtilos, batatas e hortênsias.";
+            } else {
+                adv = "Água equilibrada/alcalina: Rica em carbonatos, excelente para neutralizar solos muito ácidos.";
+                soil = "Benéfica para leguminosas e vinhas. Reduz a necessidade de calagem manual.";
             }
-		</style>
-	</head>
-	<body class="is-preload">
-		<div id="wrapper">
-			<div id="main">
-                <div class="inner">
-					<header id="header" style="height: 0; margin: 0; padding: 0; overflow: hidden;"></header>
-					
-                    <section>
-                        <div style="text-align: center; margin-bottom: 5em;">
-                            <span class="category-label">Recursos Vitais</span>
-                            <h1 style="font-size: 3.5em; font-weight: 300; color: #1a1a1a; letter-spacing: -2px;">Água: O Sangue da Terra</h1>
-                            <p style="font-style: italic; color: #999;">Análise técnica: <strong id="reg-name" style="color:#2e7d32">...</strong></p>
-                        </div>
+            document.getElementById('water-advantages').innerText = adv;
+            document.getElementById('soil-utility').innerText = soil;
 
-                        <div class="water-dashboard" id="water-dashboard" style="display:none;">
-                            
-                            <!-- PERFIL QUÍMICO -->
-                            <div class="data-card">
-                                <h4 class="card-title">Perfil Químico</h4>
-                                <div class="quality-grid">
-                                    <div class="metric status-neutral">
-                                        <span class="metric-val" id="val-ph">--</span>
-                                        <span class="metric-label">pH</span>
-                                    </div>
-                                    <div class="metric status-soft">
-                                        <span class="metric-val" id="val-dureza">--</span>
-                                        <span class="metric-label">ºf</span>
-                                    </div>
-                                </div>
-                                <div class="tech-info">
-                                    <div class="tech-item">
-                                        <h5>Vantagens e Utilidade</h5>
-                                        <p id="water-advantages">A analisar composição para regadio...</p>
-                                    </div>
-                                    <div class="tech-item">
-                                        <h5>Gestão de Solo</h5>
-                                        <p id="soil-utility">--</p>
-                                    </div>
-                                </div>
-                            </div>
+            // Temperatura da Água (Mês Atual)
+            const mes = new Date().getMonth();
+            const temp = info.recursos_hidricos.temp_media_agua ? info.recursos_hidricos.temp_media_agua[mes] : '--';
+            const tempBadge = document.createElement('div');
+            tempBadge.className = 'temp-badge';
+            tempBadge.innerHTML = `<i class="fas fa-thermometer-half"></i> Água hoje: ${temp}ºC`;
+            
+            const noteContainer = document.getElementById('reg-note');
+            noteContainer.innerHTML = '';
+            noteContainer.appendChild(tempBadge);
+            noteContainer.innerHTML += `<br><br><strong>Qualidade:</strong> ${info.recursos_hidricos.qualidade || 'Boa'}. ${info.agua?.nota || ''}`;
+        }
 
-                            <!-- DISPONIBILIDADE E RESERVAS -->
-                            <div class="data-card">
-                                <h4 class="card-title">Disponibilidade e Reservas</h4>
-                                <div class="tech-info" style="background: #f4f7fb;">
-                                    <div class="tech-item">
-                                        <h5>Aquífero Local</h5>
-                                        <p id="reg-aquifer">--</p>
-                                    </div>
-                                    <div class="tech-item">
-                                        <h5>Infraestrutura Hídrica</h5>
-                                        <p id="reg-dams">--</p>
-                                    </div>
-                                    <div id="dam-details" class="tech-item" style="border-top: 1px solid #e1e8ed; padding-top: 1em; margin-top: 1em; display: none;">
-                                        <h5>Capacidade e Potência</h5>
-                                        <p id="val-dam-power" style="font-size: 0.85em;"></p>
-                                    </div>
-                                </div>
-                                <div class="footer-signature-right" style="padding: 2em 0 0 0;">
-                                    <div style="display: flex; align-items: center; justify-content: flex-end; gap: 8px; opacity: 0.4;">
-                                        <span style="font-size: 0.8em; font-weight: 900;">bioCultura</span>
-                                        <svg width="15" height="15" viewBox="0 0 100 100"><path d="M50 5 L89 27.5 L89 72.5 L50 95 L11 72.5 L11 27.5 Z" fill="#333" /><path d="M50 20 C50 20 75 45 75 70 C75 85 65 85 50 85 C35 85 25 85 25 70 C25 45 50 20 50 20Z" fill="#fff" /></svg>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div id="no-gps-warning" style="text-align: center; padding: 4em; background: #f4f7fb; border-radius: 40px;">
-                            <p>Sincronize a sua localização para carregar os dados hídricos.</p>
-                        </div>
-					</section>
-				</div>
-            </div>
-			<div id="sidebar"></div>
-		</div>
-
-		<script src="/assets/js/jquery.min.js"></script>
-        <script>
-            async function inicializarPagina() {
-                const savedRegionId = localStorage.getItem('biocultura_region');
-                const cachedData = sessionStorage.getItem('biocultura_data_cache');
-
-                if (cachedData && JSON.parse(cachedData).id === savedRegionId) {
-                    renderWaterDashboard(JSON.parse(cachedData));
-                } else {
-                    try {
-                        const r = await fetch('/data/bioregioes.json');
-                        const data = await r.json();
-                        let info = data.find(item => item.id === savedRegionId);
-                        if (info) renderWaterDashboard(info);
-                    } catch(e) { console.error(e); }
-                }
+        // 4. Detalhes de Aquíferos e Barragens
+        if (info.agua) {
+            document.getElementById('reg-aquifer').innerText = info.agua.aquiferos || "Informação em levantamento.";
+            
+            const dams = info.agua.barragens_proximas || [];
+            document.getElementById('reg-dams').innerText = dams.length > 0 ? dams.join(', ') : "Sem grandes barragens num raio de 20km.";
+            
+            // Detalhe dinâmico de potência (Exemplo para Castelo de Bode)
+            const damDetails = document.getElementById('dam-details');
+            if(info.titulo.includes("Proença") || info.titulo.includes("Sertã") || info.titulo.includes("Tomar")) {
+                damDetails.style.display = 'block';
+                document.getElementById('val-dam-power').innerHTML = "<strong>Barragem de Castelo de Bode:</strong> 155 MW de potência instalada. Alimenta o sistema de abastecimento de Lisboa e gera energia renovável para a rede nacional.";
+            } else {
+                damDetails.style.display = 'none';
             }
+        }
+    }
 
-            function renderWaterDashboard(info) {
-                document.getElementById('no-gps-warning').style.display = 'none';
-                document.getElementById('water-dashboard').style.display = 'grid';
-                document.getElementById('reg-name').innerText = info.titulo;
-
-                if (info.recursos_hidricos) {
-                    const ph = parseFloat(info.recursos_hidricos.ph_agua);
-                    const dur = parseFloat(info.recursos_hidricos.dureza_fr);
-                    document.getElementById('val-ph').innerText = ph;
-                    document.getElementById('val-dureza').innerText = dur;
-
-                    // Lógica de Vantagens
-                    let adv = ""; let soil = "";
-                    if(ph < 7) {
-                        adv = "Água ligeiramente ácida: Ideal para a absorção de micronutrientes como Ferro e Zinco.";
-                        soil = "Evita a alcalinização do solo. Perfeita para culturas como mirtilos, batatas e hortênsias.";
-                    } else {
-                        adv = "Água equilibrada/alcalina: Rica em carbonatos, excelente para neutralizar solos muito ácidos.";
-                        soil = "Benéfica para leguminosas e vinhas. Reduz a necessidade de calagem manual.";
-                    }
-                    document.getElementById('water-advantages').innerText = adv;
-                    document.getElementById('soil-utility').innerText = soil;
-                }
-
-                if (info.agua) {
-                    document.getElementById('reg-aquifer').innerText = info.agua.aquiferos || "Informação em levantamento.";
-                    document.getElementById('reg-dams').innerText = (info.agua.barragens_proximas || []).join(', ') || "Sem grandes barragens num raio de 20km.";
-                    
-                    // Exemplo de detalhe técnico (pode ser expandido no JSON)
-                    if(info.titulo.includes("Proença")) {
-                        document.getElementById('dam-details').style.display = 'block';
-                        document.getElementById('val-dam-power').innerHTML = "<strong>Castelo de Bode:</strong> 155 MW de potência instalada. Alimenta o sistema de abastecimento de Lisboa e gera energia para a rede nacional.";
-                    }
-                }
-            }
-
-            fetch('/sidebar-content.html').then(r => r.text()).then(html => {
-                document.getElementById('sidebar').innerHTML = html;
-                var s = document.createElement('script'); s.src = '/assets/js/main.js'; document.body.appendChild(s);
-                inicializarPagina();
-            });
-        </script>
-	</body>
-</html>
+    // 5. Carregar Sidebar e Iniciar
+    fetch('/sidebar-content.html').then(r => r.text()).then(html => {
+        document.getElementById('sidebar').innerHTML = html;
+        var s = document.createElement('script'); s.src = '/assets/js/main.js'; document.body.appendChild(s);
+        inicializarPagina();
+    });
+</script>
