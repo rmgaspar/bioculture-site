@@ -145,23 +145,26 @@
 
     // 2. Função Vassoura Total para limpar Porto de Mós e o GPS
     function detectLocation() {
-        if (!navigator.geolocation) {
-            alert("O seu browser não suporta GPS.");
-            return;
-        }
-        
-        document.getElementById('loc-text').innerText = "A restaurar...";
-        
-        // LIMPEZA ABSOLUTA DE MEMÓRIA
-        localStorage.clear(); 
-        sessionStorage.clear();
-
-        navigator.geolocation.getCurrentPosition((pos) => {
-            // REDIRECIONAR PARA A PÁGINA LIMPA (Remove o ?region=porto-de-mos da URL)
-            window.location.href = window.location.pathname;
-        }, (err) => {
-            alert("Por favor, ative o GPS para detetarmos a sua zona real.");
-            window.location.href = window.location.pathname;
-        });
+    if (!navigator.geolocation) {
+        alert("O seu browser não suporta GPS.");
+        return;
     }
+    
+    // 1. LIMPEZA TOTAL E ABSOLUTA
+    localStorage.clear(); 
+    sessionStorage.clear();
+    
+    // 2. FEEDBACK VISUAL
+    document.getElementById('loc-text').innerText = "A restaurar...";
+
+    navigator.geolocation.getCurrentPosition((pos) => {
+        // 3. O SEGREDO: Redirecionar para a URL limpa, sem NADA depois do .html
+        const urlLimpa = window.location.protocol + "//" + window.location.host + window.location.pathname;
+        window.location.href = urlLimpa;
+    }, (err) => {
+        alert("Por favor, ative o GPS. A recarregar página limpa...");
+        window.location.href = window.location.pathname;
+    });
+}
+
 </script>
