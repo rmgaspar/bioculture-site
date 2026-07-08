@@ -1,125 +1,144 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<title>bioCultura - Engenharia e Serviços</title>
+		<title>bioCultura - Engenharia e Soluções Regenerativas</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
 		<style>
-			/* 1. LIMPEZA E ALINHAMENTO bioCultura */
-			section, #header, hr, .major, .features article { border: none !important; box-shadow: none !important; padding: 0 !important; }
-			#header .toggle { background: none !important; top: 2em !important; left: 2em !important; border: none !important; text-decoration: none !important; }
+			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
+			#header .toggle { background: none !important; top: 2em !important; left: 2em !important; border: none !important; text-decoration: none !important; z-index: 10001; }
 			#header .toggle:before { content: '\f06c' !important; font-family: "Font Awesome 5 Free" !important; font-weight: 900; color: #2e7d32 !important; font-size: 1.6em !important; }
             #header .toggle:after { display: none !important; }
-            section { padding-top: 2em !important; margin-bottom: 4em !important; }
+            section { padding-top: 2em !important; }
 
-            /* 2. TIPOGRAFIA EDITORIAL */
-            p { font-size: 1.25em !important; color: #444 !important; line-height: 1.8 !important; }
-            h2 { color: #2e7d32 !important; font-weight: 300 !important; font-size: 2.2em !important; margin-bottom: 1.5em !important; letter-spacing: -1px; }
+            /* HERO SERVIÇOS */
+            .services-hero { text-align: center; margin-bottom: 5em; padding: 4em 2em; background: #f1f8e9; border-radius: 50px; }
+            .services-hero h1 { font-size: 3.5em; font-weight: 300; color: #1b5e20; letter-spacing: -2px; }
+            .services-hero p { max-width: 700px; margin: 0 auto; color: #555; font-style: italic; }
 
-            /* 3. BANNER DE IMPACTO (ESTREITO) */
-            .hero-banner {
-                width: 100%;
-                height: 350px;
-                border-radius: 40px;
-                overflow: hidden;
-                position: relative;
-                margin-bottom: 4em;
-                box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+            /* PORTFOLIO GRID */
+            .portfolio-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; margin-bottom: 5em; }
+            .project-card { 
+                background: #fff; border-radius: 40px; padding: 3em; 
+                border: 1px solid #f0f0f0; box-shadow: 0 20px 40px rgba(0,0,0,0.03);
+                transition: all 0.4s ease; display: flex; flex-direction: column;
             }
-            .hero-banner img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.7); }
-            .hero-content {
-                position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-                display: flex; flex-direction: column; align-items: center; justify-content: center;
-                text-align: center; color: #fff; padding: 2em;
+            .project-card:hover { transform: translateY(-10px); border-color: #2e7d32; box-shadow: 0 30px 60px rgba(46, 125, 50, 0.1); }
+            
+            .project-card i { font-size: 2.5em; color: #2e7d32; margin-bottom: 1em; }
+            .project-card h3 { font-size: 1.4em; color: #1b5e20; margin-bottom: 0.8em; }
+            .project-card p { font-size: 0.9em; color: #666; line-height: 1.6; margin-bottom: 2em; }
+            
+            .project-features { list-style: none; padding: 0; margin: 0 0 2em 0; border-top: 1px solid #f9f9f9; padding-top: 1.5em; }
+            .project-features li { font-size: 0.8em; color: #444; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
+            .project-features li i { font-size: 1em; color: #81c784; margin: 0; }
+
+            .btn-order { 
+                background: #2e7d32; color: #fff !important; text-align: center; 
+                padding: 12px; border-radius: 15px; text-decoration: none; 
+                font-weight: 700; font-size: 0.8em; text-transform: uppercase;
+                margin-top: auto; transition: background 0.3s ease;
             }
-            .hero-content h1 { color: #fff !important; font-size: 3em !important; font-weight: 300 !important; margin: 0; letter-spacing: -1px; }
-            .hero-content p { color: #fff !important; font-size: 1.2em !important; opacity: 0.9; font-style: italic; margin-top: 0.5em; }
+            .btn-order:hover { background: #1b5e20; }
 
-            /* 4. PORTFÓLIO COMPACTO (ZIGUEZAGUE SUAVE) */
-            .portfolio-grid { display: flex; flex-direction: column; gap: 4em; }
-            .portfolio-item { display: flex; align-items: center; gap: 3em; flex-wrap: wrap; }
-            .portfolio-item:nth-child(even) { flex-direction: row-reverse; }
-            
-            .portfolio-text { flex: 1.5; min-width: 300px; }
-            .portfolio-text h3 { font-size: 1.6em !important; font-weight: 700; color: #263238 !important; margin-bottom: 0.5em !important; }
-            .portfolio-text p { font-size: 1.15em !important; line-height: 1.6 !important; }
-            
-            .portfolio-image { flex: 1; min-width: 250px; height: 280px; border-radius: 35px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
-            .portfolio-image img { width: 100%; height: 100%; object-fit: cover; }
+            /* APP PREVIEW */
+            .app-preview { 
+                background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%); 
+                border-radius: 50px; padding: 5em; color: #fff; text-align: center;
+                margin-bottom: 6em;
+            }
+            .app-preview h2 { color: #fff !important; font-weight: 300; font-size: 2.5em; }
+            .badge-soon { background: #ffa000; color: #fff; padding: 5px 15px; border-radius: 10px; font-size: 0.6em; font-weight: 900; text-transform: uppercase; vertical-align: middle; margin-left: 10px; }
 
-            .intro-portfolio { font-size: 1.1em !important; font-weight: 700; color: #78909c; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 3em; display: block; border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 1em; }
-
-			.footer-signature-right { text-align: right; padding: 6em 0 2em 0; opacity: 0.9; }
+			.footer-signature-right { text-align: right; padding: 4em 2em 2em 0; opacity: 0.8; }
 		</style>
 	</head>
 	<body class="is-preload">
 		<div id="wrapper">
 			<div id="main">
-				<div class="inner">
+                <div class="inner">
 					<header id="header" style="height: 0; margin: 0; padding: 0; overflow: hidden;"></header>
 					
-                    <section>
-                        <!-- Banner Superior Estreito -->
-                        <div class="hero-banner">
-                            <img src="https://plus.unsplash.com/premium_photo-1679517119885-391ce55f72bc?q=80&w=2532&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Projetos bioCultura" />
-                            <div class="hero-content">
-                                <h1>Engenharia Regenerativa</h1>
-                                <p>Desenhamos projectos à medida das suas necessidades.</p>
-                            </div>
+                    <!-- HERO -->
+                    <section class="services-hero">
+                        <span style="text-transform: uppercase; letter-spacing: 4px; font-size: 0.7em; font-weight: 800; color: #2e7d32; opacity: 0.6;">Engenharia Regenerativa</span>
+                        <h1>Soluções de Baixo Impacto</h1>
+                        <p>Transformamos a ideologia bioCultura em projetos práticos. Blueprints detalhados e consultoria para quem procura autonomia e respeito pelo planeta.</p>
+                    </section>
+
+                    <!-- PORTFOLIO DE PROJETOS -->
+                    <div class="portfolio-grid">
+                        
+                        <!-- PROJETO 1: BIOFOSSAS -->
+                        <div class="project-card">
+                            <i class="fas fa-leaf"></i>
+                            <h3>Saneamento por Fitodepuração</h3>
+                            <p>Substitua a fossa séptica tradicional por um sistema vivo. Utilizamos plantas específicas para purificar águas residuais, devolvendo água segura para rega.</p>
+                            <ul class="project-features">
+                                <li><i class="fas fa-check"></i> Dimensionamento por agregado familiar</li>
+                                <li><i class="fas fa-check"></i> Lista de plantas purificadoras</li>
+                                <li><i class="fas fa-check"></i> Esquema técnico de camadas</li>
+                            </ul>
+                            <a href="https://wa.me/OSEUNUMERO" class="btn-order">Solicitar Projeto</a>
                         </div>
 
-                        <span class="intro-portfolio">Eis o portfólio de alguns dos projectos e soluções a implementar:</span>
-
-                        <div class="portfolio-grid">
-                            
-                            <!-- PROJETO 1 -->
-                            <div class="portfolio-item">
-                                <div class="portfolio-text">
-                                    <h3>Rega Solar e Eólica Autónoma</h3>
-                                    <p>Sistemas de bombagem independentes da rede eléctrica. Utilizamos a energia do sol e do vento para garantir que a água chega à sua produção com custo zero de operação e impacto ambiental positivo.</p>
-                                </div>
-                                <div class="portfolio-image">
-                                    <img src="https://images.unsplash.com/photo-1509391366360-2e959784a276?q=80&w=2000&auto=format&fit=crop" alt="Rega Solar" />
-                                </div>
-                            </div>
-
-                            <!-- PROJETO 2 -->
-                            <div class="portfolio-item">
-                                <div class="portfolio-text">
-                                    <h3>Corredores Biológicos e Polinização</h3>
-                                    <p>Implementação de faixas de flores e sebes nativas para potenciar os aliados invisíveis. Um projecto focado no aumento da biodiversidade e no controlo natural de pragas através da fauna auxiliar.</p>
-                                </div>
-                                <div class="portfolio-image">
-                                    <img src="https://images.unsplash.com/photo-1464039397811-476f652a343b?q=80&w=2000&auto=format&fit=crop" alt="Polinizadores" />
-                                </div>
-                            </div>
-
-                            <!-- PROJETO 3 -->
-                            <div class="portfolio-item">
-                                <div class="portfolio-text">
-                                    <h3>Biofossas por Fitodepuração</h3>
-                                    <p>Sistemas de saneamento que tratam águas residuais através de processos biológicos. O resultado é a devolução de água limpa para a rega e a nutrição do solo, fechando o ciclo de recursos da propriedade.</p>
-                                </div>
-                                <div class="portfolio-image">
-                                    <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=2000&auto=format&fit=crop" alt="Biofossa" />
-                                </div>
-                            </div>
-
+                        <!-- PROJETO 2: ÁGUA -->
+                        <div class="project-card">
+                            <i class="fas fa-tint"></i>
+                            <h3>Aproveitamento Pluvial</h3>
+                            <p>O seu telhado é uma mina de água. Desenhamos o sistema de filtragem e armazenamento ideal para a pluviosidade da sua região.</p>
+                            <ul class="project-features">
+                                <li><i class="fas fa-check"></i> Cálculo de captação anual</li>
+                                <li><i class="fas fa-check"></i> Sistema de filtragem passiva</li>
+                                <li><i class="fas fa-check"></i> Guia de instalação de tanques</li>
+                            </ul>
+                            <a href="https://wa.me/OSEUNUMERO" class="btn-order">Solicitar Projeto</a>
                         </div>
-					</section>
 
-					<!-- Logótipo Rodapé -->
+                        <!-- PROJETO 3: SOLAR -->
+                        <div class="project-card">
+                            <i class="fas fa-sun"></i>
+                            <h3>Micro-Solar Ético</h3>
+                            <p>Sistemas fotovoltaicos de pequena escala para autoconsumo. Foco em eficiência e durabilidade, sem a pegada dos grandes parques industriais.</p>
+                            <ul class="project-features">
+                                <li><i class="fas fa-check"></i> Estudo de insolação local</li>
+                                <li><i class="fas fa-check"></i> Esquema de ligação AC/DC</li>
+                                <li><i class="fas fa-check"></i> Otimização de baterias</li>
+                            </ul>
+                            <a href="https://wa.me/OSEUNUMERO" class="btn-order">Solicitar Projeto</a>
+                        </div>
+
+                        <!-- PROJETO 4: AQS -->
+                        <div class="project-card">
+                            <i class="fas fa-hot-tub"></i>
+                            <h3>AQS Termossifão</h3>
+                            <p>Aqueça a água da sua casa usando apenas o sol. Projetos de baixo custo e alta eficiência para águas quentes sanitárias.</p>
+                            <ul class="project-features">
+                                <li><i class="fas fa-check"></i> Dimensionamento de painéis</li>
+                                <li><i class="fas fa-check"></i> Circuito de circulação natural</li>
+                                <li><i class="fas fa-check"></i> Lista de componentes éticos</li>
+                            </ul>
+                            <a href="https://wa.me/OSEUNUMERO" class="btn-order">Solicitar Projeto</a>
+                        </div>
+
+                    </div>
+
+                    <!-- PREVIEW APP -->
+                    <div class="app-preview">
+                        <span class="badge-soon">Brevemente</span>
+                        <h2>App bioCultura: O seu consultor de bolso.</h2>
+                        <p style="opacity: 0.9; max-width: 600px; margin: 1.5em auto;">Imagine tirar uma foto a uma planta doente e receber a bio-solução imediata, ou saber exatamente o que plantar hoje com base no seu GPS. Estamos a construir o futuro da agricultura ética.</p>
+                        <i class="fas fa-mobile-alt" style="font-size: 4em; margin-top: 20px; opacity: 0.3;"></i>
+                    </div>
+
+                    <!-- FOOTER SIGNATURE -->
 					<div class="footer-signature-right">
 						<a href="/index.html" style="border: none; display: inline-block; text-decoration: none;">
 							<div style="font-family: 'Source Sans Pro', sans-serif; font-size: 1.4em; line-height: 1; display: flex; align-items: flex-end; justify-content: flex-end;">
                                 <b style="font-weight: 700; color: #2e7d32; margin-right: -3px; position: relative; z-index: 2;">b</b>
                                 <div style="width: 32px; margin: 0 -7px; position: relative; line-height: 0; transform: translateY(4px); z-index: 1;">
-                                    <svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: auto;">
-                                        <path d="M-20 110 Q50 102 120 110" stroke="#634832" stroke-width="4" fill="none" opacity="0.3" />
-                                        <path d="M50 110 C50 80 35 70 50 45 C65 70 50 80 50 110" fill="#2e7d32" />
-                                        <path d="M50 80 C75 75 85 50 65 40 C50 55 50 65 50 80" fill="#4CAF50" />
-                                    </svg>
+                                    <svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: auto;"><path d="M-20 110 Q50 102 120 110" stroke="#634832" stroke-width="4" fill="none" opacity="0.3" /><path d="M50 110 C50 80 35 70 50 45 C65 70 50 80 50 110" fill="#2e7d32" /><path d="M50 80 C75 75 85 50 65 40 C50 55 50 65 50 80" fill="#4CAF50" /></svg>
                                 </div>
                                 <b style="font-weight: 700; color: #2e7d32; margin-left: -3px; position: relative; z-index: 2;">o</b>
                                 <span style="font-weight: 300; color: #444; margin-left: 2px;">Cultura</span>
@@ -127,23 +146,16 @@
 						</a>
 					</div>
 				</div>
-			</div>
+            </div>
 			<div id="sidebar"></div>
 		</div>
 
 		<script src="/assets/js/jquery.min.js"></script>
-        <script src="/assets/js/browser.min.js"></script>
-        <script src="/assets/js/breakpoints.min.js"></script>
-        <script src="/assets/js/util.js"></script>
         <script>
-            fetch('/sidebar-content.html')
-                .then(response => response.text())
-                .then(data => {
-                    document.getElementById('sidebar').innerHTML = data;
-                    var script = document.createElement('script');
-                    script.src = '/assets/js/main.js';
-                    document.body.appendChild(script);
-                });
+            fetch('/sidebar-content.html').then(r => r.text()).then(html => {
+                document.getElementById('sidebar').innerHTML = html;
+                var s = document.createElement('script'); s.src = '/assets/js/main.js'; document.body.appendChild(s);
+            });
         </script>
 	</body>
 </html>
