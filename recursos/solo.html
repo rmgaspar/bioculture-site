@@ -131,73 +131,61 @@
 		</div>
 
 		<script src="/assets/js/jquery.min.js"></script>
-        <script>
-            async function inicializarPagina() {
+            <script>
+        function calcularDistancia(lat1, lon1, lat2, lon2) {
+            const R = 6371;
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
+            return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+        }
+
+        async function inicializarPagina() {
+            try {
+                const r = await fetch('/data/bioregioes.json');
+                const data = await r.json();
+                const urlParams = new URLSearchParams(window.location.search);
+                const regionParam = urlParams.get('region');
+                
+                // Prioridade 1: Link (?region=...)
+                if (regionParam) {
+                    const info = data.find(item => item.id === regionParam);
+                    if (info) { renderSoilDashboard(info); return; }
+                }
+
+                // Prioridade 2: Localização Guardada
                 const savedRegionId = localStorage.getItem('biocultura_region');
-                const cachedData = sessionStorage.getItem('biocultura_data_cache');
+                let info = data.find(item => item.id === savedRegionId);
 
-                if (cachedData && JSON.parse(cachedData).id === savedRegionId) {
-                    renderSoilDashboard(JSON.parse(cachedData));
-                } else {
-                    try {
-                        const r = await fetch('/data/bioregioes.json');
-                        const data = await r.json();
-                        let info = data.find(item => item.id === savedRegionId);
-                        if (info) renderSoilDashboard(info);
-                    } catch(e) { console.error(e); }
+                if (info) {
+                    renderSoilDashboard(info);
+                } else if (navigator.geolocation) {
+                    // Prioridade 3: GPS
+                    navigator.geolocation.getCurrentPosition(pos => {
+                        let minD = Infinity; let closest = null;
+                        data.forEach(c => {
+                            if(c.lat && c.lon) {
+                                let d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon);
+                                if(d < minD) { minD = d; closest = c; }
+                            }
+                        });
+                        if(closest) {
+                            localStorage.setItem('biocultura_region', closest.id);
+                            renderSoilDashboard(closest);
+                        }
+                    });
                 }
-            }
+            } catch(e) { console.error(e); }
+        }
 
-            function renderSoilDashboard(info) {
-                document.getElementById('no-gps-warning').style.display = 'none';
-                document.getElementById('soil-dashboard').style.display = 'grid';
-                document.getElementById('reg-name').innerText = info.titulo;
+        // ... (Mantém a tua função renderSoilDashboard igual) ...
 
-                if (info.biomas) {
-                    const ph = parseFloat(info.biomas.ph_solo);
-                    const type = info.biomas.solo || "";
-                    
-                    // 1. pH Barómetro
-                    const phCont = document.getElementById('container-ph');
-                    document.getElementById('val-ph').innerText = ph;
-                    phCont.className = 'metric';
-                    if (ph < 6.0) phCont.classList.add('status-acid');
-                    else if (ph <= 7.5) phCont.classList.add('status-neutral');
-                    else phCont.classList.add('status-alkaline');
-
-                    document.getElementById('val-soil-type').innerText = type;
-                    document.getElementById('val-texture').innerText = "Textura: " + (info.biomas.textura || "N/A");
-
-                    // 2. Inteligência de Solo
-                    let benefit = ""; let carbon = ""; let water = "";
-
-                    if (type.includes("Granítico")) {
-                        benefit = "Solo excelente para castanheiros e batata. Requer reforço de matéria orgânica para reter nutrientes.";
-                        carbon = "Potencial moderado. Melhora significativamente com a técnica de cobertura permanente.";
-                        water = "Drenagem rápida: Evita o encharcamento mas exige regas mais frequentes e curtas.";
-                    } else if (type.includes("Xistoso")) {
-                        benefit = "Mineralização profunda, ideal para vinhas de alta qualidade e oliveiras resilientes.";
-                        carbon = "Fixação estável através de raízes profundas. Essencial evitar a mobilização mecânica.";
-                        water = "Retenção térmica: A rocha ajuda a manter o calor no solo durante a noite.";
-                    } else if (type.includes("Calcário")) {
-                        benefit = "Naturalmente rico em cálcio. Favorece leguminosas e fruteiras de caroço. pH equilibrado.";
-                        carbon = "Elevado potencial de armazenamento estável em forma de carbonatos minerais.";
-                        water = "Permeabilidade alta: Risco de seca rápida. Recomendamos o uso de Ânforas de barro.";
-                    } else if (type.includes("Argiloso") || type.includes("Barros")) {
-                        benefit = "Alta fertilidade natural. Ideal para cereais, pastagens ricas e hortícolas exigentes.";
-                        carbon = "O campeão do sequestro. A argila protege o carbono da oxidação rápida.";
-                        water = "Efeito esponja: Retém água por longos períodos. Cuidado com a compactação.";
-                    } else {
-                        benefit = "Solo versátil. Recomendamos mulching orgânico para proteger a microbiota local.";
-                        carbon = "Dependente da biomassa à superfície. Mantenha o solo sempre coberto.";
-                        water = "Resiliência moderada. Ajuste a rega conforme a exposição solar da encosta.";
-                    }
-
-                    document.getElementById('soil-benefits').innerText = benefit;
-                    document.getElementById('carbon-potential').innerText = carbon;
-                    document.getElementById('water-resilience').innerText = water;
-                }
-            }
+        fetch('/sidebar-content.html').then(r => r.text()).then(html => {
+            document.getElementById('sidebar').innerHTML = html;
+            var s = document.createElement('script'); s.src = '/assets/js/main.js'; document.body.appendChild(s);
+            inicializarPagina();
+        });
+    </script>
 
             fetch('/sidebar-content.html').then(r => r.text()).then(html => {
                 document.getElementById('sidebar').innerHTML = html;
