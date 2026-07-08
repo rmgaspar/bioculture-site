@@ -1,46 +1,64 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<title>bioCultura - Observatório do Solo</title>
+		<title>bioCultura - Observatório da Terra</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
 		<style>
+            /* --- ESTRUTURA GLOBAL & TIPOGRAFIA --- */
+            body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
+            
 			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
-			#header .toggle { background: none !important; top: 2em !important; left: 2em !important; border: none !important; text-decoration: none !important; z-index: 10001; }
-			#header .toggle:before { content: '\f06c' !important; font-family: "Font Awesome 5 Free" !important; font-weight: 900; color: #2e7d32 !important; font-size: 1.6em !important; }
-            #header .toggle:after { display: none !important; }
-            section { padding-top: 2em !important; }
+            section { padding-top: 4em !important; }
 
-            /* DASHBOARD REGIONAL */
-            .soil-dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 25px; margin-bottom: 4em; }
-            .data-card { background: #fff; border-radius: 35px; padding: 2.5em; box-shadow: 0 20px 50px rgba(0,0,0,0.04); border: 1px solid #f0f7ff; position: relative; overflow: hidden; min-height: 320px; display: flex; flex-direction: column; }
-            .data-card h4 { color: #5d4037; text-transform: uppercase; letter-spacing: 2px; font-size: 0.75em; margin-bottom: 1.5em; font-weight: 800; text-align: center; }
-            
-            .quality-grid { display: flex; gap: 2em; margin-top: 1em; justify-content: center; align-items: center; flex-wrap: wrap; }
-            
-            /* BARÓMETRO PH SOLO */
-            .metric { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 120px; height: 120px; border-radius: 50%; border: 6px solid #eee; transition: all 0.5s ease; text-align: center; flex-shrink: 0; }
-            .metric-val { font-size: 2em; font-weight: 300; color: #333; display: block; line-height: 1; }
-            .metric-label { font-size: 0.6em; color: #888; text-transform: uppercase; font-weight: 700; margin-top: 5px; display: block; }
+            /* SIDEBAR FIXA */
+            #sidebar {
+                position: fixed !important;
+                top: 0; left: 0;
+                height: 100vh !important;
+                width: 18em !important;
+                overflow: hidden !important;
+                z-index: 10000;
+                background: #fff;
+                border-right: 1px solid #f2f2f2 !important;
+            }
+            #wrapper { padding-left: 18em !important; }
 
-            /* CORES PH SOLO */
+            /* CABEÇALHOS CINZENTOS (ESTILO SIDEBAR) */
+            .category-label { 
+                font-size: 0.65em; font-weight: 900; text-transform: uppercase; 
+                letter-spacing: 3px; color: #bbb; margin-bottom: 10px; display: block; 
+            }
+            .card-title { 
+                font-size: 0.7em; font-weight: 900; text-transform: uppercase; 
+                letter-spacing: 2px; color: #bbb; margin-bottom: 2em; text-align: center; 
+            }
+
+            /* DASHBOARD */
+            .soil-dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 30px; margin-bottom: 4em; }
+            .data-card { background: #fff; border-radius: 35px; padding: 3em; box-shadow: 0 15px 45px rgba(0,0,0,0.03); border: 1px solid #f8f8f8; }
+            
+            .quality-grid { display: flex; gap: 2em; justify-content: center; align-items: center; margin-bottom: 2em; }
+            .metric { display: flex; flex-direction: column; align-items: center; width: 130px; height: 130px; border-radius: 50%; border: 5px solid #eee; justify-content: center; }
+            .metric-val { font-size: 2.2em; font-weight: 300; color: #222; }
+            .metric-label { font-size: 0.6em; font-weight: 800; text-transform: uppercase; color: #aaa; }
+
+            /* CORES MÉTRICAS */
             .status-acid { border-color: #ffd54f !important; color: #f57f17 !important; }    
             .status-neutral { border-color: #81c784 !important; color: #2e7d32 !important; } 
             .status-alkaline { border-color: #4fc3f7 !important; color: #01579b !important; }
 
-            /* BADGES E TEXTO */
-            .benefit-box { background: #fdf5e6; border-left: 4px solid #d4a373; padding: 15px; border-radius: 0 15px 15px 0; margin-top: 15px; font-size: 0.85em; color: #5d4037; line-height: 1.5; }
-            .climate-link { background: #e8f5e9; padding: 20px; border-radius: 25px; margin-top: 10px; }
-            .climate-link i { color: #2e7d32; margin-right: 10px; }
-            .info-label { font-size: 0.7em; color: #aaa; text-transform: uppercase; font-weight: 800; letter-spacing: 1px; }
+            /* INFO TÉCNICA */
+            .tech-info { background: #fdfaf5; padding: 2em; border-radius: 20px; margin-top: 1.5em; border: 1px solid #f5ede4; }
+            .tech-item { margin-bottom: 1.5em; }
+            .tech-item h5 { font-size: 0.7em; font-weight: 900; text-transform: uppercase; color: #8d6e63; margin-bottom: 5px; }
+            .tech-item p { font-size: 0.9em; margin: 0; line-height: 1.5; color: #5d4037; }
 
-            .features-flow { display: flex; flex-direction: column; gap: 8em; margin-top: 4em; }
-            .feature-row { display: flex; align-items: center; gap: 5em; flex-wrap: wrap; flex-direction: row-reverse; } 
-            .feature-image { flex: 1; min-width: 300px; height: 380px; border-radius: 40px; overflow: hidden; }
-            .feature-image img { width: 100%; height: 100%; object-fit: cover; }
-
-			.footer-signature-right { text-align: right; padding: 4em 2em 2em 0; opacity: 0.8; }
+            @media screen and (max-width: 1280px) {
+                #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
+                #wrapper { padding-left: 0 !important; }
+            }
 		</style>
 	</head>
 	<body class="is-preload">
@@ -51,67 +69,62 @@
 					
                     <section>
                         <div style="text-align: center; margin-bottom: 5em;">
-                            <h4 style="letter-spacing: 5px; color: #8d6e63; text-transform: uppercase; font-size: 0.8em; opacity: 0.6;">Geologia e Regeneração</h4>
-                            <h1 style="font-size: 3.5em; font-weight: 300; color: #5d4037; letter-spacing: -2px;">Solo: A Fundação da Vida</h1>
-                            <p style="font-style: italic; color: #888;">Análise do território: <strong id="reg-name" style="color:#5d4037">...</strong></p>
+                            <span class="category-label">Recursos Vitais</span>
+                            <h1 style="font-size: 3.5em; font-weight: 300; color: #1a1a1a; letter-spacing: -2px;">Solo: A Fundação da Vida</h1>
+                            <p style="font-style: italic; color: #999;">Análise pedológica: <strong id="reg-name" style="color:#2e7d32">...</strong></p>
                         </div>
 
-                        <!-- DASHBOARD REGIONAL -->
                         <div class="soil-dashboard" id="soil-dashboard" style="display:none;">
                             
-                            <!-- CARTA 1: COMPOSIÇÃO -->
+                            <!-- PERFIL PEDOLÓGICO -->
                             <div class="data-card">
-                                <h4>Perfil Pedológico</h4>
+                                <h4 class="card-title">Composição e Acidez</h4>
                                 <div class="quality-grid">
                                     <div class="metric" id="container-ph">
                                         <span class="metric-val" id="val-ph">--</span>
                                         <span class="metric-label">pH Solo</span>
                                     </div>
-                                    <div style="flex: 1; min-width: 200px;">
-                                        <span class="info-label">Tipo de Terreno</span>
+                                    <div style="flex: 1; min-width: 180px;">
+                                        <h5 style="font-size: 0.65em; font-weight: 900; text-transform: uppercase; color: #aaa; margin-bottom: 5px;">Tipo de Terreno</h5>
                                         <p id="val-soil-type" style="font-size: 1.2em; font-weight: 700; color: #5d4037; margin: 0;"></p>
-                                        <p id="val-texture" style="font-size: 0.9em; color: #888; margin-bottom: 10px;"></p>
+                                        <p id="val-texture" style="font-size: 0.85em; color: #888; margin-top: 5px;"></p>
                                     </div>
                                 </div>
-                                <div class="benefit-box" id="soil-benefits">
-                                    <!-- Benefícios gerados por JS aqui -->
+                                <div class="tech-info">
+                                    <div class="tech-item">
+                                        <h5>Aptidão e Benefícios</h5>
+                                        <p id="soil-benefits">A analisar potencial regenerativo...</p>
+                                    </div>
                                 </div>
                             </div>
 
-                            <!-- CARTA 2: SOLO & CLIMA -->
+                            <!-- REGENERAÇÃO E CLIMA -->
                             <div class="data-card">
-                                <h4>Interação Solo-Clima</h4>
-                                <div class="climate-link">
-                                    <p style="margin: 0; font-size: 0.9em; color: #2e7d32; line-height: 1.6;">
-                                        <i class="fas fa-cloud-sun-rain"></i> 
-                                        <span id="climate-impact-text">A carregar análise de impacto...</span>
-                                    </p>
+                                <h4 class="card-title">Interação e Regeneração</h4>
+                                <div class="tech-info" style="background: #f1f8e9; border-color: #dcedc8;">
+                                    <div class="tech-item">
+                                        <h5 style="color: #33691e;">Sequestro de Carbono</h5>
+                                        <p id="carbon-potential" style="font-size: 0.9em; color: #33691e;">--</p>
+                                    </div>
+                                    <div class="tech-item">
+                                        <h5 style="color: #33691e;">Resiliência Hídrica</h5>
+                                        <p id="water-resilience" style="font-size: 0.9em; color: #33691e;">--</p>
+                                    </div>
                                 </div>
-                                <div style="margin-top: 2em;">
-                                    <span class="info-label">Sequestro de Carbono</span>
-                                    <p id="carbon-text" style="font-size: 0.9em; color: #666; margin-top: 5px;"></p>
+                                
+                                <div class="footer-signature-right" style="padding: 2em 0 0 0;">
+                                    <div style="display: flex; align-items: center; justify-content: flex-end; gap: 8px; opacity: 0.4;">
+                                        <span style="font-size: 0.8em; font-weight: 900;">bioCultura</span>
+                                        <svg width="15" height="15" viewBox="0 0 100 100"><path d="M50 5 L89 27.5 L89 72.5 L50 95 L11 72.5 L11 27.5 Z" fill="#333" /><path d="M50 20 C50 20 75 45 75 70 C75 85 65 85 50 85 C35 85 25 85 25 70 C25 45 50 20 50 20Z" fill="#fff" /></svg>
+                                    </div>
                                 </div>
-                                <div class="source-note" style="margin-top: auto; font-size: 0.7em; color: #ccc; text-align: center;">Análise Baseada em FAO e bioCultura</div>
                             </div>
                         </div>
 
-                        <div id="no-gps-warning" style="text-align: center; padding: 4em; background: #f4f7fb; border-radius: 40px; margin-bottom: 4em;">
-                            <p>Sincronize a sua localização na barra lateral para carregar os dados geológicos da sua região.</p>
+                        <div id="no-gps-warning" style="text-align: center; padding: 4em; background: #f4f7fb; border-radius: 40px;">
+                            <p>Sincronize a sua localização para carregar os dados geológicos.</p>
                         </div>
 					</section>
-
-					<div class="footer-signature-right">
-						<a href="/index.html" style="border: none; display: inline-block; text-decoration: none;">
-							<div style="font-family: 'Source Sans Pro', sans-serif; font-size: 1.4em; line-height: 1; display: flex; align-items: flex-end; justify-content: flex-end;">
-                                <b style="font-weight: 700; color: #2e7d32; margin-right: -3px; position: relative; z-index: 2;">b</b>
-                                <div style="width: 32px; margin: 0 -7px; position: relative; line-height: 0; transform: translateY(4px); z-index: 1;">
-                                    <svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: auto;"><path d="M-20 110 Q50 102 120 110" stroke="#634832" stroke-width="4" fill="none" opacity="0.3" /><path d="M50 110 C50 80 35 70 50 45 C65 70 50 80 50 110" fill="#2e7d32" /><path d="M50 80 C75 75 85 50 65 40 C50 55 50 65 50 80" fill="#4CAF50" /></svg>
-                                </div>
-                                <b style="font-weight: 700; color: #2e7d32; margin-left: -3px; position: relative; z-index: 2;">o</b>
-                                <span style="font-weight: 300; color: #444; margin-left: 2px;">Cultura</span>
-                            </div>
-						</a>
-					</div>
 				</div>
             </div>
 			<div id="sidebar"></div>
@@ -119,14 +132,6 @@
 
 		<script src="/assets/js/jquery.min.js"></script>
         <script>
-            function calcularDistancia(lat1, lon1, lat2, lon2) {
-                const R = 6371;
-                const dLat = (lat2 - lat1) * Math.PI / 180;
-                const dLon = (lon2 - lon1) * Math.PI / 180;
-                const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
-                return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
-            }
-
             async function inicializarPagina() {
                 const savedRegionId = localStorage.getItem('biocultura_region');
                 const cachedData = sessionStorage.getItem('biocultura_data_cache');
@@ -138,26 +143,8 @@
                         const r = await fetch('/data/bioregioes.json');
                         const data = await r.json();
                         let info = data.find(item => item.id === savedRegionId);
-
-                        if (!info && navigator.geolocation) {
-                            navigator.geolocation.getCurrentPosition(pos => {
-                                let minD = Infinity;
-                                data.forEach(c => {
-                                    if(c.lat && c.lon) {
-                                        let d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon);
-                                        if(d < minD) { minD = d; info = c; }
-                                    }
-                                });
-                                if(info) {
-                                    localStorage.setItem('biocultura_region', info.id);
-                                    sessionStorage.setItem('biocultura_data_cache', JSON.stringify(info));
-                                    renderSoilDashboard(info);
-                                }
-                            });
-                        } else if (info) {
-                            renderSoilDashboard(info);
-                        }
-                    } catch(e) { console.error("Erro", e); }
+                        if (info) renderSoilDashboard(info);
+                    } catch(e) { console.error(e); }
                 }
             }
 
@@ -181,36 +168,34 @@
                     document.getElementById('val-soil-type').innerText = type;
                     document.getElementById('val-texture').innerText = "Textura: " + (info.biomas.textura || "N/A");
 
-                    // 2. Lógica de Benefícios e Clima
-                    let benefit = "";
-                    let climate = "";
-                    let carbon = "";
+                    // 2. Inteligência de Solo
+                    let benefit = ""; let carbon = ""; let water = "";
 
                     if (type.includes("Granítico")) {
-                        benefit = "Solo excelente para castanheiros, batata e pequenos frutos. Requer adição de matéria orgânica para reter nutrientes.";
-                        climate = "Em climas quentes, este solo drena rápido, ajudando a evitar o apodrecimento das raízes em invernos chuvosos.";
-                        carbon = "Potencial de sequestro moderado. Beneficia muito com a técnica de 'Mulching' (cobertura morta).";
+                        benefit = "Solo excelente para castanheiros e batata. Requer reforço de matéria orgânica para reter nutrientes.";
+                        carbon = "Potencial moderado. Melhora significativamente com a técnica de cobertura permanente.";
+                        water = "Drenagem rápida: Evita o encharcamento mas exige regas mais frequentes e curtas.";
                     } else if (type.includes("Xistoso")) {
-                        benefit = "Retém bem o calor, ideal para vinhas de alta qualidade. Solo mineral que confere complexidade aos frutos.";
-                        climate = "A rocha xistosa ajuda a regular a temperatura do solo durante a noite, protegendo contra geadas precoces.";
-                        carbon = "Baixa porosidade natural; o sequestro de carbono depende de manter a cobertura vegetal viva.";
+                        benefit = "Mineralização profunda, ideal para vinhas de alta qualidade e oliveiras resilientes.";
+                        carbon = "Fixação estável através de raízes profundas. Essencial evitar a mobilização mecânica.";
+                        water = "Retenção térmica: A rocha ajuda a manter o calor no solo durante a noite.";
                     } else if (type.includes("Calcário")) {
-                        benefit = "Naturalmente rico em cálcio. Favorece leguminosas, oliveiras e figueiras. pH equilibrado para hortícolas.";
-                        climate = "Elevada capacidade de refletir luz e calor, mantendo o subsolo mais fresco em regiões de Verão intenso.";
-                        carbon = "Excelente potencial de armazenamento estável de carbono em forma de carbonatos.";
+                        benefit = "Naturalmente rico em cálcio. Favorece leguminosas e fruteiras de caroço. pH equilibrado.";
+                        carbon = "Elevado potencial de armazenamento estável em forma de carbonatos minerais.";
+                        water = "Permeabilidade alta: Risco de seca rápida. Recomendamos o uso de Ânforas de barro.";
                     } else if (type.includes("Argiloso") || type.includes("Barros")) {
-                        benefit = "Alta fertilidade natural e retenção de nutrientes. Ideal para cereais e pastagens ricas.";
-                        climate = "Funciona como uma esponja: retém água por longos períodos, sendo resiliente a secas moderadas.";
-                        carbon = "O campeão do sequestro de carbono. A argila protege a matéria orgânica da decomposição rápida.";
+                        benefit = "Alta fertilidade natural. Ideal para cereais, pastagens ricas e hortícolas exigentes.";
+                        carbon = "O campeão do sequestro. A argila protege o carbono da oxidação rápida.";
+                        water = "Efeito esponja: Retém água por longos períodos. Cuidado com a compactação.";
                     } else {
-                        benefit = "Solo versátil. Recomendamos análise sazonal para ajuste de nutrientes orgânicos.";
-                        climate = "A interação depende da altitude. Mantenha o solo coberto para regular a temperatura.";
-                        carbon = "Manter raízes vivas durante todo o ano é a melhor forma de fixar carbono aqui.";
+                        benefit = "Solo versátil. Recomendamos mulching orgânico para proteger a microbiota local.";
+                        carbon = "Dependente da biomassa à superfície. Mantenha o solo sempre coberto.";
+                        water = "Resiliência moderada. Ajuste a rega conforme a exposição solar da encosta.";
                     }
 
-                    document.getElementById('soil-benefits').innerHTML = `<strong>Benefícios:</strong> ${benefit}`;
-                    document.getElementById('climate-impact-text').innerText = climate;
-                    document.getElementById('carbon-text').innerText = carbon;
+                    document.getElementById('soil-benefits').innerText = benefit;
+                    document.getElementById('carbon-potential').innerText = carbon;
+                    document.getElementById('water-resilience').innerText = water;
                 }
             }
 
