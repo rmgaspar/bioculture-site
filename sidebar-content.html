@@ -1,8 +1,8 @@
 <div class="inner" style="display: flex; flex-direction: column; height: 100%; border: none; min-height: 100vh; padding: 2.5em 1.5em; background: #fff;">
     
-    <!-- NOVO LOGÓTIPO BIOCULTURA (DESIGN PREMIUM) -->
+    <!-- LOGÓTIPO BIOCULTURA -->
     <div style="margin-bottom: 3.5em; text-align: left;">
-        <a href="index.html" style="border: none !important; display: inline-block; text-decoration: none;">
+        <a href="/index.html" style="border: none !important; display: inline-block; text-decoration: none; pointer-events: auto !important;">
             <div style="display: flex; align-items: center; gap: 12px;">
                 <div style="width: 45px; height: 45px; position: relative;">
                     <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
@@ -20,7 +20,7 @@
         </a>
     </div>
 
-    <!-- Botão de Localização Moderno -->
+    <!-- BOTÃO DE LOCALIZAÇÃO -->
     <div style="padding: 0 0 2em 0; border-bottom: 1px solid rgba(0,0,0,0.05); margin-bottom: 2em;">
         <button id="btn-location" onclick="detectLocation()" class="btn-modern-loc">
             <div class="pulse-icon"></div>
@@ -32,41 +32,37 @@
         </div>
     </div>
 
-    <!-- Menu Principal -->
+    <!-- MENU PRINCIPAL -->
     <nav id="menu">
         <ul class="main-menu-list">
             
-            <!-- Recursos Vitais -->
             <li class="menu-group">
                 <span class="group-title">Recursos Vitais</span>
                 <ul class="sub-list-force">
-                    <li><a href="recursos/agua.html"><i class="fas fa-tint"></i> Água</a></li>
-                    <li><a href="recursos/solo.html"><i class="fas fa-mountain"></i> Terra</a></li>
-                    <li><a href="recursos/ar.html"><i class="fas fa-wind"></i> Ar</a></li>
+                    <li><a href="/recursos/agua.html"><i class="fas fa-tint"></i> Água</a></li>
+                    <li><a href="/recursos/solo.html"><i class="fas fa-mountain"></i> Terra</a></li>
+                    <li><a href="/recursos/ar.html"><i class="fas fa-wind"></i> Ar</a></li>
                 </ul>
             </li>
 
-            <!-- Vida & Ecossistemas -->
             <li class="menu-group">
                 <span class="group-title">Vida & Ecossistemas</span>
                 <ul class="sub-list-force">
-                    <li><a href="ecossistemas/biodiversidade.html"><i class="fas fa-seedling"></i> Biodiversidade</a></li>
+                    <li><a href="/ecossistemas/biodiversidade.html"><i class="fas fa-seedling"></i> Biodiversidade</a></li>
                 </ul>
             </li>
 
-            <!-- Engenharia & Soluções -->
             <li class="menu-group">
                 <span class="group-title">Engenharia & Soluções</span>
                 <ul class="sub-list-force">
-                    <li><a href="energia/energia.html"><i class="fas fa-bolt"></i> Energia Ética</a></li>
-                    <li><a href="energia/mineracao.html"><i class="fas fa-hammer"></i> Mineração</a></li>
-                    <li><a href="servicos/bioenergia.html"><i class="fas fa-tools"></i> Serviços bioCultura</a></li>
+                    <li><a href="/energia/energia.html"><i class="fas fa-bolt"></i> Energia Ética</a></li>
+                    <li><a href="/energia/mineracao.html"><i class="fas fa-hammer"></i> Mineração</a></li>
+                    <li><a href="/servicos/bioenergia.html"><i class="fas fa-tools"></i> Serviços bioCultura</a></li>
                 </ul>
             </li>
 
-            <!-- Calendário -->
             <li class="menu-group" style="margin-top: 1em;">
-                <a href="calendario/calendario.html" class="group-header-link">
+                <a href="/calendario/calendario.html" class="group-header-link">
                     <i class="fas fa-calendar-alt"></i> Calendário Hortícola
                 </a>
             </li>
@@ -74,14 +70,14 @@
     </nav>
 
     <footer style="margin-top: auto; padding-top: 3em;">
-        <a href="contactos.html" style="font-size: 0.65em; color: #2e7d32; text-decoration: none; border: none !important; opacity: 0.5; font-weight: 600;">
+        <a href="/contactos.html" style="font-size: 0.65em; color: #2e7d32; text-decoration: none; border: none !important; opacity: 0.5; font-weight: 600; pointer-events: auto !important;">
             © bioCultura 2026<br>Pela Preservação do Planeta.
         </a>
     </footer>
 </div>
 
 <style>
-    /* CSS AGRESSIVO PARA FORÇAR FUNCIONAMENTO */
+    /* CSS PARA GARANTIR FUNCIONAMENTO DOS LINKS */
     .main-menu-list { list-style: none !important; padding: 0 !important; margin: 0 !important; }
     .menu-group { margin-bottom: 2em !important; display: block !important; }
     
@@ -106,7 +102,7 @@
 
     .sub-list-force li { margin: 10px 0 !important; display: block !important; }
 
-    .sub-list-force li a { 
+    .sub-list-force li a, .group-header-link, #menu a { 
         color: #666 !important; 
         font-size: 0.95em !important; 
         text-decoration: none !important; 
@@ -115,10 +111,11 @@
         gap: 12px !important; 
         border: none !important;
         transition: all 0.3s ease !important;
-        pointer-events: auto !important; /* Garante que o clique funciona */
+        pointer-events: auto !important; /* CRÍTICO: Permite o clique */
+        cursor: pointer !important;
     }
 
-    .sub-list-force li a:hover { color: #2e7d32 !important; padding-left: 5px !important; }
+    .sub-list-force li a:hover, .group-header-link:hover { color: #2e7d32 !important; padding-left: 5px !important; }
     .sub-list-force li a i { color: #2e7d32 !important; opacity: 0.4 !important; }
 
     .group-header-link { 
@@ -127,11 +124,6 @@
         font-weight: 700 !important; 
         text-transform: uppercase !important; 
         letter-spacing: 1.5px !important; 
-        display: flex !important; 
-        align-items: center !important; 
-        gap: 10px !important; 
-        text-decoration: none !important; 
-        border: none !important; 
     }
 
     /* BOTÃO */
@@ -140,7 +132,7 @@
         border: none !important; border-radius: 15px !important; padding: 14px !important; font-size: 0.72em !important; 
         font-weight: 700 !important; text-transform: uppercase !important; letter-spacing: 1px !important; 
         cursor: pointer !important; display: flex !important; align-items: center !important; justify-content: center !important; 
-        gap: 10px !important; box-shadow: 0 8px 20px rgba(46, 125, 50, 0.2) !important;
+        gap: 10px !important; box-shadow: 0 8px 20px rgba(46, 125, 50, 0.2) !important; pointer-events: auto !important;
     }
 
     .active-city-tag { background: #f8f9fa; color: #2e7d32; font-size: 0.6em; text-align: center; margin-top: 12px; padding: 6px; border-radius: 8px; font-weight: 800; border: 1px solid #eee; }
