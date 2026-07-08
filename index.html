@@ -1,174 +1,149 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<title>bioCultura - Ecossistema Integrado</title>
+		<title>bioCultura - Regeneração Ética do Planeta</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-		<link rel="stylesheet" href="assets/css/main.css" />
+		<link rel="stylesheet" href="/assets/css/main.css" />
 		<style>
-			/* 1. RESET E ESTRUTURA COMPACTA */
 			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
-			#header .toggle { background: none !important; top: 1.5em !important; left: 1.5em !important; border: none !important; text-decoration: none !important; z-index: 10001; }
+			#header .toggle { background: none !important; top: 2em !important; left: 2em !important; border: none !important; text-decoration: none !important; z-index: 10001; }
 			#header .toggle:before { content: '\f06c' !important; font-family: "Font Awesome 5 Free" !important; font-weight: 900; color: #2e7d32 !important; font-size: 1.6em !important; }
             #header .toggle:after { display: none !important; }
-            
-            section { 
-                padding-top: 0.5em !important; 
-                display: flex; 
-                flex-direction: column; 
-                align-items: center;
-                min-height: 100vh;
-                background: #ffffff;
-                overflow: hidden; /* Evita scroll indesejado */
+
+            /* HERO SECTION */
+            .hero { text-align: center; padding: 4em 0 6em 0; max-width: 900px; margin: 0 auto; }
+            .hero h1 { font-size: 4.5em; font-weight: 300; color: #1b5e20; letter-spacing: -3px; line-height: 1; margin-bottom: 0.5em; }
+            .hero p { font-size: 1.4em; color: #666; font-style: italic; line-height: 1.6; }
+
+            /* IMAGEM PRINCIPAL SMOOTH */
+            .main-image-container { 
+                width: 100%; max-height: 500px; border-radius: 60px; overflow: hidden; 
+                box-shadow: 0 30px 60px rgba(0,0,0,0.1); margin-bottom: 6em;
+            }
+            .main-image-container img { width: 100%; height: 100%; object-fit: cover; }
+
+            /* PILARES DA MISSÃO */
+            .mission-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; margin-bottom: 6em; }
+            .pillar { padding: 2em; background: #fff; border-radius: 40px; border: 1px solid #f0f7f0; transition: all 0.3s ease; }
+            .pillar:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.04); }
+            .pillar i { font-size: 2.5em; color: #2e7d32; margin-bottom: 0.8em; display: block; }
+            .pillar h3 { font-size: 1.2em; color: #1b5e20; font-weight: 800; margin-bottom: 1em; text-transform: uppercase; letter-spacing: 1px; }
+            .pillar p { font-size: 0.95em; color: #555; line-height: 1.6; margin: 0; }
+
+            /* ALERT SECTION (MINERAÇÃO) */
+            .alert-box { 
+                background: #fff5f5; border: 2px solid #fee2e2; border-radius: 45px; 
+                padding: 4em; text-align: center; margin-bottom: 6em; position: relative;
+            }
+            .alert-box h2 { color: #c62828; font-size: 2.2em; font-weight: 300; margin-bottom: 0.5em; }
+            .alert-box p { color: #7f1d1d; max-width: 700px; margin: 0 auto 2em auto; font-weight: 600; }
+            .alert-tag { 
+                position: absolute; top: -15px; left: 50%; transform: translateX(-50%);
+                background: #c62828; color: #fff; padding: 5px 20px; border-radius: 20px;
+                font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px;
             }
 
-            /* 2. ASSINATURA COMPACTA */
-            .mini-banner {
-                width: 100%;
-                text-align: center;
-                padding: 1em 0;
-                margin-bottom: 1em;
+            /* CALL TO ACTION */
+            .cta-section { 
+                background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%); 
+                border-radius: 50px; padding: 5em; text-align: center; color: #fff;
             }
-            .mini-banner h1 { 
-                font-family: 'Source Sans Pro', sans-serif; 
-                font-size: 1.6em !important; 
-                font-weight: 300 !important; 
-                color: #2e7d32 !important; 
-                margin: 0; 
-                letter-spacing: 8px; 
-                text-transform: uppercase;
-                opacity: 0.8;
-            }
+            .cta-section h2 { color: #fff !important; font-size: 2.5em; font-weight: 300; }
+            .cta-section .button.white { background: #fff; color: #1b5e20 !important; border: none; font-weight: 800; border-radius: 50px; padding: 0 40px; height: 3.5em; line-height: 3.5em; }
 
-            /* 3. O ATLAS BIOCULTURA (ALTURA AJUSTADA) */
-            .atlas-wrapper {
-                width: 100%;
-                max-width: 950px;
-                padding: 0 20px;
-                margin-bottom: 2em;
-            }
-
-            .atlas-container {
-                position: relative;
-                width: 100%;
-                height: 480px; /* Reduzido de 550px para caber no ecrã */
-                border-radius: 50% / 15%; 
-                overflow: hidden;
-                box-shadow: 0 25px 60px rgba(0,0,0,0.12);
-                background: #000;
-            }
-
-            .layer {
-                position: absolute;
-                top: 0; left: 0;
-                width: 100%;
-                height: 100%;
-                background-size: cover;
-                background-position: center;
-                transition: transform 10s ease-in-out;
-            }
-
-            .layer-earth {
-                background-image: url('https://plus.unsplash.com/premium_photo-1661818041329-e687525f87ee?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
-                z-index: 1;
-            }
-
-            .layer-water {
-                background-image: url('https://images.unsplash.com/photo-1583212292454-1fe6229603b7?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8Y29yYWx8ZW58MHx8MHx8fDA%3D');
-                z-index: 2;
-                mask-image: linear-gradient(to right, transparent 0%, transparent 20%, black 80%, black 100%);
-                -webkit-mask-image: linear-gradient(to right, transparent 0%, transparent 20%, black 80%, black 100%);
-            }
-
-            /* 4. TEXTO DE CONCEITO SUBIDO */
-            .concept-text {
-                text-align: center;
-                max-width: 700px;
-                margin-top: 1em;
-                padding: 0 2em;
-            }
-
-            .concept-text h2 {
-                font-family: 'Source Sans Pro', sans-serif;
-                font-size: 2.2em !important;
-                font-weight: 300 !important;
-                color: #1b5e20 !important;
-                margin-bottom: 0.3em !important;
-                letter-spacing: -1px;
-            }
-
-            .concept-text p {
-                font-size: 1.2em !important;
-                color: #666 !important;
-                font-style: italic;
-                line-height: 1.4;
-                margin: 0;
-            }
-
-			.footer-signature-right { width: 100%; text-align: right; padding: 2em 2em 1em 0; opacity: 0.8; margin-top: auto; }
-
-            @media screen and (max-width: 736px) {
-                .atlas-container { height: 300px; }
-                .concept-text h2 { font-size: 1.6em !important; }
-                .mini-banner h1 { letter-spacing: 4px; font-size: 1.2em !important; }
-            }
+			.footer-signature-right { text-align: right; padding: 4em 2em 2em 0; opacity: 0.8; }
 		</style>
 	</head>
 	<body class="is-preload">
 		<div id="wrapper">
-			<div id="main"><div class="inner">
+			<div id="main">
+                <div class="inner">
 					<header id="header" style="height: 0; margin: 0; padding: 0; overflow: hidden;"></header>
 					
-                    <section>
-                        <!-- ASSINATURA -->
-                        <div class="mini-banner">
-                            <h1>bioCultura</h1>
-                        </div>
+                    <!-- HERO -->
+                    <section class="hero">
+                        <div class="month-indicator" style="font-size: 0.7em; letter-spacing: 4px; color: #2e7d32; text-transform: uppercase; font-weight: 800; margin-bottom: 1em; opacity: 0.6;">Manifesto bioCultura</div>
+                        <h1>A Vida não se divide.</h1>
+                        <p>Onde a tecnologia e a natureza respiram em uníssono, fechando o ciclo da regeneração ética.</p>
+                    </section>
 
-                        <!-- O ATLAS -->
-                        <div class="atlas-wrapper">
-                            <div class="atlas-container">
-                                <div class="layer layer-earth"></div>
-                                <div class="layer layer-water"></div>
-                            </div>
-                        </div>
+                    <!-- IMAGEM IMPACTO -->
+                    <div class="main-image-container">
+                        <img src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?q=80&w=2000&auto=format&fit=crop" alt="Natureza e Preservação" />
+                    </div>
 
-                        <!-- CONCEITO -->
-                        <div class="concept-text">
-                            <h2>A Vida não se divide.</h2>
-                            <p>Onde a tecnologia e a natureza respiram em uníssono,<br>fechando o ciclo da regeneração ética.</p>
+                    <!-- PILARES DA MISSÃO -->
+                    <div class="mission-grid">
+                        <div class="pillar">
+                            <i class="fas fa-ban"></i>
+                            <h3>Zero Pesticidas</h3>
+                            <p>Promovemos tratamentos biológicos e a saúde do solo. Alimento limpo é um direito, não um luxo. Acabar com a química é devolver a vida à terra.</p>
                         </div>
-					</section>
+                        <div class="pillar">
+                            <i class="fas fa-frog"></i>
+                            <h3>Biodiversidade</h3>
+                            <p>Preservar a fauna e flora local é proteger a nossa própria sobrevivência. Monitorizamos espécies para garantir que o equilíbrio não se quebra.</p>
+                        </div>
+                        <div class="pillar">
+                            <i class="fas fa-tint"></i>
+                            <h3>Recursos Vitais</h3>
+                            <p>Água pura e ar limpo. Reduzimos a pegada carbónica através de dados precisos, incentivando a poupança e a fitodepuração.</p>
+                        </div>
+                        <div class="pillar">
+                            <i class="fas fa-bolt"></i>
+                            <h3>Energia Ética</h3>
+                            <p>A transição energética não pode destruir ecossistemas. Defendemos soluções renováveis que respeitem o território e as comunidades.</p>
+                        </div>
+                    </div>
+
+                    <!-- ALERTA MINERAÇÃO -->
+                    <div class="alert-box">
+                        <div class="alert-tag">Alerta Crítico</div>
+                        <h2>A Ameaça sob os nossos pés.</h2>
+                        <p>A mineração de lítio e outros minérios nocivos em áreas sensíveis é uma agressão direta à nossa biodiversidade. A bioCultura monitoriza zonas de prospeção para alertar e proteger o que é de todos.</p>
+                        <i class="fas fa-exclamation-triangle" style="color: #c62828; font-size: 1.5em;"></i>
+                    </div>
+
+                    <!-- CTA FINAL -->
+                    <div class="cta-section">
+                        <h2>Pronto para conhecer a sua região?</h2>
+                        <p style="margin-bottom: 2.5em; opacity: 0.9;">Aceda a dados em tempo real sobre o solo, ar e água da sua localidade.</p>
+                        <button onclick="detectLocation()" class="button white large">Sincronizar Localização</button>
+                    </div>
 
 					<div class="footer-signature-right">
-						<a href="index.html" style="border: none; display: inline-block; text-decoration: none;">
-							<div style="font-family: 'Source Sans Pro', sans-serif; font-size: 1.2em; line-height: 1; display: flex; align-items: flex-end; justify-content: flex-end;">
+						<a href="/index.html" style="border: none; display: inline-block; text-decoration: none;">
+							<div style="font-family: 'Source Sans Pro', sans-serif; font-size: 1.4em; line-height: 1; display: flex; align-items: flex-end; justify-content: flex-end;">
                                 <b style="font-weight: 700; color: #2e7d32; margin-right: -3px; position: relative; z-index: 2;">b</b>
-                                <div style="width: 28px; margin: 0 -6px; position: relative; line-height: 0; transform: translateY(4px); z-index: 1;">
-                                    <svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: auto;">
-                                        <path d="M-20 110 Q50 102 120 110" stroke="#634832" stroke-width="4" fill="none" opacity="0.3" />
-                                        <path d="M50 110 C50 80 35 70 50 45 C65 70 50 80 50 110" fill="#2e7d32" />
-                                        <path d="M50 80 C75 75 85 50 65 40 C50 55 50 65 50 80" fill="#4CAF50" />
-                                    </svg>
+                                <div style="width: 32px; margin: 0 -7px; position: relative; line-height: 0; transform: translateY(4px); z-index: 1;">
+                                    <svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: auto;"><path d="M-20 110 Q50 102 120 110" stroke="#634832" stroke-width="4" fill="none" opacity="0.3" /><path d="M50 110 C50 80 35 70 50 45 C65 70 50 80 50 110" fill="#2e7d32" /><path d="M50 80 C75 75 85 50 65 40 C50 55 50 65 50 80" fill="#4CAF50" /></svg>
                                 </div>
                                 <b style="font-weight: 700; color: #2e7d32; margin-left: -3px; position: relative; z-index: 2;">o</b>
                                 <span style="font-weight: 300; color: #444; margin-left: 2px;">Cultura</span>
                             </div>
 						</a>
 					</div>
-				</div></div>
+				</div>
+            </div>
 			<div id="sidebar"></div>
 		</div>
-		<script src="assets/js/jquery.min.js"></script>
-        <script src="assets/js/browser.min.js"></script>
-        <script src="assets/js/breakpoints.min.js"></script>
-        <script src="assets/js/util.js"></script>
+
+		<script src="/assets/js/jquery.min.js"></script>
         <script>
-            fetch('sidebar-content.html').then(response => response.text()).then(data => {
-                document.getElementById('sidebar').innerHTML = data;
-                var script = document.createElement('script');
-                script.src = 'assets/js/main.js';
-                document.body.appendChild(script);
+            // Função para o botão de sincronizar (igual à da sidebar)
+            function detectLocation() {
+                if (!navigator.geolocation) return;
+                navigator.geolocation.getCurrentPosition((pos) => {
+                    sessionStorage.removeItem('biocultura_data_cache');
+                    localStorage.removeItem('biocultura_region');
+                    location.reload();
+                });
+            }
+
+            fetch('/sidebar-content.html').then(r => r.text()).then(html => {
+                document.getElementById('sidebar').innerHTML = html;
+                var s = document.createElement('script'); s.src = '/assets/js/main.js'; document.body.appendChild(s);
             });
         </script>
 	</body>
