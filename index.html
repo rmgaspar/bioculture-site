@@ -13,17 +13,23 @@
             #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
             #wrapper { padding-left: 18em !important; }
 
-            /* SPLIT HERO (AJUSTADO PARA ALINHAMENTO CENTRAL) */
+            /* HERO SPLIT - LENTE SOBRE O HORIZONTE */
             .hero-split { 
-                padding: 10em 0 6em 0; 
+                padding: 12em 0 6em 0; 
                 max-width: 1100px; 
                 margin: 0 auto; 
                 display: flex;
-                align-items: center; /* Alinha verticalmente o texto e a imagem */
+                align-items: center; 
                 gap: 5em;
             }
             .hero-text { flex: 1.4; }
-            .hero-visual { flex: 1; }
+            .hero-visual { 
+                flex: 1; 
+                display: flex; 
+                justify-content: center; 
+                align-items: center;
+                position: relative;
+            }
 
             .hero-text span.obs-label { 
                 font-size: 0.65em; font-weight: 900; text-transform: uppercase; 
@@ -34,23 +40,42 @@
                 letter-spacing: -2.5px; line-height: 0.95; margin-bottom: 25px; 
             }
             .hero-text p { 
-                font-size: 1.2em; color: #777; line-height: 1.6; 
-                border-left: 5px solid #c62828; /* Cor de alerta para o texto de impacto */
+                font-size: 1.25em; color: #777; line-height: 1.6; 
+                border-left: 5px solid #c62828; 
                 padding-left: 25px; font-style: italic;
             }
             
-            /* IMAGEM COMPACTA */
-            .hero-img-box { 
-                width: 100%; 
-                height: 380px; 
-                border-radius: 50px; 
+            /* IMAGEM EM FORMATO GLOBO / LENTE */
+            .hero-globe { 
+                width: 400px; 
+                height: 400px; 
+                border-radius: 50%; 
                 overflow: hidden; 
-                box-shadow: 0 40px 80px rgba(0,0,0,0.12);
+                box-shadow: 0 40px 100px rgba(0,0,0,0.15);
+                border: 1px solid rgba(0,0,0,0.05);
+                position: relative;
+                transition: transform 0.5s ease;
             }
-            .hero-img-box img { width: 100%; height: 100%; object-fit: cover; }
+            .hero-globe:hover { transform: scale(1.02); }
+            .hero-globe img { 
+                width: 100%; 
+                height: 100%; 
+                object-fit: cover; 
+                filter: saturate(1.2);
+            }
+
+            /* EFEITO DE ATMOSFERA NO GLOBO */
+            .hero-globe::after {
+                content: '';
+                position: absolute;
+                top: 0; left: 0;
+                width: 100%; height: 100%;
+                background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0) 70%);
+                pointer-events: none;
+            }
 
             /* GRID DE INVESTIGAÇÃO */
-            .news-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; margin-bottom: 6em; }
+            .news-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-bottom: 6em; }
             .news-card { background: #fff; border-radius: 35px; border: 1px solid #f0f0f0; padding: 2.5em; transition: all 0.4s ease; display: flex; flex-direction: column; }
             .news-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.04); border-color: #2e7d32; }
             
@@ -72,7 +97,7 @@
                 #wrapper { padding-left: 0 !important; }
                 .hero-split { flex-direction: column; padding-top: 6em; text-align: center; gap: 3em; }
                 .hero-text h1 { font-size: 3em; }
-                .hero-img-box { height: 300px; }
+                .hero-globe { width: 300px; height: 300px; }
             }
 		</style>
 	</head>
@@ -82,16 +107,16 @@
                 <div class="inner">
 					<header id="header" style="height: 0; margin: 0; padding: 0; overflow: hidden;"></header>
 					
-                    <!-- HERO SPLIT -->
+                    <!-- HERO SPLIT COM GLOBO -->
                     <section class="hero-split">
                         <div class="hero-text">
                             <span class="obs-label">Observatório bioCultura</span>
                             <h1>O progresso não pode ser o fim do seu horizonte.</h1>
-                            <p>Casas transformadas em minas, jardins substituídos por silício. Enquanto nos vendem um futuro "verde", o seu território está a ser silenciado. Descubra a verdade oculta sob os seus pés.</p>
+                            <p>Entre minas de lítio e espelhos de silício, o seu lar está a perder a cor. Enquanto nos vendem um futuro "verde", o seu território está a ser silenciado. Descubra a verdade oculta sob os seus pés.</p>
                         </div>
                         <div class="hero-visual">
-                            <div class="hero-img-box">
-                                <img src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=2000&auto=format&fit=crop" alt="Impacto Territorial" />
+                            <div class="hero-globe">
+                                <img src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=2000&auto=format&fit=crop" alt="O Horizonte bioCultura" />
                             </div>
                         </div>
                     </section>
@@ -102,6 +127,7 @@
                     </div>
 
                     <div class="news-grid">
+                        <!-- CARDS IGUAIS AOS ANTERIORES -->
                         <div class="news-card">
                             <span class="news-tag">Mineração & Conflito</span>
                             <h3>A Fronteira do Lítio: Barroso e Arga</h3>
