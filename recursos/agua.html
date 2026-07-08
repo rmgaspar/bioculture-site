@@ -28,7 +28,6 @@
             .metric-val { font-size: 2em; font-weight: 300; color: #222; }
             .metric-label { font-size: 0.55em; font-weight: 800; text-transform: uppercase; color: #aaa; }
 
-            /* CORES MÉTRICAS */
             .status-acid { border-color: #ffd54f !important; }
             .status-neutral { border-color: #81c784 !important; }
             .status-alkaline { border-color: #4fc3f7 !important; }
@@ -36,7 +35,7 @@
             .status-medium { border-color: #ffb74d !important; }
             .status-hard { border-color: #ef5350 !important; }
 
-            /* ALERTAS DE IMPACTO (PROBLEMAS) */
+            /* ALERTAS DE IMPACTO */
             .alert-card { background: #fff5f5; border-left: 6px solid #c62828; padding: 2em; border-radius: 0 25px 25px 0; margin-bottom: 2em; }
             .alert-card h5 { color: #c62828; text-transform: uppercase; font-size: 0.7em; letter-spacing: 1px; margin-bottom: 8px; font-weight: 900; }
             .alert-card p { color: #7f1d1d; font-size: 0.9em; margin: 0; line-height: 1.5; font-weight: 600; }
@@ -48,7 +47,6 @@
 
             .temp-badge { background: #e1f5fe; color: #0277bd; padding: 8px 20px; border-radius: 25px; font-size: 0.85em; font-weight: 700; display: inline-block; margin-bottom: 15px; }
 
-            /* RODAPÉ DA PÁGINA */
             .page-footer { margin-top: auto; padding: 4em 0 2em 0; border-top: 1px solid #f2f2f2; }
 
             @media screen and (max-width: 1280px) {
@@ -72,7 +70,6 @@
 
                         <div class="water-dashboard" id="water-dashboard" style="display:none;">
                             
-                            <!-- COLUNA 1: QUALIDADE E BENEFÍCIOS -->
                             <div class="data-card">
                                 <h4 class="card-title">Perfil Químico</h4>
                                 <div class="quality-grid">
@@ -80,32 +77,21 @@
                                     <div class="metric" id="container-dureza"><span class="metric-val" id="val-dureza">--</span><span class="metric-label">ºf</span></div>
                                 </div>
                                 <div class="tech-info">
-                                    <div class="tech-item">
-                                        <h5>Vantagens e Utilidade</h5>
-                                        <p id="water-advantages">A analisar composição...</p>
-                                    </div>
-                                    <div class="tech-item">
-                                        <h5>Aptidão de Cultivo</h5>
-                                        <p id="soil-utility">--</p>
-                                    </div>
+                                    <div class="tech-item"><h5>Vantagens e Utilidade</h5><p id="water-advantages">A analisar...</p></div>
+                                    <div class="tech-item"><h5>Aptidão de Cultivo</h5><p id="soil-utility">--</p></div>
                                 </div>
                             </div>
 
-                            <!-- COLUNA 2: RESERVAS E AMEAÇAS -->
                             <div class="data-card">
                                 <h4 class="card-title">Estado do Recurso</h4>
-                                
-                                <!-- ALERTA DE PROBLEMAS -->
                                 <div id="impact-alert" class="alert-card" style="display:none;">
                                     <h5>Alerta de Vulnerabilidade</h5>
                                     <p id="impact-text"></p>
                                 </div>
-
                                 <div class="tech-info" style="background: #f4f7fb;">
                                     <div class="tech-item"><h5>Origem / Aquífero</h5><p id="reg-aquifer">--</p></div>
                                     <div class="tech-item"><h5>Infraestrutura Hídrica</h5><p id="reg-dams">--</p></div>
                                 </div>
-                                
                                 <div id="temp-container" style="text-align: center; margin-top: 15px;"></div>
                             </div>
                         </div>
@@ -114,17 +100,13 @@
                             <p>Sincronize a sua localização para carregar os dados hídricos.</p>
                         </div>
 
-                        <!-- FOOTER COM LOGO -->
                         <footer class="page-footer">
                             <div style="display: flex; align-items: center; justify-content: flex-end; gap: 10px; opacity: 0.3;">
                                 <div style="text-align: right; line-height: 1;">
                                     <span style="display: block; font-size: 0.85em; font-weight: 900; color: #333;">bioCultura</span>
                                     <span style="display: block; font-size: 0.5em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Global Regeneration</span>
                                 </div>
-                                <svg width="22" height="22" viewBox="0 0 100 100">
-                                    <path d="M50 5 L89 27.5 L89 72.5 L50 95 L11 72.5 L11 27.5 Z" fill="#333" />
-                                    <path d="M50 20 C50 20 75 45 75 70 C75 85 65 85 50 85 C35 85 25 85 25 70 C25 45 50 20 50 20Z" fill="#fff" />
-                                </svg>
+                                <svg width="22" height="22" viewBox="0 0 100 100"><path d="M50 5 L89 27.5 L89 72.5 L50 95 L11 72.5 L11 27.5 Z" fill="#333" /><path d="M50 20 C50 20 75 45 75 70 C75 85 65 85 50 85 C35 85 25 85 25 70 C25 45 50 20 50 20Z" fill="#fff" /></svg>
                             </div>
                         </footer>
 					</section>
@@ -147,11 +129,9 @@
                 try {
                     const r = await fetch('/data/bioregioes.json');
                     const data = await r.json();
-                    
                     const urlParams = new URLSearchParams(window.location.search);
                     const regionParam = urlParams.get('region');
                     
-                    // 1. Prioridade: Parâmetro na URL (Exploração temporária)
                     if (regionParam) {
                         const info = data.find(item => item.id === regionParam);
                         if (info) {
@@ -161,24 +141,18 @@
                         }
                     }
 
-                    // 2. Segunda Prioridade: Ver se o utilizador está em modo "Exploração"
                     const explorationId = sessionStorage.getItem('biocultura_exploration_id');
                     if (explorationId) {
                         const info = data.find(item => item.id === explorationId);
-                        if (info) {
-                            renderWaterDashboard(info);
-                            return;
-                        }
+                        if (info) { renderWaterDashboard(info); return; }
                     }
 
-                    // 3. Terceira Prioridade: Localização "Casa" (LocalStorage)
                     const savedRegionId = localStorage.getItem('biocultura_region');
                     let info = data.find(item => item.id === savedRegionId);
 
                     if (info) {
                         renderWaterDashboard(info);
                     } else if (navigator.geolocation) {
-                        // 4. Último recurso: GPS
                         navigator.geolocation.getCurrentPosition(pos => {
                             let minD = Infinity; let closest = null;
                             data.forEach(c => {
@@ -193,7 +167,7 @@
                             }
                         });
                     }
-                } catch(e) { console.error("Erro no carregamento:", e); }
+                } catch(e) { console.error("Erro:", e); }
             }
 
             function renderWaterDashboard(info) {
@@ -220,7 +194,7 @@
                     else if (dur <= 30) durCont.classList.add('status-medium');
                     else durCont.classList.add('status-hard');
 
-                    document.getElementById('water-advantages').innerText = ph < 7 ? "Água ligeiramente ácida: Ideal para a absorção de micronutrientes como Ferro e Zinco." : "Água equilibrada: Rica em carbonatos, excelente para neutralizar solos ácidos.";
+                    document.getElementById('water-advantages').innerText = ph < 7 ? "Água ligeiramente ácida: Ideal para a absorção de micronutrientes." : "Água equilibrada: Rica em carbonatos, excelente para neutralizar solos ácidos.";
                     document.getElementById('soil-utility').innerText = ph < 7 ? "Favorece mirtilos, batatas e hortênsias." : "Favorece leguminosas, vinhas e oliveiras.";
 
                     const mes = new Date().getMonth();
@@ -238,9 +212,7 @@
 
                     if (info.id === "porto-de-mos" || nota.toLowerCase().includes("poluição") || nota.toLowerCase().includes("contaminação") || nota.toLowerCase().includes("escassez")) {
                         impactAlert.style.display = 'block';
-                        impactText.innerText = info.id === "porto-de-mos" 
-                            ? "A poluição industrial e a extração descontrolada ameaçam a integridade deste aquífero vital." 
-                            : nota;
+                        impactText.innerText = info.id === "porto-de-mos" ? "A poluição industrial e a extração descontrolada ameaçam a integridade deste aquífero vital." : nota;
                     } else {
                         impactAlert.style.display = 'none';
                     }
