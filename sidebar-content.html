@@ -136,21 +136,23 @@
     }
 
     function detectLocation() {
-        if (!navigator.geolocation) return;
-        
-        document.getElementById('loc-text').innerText = "A restaurar...";
-        
-        // LIMPEZA CRÍTICA: Remove Porto de Mós ou qualquer ID fixo
-        localStorage.removeItem('biocultura_region');
-        sessionStorage.removeItem('biocultura_exploration_id');
-        sessionStorage.removeItem('biocultura_data_cache');
-
-        navigator.geolocation.getCurrentPosition((pos) => {
-            // O refresh vai disparar a lógica de GPS que está nas páginas (agua.html, etc)
-            location.reload();
-        }, (err) => {
-            alert("Por favor, ative o GPS para detetarmos a sua zona real.");
-            location.reload();
-        });
+    if (!navigator.geolocation) {
+        alert("O seu browser não suporta GPS.");
+        return;
     }
+    
+    // LIMPEZA ABSOLUTA
+    localStorage.clear(); 
+    sessionStorage.clear();
+
+    navigator.geolocation.getCurrentPosition((pos) => {
+        // Grava a nova posição real detetada
+        // O sistema de proximidade das páginas vai tratar do resto
+        window.location.href = "/index.html"; 
+    }, (err) => {
+        alert("Por favor, ative o GPS.");
+        window.location.href = "/index.html";
+    });
+}
+
 </script>
