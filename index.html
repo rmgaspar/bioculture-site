@@ -1,77 +1,61 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<title>bioCultura - Inteligência e Regeneração Planetária</title>
+		<title>bioCultura - Observatório de Regeneração Planetária</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
 		<style>
             /* --- ESTRUTURA GLOBAL & TIPOGRAFIA --- */
             body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
-            
 			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
-            section { padding-top: 8em !important; }
-
+            
             /* SIDEBAR FIXA */
-            #sidebar {
-                position: fixed !important;
-                top: 0; left: 0;
-                height: 100vh !important;
-                width: 18em !important;
-                overflow: hidden !important;
-                z-index: 10000;
-                background: #fff;
-                border-right: 1px solid #f2f2f2 !important;
-            }
+            #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
             #wrapper { padding-left: 18em !important; }
 
-            /* CABEÇALHOS CINZENTOS */
-            .category-label { 
-                font-size: 0.65em; font-weight: 900; text-transform: uppercase; 
-                letter-spacing: 3px; color: #bbb; margin-bottom: 10px; display: block; 
-            }
+            /* HERO COMPACTO & IMPACTANTE */
+            .hero-compact { padding: 8em 0 4em 0; max-width: 1000px; margin: 0 auto; text-align: left; display: flex; align-items: center; gap: 4em; }
+            .hero-text { flex: 1.5; }
+            .hero-text h1 { font-size: 3.8em; font-weight: 900; color: #1a1a1a; letter-spacing: -2px; line-height: 1.1; margin-bottom: 0.3em; }
+            .hero-text p { font-size: 1.2em; color: #666; line-height: 1.5; border-left: 4px solid #2e7d32; padding-left: 20px; }
+            .hero-image { flex: 1; height: 300px; border-radius: 40px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+            .hero-image img { width: 100%; height: 100%; object-fit: cover; }
 
-            /* HERO SECTION */
-            .hero { text-align: center; margin-bottom: 6em; max-width: 900px; margin-left: auto; margin-right: auto; }
-            .hero h1 { font-size: 4.5em; font-weight: 300; color: #1a1a1a; letter-spacing: -3px; line-height: 1; margin-bottom: 0.5em; }
-            .hero p { font-size: 1.4em; color: #888; font-style: italic; line-height: 1.6; }
+            /* BARRA DE CHOQUE (ESTATÍSTICAS) */
+            .stats-bar { display: flex; gap: 20px; margin-bottom: 5em; flex-wrap: wrap; }
+            .stat-card { flex: 1; min-width: 250px; background: #1b5e20; color: #fff; padding: 2em; border-radius: 25px; text-align: center; }
+            .stat-card h2 { color: #fff !important; font-size: 2.5em; font-weight: 300; margin: 0; }
+            .stat-card span { font-size: 0.7em; text-transform: uppercase; letter-spacing: 2px; font-weight: 800; opacity: 0.7; }
 
-            /* IMAGEM IMPACTO */
-            .main-image-container { 
-                width: 100%; max-height: 550px; border-radius: 60px; overflow: hidden; 
-                box-shadow: 0 30px 60px rgba(0,0,0,0.08); margin-bottom: 6em;
-            }
-            .main-image-container img { width: 100%; height: 100%; object-fit: cover; }
+            /* GRID DE NOTÍCIAS REGIONAIS */
+            .news-section { margin-bottom: 6em; }
+            .news-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; }
+            .news-card { background: #fff; border-radius: 30px; border: 1px solid #f0f0f0; overflow: hidden; transition: all 0.3s ease; display: flex; flex-direction: column; }
+            .news-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.05); }
+            .news-tag { padding: 5px 15px; font-size: 0.6em; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; color: #fff; display: inline-block; margin-bottom: 15px; border-radius: 5px; }
+            .tag-alert { background: #c62828; }
+            .tag-energy { background: #ffa000; }
+            .tag-nature { background: #2e7d32; }
+            .news-body { padding: 2em; flex-grow: 1; }
+            .news-body h3 { font-size: 1.2em; color: #1a1a1a; margin-bottom: 10px; line-height: 1.3; }
+            .news-body p { font-size: 0.85em; color: #777; line-height: 1.6; }
 
-            /* MENSAGEM DE ALERTA (O PROBLEMA) */
-            .problem-section { margin-bottom: 8em; }
-            .problem-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; }
-            .problem-card { background: #fff; padding: 3em; border-radius: 40px; border: 1px solid #f8f8f8; box-shadow: 0 10px 30px rgba(0,0,0,0.02); }
-            .problem-card h3 { font-size: 1.1em; font-weight: 800; color: #1a1a1a; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1.2em; display: flex; align-items: center; gap: 15px; }
-            .problem-card h3 i { color: #c62828; }
-            .problem-card p { font-size: 0.95em; color: #666; line-height: 1.7; text-align: justify; }
+            /* SECÇÃO PSZAER */
+            .debate-box { background: #fafafa; border: 1px solid #eee; border-radius: 40px; padding: 4em; margin-bottom: 6em; }
+            .debate-content { max-width: 800px; margin: 0 auto; text-align: center; }
+            .debate-content blockquote { font-size: 1.2em; color: #444; font-style: italic; border: none; padding: 0; margin: 1.5em 0; }
 
-            /* CTA SECTION */
-            .cta-box { 
-                background: #1b5e20; border-radius: 50px; padding: 5em; text-align: center; color: #fff; 
-                margin-bottom: 6em; position: relative; overflow: hidden;
-            }
-            .cta-box h2 { color: #fff !important; font-size: 2.8em; font-weight: 300; margin-bottom: 0.5em; }
-            .cta-box p { opacity: 0.8; font-size: 1.1em; margin-bottom: 2.5em; }
-            .btn-sync { 
-                background: #fff; color: #1b5e20 !important; border: none; padding: 18px 45px; 
-                border-radius: 50px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; 
-                cursor: pointer; transition: all 0.3s ease; 
-            }
-            .btn-sync:hover { transform: scale(1.05); box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
-
-            /* RODAPÉ */
-            .page-footer { padding: 4em 0 2em 0; border-top: 1px solid #f2f2f2; }
+            /* CTA */
+            .cta-final { background: #f1f8e9; border-radius: 40px; padding: 4em; text-align: center; margin-bottom: 4em; }
+            .btn-main { background: #1b5e20; color: #fff !important; padding: 15px 40px; border-radius: 50px; font-weight: 800; text-transform: uppercase; text-decoration: none; display: inline-block; transition: all 0.3s ease; }
+            .btn-main:hover { background: #2e7d32; transform: scale(1.05); }
 
             @media screen and (max-width: 1280px) {
                 #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
                 #wrapper { padding-left: 0 !important; }
-                .hero h1 { font-size: 3em; }
+                .hero-compact { flex-direction: column; padding-top: 4em; text-align: center; }
+                .hero-text h1 { font-size: 2.8em; }
             }
 		</style>
 	</head>
@@ -81,49 +65,94 @@
                 <div class="inner">
 					<header id="header" style="height: 0; margin: 0; padding: 0; overflow: hidden;"></header>
 					
-                    <!-- HERO -->
-                    <section class="hero">
-                        <span class="category-label">bioCultura Global</span>
-                        <h1>A Vida não se divide.</h1>
-                        <p>Onde a tecnologia e a natureza respiram em uníssono para regenerar o que é de todos.</p>
-                    </section>
-
-                    <!-- IMAGEM DE IMPACTO -->
-                    <div class="main-image-container">
-                        <img src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?q=80&w=2000&auto=format&fit=crop" alt="Regeneração Planetária" />
-                    </div>
-
-                    <!-- OS PROBLEMAS DA ACTUALIDADE -->
-                    <section class="problem-section">
-                        <div style="text-align: center; margin-bottom: 4em;">
-                            <h2 style="font-size: 2.2em; font-weight: 300; color: #1a1a1a;">O que estamos a enfrentar?</h2>
-                            <p style="color: #999;">A falsa sustentabilidade está a mascarar a destruição silenciosa dos nossos recursos.</p>
+                    <!-- HERO COMPACTO -->
+                    <section class="hero-compact">
+                        <div class="hero-text">
+                            <span style="font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; color: #2e7d32;">bioCultura Global</span>
+                            <h1>O que o seu território não lhe diz.</h1>
+                            <p>A transparência de dados é a nossa única arma contra a destruição silenciosa da biodiversidade e o falso marketing verde.</p>
                         </div>
-
-                        <div class="problem-grid">
-                            <div class="problem-card">
-                                <h3><i class="fas fa-vial"></i> Dependência Química</h3>
-                                <p>O uso sistemático de pesticidas e herbicidas não só contamina os alimentos, como aniquila a microbiota do solo. Um solo morto não sequestra carbono e exige cada vez mais química, num ciclo vicioso que a bioCultura pretende quebrar através de tratamentos biológicos e regeneração pedológica.</p>
-                            </div>
-                            <div class="problem-card">
-                                <h3><i class="fas fa-exclamation-triangle"></i> O Mito das Baterias</h3>
-                                <p>A transição energética atual foca-se na redução de CO2 nas cidades, mas ignora a destruição de ecossistemas remotos. A extração de Lítio e Silício consome milhões de litros de água, baixa o nível dos aquíferos e ameaça a biodiversidade local. É uma troca ética que raramente é discutida.</p>
-                            </div>
-                            <div class="problem-card">
-                                <h3><i class="fas fa-tint-slash"></i> Escassez Silenciosa</h3>
-                                <p>A água é o sangue da terra, mas os nossos aquíferos estão a ser drenados e contaminados a um ritmo insustentável. A falta de dados locais precisos impede uma gestão ética. Monitorizar a qualidade e a reserva hídrica da sua região é o primeiro passo para a autonomia.</p>
-                            </div>
+                        <div class="hero-image">
+                            <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=2000&auto=format&fit=crop" alt="Monitorização" />
                         </div>
                     </section>
 
-                    <!-- CALL TO ACTION -->
-                    <div class="cta-box">
-                        <h2>Conheça o seu território.</h2>
-                        <p>Não tome decisões baseadas em dados globais. Aceda à inteligência específica da sua localidade.</p>
-                        <button onclick="detectLocation()" class="btn-sync">Sincronizar Localização</button>
+                    <!-- ESTATÍSTICAS DE CHOQUE -->
+                    <div class="stats-bar">
+                        <div class="stat-card">
+                            <span>Consumo Água / Dia</span>
+                            <h2>197 Litros</h2>
+                            <p style="font-size: 0.7em; margin: 0; opacity: 0.8;">Média por habitante (ERSAR)</p>
+                        </div>
+                        <div class="stat-card" style="background: #2e7d32;">
+                            <span>Resíduos / Dia</span>
+                            <h2>1,46 KG</h2>
+                            <p style="font-size: 0.7em; margin: 0; opacity: 0.8;">Produção por habitante</p>
+                        </div>
+                        <div class="stat-card" style="background: #388e3c;">
+                            <span>Aquecimento Local</span>
+                            <h2>+1.5°C</h2>
+                            <p style="font-size: 0.7em; margin: 0; opacity: 0.8;">Anomalia em regiões críticas</p>
+                        </div>
                     </div>
 
-                    <!-- FOOTER COM LOGÓTIPO -->
+                    <!-- NOTÍCIAS DAS REGIÕES -->
+                    <section class="news-section">
+                        <div style="margin-bottom: 3em;">
+                            <h2 style="font-size: 2em; font-weight: 300;">Radar Territorial</h2>
+                        </div>
+                        <div class="news-grid">
+                            <!-- CASO 1: LÍTIO -->
+                            <div class="news-card">
+                                <div class="news-body">
+                                    <span class="news-tag tag-alert">Mineração</span>
+                                    <h3>Boticas: A Linha da Frente contra o Lítio</h3>
+                                    <p>A população de Covas do Barroso mantém a resistência contra a maior mina a céu aberto da Europa. O impacto no aquífero local é irreversível.</p>
+                                    <a href="/energia/transicao-etica.html" style="font-size: 0.7em; font-weight: 800; color: #c62828;">VER RADAR DE MINERAÇÃO →</a>
+                                </div>
+                            </div>
+                            <!-- CASO 2: SOLAR -->
+                            <div class="news-card">
+                                <div class="news-body">
+                                    <span class="news-tag tag-energy">Energia</span>
+                                    <h3>Alentejo: O Sol que apaga o Montado</h3>
+                                    <p>Milhares de hectares de azinheiras e sobreiros estão a ser abatidos para dar lugar a espelhos de silício. É este o preço da transição?</p>
+                                    <a href="/energia/transicao-etica.html" style="font-size: 0.7em; font-weight: 800; color: #ffa000;">VER IMPACTO SOLAR →</a>
+                                </div>
+                            </div>
+                            <!-- CASO 3: BIODIVERSIDADE -->
+                            <div class="news-card">
+                                <div class="news-body">
+                                    <span class="news-tag tag-nature">Biodiversidade</span>
+                                    <h3>O Silêncio da Fauna na Beira Baixa</h3>
+                                    <p>A fragmentação de habitats por infraestruturas energéticas está a expulsar espécies protegidas como o Lince e a Águia-Imperial.</p>
+                                    <a href="/ecossistemas/biodiversidade.html" style="font-size: 0.7em; font-weight: 800; color: #2e7d32;">VER BIODIVERSIDADE →</a>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- DEBATE PSZAER -->
+                    <section class="debate-box">
+                        <div class="debate-content">
+                            <span class="category-label">Debate Público</span>
+                            <h2 style="font-weight: 300;">Zonas de Aceleração (PSZAER)</h2>
+                            <blockquote>
+                                "A transição é indispensável, mas não pode ser feita à custa do território, das pessoas e da vida que nele existe."
+                            </blockquote>
+                            <p style="font-size: 0.9em; color: #888;">— Movimento Cívico Cidadãos pela Beira Baixa (via Observador)</p>
+                            <p style="margin-top: 2em; font-size: 0.95em;">O novo programa setorial ignora o equilíbrio entre paisagem e saúde pública. A bioCultura monitoriza estas zonas para lhe dar o poder da informação.</p>
+                        </div>
+                    </section>
+
+                    <!-- CTA FINAL -->
+                    <div class="cta-final">
+                        <h2>Descubra a realidade da sua localidade.</h2>
+                        <p>Sincronize o seu GPS para ver os dados reais de mineração, água e solo da sua zona.</p>
+                        <a href="javascript:void(0)" onclick="detectLocation()" class="btn-main">Sincronizar Agora</a>
+                    </div>
+
+                    <!-- FOOTER -->
                     <footer class="page-footer">
                         <div style="display: flex; align-items: center; justify-content: flex-end; gap: 10px; opacity: 0.3;">
                             <div style="text-align: right; line-height: 1;">
