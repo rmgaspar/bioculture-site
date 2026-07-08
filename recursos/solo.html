@@ -8,52 +8,39 @@
 		<style>
             /* --- ESTRUTURA GLOBAL & TIPOGRAFIA --- */
             body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
-            
 			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
-            section { padding-top: 4em !important; }
+            section { padding-top: 4em !important; min-height: 100vh; display: flex; flex-direction: column; }
 
             /* SIDEBAR FIXA */
-            #sidebar {
-                position: fixed !important;
-                top: 0; left: 0;
-                height: 100vh !important;
-                width: 18em !important;
-                overflow: hidden !important;
-                z-index: 10000;
-                background: #fff;
-                border-right: 1px solid #f2f2f2 !important;
-            }
+            #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
             #wrapper { padding-left: 18em !important; }
 
-            /* CABEÇALHOS CINZENTOS (ESTILO SIDEBAR) */
-            .category-label { 
-                font-size: 0.65em; font-weight: 900; text-transform: uppercase; 
-                letter-spacing: 3px; color: #bbb; margin-bottom: 10px; display: block; 
-            }
-            .card-title { 
-                font-size: 0.7em; font-weight: 900; text-transform: uppercase; 
-                letter-spacing: 2px; color: #bbb; margin-bottom: 2em; text-align: center; 
-            }
+            /* CABEÇALHOS CINZENTOS */
+            .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; color: #bbb; margin-bottom: 10px; display: block; }
+            .card-title { font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin-bottom: 2em; text-align: center; }
 
             /* DASHBOARD */
             .soil-dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 30px; margin-bottom: 4em; }
-            .data-card { background: #fff; border-radius: 35px; padding: 3em; box-shadow: 0 15px 45px rgba(0,0,0,0.03); border: 1px solid #f8f8f8; }
+            .data-card { background: #fff; border-radius: 35px; padding: 3em; box-shadow: 0 15px 45px rgba(0,0,0,0.03); border: 1px solid #f8f8f8; display: flex; flex-direction: column; }
             
             .quality-grid { display: flex; gap: 2em; justify-content: center; align-items: center; margin-bottom: 2em; }
-            .metric { display: flex; flex-direction: column; align-items: center; width: 130px; height: 130px; border-radius: 50%; border: 5px solid #eee; justify-content: center; }
+            .metric { display: flex; flex-direction: column; align-items: center; width: 110px; height: 110px; border-radius: 50%; border: 5px solid #eee; justify-content: center; text-align: center; }
             .metric-val { font-size: 2.2em; font-weight: 300; color: #222; }
-            .metric-label { font-size: 0.6em; font-weight: 800; text-transform: uppercase; color: #aaa; }
+            .metric-label { font-size: 0.55em; font-weight: 800; text-transform: uppercase; color: #aaa; }
 
-            /* CORES MÉTRICAS */
-            .status-acid { border-color: #ffd54f !important; color: #f57f17 !important; }    
-            .status-neutral { border-color: #81c784 !important; color: #2e7d32 !important; } 
-            .status-alkaline { border-color: #4fc3f7 !important; color: #01579b !important; }
+            /* CORES MÉTRICAS PH */
+            .status-acid { border-color: #ffd54f !important; }
+            .status-neutral { border-color: #81c784 !important; }
+            .status-alkaline { border-color: #4fc3f7 !important; }
 
             /* INFO TÉCNICA */
-            .tech-info { background: #fdfaf5; padding: 2em; border-radius: 20px; margin-top: 1.5em; border: 1px solid #f5ede4; }
-            .tech-item { margin-bottom: 1.5em; }
-            .tech-item h5 { font-size: 0.7em; font-weight: 900; text-transform: uppercase; color: #8d6e63; margin-bottom: 5px; }
-            .tech-item p { font-size: 0.9em; margin: 0; line-height: 1.5; color: #5d4037; }
+            .tech-info { background: #f9fbf9; padding: 1.5em; border-radius: 20px; margin-top: 1em; flex-grow: 1; }
+            .tech-item { margin-bottom: 1em; }
+            .tech-item h5 { font-size: 0.65em; font-weight: 900; text-transform: uppercase; color: #bbb; margin-bottom: 5px; }
+            .tech-item p { font-size: 0.85em; margin: 0; line-height: 1.5; color: #444; }
+
+            /* RODAPÉ DA PÁGINA */
+            .page-footer { margin-top: auto; padding: 4em 0 2em 0; border-top: 1px solid #f2f2f2; }
 
             @media screen and (max-width: 1280px) {
                 #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
@@ -76,31 +63,28 @@
 
                         <div class="soil-dashboard" id="soil-dashboard" style="display:none;">
                             
-                            <!-- PERFIL PEDOLÓGICO -->
+                            <!-- COLUNA 1: COMPOSIÇÃO -->
                             <div class="data-card">
-                                <h4 class="card-title">Composição e Acidez</h4>
+                                <h4 class="card-title">Perfil Geológico</h4>
                                 <div class="quality-grid">
-                                    <div class="metric" id="container-ph">
-                                        <span class="metric-val" id="val-ph">--</span>
-                                        <span class="metric-label">pH Solo</span>
-                                    </div>
+                                    <div class="metric" id="container-ph"><span class="metric-val" id="val-ph">--</span><span class="metric-label">pH</span></div>
                                     <div style="flex: 1; min-width: 180px;">
-                                        <h5 style="font-size: 0.65em; font-weight: 900; text-transform: uppercase; color: #aaa; margin-bottom: 5px;">Tipo de Terreno</h5>
-                                        <p id="val-soil-type" style="font-size: 1.2em; font-weight: 700; color: #5d4037; margin: 0;"></p>
+                                        <h5 style="font-size: 0.65em; font-weight: 900; text-transform: uppercase; color: #bbb; margin-bottom: 5px;">Tipo de Terreno</h5>
+                                        <p id="val-soil-type" style="font-size: 1.2em; font-weight: 700; color: #1b5e20; margin: 0;"></p>
                                         <p id="val-texture" style="font-size: 0.85em; color: #888; margin-top: 5px;"></p>
                                     </div>
                                 </div>
                                 <div class="tech-info">
                                     <div class="tech-item">
                                         <h5>Aptidão e Benefícios</h5>
-                                        <p id="soil-benefits">A analisar potencial regenerativo...</p>
+                                        <p id="soil-benefits">A analisar potencial do terreno...</p>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- REGENERAÇÃO E CLIMA -->
+                            <!-- COLUNA 2: REGENERAÇÃO -->
                             <div class="data-card">
-                                <h4 class="card-title">Interação e Regeneração</h4>
+                                <h4 class="card-title">Interação & Regeneração</h4>
                                 <div class="tech-info" style="background: #f1f8e9; border-color: #dcedc8;">
                                     <div class="tech-item">
                                         <h5 style="color: #33691e;">Sequestro de Carbono</h5>
@@ -111,19 +95,26 @@
                                         <p id="water-resilience" style="font-size: 0.9em; color: #33691e;">--</p>
                                     </div>
                                 </div>
-                                
-                                <div class="footer-signature-right" style="padding: 2em 0 0 0;">
-                                    <div style="display: flex; align-items: center; justify-content: flex-end; gap: 8px; opacity: 0.4;">
-                                        <span style="font-size: 0.8em; font-weight: 900;">bioCultura</span>
-                                        <svg width="15" height="15" viewBox="0 0 100 100"><path d="M50 5 L89 27.5 L89 72.5 L50 95 L11 72.5 L11 27.5 Z" fill="#333" /><path d="M50 20 C50 20 75 45 75 70 C75 85 65 85 50 85 C35 85 25 85 25 70 C25 45 50 20 50 20Z" fill="#fff" /></svg>
-                                    </div>
-                                </div>
                             </div>
                         </div>
 
                         <div id="no-gps-warning" style="text-align: center; padding: 4em; background: #f4f7fb; border-radius: 40px;">
                             <p>Sincronize a sua localização para carregar os dados geológicos.</p>
                         </div>
+
+                        <!-- FOOTER -->
+                        <footer class="page-footer">
+                            <div style="display: flex; align-items: center; justify-content: flex-end; gap: 10px; opacity: 0.3;">
+                                <div style="text-align: right; line-height: 1;">
+                                    <span style="display: block; font-size: 0.85em; font-weight: 900; color: #333;">bioCultura</span>
+                                    <span style="display: block; font-size: 0.5em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Global Regeneration</span>
+                                </div>
+                                <svg width="22" height="22" viewBox="0 0 100 100">
+                                    <path d="M50 5 L89 27.5 L89 72.5 L50 95 L11 72.5 L11 27.5 Z" fill="#333" />
+                                    <path d="M50 20 C50 20 75 45 75 70 C75 85 65 85 50 85 C35 85 25 85 25 70 C25 45 50 20 50 20Z" fill="#fff" />
+                                </svg>
+                            </div>
+                        </footer>
 					</section>
 				</div>
             </div>
@@ -131,7 +122,7 @@
 		</div>
 
 		<script src="/assets/js/jquery.min.js"></script>
-            <script>
+        <script>
             function calcularDistancia(lat1, lon1, lat2, lon2) {
                 const R = 6371;
                 const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -147,20 +138,27 @@
                     const urlParams = new URLSearchParams(window.location.search);
                     const regionParam = urlParams.get('region');
                     
-                    // Prioridade 1: Link (?region=...)
                     if (regionParam) {
                         const info = data.find(item => item.id === regionParam);
+                        if (info) {
+                            sessionStorage.setItem('biocultura_exploration_id', info.id);
+                            renderSoilDashboard(info);
+                            return;
+                        }
+                    }
+
+                    const explorationId = sessionStorage.getItem('biocultura_exploration_id');
+                    if (explorationId) {
+                        const info = data.find(item => item.id === explorationId);
                         if (info) { renderSoilDashboard(info); return; }
                     }
 
-                    // Prioridade 2: Localização Guardada
                     const savedRegionId = localStorage.getItem('biocultura_region');
                     let info = data.find(item => item.id === savedRegionId);
 
                     if (info) {
                         renderSoilDashboard(info);
                     } else if (navigator.geolocation) {
-                        // Prioridade 3: GPS
                         navigator.geolocation.getCurrentPosition(pos => {
                             let minD = Infinity; let closest = null;
                             data.forEach(c => {
@@ -175,27 +173,58 @@
                             }
                         });
                     }
-                } catch(e) { console.error(e); }
+                } catch(e) { console.error("Erro:", e); }
             }
 
-            // ... (Mantém a tua função renderSoilDashboard igual) ...
+            function renderSoilDashboard(info) {
+                if(!info) return;
+                document.getElementById('no-gps-warning').style.display = 'none';
+                document.getElementById('soil-dashboard').style.display = 'grid';
+                document.getElementById('reg-name').innerText = info.titulo;
 
-            fetch('/sidebar-content.html').then(r => r.text()).then(html => {
-                document.getElementById('sidebar').innerHTML = html;
-                var s = document.createElement('script'); s.src = '/assets/js/main.js'; document.body.appendChild(s);
-                inicializarPagina();
-            });
-        </script>
+                if (info.biomas) {
+                    const ph = parseFloat(info.biomas.ph_solo) || 6.5;
+                    const type = info.biomas.solo || "";
+                    
+                    document.getElementById('val-ph').innerText = ph;
+                    const phCont = document.getElementById('container-ph');
+                    phCont.className = 'metric';
+                    if (ph < 6.0) phCont.classList.add('status-acid');
+                    else if (ph <= 7.5) phCont.classList.add('status-neutral');
+                    else phCont.classList.add('status-alkaline');
 
+                    document.getElementById('val-soil-type').innerText = type;
+                    document.getElementById('val-texture').innerText = "Textura: " + (info.biomas.textura || "N/A");
 
-        // ... (Mantém a tua função renderSoilDashboard igual) ...
+                    let benefit = ""; let carbon = ""; let water = "";
 
-        fetch('/sidebar-content.html').then(r => r.text()).then(html => {
-            document.getElementById('sidebar').innerHTML = html;
-            var s = document.createElement('script'); s.src = '/assets/js/main.js'; document.body.appendChild(s);
-            inicializarPagina();
-        });
-    </script>
+                    if (type.includes("Granítico")) {
+                        benefit = "Solo excelente para castanheiros e batata. Requer reforço de matéria orgânica para reter nutrientes.";
+                        carbon = "Potencial moderado. Melhora significativamente com a técnica de cobertura permanente.";
+                        water = "Drenagem rápida: Evita o encharcamento mas exige regas mais frequentes e curtas.";
+                    } else if (type.includes("Xistoso")) {
+                        benefit = "Mineralização profunda, ideal para vinhas de alta qualidade e oliveiras resilientes.";
+                        carbon = "Fixação estável através de raízes profundas. Essencial evitar a mobilização mecânica.";
+                        water = "Retenção térmica: A rocha ajuda a manter o calor no solo durante a noite.";
+                    } else if (type.includes("Calcário")) {
+                        benefit = "Naturalmente rico em cálcio. Favorece leguminosas e fruteiras de caroço. pH equilibrado.";
+                        carbon = "Elevado potencial de armazenamento estável em forma de carbonatos minerais.";
+                        water = "Permeabilidade alta: Risco de seca rápida. Recomendamos o uso de cobertura morta.";
+                    } else if (type.includes("Argiloso") || type.includes("Barros")) {
+                        benefit = "Alta fertilidade natural. Ideal para cereais, pastagens ricas e hortícolas exigentes.";
+                        carbon = "O campeão do sequestro. A argila protege o carbono da oxidação rápida.";
+                        water = "Efeito esponja: Retém água por longos períodos. Cuidado com a compactação.";
+                    } else {
+                        benefit = "Solo versátil. Recomendamos mulching orgânico para proteger a microbiota local.";
+                        carbon = "Dependente da biomassa à superfície. Mantenha o solo sempre coberto.";
+                        water = "Resiliência moderada. Ajuste a rega conforme a exposição solar da encosta.";
+                    }
+
+                    document.getElementById('soil-benefits').innerText = benefit;
+                    document.getElementById('carbon-potential').innerText = carbon;
+                    document.getElementById('water-resilience').innerText = water;
+                }
+            }
 
             fetch('/sidebar-content.html').then(r => r.text()).then(html => {
                 document.getElementById('sidebar').innerHTML = html;
