@@ -1,40 +1,71 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<title>bioCultura - Ecossistemas Locais</title>
+		<title>bioCultura - Observatório da Biodiversidade</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
 		<style>
+            /* --- ESTRUTURA GLOBAL & TIPOGRAFIA --- */
+            body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
+            
 			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
-			#header .toggle { background: none !important; top: 2em !important; left: 2em !important; border: none !important; text-decoration: none !important; z-index: 10001; }
-			#header .toggle:before { content: '\f06c' !important; font-family: "Font Awesome 5 Free" !important; font-weight: 900; color: #2e7d32 !important; font-size: 1.6em !important; }
-            #header .toggle:after { display: none !important; }
-            section { padding-top: 2em !important; }
+            section { padding-top: 4em !important; }
+
+            /* SIDEBAR FIXA */
+            #sidebar {
+                position: fixed !important;
+                top: 0; left: 0;
+                height: 100vh !important;
+                width: 18em !important;
+                overflow: hidden !important;
+                z-index: 10000;
+                background: #fff;
+                border-right: 1px solid #f2f2f2 !important;
+            }
+            #wrapper { padding-left: 18em !important; }
+
+            /* CABEÇALHOS CINZENTOS */
+            .category-label { 
+                font-size: 0.65em; font-weight: 900; text-transform: uppercase; 
+                letter-spacing: 3px; color: #bbb; margin-bottom: 10px; display: block; 
+            }
+            .card-title { 
+                font-size: 0.7em; font-weight: 900; text-transform: uppercase; 
+                letter-spacing: 2px; color: #bbb; margin-bottom: 2em; text-align: center; 
+            }
 
             /* DASHBOARD BIODIVERSIDADE */
-            .bio-dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 25px; margin-bottom: 4em; }
-            .data-card { background: #fff; border-radius: 35px; padding: 2.5em; box-shadow: 0 20px 50px rgba(0,0,0,0.04); border: 1px solid #f0f7ff; position: relative; display: flex; flex-direction: column; min-height: 400px; }
-            .data-card h4 { color: #2e7d32; text-transform: uppercase; letter-spacing: 2px; font-size: 0.75em; margin-bottom: 1.5em; font-weight: 800; text-align: center; }
+            .bio-dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 30px; margin-bottom: 4em; }
+            .data-card { background: #fff; border-radius: 35px; padding: 3em; box-shadow: 0 15px 45px rgba(0,0,0,0.03); border: 1px solid #f8f8f8; display: flex; flex-direction: column; }
             
             /* LISTAS DE ESPÉCIES */
             .species-list { list-style: none; padding: 0; margin: 0; }
-            .species-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid #f0f0f0; font-size: 0.95em; color: #444; }
+            .species-item { 
+                display: flex; align-items: center; gap: 15px; padding: 12px 0; 
+                border-bottom: 1px solid #f9f9f9; font-size: 0.95em; color: #444; 
+            }
             .species-item:last-child { border: none; }
-            .species-item i { color: #81c784; font-size: 0.8em; }
+            .species-item i { color: #81c784; font-size: 0.9em; width: 20px; text-align: center; }
 
             /* BADGES DE STATUS */
-            .status-badge { font-size: 0.65em; padding: 3px 10px; border-radius: 10px; text-transform: uppercase; font-weight: 800; margin-left: auto; letter-spacing: 0.5px; }
-            .status-protected { background: #e8f5e9; color: #2e7d32; } /* Verde - Protegida */
-            .status-danger { background: #ffebee; color: #c62828; }    /* Vermelho - Ameaçada */
-            .status-invasive { background: #fff3e0; color: #e65100; }  /* Laranja - Invasora */
+            .status-badge { 
+                font-size: 0.6em; padding: 4px 10px; border-radius: 12px; 
+                text-transform: uppercase; font-weight: 800; margin-left: auto; letter-spacing: 0.5px; 
+            }
+            .status-protected { background: #e8f5e9; color: #2e7d32; }
+            .status-danger { background: #ffebee; color: #c62828; }
+            .status-invasive { background: #fff3e0; color: #e65100; }
 
-            .features-flow { display: flex; flex-direction: column; gap: 8em; margin-top: 4em; }
-            .feature-row { display: flex; align-items: center; gap: 5em; flex-wrap: wrap; } 
-            .feature-image { flex: 1; min-width: 300px; height: 380px; border-radius: 40px; overflow: hidden; }
-            .feature-image img { width: 100%; height: 100%; object-fit: cover; }
+            /* INFO BOX */
+            .conservation-note { background: #f4f7fb; padding: 2em; border-radius: 20px; margin-top: auto; border: 1px solid #e1e8ed; }
+            .conservation-note h5 { font-size: 0.7em; font-weight: 900; text-transform: uppercase; color: #0277bd; margin-bottom: 8px; }
+            .conservation-note p { font-size: 0.85em; margin: 0; line-height: 1.5; color: #5c6bc0; }
 
-			.footer-signature-right { text-align: right; padding: 4em 2em 2em 0; opacity: 0.8; }
+            @media screen and (max-width: 1280px) {
+                #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
+                #wrapper { padding-left: 0 !important; }
+            }
 		</style>
 	</head>
 	<body class="is-preload">
@@ -45,51 +76,48 @@
 					
                     <section>
                         <div style="text-align: center; margin-bottom: 5em;">
-                            <h4 style="letter-spacing: 5px; color: #2e7d32; text-transform: uppercase; font-size: 0.8em; opacity: 0.6;">Património Natural</h4>
-                            <h1 style="font-size: 3.5em; font-weight: 300; color: #1b5e20; letter-spacing: -2px;">Ecossistemas: O Equilíbrio Local</h1>
-                            <p style="font-style: italic; color: #888;">Biodiversidade observada em: <strong id="reg-name" style="color:#2e7d32">...</strong></p>
+                            <span class="category-label">Vida & Ecossistemas</span>
+                            <h1 style="font-size: 3.5em; font-weight: 300; color: #1a1a1a; letter-spacing: -2px;">Biodiversidade Local</h1>
+                            <p style="font-style: italic; color: #999;">Património natural de: <strong id="reg-name" style="color:#2e7d32">...</strong></p>
                         </div>
 
-                        <!-- DASHBOARD BIODIVERSIDADE -->
                         <div class="bio-dashboard" id="bio-dashboard" style="display:none;">
                             
-                            <!-- COLUNA FAUNA -->
+                            <!-- FAUNA REGIONAL -->
                             <div class="data-card">
-                                <h4><i class="fas fa-paw"></i> Fauna Regional</h4>
+                                <h4 class="card-title">Fauna e Vida Selvagem</h4>
                                 <ul class="species-list" id="fauna-list">
                                     <!-- Injetado por JS -->
                                 </ul>
-                                <div class="source-note" style="margin-top: auto; font-size: 0.7em; color: #ccc; text-align: center; padding-top: 20px;">Dados: ICNF / bioCultura</div>
+                                <div class="conservation-note" style="margin-top: 2em;">
+                                    <h5>Estado de Conservação</h5>
+                                    <p>A fauna local é o indicador máximo da saúde do território. A presença de predadores de topo indica um ecossistema funcional.</p>
+                                </div>
                             </div>
 
-                            <!-- COLUNA FLORA -->
+                            <!-- FLORA REGIONAL -->
                             <div class="data-card">
-                                <h4><i class="fas fa-tree"></i> Flora e Vegetação</h4>
+                                <h4 class="card-title">Flora e Vegetação</h4>
                                 <ul class="species-list" id="flora-list">
                                     <!-- Injetado por JS -->
                                 </ul>
-                                <div class="source-note" style="margin-top: auto; font-size: 0.7em; color: #ccc; text-align: center; padding-top: 20px;">Dados: Flora-On / bioCultura</div>
+                                <div class="conservation-note" style="margin-top: 2em; background: #f1f8e9; border-color: #dcedc8;">
+                                    <h5 style="color: #33691e;">Gestão Vegetal</h5>
+                                    <p style="color: #33691e;">Promova espécies autóctones. Estas plantas estão adaptadas ao solo e clima local, exigindo menos água e zero pesticidas.</p>
+                                </div>
+                                <div class="footer-signature-right" style="padding: 2em 0 0 0;">
+                                    <div style="display: flex; align-items: center; justify-content: flex-end; gap: 8px; opacity: 0.4;">
+                                        <span style="font-size: 0.8em; font-weight: 900;">bioCultura</span>
+                                        <svg width="15" height="15" viewBox="0 0 100 100"><path d="M50 5 L89 27.5 L89 72.5 L50 95 L11 72.5 L11 27.5 Z" fill="#333" /><path d="M50 20 C50 20 75 45 75 70 C75 85 65 85 50 85 C35 85 25 85 25 70 C25 45 50 20 50 20Z" fill="#fff" /></svg>
+                                    </div>
+                                </div>
                             </div>
-
                         </div>
 
-                        <div id="no-gps-warning" style="text-align: center; padding: 4em; background: #f4f7fb; border-radius: 40px; margin-bottom: 4em;">
-                            <p>Sincronize a sua localização na barra lateral para descobrir a vida selvagem da sua região.</p>
+                        <div id="no-gps-warning" style="text-align: center; padding: 4em; background: #f4f7fb; border-radius: 40px;">
+                            <p>Sincronize a sua localização para carregar o inventário biológico da região.</p>
                         </div>
 					</section>
-
-					<div class="footer-signature-right">
-						<a href="/index.html" style="border: none; display: inline-block; text-decoration: none;">
-							<div style="font-family: 'Source Sans Pro', sans-serif; font-size: 1.4em; line-height: 1; display: flex; align-items: flex-end; justify-content: flex-end;">
-                                <b style="font-weight: 700; color: #2e7d32; margin-right: -3px; position: relative; z-index: 2;">b</b>
-                                <div style="width: 32px; margin: 0 -7px; position: relative; line-height: 0; transform: translateY(4px); z-index: 1;">
-                                    <svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: auto;"><path d="M-20 110 Q50 102 120 110" stroke="#634832" stroke-width="4" fill="none" opacity="0.3" /><path d="M50 110 C50 80 35 70 50 45 C65 70 50 80 50 110" fill="#2e7d32" /><path d="M50 80 C75 75 85 50 65 40 C50 55 50 65 50 80" fill="#4CAF50" /></svg>
-                                </div>
-                                <b style="font-weight: 700; color: #2e7d32; margin-left: -3px; position: relative; z-index: 2;">o</b>
-                                <span style="font-weight: 300; color: #444; margin-left: 2px;">Cultura</span>
-                            </div>
-						</a>
-					</div>
 				</div>
             </div>
 			<div id="sidebar"></div>
@@ -97,14 +125,6 @@
 
 		<script src="/assets/js/jquery.min.js"></script>
         <script>
-            function calcularDistancia(lat1, lon1, lat2, lon2) {
-                const R = 6371;
-                const dLat = (lat2 - lat1) * Math.PI / 180;
-                const dLon = (lon2 - lon1) * Math.PI / 180;
-                const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
-                return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
-            }
-
             async function inicializarPagina() {
                 const savedRegionId = localStorage.getItem('biocultura_region');
                 const cachedData = sessionStorage.getItem('biocultura_data_cache');
@@ -116,26 +136,8 @@
                         const r = await fetch('/data/bioregioes.json');
                         const data = await r.json();
                         let info = data.find(item => item.id === savedRegionId);
-
-                        if (!info && navigator.geolocation) {
-                            navigator.geolocation.getCurrentPosition(pos => {
-                                let minD = Infinity;
-                                data.forEach(c => {
-                                    if(c.lat && c.lon) {
-                                        let d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon);
-                                        if(d < minD) { minD = d; info = c; }
-                                    }
-                                });
-                                if(info) {
-                                    localStorage.setItem('biocultura_region', info.id);
-                                    sessionStorage.setItem('biocultura_data_cache', JSON.stringify(info));
-                                    renderBioDashboard(info);
-                                }
-                            });
-                        } else if (info) {
-                            renderBioDashboard(info);
-                        }
-                    } catch(e) { console.error("Erro", e); }
+                        if (info) renderBioDashboard(info);
+                    } catch(e) { console.error(e); }
                 }
             }
 
@@ -148,39 +150,31 @@
                     // 1. Renderizar FAUNA
                     const faunaList = document.getElementById('fauna-list');
                     faunaList.innerHTML = '';
-                    
-                    // Juntar fauna geral, protegida e ameaçada para a lista
                     const faunaGeral = info.biomas.fauna || [];
                     const faunaProt = info.biomas.fauna_protegida || [];
                     const faunaAmea = info.biomas.fauna_ameacada || [];
-
-                    // Criar itens únicos na lista
                     const todasFauna = [...new Set([...faunaGeral, ...faunaProt, ...faunaAmea])];
                     
                     todasFauna.forEach(nome => {
                         let status = "";
-                        if (faunaAmea.includes(nome)) status = '<span class="status-badge status-danger">Ameaçada</span>';
-                        else if (faunaProt.includes(nome)) status = '<span class="status-badge status-protected">Protegida</span>';
-                        
-                        faunaList.innerHTML += `<li class="species-item"><i class="fas fa-check-circle"></i> ${nome} ${status}</li>`;
+                        if (faunaAmea.some(a => nome.includes(a) || a.includes(nome))) status = '<span class="status-badge status-danger">Ameaçada</span>';
+                        else if (faunaProt.some(p => nome.includes(p) || p.includes(nome))) status = '<span class="status-badge status-protected">Protegida</span>';
+                        faunaList.innerHTML += `<li class="species-item"><i class="fas fa-paw"></i> <span>${nome}</span> ${status}</li>`;
                     });
 
                     // 2. Renderizar FLORA
                     const floraList = document.getElementById('flora-list');
                     floraList.innerHTML = '';
-                    
                     const floraGeral = info.biomas.flora || [];
                     const floraProt = info.biomas.flora_protegida || [];
                     const floraInva = info.biomas.flora_invasora || [];
-
                     const todasFlora = [...new Set([...floraGeral, ...floraProt, ...floraInva])];
 
                     todasFlora.forEach(nome => {
                         let status = "";
-                        if (floraInva.includes(nome)) status = '<span class="status-badge status-invasive">Invasora</span>';
-                        else if (floraProt.includes(nome)) status = '<span class="status-badge status-protected">Protegida</span>';
-                        
-                        floraList.innerHTML += `<li class="species-item"><i class="fas fa-leaf"></i> ${nome} ${status}</li>`;
+                        if (floraInva.some(i => nome.includes(i) || i.includes(nome))) status = '<span class="status-badge status-invasive">Invasora</span>';
+                        else if (floraProt.some(p => nome.includes(p) || p.includes(nome))) status = '<span class="status-badge status-protected">Protegida</span>';
+                        floraList.innerHTML += `<li class="species-item"><i class="fas fa-leaf"></i> <span>${nome}</span> ${status}</li>`;
                     });
                 }
             }
