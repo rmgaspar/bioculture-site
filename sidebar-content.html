@@ -18,14 +18,17 @@
         </a>
     </div>
 
-    <!-- BOTÃO LOCALIZAÇÃO (LIMPO COM SETA) -->
+    <!-- SECÇÃO LOCALIZAÇÃO (COM SETA SVG PARA GARANTIR QUE APARECE) -->
     <div style="margin-bottom: 3em; text-align: left;">
         <button id="btn-location" onclick="detectLocation()" class="custom-btn-loc">
-            <i class="fas fa-location-arrow" style="font-size: 0.9em;"></i> 
-            <span id="loc-text">Sincronizar localização</span>
+            <!-- Seta de localização em SVG -->
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px; transform: rotate(-15deg);"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+            <span id="loc-text">Localização</span>
         </button>
-        <div id="active-city-box" class="city-label" style="display: none;">
-             <i class="fas fa-map-marker-alt"></i> <span id="city-name">...</span>
+        <p id="loc-sub" style="font-size: 0.6em; color: #bbb; margin: 4px 0 0 22px; line-height: 1.2; font-weight: 400 !important;">Sincronize para resultados à sua medida.</p>
+        
+        <div id="active-city-box" class="city-label" style="display: none; margin-left: 22px; margin-top: 5px;">
+             <span id="city-name">...</span>
         </div>
     </div>
 
@@ -66,26 +69,25 @@
         border: none !important; 
         box-shadow: none !important; 
         text-decoration: none !important;
-        font-weight: 400 !important; /* Remove negritos por defeito */
+        font-weight: 400 !important; 
     }
 
-    /* LOGÓTIPO PRECISA DE MANTER O PESO */
-    #sidebar b, .nav-title, .menu-header, span[style*="font-weight: 800"], span[style*="font-weight: 900"] { 
+    /* LOGÓTIPO E HEADERS (MANTÊM PESO) */
+    #sidebar b, .nav-title, .menu-header, span[style*="font-weight: 900"], span[style*="font-weight: 800"] { 
         font-weight: 900 !important; 
     }
 
-    /* BOTÃO SINCRONIZAR */
+    /* BOTÃO LOCALIZAÇÃO */
     .custom-btn-loc {
         background: none !important;
         color: #888 !important;
         padding: 0 !important;
-        font-size: 0.8em !important;
-        font-weight: 400 !important;
+        font-size: 0.85em !important;
+        font-weight: 600 !important;
         cursor: pointer !important;
         display: flex !important;
         align-items: center !important;
         justify-content: flex-start !important;
-        gap: 10px !important;
         transition: color 0.3s ease !important;
     }
     .custom-btn-loc:hover { color: #2e7d32 !important; }
@@ -105,7 +107,7 @@
 
     .menu-item {
         font-size: 0.95em !important;
-        color: #888 !important; /* Cinzento uniforme para todos */
+        color: #888 !important; 
         padding: 5px 0 !important;
         display: block !important;
         text-transform: none !important;
@@ -119,8 +121,6 @@
 
     .city-label { 
         font-size: 0.65em !important; 
-        text-align: left; 
-        margin-top: 10px; 
         color: #2e7d32 !important; 
         font-weight: 700 !important; 
         text-transform: uppercase; 
@@ -133,7 +133,8 @@
         const info = JSON.parse(cacheBio);
         document.getElementById('city-name').innerText = info.titulo;
         document.getElementById('active-city-box').style.display = 'block';
-        document.getElementById('loc-text').innerText = "Sincronizado";
+        document.getElementById('loc-text').innerText = "Localização";
+        document.getElementById('loc-sub').innerText = "Resultados otimizados para si.";
     }
 
     function detectLocation() {
