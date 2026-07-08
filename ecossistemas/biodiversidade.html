@@ -25,7 +25,7 @@
             }
             #wrapper { padding-left: 18em !important; }
 
-            /* CABEÇALHOS CINZENTOS */
+            /* CABEÇALHOS CINZENTOS (ESTILO SIDEBAR) */
             .category-label { 
                 font-size: 0.65em; font-weight: 900; text-transform: uppercase; 
                 letter-spacing: 3px; color: #bbb; margin-bottom: 10px; display: block; 
@@ -91,7 +91,7 @@
                                 </ul>
                                 <div class="conservation-note" style="margin-top: 2em;">
                                     <h5>Estado de Conservação</h5>
-                                    <p>A fauna local é o indicador máximo da saúde do território. A presença de predadores de topo indica um ecossistema funcional.</p>
+                                    <p>A fauna local é o indicador máximo da saúde do território. A presença de espécies protegidas exige um maneio de solo sem químicos.</p>
                                 </div>
                             </div>
 
@@ -103,8 +103,10 @@
                                 </ul>
                                 <div class="conservation-note" style="margin-top: 2em; background: #f1f8e9; border-color: #dcedc8;">
                                     <h5 style="color: #33691e;">Gestão Vegetal</h5>
-                                    <p style="color: #33691e;">Promova espécies autóctones. Estas plantas estão adaptadas ao solo e clima local, exigindo menos água e zero pesticidas.</p>
+                                    <p style="color: #33691e;">Promova espécies autóctones. Estas plantas estão adaptadas ao território, exigindo menos água e regenerando o ecossistema.</p>
                                 </div>
+                                
+                                <!-- ASSINATURA NO FUNDO DO CARD -->
                                 <div class="footer-signature-right" style="padding: 2em 0 0 0;">
                                     <div style="display: flex; align-items: center; justify-content: flex-end; gap: 8px; opacity: 0.4;">
                                         <span style="font-size: 0.8em; font-weight: 900;">bioCultura</span>
@@ -125,6 +127,14 @@
 
 		<script src="/assets/js/jquery.min.js"></script>
         <script>
+            function calcularDistancia(lat1, lon1, lat2, lon2) {
+                const R = 6371;
+                const dLat = (lat2 - lat1) * Math.PI / 180;
+                const dLon = (lon2 - lon1) * Math.PI / 180;
+                const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
+                return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+            }
+
             async function inicializarPagina() {
                 const savedRegionId = localStorage.getItem('biocultura_region');
                 const cachedData = sessionStorage.getItem('biocultura_data_cache');
@@ -136,8 +146,26 @@
                         const r = await fetch('/data/bioregioes.json');
                         const data = await r.json();
                         let info = data.find(item => item.id === savedRegionId);
-                        if (info) renderBioDashboard(info);
-                    } catch(e) { console.error(e); }
+
+                        if (!info && navigator.geolocation) {
+                            navigator.geolocation.getCurrentPosition(pos => {
+                                let minD = Infinity;
+                                data.forEach(c => {
+                                    if(c.lat && c.lon) {
+                                        let d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon);
+                                        if(d < minD) { minD = d; info = c; }
+                                    }
+                                });
+                                if(info) {
+                                    localStorage.setItem('biocultura_region', info.id);
+                                    sessionStorage.setItem('biocultura_data_cache', JSON.stringify(info));
+                                    renderBioDashboard(info);
+                                }
+                            });
+                        } else if (info) {
+                            renderBioDashboard(info);
+                        }
+                    } catch(e) { console.error("Erro ao carregar dados", e); }
                 }
             }
 
@@ -147,38 +175,53 @@
                 document.getElementById('reg-name').innerText = info.titulo;
 
                 if (info.biomas) {
-                    // 1. Renderizar FAUNA
+                    // --- PROCESSAR FAUNA (SEM DUPLICADOS) ---
                     const faunaList = document.getElementById('fauna-list');
                     faunaList.innerHTML = '';
-                    const faunaGeral = info.biomas.fauna || [];
-                    const faunaProt = info.biomas.fauna_protegida || [];
-                    const faunaAmea = info.biomas.fauna_ameacada || [];
-                    const todasFauna = [...new Set([...faunaGeral, ...faunaProt, ...faunaAmea])];
-                    
-                    todasFauna.forEach(nome => {
+                    const fGeral = info.biomas.fauna || [];
+                    const fProt = info.biomas.fauna_protegida || [];
+                    const fAmea = info.biomas.fauna_ameacada || [];
+
+                    const faunaMap = new Map();
+                    [...fGeral, ...fProt, ...fAmea].forEach(nome => {
+                        const raiz = nome.split('(')[0].trim().toLowerCase();
                         let status = "";
-                        if (faunaAmea.some(a => nome.includes(a) || a.includes(nome))) status = '<span class="status-badge status-danger">Ameaçada</span>';
-                        else if (faunaProt.some(p => nome.includes(p) || p.includes(nome))) status = '<span class="status-badge status-protected">Protegida</span>';
-                        faunaList.innerHTML += `<li class="species-item"><i class="fas fa-paw"></i> <span>${nome}</span> ${status}</li>`;
+                        if (fAmea.some(a => a.toLowerCase().includes(raiz))) status = '<span class="status-badge status-danger">Ameaçada</span>';
+                        else if (fProt.some(p => p.toLowerCase().includes(raiz))) status = '<span class="status-badge status-protected">Protegida</span>';
+
+                        if (!faunaMap.has(raiz) || nome.includes('(')) {
+                            faunaMap.set(raiz, { nome: nome, status: status });
+                        }
+                    });
+                    faunaMap.forEach(item => {
+                        faunaList.innerHTML += `<li class="species-item"><i class="fas fa-paw"></i> <span>${item.nome}</span> ${item.status}</li>`;
                     });
 
-                    // 2. Renderizar FLORA
+                    // --- PROCESSAR FLORA (SEM DUPLICADOS) ---
                     const floraList = document.getElementById('flora-list');
                     floraList.innerHTML = '';
-                    const floraGeral = info.biomas.flora || [];
-                    const floraProt = info.biomas.flora_protegida || [];
-                    const floraInva = info.biomas.flora_invasora || [];
-                    const todasFlora = [...new Set([...floraGeral, ...floraProt, ...floraInva])];
+                    const flGeral = info.biomas.flora || [];
+                    const flProt = info.biomas.flora_protegida || [];
+                    const flInva = info.biomas.flora_invasora || [];
 
-                    todasFlora.forEach(nome => {
+                    const floraMap = new Map();
+                    [...flGeral, ...flProt, ...flInva].forEach(nome => {
+                        const raiz = nome.split('(')[0].trim().toLowerCase();
                         let status = "";
-                        if (floraInva.some(i => nome.includes(i) || i.includes(nome))) status = '<span class="status-badge status-invasive">Invasora</span>';
-                        else if (floraProt.some(p => nome.includes(p) || p.includes(nome))) status = '<span class="status-badge status-protected">Protegida</span>';
-                        floraList.innerHTML += `<li class="species-item"><i class="fas fa-leaf"></i> <span>${nome}</span> ${status}</li>`;
+                        if (flInva.some(i => i.toLowerCase().includes(raiz))) status = '<span class="status-badge status-invasive">Invasora</span>';
+                        else if (flProt.some(p => p.toLowerCase().includes(raiz))) status = '<span class="status-badge status-protected">Protegida</span>';
+
+                        if (!floraMap.has(raiz) || nome.includes('(')) {
+                            floraMap.set(raiz, { nome: nome, status: status });
+                        }
+                    });
+                    floraMap.forEach(item => {
+                        floraList.innerHTML += `<li class="species-item"><i class="fas fa-leaf"></i> <span>${item.nome}</span> ${item.status}</li>`;
                     });
                 }
             }
 
+            // Carregamento da Sidebar e Inicialização
             fetch('/sidebar-content.html').then(r => r.text()).then(html => {
                 document.getElementById('sidebar').innerHTML = html;
                 var s = document.createElement('script'); s.src = '/assets/js/main.js'; document.body.appendChild(s);
