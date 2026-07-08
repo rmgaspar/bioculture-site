@@ -8,52 +8,44 @@
 		<style>
             /* --- ESTRUTURA GLOBAL & TIPOGRAFIA --- */
             body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
-            
 			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
-            section { padding-top: 4em !important; }
+            section { padding-top: 4em !important; min-height: 100vh; display: flex; flex-direction: column; }
 
             /* SIDEBAR FIXA */
-            #sidebar {
-                position: fixed !important;
-                top: 0; left: 0;
-                height: 100vh !important;
-                width: 18em !important;
-                overflow: hidden !important;
-                z-index: 10000;
-                background: #fff;
-                border-right: 1px solid #f2f2f2 !important;
-            }
+            #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
             #wrapper { padding-left: 18em !important; }
 
             /* CABEÇALHOS CINZENTOS */
-            .category-label { 
-                font-size: 0.65em; font-weight: 900; text-transform: uppercase; 
-                letter-spacing: 3px; color: #bbb; margin-bottom: 10px; display: block; 
-            }
-            .card-title { 
-                font-size: 0.7em; font-weight: 900; text-transform: uppercase; 
-                letter-spacing: 2px; color: #bbb; margin-bottom: 2em; text-align: center; 
-            }
+            .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; color: #bbb; margin-bottom: 10px; display: block; }
+            .card-title { font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin-bottom: 2em; text-align: center; }
 
             /* DASHBOARD */
             .air-dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 30px; margin-bottom: 4em; }
-            .data-card { background: #fff; border-radius: 35px; padding: 3em; box-shadow: 0 15px 45px rgba(0,0,0,0.03); border: 1px solid #f8f8f8; }
+            .data-card { background: #fff; border-radius: 35px; padding: 3em; box-shadow: 0 15px 45px rgba(0,0,0,0.03); border: 1px solid #f8f8f8; display: flex; flex-direction: column; }
             
             .quality-grid { display: flex; gap: 2em; justify-content: center; align-items: center; margin-bottom: 2em; }
-            .metric { display: flex; flex-direction: column; align-items: center; width: 130px; height: 130px; border-radius: 50%; border: 5px solid #eee; justify-content: center; text-align: center; }
-            .metric-val { font-size: 1.4em; font-weight: 700; color: #222; line-height: 1.1; }
+            .metric { display: flex; flex-direction: column; align-items: center; width: 110px; height: 110px; border-radius: 50%; border: 5px solid #eee; justify-content: center; text-align: center; }
+            .metric-val { font-size: 1.3em; font-weight: 700; color: #222; line-height: 1.1; }
             .metric-label { font-size: 0.55em; font-weight: 800; text-transform: uppercase; color: #aaa; margin-top: 5px; }
 
             /* CORES MÉTRICAS */
             .status-excellent { border-color: #81c784 !important; color: #2e7d32 !important; }
             .status-good { border-color: #aed581 !important; color: #558b2f !important; }
             .status-warn { border-color: #ffd54f !important; color: #f57f17 !important; }
+            .status-danger { border-color: #ef5350 !important; color: #c62828 !important; }
 
-            /* INFO TÉCNICA */
-            .tech-info { background: #f9fbf9; padding: 2em; border-radius: 20px; margin-top: 1.5em; }
-            .tech-item { margin-bottom: 1.5em; }
-            .tech-item h5 { font-size: 0.7em; font-weight: 900; text-transform: uppercase; color: #2e7d32; margin-bottom: 5px; }
-            .tech-item p { font-size: 0.9em; margin: 0; line-height: 1.5; color: #666; }
+            /* ALERTAS DE IMPACTO (PROBLEMAS) */
+            .alert-card { background: #fff5f5; border-left: 6px solid #c62828; padding: 2em; border-radius: 0 25px 25px 0; margin-bottom: 2em; }
+            .alert-card h5 { color: #c62828; text-transform: uppercase; font-size: 0.7em; letter-spacing: 1px; margin-bottom: 8px; font-weight: 900; }
+            .alert-card p { color: #7f1d1d; font-size: 0.9em; margin: 0; line-height: 1.5; font-weight: 600; }
+
+            .tech-info { background: #f9fbf9; padding: 1.5em; border-radius: 20px; margin-top: 1em; flex-grow: 1; }
+            .tech-item { margin-bottom: 1em; }
+            .tech-item h5 { font-size: 0.65em; font-weight: 900; text-transform: uppercase; color: #bbb; margin-bottom: 5px; }
+            .tech-item p { font-size: 0.85em; margin: 0; line-height: 1.5; color: #444; }
+
+            /* RODAPÉ DA PÁGINA */
+            .page-footer { margin-top: auto; padding: 2em 0; border-top: 1px solid #f2f2f2; }
 
             @media screen and (max-width: 1280px) {
                 #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
@@ -76,60 +68,69 @@
 
                         <div class="air-dashboard" id="air-dashboard" style="display:none;">
                             
-                            <!-- CONDIÇÃO ATMOSFÉRICA -->
+                            <!-- COLUNA 1: QUALIDADE E SAÚDE -->
                             <div class="data-card">
-                                <h4 class="card-title">Condição Atmosférica</h4>
+                                <h4 class="card-title">Estado da Atmosfera</h4>
                                 <div class="quality-grid">
-                                    <div class="metric" id="container-ar">
-                                        <span class="metric-val" id="val-ar">--</span>
-                                        <span class="metric-label">Qualidade</span>
-                                    </div>
-                                    <div class="metric" id="container-vento">
-                                        <span class="metric-val" id="val-vento">--</span>
-                                        <span class="metric-label">Vento (m/s)</span>
-                                    </div>
+                                    <div class="metric" id="container-ar"><span class="metric-val" id="val-ar">--</span><span class="metric-label">Ar</span></div>
+                                    <div class="metric" id="container-vento"><span class="metric-val" id="val-vento">--</span><span class="metric-label">Vento</span></div>
                                 </div>
                                 <div class="tech-info">
                                     <div class="tech-item">
-                                        <h5>Saúde e Bem-estar</h5>
-                                        <p id="air-health-note">A analisar pureza do oxigénio...</p>
+                                        <h5>Benefícios Respiratórios</h5>
+                                        <p id="air-health-note">A analisar pureza...</p>
                                     </div>
                                     <div class="tech-item">
-                                        <h5>Potencial Eólico</h5>
+                                        <h5>Potencial Energético</h5>
                                         <p id="wind-potential">--</p>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- IMPACTO CLIMÁTICO -->
+                            <!-- COLUNA 2: IMPACTO E CLIMA -->
                             <div class="data-card">
-                                <h4 class="card-title">Impacto & Recurso Solar</h4>
-                                <div class="tech-info" style="background: #fff5f5; border: 1px solid #fee2e2;">
+                                <h4 class="card-title">Radar de Impacto</h4>
+                                
+                                <!-- ALERTA DE PROBLEMAS -->
+                                <div id="air-impact-alert" class="alert-card" style="display:none;">
+                                    <h5>Alerta de Emissões</h5>
+                                    <p id="air-impact-text"></p>
+                                </div>
+
+                                <div class="tech-info" style="background: #fff5f5; border-color: #fee2e2;">
                                     <div class="tech-item">
                                         <h5 style="color: #c62828;">Aquecimento Local</h5>
-                                        <p id="val-anomaly" style="font-size: 1.8em; font-weight: 300; color: #c62828; margin: 10px 0;">--</p>
-                                        <p style="font-size: 0.8em; color: #a67c7c;">Variação térmica vs. Era Pré-Industrial</p>
+                                        <p id="val-anomaly" style="font-size: 1.8em; font-weight: 300; color: #c62828; margin: 5px 0;">--</p>
+                                        <p style="font-size: 0.75em; color: #a67c7c;">Variação térmica vs. Era Pré-Industrial</p>
                                     </div>
                                 </div>
-                                <div class="tech-info" style="background: #fffdf2; border: 1px solid #fef3c7; margin-top: 15px;">
+
+                                <div class="tech-info" style="background: #f4f7fb; margin-top: 15px;">
                                     <div class="tech-item">
-                                        <h5 style="color: #b45309;">Exposição Solar</h5>
-                                        <p id="val-sun-hours" style="font-size: 1.2em; font-weight: 700; color: #b45309;"></p>
-                                        <p style="font-size: 0.8em; color: #92400e;">Horas de sol estimadas por ano</p>
+                                        <h5>Horas de Sol / Ano</h5>
+                                        <p id="val-sun-hours" style="font-size: 1.1em; font-weight: 700; color: #0277bd;"></p>
                                     </div>
                                 </div>
-                                
-                                <div class="footer-signature-right" style="padding: 2em 0 0 0;">
-                                    <div style="display: flex; align-items: center; justify-content: flex-end; gap: 8px; opacity: 0.4;">
-                                        <span style="font-size: 0.8em; font-weight: 900;">bioCultura</span>
-                                        <svg width="15" height="15" viewBox="0 0 100 100"><path d="M50 5 L89 27.5 L89 72.5 L50 95 L11 72.5 L11 27.5 Z" fill="#333" /><path d="M50 20 C50 20 75 45 75 70 C75 85 65 85 50 85 C35 85 25 85 25 70 C25 45 50 20 50 20Z" fill="#fff" /></svg>
-                                    </div>
-                                </div>
+
                             </div>
                         </div>
 
                         <div id="no-gps-warning" style="text-align: center; padding: 4em; background: #f4f7fb; border-radius: 40px;">
                             <p>Sincronize a sua localização para carregar os dados atmosféricos.</p>
+                        </div>
+
+                        <!-- FOOTER -->
+                        <div class="page-footer">
+                            <div style="display: flex; align-items: center; justify-content: flex-end; gap: 10px; opacity: 0.3;">
+                                <div style="text-align: right; line-height: 1;">
+                                    <span style="display: block; font-size: 0.85em; font-weight: 900; color: #333;">bioCultura</span>
+                                    <span style="display: block; font-size: 0.5em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Global Regeneration</span>
+                                </div>
+                                <svg width="22" height="22" viewBox="0 0 100 100">
+                                    <path d="M50 5 L89 27.5 L89 72.5 L50 95 L11 72.5 L11 27.5 Z" fill="#333" />
+                                    <path d="M50 20 C50 20 75 45 75 70 C75 85 65 85 50 85 C35 85 25 85 25 70 C25 45 50 20 50 20Z" fill="#fff" />
+                                </svg>
+                            </div>
                         </div>
 					</section>
 				</div>
@@ -139,57 +140,91 @@
 
 		<script src="/assets/js/jquery.min.js"></script>
         <script>
-            async function inicializarPagina() {
-                const savedRegionId = localStorage.getItem('biocultura_region');
-                const cachedData = sessionStorage.getItem('biocultura_data_cache');
+            function calcularDistancia(lat1, lon1, lat2, lon2) {
+                const R = 6371;
+                const dLat = (lat2 - lat1) * Math.PI / 180;
+                const dLon = (lon2 - lon1) * Math.PI / 180;
+                const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
+                return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+            }
 
-                if (cachedData && JSON.parse(cachedData).id === savedRegionId) {
-                    renderAirDashboard(JSON.parse(cachedData));
-                } else {
-                    try {
-                        const r = await fetch('/data/bioregioes.json');
-                        const data = await r.json();
-                        let info = data.find(item => item.id === savedRegionId);
-                        if (info) renderAirDashboard(info);
-                    } catch(e) { console.error(e); }
-                }
+            async function inicializarPagina() {
+                try {
+                    const r = await fetch('/data/bioregioes.json');
+                    const data = await r.json();
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const regionParam = urlParams.get('region');
+                    const savedRegionId = regionParam || localStorage.getItem('biocultura_region');
+                    let info = data.find(item => item.id === savedRegionId);
+
+                    if (regionParam && info) {
+                        localStorage.setItem('biocultura_region', info.id);
+                        sessionStorage.removeItem('biocultura_data_cache');
+                    }
+
+                    if (info) renderAirDashboard(info);
+                    else if (navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition(pos => {
+                            let minD = Infinity; let closest = null;
+                            data.forEach(c => {
+                                if(c.lat && c.lon) {
+                                    let d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon);
+                                    if(d < minD) { minD = d; closest = c; }
+                                }
+                            });
+                            if(closest) { localStorage.setItem('biocultura_region', closest.id); renderAirDashboard(closest); }
+                        });
+                    }
+                } catch(e) { console.error("Erro:", e); }
             }
 
             function renderAirDashboard(info) {
+                if(!info) return;
                 document.getElementById('no-gps-warning').style.display = 'none';
                 document.getElementById('air-dashboard').style.display = 'grid';
                 document.getElementById('reg-name').innerText = info.titulo;
 
                 if (info.atmosfera) {
                     // 1. Qualidade do Ar
-                    const arStatus = info.atmosfera.qualidade_ar;
+                    const arStatus = info.atmosfera.qualidade_ar || "Moderada";
                     const arCont = document.getElementById('container-ar');
                     document.getElementById('val-ar').innerText = arStatus;
                     arCont.className = 'metric';
                     if (arStatus.includes("Excelente") || arStatus.includes("Muito Boa")) arCont.classList.add('status-excellent');
                     else if (arStatus.includes("Boa")) arCont.classList.add('status-good');
-                    else arCont.classList.add('status-warn');
+                    else if (arStatus.includes("Moderada")) arCont.classList.add('status-warn');
+                    else arCont.classList.add('status-danger');
 
                     // 2. Vento
-                    const vento = parseFloat(info.atmosfera.vento_medio_ms);
-                    document.getElementById('val-vento').innerText = vento;
+                    const vento = parseFloat(info.atmosfera.vento_medio_ms) || 0;
+                    document.getElementById('val-vento').innerText = vento + " m/s";
                     const ventoCont = document.getElementById('container-vento');
                     ventoCont.className = 'metric';
-                    if(vento > 5) ventoCont.classList.add('status-good'); // Bom para energia
+                    if(vento > 5) ventoCont.classList.add('status-good');
 
-                    // 3. Lógica Técnica
+                    // 3. Lógica Técnica e Ameaças
+                    const impactAlert = document.getElementById('air-impact-alert');
+                    const impactText = document.getElementById('air-impact-text');
+                    
                     let health = ""; let wind = "";
+                    
                     if(arStatus.includes("Excelente")) {
-                        health = "Ar de elevada pureza. Ideal para a prática de desporto e oxigenação celular profunda.";
+                        health = "Ar de elevada pureza. Ideal para a oxigenação profunda e regeneração celular.";
+                        impactAlert.style.display = 'none';
                     } else {
-                        health = "Qualidade urbana moderada. Recomendamos a plantação de espécies filtrantes como a Tília ou o Freixo.";
+                        health = "Qualidade urbana. Recomendamos o uso de barreiras vegetais (flora autóctone) para filtrar micropartículas.";
+                        impactAlert.style.display = 'block';
+                        impactText.innerText = "A concentração de poluentes (PM10/NO2) nesta zona exige monitorização. Evite a exposição em horas de tráfego intenso.";
                     }
 
-                    if(vento > 4.5) {
-                        wind = "Potencial eólico elevado: Viabilidade para micro-geração doméstica e bombeamento de água.";
-                    } else {
-                        wind = "Ventos suaves: Estabilidade ideal para polinização natural e estufas leves.";
+                    // Caso específico Sines ou áreas industriais
+                    if(info.id === "sines" || info.id === "estarreja" || info.id === "matosinhos") {
+                        impactAlert.style.display = 'block';
+                        impactText.innerText = "Zona de forte pressão industrial. As emissões de SO2 e NOx podem comprometer a saúde respiratória e a biodiversidade envolvente.";
                     }
+
+                    if(vento > 4.5) wind = "Potencial eólico elevado: Viabilidade para micro-geração doméstica e autonomia energética.";
+                    else wind = "Ventos estáveis: Ideal para sistemas de ventilação passiva e polinização natural.";
                     
                     document.getElementById('air-health-note').innerText = health;
                     document.getElementById('wind-potential').innerText = wind;
