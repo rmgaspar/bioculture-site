@@ -132,51 +132,61 @@
 
 		<script src="/assets/js/jquery.min.js"></script>
             <script>
-        function calcularDistancia(lat1, lon1, lat2, lon2) {
-            const R = 6371;
-            const dLat = (lat2 - lat1) * Math.PI / 180;
-            const dLon = (lon2 - lon1) * Math.PI / 180;
-            const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
-            return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
-        }
+            function calcularDistancia(lat1, lon1, lat2, lon2) {
+                const R = 6371;
+                const dLat = (lat2 - lat1) * Math.PI / 180;
+                const dLon = (lon2 - lon1) * Math.PI / 180;
+                const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
+                return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+            }
 
-        async function inicializarPagina() {
-            try {
-                const r = await fetch('/data/bioregioes.json');
-                const data = await r.json();
-                const urlParams = new URLSearchParams(window.location.search);
-                const regionParam = urlParams.get('region');
-                
-                // Prioridade 1: Link (?region=...)
-                if (regionParam) {
-                    const info = data.find(item => item.id === regionParam);
-                    if (info) { renderSoilDashboard(info); return; }
-                }
+            async function inicializarPagina() {
+                try {
+                    const r = await fetch('/data/bioregioes.json');
+                    const data = await r.json();
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const regionParam = urlParams.get('region');
+                    
+                    // Prioridade 1: Link (?region=...)
+                    if (regionParam) {
+                        const info = data.find(item => item.id === regionParam);
+                        if (info) { renderSoilDashboard(info); return; }
+                    }
 
-                // Prioridade 2: Localização Guardada
-                const savedRegionId = localStorage.getItem('biocultura_region');
-                let info = data.find(item => item.id === savedRegionId);
+                    // Prioridade 2: Localização Guardada
+                    const savedRegionId = localStorage.getItem('biocultura_region');
+                    let info = data.find(item => item.id === savedRegionId);
 
-                if (info) {
-                    renderSoilDashboard(info);
-                } else if (navigator.geolocation) {
-                    // Prioridade 3: GPS
-                    navigator.geolocation.getCurrentPosition(pos => {
-                        let minD = Infinity; let closest = null;
-                        data.forEach(c => {
-                            if(c.lat && c.lon) {
-                                let d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon);
-                                if(d < minD) { minD = d; closest = c; }
+                    if (info) {
+                        renderSoilDashboard(info);
+                    } else if (navigator.geolocation) {
+                        // Prioridade 3: GPS
+                        navigator.geolocation.getCurrentPosition(pos => {
+                            let minD = Infinity; let closest = null;
+                            data.forEach(c => {
+                                if(c.lat && c.lon) {
+                                    let d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon);
+                                    if(d < minD) { minD = d; closest = c; }
+                                }
+                            });
+                            if(closest) {
+                                localStorage.setItem('biocultura_region', closest.id);
+                                renderSoilDashboard(closest);
                             }
                         });
-                        if(closest) {
-                            localStorage.setItem('biocultura_region', closest.id);
-                            renderSoilDashboard(closest);
-                        }
-                    });
-                }
-            } catch(e) { console.error(e); }
-        }
+                    }
+                } catch(e) { console.error(e); }
+            }
+
+            // ... (Mantém a tua função renderSoilDashboard igual) ...
+
+            fetch('/sidebar-content.html').then(r => r.text()).then(html => {
+                document.getElementById('sidebar').innerHTML = html;
+                var s = document.createElement('script'); s.src = '/assets/js/main.js'; document.body.appendChild(s);
+                inicializarPagina();
+            });
+        </script>
+
 
         // ... (Mantém a tua função renderSoilDashboard igual) ...
 
