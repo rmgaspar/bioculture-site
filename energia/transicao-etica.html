@@ -6,35 +6,64 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
 		<style>
+            /* --- ESTRUTURA GLOBAL & TIPOGRAFIA --- */
+            body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
+            
 			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
-			#header .toggle { background: none !important; top: 2em !important; left: 2em !important; border: none !important; text-decoration: none !important; z-index: 10001; }
-			#header .toggle:before { content: '\f06c' !important; font-family: "Font Awesome 5 Free" !important; font-weight: 900; color: #2e7d32 !important; font-size: 1.6em !important; }
-            #header .toggle:after { display: none !important; }
-            section { padding-top: 2em !important; }
+            section { padding-top: 4em !important; }
+
+            /* SIDEBAR FIXA */
+            #sidebar {
+                position: fixed !important;
+                top: 0; left: 0;
+                height: 100vh !important;
+                width: 18em !important;
+                overflow: hidden !important;
+                z-index: 10000;
+                background: #fff;
+                border-right: 1px solid #f2f2f2 !important;
+            }
+            #wrapper { padding-left: 18em !important; }
+
+            /* CABEÇALHOS CINZENTOS */
+            .category-label { 
+                font-size: 0.65em; font-weight: 900; text-transform: uppercase; 
+                letter-spacing: 3px; color: #bbb; margin-bottom: 10px; display: block; 
+            }
+            .card-title { 
+                font-size: 0.7em; font-weight: 900; text-transform: uppercase; 
+                letter-spacing: 2px; color: #bbb; margin-bottom: 2em; text-align: center; 
+            }
 
             /* DASHBOARD DE IMPACTO */
-            .impact-dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 25px; margin-bottom: 4em; }
-            .data-card { background: #fff; border-radius: 35px; padding: 2.5em; box-shadow: 0 20px 50px rgba(0,0,0,0.04); border: 1px solid #f0f7ff; position: relative; overflow: hidden; }
+            .impact-dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 30px; margin-bottom: 4em; }
+            .data-card { background: #fff; border-radius: 35px; padding: 3em; box-shadow: 0 15px 45px rgba(0,0,0,0.03); border: 1px solid #f8f8f8; display: flex; flex-direction: column; }
             
-            /* ALERTAS */
-            .alert-strip { background: #fff5f5; border-left: 6px solid #c62828; padding: 1.5em; border-radius: 0 20px 20px 0; margin-bottom: 1.5em; }
-            .alert-strip h5 { color: #c62828; text-transform: uppercase; font-size: 0.7em; letter-spacing: 1px; margin-bottom: 5px; font-weight: 800; }
+            /* ALERTAS CRÍTICOS */
+            .alert-strip { 
+                background: #fff5f5; border-left: 6px solid #c62828; padding: 1.5em; 
+                border-radius: 0 20px 20px 0; margin-bottom: 1.5em; 
+            }
+            .alert-strip h5 { color: #c62828; text-transform: uppercase; font-size: 0.7em; letter-spacing: 1px; margin-bottom: 5px; font-weight: 900; }
             .alert-strip p { color: #7f1d1d; font-size: 0.9em; margin: 0; line-height: 1.4; font-weight: 600; }
 
-            /* LISTAS LOCAIS */
-            .local-list { list-style: none; padding: 0; margin: 1em 0; }
-            .local-list li { display: flex; align-items: center; gap: 10px; font-size: 0.9em; color: #444; padding: 8px 0; border-bottom: 1px solid #f0f0f0; }
-            .local-list li i { color: #ffa000; }
+            /* INFO TÉCNICA */
+            .tech-info { background: #f9fbf9; padding: 2em; border-radius: 20px; margin-top: 1.5em; }
+            .tech-item { margin-bottom: 1.5em; }
+            .tech-item h5 { font-size: 0.7em; font-weight: 900; text-transform: uppercase; color: #2e7d32; margin-bottom: 5px; }
+            .tech-item p { font-size: 0.9em; margin: 0; line-height: 1.5; color: #666; }
 
-            /* CONTEÚDO EDUCATIVO */
-            .paradox-box { background: #fafafa; border-radius: 40px; padding: 3em; margin-bottom: 4em; border: 1px solid #eee; }
-            .paradox-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 2em; }
-            @media (max-width: 768px) { .paradox-grid { grid-template-columns: 1fr; } }
-            
-            .paradox-item h4 { color: #1b5e20; font-size: 1em; margin-bottom: 10px; }
-            .paradox-item p { font-size: 0.85em; color: #666; line-height: 1.6; }
+            /* SECÇÃO PARADOXO */
+            .paradox-section { background: #fafafa; border-radius: 40px; padding: 4em; margin-bottom: 4em; border: 1px solid #eee; }
+            .paradox-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; margin-top: 2em; }
+            .paradox-item h4 { color: #1b5e20; font-size: 1.1em; font-weight: 700; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+            .paradox-item p { font-size: 0.9em; color: #666; line-height: 1.6; text-align: justify; }
 
-			.footer-signature-right { text-align: right; padding: 4em 2em 2em 0; opacity: 0.8; }
+            @media screen and (max-width: 1280px) {
+                #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
+                #wrapper { padding-left: 0 !important; }
+                .paradox-grid { grid-template-columns: 1fr; }
+            }
 		</style>
 	</head>
 	<body class="is-preload">
@@ -45,84 +74,82 @@
 					
                     <section>
                         <div style="text-align: center; margin-bottom: 5em;">
-                            <h4 style="letter-spacing: 5px; color: #c62828; text-transform: uppercase; font-size: 0.8em; opacity: 0.8;">O Custo da Transição</h4>
+                            <span class="category-label">Engenharia & Soluções</span>
                             <h1 style="font-size: 3.5em; font-weight: 300; color: #1a1a1a; letter-spacing: -2px;">Energia & Extração</h1>
-                            <p style="font-style: italic; color: #888;">Radar de impacto para: <strong id="reg-name" style="color:#c62828">...</strong></p>
+                            <p style="font-style: italic; color: #999;">Radar de impacto territorial: <strong id="reg-name" style="color:#c62828">...</strong></p>
                         </div>
 
-                        <!-- DASHBOARD REGIONAL -->
                         <div class="impact-dashboard" id="impact-dashboard" style="display:none;">
                             
-                            <!-- COLUNA ENERGIA -->
+                            <!-- COLUNA ENERGIA (SILÍCIO) -->
                             <div class="data-card">
-                                <h4 style="color: #ffa000; text-transform: uppercase; letter-spacing: 2px; font-size: 0.75em; margin-bottom: 2em; font-weight: 800;">Infraestrutura Solar e Eólica</h4>
+                                <h4 class="card-title">Infraestrutura Fotovoltaica</h4>
                                 
                                 <div id="energy-alert" class="alert-strip" style="display:none;">
-                                    <h5>Alerta de Impacto</h5>
+                                    <h5>Alerta de Ecossistema</h5>
                                     <p id="energy-alert-text"></p>
                                 </div>
 
-                                <div id="solar-parks-box">
-                                    <span style="font-size: 0.7em; font-weight: 800; color: #aaa; text-transform: uppercase;">Grandes Parques Próximos</span>
-                                    <ul class="local-list" id="solar-list">
-                                        <!-- Injetado por JS -->
-                                    </ul>
+                                <div class="tech-info">
+                                    <div class="tech-item">
+                                        <h5>Parques de Larga Escala</h5>
+                                        <p id="solar-list" style="font-weight: 600; color: #444;"></p>
+                                    </div>
+                                    <div class="tech-item">
+                                        <h5>Capacidade Instalada</h5>
+                                        <p><span id="val-energy-mw">--</span> MW na região</p>
+                                    </div>
                                 </div>
-                                
-                                <p style="font-size: 0.8em; color: #999; margin-top: 2em;">Exploração atual na região: <strong id="val-energy-mw">--</strong> MW</p>
                             </div>
 
-                            <!-- COLUNA MINERAÇÃO -->
+                            <!-- COLUNA MINERAÇÃO (LÍTIO) -->
                             <div class="data-card">
-                                <h4 style="color: #5d4037; text-transform: uppercase; letter-spacing: 2px; font-size: 0.75em; margin-bottom: 2em; font-weight: 800;">Mineração e Lítio</h4>
+                                <h4 class="card-title">Recursos Geológicos & Lítio</h4>
                                 
                                 <div id="mining-alert" class="alert-strip" style="display:none;">
                                     <h5>Conflito de Mineração</h5>
                                     <p id="mining-alert-text"></p>
                                 </div>
 
-                                <div id="prospect-box">
-                                    <span style="font-size: 0.7em; font-weight: 800; color: #aaa; text-transform: uppercase;">Zonas de Prospeção</span>
-                                    <ul class="local-list" id="prospect-list">
-                                        <!-- Injetado por JS -->
-                                    </ul>
+                                <div class="tech-info" style="background: #fdfaf5;">
+                                    <div class="tech-item">
+                                        <h5>Zonas de Prospeção Ativas</h5>
+                                        <p id="prospect-list" style="font-weight: 600; color: #5d4037;"></p>
+                                    </div>
+                                    <div class="tech-item">
+                                        <h5>Risco de Incêndio Estatístico</h5>
+                                        <p id="val-fire-risk">--</p>
+                                    </div>
+                                </div>
+
+                                <div class="footer-signature-right" style="padding: 2em 0 0 0;">
+                                    <div style="display: flex; align-items: center; justify-content: flex-end; gap: 8px; opacity: 0.4;">
+                                        <span style="font-size: 0.8em; font-weight: 900;">bioCultura</span>
+                                        <svg width="15" height="15" viewBox="0 0 100 100"><path d="M50 5 L89 27.5 L89 72.5 L50 95 L11 72.5 L11 27.5 Z" fill="#333" /><path d="M50 20 C50 20 75 45 75 70 C75 85 65 85 50 85 C35 85 25 85 25 70 C25 45 50 20 50 20Z" fill="#fff" /></svg>
+                                    </div>
                                 </div>
                             </div>
-
                         </div>
 
-                        <!-- O PARADOXO -->
-                        <div class="paradox-box">
-                            <h3 style="text-align: center;">O Paradoxo da Transição "Verde"</h3>
+                        <!-- O PARADOXO ÉTICO -->
+                        <div class="paradox-section">
+                            <h3 style="text-align: center; font-weight: 300; font-size: 2em; margin-bottom: 1em;">O Paradoxo da Transição "Verde"</h3>
                             <div class="paradox-grid">
                                 <div class="paradox-item">
-                                    <h4><i class="fas fa-microchip"></i> O Problema do Silício</h4>
-                                    <p>Grandes parques fotovoltaicos exigem desmatamento e impermeabilização do solo. A produção de células de silício é altamente intensiva em energia e utiliza químicos que, se não geridos, contaminam a biodiversidade local.</p>
+                                    <h4><i class="fas fa-microchip"></i> O Custo do Silício</h4>
+                                    <p>A instalação de parques fotovoltaicos de larga escala exige frequentemente a desflorestação e a impermeabilização de solos férteis. O silício, embora abundante, requer processos de purificação químicos altamente poluentes e uma pegada hídrica invisível que compromete a biodiversidade local sob o pretexto de reduzir emissões de CO2.</p>
                                 </div>
                                 <div class="paradox-item">
-                                    <h4><i class="fas fa-car-battery"></i> O Mito das Baterias</h4>
-                                    <p>A redução de CO2 nas cidades mascara a destruição de ecossistemas remotos. A extração de lítio consome milhões de litros de água, secando aquíferos e ameaçando espécies endémicas em nome da mobilidade elétrica.</p>
+                                    <h4><i class="fas fa-car-battery"></i> A Ilusão das Baterias</h4>
+                                    <p>O armazenamento de energia em baterias de lítio mascara a destruição de ecossistemas remotos. A extração mineira consome milhões de litros de água doce, baixando o nível dos aquíferos e sufocando a fauna e flora endémicas. Na bioCultura, questionamos a ética de salvar o clima à custa da destruição da vida local.</p>
                                 </div>
                             </div>
                         </div>
 
-                        <div id="no-gps-warning" style="text-align: center; padding: 4em; background: #f4f7fb; border-radius: 40px; margin-bottom: 4em;">
-                            <p>Sincronize a sua localização para detetar ameaças ambientais e infraestruturas na sua região.</p>
+                        <div id="no-gps-warning" style="text-align: center; padding: 4em; background: #f4f7fb; border-radius: 40px;">
+                            <p>Sincronize a sua localização para detetar ameaças e infraestruturas energéticas na sua região.</p>
                         </div>
 					</section>
-
-					<div class="footer-signature-right">
-						<a href="/index.html" style="border: none; display: inline-block; text-decoration: none;">
-							<div style="font-family: 'Source Sans Pro', sans-serif; font-size: 1.4em; line-height: 1; display: flex; align-items: flex-end; justify-content: flex-end;">
-                                <b style="font-weight: 700; color: #2e7d32; margin-right: -3px; position: relative; z-index: 2;">b</b>
-                                <div style="width: 32px; margin: 0 -7px; position: relative; line-height: 0; transform: translateY(4px); z-index: 1;">
-                                    <svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: auto;"><path d="M-20 110 Q50 102 120 110" stroke="#634832" stroke-width="4" fill="none" opacity="0.3" /><path d="M50 110 C50 80 35 70 50 45 C65 70 50 80 50 110" fill="#2e7d32" /><path d="M50 80 C75 75 85 50 65 40 C50 55 50 65 50 80" fill="#4CAF50" /></svg>
-                                </div>
-                                <b style="font-weight: 700; color: #2e7d32; margin-left: -3px; position: relative; z-index: 2;">o</b>
-                                <span style="font-weight: 300; color: #444; margin-left: 2px;">Cultura</span>
-                            </div>
-						</a>
-					</div>
 				</div>
             </div>
 			<div id="sidebar"></div>
@@ -130,14 +157,6 @@
 
 		<script src="/assets/js/jquery.min.js"></script>
         <script>
-            function calcularDistancia(lat1, lon1, lat2, lon2) {
-                const R = 6371;
-                const dLat = (lat2 - lat1) * Math.PI / 180;
-                const dLon = (lon2 - lon1) * Math.PI / 180;
-                const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
-                return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
-            }
-
             async function inicializarPagina() {
                 const savedRegionId = localStorage.getItem('biocultura_region');
                 const cachedData = sessionStorage.getItem('biocultura_data_cache');
@@ -149,26 +168,8 @@
                         const r = await fetch('/data/bioregioes.json');
                         const data = await r.json();
                         let info = data.find(item => item.id === savedRegionId);
-
-                        if (!info && navigator.geolocation) {
-                            navigator.geolocation.getCurrentPosition(pos => {
-                                let minD = Infinity;
-                                data.forEach(c => {
-                                    if(c.lat && c.lon) {
-                                        let d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon);
-                                        if(d < minD) { minD = d; info = c; }
-                                    }
-                                });
-                                if(info) {
-                                    localStorage.setItem('biocultura_region', info.id);
-                                    sessionStorage.setItem('biocultura_data_cache', JSON.stringify(info));
-                                    renderImpactDashboard(info);
-                                }
-                            });
-                        } else if (info) {
-                            renderImpactDashboard(info);
-                        }
-                    } catch(e) { console.error("Erro", e); }
+                        if (info) renderImpactDashboard(info);
+                    } catch(e) { console.error(e); }
                 }
             }
 
@@ -177,39 +178,27 @@
                 document.getElementById('impact-dashboard').style.display = 'grid';
                 document.getElementById('reg-name').innerText = info.titulo;
 
-                // 1. Energia Ética
+                // 1. Lógica de Energia
                 if (info.energia_etica) {
                     document.getElementById('val-energy-mw').innerText = info.energia_etica.exploracao_atual_mw || '0';
+                    const solarParks = info.energia_etica.parques_solares || [];
+                    document.getElementById('solar-list').innerText = solarParks.length > 0 ? solarParks.join(', ') : "Sem registo de parques industriais.";
                     
-                    if(info.energia_etica.alerta_impacto) {
+                    if(info.energia_etica.alerta_impacto && info.energia_etica.alerta_impacto !== "N/A") {
                         document.getElementById('energy-alert').style.display = 'block';
                         document.getElementById('energy-alert-text').innerText = info.energia_etica.alerta_impacto;
                     }
-
-                    const solarList = document.getElementById('solar-list');
-                    solarList.innerHTML = '';
-                    const parques = info.energia_etica.parques_solares || [];
-                    if(parques.length > 0) {
-                        parques.forEach(p => solarList.innerHTML += `<li><i class="fas fa-sun"></i> ${p}</li>`);
-                    } else {
-                        solarList.innerHTML = '<li><i class="fas fa-check-circle" style="color:#81c784"></i> Sem parques de grande escala.</li>';
-                    }
                 }
 
-                // 2. Mineração
+                // 2. Lógica de Mineração
                 if (info.mineracao) {
+                    const prospects = info.mineracao.zonas_prospeccao || [];
+                    document.getElementById('prospect-list').innerText = prospects.length > 0 ? prospects.join(', ') : "Sem prospeção ativa detetada.";
+                    document.getElementById('val-fire-risk').innerText = info.mineracao.risco_incendio_estatistico || "Moderado";
+
                     if(info.mineracao.conflito_litio && info.mineracao.conflito_litio !== "N/A") {
                         document.getElementById('mining-alert').style.display = 'block';
                         document.getElementById('mining-alert-text').innerText = info.mineracao.conflito_litio;
-                    }
-
-                    const prospectList = document.getElementById('prospect-list');
-                    prospectList.innerHTML = '';
-                    const zonas = info.mineracao.zonas_prospeccao || [];
-                    if(zonas.length > 0) {
-                        zonas.forEach(z => prospectList.innerHTML += `<li><i class="fas fa-pickaxe"></i> ${z}</li>`);
-                    } else {
-                        prospectList.innerHTML = '<li><i class="fas fa-shield-alt" style="color:#81c784"></i> Sem prospeção ativa detetada.</li>';
                     }
                 }
             }
