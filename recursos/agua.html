@@ -117,6 +117,7 @@
 
 		<script src="/assets/js/jquery.min.js"></script>
         <script>
+            // 1. Função para calcular distância (usada se quiseres reativar o GPS no futuro)
             function calcularDistancia(lat1, lon1, lat2, lon2) {
                 const R = 6371;
                 const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -125,6 +126,7 @@
                 return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
             }
 
+            // 2. Inicialização com as 3 prioridades
             async function inicializarPagina() {
                 try {
                     const r = await fetch('/data/bioregioes.json');
@@ -132,91 +134,124 @@
                     
                     const urlParams = new URLSearchParams(window.location.search);
                     const regionParam = urlParams.get('region');
+                    const savedId = localStorage.getItem('biocultura_region');
                     
-                    // 1. PRIORIDADE MÁXIMA: Link direto (?region=...)
-                    // Apenas mostra, NÃO GRAVA no localStorage
+                    // PRIORIDADE 1: Link direto (?region=...)
                     if (regionParam) {
-                        const info = data.find(item => item.id === regionParam);
-                        if (info) {
-                            renderWaterDashboard(info);
-                            return; // Para aqui, não executa mais nada
-                        }
+                        const info = data.find(i => i.id === regionParam);
+                        if (info) { renderWaterDashboard(info); return; }
                     }
 
-                    // 2. SEGUNDA PRIORIDADE: Localização real do utilizador (Casa)
-                    const savedRegionId = localStorage.getItem('biocultura_region');
-                    let info = data.find(item => item.id === savedRegionId);
-
-                    if (info) {
-                        renderWaterDashboard(info);
-                    } else if (navigator.geolocation) {
-                        // 3. ÚLTIMO RECURSO: GPS para encontrar a zona real
-                        navigator.geolocation.getCurrentPosition(pos => {
-                            let minD = Infinity;
-                            let closest = null;
-                            data.forEach(c => {
-                                if(c.lat && c.lon) {
-                                    let d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon);
-                                    if(d < minD) { minD = d; closest = c; }
-                                }
-                            });
-                            if(closest) {
-                                localStorage.setItem('biocultura_region', closest.id);
-                                renderWaterDashboard(closest);
-                            }
-                        });
+                    // PRIORIDADE 2: Escolha guardada no computador
+                    if (savedId) {
+                        const info = data.find(i => i.id === savedId);
+                        if (info) { renderWaterDashboard(info); return; }
                     }
-                } catch(e) { console.error("Erro no carregamento:", e); }
+
+                    // PRIORIDADE 3: Perfil Nacional por defeito
+                    const nacional = data.find(i => i.id === "portugal-nacional");
+                    if (nacional) {
+                        renderWaterDashboard(nacional);
+                        document.getElementById('reg-name').innerHTML = "Portugal <span style='font-size:0.5em; color:#bbb'>(Média Nacional)</span>";
+                    }
+                } catch(e) { 
+                    console.error("Erro ao carregar dados:", e); 
+                }
             }
 
+            // 3. Função de renderização (Garante que os IDs coincidem com o teu HTML)
             function renderWaterDashboard(info) {
                 if(!info) return;
-                document.getElementById('no-gps-warning').style.display = 'none';
-                document.getElementById('water-dashboard').style.display = 'grid';
-                document.getElementById('reg-name').innerText = info.titulo;
+                
+                // Esconder aviso de GPS se existir
+                const warning = document.getElementById('no-gps-warning');
+                if(warning) warning.style.display = 'none';
+                
+                // Mostrar o dashboard
+                const dashboard = document.getElementById('water-dashboard');
+                if(dashboard) dashboard.style.display = 'grid';
+
+                // Nome da região
+                const regName = document.getElementById('reg-name');
+                if(regName) regName.innerText = info.titulo;
 
                 if (info.recursos_hidricos) {
                     const ph = parseFloat(info.recursos_hidricos.ph_agua) || 7.0;
                     const dur = parseFloat(info.recursos_hidricos.dureza_fr) || 10;
                     
-                    document.getElementById('val-ph').innerText = ph;
-                    const phCont = document.getElementById('container-ph');
-                    phCont.className = 'metric';
-                    if (ph < 6.5) phCont.classList.add('status-acid');
-                    else if (ph <= 8.5) phCont.classList.add('status-neutral');
-                    else phCont.classList.add('status-alkaline');
+                    // pH
+                    const valPh = document.getElementById('val-ph');
+                    if(valPh) valPh.innerText = ph;
+                    
+                    const contPh = document.getElementById('container-ph');
+                    if(contPh) {
+                        contPh.className = 'metric';
+                        if (ph < 6.5) contPh.classList.add('status-acid');
+                        else if (ph <= 8.5) contPh.classList.add('status-neutral');
+                        else contPh.classList.add('status-alkaline');
+                    }
 
-                    document.getElementById('val-dureza').innerText = dur;
-                    const durCont = document.getElementById('container-dureza');
-                    durCont.className = 'metric';
-                    if (dur < 15) durCont.classList.add('status-soft');
-                    else if (dur <= 30) durCont.classList.add('status-medium');
-                    else durCont.classList.add('status-hard');
+                    // Dureza
+                    const valDur = document.getElementById('val-dureza');
+                    if(valDur) valDur.innerText = dur;
+                    
+                    const contDur = document.getElementById('container-dureza');
+                    if(contDur) {
+                        contDur.className = 'metric';
+                        if (dur < 15) contDur.classList.add('status-soft');
+                        else if (dur <= 30) contDur.classList.add('status-medium');
+                        else contDur.classList.add('status-hard');
+                    }
 
-                    document.getElementById('water-advantages').innerText = ph < 7 ? "Água ligeiramente ácida: Ideal para a absorção de micronutrientes." : "Água equilibrada: Rica em carbonatos, excelente para neutralizar solos ácidos.";
-                    document.getElementById('soil-utility').innerText = ph < 7 ? "Favorece mirtilos, batatas e hortênsias." : "Favorece leguminosas, vinhas e oliveiras.";
+                    // Vantagens baseadas no pH
+                    const waterAdv = document.getElementById('water-advantages');
+                    if(waterAdv) waterAdv.innerText = ph < 7 ? "Água ligeiramente ácida: Ideal para a absorção de micronutrientes." : "Água equilibrada: Rica em carbonatos, excelente para neutralizar solos ácidos.";
+                    
+                    const soilUtil = document.getElementById('soil-utility');
+                    if(soilUtil) soilUtil.innerText = ph < 7 ? "Favorece mirtilos, batatas e hortênsias." : "Favorece leguminosas, vinhas e oliveiras.";
 
-                    const mes = new Date().getMonth();
-                    const temp = (info.recursos_hidricos.temp_media_agua && info.recursos_hidricos.temp_media_agua[mes]) ? info.recursos_hidricos.temp_media_agua[mes] : '--';
-                    document.getElementById('temp-container').innerHTML = `<div class="temp-badge"><i class="fas fa-thermometer-half"></i> Água hoje: ${temp}ºC</div>`;
+                    // Temperatura
+                    const tempCont = document.getElementById('temp-container');
+                    if(tempCont) {
+                        const mes = new Date().getMonth();
+                        const temp = (info.recursos_hidricos.temp_media_agua && info.recursos_hidricos.temp_media_agua[mes]) ? info.recursos_hidricos.temp_media_agua[mes] : '--';
+                        tempCont.innerHTML = `<div class="temp-badge"><i class="fas fa-thermometer-half"></i> Água hoje: ${temp}ºC</div>`;
+                    }
                 }
 
                 if (info.agua) {
-                    document.getElementById('reg-aquifer').innerText = info.agua.aquiferos || "Em levantamento.";
-                    document.getElementById('reg-dams').innerText = (info.agua.barragens_proximas && Array.isArray(info.agua.barragens_proximas)) ? info.agua.barragens_proximas.join(', ') : "Sem barragens próximas.";
+                    const regAq = document.getElementById('reg-aquifer');
+                    if(regAq) regAq.innerText = info.agua.aquiferos || "Em levantamento.";
                     
+                    const regDams = document.getElementById('reg-dams');
+                    if(regDams) regDams.innerText = (info.agua.barragens_proximas && Array.isArray(info.agua.barragens_proximas)) ? info.agua.barragens_proximas.join(', ') : "Sem barragens próximas.";
+                    
+                    // Alerta de impacto
                     const impactAlert = document.getElementById('impact-alert');
                     const impactText = document.getElementById('impact-text');
-                    const nota = info.agua.nota || "";
-
-                    if (info.id === "porto-de-mos" || nota.toLowerCase().includes("poluição") || nota.toLowerCase().includes("contaminação") || nota.toLowerCase().includes("escassez")) {
-                        impactAlert.style.display = 'block';
-                        impactText.innerText = info.id === "porto-de-mos" ? "A poluição industrial e a extração descontrolada ameaçam a integridade deste aquífero vital." : nota;
-                    } else {
-                        impactAlert.style.display = 'none';
+                    if(impactAlert && impactText) {
+                        const nota = info.agua.nota || "";
+                        if (info.id === "porto-de-mos" || nota.toLowerCase().includes("poluição") || nota.toLowerCase().includes("contaminação")) {
+                            impactAlert.style.display = 'block';
+                            impactText.innerText = info.id === "porto-de-mos" ? "A poluição industrial e a extração descontrolada ameaçam a integridade deste aquífero vital." : nota;
+                        } else {
+                            impactAlert.style.display = 'none';
+                        }
                     }
                 }
             }
+
+            // 4. Carregar Sidebar e Iniciar
+            fetch('/sidebar-content.html').then(r => r.text()).then(html => {
+                const sidebar = document.getElementById('sidebar');
+                if(sidebar) {
+                    sidebar.innerHTML = html;
+                    var s = document.createElement('script'); s.src = '/assets/js/main.js'; document.body.appendChild(s);
+                    inicializarPagina();
+                }
+            });
+        </script>
+
 
             fetch('/sidebar-content.html').then(r => r.text()).then(html => {
                 document.getElementById('sidebar').innerHTML = html;
