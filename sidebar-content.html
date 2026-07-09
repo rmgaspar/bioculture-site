@@ -37,12 +37,12 @@
                 <a href="/servicos/bioenergia.html" class="menu-item">Serviços</a>
             </div>
             <div class="menu-section" style="margin-top: 1em;">
-                <a href="/calendario/calendario.html" class="menu-item">Calendário hortícola</a>
+                <a href="/calendario/calendario.html" class="menu-item" style="font-weight: 700; color: #222 !important;">Calendário hortícola</a>
             </div>
         </nav>
     </div>
 
-    <!-- PARTE INFERIOR: LOCALIZAÇÃO COM NAVEGAÇÃO POR TECLADO -->
+    <!-- LOCALIZAÇÃO SMART NO FUNDO -->
     <div style="padding-bottom: 2em; border-top: 1px solid #f2f2f2; padding-top: 2.5em;">
         <div class="loc-input-wrapper">
             <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px;">
@@ -51,7 +51,7 @@
                 <button onclick="useGPS()" class="gps-mini-btn" title="Usar GPS"><i class="fas fa-crosshairs"></i></button>
             </div>
             <div id="loc-results" class="loc-results-dropdown"></div>
-            <p style="font-size: 0.6em; color: #bbb; margin: 0; line-height: 1.4;">Use as setas ↑↓ e Enter para selecionar.</p>
+            <p id="loc-sub" style="font-size: 0.6em; color: #bbb; margin: 0; line-height: 1.4;">Escreva o nome ou use as setas ↑↓ e Enter.</p>
         </div>
 
         <footer style="margin-top: 3em;">
@@ -61,11 +61,8 @@
 </div>
 
 <style>
-    /* RESET E TIPOGRAFIA */
     #sidebar * { font-family: 'Source Sans Pro', sans-serif !important; border: none !important; box-shadow: none !important; text-decoration: none !important; font-weight: 400 !important; }
     #sidebar b, .menu-header { font-weight: 900 !important; }
-
-    /* MENU */
     .menu-section { margin-bottom: 2.2em; display: flex; flex-direction: column; }
     .menu-header { font-size: 0.65em !important; text-transform: uppercase; letter-spacing: 2px; color: #bbb !important; margin-bottom: 12px !important; }
     .menu-item { font-size: 0.95em !important; color: #888 !important; padding: 5px 0 !important; display: block !important; transition: color 0.2s ease !important; }
@@ -74,25 +71,22 @@
     /* LOCALIZAÇÃO */
     .loc-input-wrapper { position: relative; width: 100%; }
     .loc-input { background: none !important; color: #666 !important; font-size: 0.85em !important; font-weight: 600 !important; width: 100%; padding: 0 !important; outline: none !important; }
-    .gps-mini-btn { background: none !important; color: #bbb !important; cursor: pointer !important; padding: 0 !important; transition: color 0.2s; }
+    .gps-mini-btn { background: none !important; color: #bbb !important; cursor: pointer !important; padding: 0 !important; }
     .gps-mini-btn:hover { color: #2e7d32 !important; }
 
-    /* DROPDOWN DE RESULTADOS */
     .loc-results-dropdown {
         position: absolute; bottom: 100%; left: 0; width: 100%;
         background: #fff; border: 1px solid #eee !important; border-radius: 12px;
         max-height: 220px; overflow-y: auto; display: none; z-index: 100;
         margin-bottom: 15px; box-shadow: 0 -10px 40px rgba(0,0,0,0.08) !important;
     }
-    .loc-res-item { padding: 10px 15px; font-size: 0.85em; color: #666; cursor: pointer; border-bottom: 1px solid #f9f9f9 !important; transition: all 0.2s; }
-    
-    /* ESTADO ATIVO (NAVEGAÇÃO POR SETAS) */
-    .loc-res-item.active, .loc-res-item:hover { background: #f1f8e9 !important; color: #2e7d32 !important; padding-left: 20px !important; font-weight: 600 !important; }
+    .loc-res-item { padding: 10px 15px; font-size: 0.85em; color: #666; cursor: pointer; border-bottom: 1px solid #f9f9f9 !important; }
+    .loc-res-item.active, .loc-res-item:hover { background: #f1f8e9 !important; color: #2e7d32 !important; font-weight: 600 !important; }
 </style>
 
 <script>
     let locationsDB = [];
-    let currentFocus = -1; // Índice para navegação por setas
+    let currentFocus = -1;
 
     fetch('/data/bioregioes.json').then(r => r.json()).then(data => { 
         locationsDB = data; 
@@ -100,13 +94,10 @@
         if(saved) {
             const info = data.find(i => i.id === saved);
             if(info) document.getElementById('loc-input-field').value = info.titulo;
-        } else {
-            document.getElementById('loc-input-field').value = "Portugal (Nacional)";
         }
     });
 
     function handleLocSearch(e) {
-        // Ignorar se forem as teclas de direção ou enter (tratadas noutra função)
         if (["ArrowUp", "ArrowDown", "Enter", "Escape"].includes(e.key)) return;
 
         const val = e.target.value.toLowerCase();
@@ -123,9 +114,9 @@
             filtered.forEach((item, index) => {
                 const div = document.createElement('div');
                 div.className = 'loc-res-item';
-                div.id = 'res-item-' + index;
                 div.innerText = item.titulo;
-                div.onclick = () => selectLocation(item);
+                div.setAttribute('data-id', item.id);
+                div.onclick = () => selectLocation(item.id);
                 resultsBox.appendChild(div);
             });
         } else {
@@ -145,47 +136,51 @@
             addActive(items);
         } else if (e.key === "Enter") {
             e.preventDefault();
-            if (currentFocus > -1) {
-                if (items[currentFocus]) items[currentFocus].click();
+            const inputVal = document.getElementById('loc-input-field').value.trim().toLowerCase();
+            
+            if (currentFocus > -1 && items[currentFocus]) {
+                // Se houver algo selecionado pelas setas
+                items[currentFocus].click();
+            } else {
+                // Se o utilizador escreveu o nome completo e deu Enter
+                const match = locationsDB.find(i => i.titulo.toLowerCase() === inputVal);
+                if (match) {
+                    selectLocation(match.id);
+                } else {
+                    // Tenta encontrar o primeiro resultado da lista filtrada se não houver match exato
+                    const firstMatch = locationsDB.find(i => i.titulo.toLowerCase().includes(inputVal));
+                    if(firstMatch) selectLocation(firstMatch.id);
+                }
             }
-        } else if (e.key === "Escape") {
-            resultsBox.style.display = 'none';
         }
     }
 
     function addActive(items) {
-        if (!items) return false;
+        if (!items || items.length === 0) return;
         removeActive(items);
         if (currentFocus >= items.length) currentFocus = 0;
-        if (currentFocus < 0) currentFocus = (items.length - 1);
+        if (currentFocus < 0) currentFocus = items.length - 1;
         items[currentFocus].classList.add("active");
         items[currentFocus].scrollIntoView({ block: "nearest" });
     }
 
     function removeActive(items) {
-        for (let i = 0; i < items.length; i++) {
-            items[i].classList.remove("active");
-        }
+        for (let i = 0; i < items.length; i++) items[i].classList.remove("active");
     }
 
-    function selectLocation(item) {
-        localStorage.setItem('biocultura_region', item.id);
+    function selectLocation(id) {
+        localStorage.setItem('biocultura_region', id);
         sessionStorage.clear();
         location.reload();
     }
 
     function useGPS() {
         if (!navigator.geolocation) return;
-        document.getElementById('loc-input-field').value = "A localizar...";
-        localStorage.removeItem('biocultura_region');
-        sessionStorage.clear();
-        navigator.geolocation.getCurrentPosition(() => { location.reload(); }, () => { location.reload(); });
+        localStorage.clear(); sessionStorage.clear();
+        navigator.geolocation.getCurrentPosition(() => location.reload(), () => location.reload());
     }
 
-    // Fechar dropdown se clicar fora
-    document.addEventListener("click", function (e) {
-        if (e.target.id !== 'loc-input-field') {
-            document.getElementById('loc-results').style.display = 'none';
-        }
+    document.addEventListener("click", (e) => {
+        if (e.target.id !== 'loc-input-field') document.getElementById('loc-results').style.display = 'none';
     });
 </script>
