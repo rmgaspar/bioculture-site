@@ -117,88 +117,115 @@
 
 		<script src="/assets/js/jquery.min.js"></script>
         <script>
-            let locationsDB = [];
+        let locationsDB = [];
 
-            async function inicializarPagina() {
-                try {
-                    const r = await fetch('/data/bioregioes.json');
-                    const data = await r.json();
-                    locationsDB = data;
-                    
-                    const urlParams = new URLSearchParams(window.location.search);
-                    const regionParam = urlParams.get('region');
-                    const savedId = localStorage.getItem('biocultura_region');
-                    
-                    if (regionParam) {
-                        const info = data.find(i => i.id === regionParam);
-                        if (info) { renderWaterDashboard(info); return; }
-                    }
-                    if (savedId) {
-                        const info = data.find(i => i.id === savedId);
-                        if (info) { renderWaterDashboard(info); return; }
-                    }
-                    const nacional = data.find(i => i.id === "portugal-nacional");
-                    if (nacional) {
-                        renderWaterDashboard(nacional);
-                        document.getElementById('reg-name').innerHTML = "Portugal <span style='font-size:0.5em; color:#bbb'>(Média Nacional)</span>";
-                    }
-                } catch(e) { console.error(e); }
+        // Função Haversine (distância)
+        function calcularDistancia(lat1, lon1, lat2, lon2) {
+            const R = 6371;
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
+            return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+        }
+
+        async function inicializarPagina() {
+            try {
+                const r = await fetch('/data/bioregioes.json');
+                const data = await r.json();
+                locationsDB = data;
+                
+                const urlParams = new URLSearchParams(window.location.search);
+                const regionParam = urlParams.get('region');
+                const savedId = localStorage.getItem('biocultura_region');
+                
+                if (regionParam) {
+                    const info = data.find(i => i.id === regionParam);
+                    if (info) { renderWaterDashboard(info); return; }
+                }
+                if (savedId) {
+                    const info = data.find(i => i.id === savedId);
+                    if (info) { renderWaterDashboard(info); return; }
+                }
+                const nacional = data.find(i => i.id === "portugal-nacional");
+                if (nacional) {
+                    renderWaterDashboard(nacional);
+                    document.getElementById('reg-name').innerHTML = "Portugal <span style='font-size:0.5em; color:#bbb'>(Média Nacional)</span>";
+                }
+            } catch(e) { console.error(e); }
+        }
+
+        function renderWaterDashboard(info) {
+            if(!info) return;
+            document.getElementById('no-gps-warning').style.display = 'none';
+            document.getElementById('water-dashboard').style.display = 'grid';
+            document.getElementById('reg-name').innerText = info.titulo;
+            // ... (restante da tua função renderWaterDashboard igual)
+        }
+
+        // --- LÓGICA DA SIDEBAR (EXECUTADA NO PAI) ---
+        function setupSidebarEvents() {
+            const input = document.getElementById('loc-search-input');
+            const dropdown = document.getElementById('loc-dropdown');
+            const gpsBtn = document.getElementById('btn-gps-trigger');
+
+            if(!input) return;
+
+            // Ação da Seta de Localização (GPS)
+            if(gpsBtn) {
+                gpsBtn.onclick = function() {
+                    if (!navigator.geolocation) return;
+                    input.value = "A localizar...";
+                    localStorage.removeItem('biocultura_region');
+                    sessionStorage.clear();
+                    navigator.geolocation.getCurrentPosition(() => {
+                        window.location.href = window.location.pathname;
+                    }, () => {
+                        window.location.href = window.location.pathname;
+                    });
+                };
             }
 
-            function renderWaterDashboard(info) {
-                if(!info) return;
-                document.getElementById('no-gps-warning').style.display = 'none';
-                document.getElementById('water-dashboard').style.display = 'grid';
-                document.getElementById('reg-name').innerText = info.titulo;
-                // ... (resto da tua função de renderização igual)
-            }
-
-            // --- LÓGICA DA SIDEBAR (EXECUTADA NO PAI) ---
-            function setupSidebarEvents() {
-                const input = document.getElementById('loc-search-input');
-                const dropdown = document.getElementById('loc-dropdown');
-                if(!input) return;
-
-                input.addEventListener('input', function() {
-                    const val = this.value.toLowerCase();
-                    dropdown.innerHTML = '';
-                    if(val.length < 2) { dropdown.style.display = 'none'; return; }
-                    const matches = locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0, 6);
-                    if(matches.length > 0) {
-                        dropdown.style.display = 'block';
-                        matches.forEach(m => {
-                            const item = document.createElement('div');
-                            item.className = 'bio-res-item';
-                            item.innerText = m.titulo;
-                            item.onclick = () => {
-                                localStorage.setItem('biocultura_region', m.id);
-                                sessionStorage.clear();
-                                window.location.href = window.location.pathname; // Limpa a URL e recarrega
-                            };
-                            dropdown.appendChild(item);
-                        });
-                    } else { dropdown.style.display = 'none'; }
-                });
-
-                input.addEventListener('keydown', function(e) {
-                    if (e.key === 'Enter') {
-                        const val = this.value.toLowerCase().trim();
-                        const match = locationsDB.find(i => i.titulo.toLowerCase() === val || i.id === val);
-                        if(match) {
-                            localStorage.setItem('biocultura_region', match.id);
+            // Ação da Pesquisa Manual
+            input.addEventListener('input', function() {
+                const val = this.value.toLowerCase();
+                dropdown.innerHTML = '';
+                if(val.length < 2) { dropdown.style.display = 'none'; return; }
+                const matches = locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0, 6);
+                if(matches.length > 0) {
+                    dropdown.style.display = 'block';
+                    matches.forEach(m => {
+                        const item = document.createElement('div');
+                        item.className = 'bio-res-item';
+                        item.innerText = m.titulo;
+                        item.onclick = () => {
+                            localStorage.setItem('biocultura_region', m.id);
                             sessionStorage.clear();
                             window.location.href = window.location.pathname;
-                        }
-                    }
-                });
-            }
-
-            fetch('/sidebar-content.html').then(r => r.text()).then(html => {
-                document.getElementById('sidebar').innerHTML = html;
-                var s = document.createElement('script'); s.src = '/assets/js/main.js'; document.body.appendChild(s);
-                inicializarPagina();
-                setTimeout(setupSidebarEvents, 500); // Aguarda a injeção do HTML para ligar os eventos
+                        };
+                        dropdown.appendChild(item);
+                    });
+                } else { dropdown.style.display = 'none'; }
             });
-        </script>
+
+            input.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    const val = this.value.toLowerCase().trim();
+                    const match = locationsDB.find(i => i.titulo.toLowerCase() === val || i.id === val);
+                    if(match) {
+                        localStorage.setItem('biocultura_region', match.id);
+                        sessionStorage.clear();
+                        window.location.href = window.location.pathname;
+                    }
+                }
+            });
+        }
+
+        fetch('/sidebar-content.html').then(r => r.text()).then(html => {
+            document.getElementById('sidebar').innerHTML = html;
+            var s = document.createElement('script'); s.src = '/assets/js/main.js'; document.body.appendChild(s);
+            inicializarPagina();
+            setTimeout(setupSidebarEvents, 600);
+        });
+    </script>
 	</body>
 </html>
