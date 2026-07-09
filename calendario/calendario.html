@@ -19,7 +19,7 @@
             /* CABEÇALHOS */
             .current-month-text { font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; display: block; margin-bottom: 10px; text-align: center; }
             .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; color: #bbb; margin-bottom: 10px; display: block; text-align: center; }
-
+            
             /* HEADER DIVIDIDO */
             .calendar-hero { display: flex; justify-content: space-between; align-items: center; gap: 4em; margin-bottom: 4em; }
             .hero-left { flex: 1; text-align: left; }
@@ -100,14 +100,14 @@
 
                         <div class="weather-alerts">
                             <div class="weather-card">
-                                <span class="category-label" style="text-align: left;">Previsão</span>
+                                <span style="font-size: 0.6em; font-weight: 800; text-transform: uppercase; color: #bbb; letter-spacing: 1px;">Previsão</span>
                                 <div style="display: flex; align-items: center; gap: 20px; margin-top: 10px;">
                                     <i class="fas fa-cloud-sun" style="font-size: 2em; color: #ddd;"></i>
                                     <div><h2 style="margin:0; font-weight: 300; font-size: 1.6em;">28°C / 16°C</h2><p style="margin:0; font-size: 0.75em; color: #bbb;">Céu limpo, vento moderado NW</p></div>
                                 </div>
                             </div>
                             <div class="alert-card">
-                                <span class="category-label" style="text-align: left; color: #ef5350;">Precaução</span>
+                                <span style="font-size: 0.6em; font-weight: 900; text-transform: uppercase; color: #ef5350; letter-spacing: 1px;">Precaução</span>
                                 <p id="climate-alert" style="font-size: 0.95em; color: #7f1d1d; margin-top: 10px;">A carregar alertas...</p>
                             </div>
                         </div>
@@ -186,7 +186,7 @@
             }
 
             const agroIntelligence = {
-                "jul": { "pomar": "Colheita de Pêssego e Ameixa.", "pomar_detail": "Instale armadilhas biológicas para a mosca da fruta. Regue ao entardecer.", "vinha": "Poda em verde.", "vinha_detail": "Remova rebentos ladrões para concentrar energia.", "jardim": "Stress hídrico.", "jardim_detail": "Use mulching para manter a frescura. Regue ao amanhecer.", "adega": "Higiene de cubas.", "adega_detail": "Lave o vasilhame com água quente antes da vindima.", "sementeiras": "Couves de inverno.", "sementeiras_detail": "Semear brócolos e couve-flor em local sombreado.", "alerta": "SOL EXTREMO: Evite regas nas horas de maior calor." }
+                "jul": { "pomar": "Colheita de Pêssego e Ameixa.", "pomar_detail": "Instale armadilhas biológicas para a mosca da fruta. Regue ao entardecer para evitar evaporação.", "vinha": "Poda em verde.", "vinha_detail": "Remova rebentos ladrões para concentrar energia. Monitorize o aparecimento de oídio.", "jardim": "Stress hídrico.", "jardim_detail": "Use mulching para manter a frescura. Regue apenas ao amanhecer.", "adega": "Higiene de cubas.", "adega_detail": "Lave o vasilhame com água quente e prepare os equipamentos para a vindima.", "sementeiras": "Couves de inverno.", "sementeiras_detail": "Semear brócolos e couve-flor em local sombreado.", "alerta": "SOL EXTREMO: Evite regas nas horas de maior calor para não queimar as folhas." }
             };
 
             const regionalVarieties = { "norte": "Alvarinho, Loureiro, Vinhão", "centro": "Touriga Nacional, Bical, Arinto", "alentejo": "Aragonez, Trincadeira, Antão Vaz", "algarve": "Negra Mole, Castelão" };
@@ -196,8 +196,9 @@
                 document.getElementById('no-gps-warning').style.display = 'none';
                 document.getElementById('tasks-container').style.display = 'block';
                 document.getElementById('soil-card').style.display = 'flex';
-                document.getElementById('reg-name').innerText = info.titulo;
-                document.getElementById('reg-name').style.color = "#888";
+                const regName = document.getElementById('reg-name');
+                regName.innerText = info.titulo;
+                regName.style.color = "#888";
                 document.getElementById('soil-type').innerText = info.biomas?.solo || "Misto";
                 
                 const intel = agroIntelligence[mesKey] || agroIntelligence["jul"];
@@ -252,27 +253,38 @@
 
             function setupSidebarLogic() {
                 const input = document.getElementById('loc-search-input');
+                const dropdown = document.getElementById('loc-dropdown');
                 const gpsBtn = document.getElementById('btn-gps-trigger');
                 if(!input || !gpsBtn) return;
+
                 gpsBtn.addEventListener('click', function() {
                     if (!navigator.geolocation) return;
                     input.value = "A localizar...";
                     localStorage.clear(); sessionStorage.clear();
                     navigator.geolocation.getCurrentPosition(pos => {
-                        const userLat = pos.coords.latitude;
-                        const userLon = pos.coords.longitude;
-                        let minD = Infinity; let closest = null;
-                        locationsDB.forEach(c => {
-                            if(c.lat && c.lon) {
-                                let d = calcularDistancia(userLat, userLon, c.lat, c.lon);
-                                if(d < minD) { minD = d; closest = c; }
-                            }
-                        });
-                        if(closest) {
-                            localStorage.setItem('biocultura_region', closest.id);
-                            window.location.href = window.location.pathname;
-                        }
+                        window.location.href = window.location.pathname;
                     }, () => { window.location.href = window.location.pathname; });
+                });
+
+                input.addEventListener('input', function() {
+                    const val = this.value.toLowerCase();
+                    dropdown.innerHTML = '';
+                    if(val.length < 2) { dropdown.style.display = 'none'; return; }
+                    const matches = locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0, 6);
+                    if(matches.length > 0) {
+                        dropdown.style.display = 'block';
+                        matches.forEach(m => {
+                            const div = document.createElement('div');
+                            div.className = 'bio-res-item';
+                            div.innerText = m.titulo;
+                            div.onclick = () => {
+                                localStorage.setItem('biocultura_region', m.id);
+                                sessionStorage.clear();
+                                window.location.href = window.location.pathname;
+                            };
+                            dropdown.appendChild(div);
+                        });
+                    } else dropdown.style.display = 'none';
                 });
             }
 
