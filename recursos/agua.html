@@ -13,6 +13,7 @@
 
             /* SIDEBAR FIXA */
             #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
+            #sidebar > .inner { height: 100% !important; overflow: hidden !important; display: flex; flex-direction: column; }
             #wrapper { padding-left: 18em !important; }
 
             /* CABEÇALHOS CINZENTOS */
@@ -23,24 +24,35 @@
             .water-dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 30px; margin-bottom: 4em; }
             .data-card { background: #fff; border-radius: 35px; padding: 3em; box-shadow: 0 15px 45px rgba(0,0,0,0.03); border: 1px solid #f8f8f8; display: flex; flex-direction: column; }
             
-            /* GAUGE / MANÓMETRO REALISTA */
-            .gauge-container { position: relative; width: 180px; height: 110px; margin: 0 auto; overflow: hidden; }
-            .gauge-svg { width: 180px; height: 180px; }
+            .quality-grid { display: flex; gap: 2em; justify-content: center; align-items: center; margin-bottom: 2em; }
+
+            /* NOVO MANÓMETRO DIGITAL (SEM PONTEIRO) */
+            .gauge-box { position: relative; width: 160px; height: 100px; display: flex; flex-direction: column; align-items: center; }
             
-            /* Segmentos de Cor do Arco */
-            .gauge-arc-bg { fill: none; stroke: #f0f0f0; stroke-width: 12; }
-            .gauge-arc-color { fill: none; stroke-width: 12; stroke-linecap: round; stroke-dasharray: 283; stroke-dashoffset: 283; transition: stroke-dashoffset 1.5s ease, stroke 1s ease; }
+            .gauge-svg { width: 160px; height: 160px; transform: rotate(-180deg); }
+            .gauge-bg { fill: none; stroke: #f0f0f0; stroke-width: 10; stroke-linecap: round; }
+            
+            /* A linha que preenche */
+            .gauge-fill { 
+                fill: none; 
+                stroke-width: 10; 
+                stroke-linecap: round; 
+                stroke-dasharray: 251.2; /* Circunferência total para r=40 */
+                stroke-dashoffset: 251.2; 
+                transition: stroke-dashoffset 1.8s cubic-bezier(0.4, 0, 0.2, 1);
+            }
 
-            /* Ponteiro (Needle) */
-            .needle-center { position: absolute; bottom: 0; left: 50%; width: 2px; height: 80px; background: #333; transform-origin: bottom center; transform: translateX(-50%) rotate(-90deg); transition: transform 1.5s cubic-bezier(0.4, 0, 0.2, 1); z-index: 5; }
-            .needle-center::after { content: ''; position: absolute; bottom: -5px; left: -4px; width: 10px; height: 10px; background: #333; border-radius: 50%; }
-
-            .value-box { text-align: center; margin-top: -10px; position: relative; z-index: 10; }
-            .metric-val { font-size: 2.4em; font-weight: 300; color: #1a1a1a; line-height: 1; }
+            .value-overlay {
+                position: absolute;
+                top: 55px;
+                text-align: center;
+                width: 100%;
+            }
+            .metric-val { font-size: 2.2em; font-weight: 300; color: #1a1a1a; line-height: 1; display: block; }
             .metric-label { font-size: 0.6em; font-weight: 800; text-transform: uppercase; color: #aaa; letter-spacing: 1px; }
 
             /* INFO TÉCNICA */
-            .tech-info { background: #f9fbf9; padding: 1.5em; border-radius: 20px; margin-top: 1.5em; flex-grow: 1; }
+            .tech-info { background: #f9fbf9; padding: 1.5em; border-radius: 20px; margin-top: 1em; flex-grow: 1; }
             .tech-item { margin-bottom: 1em; }
             .tech-item h5 { font-size: 0.65em; font-weight: 900; text-transform: uppercase; color: #bbb; margin-bottom: 5px; }
             .tech-item p { font-size: 0.85em; margin: 0; line-height: 1.5; color: #444; }
@@ -50,6 +62,7 @@
             .alert-card p { color: #7f1d1d; font-size: 0.9em; margin: 0; line-height: 1.5; font-weight: 600; }
 
             .temp-badge { background: #e1f5fe; color: #0277bd; padding: 8px 20px; border-radius: 25px; font-size: 0.85em; font-weight: 700; display: inline-block; margin-bottom: 15px; }
+
             .page-footer { margin-top: auto; padding: 4em 0 2em 0; border-top: 1px solid #f2f2f2; }
 
             @media screen and (max-width: 1280px) {
@@ -76,35 +89,47 @@
                             <!-- PERFIL QUÍMICO -->
                             <div class="data-card">
                                 <h4 class="card-title">Perfil Químico</h4>
-                                <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+                                <div class="quality-grid">
+                                    
                                     <!-- GAUGE PH -->
-                                    <div style="text-align: center;">
-                                        <div class="gauge-container">
-                                            <svg class="gauge-svg" viewBox="0 0 100 100">
-                                                <path class="gauge-arc-bg" d="M 10 50 A 40 40 0 0 1 90 50" />
-                                                <path id="path-ph" class="gauge-arc-color" d="M 10 50 A 40 40 0 0 1 90 50" />
-                                            </svg>
-                                            <div id="needle-ph" class="needle-center"></div>
-                                        </div>
-                                        <div class="value-box">
+                                    <div class="gauge-box">
+                                        <svg class="gauge-svg" viewBox="0 0 100 100">
+                                            <!-- Definição do Gradiente -->
+                                            <defs>
+                                                <linearGradient id="grad-ph" x1="0%" y1="0%" x2="100%" y2="0%">
+                                                    <stop offset="0%" style="stop-color:#ffd54f;stop-opacity:1" />
+                                                    <stop offset="50%" style="stop-color:#81c784;stop-opacity:1" />
+                                                    <stop offset="100%" style="stop-color:#4fc3f7;stop-opacity:1" />
+                                                </linearGradient>
+                                            </defs>
+                                            <path class="gauge-bg" d="M 10 50 A 40 40 0 0 1 90 50" />
+                                            <path id="fill-ph" class="gauge-fill" d="M 10 50 A 40 40 0 0 1 90 50" stroke="url(#grad-ph)" />
+                                        </svg>
+                                        <div class="value-overlay">
                                             <span class="metric-val" id="val-ph">--</span>
                                             <span class="metric-label">pH</span>
                                         </div>
                                     </div>
+
                                     <!-- GAUGE DUREZA -->
-                                    <div style="text-align: center;">
-                                        <div class="gauge-container">
-                                            <svg class="gauge-svg" viewBox="0 0 100 100">
-                                                <path class="gauge-arc-bg" d="M 10 50 A 40 40 0 0 1 90 50" />
-                                                <path id="path-dureza" class="gauge-arc-color" d="M 10 50 A 40 40 0 0 1 90 50" />
-                                            </svg>
-                                            <div id="needle-dureza" class="needle-center"></div>
-                                        </div>
-                                        <div class="value-box">
+                                    <div class="gauge-box">
+                                        <svg class="gauge-svg" viewBox="0 0 100 100">
+                                            <defs>
+                                                <linearGradient id="grad-dur" x1="0%" y1="0%" x2="100%" y2="0%">
+                                                    <stop offset="0%" style="stop-color:#4fc3f7;stop-opacity:1" />
+                                                    <stop offset="50%" style="stop-color:#ffb74d;stop-opacity:1" />
+                                                    <stop offset="100%" style="stop-color:#ef5350;stop-opacity:1" />
+                                                </linearGradient>
+                                            </defs>
+                                            <path class="gauge-bg" d="M 10 50 A 40 40 0 0 1 90 50" />
+                                            <path id="fill-dureza" class="gauge-fill" d="M 10 50 A 40 40 0 0 1 90 50" stroke="url(#grad-dur)" />
+                                        </svg>
+                                        <div class="value-overlay">
                                             <span class="metric-val" id="val-dureza">--</span>
                                             <span class="metric-label">ºf</span>
                                         </div>
                                     </div>
+
                                 </div>
                                 <div class="tech-info">
                                     <div class="tech-item"><h5>Vantagens e Utilidade</h5><p id="water-advantages">A analisar...</p></div>
@@ -137,10 +162,7 @@
                                     <span style="display: block; font-size: 0.85em; font-weight: 900; color: #333;">bioCultura</span>
                                     <span style="display: block; font-size: 0.5em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Global Regeneration</span>
                                 </div>
-                                <svg width="22" height="22" viewBox="0 0 100 100">
-                                    <path d="M50 5 L89 27.5 L89 72.5 L50 95 L11 72.5 L11 27.5 Z" fill="#333" />
-                                    <path d="M50 20 C50 20 75 45 75 70 C75 85 65 85 50 85 C35 85 25 85 25 70 C25 45 50 20 50 20Z" fill="#fff" />
-                                </svg>
+                                <svg width="22" height="22" viewBox="0 0 100 100"><path d="M50 5 L89 27.5 L89 72.5 L50 95 L11 72.5 L11 27.5 Z" fill="#333" /><path d="M50 20 C50 20 75 45 75 70 C75 85 65 85 50 85 C35 85 25 85 25 70 C25 45 50 20 50 20Z" fill="#fff" /></svg>
                             </div>
                         </footer>
 					</section>
@@ -151,8 +173,6 @@
 
 		<script src="/assets/js/jquery.min.js"></script>
         <script>
-            let locationsDB = [];
-
             function calcularDistancia(lat1, lon1, lat2, lon2) {
                 const R = 6371;
                 const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -164,45 +184,28 @@
             async function inicializarPagina() {
                 try {
                     const r = await fetch('/data/bioregioes.json');
-                    locationsDB = await r.json();
+                    const data = await r.json();
                     const urlParams = new URLSearchParams(window.location.search);
                     const regionParam = urlParams.get('region');
                     const savedId = localStorage.getItem('biocultura_region');
-                    let info = regionParam ? locationsDB.find(i => i.id === regionParam) : locationsDB.find(i => i.id === savedId);
+                    let info = regionParam ? data.find(i => i.id === regionParam) : data.find(i => i.id === savedId);
                     if (info) renderWaterDashboard(info);
-                    else renderWaterDashboard(locationsDB.find(i => i.id === "portugal-nacional"));
+                    else renderWaterDashboard(data.find(i => i.id === "portugal-nacional"));
                 } catch(e) { console.error(e); }
             }
 
-            function updateManometer(id, value, max, type) {
-                const path = document.getElementById('path-' + id);
-                const needle = document.getElementById('needle-' + id);
-                if (!path || !needle) return;
+            function updateGauge(id, value, max) {
+                const fill = document.getElementById('fill-' + id);
+                if (!fill) return;
 
-                // Arco de 180 graus (meia-lua)
-                const circumference = 126; // Metade de 251.3 para raio 40
-                path.style.strokeDasharray = "126 126";
-                
+                // A circunferência de uma meia-lua (180º) com r=40 é ~125.6
+                const maxOffset = 125.6; 
                 const percentage = Math.min(value / max, 1);
-                const offset = 126 - (percentage * 126);
-                path.style.strokeDashoffset = offset;
-
-                // Rotação do ponteiro (-90deg a +90deg)
-                const rotation = (percentage * 180) - 90;
-                needle.style.transform = `translateX(-50%) rotate(${rotation}deg)`;
-
-                // Cores dinâmicas
-                let color = "#bbb";
-                if (type === 'ph') {
-                    if (value >= 6.5 && value <= 8.5) color = "#81c784";
-                    else if (value < 6.5) color = "#ffa000";
-                    else color = "#4fc3f7";
-                } else {
-                    if (value < 15) color = "#81c784";
-                    else if (value <= 30) color = "#ffb74d";
-                    else color = "#ef5350";
-                }
-                path.style.stroke = color;
+                const offset = maxOffset - (percentage * maxOffset);
+                
+                // stroke-dasharray está definido para 251.2 (círculo completo)
+                // mas só mostramos metade. O offset 125.6 significa "zero" na nossa meia-lua.
+                fill.style.strokeDashoffset = 251.2 - (percentage * 125.6);
             }
 
             function renderWaterDashboard(info) {
@@ -214,15 +217,17 @@
                 if (info.recursos_hidricos) {
                     const ph = parseFloat(info.recursos_hidricos.ph_agua) || 7.0;
                     const dur = parseFloat(info.recursos_hidricos.dureza_fr) || 10;
+                    
                     document.getElementById('val-ph').innerText = ph;
                     document.getElementById('val-dureza').innerText = dur;
 
+                    // Atualizar Arcos (pH max 14, Dureza max 50)
                     setTimeout(() => {
-                        updateManometer('ph', ph, 14, 'ph');
-                        updateManometer('dureza', dur, 50, 'dur');
+                        updateGauge('ph', ph, 14);
+                        updateGauge('dureza', dur, 50);
                     }, 300);
 
-                    document.getElementById('water-advantages').innerText = ph < 7 ? "Água ligeiramente ácida: Ideal para a absorção de micronutrientes como Ferro e Zinco." : "Água equilibrada: Rica em carbonatos, excelente para neutralizar solos ácidos.";
+                    document.getElementById('water-advantages').innerText = ph < 7 ? "Água ligeiramente ácida: Ideal para a absorção de micronutrientes." : "Água equilibrada: Rica em carbonatos, excelente para neutralizar solos ácidos.";
                     document.getElementById('soil-utility').innerText = ph < 7 ? "Favorece mirtilos, batatas e hortênsias." : "Favorece leguminosas, vinhas e oliveiras.";
 
                     const mes = new Date().getMonth();
@@ -243,41 +248,10 @@
                 }
             }
 
-            function setupSidebarLogic() {
-                const input = document.getElementById('loc-search-input');
-                const gpsBtn = document.getElementById('btn-gps-trigger');
-                if(!input) return;
-                gpsBtn.onclick = () => {
-                    input.value = "A localizar...";
-                    localStorage.clear(); sessionStorage.clear();
-                    navigator.geolocation.getCurrentPosition(pos => {
-                        window.location.href = window.location.pathname;
-                    }, () => { window.location.href = window.location.pathname; });
-                };
-                input.addEventListener('input', function() {
-                    const val = this.value.toLowerCase();
-                    const dropdown = document.getElementById('loc-dropdown');
-                    dropdown.innerHTML = '';
-                    if(val.length < 2) { dropdown.style.display = 'none'; return; }
-                    const matches = locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0, 6);
-                    if(matches.length > 0) {
-                        dropdown.style.display = 'block';
-                        matches.forEach(m => {
-                            const div = document.createElement('div');
-                            div.className = 'bio-res-item';
-                            div.innerText = m.titulo;
-                            div.onclick = () => { localStorage.setItem('biocultura_region', m.id); location.reload(); };
-                            dropdown.appendChild(div);
-                        });
-                    } else dropdown.style.display = 'none';
-                });
-            }
-
             fetch('/sidebar-content.html').then(r => r.text()).then(html => {
                 document.getElementById('sidebar').innerHTML = html;
                 var s = document.createElement('script'); s.src = '/assets/js/main.js'; document.body.appendChild(s);
                 inicializarPagina();
-                setTimeout(setupSidebarLogic, 1000);
             });
         </script>
 	</body>
