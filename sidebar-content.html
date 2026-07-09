@@ -2,7 +2,7 @@
     
     <div>
         <!-- LOGÓTIPO PREMIUM -->
-        <div style="margin-bottom: 3.5em; text-align: left; border: none !important;">
+        <div style="margin-bottom: 3.5em; text-align: left; padding-left: 0;">
             <a href="/index.html" style="border: none !important; text-decoration: none !important;">
                 <div style="display: flex; align-items: center; gap: 12px;">
                     <div style="width: 35px; height: 35px;">
@@ -19,7 +19,7 @@
             </a>
         </div>
 
-        <!-- MENU -->
+        <!-- MENU (UNIFORME E CINZENTO) -->
         <nav id="menu-bio">
             <div class="menu-section">
                 <span class="menu-header">Recursos vitais</span>
@@ -27,22 +27,25 @@
                 <a href="/recursos/solo.html" class="menu-item">Terra</a>
                 <a href="/recursos/ar.html" class="menu-item">Ar</a>
             </div>
+
             <div class="menu-section">
                 <span class="menu-header">Ecossistemas</span>
                 <a href="/ecossistemas/biodiversidade.html" class="menu-item">Biodiversidade</a>
             </div>
+
             <div class="menu-section">
                 <span class="menu-header">Engenharia</span>
                 <a href="/energia/transicao-etica.html" class="menu-item">Impacto & energia</a>
                 <a href="/servicos/bioenergia.html" class="menu-item">Serviços</a>
             </div>
+
             <div class="menu-section" style="margin-top: 1em;">
-                <a href="/calendario/calendario.html" class="menu-item" style="font-weight: 700; color: #222 !important;">Calendário hortícola</a>
+                <a href="/calendario/calendario.html" class="menu-item">Calendário hortícola</a>
             </div>
         </nav>
     </div>
 
-    <!-- LOCALIZAÇÃO SMART NO FUNDO -->
+    <!-- PARTE INFERIOR: LOCALIZAÇÃO SMART -->
     <div style="padding-bottom: 2em; border-top: 1px solid #f2f2f2; padding-top: 2.5em;">
         <div class="loc-input-wrapper">
             <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px;">
@@ -51,7 +54,7 @@
                 <button onclick="useGPS()" class="gps-mini-btn" title="Usar GPS"><i class="fas fa-crosshairs"></i></button>
             </div>
             <div id="loc-results" class="loc-results-dropdown"></div>
-            <p id="loc-sub" style="font-size: 0.6em; color: #bbb; margin: 0; line-height: 1.4;">Escreva o nome ou use as setas ↑↓ e Enter.</p>
+            <p style="font-size: 0.65em; color: #bbb; margin: 0; line-height: 1.4;">Sincronize para resultados à sua medida.</p>
         </div>
 
         <footer style="margin-top: 3em;">
@@ -61,23 +64,31 @@
 </div>
 
 <style>
-    #sidebar * { font-family: 'Source Sans Pro', sans-serif !important; border: none !important; box-shadow: none !important; text-decoration: none !important; font-weight: 400 !important; }
-    #sidebar b, .menu-header { font-weight: 900 !important; }
+    /* RESET TOTAL */
+    #sidebar * { 
+        font-family: 'Source Sans Pro', sans-serif !important; 
+        border: none !important; 
+        box-shadow: none !important; 
+        text-decoration: none !important;
+        font-weight: 400 !important; 
+    }
+
+    .menu-header { font-weight: 900 !important; font-size: 0.65em !important; text-transform: uppercase !important; letter-spacing: 2px !important; color: #bbb !important; margin-bottom: 12px !important; }
     .menu-section { margin-bottom: 2.2em; display: flex; flex-direction: column; }
-    .menu-header { font-size: 0.65em !important; text-transform: uppercase; letter-spacing: 2px; color: #bbb !important; margin-bottom: 12px !important; }
-    .menu-item { font-size: 0.95em !important; color: #888 !important; padding: 5px 0 !important; display: block !important; transition: color 0.2s ease !important; }
+    .menu-item { font-size: 0.95em !important; color: #888 !important; padding: 5px 0 !important; display: block !important; transition: all 0.2s ease !important; }
     .menu-item:hover { color: #2e7d32 !important; padding-left: 5px !important; }
 
-    /* LOCALIZAÇÃO */
+    /* LOCALIZAÇÃO INPUT */
     .loc-input-wrapper { position: relative; width: 100%; }
     .loc-input { background: none !important; color: #666 !important; font-size: 0.85em !important; font-weight: 600 !important; width: 100%; padding: 0 !important; outline: none !important; }
     .gps-mini-btn { background: none !important; color: #bbb !important; cursor: pointer !important; padding: 0 !important; }
     .gps-mini-btn:hover { color: #2e7d32 !important; }
 
+    /* DROPDOWN - CORRIGIDO */
     .loc-results-dropdown {
         position: absolute; bottom: 100%; left: 0; width: 100%;
         background: #fff; border: 1px solid #eee !important; border-radius: 12px;
-        max-height: 220px; overflow-y: auto; display: none; z-index: 100;
+        max-height: 220px; overflow-y: auto; display: none; z-index: 1000;
         margin-bottom: 15px; box-shadow: 0 -10px 40px rgba(0,0,0,0.08) !important;
     }
     .loc-res-item { padding: 10px 15px; font-size: 0.85em; color: #666; cursor: pointer; border-bottom: 1px solid #f9f9f9 !important; }
@@ -99,73 +110,47 @@
 
     function handleLocSearch(e) {
         if (["ArrowUp", "ArrowDown", "Enter", "Escape"].includes(e.key)) return;
-
         const val = e.target.value.toLowerCase();
         const resultsBox = document.getElementById('loc-results');
         resultsBox.innerHTML = '';
         currentFocus = -1;
-        
         if(val.length < 2) { resultsBox.style.display = 'none'; return; }
-        
         const filtered = locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0, 8);
-        
         if(filtered.length > 0) {
             resultsBox.style.display = 'block';
             filtered.forEach((item, index) => {
                 const div = document.createElement('div');
                 div.className = 'loc-res-item';
                 div.innerText = item.titulo;
-                div.setAttribute('data-id', item.id);
                 div.onclick = () => selectLocation(item.id);
                 resultsBox.appendChild(div);
             });
-        } else {
-            resultsBox.style.display = 'none';
-        }
+        } else { resultsBox.style.display = 'none'; }
     }
 
     function handleKeyboardNav(e) {
         const resultsBox = document.getElementById('loc-results');
         const items = resultsBox.getElementsByClassName('loc-res-item');
-        
-        if (e.key === "ArrowDown") {
-            currentFocus++;
-            addActive(items);
-        } else if (e.key === "ArrowUp") {
-            currentFocus--;
-            addActive(items);
-        } else if (e.key === "Enter") {
+        if (e.key === "ArrowDown") { currentFocus++; addActive(items); }
+        else if (e.key === "ArrowUp") { currentFocus--; addActive(items); }
+        else if (e.key === "Enter") {
             e.preventDefault();
-            const inputVal = document.getElementById('loc-input-field').value.trim().toLowerCase();
-            
-            if (currentFocus > -1 && items[currentFocus]) {
-                // Se houver algo selecionado pelas setas
-                items[currentFocus].click();
-            } else {
-                // Se o utilizador escreveu o nome completo e deu Enter
+            if (currentFocus > -1 && items[currentFocus]) { items[currentFocus].click(); }
+            else {
+                const inputVal = document.getElementById('loc-input-field').value.trim().toLowerCase();
                 const match = locationsDB.find(i => i.titulo.toLowerCase() === inputVal);
-                if (match) {
-                    selectLocation(match.id);
-                } else {
-                    // Tenta encontrar o primeiro resultado da lista filtrada se não houver match exato
-                    const firstMatch = locationsDB.find(i => i.titulo.toLowerCase().includes(inputVal));
-                    if(firstMatch) selectLocation(firstMatch.id);
-                }
+                if (match) selectLocation(match.id);
             }
         }
     }
 
     function addActive(items) {
         if (!items || items.length === 0) return;
-        removeActive(items);
+        for (let i = 0; i < items.length; i++) items[i].classList.remove("active");
         if (currentFocus >= items.length) currentFocus = 0;
         if (currentFocus < 0) currentFocus = items.length - 1;
         items[currentFocus].classList.add("active");
         items[currentFocus].scrollIntoView({ block: "nearest" });
-    }
-
-    function removeActive(items) {
-        for (let i = 0; i < items.length; i++) items[i].classList.remove("active");
     }
 
     function selectLocation(id) {
