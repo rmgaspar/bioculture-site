@@ -6,50 +6,67 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
 		<style>
-            /* --- ESTRUTURA GLOBAL & TIPOGRAFIA --- */
+            /* --- ESTRUTURA GLOBAL (ESTILO CALENDÁRIO) --- */
             body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
 			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
             section { padding-top: 4em !important; min-height: 100vh; display: flex; flex-direction: column; }
 
-            /* SIDEBAR FIXA */
+            /* SIDEBAR FIXA E SEM SCROLL */
             #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
+            #sidebar > .inner { height: 100% !important; overflow: hidden !important; display: flex; flex-direction: column; }
             #wrapper { padding-left: 18em !important; }
 
-            /* CABEÇALHOS */
+            /* CABEÇALHOS SUBTIS */
             .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; color: #bbb; margin-bottom: 10px; display: block; text-align: center; }
-            .card-title { font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin-bottom: 2em; text-align: center; }
-
-            /* DASHBOARD */
-            .water-dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 30px; margin-bottom: 4em; }
-            .data-card { background: #fff; border-radius: 35px; padding: 3em; box-shadow: 0 15px 45px rgba(0,0,0,0.03); border: 1px solid #f8f8f8; display: flex; flex-direction: column; }
             
-            .quality-grid { display: flex; gap: 2em; justify-content: center; align-items: center; margin-bottom: 2em; }
-            .metric { display: flex; flex-direction: column; align-items: center; width: 110px; height: 110px; border-radius: 50%; border: 5px solid #eee; justify-content: center; }
-            .metric-val { font-size: 2em; font-weight: 300; color: #222; }
-            .metric-label { font-size: 0.55em; font-weight: 800; text-transform: uppercase; color: #aaa; }
+            /* LINHAS DE DADOS (ESTILO DIÁRIO) */
+            .data-row { 
+                display: grid; 
+                grid-template-columns: 180px 1fr; 
+                gap: 40px; 
+                padding: 2.5em 0;
+                border-bottom: 1px solid #f2f2f2;
+            }
+            .data-row h4 { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin: 0; padding-top: 5px; }
 
-            .status-acid { border-color: #ffd54f !important; }
-            .status-neutral { border-color: #81c784 !important; }
-            .status-alkaline { border-color: #4fc3f7 !important; }
-            .status-soft { border-color: #4fc3f7 !important; }
-            .status-medium { border-color: #ffb74d !important; }
-            .status-hard { border-color: #ef5350 !important; }
+            /* ESCALAS HORIZONTAIS */
+            .gauge-container { margin-bottom: 35px; width: 100%; max-width: 500px; }
+            .gauge-label { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 10px; }
+            .gauge-label .current-val { font-size: 1.4em; font-weight: 700; color: #1a1a1a; }
+            .gauge-label .unit { font-size: 0.7em; font-weight: 800; color: #bbb; text-transform: uppercase; }
 
-            .alert-card { background: #fff5f5; border-left: 6px solid #c62828; padding: 2em; border-radius: 0 25px 25px 0; margin-bottom: 2em; }
-            .alert-card h5 { color: #c62828; font-weight: 900; text-transform: uppercase; font-size: 0.7em; letter-spacing: 1px; margin-bottom: 8px; }
-            .alert-card p { color: #7f1d1d; font-size: 0.9em; margin: 0; line-height: 1.5; font-weight: 600; }
+            .gauge-bar { height: 8px; width: 100%; border-radius: 10px; position: relative; background: #eee; }
+            .bar-ph { background: linear-gradient(to right, #ffd54f 0%, #81c784 50%, #4fc3f7 100%); }
+            .bar-dureza { background: linear-gradient(to right, #4fc3f7 0%, #ffb74d 50%, #ef5350 100%); }
 
-            .tech-info { background: #f9fbf9; padding: 1.5em; border-radius: 20px; margin-top: 1em; flex-grow: 1; }
-            .tech-item { margin-bottom: 1em; }
-            .tech-item h5 { font-size: 0.65em; font-weight: 900; text-transform: uppercase; color: #bbb; margin-bottom: 5px; }
-            .tech-item p { font-size: 0.85em; margin: 0; line-height: 1.5; color: #444; }
+            .gauge-marker {
+                position: absolute;
+                top: -6px;
+                left: 0%; 
+                width: 3px;
+                height: 20px;
+                background: #1a1a1a;
+                border-radius: 2px;
+                transition: left 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+            }
 
-            .temp-badge { background: #e1f5fe; color: #0277bd; padding: 8px 20px; border-radius: 25px; font-size: 0.85em; font-weight: 700; display: inline-block; margin-bottom: 15px; }
+            .tech-content { display: flex; flex-direction: column; gap: 15px; }
+            .tech-main { font-size: 1.1em; font-weight: 700; color: #1a1a1a; line-height: 1.3; }
+            .tech-detail { font-size: 0.95em; color: #777; line-height: 1.6; margin: 0; }
+
+            /* ALERTA CRÍTICO */
+            .alert-box { background: #fff8f8; padding: 2em; border-radius: 25px; border-left: 5px solid #ef5350; margin-bottom: 20px; }
+            .alert-box h5 { color: #ef5350; font-weight: 900; text-transform: uppercase; font-size: 0.7em; margin-bottom: 8px; }
+            .alert-box p { color: #7f1d1d; font-size: 0.95em; margin: 0; font-weight: 600; }
+
+            .temp-badge { background: #f4f7fb; color: #5c6bc0; padding: 6px 15px; border-radius: 50px; font-size: 0.75em; font-weight: 800; display: inline-block; margin-top: 20px; }
+
             .page-footer { margin-top: auto; padding: 4em 0 2em 0; border-top: 1px solid #f2f2f2; }
 
             @media screen and (max-width: 1280px) {
                 #sidebar { position: relative !important; width: 100% !important; height: auto !important; overflow: visible !important; }
                 #wrapper { padding-left: 0 !important; }
+                .data-row { grid-template-columns: 1fr; gap: 15px; }
             }
 		</style>
 	</head>
@@ -58,44 +75,47 @@
 			<div id="main">
                 <div class="inner">
 					<header id="header" style="height: 0; margin: 0; padding: 0; overflow: hidden;"></header>
-					
                     <section>
-                        <div style="text-align: center; margin-bottom: 5em;">
+                        <div style="text-align: center; margin-bottom: 4em;">
                             <span class="category-label">Recursos Vitais</span>
-                            <h1 style="font-size: 3.5em; font-weight: 300; color: #1a1a1a; letter-spacing: -2px;">Água: O Sangue da Terra</h1>
-                            <p style="font-style: italic; color: #999;">Análise técnica: <strong id="reg-name" style="color:#888">...</strong></p>
+                            <h1 style="font-size: 3.5em; font-weight: 300; color: #1a1a1a; letter-spacing: -2px; margin: 0;">Água: O Sangue da Terra</h1>
+                            <p style="font-size: 0.9em; font-style: italic; color: #bbb; margin-top: 5px;">Análise regional: <strong id="reg-name" style="color:#888">...</strong></p>
                         </div>
 
-                        <div class="water-dashboard" id="water-dashboard" style="display:none;">
-                            <div class="data-card">
-                                <h4 class="card-title">Perfil Químico</h4>
-                                <div class="quality-grid">
-                                    <div class="metric" id="container-ph"><span class="metric-val" id="val-ph">--</span><span class="metric-label">pH</span></div>
-                                    <div class="metric" id="container-dureza"><span class="metric-val" id="val-dureza">--</span><span class="metric-label">ºf</span></div>
-                                </div>
-                                <div class="tech-info">
-                                    <div class="tech-item"><h5>Vantagens e Utilidade</h5><p id="water-advantages">A analisar composição...</p></div>
-                                    <div class="tech-item"><h5>Aptidão de Cultivo</h5><p id="soil-utility">--</p></div>
+                        <div id="water-dashboard" style="display:none;">
+                            
+                            <!-- LINHA 1: PERFIL QUÍMICO -->
+                            <div class="data-row">
+                                <h4>Perfil Químico</h4>
+                                <div class="tech-content">
+                                    <div class="gauge-container">
+                                        <div class="gauge-label"><span class="current-val" id="label-ph">pH --</span><span class="unit">Escala 0-14</span></div>
+                                        <div class="gauge-bar bar-ph"><div id="marker-ph" class="gauge-marker"></div></div>
+                                    </div>
+                                    <div class="gauge-container">
+                                        <div class="gauge-label"><span class="current-val" id="label-dureza">-- ºf</span><span class="unit">Dureza Francesa</span></div>
+                                        <div class="gauge-bar bar-dureza"><div id="marker-dureza" class="gauge-marker"></div></div>
+                                    </div>
+                                    <p class="tech-detail" id="water-advantages">A analisar composição mineral...</p>
                                 </div>
                             </div>
 
-                            <div class="data-card">
-                                <h4 class="card-title">Estado do Recurso</h4>
-                                <div id="impact-alert" class="alert-card" style="display:none;">
-                                    <h5>Alerta de Vulnerabilidade</h5>
-                                    <p id="impact-text"></p>
+                            <!-- LINHA 2: DISPONIBILIDADE -->
+                            <div class="data-row">
+                                <h4>Disponibilidade</h4>
+                                <div class="tech-content">
+                                    <div id="impact-alert" class="alert-box" style="display:none;">
+                                        <h5>Alerta de Vulnerabilidade</h5>
+                                        <p id="impact-text"></p>
+                                    </div>
+                                    <span class="tech-main" id="reg-aquifer">--</span>
+                                    <p class="tech-detail" id="reg-dams">--</p>
+                                    <div id="temp-container"></div>
                                 </div>
-                                <div class="tech-info" style="background: #f4f7fb;">
-                                    <div class="tech-item"><h5>Origem / Aquífero</h5><p id="reg-aquifer">--</p></div>
-                                    <div class="tech-item"><h5>Infraestrutura Hídrica</h5><p id="reg-dams">--</p></div>
-                                </div>
-                                <div id="temp-container" style="text-align: center; margin-top: 15px;"></div>
                             </div>
                         </div>
 
-                        <div id="no-gps-warning" style="text-align: center; padding: 4em; background: #f4f7fb; border-radius: 40px;">
-                            <p>Sincronize a sua localização para carregar os dados hídricos.</p>
-                        </div>
+                        <div id="no-gps-warning" style="text-align: center; padding: 4em; color: #bbb;"><p>Selecione uma localidade na barra lateral.</p></div>
 
                         <footer class="page-footer">
                             <div style="display: flex; align-items: center; justify-content: flex-end; gap: 10px; opacity: 0.3;">
@@ -128,53 +148,40 @@
                 try {
                     const r = await fetch('/data/bioregioes.json');
                     locationsDB = await r.json();
-                    
                     const urlParams = new URLSearchParams(window.location.search);
                     const regionParam = urlParams.get('region');
                     const savedId = localStorage.getItem('biocultura_region');
                     
-                    let info = null;
-                    if (regionParam) info = locationsDB.find(i => i.id === regionParam);
-                    if (!info && savedId) info = locationsDB.find(i => i.id === savedId);
-
-                    if (info) {
-                        renderDashboard(info);
-                    } else {
-                        const nacional = locationsDB.find(i => i.id === "portugal-nacional");
-                        if (nacional) renderDashboard(nacional);
-                    }
+                    let info = regionParam ? locationsDB.find(i => i.id === regionParam) : locationsDB.find(i => i.id === savedId);
+                    if (info) renderDashboard(info);
+                    else renderDashboard(locationsDB.find(i => i.id === "portugal-nacional"));
                 } catch(e) { console.error(e); }
             }
 
             function renderDashboard(info) {
                 if(!info) return;
                 document.getElementById('no-gps-warning').style.display = 'none';
-                document.getElementById('water-dashboard').style.display = 'grid';
+                document.getElementById('water-dashboard').style.display = 'block';
                 
                 const regName = document.getElementById('reg-name');
                 regName.innerText = info.titulo;
-                regName.style.color = "#888"; // Garante o cinzento
+                regName.style.color = "#888";
 
                 if (info.recursos_hidricos) {
                     const ph = parseFloat(info.recursos_hidricos.ph_agua) || 7.0;
                     const dur = parseFloat(info.recursos_hidricos.dureza_fr) || 10;
                     
-                    document.getElementById('val-ph').innerText = ph;
-                    const phCont = document.getElementById('container-ph');
-                    phCont.className = 'metric';
-                    if (ph < 6.5) phCont.classList.add('status-acid');
-                    else if (ph <= 8.5) phCont.classList.add('status-neutral');
-                    else phCont.classList.add('status-alkaline');
+                    document.getElementById('label-ph').innerText = "pH " + ph;
+                    document.getElementById('label-dureza').innerText = dur + " ºf";
 
-                    document.getElementById('val-dureza').innerText = dur;
-                    const durCont = document.getElementById('container-dureza');
-                    durCont.className = 'metric';
-                    if (dur < 15) durCont.classList.add('status-soft');
-                    else if (dur <= 30) durCont.classList.add('status-medium');
-                    else durCont.classList.add('status-hard');
+                    setTimeout(() => {
+                        document.getElementById('marker-ph').style.left = (ph / 14 * 100) + "%";
+                        document.getElementById('marker-dureza').style.left = (Math.min(dur / 50 * 100, 100)) + "%";
+                    }, 300);
 
-                    document.getElementById('water-advantages').innerText = ph < 7 ? "Água ligeiramente ácida: Ideal para a absorção de micronutrientes." : "Água equilibrada: Rica em carbonatos, excelente para neutralizar solos ácidos.";
-                    document.getElementById('soil-utility').innerText = ph < 7 ? "Favorece mirtilos, batatas e hortênsias." : "Favorece leguminosas, vinhas e oliveiras.";
+                    document.getElementById('water-advantages').innerText = ph < 7 
+                        ? "Água ligeiramente ácida: Ideal para a absorção de micronutrientes. Favorece mirtilos e batatas." 
+                        : "Água equilibrada: Rica em carbonatos, excelente para neutralizar solos ácidos. Benéfica para vinhas.";
 
                     const mes = new Date().getMonth();
                     const temp = (info.recursos_hidricos.temp_media_agua && info.recursos_hidricos.temp_media_agua[mes]) ? info.recursos_hidricos.temp_media_agua[mes] : '--';
@@ -182,8 +189,16 @@
                 }
 
                 if (info.agua) {
-                    document.getElementById('reg-aquifer').innerText = info.agua.aquiferos || "Em levantamento.";
-                    document.getElementById('reg-dams').innerText = (info.agua.barragens_proximas && Array.isArray(info.agua.barragens_proximas)) ? info.agua.barragens_proximas.join(', ') : "Sem barragens próximas.";
+                    document.getElementById('reg-aquifer').innerText = "Aquífero: " + (info.agua.aquiferos || "Em levantamento.");
+                    document.getElementById('reg-dams').innerText = "Barragens próximas: " + ((info.agua.barragens_proximas && Array.isArray(info.agua.barragens_proximas)) ? info.agua.barragens_proximas.join(', ') : "Nenhuma detetada.");
+                    
+                    const impactAlert = document.getElementById('impact-alert');
+                    const impactText = document.getElementById('impact-text');
+                    const nota = info.agua.nota || "";
+                    if (info.id === "porto-de-mos" || nota.toLowerCase().includes("poluição") || nota.toLowerCase().includes("contaminação")) {
+                        impactAlert.style.display = 'block';
+                        impactText.innerText = info.id === "porto-de-mos" ? "A poluição industrial e a extração descontrolada ameaçam a integridade deste aquífero vital." : nota;
+                    } else { impactAlert.style.display = 'none'; }
                 }
                 
                 const input = document.getElementById('loc-search-input');
@@ -192,23 +207,20 @@
 
             function setupSidebarLogic() {
                 const input = document.getElementById('loc-search-input');
-                const dropdown = document.getElementById('loc-dropdown');
                 const gpsBtn = document.getElementById('btn-gps-trigger');
-
                 if(!input) return;
 
-                // CORREÇÃO DA SETINHA GPS
-                gpsBtn.addEventListener('click', function() {
-                    if (!navigator.geolocation) return;
+                gpsBtn.onclick = () => {
                     input.value = "A localizar...";
                     localStorage.clear(); sessionStorage.clear();
                     navigator.geolocation.getCurrentPosition(pos => {
                         window.location.href = window.location.pathname;
                     }, () => { window.location.href = window.location.pathname; });
-                });
+                };
 
                 input.addEventListener('input', function() {
                     const val = this.value.toLowerCase();
+                    const dropdown = document.getElementById('loc-dropdown');
                     dropdown.innerHTML = '';
                     if(val.length < 2) { dropdown.style.display = 'none'; return; }
                     const matches = locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0, 6);
