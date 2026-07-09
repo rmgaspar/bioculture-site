@@ -6,126 +6,85 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
 		<style>
-            /* --- ESTRUTURA GLOBAL --- */
+            /* --- ESTRUTURA GLOBAL & TIPOGRAFIA --- */
             body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
 			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
             
-            #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
+            /* SIDEBAR FIXA */
+            #sidebar { 
+                position: fixed !important; 
+                top: 0; left: 0; 
+                height: 100vh !important; 
+                width: 18em !important; 
+                overflow: hidden !important; 
+                z-index: 10000; 
+                background: #fff; 
+                border-right: 1px solid #f2f2f2 !important; 
+            }
             #wrapper { padding-left: 18em !important; }
 
-            /* HERO SPLIT */
-            .hero-split { 
-                padding: 12em 0 6em 0; 
-                max-width: 1100px; 
+            /* HERO SECTION */
+            .hero-section { 
+                padding: 10em 0 5em 0; 
+                max-width: 1000px; 
                 margin: 0 auto; 
-                display: flex;
-                align-items: center; 
-                gap: 5em;
+                text-align: center;
             }
-            .hero-text { flex: 1.2; }
-            .hero-visual { flex: 1.5; display: flex; justify-content: center; align-items: center; }
-
-            .hero-text h1 { 
-                font-size: 3.8em; font-weight: 900; color: #1a1a1a; 
-                letter-spacing: -2.5px; line-height: 0.95; margin-bottom: 25px; 
+            .hero-section span.obs-label { 
+                font-size: 0.7em; font-weight: 900; text-transform: uppercase; 
+                letter-spacing: 4px; color: #bbb; display: block; margin-bottom: 20px;
             }
-            .hero-text p { 
-                font-size: 1.2em; color: #777; line-height: 1.6; 
-                border-left: 5px solid #c62828; padding-left: 25px; font-style: italic;
+            .hero-section h1 { 
+                font-size: 4em; font-weight: 900; color: #1a1a1a; 
+                letter-spacing: -3px; line-height: 1; margin-bottom: 30px; 
+            }
+            .hero-section p { 
+                font-size: 1.3em; color: #777; line-height: 1.6; 
+                max-width: 800px; margin: 0 auto; font-style: italic;
+                border-left: 5px solid #c62828; padding-left: 30px; text-align: left;
             }
             
-            /* BINÓCULOS FUSIONADOS (ESTILO PREMIUM) */
-            .binoculars-box {
-                position: relative;
-                width: 520px;
-                height: 280px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                filter: drop-shadow(0 40px 80px rgba(0,0,0,0.15));
+            /* JANELA DE IMPACTO (IMAGEM) */
+            .impact-window { 
+                width: 100%; 
+                height: 450px; 
+                border-radius: 60px; 
+                overflow: hidden; 
+                box-shadow: 0 40px 100px rgba(0,0,0,0.08);
+                margin: 5em 0 8em 0;
             }
-
-            /* A forma de 8 deitado que corta tudo lá dentro */
-            .binoculars-shape {
-                position: absolute;
-                width: 100%;
-                height: 100%;
-                display: flex;
-                /* Máscara para criar o formato de binóculos unido */
-                -webkit-mask-image: radial-gradient(circle at 35% 50%, black 38%, transparent 38.5%), 
-                                   radial-gradient(circle at 65% 50%, black 38%, transparent 38.5%);
-                mask-image: radial-gradient(circle at 35% 50%, black 38%, transparent 38.5%), 
-                            radial-gradient(circle at 65% 50%, black 38%, transparent 38.5%);
-            }
-
-            .view {
-                height: 100%;
-                background-size: cover;
-                background-position: center;
-                transition: transform 1s ease;
-            }
-
-            .view-left {
-                width: 60%;
-                background-image: url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=1000&auto=format&fit=crop');
-                z-index: 1;
-            }
-
-            .view-right {
-                width: 60%;
-                margin-left: -20%; /* Sobreposição subtil */
-                background-image: url('https://images.unsplash.com/photo-1509391366360-fe5bb58583bb?q=80&w=1000&auto=format&fit=crop');
-                z-index: 2;
-                box-shadow: -15px 0 30px rgba(0,0,0,0.2); /* Sombra suave na sobreposição */
-            }
-
-            /* Bordo exterior em SVG para não ter frame no meio */
-            .binoculars-border {
-                position: absolute;
-                top: 0; left: 0;
-                width: 100%; height: 100%;
-                pointer-events: none;
-                z-index: 10;
-                fill: none;
-                stroke: #1a1a1a;
-                stroke-width: 14;
-            }
-
-            /* Escala de Observação (Mira) */
-            .crosshair-svg {
-                position: absolute;
-                top: 50%; left: 50%;
-                transform: translate(-50%, -50%);
-                width: 100%; height: 100%;
-                z-index: 15;
-                pointer-events: none;
-                opacity: 0.4;
-            }
-
-            .binoculars-box:hover .view { transform: scale(1.1); }
+            .impact-window img { width: 100%; height: 100%; object-fit: cover; }
 
             /* GRID DE INVESTIGAÇÃO */
-            .news-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-bottom: 6em; }
-            .news-card { background: #fff; border-radius: 35px; border: 1px solid #f0f0f0; padding: 2.5em; transition: all 0.4s ease; display: flex; flex-direction: column; }
+            .news-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; margin-bottom: 6em; }
+            .news-card { 
+                background: #fff; border-radius: 35px; border: 1px solid #f0f0f0; 
+                padding: 3em; transition: all 0.4s ease; display: flex; flex-direction: column; 
+            }
             .news-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.04); border-color: #2e7d32; }
             
-            .news-tag { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; color: #bbb; margin-bottom: 10px; display: block; }
-            .news-card h3 { font-size: 1.25em; color: #1a1a1a; margin-bottom: 15px; line-height: 1.2; font-weight: 800; }
+            .news-tag { font-size: 0.6em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin-bottom: 15px; display: block; }
+            .news-card h3 { font-size: 1.3em; color: #1a1a1a; margin-bottom: 15px; line-height: 1.2; font-weight: 800; }
             .news-card p { font-size: 0.9em; color: #777; line-height: 1.7; margin-bottom: 2em; }
-            .news-link { font-size: 0.7em; font-weight: 800; text-transform: uppercase; text-decoration: none; border: none !important; }
+            .news-link { font-size: 0.7em; font-weight: 800; text-transform: uppercase; text-decoration: none; border: none !important; color: #888; }
+            .news-card:hover .news-link { color: #2e7d32; }
 
             .c-mining { color: #c62828 !important; }
-            .c-energy { color: #f57f17 !important; }
             .c-water { color: #0277bd !important; }
+            .c-nature { color: #2e7d32 !important; }
 
+            /* INFO FOOTER */
             .info-footer { text-align: left; padding: 4em 0; border-top: 1px solid #f2f2f2; }
             .info-footer p { font-size: 1.1em; color: #bbb; font-style: italic; max-width: 800px; }
 
+            /* RODAPÉ */
+            .page-footer { padding: 4em 0 2em 0; }
+
             @media screen and (max-width: 1280px) {
-                #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
+                #sidebar { position: relative !important; width: 100% !important; height: auto !important; overflow: visible !important; }
                 #wrapper { padding-left: 0 !important; }
-                .hero-split { flex-direction: column; padding-top: 6em; text-align: center; }
-                .binoculars-box { width: 320px; height: 180px; }
+                .hero-section h1 { font-size: 3em; }
+                .impact-window { height: 300px; border-radius: 40px; }
             }
 		</style>
 	</head>
@@ -135,71 +94,53 @@
                 <div class="inner">
 					<header id="header" style="height: 0; margin: 0; padding: 0; overflow: hidden;"></header>
 					
-                    <!-- HERO SPLIT COM BINÓCULOS FUSIONADOS -->
-                    <section class="hero-split">
-                        <div class="hero-text">
-                            <span style="font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; display: block; margin-bottom: 15px;">Observatório bioCultura</span>
-                            <h1>O progresso não pode ser o fim do seu horizonte.</h1>
-                            <p>Entre minas de lítio e espelhos de silício, o seu lar está a perder a cor. Enquanto nos vendem um futuro "verde", o seu território está a ser silenciado. Descubra a verdade oculta sob os seus pés.</p>
-                        </div>
-                        
-                        <div class="hero-visual">
-                            <div class="binoculars-box">
-                                <!-- A forma unida -->
-                                <div class="binoculars-shape">
-                                    <div class="view view-left"></div>
-                                    <div class="view view-right"></div>
-                                </div>
-                                
-                                <!-- Bordo exterior único (sem linha no meio) -->
-                                <svg class="binoculars-border" viewBox="0 0 520 280">
-                                    <path d="M182,238 C141,238 108,205 108,164 C108,123 141,90 182,90 C203,90 222,99 235,113 C248,99 267,90 288,90 C329,90 362,123 362,164 C362,205 329,238 288,238 C267,238 248,229 235,215 C222,229 203,238 182,238 Z" 
-                                          transform="scale(1.4) translate(-60, -60)" />
-                                </svg>
-
-                                <!-- Mira Técnica -->
-                                <svg class="crosshair-svg" viewBox="0 0 520 280">
-                                    <line x1="260" y1="100" x2="260" y2="180" stroke="white" stroke-width="1" />
-                                    <line x1="200" y1="140" x2="320" y2="140" stroke="white" stroke-width="1" />
-                                </svg>
-                            </div>
-                        </div>
+                    <!-- HERO -->
+                    <section class="hero-section">
+                        <span class="obs-label">Observatório bioCultura</span>
+                        <h1>O progresso não pode ser o fim do seu horizonte.</h1>
+                        <p>Entre minas de lítio e espelhos de silício, o seu lar está a perder a cor. Enquanto nos vendem um futuro "verde", o seu território está a ser silenciado. Descubra a verdade oculta sob os seus pés.</p>
                     </section>
 
+                    <!-- JANELA DE IMPACTO -->
+                    <div class="impact-window">
+                        <img src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=2000&auto=format&fit=crop" alt="O Território" />
+                    </div>
+
+                    <!-- RADAR TERRITORIAL -->
                     <div style="margin-bottom: 3em; border-bottom: 1px solid #f2f2f2; padding-bottom: 15px;">
                         <h2 style="font-size: 1.6em; font-weight: 300; color: #bbb; letter-spacing: 1px;">Radar de Investigação</h2>
                     </div>
 
                     <div class="news-grid">
-                        <!-- Cards de notícias (Mantêm-se iguais aos anteriores) -->
                         <div class="news-card">
                             <span class="news-tag">Mineração & Conflito</span>
                             <h3>A Fronteira do Lítio: Barroso e Arga</h3>
                             <p>Boticas e a Serra d'Arga enfrentam a destruição de aquíferos milenares para extração a céu aberto. Onde termina a ecologia e começa a extração?</p>
-                            <a href="/observatorio/observatorio-nacional.html" class="news-link c-mining">Analisar Boticas →</a>
+                            <a href="/observatorio/observatorio-nacional.html" class="news-link c-mining">Analisar Caso →</a>
                         </div>
 
                         <div class="news-card">
                             <span class="news-tag">Recursos Hídricos</span>
                             <h3>Alviela: O Gigante sob o Calcário</h3>
                             <p>Em Porto de Mós, o maior aquífero de Portugal sobrevive sob um sistema cárstico frágil, ameaçado pela poluição e extração descontrolada.</p>
-                            <a href="/observatorio/observatorio-nacional.html" class="news-link c-water">Analisar Porto de Mós →</a>
+                            <a href="/observatorio/observatorio-nacional.html" class="news-link c-water">Analisar Caso →</a>
                         </div>
 
                         <div class="news-card">
                             <span class="news-tag">Energia Ética</span>
                             <h3>Alentejo: O Sol que apaga o Montado</h3>
                             <p>O programa PSZAER acelera a instalação de mega-centrais solares em Beja, sacrificando milhares de azinheiras em nome de metas de CO2.</p>
-                            <a href="/observatorio/observatorio-nacional.html" class="news-link c-energy">Analisar Beja →</a>
+                            <a href="/observatorio/observatorio-nacional.html" class="news-link">Analisar Caso →</a>
                         </div>
                     </div>
 
+                    <!-- INFO FINAL -->
                     <section class="info-footer">
                         <p>Saiba mais sobre mineração, água e solo da sua região, ativando a localização na barra lateral.</p>
                     </section>
 
                     <!-- FOOTER -->
-                    <footer style="padding: 4em 0 2em 0; border-top: 1px solid #f2f2f2;">
+                    <footer class="page-footer">
                         <div style="display: flex; align-items: center; justify-content: flex-end; gap: 10px; opacity: 0.3;">
                             <div style="text-align: right; line-height: 1;">
                                 <span style="display: block; font-size: 0.85em; font-weight: 900; color: #333;">bioCultura</span>
