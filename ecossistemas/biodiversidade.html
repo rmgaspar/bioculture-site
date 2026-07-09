@@ -127,6 +127,8 @@
 
 		<script src="/assets/js/jquery.min.js"></script>
         <script>
+            let locationsDB = [];
+            // (Função calcularDistancia igual)
             function calcularDistancia(lat1, lon1, lat2, lon2) {
                 const R = 6371;
                 const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -136,84 +138,78 @@
             }
 
             async function inicializarPagina() {
-                const savedRegionId = localStorage.getItem('biocultura_region');
-                const cachedData = sessionStorage.getItem('biocultura_data_cache');
+                try {
+                    const r = await fetch('/data/bioregioes.json');
+                    locationsDB = await r.json();
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const regionParam = urlParams.get('region');
+                    const savedId = localStorage.getItem('biocultura_region');
+                    let info = null;
+                    if (regionParam) info = locationsDB.find(i => i.id === regionParam);
+                    if (!info && savedId) info = locationsDB.find(i => i.id === savedId);
+                    if (info) renderBioDashboard(info);
+                    else tentarGPSOuNacional();
+                } catch(e) { console.error(e); }
+            }
 
-                if (cachedData && JSON.parse(cachedData).id === savedRegionId) {
-                    renderBioDashboard(JSON.parse(cachedData));
-                } else {
-                    try {
-                        const r = await fetch('/data/bioregioes.json');
-                        const data = await r.json();
-                        let info = data.find(item => item.id === savedRegionId);
+            function tentarGPSOuNacional() {
+                if (navigator.geolocation) {
+                    const timeout = setTimeout(() => carregarNacional(), 3000);
+                    navigator.geolocation.getCurrentPosition(pos => {
+                        clearTimeout(timeout);
+                        let minD = Infinity; let closest = null;
+                        locationsDB.forEach(c => { if(c.lat && c.lon) { let d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon); if(d < minD) { minD = d; closest = c; } } });
+                        if(closest) { localStorage.setItem('biocultura_region', closest.id); renderBioDashboard(closest); }
+                    }, () => { clearTimeout(timeout); carregarNacional(); });
+                } else carregarNacional();
+            }
 
-                        if (!info && navigator.geolocation) {
-                            navigator.geolocation.getCurrentPosition(pos => {
-                                let minD = Infinity;
-                                data.forEach(c => {
-                                    if(c.lat && c.lon) {
-                                        let d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon);
-                                        if(d < minD) { minD = d; info = c; }
-                                    }
-                                });
-                                if(info) {
-                                    localStorage.setItem('biocultura_region', info.id);
-                                    sessionStorage.setItem('biocultura_data_cache', JSON.stringify(info));
-                                    renderBioDashboard(info);
-                                }
-                            });
-                        } else if (info) {
-                            renderBioDashboard(info);
-                        }
-                    } catch(e) { console.error("Erro ao carregar dados", e); }
+            function carregarNacional() {
+                const nacional = locationsDB.find(i => i.id === "portugal-nacional");
+                if (nacional) {
+                    renderBioDashboard(nacional);
+                    document.getElementById('reg-name').innerHTML = "Portugal <span style='font-size:0.5em; color:#bbb'>(Média Nacional)</span>";
                 }
             }
 
             function renderBioDashboard(info) {
+                if(!info) return;
                 document.getElementById('no-gps-warning').style.display = 'none';
                 document.getElementById('bio-dashboard').style.display = 'grid';
                 document.getElementById('reg-name').innerText = info.titulo;
 
                 if (info.biomas) {
-                    // --- PROCESSAR FAUNA (SEM DUPLICADOS) ---
+                    // FAUNA (SEM DUPLICADOS)
                     const faunaList = document.getElementById('fauna-list');
                     faunaList.innerHTML = '';
                     const fGeral = info.biomas.fauna || [];
                     const fProt = info.biomas.fauna_protegida || [];
                     const fAmea = info.biomas.fauna_ameacada || [];
-
                     const faunaMap = new Map();
                     [...fGeral, ...fProt, ...fAmea].forEach(nome => {
                         const raiz = nome.split('(')[0].trim().toLowerCase();
                         let status = "";
                         if (fAmea.some(a => a.toLowerCase().includes(raiz))) status = '<span class="status-badge status-danger">Ameaçada</span>';
                         else if (fProt.some(p => p.toLowerCase().includes(raiz))) status = '<span class="status-badge status-protected">Protegida</span>';
-
-                        if (!faunaMap.has(raiz) || nome.includes('(')) {
-                            faunaMap.set(raiz, { nome: nome, status: status });
-                        }
+                        if (!faunaMap.has(raiz) || nome.includes('(')) faunaMap.set(raiz, { nome: nome, status: status });
                     });
                     faunaMap.forEach(item => {
                         faunaList.innerHTML += `<li class="species-item"><i class="fas fa-paw"></i> <span>${item.nome}</span> ${item.status}</li>`;
                     });
 
-                    // --- PROCESSAR FLORA (SEM DUPLICADOS) ---
+                    // FLORA (SEM DUPLICADOS)
                     const floraList = document.getElementById('flora-list');
                     floraList.innerHTML = '';
                     const flGeral = info.biomas.flora || [];
                     const flProt = info.biomas.flora_protegida || [];
                     const flInva = info.biomas.flora_invasora || [];
-
                     const floraMap = new Map();
                     [...flGeral, ...flProt, ...flInva].forEach(nome => {
                         const raiz = nome.split('(')[0].trim().toLowerCase();
                         let status = "";
                         if (flInva.some(i => i.toLowerCase().includes(raiz))) status = '<span class="status-badge status-invasive">Invasora</span>';
                         else if (flProt.some(p => p.toLowerCase().includes(raiz))) status = '<span class="status-badge status-protected">Protegida</span>';
-
-                        if (!floraMap.has(raiz) || nome.includes('(')) {
-                            floraMap.set(raiz, { nome: nome, status: status });
-                        }
+                        if (!floraMap.has(raiz) || nome.includes('(')) floraMap.set(raiz, { nome: nome, status: status });
                     });
                     floraMap.forEach(item => {
                         floraList.innerHTML += `<li class="species-item"><i class="fas fa-leaf"></i> <span>${item.nome}</span> ${item.status}</li>`;
@@ -221,11 +217,49 @@
                 }
             }
 
-            // Carregamento da Sidebar e Inicialização
+            function setupSidebarEvents() {
+                const input = document.getElementById('loc-search-input');
+                const dropdown = document.getElementById('loc-dropdown');
+                const gpsBtn = document.getElementById('btn-gps-trigger');
+                if(!input) return;
+                if(gpsBtn) {
+                    gpsBtn.onclick = function(e) {
+                        e.preventDefault();
+                        input.value = "A localizar...";
+                        localStorage.clear(); sessionStorage.clear();
+                        navigator.geolocation.getCurrentPosition(() => { window.location.href = window.location.pathname; }, () => { window.location.href = window.location.pathname; });
+                    };
+                }
+                input.addEventListener('input', function() {
+                    const val = this.value.toLowerCase();
+                    dropdown.innerHTML = '';
+                    if(val.length < 2) { dropdown.style.display = 'none'; return; }
+                    const matches = locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0, 6);
+                    if(matches.length > 0) {
+                        dropdown.style.display = 'block';
+                        matches.forEach(m => {
+                            const item = document.createElement('div');
+                            item.className = 'bio-res-item';
+                            item.innerText = m.titulo;
+                            item.onclick = () => { localStorage.setItem('biocultura_region', m.id); sessionStorage.clear(); window.location.href = window.location.pathname; };
+                            dropdown.appendChild(item);
+                        });
+                    } else dropdown.style.display = 'none';
+                });
+                input.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        const val = this.value.toLowerCase().trim();
+                        const match = locationsDB.find(i => i.titulo.toLowerCase() === val || i.id === val);
+                        if(match) { localStorage.setItem('biocultura_region', match.id); sessionStorage.clear(); window.location.href = window.location.pathname; }
+                    }
+                });
+            }
+
             fetch('/sidebar-content.html').then(r => r.text()).then(html => {
                 document.getElementById('sidebar').innerHTML = html;
                 var s = document.createElement('script'); s.src = '/assets/js/main.js'; document.body.appendChild(s);
                 inicializarPagina();
+                setTimeout(setupSidebarEvents, 1000);
             });
         </script>
 	</body>
