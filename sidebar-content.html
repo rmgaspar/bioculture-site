@@ -19,7 +19,7 @@
             </a>
         </div>
 
-        <!-- MENU (UNIFORME E CINZENTO) -->
+        <!-- MENU (CINZENTO, SEM BOLD, SENTENCE CASE) -->
         <nav id="menu-bio">
             <div class="menu-section">
                 <span class="menu-header">Recursos vitais</span>
@@ -45,12 +45,15 @@
         </nav>
     </div>
 
-    <!-- PARTE INFERIOR: LOCALIZAÇÃO SMART -->
+    <!-- PARTE INFERIOR: LOCALIZAÇÃO SMART (SEM LINHAS, SEM QUADRADOS) -->
     <div style="padding-bottom: 2em; border-top: 1px solid #f2f2f2; padding-top: 2.5em;">
         <div class="loc-input-wrapper">
             <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px;">
+                <!-- Seta de localização SVG -->
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#bbb" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="transform: rotate(-15deg); flex-shrink: 0;"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                
                 <input type="text" id="loc-input-field" class="loc-input" placeholder="Definir localidade..." autocomplete="off" onkeydown="handleKeyboardNav(event)" onkeyup="handleLocSearch(event)">
+                
                 <button onclick="useGPS()" class="gps-mini-btn" title="Usar GPS"><i class="fas fa-crosshairs"></i></button>
             </div>
             <div id="loc-results" class="loc-results-dropdown"></div>
@@ -73,49 +76,83 @@
         font-weight: 400 !important; 
     }
 
-    .menu-header { font-weight: 900 !important; font-size: 0.65em !important; text-transform: uppercase !important; letter-spacing: 2px !important; color: #bbb !important; margin-bottom: 12px !important; }
+    .menu-header { font-weight: 900 !important; font-size: 0.65em !important; text-transform: uppercase !important; letter-spacing: 2px !important; color: #bbb !important; margin-bottom: 12px !important; display: block; }
     .menu-section { margin-bottom: 2.2em; display: flex; flex-direction: column; }
-    .menu-item { font-size: 0.95em !important; color: #888 !important; padding: 5px 0 !important; display: block !important; transition: all 0.2s ease !important; }
+    
+    .menu-item {
+        font-size: 0.95em !important;
+        color: #888 !important; 
+        padding: 5px 0 !important;
+        display: block !important;
+        transition: all 0.2s ease !important;
+    }
     .menu-item:hover { color: #2e7d32 !important; padding-left: 5px !important; }
 
     /* LOCALIZAÇÃO INPUT */
     .loc-input-wrapper { position: relative; width: 100%; }
-    .loc-input { background: none !important; color: #666 !important; font-size: 0.85em !important; font-weight: 600 !important; width: 100%; padding: 0 !important; outline: none !important; }
-    .gps-mini-btn { background: none !important; color: #bbb !important; cursor: pointer !important; padding: 0 !important; }
+    .loc-input { 
+        background: none !important; 
+        color: #888 !important; 
+        font-size: 0.85em !important; 
+        font-weight: 600 !important; 
+        width: 100%; 
+        padding: 0 !important; 
+        outline: none !important; 
+    }
+    
+    .gps-mini-btn { background: none !important; color: #bbb !important; cursor: pointer !important; padding: 0 !important; transition: color 0.2s; }
     .gps-mini-btn:hover { color: #2e7d32 !important; }
 
-    /* DROPDOWN - CORRIGIDO */
+    /* DROPDOWN RESULTADOS */
     .loc-results-dropdown {
-        position: absolute; bottom: 100%; left: 0; width: 100%;
-        background: #fff; border: 1px solid #eee !important; border-radius: 12px;
-        max-height: 220px; overflow-y: auto; display: none; z-index: 1000;
-        margin-bottom: 15px; box-shadow: 0 -10px 40px rgba(0,0,0,0.08) !important;
+        position: absolute; 
+        bottom: 100%; 
+        left: 0; 
+        width: 100%;
+        background: #fff; 
+        border: 1px solid #eee !important; 
+        border-radius: 12px;
+        max-height: 220px; 
+        overflow-y: auto; 
+        display: none; 
+        z-index: 9999; /* Garantir que fica por cima de tudo */
+        margin-bottom: 15px; 
+        box-shadow: 0 -10px 40px rgba(0,0,0,0.08) !important;
     }
-    .loc-res-item { padding: 10px 15px; font-size: 0.85em; color: #666; cursor: pointer; border-bottom: 1px solid #f9f9f9 !important; }
-    .loc-res-item.active, .loc-res-item:hover { background: #f1f8e9 !important; color: #2e7d32 !important; font-weight: 600 !important; }
+    .loc-res-item { padding: 10px 15px; font-size: 0.85em; color: #888; cursor: pointer; border-bottom: 1px solid #f9f9f9 !important; transition: all 0.2s; }
+    .loc-res-item.active, .loc-res-item:hover { background: #f1f8e9 !important; color: #2e7d32 !important; font-weight: 600 !important; padding-left: 20px !important; }
 </style>
 
 <script>
     let locationsDB = [];
     let currentFocus = -1;
 
-    fetch('/data/bioregioes.json').then(r => r.json()).then(data => { 
-        locationsDB = data; 
-        const saved = localStorage.getItem('biocultura_region');
-        if(saved) {
-            const info = data.find(i => i.id === saved);
-            if(info) document.getElementById('loc-input-field').value = info.titulo;
-        }
-    });
+    // Carregar base de dados imediatamente
+    fetch('/data/bioregioes.json')
+        .then(r => r.json())
+        .then(data => { 
+            locationsDB = data; 
+            const saved = localStorage.getItem('biocultura_region');
+            if(saved) {
+                const info = data.find(i => i.id === saved);
+                if(info) document.getElementById('loc-input-field').value = info.titulo;
+            } else {
+                document.getElementById('loc-input-field').value = "Portugal (Nacional)";
+            }
+        });
 
     function handleLocSearch(e) {
         if (["ArrowUp", "ArrowDown", "Enter", "Escape"].includes(e.key)) return;
+
         const val = e.target.value.toLowerCase();
         const resultsBox = document.getElementById('loc-results');
         resultsBox.innerHTML = '';
         currentFocus = -1;
+        
         if(val.length < 2) { resultsBox.style.display = 'none'; return; }
+        
         const filtered = locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0, 8);
+        
         if(filtered.length > 0) {
             resultsBox.style.display = 'block';
             filtered.forEach((item, index) => {
@@ -125,22 +162,33 @@
                 div.onclick = () => selectLocation(item.id);
                 resultsBox.appendChild(div);
             });
-        } else { resultsBox.style.display = 'none'; }
+        } else {
+            resultsBox.style.display = 'none';
+        }
     }
 
     function handleKeyboardNav(e) {
         const resultsBox = document.getElementById('loc-results');
         const items = resultsBox.getElementsByClassName('loc-res-item');
-        if (e.key === "ArrowDown") { currentFocus++; addActive(items); }
-        else if (e.key === "ArrowUp") { currentFocus--; addActive(items); }
-        else if (e.key === "Enter") {
+        
+        if (e.key === "ArrowDown") {
+            currentFocus++;
+            addActive(items);
+        } else if (e.key === "ArrowUp") {
+            currentFocus--;
+            addActive(items);
+        } else if (e.key === "Enter") {
             e.preventDefault();
-            if (currentFocus > -1 && items[currentFocus]) { items[currentFocus].click(); }
-            else {
+            if (currentFocus > -1 && items[currentFocus]) {
+                items[currentFocus].click();
+            } else {
+                // Tentar match direto pelo que está escrito
                 const inputVal = document.getElementById('loc-input-field').value.trim().toLowerCase();
                 const match = locationsDB.find(i => i.titulo.toLowerCase() === inputVal);
                 if (match) selectLocation(match.id);
             }
+        } else if (e.key === "Escape") {
+            resultsBox.style.display = 'none';
         }
     }
 
@@ -161,10 +209,13 @@
 
     function useGPS() {
         if (!navigator.geolocation) return;
-        localStorage.clear(); sessionStorage.clear();
+        document.getElementById('loc-input-field').value = "A localizar...";
+        localStorage.removeItem('biocultura_region');
+        sessionStorage.clear();
         navigator.geolocation.getCurrentPosition(() => location.reload(), () => location.reload());
     }
 
+    // Fechar se clicar fora
     document.addEventListener("click", (e) => {
         if (e.target.id !== 'loc-input-field') document.getElementById('loc-results').style.display = 'none';
     });
