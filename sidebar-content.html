@@ -1,9 +1,9 @@
 <div class="inner" style="display: flex; flex-direction: column; height: 100%; min-height: 100vh; padding: 2em 1.5em; background: #fff !important; border: none !important; justify-content: space-between;">
     
     <!-- PARTE SUPERIOR: LOGO E MENU -->
-    <div>
-        <!-- LOGÓTIPO PREMIUM -->
-        <div style="margin-bottom: 3.5em; text-align: left; padding-left: 0;">
+    <div id="sidebar-top">
+        <!-- LOGÓTIPO -->
+        <div style="margin-bottom: 3.5em; text-align: left;">
             <a href="/index.html" style="border: none !important; text-decoration: none !important;">
                 <div style="display: flex; align-items: center; gap: 12px;">
                     <div style="width: 35px; height: 35px;">
@@ -20,8 +20,8 @@
             </a>
         </div>
 
-        <!-- MENU -->
-        <nav id="menu-bio">
+        <!-- MENU PRINCIPAL -->
+        <nav id="main-nav">
             <div class="menu-section">
                 <span class="menu-header">Recursos vitais</span>
                 <a href="/recursos/agua.html" class="menu-item">Água</a>
@@ -38,7 +38,16 @@
                 <a href="/servicos/bioenergia.html" class="menu-item">Serviços</a>
             </div>
             <div class="menu-section" style="margin-top: 1em;">
-                <a href="/calendario/calendario.html" class="menu-item">Calendário hortícola</a>
+                <a href="/calendario/calendario.html" class="menu-item" style="font-weight: 700; color: #222 !important;">Calendário hortícola</a>
+            </div>
+        </nav>
+
+        <!-- MENU DE SELEÇÃO DE LOCALIDADE (ESCONDIDO POR DEFEITO) -->
+        <nav id="location-selector" style="display: none;">
+            <button onclick="showMainMenu()" class="btn-back"><i class="fas fa-chevron-left"></i> Voltar</button>
+            <span class="menu-header" id="selector-title">Escolher Distrito</span>
+            <div id="location-list" class="scroll-list">
+                <!-- Injetado via JS -->
             </div>
         </nav>
     </div>
@@ -46,12 +55,15 @@
     <!-- PARTE INFERIOR: LOCALIZAÇÃO -->
     <div style="padding-bottom: 2em; border-top: 1px solid #f2f2f2; padding-top: 2.5em;">
         <div style="text-align: left;">
-            <button onclick="openLocationModal()" class="custom-btn-loc">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-                <span id="loc-text">Definir Localização</span>
+            <button onclick="showDistricts()" class="custom-btn-loc">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px; transform: rotate(-15deg);"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                <span id="loc-text">Localização</span>
             </button>
-            <div id="active-city-box" class="city-label" style="display: none; margin-top: 8px;">
-                 <span id="city-name">...</span>
+            <p id="loc-sub" style="font-size: 0.65em; color: #bbb; margin: 4px 0 0 0; line-height: 1.4; text-align: left;">Sincronize para resultados à sua medida.</p>
+            
+            <div id="active-city-box" style="margin-top: 12px; display: flex; align-items: center; gap: 8px;">
+                 <span id="city-name" class="city-label">Portugal</span>
+                 <button onclick="clearLocation()" class="btn-clear" title="Remover localização">&times;</button>
             </div>
         </div>
         <footer style="margin-top: 3em;">
@@ -60,105 +72,106 @@
     </div>
 </div>
 
-<!-- MODAL DE SELEÇÃO DE LOCALIDADE -->
-<div id="location-modal" class="modal-overlay">
-    <div class="modal-content">
-        <button class="close-modal" onclick="closeLocationModal()">&times;</button>
-        <h3>Onde se encontra?</h3>
-        <p>Escolha a sua região para dados personalizados ou use o GPS.</p>
-        
-        <div class="search-box">
-            <i class="fas fa-search"></i>
-            <input type="text" id="city-search" placeholder="Procure por concelho (ex: Boticas, Faro...)" onkeyup="filterCities()">
-        </div>
-
-        <div class="modal-actions">
-            <button onclick="useGPS()" class="btn-gps"><i class="fas fa-location-arrow"></i> Detectar automaticamente</button>
-        </div>
-
-        <div id="search-results" class="results-grid">
-            <!-- Resultados aparecem aqui -->
-        </div>
-    </div>
-</div>
-
 <style>
-    /* ESTILOS SIDEBAR */
-    .custom-btn-loc { background: none; color: #888; border: none; font-size: 0.85em; font-weight: 600; cursor: pointer; display: flex; align-items: center; transition: color 0.3s; }
-    .custom-btn-loc:hover { color: #2e7d32; }
-    .menu-section { margin-bottom: 2.2em; display: flex; flex-direction: column; }
-    .menu-header { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin-bottom: 12px; }
-    .menu-item { font-size: 0.95em; color: #888; padding: 5px 0; text-decoration: none; transition: all 0.2s ease; }
-    .menu-item:hover { color: #2e7d32; padding-left: 5px; }
-    .city-label { font-size: 0.65em; color: #2e7d32; font-weight: 700; text-transform: uppercase; }
-
-    /* ESTILOS MODAL (OVERLAY) */
-    .modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(255,255,255,0.98); z-index: 20000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
-    .modal-content { width: 90%; max-width: 600px; text-align: center; position: relative; animation: fadeIn 0.4s ease; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    /* TIPOGRAFIA E RESETS */
+    #sidebar * { font-family: 'Source Sans Pro', sans-serif !important; border: none !important; box-shadow: none !important; text-decoration: none !important; }
+    .menu-header { font-weight: 900 !important; font-size: 0.65em !important; text-transform: uppercase !important; letter-spacing: 2px !important; color: #bbb !important; margin-bottom: 12px !important; display: block; }
     
-    .close-modal { position: absolute; top: -50px; right: 0; background: none; border: none; font-size: 2em; cursor: pointer; color: #ccc; }
-    .search-box { position: relative; margin: 2em 0; }
-    .search-box i { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); color: #bbb; }
-    .search-box input { width: 100%; padding: 18px 20px 18px 50px; border-radius: 15px; border: 1px solid #eee; font-size: 1.1em; outline: none; transition: border-color 0.3s; }
-    .search-box input:focus { border-color: #2e7d32; box-shadow: 0 10px 30px rgba(46,125,50,0.05); }
+    /* BOTÕES E LINKS */
+    .menu-item { font-size: 0.95em !important; color: #888 !important; padding: 5px 0 !important; display: block !important; transition: all 0.2s ease !important; }
+    .menu-item:hover { color: #2e7d32 !important; padding-left: 5px; }
 
-    .btn-gps { background: #f1f8e9; color: #2e7d32; border: 1px solid #c8e6c9; padding: 12px 25px; border-radius: 50px; font-weight: 700; cursor: pointer; font-size: 0.8em; margin-bottom: 2em; transition: all 0.3s; }
-    .btn-gps:hover { background: #2e7d32; color: #fff; }
+    .custom-btn-loc { background: none; color: #888 !important; font-size: 0.85em !important; font-weight: 600 !important; cursor: pointer; display: flex; align-items: center; padding: 0; }
+    .custom-btn-loc:hover { color: #2e7d32 !important; }
 
-    .results-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; max-height: 300px; overflow-y: auto; padding: 10px; }
-    .city-btn { padding: 10px; background: #fff; border: 1px solid #f0f0f0; border-radius: 10px; font-size: 0.8em; cursor: pointer; transition: all 0.2s; color: #666; }
-    .city-btn:hover { border-color: #2e7d32; color: #2e7d32; background: #f9fbf9; }
+    .btn-back { font-size: 0.7em !important; color: #2e7d32 !important; font-weight: 800 !important; text-transform: uppercase; margin-bottom: 20px; cursor: pointer; background: none; display: flex; align-items: center; gap: 5px; padding: 0; }
+    
+    /* LISTA DE LOCALIZAÇÃO */
+    .scroll-list { max-height: 50vh; overflow-y: auto; scrollbar-width: none; }
+    .scroll-list::-webkit-scrollbar { display: none; }
+    .loc-option { display: block; padding: 8px 0; font-size: 0.9em; color: #666; cursor: pointer; transition: all 0.2s; }
+    .loc-option:hover { color: #2e7d32; padding-left: 5px; }
+
+    /* LABELS */
+    .city-label { font-size: 0.65em !important; color: #2e7d32 !important; font-weight: 700 !important; text-transform: uppercase; }
+    .btn-clear { background: #f0f0f0; color: #999; border-radius: 50%; width: 16px; height: 16px; line-height: 14px; text-align: center; font-size: 12px; cursor: pointer; }
+    .btn-clear:hover { background: #ffebee; color: #c62828; }
 </style>
 
 <script>
-    let allData = [];
+    let bioregionsData = [];
+    
+    // Carregar dados
+    fetch('/data/bioregioes.json')
+        .then(r => r.json())
+        .then(data => { bioregionsData = data; updateUI(); });
 
-    // Carregar dados para a pesquisa
-    fetch('/data/bioregioes.json').then(r => r.json()).then(data => { allData = data; });
-
-    function openLocationModal() { document.getElementById('location-modal').style.display = 'flex'; }
-    function closeLocationModal() { document.getElementById('location-modal').style.display = 'none'; }
-
-    function filterCities() {
-        const term = document.getElementById('city-search').value.toLowerCase();
-        const results = document.getElementById('search-results');
-        results.innerHTML = '';
+    function showDistricts() {
+        document.getElementById('main-nav').style.display = 'none';
+        document.getElementById('location-selector').style.display = 'block';
+        document.getElementById('selector-title').innerText = "Escolher Distrito";
         
-        if (term.length < 2) return;
-
-        const filtered = allData.filter(c => c.titulo.toLowerCase().includes(term));
-        filtered.forEach(c => {
-            const btn = document.createElement('button');
-            btn.className = 'city-btn';
-            btn.innerText = c.titulo;
-            btn.onclick = () => selectCity(c);
-            results.appendChild(btn);
+        const list = document.getElementById('location-list');
+        list.innerHTML = '<div class="loc-option" onclick="useGPS()"><i class="fas fa-location-arrow"></i> Usar GPS (Mais próximo)</div>';
+        
+        // Extrair distritos únicos
+        const distritos = [...new Set(bioregionsData.map(item => item.distrito))].sort();
+        distritos.forEach(d => {
+            if(!d) return;
+            const div = document.createElement('div');
+            div.className = 'loc-option';
+            div.innerText = d.charAt(0).toUpperCase() + d.slice(1);
+            div.onclick = () => showCounties(d);
+            list.appendChild(div);
         });
     }
 
-    function selectCity(concelho) {
+    function showCounties(distrito) {
+        document.getElementById('selector-title').innerText = distrito;
+        const list = document.getElementById('location-list');
+        list.innerHTML = '';
+        
+        const concelhos = bioregionsData.filter(item => item.distrito === distrito).sort((a,b) => a.titulo.localeCompare(b.titulo));
+        concelhos.forEach(c => {
+            const div = document.createElement('div');
+            div.className = 'loc-option';
+            div.innerText = c.titulo;
+            div.onclick = () => selectLocation(c);
+            list.appendChild(div);
+        });
+    }
+
+    function showMainMenu() {
+        document.getElementById('main-nav').style.display = 'block';
+        document.getElementById('location-selector').style.display = 'none';
+    }
+
+    function selectLocation(concelho) {
         localStorage.setItem('biocultura_region', concelho.id);
         sessionStorage.removeItem('biocultura_data_cache');
-        sessionStorage.removeItem('biocultura_exploration_id');
         location.reload();
     }
 
     function useGPS() {
         if (!navigator.geolocation) return;
-        navigator.geolocation.getCurrentPosition((pos) => {
-            localStorage.removeItem('biocultura_region');
-            sessionStorage.clear();
-            location.reload();
-        });
+        localStorage.removeItem('biocultura_region');
+        sessionStorage.clear();
+        location.reload();
     }
 
-    // Atualizar UI se houver cidade ativa
-    const active = sessionStorage.getItem('biocultura_data_cache');
-    if(active) {
-        const info = JSON.parse(active);
-        document.getElementById('city-name').innerText = info.titulo;
-        document.getElementById('active-city-box').style.display = 'block';
-        document.getElementById('loc-text').innerText = "Localização Ativa";
+    function clearLocation() {
+        localStorage.removeItem('biocultura_region');
+        sessionStorage.clear();
+        location.reload();
+    }
+
+    function updateUI() {
+        const cache = sessionStorage.getItem('biocultura_data_cache');
+        if(cache) {
+            const info = JSON.parse(cache);
+            document.getElementById('city-name').innerText = info.titulo;
+            document.getElementById('active-city-box').style.display = 'flex';
+            document.getElementById('loc-sub').innerText = "Resultados otimizados para si.";
+        }
     }
 </script>
