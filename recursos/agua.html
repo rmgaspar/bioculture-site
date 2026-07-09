@@ -83,6 +83,7 @@
         <script>
             let locationsDB = [];
 
+            // 1. Função de Distância
             function calcularDistancia(lat1, lon1, lat2, lon2) {
                 const R = 6371;
                 const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -91,6 +92,7 @@
                 return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
             }
 
+            // 2. Inicialização com Fallback
             async function inicializarPagina() {
                 try {
                     const r = await fetch('/data/bioregioes.json');
@@ -107,10 +109,52 @@
                     if (info) {
                         renderWaterDashboard(info);
                     } else {
-                        const nacional = locationsDB.find(i => i.id === "portugal-nacional");
-                        if (nacional) renderWaterDashboard(nacional);
+                        // Se não há nada, tenta GPS mas define um limite de 3 segundos
+                        tentarGPSOuNacional();
                     }
-                } catch(e) { console.error("Erro ao carregar dados", e); }
+                } catch(e) { 
+                    console.error("Erro ao carregar dados", e);
+                    // Se falhar o fetch, tenta mostrar o que for possível
+                    document.getElementById('no-gps-warning').innerText = "Erro ao carregar base de dados.";
+                }
+            }
+
+            function tentarGPSOuNacional() {
+                if (navigator.geolocation) {
+                    // Se em 3 segundos o GPS não responder, carrega o Nacional
+                    const timeout = setTimeout(() => {
+                        carregarNacional();
+                    }, 3000);
+
+                    navigator.geolocation.getCurrentPosition(pos => {
+                        clearTimeout(timeout);
+                        let minD = Infinity;
+                        let closest = null;
+                        locationsDB.forEach(c => {
+                            if(c.lat && c.lon) {
+                                let d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon);
+                                if(d < minD) { minD = d; closest = c; }
+                            }
+                        });
+                        if(closest) {
+                            localStorage.setItem('biocultura_region', closest.id);
+                            renderWaterDashboard(closest);
+                        }
+                    }, () => {
+                        clearTimeout(timeout);
+                        carregarNacional();
+                    });
+                } else {
+                    carregarNacional();
+                }
+            }
+
+            function carregarNacional() {
+                const nacional = locationsDB.find(i => i.id === "portugal-nacional");
+                if (nacional) {
+                    renderWaterDashboard(nacional);
+                    document.getElementById('reg-name').innerHTML = "Portugal <span style='font-size:0.5em; color:#bbb'>(Média Nacional)</span>";
+                }
             }
 
             function renderWaterDashboard(info) {
@@ -120,18 +164,18 @@
                 document.getElementById('reg-name').innerText = info.titulo;
 
                 if (info.recursos_hidricos) {
-                    const ph = parseFloat(info.recursos_hidricos.ph_agua) || 7.0;
-                    const dur = parseFloat(info.recursos_hidricos.dureza_fr) || 10;
+                    document.getElementById('val-ph').innerText = info.recursos_hidricos.ph_agua || '--';
+                    document.getElementById('val-dureza').innerText = info.recursos_hidricos.dureza_fr || '--';
                     
-                    document.getElementById('val-ph').innerText = ph;
                     const phCont = document.getElementById('container-ph');
+                    const ph = parseFloat(info.recursos_hidricos.ph_agua);
                     phCont.className = 'metric';
                     if (ph < 6.5) phCont.classList.add('status-acid');
                     else if (ph <= 8.5) phCont.classList.add('status-neutral');
                     else phCont.classList.add('status-alkaline');
 
-                    document.getElementById('val-dureza').innerText = dur;
                     const durCont = document.getElementById('container-dureza');
+                    const dur = parseFloat(info.recursos_hidricos.dureza_fr);
                     durCont.className = 'metric';
                     if (dur < 15) durCont.classList.add('status-soft');
                     else if (dur <= 30) durCont.classList.add('status-medium');
@@ -158,25 +202,32 @@
                 }
             }
 
+            // 3. Eventos da Sidebar
             function setupSidebarEvents() {
                 const input = document.getElementById('loc-search-input');
                 const dropdown = document.getElementById('loc-dropdown');
                 const gpsBtn = document.getElementById('btn-gps-trigger');
+                
                 if(!input) return;
 
-                // GPS
+                // Limpar bordas do botão de GPS que o template força
                 if(gpsBtn) {
-                    gpsBtn.onclick = function() {
-                        if (!navigator.geolocation) return;
+                    gpsBtn.style.border = "none";
+                    gpsBtn.style.boxShadow = "none";
+                    
+                    gpsBtn.onclick = function(e) {
+                        e.preventDefault();
                         input.value = "A localizar...";
-                        localStorage.clear(); sessionStorage.clear();
-                        navigator.geolocation.getCurrentPosition(pos => {
+                        localStorage.removeItem('biocultura_region');
+                        sessionStorage.clear();
+                        navigator.geolocation.getCurrentPosition(() => {
                             window.location.href = window.location.pathname;
-                        }, () => { window.location.href = window.location.pathname; });
+                        }, () => {
+                            window.location.href = window.location.pathname;
+                        });
                     };
                 }
 
-                // Pesquisa
                 input.addEventListener('input', function() {
                     const val = this.value.toLowerCase();
                     dropdown.innerHTML = '';
@@ -215,7 +266,7 @@
                 document.getElementById('sidebar').innerHTML = html;
                 var s = document.createElement('script'); s.src = '/assets/js/main.js'; document.body.appendChild(s);
                 inicializarPagina();
-                setTimeout(setupSidebarEvents, 1000); // Aumentado para 1 segundo para garantir carregamento
+                setTimeout(setupSidebarEvents, 1000);
             });
         </script>
 	</body>
