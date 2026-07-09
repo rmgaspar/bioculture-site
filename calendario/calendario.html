@@ -6,7 +6,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
 		<style>
-            /* --- ESTRUTURA GLOBAL --- */
+            /* --- ESTRUTURA GLOBAL & TIPOGRAFIA --- */
             body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
 			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
             section { padding-top: 4em !important; min-height: 100vh; display: flex; flex-direction: column; }
@@ -16,23 +16,28 @@
             #sidebar > .inner { height: 100% !important; overflow: hidden !important; display: flex; flex-direction: column; }
             #wrapper { padding-left: 18em !important; }
 
-            /* CABEÇALHOS SUBTIS */
-            .current-month-text { 
-                font-size: 0.7em; font-weight: 900; text-transform: uppercase; 
-                letter-spacing: 4px; color: #bbb; display: block; margin-bottom: 10px; 
-            }
-            .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; color: #bbb; margin-bottom: 10px; display: block; }
-            
+            /* CABEÇALHOS */
+            .current-month-text { font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; display: block; margin-bottom: 10px; text-align: center; }
+            .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; color: #bbb; margin-bottom: 10px; display: block; text-align: center; }
+
             /* HEADER DIVIDIDO */
             .calendar-hero { display: flex; justify-content: space-between; align-items: center; gap: 4em; margin-bottom: 4em; }
             .hero-left { flex: 1; text-align: left; }
             .hero-right { flex: 1.2; }
 
-            /* MINI CALENDÁRIO */
-            .mini-calendar { background: #fdfdfd; border-radius: 25px; padding: 1.5em; position: relative; mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent); -webkit-mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent); }
+            /* MINI CALENDÁRIO COM FADE */
+            .mini-calendar { 
+                background: #fdfdfd; 
+                border-radius: 25px; 
+                padding: 1.5em; 
+                position: relative; 
+                mask-image: linear-gradient(to bottom, transparent, black 20%, black 80%, transparent);
+                -webkit-mask-image: linear-gradient(to bottom, transparent, black 20%, black 80%, transparent);
+            }
             .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; text-align: center; }
             .cal-day-label { font-size: 0.55em; font-weight: 900; text-transform: uppercase; color: #ccc; margin-bottom: 10px; }
             .cal-day-label.weekend { color: #ef5350 !important; }
+            
             .cal-date { font-size: 0.85em; font-weight: 600; padding: 10px 0; border-radius: 12px; color: #bbb; min-height: 45px; display: flex; align-items: center; justify-content: center; }
             .cal-date.today { background: #f1f8e9; color: #1b5e20; border: 1px solid #dcedc8; }
             .cal-date.weekend-date { color: #ef5350; opacity: 0.6; }
@@ -50,23 +55,13 @@
             .info-card .label { font-size: 0.6em; text-transform: uppercase; font-weight: 800; color: #bbb; display: block; }
             .info-card .val { font-size: 0.95em; color: #666; font-weight: 600; }
 
-            /* TAREFAS EM FORMATO LISTA SUBTIL */
+            /* TAREFAS EM LINHAS */
             .tasks-grid { display: grid; grid-template-columns: 1fr; gap: 40px; margin-bottom: 4em; }
-            .task-row { 
-                display: grid; 
-                grid-template-columns: 150px 1fr; 
-                gap: 30px; 
-                padding: 1.5em 0;
-                border-left: 3px solid #eee;
-                padding-left: 2em;
-                transition: all 0.3s ease;
-            }
+            .task-row { display: grid; grid-template-columns: 150px 1fr; gap: 30px; padding: 1.5em 0; border-left: 3px solid #eee; padding-left: 2em; }
             .task-row h4 { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin: 0; padding-top: 5px; }
-            .task-content { display: flex; flex-direction: column; gap: 8px; }
-            .task-main { font-size: 1.15em; font-weight: 700; color: #1a1a1a; line-height: 1.2; }
+            .task-main { font-size: 1.15em; font-weight: 700; color: #1a1a1a; display: block; margin-bottom: 8px; }
             .task-detail { font-size: 0.95em; color: #888; line-height: 1.6; margin: 0; }
 
-            /* CORES LINEARES */
             .row-pomar { border-left-color: #ff9800 !important; }
             .row-vinha { border-left-color: #9c27b0 !important; }
             .row-jardim { border-left-color: #e91e63 !important; }
@@ -95,20 +90,14 @@
                                 <h1 style="font-size: 3.5em; font-weight: 300; color: #1a1a1a; letter-spacing: -2px; margin: 0;">O Ritmo da Terra</h1>
                                 <p style="font-size: 0.9em; font-style: italic; color: #bbb; margin-top: 5px;">Orientação regional: <strong id="reg-name" style="color:#888">...</strong></p>
                             </div>
-                            <div class="hero-right">
-                                <div class="mini-calendar">
-                                    <div class="cal-grid" id="calendar-week-grid"></div>
-                                </div>
-                            </div>
+                            <div class="hero-right"><div class="mini-calendar"><div class="cal-grid" id="calendar-week-grid"></div></div></div>
                         </div>
 
-                        <!-- INFO ROW (SOLO E LUA) -->
                         <div class="info-row">
                             <div class="info-card" id="soil-card" style="display:none;"><i class="fas fa-seedling"></i><div><span class="label">Solo local</span><span id="soil-type" class="val">...</span></div></div>
                             <div class="info-card"><i class="fas fa-moon"></i><div><span class="label" id="lunar-phase-name">Fase da Lua</span><span id="lunar-tip" class="val">...</span></div></div>
                         </div>
 
-                        <!-- WEATHER & ALERTS -->
                         <div class="weather-alerts">
                             <div class="weather-card">
                                 <span class="category-label" style="text-align: left;">Previsão</span>
@@ -123,16 +112,15 @@
                             </div>
                         </div>
 
-                        <!-- TAREFAS EM LINHAS SUBTIS -->
                         <div class="tasks-grid" id="tasks-container" style="display:none;">
                             <div class="task-row row-pomar"><h4>Pomar</h4><div class="task-content"><span class="task-main" id="task-pomar-main">--</span><p class="task-detail" id="task-pomar-detail">--</p></div></div>
-                            <div class="task-row row-vinha"><h4>Vinha</h4><div class="task-content"><span class="task-main" id="task-vinha-main">--</span><p class="task-detail" id="task-vinha-detail">--</p></div></div>
+                            <div class="task-row row-vinha"><h4>Vinha</h4><div class="task-content"><span class="task-main" id="task-vinha-main">--</span><p class="task-detail" id="task-vinha-detail">--</p><div class="native-varieties" id="vinha-castas"></div></div></div>
                             <div class="task-row row-jardim"><h4>Jardim</h4><div class="task-content"><span class="task-main" id="task-jardim-main">--</span><p class="task-detail" id="task-jardim-detail">--</p></div></div>
                             <div class="task-row row-adega"><h4>Adega</h4><div class="task-content"><span class="task-main" id="task-adega-main">--</span><p class="task-detail" id="task-adega-detail">--</p></div></div>
                             <div class="task-row row-sementeiras"><h4>Sementeiras</h4><div class="task-content"><span class="task-main" id="task-sementeiras-main">--</span><p class="task-detail" id="task-sementeiras-detail">--</p></div></div>
                         </div>
 
-                        <div id="no-gps-warning" style="text-align: center; padding: 4em; color: #bbb;"><p>Selecione uma localidade na barra lateral.</p></div>
+                        <div id="no-gps-warning" style="text-align: center; padding: 4em; color: #bbb;"><p>A carregar inteligência regional...</p></div>
 
                         <footer class="page-footer">
                             <div style="display: flex; align-items: center; justify-content: flex-end; gap: 10px; opacity: 0.3;">
@@ -168,6 +156,7 @@
             function buildMiniCalendar() {
                 const grid = document.getElementById('calendar-week-grid');
                 if(!grid) return;
+                grid.innerHTML = '';
                 const days = ['S','T','Q','Q','S','S','D'];
                 const today = new Date();
                 days.forEach((d, i) => grid.innerHTML += `<div class="cal-day-label ${i >= 5 ? 'weekend' : ''}">${d}</div>`);
@@ -197,8 +186,10 @@
             }
 
             const agroIntelligence = {
-                "jul": { "pomar": "Colheita de Pêssego e Ameixa.", "pomar_detail": "Instale armadilhas biológicas para a mosca da fruta. Regue ao entardecer para evitar a evaporação imediata.", "vinha": "Poda em verde.", "vinha_detail": "Remova rebentos ladrões para concentrar a energia nos cachos. Monitorize o aparecimento de oídio.", "jardim": "Gestão de stress hídrico.", "jardim_detail": "Use mulching (palha ou casca) para manter a frescura radicular. Regue apenas ao amanhecer.", "adega": "Higiene de cubas.", "adega_detail": "Lave o vasilhame com água quente e prepare os equipamentos para a vindima de Setembro.", "sementeiras": "Couves de inverno.", "sementeiras_detail": "Semear brócolos e couve-flor em local sombreado antes do transplante definitivo.", "alerta": "SOL EXTREMO: Evite regas nas horas de maior calor para não queimar as folhas por efeito de lupa." }
+                "jul": { "pomar": "Colheita de Pêssego e Ameixa.", "pomar_detail": "Instale armadilhas biológicas para a mosca da fruta. Regue ao entardecer.", "vinha": "Poda em verde.", "vinha_detail": "Remova rebentos ladrões para concentrar energia.", "jardim": "Stress hídrico.", "jardim_detail": "Use mulching para manter a frescura. Regue ao amanhecer.", "adega": "Higiene de cubas.", "adega_detail": "Lave o vasilhame com água quente antes da vindima.", "sementeiras": "Couves de inverno.", "sementeiras_detail": "Semear brócolos e couve-flor em local sombreado.", "alerta": "SOL EXTREMO: Evite regas nas horas de maior calor." }
             };
+
+            const regionalVarieties = { "norte": "Alvarinho, Loureiro, Vinhão", "centro": "Touriga Nacional, Bical, Arinto", "alentejo": "Aragonez, Trincadeira, Antão Vaz", "algarve": "Negra Mole, Castelão" };
 
             function renderDashboard(info) {
                 if(!info) return;
@@ -206,6 +197,7 @@
                 document.getElementById('tasks-container').style.display = 'block';
                 document.getElementById('soil-card').style.display = 'flex';
                 document.getElementById('reg-name').innerText = info.titulo;
+                document.getElementById('reg-name').style.color = "#888";
                 document.getElementById('soil-type').innerText = info.biomas?.solo || "Misto";
                 
                 const intel = agroIntelligence[mesKey] || agroIntelligence["jul"];
@@ -220,17 +212,68 @@
                 document.getElementById('task-sementeiras-main').innerText = intel.sementeiras;
                 document.getElementById('task-sementeiras-detail').innerText = intel.sementeiras_detail;
                 document.getElementById('climate-alert').innerText = intel.alerta;
+
+                const reg = info.regiao || "centro";
+                document.getElementById('vinha-castas').innerHTML = `<strong>Castas sugeridas:</strong> ${regionalVarieties[reg]}`;
+
+                const moon = getLunarPhase();
+                document.getElementById('lunar-phase-name').innerText = moon.name;
+                document.getElementById('lunar-tip').innerText = moon.tip;
+                
+                const input = document.getElementById('loc-search-input');
+                if(input) input.value = info.titulo;
             }
 
             async function inicializarPagina() {
                 try {
                     const r = await fetch('/data/bioregioes.json');
                     locationsDB = await r.json();
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const regionParam = urlParams.get('region');
                     const savedId = localStorage.getItem('biocultura_region');
-                    let info = locationsDB.find(i => i.id === savedId);
+                    let info = regionParam ? locationsDB.find(i => i.id === regionParam) : locationsDB.find(i => i.id === savedId);
                     if (info) renderDashboard(info);
-                    else renderDashboard(locationsDB.find(i => i.id === "portugal-nacional"));
+                    else {
+                        const timeout = setTimeout(() => carregarNacional(), 4000);
+                        navigator.geolocation.getCurrentPosition(pos => {
+                            clearTimeout(timeout);
+                            let minD = Infinity; let closest = null;
+                            locationsDB.forEach(c => { if(c.lat && c.lon) { let d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon); if(d < minD) { minD = d; closest = c; } } });
+                            if(closest) { localStorage.setItem('biocultura_region', closest.id); renderDashboard(closest); }
+                        }, () => { clearTimeout(timeout); carregarNacional(); });
+                    }
                 } catch(e) { console.error(e); }
+            }
+
+            function carregarNacional() {
+                const nac = locationsDB.find(i => i.id === "portugal-nacional");
+                if(nac) renderDashboard(nac);
+            }
+
+            function setupSidebarLogic() {
+                const input = document.getElementById('loc-search-input');
+                const gpsBtn = document.getElementById('btn-gps-trigger');
+                if(!input || !gpsBtn) return;
+                gpsBtn.addEventListener('click', function() {
+                    if (!navigator.geolocation) return;
+                    input.value = "A localizar...";
+                    localStorage.clear(); sessionStorage.clear();
+                    navigator.geolocation.getCurrentPosition(pos => {
+                        const userLat = pos.coords.latitude;
+                        const userLon = pos.coords.longitude;
+                        let minD = Infinity; let closest = null;
+                        locationsDB.forEach(c => {
+                            if(c.lat && c.lon) {
+                                let d = calcularDistancia(userLat, userLon, c.lat, c.lon);
+                                if(d < minD) { minD = d; closest = c; }
+                            }
+                        });
+                        if(closest) {
+                            localStorage.setItem('biocultura_region', closest.id);
+                            window.location.href = window.location.pathname;
+                        }
+                    }, () => { window.location.href = window.location.pathname; });
+                });
             }
 
             fetch('/sidebar-content.html').then(r => r.text()).then(html => {
@@ -238,6 +281,7 @@
                 var s = document.createElement('script'); s.src = '/assets/js/main.js'; document.body.appendChild(s);
                 buildMiniCalendar();
                 inicializarPagina();
+                setTimeout(setupSidebarLogic, 1000);
             });
         </script>
 	</body>
