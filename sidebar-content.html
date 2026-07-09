@@ -1,8 +1,8 @@
 <div class="inner" style="display: flex; flex-direction: column; height: 100%; min-height: 100vh; padding: 2em 1.5em; background: #fff !important; border: none !important; justify-content: space-between;">
     
     <div>
-        <!-- LOGÓTIPO -->
-        <div style="margin-bottom: 3.5em; text-align: left;">
+        <!-- LOGÓTIPO PREMIUM -->
+        <div style="margin-bottom: 3.5em; text-align: left; border: none !important;">
             <a href="/index.html" style="border: none !important; text-decoration: none !important;">
                 <div style="display: flex; align-items: center; gap: 12px;">
                     <div style="width: 35px; height: 35px;">
@@ -19,123 +19,138 @@
             </a>
         </div>
 
-        <!-- MENU -->
+        <!-- MENU (LIMPO, CINZENTO, SEM BOLD) -->
         <nav id="menu-bio">
-            <div class="menu-section"><span class="menu-header">Recursos vitais</span>
+            <div class="menu-section">
+                <span class="menu-header">Recursos vitais</span>
                 <a href="/recursos/agua.html" class="menu-item">Água</a>
                 <a href="/recursos/solo.html" class="menu-item">Terra</a>
                 <a href="/recursos/ar.html" class="menu-item">Ar</a>
             </div>
-            <div class="menu-section"><span class="menu-header">Ecossistemas</span>
+
+            <div class="menu-section">
+                <span class="menu-header">Ecossistemas</span>
                 <a href="/ecossistemas/biodiversidade.html" class="menu-item">Biodiversidade</a>
             </div>
-            <div class="menu-section"><span class="menu-header">Engenharia</span>
-                <a href="/energia/transicao-etica.html" class="menu-item" style="color: #c62828 !important;">Impacto & energia</a>
+
+            <div class="menu-section">
+                <span class="menu-header">Engenharia</span>
+                <a href="/energia/transicao-etica.html" class="menu-item">Impacto & energia</a>
                 <a href="/servicos/bioenergia.html" class="menu-item">Serviços</a>
             </div>
+
             <div class="menu-section" style="margin-top: 1em;">
-                <a href="/calendario/calendario.html" class="menu-item" style="font-weight: 700; color: #222 !important;">Calendário hortícola</a>
+                <a href="/calendario/calendario.html" class="menu-item">Calendário hortícola</a>
             </div>
         </nav>
     </div>
 
-    <!-- LOCALIZAÇÃO NO FUNDO -->
+    <!-- PARTE INFERIOR: LOCALIZAÇÃO EDITÁVEL -->
     <div style="padding-bottom: 2em; border-top: 1px solid #f2f2f2; padding-top: 2.5em;">
-        <button onclick="openLocModal()" class="custom-btn-loc">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px; transform: rotate(-15deg);"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
-            <span id="loc-display-name">Portugal (Nacional)</span>
-        </button>
-        <p style="font-size: 0.6em; color: #bbb; margin: 5px 0 0 0; text-align: left;">Sincronize para resultados à sua medida.</p>
-        <footer style="margin-top: 3em;"><span style="font-size: 0.6em; color: #ccc; font-weight: 700; letter-spacing: 1px;">© BIOCULTURA 2026</span></footer>
-    </div>
-</div>
-
-<!-- JANELA (MODAL) DE LOCALIZAÇÃO -->
-<div id="loc-modal" class="modal-overlay">
-    <div class="modal-box">
-        <button class="close-btn" onclick="closeLocModal()">&times;</button>
-        <h2>Onde se encontra?</h2>
-        <p>Escolha a sua localidade para obter dados técnicos de precisão.</p>
-        
-        <div class="search-wrap">
-            <input type="text" id="city-input" placeholder="Escreva o seu concelho..." onkeyup="searchCity()">
-            <div id="results-box" class="results-list"></div>
+        <div class="loc-input-wrapper">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#bbb" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="transform: rotate(-15deg); flex-shrink: 0;"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                <input type="text" id="loc-input-field" class="loc-input" placeholder="Definir localidade..." onkeyup="handleLocSearch(event)">
+                <button onclick="useGPS()" class="gps-mini-btn" title="Usar GPS"><i class="fas fa-crosshairs"></i></button>
+            </div>
+            <div id="loc-results" class="loc-results-dropdown"></div>
+            <p style="font-size: 0.6em; color: #bbb; margin: 0; line-height: 1.4;">Sincronize para resultados à sua medida.</p>
         </div>
 
-        <div style="margin: 20px 0; color: #ccc; font-size: 0.7em;">OU</div>
-        
-        <button onclick="useGPS()" class="btn-gps-action">Detectar via GPS</button>
+        <footer style="margin-top: 3em;">
+            <span style="font-size: 0.6em; color: #ccc; font-weight: 700; letter-spacing: 1px;">© BIOCULTURA 2026</span>
+        </footer>
     </div>
 </div>
 
 <style>
-    /* Estilos Sidebar */
-    .custom-btn-loc { background: none !important; color: #888 !important; padding: 0 !important; font-size: 0.85em !important; font-weight: 600 !important; cursor: pointer !important; display: flex !important; align-items: center; }
+    /* RESET TOTAL DE ESTILOS DO TEMPLATE */
+    #sidebar * { 
+        font-family: 'Source Sans Pro', sans-serif !important; 
+        border: none !important; 
+        box-shadow: none !important; 
+        text-decoration: none !important;
+        font-weight: 400 !important; 
+    }
+
+    #sidebar b, .menu-header { font-weight: 900 !important; }
+
+    /* MENU */
     .menu-section { margin-bottom: 2.2em; display: flex; flex-direction: column; }
-    .menu-header { font-size: 0.65em !important; font-weight: 900 !important; text-transform: uppercase; letter-spacing: 2px; color: #bbb !important; margin-bottom: 12px !important; }
-    .menu-item { font-size: 0.95em !important; color: #888 !important; padding: 5px 0 !important; text-decoration: none !important; display: block !important; }
-    .menu-item:hover { color: #2e7d32 !important; padding-left: 5px !important; transition: all 0.2s; }
+    .menu-header { font-size: 0.65em !important; text-transform: uppercase !important; letter-spacing: 2px !important; color: #bbb !important; margin-bottom: 12px !important; }
+    .menu-item { font-size: 0.95em !important; color: #888 !important; padding: 5px 0 !important; display: block !important; transition: color 0.2s ease !important; }
+    .menu-item:hover { color: #2e7d32 !important; padding-left: 5px !important; }
 
-    /* Estilos Modal Smooth */
-    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.85); backdrop-filter: blur(12px); z-index: 20000; display: none; align-items: center; justify-content: center; }
-    .modal-box { background: #fff; width: 90%; max-width: 500px; padding: 4em 3em; border-radius: 40px; box-shadow: 0 30px 100px rgba(0,0,0,0.1); text-align: center; position: relative; }
-    .modal-box h2 { font-size: 2.2em; font-weight: 300; color: #1a1a1a; margin-bottom: 10px; }
-    .modal-box p { font-size: 0.95em; color: #888; margin-bottom: 2em; }
-    .close-btn { position: absolute; top: 20px; right: 30px; background: none; border: none; font-size: 2em; color: #ccc; cursor: pointer; }
+    /* ÁREA DE LOCALIZAÇÃO */
+    .loc-input-wrapper { position: relative; width: 100%; }
+    .loc-input {
+        background: none !important;
+        color: #666 !important;
+        font-size: 0.85em !important;
+        font-weight: 600 !important;
+        width: 100%;
+        padding: 0 !important;
+        outline: none !important;
+    }
+    .loc-input::placeholder { color: #ccc; font-weight: 400 !important; }
     
-    .search-wrap { position: relative; }
-    .search-wrap input { width: 100%; padding: 15px 25px; border-radius: 15px; border: 1px solid #eee; background: #f9f9f9; font-size: 1.1em; outline: none; }
-    .results-list { position: absolute; width: 100%; background: #fff; border-radius: 0 0 15px 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); max-height: 200px; overflow-y: auto; z-index: 20001; text-align: left; }
-    .res-item { padding: 12px 25px; font-size: 0.9em; color: #666; cursor: pointer; border-bottom: 1px solid #f9f9f9; }
-    .res-item:hover { background: #f1f8e9; color: #2e7d32; }
+    .gps-mini-btn { background: none !important; color: #bbb !important; cursor: pointer !important; padding: 0 !important; transition: color 0.2s; }
+    .gps-mini-btn:hover { color: #2e7d32 !important; }
 
-    .btn-gps-action { background: #1b5e20; color: #fff; border: none; padding: 12px 30px; border-radius: 50px; font-weight: 800; cursor: pointer; text-transform: uppercase; font-size: 0.7em; letter-spacing: 1px; }
+    .loc-results-dropdown {
+        position: absolute; bottom: 100%; left: 0; width: 100%;
+        background: #fff; border: 1px solid #eee !important; border-radius: 8px;
+        max-height: 150px; overflow-y: auto; display: none; z-index: 10;
+        margin-bottom: 10px; box-shadow: 0 -10px 30px rgba(0,0,0,0.05) !important;
+    }
+    .loc-res-item { padding: 8px 12px; font-size: 0.8em; color: #666; cursor: pointer; }
+    .loc-res-item:hover { background: #f1f8e9; color: #2e7d32; }
 </style>
 
 <script>
-    let db = [];
-    fetch('/data/bioregioes.json').then(r => r.json()).then(data => { db = data; checkFirstVisit(); });
-
-    function checkFirstVisit() {
+    let locationsDB = [];
+    fetch('/data/bioregioes.json').then(r => r.json()).then(data => { 
+        locationsDB = data; 
         const saved = localStorage.getItem('biocultura_region');
-        if(!saved) {
-            // Se for a primeira visita, mostramos o modal após 1 segundo
-            setTimeout(() => { openLocModal(); }, 1000);
+        if(saved) {
+            const info = data.find(i => i.id === saved);
+            if(info) document.getElementById('loc-input-field').value = info.titulo;
         } else {
-            const info = db.find(i => i.id === saved);
-            if(info) document.getElementById('loc-display-name').innerText = info.titulo;
+            document.getElementById('loc-input-field').value = "Portugal (Nacional)";
         }
-    }
+    });
 
-    function openLocModal() { document.getElementById('loc-modal').style.display = 'flex'; }
-    function closeLocModal() { document.getElementById('loc-modal').style.display = 'none'; }
-
-    function searchCity() {
-        const val = document.getElementById('city-input').value.toLowerCase();
-        const box = document.getElementById('results-box');
-        box.innerHTML = '';
-        if(val.length < 2) return;
+    function handleLocSearch(e) {
+        const val = e.target.value.toLowerCase();
+        const resultsBox = document.getElementById('loc-results');
+        resultsBox.innerHTML = '';
         
-        const filtered = db.filter(item => item.titulo.toLowerCase().includes(val));
-        filtered.slice(0, 5).forEach(item => {
-            const div = document.createElement('div');
-            div.className = 'res-item';
-            div.innerText = item.titulo;
-            div.onclick = () => {
-                localStorage.setItem('biocultura_region', item.id);
-                sessionStorage.clear();
-                location.reload();
-            };
-            box.appendChild(div);
-        });
+        if(val.length < 2) { resultsBox.style.display = 'none'; return; }
+        
+        const filtered = locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0, 5);
+        if(filtered.length > 0) {
+            resultsBox.style.display = 'block';
+            filtered.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'loc-res-item';
+                div.innerText = item.titulo;
+                div.onclick = () => {
+                    localStorage.setItem('biocultura_region', item.id);
+                    sessionStorage.clear();
+                    location.reload();
+                };
+                resultsBox.appendChild(div);
+            });
+        } else {
+            resultsBox.style.display = 'none';
+        }
     }
 
     function useGPS() {
         if (!navigator.geolocation) return;
-        navigator.geolocation.getCurrentPosition((pos) => {
-            localStorage.removeItem('biocultura_region');
-            sessionStorage.clear();
-            location.reload();
-        });
+        document.getElementById('loc-input-field').value = "A localizar...";
+        localStorage.removeItem('biocultura_region');
+        sessionStorage.clear();
+        navigator.geolocation.getCurrentPosition(() => { location.reload(); }, () => { location.reload(); });
     }
 </script>
