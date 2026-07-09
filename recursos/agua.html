@@ -6,16 +6,16 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
 		<style>
-            /* --- ESTRUTURA GLOBAL & TIPOGRAFIA --- */
+            /* --- ESTRUTURA GLOBAL --- */
             body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
 			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
             section { padding-top: 4em !important; min-height: 100vh; display: flex; flex-direction: column; }
 
             /* SIDEBAR FIXA */
             #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
+            #sidebar > .inner { height: 100% !important; overflow: hidden !important; display: flex; flex-direction: column; }
             #wrapper { padding-left: 18em !important; }
 
-            /* CABEÇALHOS */
             .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; color: #bbb; margin-bottom: 10px; display: block; }
             .card-title { font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin-bottom: 2em; text-align: center; }
 
@@ -25,50 +25,58 @@
             
             .quality-grid { display: flex; gap: 3em; justify-content: center; align-items: center; margin-bottom: 2em; }
 
-            /* BARÓMETRO COM PONTEIRO (DOT) */
-            .gauge-container { position: relative; width: 130px; height: 130px; display: flex; align-items: center; justify-content: center; }
+            /* NOVO GAUGE DE PRECISÃO */
+            .gauge-wrapper { position: relative; width: 150px; height: 150px; display: flex; align-items: center; justify-content: center; }
             
-            .gauge-track { 
-                position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-                border-radius: 50%; border: 6px solid #f0f0f0; 
+            .gauge-svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+            .gauge-bg { fill: none; stroke: #f0f0f0; stroke-width: 4; }
+            .gauge-path { 
+                fill: none; 
+                stroke-width: 4; 
+                stroke-linecap: round; 
+                transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1), stroke 1s ease;
+                stroke-dasharray: 283; /* Circunferência de raio 45 */
+                stroke-dashoffset: 283;
             }
 
-            .gauge-dot {
+            .needle {
                 position: absolute;
-                top: -5px; /* Alinhado com o topo do track */
-                left: 50%;
-                width: 14px;
-                height: 14px;
-                background: #ccc;
+                width: 2px;
+                height: 60px;
+                background: #333;
+                bottom: 50%;
+                left: calc(50% - 1px);
+                transform-origin: bottom center;
+                transform: rotate(0deg);
+                transition: transform 1.5s cubic-bezier(0.4, 0, 0.2, 1), background 1s ease;
+                z-index: 5;
+                border-radius: 2px;
+            }
+            /* Pequena base do ponteiro no centro */
+            .needle::after {
+                content: '';
+                position: absolute;
+                bottom: -4px; left: -3px;
+                width: 8px; height: 8px;
+                background: inherit;
                 border-radius: 50%;
-                transform-origin: 0 70px; /* Faz rodar à volta do centro do gauge */
-                transform: translateX(-50%) rotate(0deg);
-                transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
-                z-index: 2;
-                box-shadow: 0 2px 5px rgba(0,0,0,0.2);
             }
 
-            .metric-val { font-size: 2.2em; font-weight: 300; color: #222; z-index: 1; margin-top: -5px; }
-            .metric-label { position: absolute; bottom: 30px; font-size: 0.55em; font-weight: 800; text-transform: uppercase; color: #aaa; }
+            .value-display { position: absolute; z-index: 10; text-align: center; background: #fff; padding: 5px; border-radius: 50%; }
+            .metric-val { font-size: 2.2em; font-weight: 300; color: #1a1a1a; display: block; line-height: 1; }
+            .metric-label { font-size: 0.55em; font-weight: 800; text-transform: uppercase; color: #aaa; margin-top: 2px; display: block; }
 
-            /* CORES DINÂMICAS PARA O PONTO */
-            .dot-ideal { background: #81c784 !important; box-shadow: 0 0 10px rgba(129, 199, 132, 0.5); }
-            .dot-warning { background: #ffa000 !important; }
-            .dot-danger { background: #ef5350 !important; }
-            .dot-alkaline { background: #4fc3f7 !important; }
-
-            /* ALERTAS E INFO */
-            .alert-card { background: #fff5f5; border-left: 6px solid #c62828; padding: 2em; border-radius: 0 25px 25px 0; margin-bottom: 2em; }
-            .alert-card h5 { color: #c62828; text-transform: uppercase; font-size: 0.7em; letter-spacing: 1px; margin-bottom: 8px; font-weight: 900; }
-            .alert-card p { color: #7f1d1d; font-size: 0.9em; margin: 0; line-height: 1.5; font-weight: 600; }
-
+            /* INFO TÉCNICA */
             .tech-info { background: #f9fbf9; padding: 1.5em; border-radius: 20px; margin-top: 1em; flex-grow: 1; }
             .tech-item { margin-bottom: 1em; }
             .tech-item h5 { font-size: 0.65em; font-weight: 900; text-transform: uppercase; color: #bbb; margin-bottom: 5px; }
             .tech-item p { font-size: 0.85em; margin: 0; line-height: 1.5; color: #444; }
 
-            .temp-badge { background: #e1f5fe; color: #0277bd; padding: 8px 20px; border-radius: 25px; font-size: 0.85em; font-weight: 700; display: inline-block; margin-bottom: 15px; }
+            .alert-card { background: #fff5f5; border-left: 6px solid #c62828; padding: 2em; border-radius: 0 25px 25px 0; margin-bottom: 2em; }
+            .alert-card h5 { color: #c62828; text-transform: uppercase; font-size: 0.7em; letter-spacing: 1px; margin-bottom: 8px; font-weight: 900; }
+            .alert-card p { color: #7f1d1d; font-size: 0.9em; margin: 0; line-height: 1.5; font-weight: 600; }
 
+            .temp-badge { background: #e1f5fe; color: #0277bd; padding: 8px 20px; border-radius: 25px; font-size: 0.85em; font-weight: 700; display: inline-block; margin-bottom: 15px; }
             .page-footer { margin-top: auto; padding: 4em 0 2em 0; border-top: 1px solid #f2f2f2; }
 
             @media screen and (max-width: 1280px) {
@@ -82,7 +90,6 @@
 			<div id="main">
                 <div class="inner">
 					<header id="header" style="height: 0; margin: 0; padding: 0; overflow: hidden;"></header>
-					
                     <section>
                         <div style="text-align: center; margin-bottom: 5em;">
                             <span class="category-label">Recursos Vitais</span>
@@ -92,27 +99,37 @@
 
                         <div class="water-dashboard" id="water-dashboard" style="display:none;">
                             
-                            <!-- PERFIL QUÍMICO COM BARÓMETROS -->
+                            <!-- PERFIL QUÍMICO -->
                             <div class="data-card">
                                 <h4 class="card-title">Perfil Químico</h4>
                                 <div class="quality-grid">
-                                    <!-- GAUGE PH -->
-                                    <div class="gauge-container">
-                                        <div class="gauge-track"></div>
-                                        <div id="ph-dot" class="gauge-dot"></div>
-                                        <span class="metric-val" id="val-ph">--</span>
-                                        <span class="metric-label">pH</span>
+                                    <!-- MANÓMETRO PH -->
+                                    <div class="gauge-wrapper">
+                                        <svg class="gauge-svg" viewBox="0 0 100 100">
+                                            <circle class="gauge-bg" cx="50" cy="50" r="45" />
+                                            <circle id="path-ph" class="gauge-path" cx="50" cy="50" r="45" />
+                                        </svg>
+                                        <div id="needle-ph" class="needle"></div>
+                                        <div class="value-display">
+                                            <span class="metric-val" id="val-ph">--</span>
+                                            <span class="metric-label">pH</span>
+                                        </div>
                                     </div>
-                                    <!-- GAUGE DUREZA -->
-                                    <div class="gauge-container">
-                                        <div class="gauge-track"></div>
-                                        <div id="dur-dot" class="gauge-dot"></div>
-                                        <span class="metric-val" id="val-dureza">--</span>
-                                        <span class="metric-label">Dureza (ºf)</span>
+                                    <!-- MANÓMETRO DUREZA -->
+                                    <div class="gauge-wrapper">
+                                        <svg class="gauge-svg" viewBox="0 0 100 100">
+                                            <circle class="gauge-bg" cx="50" cy="50" r="45" />
+                                            <circle id="path-dureza" class="gauge-path" cx="50" cy="50" r="45" />
+                                        </svg>
+                                        <div id="needle-dureza" class="needle"></div>
+                                        <div class="value-display">
+                                            <span class="metric-val" id="val-dureza">--</span>
+                                            <span class="metric-label">ºf</span>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="tech-info">
-                                    <div class="tech-item"><h5>Vantagens e Utilidade</h5><p id="water-advantages">A analisar composição...</p></div>
+                                    <div class="tech-item"><h5>Vantagens e Utilidade</h5><p id="water-advantages">A analisar...</p></div>
                                     <div class="tech-item"><h5>Aptidão de Cultivo</h5><p id="soil-utility">--</p></div>
                                 </div>
                             </div>
@@ -120,10 +137,7 @@
                             <!-- ESTADO DO RECURSO -->
                             <div class="data-card">
                                 <h4 class="card-title">Estado do Recurso</h4>
-                                <div id="impact-alert" class="alert-card" style="display:none;">
-                                    <h5>Alerta de Vulnerabilidade</h5>
-                                    <p id="impact-text"></p>
-                                </div>
+                                <div id="impact-alert" class="alert-card" style="display:none;"><h5>Alerta de Vulnerabilidade</h5><p id="impact-text"></p></div>
                                 <div class="tech-info" style="background: #f4f7fb;">
                                     <div class="tech-item"><h5>Origem / Aquífero</h5><p id="reg-aquifer">--</p></div>
                                     <div class="tech-item"><h5>Infraestrutura Hídrica</h5><p id="reg-dams">--</p></div>
@@ -132,9 +146,7 @@
                             </div>
                         </div>
 
-                        <div id="no-gps-warning" style="text-align: center; padding: 4em; background: #f4f7fb; border-radius: 40px;">
-                            <p>Sincronize a sua localização para carregar os dados hídricos.</p>
-                        </div>
+                        <div id="no-gps-warning" style="text-align: center; padding: 4em; background: #f4f7fb; border-radius: 40px;"><p>A carregar inteligência regional...</p></div>
 
                         <footer class="page-footer">
                             <div style="display: flex; align-items: center; justify-content: flex-end; gap: 10px; opacity: 0.3;">
@@ -153,6 +165,8 @@
 
 		<script src="/assets/js/jquery.min.js"></script>
         <script>
+            let locationsDB = [];
+
             function calcularDistancia(lat1, lon1, lat2, lon2) {
                 const R = 6371;
                 const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -164,18 +178,47 @@
             async function inicializarPagina() {
                 try {
                     const r = await fetch('/data/bioregioes.json');
-                    const data = await r.json();
+                    locationsDB = await r.json();
                     const urlParams = new URLSearchParams(window.location.search);
                     const regionParam = urlParams.get('region');
                     const savedId = localStorage.getItem('biocultura_region');
-                    let info = regionParam ? data.find(i => i.id === regionParam) : data.find(i => i.id === savedId);
-
-                    if (info) renderWaterDashboard(info);
-                    else renderWaterDashboard(data.find(i => i.id === "portugal-nacional"));
+                    let info = regionParam ? locationsDB.find(i => i.id === regionParam) : locationsDB.find(i => i.id === savedId);
+                    if (info) renderDashboard(info);
+                    else renderDashboard(locationsDB.find(i => i.id === "portugal-nacional"));
                 } catch(e) { console.error(e); }
             }
 
-            function renderWaterDashboard(info) {
+            function updateGauge(id, value, max, type) {
+                const path = document.getElementById('path-' + id);
+                const needle = document.getElementById('needle-' + id);
+                if (!path || !needle) return;
+
+                // Cálculo do arco (stroke-dashoffset)
+                const circumference = 283;
+                const percentage = value / max;
+                const offset = circumference - (percentage * circumference);
+                path.style.strokeDashoffset = offset;
+
+                // Cálculo da rotação do ponteiro (0 a 360 graus)
+                const rotation = percentage * 360;
+                needle.style.transform = `rotate(${rotation}deg)`;
+
+                // Cores dinâmicas baseadas na escala
+                let color = "#bbb";
+                if (type === 'ph') {
+                    if (value >= 6.5 && value <= 8.5) color = "#81c784"; // Ideal
+                    else if (value < 6.5) color = "#ffd54f"; // Ácido
+                    else color = "#4fc3f7"; // Alcalino
+                } else {
+                    if (value < 15) color = "#4fc3f7"; // Macia
+                    else if (value <= 30) color = "#ffb74d"; // Média
+                    else color = "#ef5350"; // Dura
+                }
+                path.style.stroke = color;
+                needle.style.background = color;
+            }
+
+            function renderDashboard(info) {
                 if(!info) return;
                 document.getElementById('no-gps-warning').style.display = 'none';
                 document.getElementById('water-dashboard').style.display = 'grid';
@@ -188,26 +231,11 @@
                     document.getElementById('val-ph').innerText = ph;
                     document.getElementById('val-dureza').innerText = dur;
 
-                    // Lógica do Ponto de pH (Escala 0 a 14, onde 7 é 180deg)
-                    // Mapeamos 0-14 para -150deg a 150deg para um arco visual bonito
-                    const phRotation = ((ph / 14) * 300) - 150;
-                    const phDot = document.getElementById('ph-dot');
-                    phDot.style.transform = `translateX(-50%) rotate(${phRotation}deg)`;
-                    
-                    phDot.className = 'gauge-dot'; // Reset
-                    if (ph >= 6.5 && ph <= 8.5) phDot.classList.add('dot-ideal');
-                    else if (ph < 6.5) phDot.classList.add('dot-warning');
-                    else phDot.classList.add('dot-alkaline');
-
-                    // Lógica do Ponto de Dureza (Escala 0 a 50)
-                    const durRotation = ((dur / 50) * 300) - 150;
-                    const durDot = document.getElementById('dur-dot');
-                    durDot.style.transform = `translateX(-50%) rotate(${durRotation}deg)`;
-                    
-                    durDot.className = 'gauge-dot';
-                    if (dur < 15) durDot.classList.add('dot-ideal');
-                    else if (dur <= 30) durDot.classList.add('dot-warning');
-                    else durDot.classList.add('dot-danger');
+                    // Atualizar Gauges (pH max 14, Dureza max 50)
+                    setTimeout(() => {
+                        updateGauge('ph', ph, 14, 'ph');
+                        updateGauge('dureza', dur, 50, 'dur');
+                    }, 100);
 
                     document.getElementById('water-advantages').innerText = ph < 7 ? "Água ligeiramente ácida: Ideal para a absorção de micronutrientes." : "Água equilibrada: Rica em carbonatos, excelente para neutralizar solos ácidos.";
                     document.getElementById('soil-utility').innerText = ph < 7 ? "Favorece mirtilos, batatas e hortênsias." : "Favorece leguminosas, vinhas e oliveiras.";
@@ -220,7 +248,6 @@
                 if (info.agua) {
                     document.getElementById('reg-aquifer').innerText = info.agua.aquiferos || "Em levantamento.";
                     document.getElementById('reg-dams').innerText = (info.agua.barragens_proximas && Array.isArray(info.agua.barragens_proximas)) ? info.agua.barragens_proximas.join(', ') : "Sem barragens próximas.";
-                    
                     const impactAlert = document.getElementById('impact-alert');
                     const impactText = document.getElementById('impact-text');
                     const nota = info.agua.nota || "";
