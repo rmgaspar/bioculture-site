@@ -16,17 +16,11 @@
             #sidebar > .inner { height: 100% !important; overflow: hidden !important; display: flex; flex-direction: column; }
             #wrapper { padding-left: 18em !important; }
 
-            /* CABEÇALHOS SUBTIS */
+            /* CABEÇALHOS CINZENTOS */
             .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; color: #bbb; margin-bottom: 10px; display: block; text-align: center; }
             
-            /* LINHAS DE DADOS (ESTILO DIÁRIO) */
-            .data-row { 
-                display: grid; 
-                grid-template-columns: 180px 1fr; 
-                gap: 40px; 
-                padding: 2.5em 0;
-                border-bottom: 1px solid #f2f2f2;
-            }
+            /* LINHAS DE DADOS */
+            .data-row { display: grid; grid-template-columns: 180px 1fr; gap: 40px; padding: 2.5em 0; border-bottom: 1px solid #f2f2f2; }
             .data-row h4 { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin: 0; padding-top: 5px; }
 
             /* ESCALAS HORIZONTAIS */
@@ -34,33 +28,21 @@
             .gauge-label { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 10px; }
             .gauge-label .current-val { font-size: 1.4em; font-weight: 700; color: #1a1a1a; }
             .gauge-label .unit { font-size: 0.7em; font-weight: 800; color: #bbb; text-transform: uppercase; }
-
             .gauge-bar { height: 8px; width: 100%; border-radius: 10px; position: relative; background: #eee; }
             .bar-ph { background: linear-gradient(to right, #ffd54f 0%, #81c784 50%, #4fc3f7 100%); }
             .bar-dureza { background: linear-gradient(to right, #4fc3f7 0%, #ffb74d 50%, #ef5350 100%); }
 
-            .gauge-marker {
-                position: absolute;
-                top: -6px;
-                left: 0%; 
-                width: 3px;
-                height: 20px;
-                background: #1a1a1a;
-                border-radius: 2px;
-                transition: left 1.5s cubic-bezier(0.4, 0, 0.2, 1);
-            }
+            .gauge-marker { position: absolute; top: -6px; left: 0%; width: 3px; height: 20px; background: #1a1a1a; border-radius: 2px; transition: left 1.5s cubic-bezier(0.4, 0, 0.2, 1); }
 
             .tech-content { display: flex; flex-direction: column; gap: 15px; }
             .tech-main { font-size: 1.1em; font-weight: 700; color: #1a1a1a; line-height: 1.3; }
             .tech-detail { font-size: 0.95em; color: #777; line-height: 1.6; margin: 0; }
 
-            /* ALERTA CRÍTICO */
-            .alert-box { background: #fff8f8; padding: 2em; border-radius: 25px; border-left: 5px solid #ef5350; margin-bottom: 20px; }
+            .alert-box { background: #fff8f8; padding: 2em; border-radius: 25px; border-left: 5px solid #ef5350; margin-top: 20px; }
             .alert-box h5 { color: #ef5350; font-weight: 900; text-transform: uppercase; font-size: 0.7em; margin-bottom: 8px; }
             .alert-box p { color: #7f1d1d; font-size: 0.95em; margin: 0; font-weight: 600; }
 
             .temp-badge { background: #f4f7fb; color: #5c6bc0; padding: 6px 15px; border-radius: 50px; font-size: 0.75em; font-weight: 800; display: inline-block; margin-top: 20px; }
-
             .page-footer { margin-top: auto; padding: 4em 0 2em 0; border-top: 1px solid #f2f2f2; }
 
             @media screen and (max-width: 1280px) {
@@ -83,8 +65,6 @@
                         </div>
 
                         <div id="water-dashboard" style="display:none;">
-                            
-                            <!-- LINHA 1: PERFIL QUÍMICO -->
                             <div class="data-row">
                                 <h4>Perfil Químico</h4>
                                 <div class="tech-content">
@@ -100,7 +80,6 @@
                                 </div>
                             </div>
 
-                            <!-- LINHA 2: DISPONIBILIDADE -->
                             <div class="data-row">
                                 <h4>Disponibilidade</h4>
                                 <div class="tech-content">
@@ -162,27 +141,19 @@
                 if(!info) return;
                 document.getElementById('no-gps-warning').style.display = 'none';
                 document.getElementById('water-dashboard').style.display = 'block';
-                
-                const regName = document.getElementById('reg-name');
-                regName.innerText = info.titulo;
-                regName.style.color = "#888";
+                document.getElementById('reg-name').innerText = info.titulo;
+                document.getElementById('reg-name').style.color = "#888";
 
                 if (info.recursos_hidricos) {
                     const ph = parseFloat(info.recursos_hidricos.ph_agua) || 7.0;
                     const dur = parseFloat(info.recursos_hidricos.dureza_fr) || 10;
-                    
                     document.getElementById('label-ph').innerText = "pH " + ph;
                     document.getElementById('label-dureza').innerText = dur + " ºf";
-
                     setTimeout(() => {
                         document.getElementById('marker-ph').style.left = (ph / 14 * 100) + "%";
                         document.getElementById('marker-dureza').style.left = (Math.min(dur / 50 * 100, 100)) + "%";
                     }, 300);
-
-                    document.getElementById('water-advantages').innerText = ph < 7 
-                        ? "Água ligeiramente ácida: Ideal para a absorção de micronutrientes. Favorece mirtilos e batatas." 
-                        : "Água equilibrada: Rica em carbonatos, excelente para neutralizar solos ácidos. Benéfica para vinhas.";
-
+                    document.getElementById('water-advantages').innerText = ph < 7 ? "Água ligeiramente ácida: Ideal para a absorção de micronutrientes. Favorece mirtilos e batatas." : "Água equilibrada: Rica em carbonatos, excelente para neutralizar solos ácidos.";
                     const mes = new Date().getMonth();
                     const temp = (info.recursos_hidricos.temp_media_agua && info.recursos_hidricos.temp_media_agua[mes]) ? info.recursos_hidricos.temp_media_agua[mes] : '--';
                     document.getElementById('temp-container').innerHTML = `<div class="temp-badge"><i class="fas fa-thermometer-half"></i> Água hoje: ${temp}ºC</div>`;
@@ -191,16 +162,12 @@
                 if (info.agua) {
                     document.getElementById('reg-aquifer').innerText = "Aquífero: " + (info.agua.aquiferos || "Em levantamento.");
                     document.getElementById('reg-dams').innerText = "Barragens próximas: " + ((info.agua.barragens_proximas && Array.isArray(info.agua.barragens_proximas)) ? info.agua.barragens_proximas.join(', ') : "Nenhuma detetada.");
-                    
                     const impactAlert = document.getElementById('impact-alert');
-                    const impactText = document.getElementById('impact-text');
-                    const nota = info.agua.nota || "";
-                    if (info.id === "porto-de-mos" || nota.toLowerCase().includes("poluição") || nota.toLowerCase().includes("contaminação")) {
+                    if (info.id === "porto-de-mos") {
                         impactAlert.style.display = 'block';
-                        impactText.innerText = info.id === "porto-de-mos" ? "A poluição industrial e a extração descontrolada ameaçam a integridade deste aquífero vital." : nota;
+                        document.getElementById('impact-text').innerText = "A poluição industrial e a extração descontrolada ameaçam a integridade deste aquífero vital.";
                     } else { impactAlert.style.display = 'none'; }
                 }
-                
                 const input = document.getElementById('loc-search-input');
                 if(input) input.value = info.titulo;
             }
@@ -208,13 +175,26 @@
             function setupSidebarLogic() {
                 const input = document.getElementById('loc-search-input');
                 const gpsBtn = document.getElementById('btn-gps-trigger');
-                if(!input) return;
+                if(!input || !gpsBtn) return;
 
                 gpsBtn.onclick = () => {
                     input.value = "A localizar...";
-                    localStorage.clear(); sessionStorage.clear();
                     navigator.geolocation.getCurrentPosition(pos => {
-                        window.location.href = window.location.pathname;
+                        const userLat = pos.coords.latitude;
+                        const userLon = pos.coords.longitude;
+                        let minD = Infinity;
+                        let closest = null;
+                        locationsDB.forEach(c => {
+                            if(c.lat && c.lon) {
+                                let d = calcularDistancia(userLat, userLon, c.lat, c.lon);
+                                if(d < minD) { minD = d; closest = c; }
+                            }
+                        });
+                        if(closest) {
+                            localStorage.setItem('biocultura_region', closest.id);
+                            sessionStorage.clear();
+                            window.location.href = window.location.pathname;
+                        }
                     }, () => { window.location.href = window.location.pathname; });
                 };
 
@@ -230,11 +210,7 @@
                             const div = document.createElement('div');
                             div.className = 'bio-res-item';
                             div.innerText = m.titulo;
-                            div.onclick = () => {
-                                localStorage.setItem('biocultura_region', m.id);
-                                sessionStorage.clear();
-                                window.location.href = window.location.pathname;
-                            };
+                            div.onclick = () => { localStorage.setItem('biocultura_region', m.id); location.reload(); };
                             dropdown.appendChild(div);
                         });
                     } else dropdown.style.display = 'none';
