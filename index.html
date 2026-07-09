@@ -23,7 +23,7 @@
                 gap: 5em;
             }
             .hero-text { flex: 1.2; }
-            .hero-visual { flex: 1.5; display: flex; justify-content: center; align-items: center; }
+            .hero-visual { flex: 1.5; display: flex; justify-content: center; align-items: center; position: relative; }
 
             .hero-text h1 { 
                 font-size: 3.8em; font-weight: 900; color: #1a1a1a; 
@@ -34,57 +34,57 @@
                 border-left: 5px solid #c62828; padding-left: 25px; font-style: italic;
             }
             
-            /* BINÓCULOS SEM FRAME (LENTES FLUTUANTES) */
-            .binoculars-wrap {
+            /* BINÓCULOS FLUTUANTES (SEM FRAME PRETO) */
+            .binoculars-container {
+                position: relative;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                position: relative;
-                filter: drop-shadow(0 30px 50px rgba(0,0,0,0.12));
+                filter: drop-shadow(0 30px 60px rgba(0,0,0,0.15));
             }
 
             .lens {
-                width: 260px;
-                height: 260px;
+                width: 250px;
+                height: 250px;
                 border-radius: 50%;
                 overflow: hidden;
                 position: relative;
+                border: 12px solid #1a1a1a; /* Aro dos binóculos */
                 background: #000;
-                border: 10px solid #1a1a1a; /* O aro dos binóculos */
                 z-index: 1;
             }
 
             /* União das lentes */
-            .lens-left { margin-right: -45px; }
-            .lens-right { margin-left: -45px; }
+            .lens-left { margin-right: -40px; }
+            .lens-right { margin-left: -40px; }
 
             .lens img {
                 width: 100%;
                 height: 100%;
                 object-fit: cover;
-                transition: transform 0.8s ease;
+                transition: transform 1s ease;
                 opacity: 0.9;
             }
-            .binoculars-wrap:hover img { transform: scale(1.1); opacity: 1; }
+            .binoculars-container:hover img { transform: scale(1.15); opacity: 1; }
 
-            /* Escala Técnica Centralizada na união */
-            .crosshair {
+            /* ESCALA TÉCNICA (SVG OVERLAY) */
+            .tech-overlay {
                 position: absolute;
                 top: 50%; left: 50%;
                 transform: translate(-50%, -50%);
-                width: 80px;
-                height: 80px;
+                width: 440px; /* Largura total das duas lentes unidas */
+                height: 250px;
                 z-index: 10;
                 pointer-events: none;
+                opacity: 0.4;
             }
-            .crosshair::before { content: ''; position: absolute; top: 50%; left: 0; width: 100%; height: 1.5px; background: rgba(255,255,255,0.4); }
-            .crosshair::after { content: ''; position: absolute; left: 50%; top: 0; width: 1.5px; height: 100%; background: rgba(255,255,255,0.4); }
 
-            /* Etiquetas flutuantes por baixo das lentes */
-            .lens-tag {
+            .lens-label {
                 position: absolute;
                 bottom: -35px;
-                font-size: 0.6em;
+                width: 100%;
+                text-align: center;
+                font-size: 0.55em;
                 font-weight: 900;
                 text-transform: uppercase;
                 letter-spacing: 2px;
@@ -96,7 +96,7 @@
             .news-card { background: #fff; border-radius: 35px; border: 1px solid #f0f0f0; padding: 2.5em; transition: all 0.4s ease; display: flex; flex-direction: column; }
             .news-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.04); border-color: #2e7d32; }
             
-            .news-tag { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; color: #bbb; margin-bottom: 10px; display: block; }
+            .news-tag { font-size: 0.6em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin-bottom: 15px; display: block; }
             .news-card h3 { font-size: 1.25em; color: #1a1a1a; margin-bottom: 15px; line-height: 1.2; font-weight: 800; }
             .news-card p { font-size: 0.9em; color: #777; line-height: 1.7; margin-bottom: 2em; }
             .news-link { font-size: 0.7em; font-weight: 800; text-transform: uppercase; text-decoration: none; border: none !important; }
@@ -111,10 +111,9 @@
             @media screen and (max-width: 1280px) {
                 #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
                 #wrapper { padding-left: 0 !important; }
-                .hero-split { flex-direction: column; padding-top: 6em; text-align: center; }
-                .lens { width: 180px; height: 180px; border-width: 6px; }
-                .lens-left { margin-right: -25px; }
-                .lens-right { margin-left: -25px; }
+                .hero-split { flex-direction: column; padding-top: 6em; text-align: center; gap: 3em; }
+                .lens { width: 180px; height: 180px; border-width: 8px; }
+                .tech-overlay { width: 300px; height: 180px; }
             }
 		</style>
 	</head>
@@ -124,27 +123,35 @@
                 <div class="inner">
 					<header id="header" style="height: 0; margin: 0; padding: 0; overflow: hidden;"></header>
 					
+                    <!-- HERO SPLIT COM BINÓCULOS FLUTUANTES -->
                     <section class="hero-split">
                         <div class="hero-text">
                             <span style="font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; display: block; margin-bottom: 15px;">Observatório bioCultura</span>
                             <h1>O progresso não pode ser o fim do seu horizonte.</h1>
                             <p>Entre minas de lítio e espelhos de silício, o seu lar está a perder a cor. Enquanto nos vendem um futuro "verde", o seu território está a ser silenciado. Descubra a verdade oculta sob os seus pés.</p>
                         </div>
+                        
                         <div class="hero-visual">
-                            <!-- BINÓCULOS FLUTUANTES -->
-                            <div class="binoculars-wrap">
-                                <div class="crosshair"></div>
+                            <div class="binoculars-container">
                                 
-                                <!-- LENTE ESQUERDA -->
+                                <!-- ESCALA TÉCNICA SVG -->
+                                <svg class="tech-overlay" viewBox="0 0 400 200">
+                                    <line x1="200" y1="20" x2="200" y2="180" stroke="white" stroke-width="1" />
+                                    <line x1="100" y1="100" x2="300" y2="100" stroke="white" stroke-width="1" />
+                                    <!-- Pequenos traços de escala -->
+                                    <path d="M190 60 L210 60 M190 140 L210 140 M150 90 L150 110 M250 90 L250 110" stroke="white" stroke-width="1" fill="none" />
+                                </svg>
+
+                                <!-- LENTE ESQUERDA: NATUREZA -->
                                 <div class="lens lens-left">
                                     <img src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=1000&auto=format&fit=crop" />
-                                    <div class="lens-tag" style="left: 20%;">Preservação</div>
+                                    <div class="lens-label">Preservação</div>
                                 </div>
                                 
-                                <!-- LENTE DIREITA -->
+                                <!-- LENTE DIREITA: INDÚSTRIA -->
                                 <div class="lens lens-right">
                                     <img src="https://images.unsplash.com/photo-1509391366360-fe5bb58583bb?q=80&w=1000&auto=format&fit=crop" />
-                                    <div class="lens-tag" style="right: 20%;">Exploração</div>
+                                    <div class="lens-label">Exploração</div>
                                 </div>
                             </div>
                         </div>
