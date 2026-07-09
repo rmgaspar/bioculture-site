@@ -6,48 +6,55 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
 		<style>
-            /* --- ESTRUTURA GLOBAL & TIPOGRAFIA --- */
+            /* --- ESTRUTURA GLOBAL --- */
             body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
 			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
             section { padding-top: 4em !important; min-height: 100vh; display: flex; flex-direction: column; }
 
-            /* SIDEBAR FIXA */
+            /* SIDEBAR FIXA E SEM SCROLL */
             #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
+            #sidebar > .inner { height: 100% !important; overflow: hidden !important; display: flex; flex-direction: column; }
             #wrapper { padding-left: 18em !important; }
 
             /* CABEÇALHOS CINZENTOS */
-            .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; color: #bbb; margin-bottom: 10px; display: block; }
-            .card-title { font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin-bottom: 2em; text-align: center; }
-
-            /* DASHBOARD DE IMPACTO */
-            .impact-dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 30px; margin-bottom: 4em; }
-            .data-card { background: #fff; border-radius: 35px; padding: 3em; box-shadow: 0 15px 45px rgba(0,0,0,0.03); border: 1px solid #f8f8f8; display: flex; flex-direction: column; }
+            .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; color: #bbb; margin-bottom: 10px; display: block; text-align: center; }
             
+            /* LINHAS DE DADOS (ESTILO DIÁRIO) */
+            .data-row { 
+                display: grid; 
+                grid-template-columns: 180px 1fr; 
+                gap: 40px; 
+                padding: 2.5em 0;
+                border-bottom: 1px solid #f2f2f2;
+            }
+            .data-row h4 { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin: 0; padding-top: 5px; }
+
             /* ALERTAS CRÍTICOS */
-            .alert-strip { background: #fff5f5; border-left: 6px solid #c62828; padding: 1.5em; border-radius: 0 20px 20px 0; margin-bottom: 1.5em; }
-            .alert-strip h5 { color: #c62828; text-transform: uppercase; font-size: 0.7em; letter-spacing: 1px; margin-bottom: 5px; font-weight: 900; }
-            .alert-strip p { color: #7f1d1d; font-size: 0.9em; margin: 0; line-height: 1.4; font-weight: 600; }
+            .alert-box { background: #fff5f5; padding: 2em; border-radius: 25px; border-left: 5px solid #c62828; margin-bottom: 20px; }
+            .alert-box h5 { color: #c62828; font-weight: 900; text-transform: uppercase; font-size: 0.7em; margin-bottom: 8px; }
+            .alert-box p { color: #7f1d1d; font-size: 0.95em; margin: 0; font-weight: 600; }
 
-            /* INFO TÉCNICA */
-            .tech-info { background: #f9fbf9; padding: 2em; border-radius: 20px; margin-top: 1.5em; flex-grow: 1; }
-            .tech-item { margin-bottom: 1.5em; }
-            .tech-item h5 { font-size: 0.7em; font-weight: 900; text-transform: uppercase; color: #bbb; margin-bottom: 5px; }
-            .tech-item p { font-size: 0.9em; margin: 0; line-height: 1.5; color: #444; }
+            .tech-main { font-size: 1.15em; font-weight: 700; color: #1a1a1a; display: block; margin-bottom: 8px; }
+            .tech-detail { font-size: 0.95em; color: #777; line-height: 1.6; margin: 0; }
 
-            .risk-critical { color: #c62828 !important; font-weight: 700 !important; }
+            /* ESCALA DE RISCO */
+            .risk-meter { height: 8px; width: 100%; max-width: 300px; border-radius: 10px; background: #eee; position: relative; margin-top: 10px; }
+            .risk-fill { height: 100%; border-radius: 10px; transition: width 1.5s ease; }
+            .risk-high { background: #ef5350; }
+            .risk-med { background: #ffa000; }
 
             /* SECÇÃO PARADOXO */
-            .paradox-section { background: #fafafa; border-radius: 40px; padding: 4em; margin-bottom: 4em; border: 1px solid #eee; }
-            .paradox-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; margin-top: 2em; }
-            .paradox-item h4 { color: #1b5e20; font-size: 1.1em; font-weight: 700; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
-            .paradox-item p { font-size: 0.9em; color: #666; line-height: 1.6; text-align: justify; }
+            .paradox-container { background: #fafafa; padding: 4em; border-radius: 40px; margin: 4em 0; border: 1px solid #eee; }
+            .paradox-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; }
+            .paradox-item h3 { font-size: 1.1em; color: #1b5e20; font-weight: 800; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+            .paradox-item p { font-size: 0.9em; color: #666; line-height: 1.7; text-align: justify; }
 
-            /* RODAPÉ */
             .page-footer { margin-top: auto; padding: 4em 0 2em 0; border-top: 1px solid #f2f2f2; }
 
             @media screen and (max-width: 1280px) {
-                #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
+                #sidebar { position: relative !important; width: 100% !important; height: auto !important; overflow: visible !important; }
                 #wrapper { padding-left: 0 !important; }
+                .data-row { grid-template-columns: 1fr; gap: 15px; }
                 .paradox-grid { grid-template-columns: 1fr; }
             }
 		</style>
@@ -57,75 +64,64 @@
 			<div id="main">
                 <div class="inner">
 					<header id="header" style="height: 0; margin: 0; padding: 0; overflow: hidden;"></header>
-					
                     <section>
                         <div style="text-align: center; margin-bottom: 5em;">
                             <span class="category-label">Engenharia & Soluções</span>
-                            <h1 style="font-size: 3.5em; font-weight: 300; color: #1a1a1a; letter-spacing: -2px;">Energia & Extração</h1>
-                            <p style="font-style: italic; color: #999;">Radar de impacto territorial: <strong id="reg-name" style="color:#c62828">...</strong></p>
+                            <h1 style="font-size: 3.5em; font-weight: 300; color: #1a1a1a; letter-spacing: -2px; margin: 0;">Energia & Extração</h1>
+                            <p style="font-size: 0.9em; font-style: italic; color: #bbb; margin-top: 5px;">Radar de impacto territorial: <strong id="reg-name" style="color:#c62828">...</strong></p>
                         </div>
 
-                        <div class="impact-dashboard" id="impact-dashboard" style="display:none;">
+                        <div id="impact-dashboard" style="display:none;">
                             
-                            <!-- COLUNA ENERGIA -->
-                            <div class="data-card">
-                                <h4 class="card-title">Infraestrutura Fotovoltaica</h4>
-                                <div id="energy-alert" class="alert-strip" style="display:none;">
-                                    <h5>Alerta de Ecossistema</h5>
-                                    <p id="energy-alert-text"></p>
-                                </div>
-                                <div class="tech-info">
-                                    <div class="tech-item">
-                                        <h5>Parques de Larga Escala</h5>
-                                        <p id="solar-list" style="font-weight: 600;"></p>
+                            <!-- LINHA 1: FOTOVOLTAICO -->
+                            <div class="data-row">
+                                <h4>Infraestrutura</h4>
+                                <div style="width: 100%;">
+                                    <div id="energy-alert" class="alert-box" style="display:none;">
+                                        <h5>Alerta de Ecossistema</h5>
+                                        <p id="energy-alert-text"></p>
                                     </div>
-                                    <div class="tech-item">
-                                        <h5>Capacidade Instalada</h5>
-                                        <p><span id="val-energy-mw">--</span> MW na região</p>
-                                    </div>
+                                    <span class="tech-main">Capacidade Instalada: <span id="val-energy-mw">--</span> MW</span>
+                                    <p class="tech-detail" id="solar-list">A analisar parques de larga escala...</p>
                                 </div>
                             </div>
 
-                            <!-- COLUNA MINERAÇÃO -->
-                            <div class="data-card">
-                                <h4 class="card-title">Recursos Geológicos & Lítio</h4>
-                                <div id="mining-alert" class="alert-strip" style="display:none;">
-                                    <h5>Conflito de Mineração</h5>
-                                    <p id="mining-alert-text"></p>
-                                </div>
-                                <div class="tech-info" style="background: #fdfaf5;">
-                                    <div class="tech-item">
-                                        <h5>Zonas de Prospeção Ativas</h5>
-                                        <p id="prospect-list" style="font-weight: 600; color: #5d4037;"></p>
+                            <!-- LINHA 2: MINERAÇÃO -->
+                            <div class="data-row">
+                                <h4>Geologia & Minas</h4>
+                                <div style="width: 100%;">
+                                    <div id="mining-alert" class="alert-box" style="display:none;">
+                                        <h5>Conflito de Mineração</h5>
+                                        <p id="mining-alert-text"></p>
                                     </div>
-                                    <div class="tech-item">
-                                        <h5>Risco de Incêndio Estatístico</h5>
-                                        <p id="val-fire-risk">--</p>
+                                    <span class="tech-main">Zonas de Prospeção</span>
+                                    <p class="tech-detail" id="prospect-list">--</p>
+                                    <div style="margin-top: 20px;">
+                                        <span style="font-size: 0.65em; font-weight: 800; color: #bbb; text-transform: uppercase;">Risco de Incêndio Estatístico</span>
+                                        <p id="val-fire-risk" style="font-weight: 700; margin: 5px 0;"></p>
+                                        <div class="risk-meter"><div id="risk-fill" class="risk-fill"></div></div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- O PARADOXO ÉTICO -->
-                        <div class="paradox-section">
-                            <h3 style="text-align: center; font-weight: 300; font-size: 2em; margin-bottom: 1em;">O Paradoxo da Transição "Verde"</h3>
+                        <!-- O PARADOXO -->
+                        <div class="paradox-container">
+                            <h2 style="text-align: center; font-weight: 300; margin-bottom: 1.5em;">O Paradoxo da Transição "Verde"</h2>
                             <div class="paradox-grid">
                                 <div class="paradox-item">
-                                    <h4><i class="fas fa-microchip"></i> O Custo do Silício</h4>
-                                    <p>A instalação de parques fotovoltaicos de larga escala exige frequentemente a desflorestação e a impermeabilização de solos férteis. O silício, embora abundante, requer processos de purificação químicos altamente poluentes.</p>
+                                    <h3><i class="fas fa-microchip"></i> O Custo do Silício</h3>
+                                    <p>A instalação de parques fotovoltaicos industriais exige frequentemente a desflorestação e a impermeabilização de solos férteis. O silício requer processos de purificação químicos que, se não geridos, contaminam a biodiversidade local sob o pretexto de reduzir emissões de CO2.</p>
                                 </div>
                                 <div class="paradox-item">
-                                    <h4><i class="fas fa-car-battery"></i> A Ilusão das Baterias</h4>
-                                    <p>O armazenamento de energia em baterias de lítio mascara a destruição de ecossistemas remotos. A extração mineira consome milhões de litros de água doce, baixando o nível dos aquíferos e sufocando a vida local.</p>
+                                    <h3><i class="fas fa-car-battery"></i> A Ilusão das Baterias</h3>
+                                    <p>O armazenamento em baterias de lítio mascara a destruição de ecossistemas remotos. A extração mineira consome milhões de litros de água doce, baixando o nível dos aquíferos e sufocando a fauna endémica. A bioCultura questiona a ética de salvar o clima destruindo a vida local.</p>
                                 </div>
                             </div>
                         </div>
 
-                        <div id="no-gps-warning" style="text-align: center; padding: 4em; background: #f4f7fb; border-radius: 40px;">
-                            <p>Sincronize a sua localização para detetar ameaças energéticas.</p>
-                        </div>
+                        <div id="no-gps-warning" style="text-align: center; padding: 4em; color: #bbb;"><p>Selecione uma localidade na barra lateral.</p></div>
 
-                        <!-- RODAPÉ -->
                         <footer class="page-footer">
                             <div style="display: flex; align-items: center; justify-content: flex-end; gap: 10px; opacity: 0.3;">
                                 <div style="text-align: right; line-height: 1;">
@@ -159,112 +155,57 @@
                     const urlParams = new URLSearchParams(window.location.search);
                     const regionParam = urlParams.get('region');
                     const savedId = localStorage.getItem('biocultura_region');
-                    let info = null;
-                    if (regionParam) info = locationsDB.find(i => i.id === regionParam);
-                    if (!info && savedId) info = locationsDB.find(i => i.id === savedId);
-                    if (info) renderImpactDashboard(info);
-                    else tentarGPSOuNacional();
+                    let info = regionParam ? locationsDB.find(i => i.id === regionParam) : locationsDB.find(i => i.id === savedId);
+                    if (info) renderDashboard(info);
+                    else renderDashboard(locationsDB.find(i => i.id === "portugal-nacional"));
                 } catch(e) { console.error(e); }
             }
 
-            function tentarGPSOuNacional() {
-                if (navigator.geolocation) {
-                    const timeout = setTimeout(() => carregarNacional(), 3000);
-                    navigator.geolocation.getCurrentPosition(pos => {
-                        clearTimeout(timeout);
-                        let minD = Infinity; let closest = null;
-                        locationsDB.forEach(c => {
-                            if(c.lat && c.lon) {
-                                let d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon);
-                                if(d < minD) { minD = d; closest = c; }
-                            }
-                        });
-                        if(closest) { localStorage.setItem('biocultura_region', closest.id); renderImpactDashboard(closest); }
-                    }, () => { clearTimeout(timeout); carregarNacional(); });
-                } else carregarNacional();
-            }
-
-            function carregarNacional() {
-                const nacional = locationsDB.find(i => i.id === "portugal-nacional");
-                if (nacional) {
-                    renderImpactDashboard(nacional);
-                    document.getElementById('reg-name').innerHTML = "Portugal <span style='font-size:0.5em; color:#bbb'>(Média Nacional)</span>";
-                }
-            }
-
-            function renderImpactDashboard(info) {
+            function renderDashboard(info) {
                 if(!info) return;
                 document.getElementById('no-gps-warning').style.display = 'none';
-                document.getElementById('impact-dashboard').style.display = 'grid';
+                document.getElementById('impact-dashboard').style.display = 'block';
                 document.getElementById('reg-name').innerText = info.titulo;
+
                 if (info.energia_etica) {
                     document.getElementById('val-energy-mw').innerText = info.energia_etica.exploracao_atual_mw || '0';
                     const solarParks = info.energia_etica.parques_solares || [];
-                    document.getElementById('solar-list').innerText = solarParks.length > 0 ? solarParks.join(', ') : "Sem registo de parques industriais.";
+                    document.getElementById('solar-list').innerText = solarParks.length > 0 ? "Parques detetados: " + solarParks.join(', ') : "Sem registo de parques industriais próximos.";
                     const eAlert = document.getElementById('energy-alert');
                     if(info.energia_etica.alerta_impacto && info.energia_etica.alerta_impacto !== "N/A") {
                         eAlert.style.display = 'block';
                         document.getElementById('energy-alert-text').innerText = info.energia_etica.alerta_impacto;
                     } else eAlert.style.display = 'none';
                 }
+
                 if (info.mineracao) {
                     const prospects = info.mineracao.zonas_prospeccao || [];
                     document.getElementById('prospect-list').innerText = prospects.length > 0 ? prospects.join(', ') : "Sem prospeção ativa detetada.";
-                    const riskEl = document.getElementById('val-fire-risk');
+                    
                     const riskVal = info.mineracao.risco_incendio_estatistico || "Moderado";
+                    const riskEl = document.getElementById('val-fire-risk');
+                    const riskFill = document.getElementById('risk-fill');
                     riskEl.innerText = riskVal;
-                    if(riskVal.includes("Elevado")) riskEl.style.color = "#c62828";
+                    
+                    if(riskVal.includes("Muito Elevado")) { riskFill.style.width = "100%"; riskFill.className = "risk-fill risk-high"; riskEl.style.color = "#c62828"; }
+                    else if(riskVal.includes("Elevado")) { riskFill.style.width = "75%"; riskFill.className = "risk-fill risk-high"; riskEl.style.color = "#c62828"; }
+                    else { riskFill.style.width = "40%"; riskFill.className = "risk-fill risk-med"; riskEl.style.color = "#ffa000"; }
+
                     const mAlert = document.getElementById('mining-alert');
                     if(info.mineracao.conflito_litio && info.mineracao.conflito_litio !== "N/A") {
                         mAlert.style.display = 'block';
                         document.getElementById('mining-alert-text').innerText = info.mineracao.conflito_litio;
                     } else mAlert.style.display = 'none';
                 }
-            }
-
-            function setupSidebarEvents() {
                 const input = document.getElementById('loc-search-input');
-                const dropdown = document.getElementById('loc-dropdown');
-                const gpsBtn = document.getElementById('btn-gps-trigger');
-                if(!input) return;
-                if(gpsBtn) {
-                    gpsBtn.onclick = function(e) {
-                        e.preventDefault();
-                        input.value = "A localizar...";
-                        localStorage.clear(); sessionStorage.clear();
-                        navigator.geolocation.getCurrentPosition(() => { window.location.href = window.location.pathname; }, () => { window.location.href = window.location.pathname; });
-                    };
-                }
-                input.addEventListener('input', function() {
-                    const val = this.value.toLowerCase();
-                    dropdown.innerHTML = '';
-                    if(val.length < 2) { dropdown.style.display = 'none'; return; }
-                    const matches = locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0, 6);
-                    if(matches.length > 0) {
-                        dropdown.style.display = 'block';
-                        matches.forEach(m => {
-                            const item = document.createElement('div');
-                            item.className = 'bio-res-item';
-                            item.innerText = m.titulo;
-                            item.onclick = () => { localStorage.setItem('biocultura_region', m.id); sessionStorage.clear(); window.location.href = window.location.pathname; };
-                            dropdown.appendChild(item);
-                        });
-                    } else dropdown.style.display = 'none';
-                });
-                input.addEventListener('keydown', function(e) {
-                    if (e.key === 'Enter') {
-                        const val = this.value.toLowerCase().trim();
-                        const match = locationsDB.find(i => i.titulo.toLowerCase() === val || i.id === val);
-                        if(match) { localStorage.setItem('biocultura_region', match.id); sessionStorage.clear(); window.location.href = window.location.pathname; }
-                    }
-                });
+                if(input) input.value = info.titulo;
             }
 
             fetch('/sidebar-content.html').then(r => r.text()).then(html => {
                 document.getElementById('sidebar').innerHTML = html;
                 var s = document.createElement('script'); s.src = '/assets/js/main.js'; document.body.appendChild(s);
                 inicializarPagina();
-                setTimeout(setupSidebarEvents, 1000);
+                setTimeout(() => { /* Lógica sidebar unificada */ }, 1000);
             });
         </script>
 	</body>
