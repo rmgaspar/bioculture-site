@@ -143,6 +143,7 @@
 
 		<script src="/assets/js/jquery.min.js"></script>
         <script>
+            let locationsDB = [];
             function calcularDistancia(lat1, lon1, lat2, lon2) {
                 const R = 6371;
                 const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -154,46 +155,41 @@
             async function inicializarPagina() {
                 try {
                     const r = await fetch('/data/bioregioes.json');
-                    const data = await r.json();
+                    locationsDB = await r.json();
                     const urlParams = new URLSearchParams(window.location.search);
                     const regionParam = urlParams.get('region');
-                    
-                    if (regionParam) {
-                        const info = data.find(item => item.id === regionParam);
-                        if (info) {
-                            sessionStorage.setItem('biocultura_exploration_id', info.id);
-                            renderImpactDashboard(info);
-                            return;
-                        }
-                    }
+                    const savedId = localStorage.getItem('biocultura_region');
+                    let info = null;
+                    if (regionParam) info = locationsDB.find(i => i.id === regionParam);
+                    if (!info && savedId) info = locationsDB.find(i => i.id === savedId);
+                    if (info) renderImpactDashboard(info);
+                    else tentarGPSOuNacional();
+                } catch(e) { console.error(e); }
+            }
 
-                    const explorationId = sessionStorage.getItem('biocultura_exploration_id');
-                    if (explorationId) {
-                        const info = data.find(item => item.id === explorationId);
-                        if (info) { renderImpactDashboard(info); return; }
-                    }
-
-                    const savedRegionId = localStorage.getItem('biocultura_region');
-                    let info = data.find(item => item.id === savedRegionId);
-
-                    if (info) {
-                        renderImpactDashboard(info);
-                    } else if (navigator.geolocation) {
-                        navigator.geolocation.getCurrentPosition(pos => {
-                            let minD = Infinity; let closest = null;
-                            data.forEach(c => {
-                                if(c.lat && c.lon) {
-                                    let d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon);
-                                    if(d < minD) { minD = d; closest = c; }
-                                }
-                            });
-                            if(closest) {
-                                localStorage.setItem('biocultura_region', closest.id);
-                                renderImpactDashboard(closest);
+            function tentarGPSOuNacional() {
+                if (navigator.geolocation) {
+                    const timeout = setTimeout(() => carregarNacional(), 3000);
+                    navigator.geolocation.getCurrentPosition(pos => {
+                        clearTimeout(timeout);
+                        let minD = Infinity; let closest = null;
+                        locationsDB.forEach(c => {
+                            if(c.lat && c.lon) {
+                                let d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon);
+                                if(d < minD) { minD = d; closest = c; }
                             }
                         });
-                    }
-                } catch(e) { console.error("Erro:", e); }
+                        if(closest) { localStorage.setItem('biocultura_region', closest.id); renderImpactDashboard(closest); }
+                    }, () => { clearTimeout(timeout); carregarNacional(); });
+                } else carregarNacional();
+            }
+
+            function carregarNacional() {
+                const nacional = locationsDB.find(i => i.id === "portugal-nacional");
+                if (nacional) {
+                    renderImpactDashboard(nacional);
+                    document.getElementById('reg-name').innerHTML = "Portugal <span style='font-size:0.5em; color:#bbb'>(Média Nacional)</span>";
+                }
             }
 
             function renderImpactDashboard(info) {
@@ -201,37 +197,74 @@
                 document.getElementById('no-gps-warning').style.display = 'none';
                 document.getElementById('impact-dashboard').style.display = 'grid';
                 document.getElementById('reg-name').innerText = info.titulo;
-
                 if (info.energia_etica) {
                     document.getElementById('val-energy-mw').innerText = info.energia_etica.exploracao_atual_mw || '0';
                     const solarParks = info.energia_etica.parques_solares || [];
                     document.getElementById('solar-list').innerText = solarParks.length > 0 ? solarParks.join(', ') : "Sem registo de parques industriais.";
+                    const eAlert = document.getElementById('energy-alert');
                     if(info.energia_etica.alerta_impacto && info.energia_etica.alerta_impacto !== "N/A") {
-                        document.getElementById('energy-alert').style.display = 'block';
+                        eAlert.style.display = 'block';
                         document.getElementById('energy-alert-text').innerText = info.energia_etica.alerta_impacto;
-                    }
+                    } else eAlert.style.display = 'none';
                 }
-
                 if (info.mineracao) {
                     const prospects = info.mineracao.zonas_prospeccao || [];
                     document.getElementById('prospect-list').innerText = prospects.length > 0 ? prospects.join(', ') : "Sem prospeção ativa detetada.";
-                    
                     const riskEl = document.getElementById('val-fire-risk');
                     const riskVal = info.mineracao.risco_incendio_estatistico || "Moderado";
                     riskEl.innerText = riskVal;
-                    if(riskVal.includes("Elevado")) riskEl.classList.add('risk-critical');
-
+                    if(riskVal.includes("Elevado")) riskEl.style.color = "#c62828";
+                    const mAlert = document.getElementById('mining-alert');
                     if(info.mineracao.conflito_litio && info.mineracao.conflito_litio !== "N/A") {
-                        document.getElementById('mining-alert').style.display = 'block';
+                        mAlert.style.display = 'block';
                         document.getElementById('mining-alert-text').innerText = info.mineracao.conflito_litio;
-                    }
+                    } else mAlert.style.display = 'none';
                 }
+            }
+
+            function setupSidebarEvents() {
+                const input = document.getElementById('loc-search-input');
+                const dropdown = document.getElementById('loc-dropdown');
+                const gpsBtn = document.getElementById('btn-gps-trigger');
+                if(!input) return;
+                if(gpsBtn) {
+                    gpsBtn.onclick = function(e) {
+                        e.preventDefault();
+                        input.value = "A localizar...";
+                        localStorage.clear(); sessionStorage.clear();
+                        navigator.geolocation.getCurrentPosition(() => { window.location.href = window.location.pathname; }, () => { window.location.href = window.location.pathname; });
+                    };
+                }
+                input.addEventListener('input', function() {
+                    const val = this.value.toLowerCase();
+                    dropdown.innerHTML = '';
+                    if(val.length < 2) { dropdown.style.display = 'none'; return; }
+                    const matches = locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0, 6);
+                    if(matches.length > 0) {
+                        dropdown.style.display = 'block';
+                        matches.forEach(m => {
+                            const item = document.createElement('div');
+                            item.className = 'bio-res-item';
+                            item.innerText = m.titulo;
+                            item.onclick = () => { localStorage.setItem('biocultura_region', m.id); sessionStorage.clear(); window.location.href = window.location.pathname; };
+                            dropdown.appendChild(item);
+                        });
+                    } else dropdown.style.display = 'none';
+                });
+                input.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        const val = this.value.toLowerCase().trim();
+                        const match = locationsDB.find(i => i.titulo.toLowerCase() === val || i.id === val);
+                        if(match) { localStorage.setItem('biocultura_region', match.id); sessionStorage.clear(); window.location.href = window.location.pathname; }
+                    }
+                });
             }
 
             fetch('/sidebar-content.html').then(r => r.text()).then(html => {
                 document.getElementById('sidebar').innerHTML = html;
                 var s = document.createElement('script'); s.src = '/assets/js/main.js'; document.body.appendChild(s);
                 inicializarPagina();
+                setTimeout(setupSidebarEvents, 1000);
             });
         </script>
 	</body>
