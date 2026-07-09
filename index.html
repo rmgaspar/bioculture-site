@@ -13,34 +13,93 @@
             #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
             #wrapper { padding-left: 18em !important; }
 
-            /* HERO SPLIT */
-            .hero-split { padding: 12em 0 6em 0; max-width: 1100px; margin: 0 auto; display: flex; align-items: center; gap: 5em; }
-            .hero-text { flex: 1.4; }
-            .hero-visual { flex: 1; display: flex; justify-content: center; align-items: center; position: relative; }
+            /* HERO BINÓCULOS (SPLIT LAYOUT) */
+            .hero-split { 
+                padding: 10em 0 6em 0; 
+                max-width: 1100px; 
+                margin: 0 auto; 
+                display: flex;
+                align-items: center; 
+                gap: 5em;
+            }
+            .hero-text { flex: 1.1; }
+            .hero-visual { flex: 1.4; display: flex; justify-content: center; align-items: center; position: relative; }
 
             .hero-text span.obs-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; display: block; margin-bottom: 15px; }
-            .hero-text h1 { font-size: 3.8em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; line-height: 0.95; margin-bottom: 25px; }
-            .hero-text p { font-size: 1.25em; color: #777; line-height: 1.6; border-left: 5px solid #c62828; padding-left: 25px; font-style: italic; }
+            .hero-text h1 { font-size: 3.5em; font-weight: 900; color: #1a1a1a; letter-spacing: -2px; line-height: 0.95; margin-bottom: 25px; }
+            .hero-text p { font-size: 1.15em; color: #777; line-height: 1.6; border-left: 5px solid #c62828; padding-left: 25px; font-style: italic; }
             
-            .hero-globe { width: 400px; height: 400px; border-radius: 50%; overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,0.15); border: 1px solid rgba(0,0,0,0.05); position: relative; }
-            .hero-globe img { width: 100%; height: 100%; object-fit: cover; }
+            /* ESTRUTURA DOS BINÓCULOS */
+            .binoculars {
+                display: flex;
+                align-items: center;
+                position: relative;
+                gap: 10px;
+            }
+            .lens {
+                width: 260px;
+                height: 260px;
+                border-radius: 50%;
+                overflow: hidden;
+                border: 8px solid #1a1a1a;
+                box-shadow: 0 30px 60px rgba(0,0,0,0.2);
+                position: relative;
+                background: #000;
+            }
+            .lens img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transition: transform 0.5s ease;
+            }
+            .lens:hover img { transform: scale(1.1); }
+            
+            /* Efeito de Vidro da Lente */
+            .lens::after {
+                content: '';
+                position: absolute;
+                top: 0; left: 0; width: 100%; height: 100%;
+                background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.15) 0%, rgba(0,0,0,0) 60%);
+                pointer-events: none;
+            }
+
+            /* Ponte dos Binoculos */
+            .binocular-bridge {
+                width: 40px;
+                height: 20px;
+                background: #1a1a1a;
+                border-radius: 5px;
+                z-index: 2;
+            }
+
+            /* Etiqueta por baixo das lentes */
+            .lens-label {
+                position: absolute;
+                bottom: -30px;
+                font-size: 0.55em;
+                font-weight: 900;
+                text-transform: uppercase;
+                letter-spacing: 2px;
+                color: #bbb;
+                width: 100%;
+                text-align: center;
+            }
 
             /* GRID DE INVESTIGAÇÃO */
-            .news-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-bottom: 6em; }
+            .news-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; margin-bottom: 6em; }
             .news-card { background: #fff; border-radius: 35px; border: 1px solid #f0f0f0; padding: 2.5em; transition: all 0.4s ease; display: flex; flex-direction: column; }
             .news-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.04); border-color: #2e7d32; }
             
             .news-tag { font-size: 0.6em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin-bottom: 15px; display: block; }
             .news-card h3 { font-size: 1.25em; color: #1a1a1a; margin-bottom: 15px; line-height: 1.2; font-weight: 800; }
             .news-card p { font-size: 0.9em; color: #777; line-height: 1.7; margin-bottom: 2em; }
-            .news-link { font-size: 0.7em; font-weight: 800; text-transform: uppercase; text-decoration: none; border: none !important; cursor: pointer; }
+            .news-link { font-size: 0.7em; font-weight: 800; text-transform: uppercase; text-decoration: none; border: none !important; }
 
             .c-mining { color: #c62828 !important; }
             .c-energy { color: #f57f17 !important; }
             .c-water { color: #0277bd !important; }
             .c-nature { color: #2e7d32 !important; }
 
-            /* INFO FOOTER - ALINHADO À ESQUERDA */
             .info-footer { text-align: left; padding: 4em 0; border-top: 1px solid #f2f2f2; }
             .info-footer p { font-size: 1.1em; color: #bbb; font-style: italic; max-width: 800px; }
 
@@ -48,7 +107,8 @@
                 #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
                 #wrapper { padding-left: 0 !important; }
                 .hero-split { flex-direction: column; padding-top: 6em; text-align: center; gap: 3em; }
-                .hero-globe { width: 300px; height: 300px; }
+                .hero-text h1 { font-size: 2.8em; }
+                .lens { width: 180px; height: 180px; }
             }
 		</style>
 	</head>
@@ -58,6 +118,7 @@
                 <div class="inner">
 					<header id="header" style="height: 0; margin: 0; padding: 0; overflow: hidden;"></header>
 					
+                    <!-- HERO SPLIT COM BINÓCULOS -->
                     <section class="hero-split">
                         <div class="hero-text">
                             <span class="obs-label">Observatório bioCultura</span>
@@ -65,8 +126,20 @@
                             <p>Entre minas de lítio e espelhos de silício, o seu lar está a perder a cor. Enquanto nos vendem um futuro "verde", o seu território está a ser silenciado. Descubra a verdade oculta sob os seus pés.</p>
                         </div>
                         <div class="hero-visual">
-                            <div class="hero-globe">
-                                <img src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=2000&auto=format&fit=crop" alt="O Horizonte bioCultura" />
+                            <div class="binoculars">
+                                <!-- LENTE ESQUERDA: NATUREZA -->
+                                <div class="lens" style="border-color: #2e7d32;">
+                                    <img src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=1000&auto=format&fit=crop" alt="Natureza Intocada" />
+                                    <div class="lens-label">Preservação</div>
+                                </div>
+                                
+                                <div class="binocular-bridge"></div>
+                                
+                                <!-- LENTE DIREITA: IMPACTO INDUSTRIAL -->
+                                <div class="lens" style="border-color: #c62828;">
+                                    <img src="https://images.unsplash.com/photo-1509391366360-fe5bb58583bb?q=80&w=1000&auto=format&fit=crop" alt="Impacto Industrial" />
+                                    <div class="lens-label">Exploração</div>
+                                </div>
                             </div>
                         </div>
                     </section>
@@ -76,7 +149,6 @@
                     </div>
 
                     <div class="news-grid">
-                        <!-- LINKS COM PARÂMETRO ?region=ID PARA FORÇAR A LOCALIDADE -->
                         <div class="news-card">
                             <span class="news-tag">Mineração & Conflito</span>
                             <h3>A Fronteira do Lítio: Barroso e Arga</h3>
@@ -120,7 +192,7 @@
                         </div>
                     </div>
 
-                    <!-- INFO FINAL ALINHADA À ESQUERDA -->
+                    <!-- INFO FINAL -->
                     <section class="info-footer">
                         <p>Saiba mais sobre mineração, água e solo da sua região, ativando a localização na barra lateral.</p>
                     </section>
