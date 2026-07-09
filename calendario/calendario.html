@@ -116,68 +116,110 @@
 
 		<script src="/assets/js/jquery.min.js"></script>
         <script>
-            const mesesMap = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
-            const mesesFull = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
-            const mesKey = mesesMap[new Date().getMonth()];
-            document.getElementById('display-month').innerText = mesesFull[new Date().getMonth()];
+            let locationsDB = [];
 
-            const agroIntelligence = {
-                "jan": { "pomar": "Poda de inverno e tratamentos.", "pomar_detail": "Aplique calda bordalesa em macieiras e pereiras. Poda de limpeza em árvores de folha caduca.", "vinha": "Poda seca e limpeza de sarmentos.", "vinha_detail": "Momento de selecionar as varas para a próxima produção. Limpeza manual de muros.", "jardim": "Proteção contra geadas.", "jardim_detail": "Cubra plantas tropicais. Podar roseiras e arbustos ornamentais de verão.", "adega": "Trasfegas e análises laboratoriais.", "adega_detail": "Primeira trasfega dos vinhos novos. Verifique o nível de sulfitos e a limpidez.", "sementeiras": "Favas, ervilhas e alhos.", "sementeiras_detail": "Semear em local definitivo. Iniciar alfobres de cebola em local protegido.", "alerta": "RISCO DE GEADA: Proteja os rebentos jovens com manta térmica durante a noite." },
-                "fev": { "pomar": "Finalização de podas e adubação.", "pomar_detail": "Adubar pomares com matéria orgânica. Floração precoce de amendoeiras.", "vinha": "Atar as varas e reparar arames.", "vinha_detail": "Concluir a poda seca. Verificar o estado dos postes e estacas.", "jardim": "Plantação de bolbos de primavera.", "jardim_detail": "Semear anuais. Poda de formação em sebes.", "adega": "Engarrafamento de vinhos jovens.", "adega_detail": "Filtragem e estabilização de brancos e rosés para consumo rápido.", "sementeiras": "Batata e cebola.", "sementeiras_detail": "Semear batata precoce em zonas baixas. Transplante de cebolas.", "alerta": "RISCO DE HUMIDADE: Vigie o aparecimento de fungos em locais pouco ventilados." },
-                "mar": { "pomar": "Enxertia e controlo de pragas.", "pomar_detail": "Época ideal para enxertar citrinos. Vigie o aparecimento de afídeos.", "vinha": "Início do ciclo vegetativo (Abrolhamento).", "vinha_detail": "Aplique enxofre preventivo se a humidade for elevada.", "jardim": "Adubação geral e sementeiras.", "jardim_detail": "Adubar relvados. Plantar perenes e arbustos.", "adega": "Limpeza de cubas vazias.", "adega_detail": "Manutenção preventiva de lagares e prensas.", "sementeiras": "Tomate, pimento e beringela.", "sementeiras_detail": "Semear em estufa ou local aquecido. Transplante de couves.", "alerta": "RISCO DE GEADA NEGRA: Atenção aos rebentos de vinha em noites de céu limpo." },
-                "abr": { "pomar": "Raleio de frutos e monitorização.", "pomar_detail": "Remover excesso de frutos em pessegueiros. Vigiar o bicho da fruta.", "vinha": "Controlo de Míldio e Oídio.", "vinha_detail": "Tratamentos preventivos biológicos à base de cobre e enxofre.", "jardim": "Combate a infestantes.", "jardim_detail": "Limpeza de canteiros. Corte regular de relva.", "adega": "Engarrafamento de tintos.", "adega_detail": "Loteamento e preparação final de vinhos de reserva.", "sementeiras": "Feijão, milho e abóbora.", "sementeiras_detail": "Sementeiras de primavera em pleno campo.", "alerta": "RISCO DE CHUVAS INTENSAS: Garanta a drenagem das valas para evitar asfixia radicular." },
-                "mai": { "pomar": "Colheita de cerejas e nêsperas.", "pomar_detail": "Vigie a mosca da cereja. Rega suplementar em pomares novos.", "vinha": "Desfolha e esladroamento.", "vinha_detail": "Remover folhas que tapam os cachos para melhorar o arejamento.", "jardim": "Rega regular e flores.", "jardim_detail": "Plantar flores de verão (petúnias, sardinheiras).", "adega": "Controlo de temperatura.", "adega_detail": "Mantenha a adega fresca para evitar refermentações indesejadas.", "sementeiras": "Melão, melancia e pepino.", "sementeiras_detail": "Sementeiras de Verão. Transplante de tomate para o exterior.", "alerta": "SOL INTENSO: Inicie a rega ao amanhecer para maximizar a absorção." },
-                "jun": { "pomar": "Colheita de damascos e ameixas.", "pomar_detail": "Rega intensiva. Proteja os frutos dos pássaros com redes.", "vinha": "Tratamentos de floração/vincagem.", "vinha_detail": "Evite tratamentos agressivos durante a floração.", "jardim": "Controlo de pragas de verão.", "jardim_detail": "Vigie o aparecimento de cochonilha e aranhiço vermelho.", "adega": "Higiene rigorosa.", "adega_detail": "Manter pavimentos e paredes limpas para evitar odores acéticos.", "sementeiras": "Cenouras e alfaces de verão.", "sementeiras_detail": "Sementeiras sucessivas para colheita escalonada.", "alerta": "RISCO DE ONDA DE CALOR: Reforce a rega e use mulching (palha) no solo." },
-                "jul": { "pomar": "Colheita de pêssegos e ameixas.", "pomar_detail": "Instale armadilhas para a mosca. Regue ao entardecer.", "vinha": "Poda em verde e maturação.", "vinha_detail": "Remover rebentos ladrões. O calor exige solo coberto.", "jardim": "Stress hídrico e limpeza.", "jardim_detail": "Use 'mulching' para reduzir a rega. Corte flores secas.", "adega": "Higienização de vasilhame.", "adega_detail": "Lave cubas com água quente antes da vindima.", "sementeiras": "Couves e brócolos para inverno.", "sementeiras_detail": "Semear em local sombreado.", "alerta": "SOL EXTREMO: Não molhe as folhas nas horas de calor (efeito lupa)." },
-                "ago": { "pomar": "Pêra Rocha e Figos.", "pomar_detail": "Inicie a colheita de amêndoa. Rega controlada.", "vinha": "Acompanhamento (Pintor).", "vinha_detail": "Uvas ganham cor. Evite regas para concentrar açúcares.", "jardim": "Recolha de sementes.", "jardim_detail": "Colher sementes de flores secas. Podar sebes.", "adega": "Preparação final vindima.", "adega_detail": "Verifique prensa e desengaçador.", "sementeiras": "Morangueiros e nabo.", "sementeiras_detail": "Plantar novos morangueiros.", "alerta": "RISCO DE INCÊNDIO: Limpe matos e faixas de gestão de combustível." },
-                "set": { "pomar": "Maçãs de guarda e castanha.", "pomar_detail": "Colheita principal. Armazenar em local fresco e arejado.", "vinha": "VINDIMA PRINCIPAL.", "vinha_detail": "Determine o momento ideal de colheita pelo equilíbrio açúcar/acidez.", "jardim": "Plantação de arbustos.", "jardim_detail": "Aproveite as primeiras chuvas para plantar árvores e arbustos.", "adega": "VINIFICAÇÃO.", "adega_detail": "Controlo rigoroso da temperatura de fermentação (25-28ºC).", "sementeiras": "Cebolas e alhos.", "sementeiras_detail": "Sementeiras de outono. Espinafres e rabanetes.", "alerta": "RISCO DE CHUVAS NA VINDIMA: Colha rapidamente se prever precipitação forte." },
-                "out": { "pomar": "Azeitona e castanha.", "pomar_detail": "Colheita de azeitona para azeite. Limpeza de pomares.", "vinha": "Adubação de outono.", "vinha_detail": "Aplique corretivos orgânicos após a queda da folha.", "jardim": "Bolbos de outono.", "jardim_detail": "Plantar tulipas e narcisos. Limpar folhas secas.", "adega": "Descubas e prensagem.", "adega_detail": "Final da fermentação alcoólica. Início da malolática.", "sementeiras": "Favas e ervilhas.", "sementeiras_detail": "Sementeiras de inverno. Tremoço para adubação verde.", "alerta": "RISCO DE GEADAS PRECOCES: Recolha os citrinos mais sensíveis." },
-                "nov": { "pomar": "Plantação de árvores de fruto.", "pomar_detail": "Aproveite o repouso vegetativo para plantar. Calagem do solo.", "vinha": "Início da poda seca.", "vinha_detail": "Limpeza de videiras e seleção de varas para enxertia.", "jardim": "Manutenção de ferramentas.", "jardim_detail": "Limpar e lubrificar tesouras e alfaias.", "adega": "Trasfegas e clarificação.", "adega_detail": "Atesto de cubas para evitar oxidações (vinhos 'a flor').", "sementeiras": "Cereais de inverno.", "sementeiras_detail": "Trigo, centeio e aveia.", "alerta": "RISCO DE NEVE/GELO: Drene tubagens expostas para evitar ruturas." },
-                "dez": { "pomar": "Poda sanitária e tratamentos.", "pomar_detail": "Calda bordalesa em todas as fruteiras. Limpeza de musgos.", "vinha": "Poda seca intensiva.", "vinha_detail": "Retirar sarmentos e fazer compostagem.", "jardim": "Planeamento do jardim.", "jardim_detail": "Desenhar novos canteiros. Descanso vegetativo.", "adega": "Loteamento final.", "adega_detail": "Provas organoléticas e estabilização natural pelo frio.", "sementeiras": "Ervas aromáticas em estufa.", "sementeiras_detail": "Salsa e coentros em local abrigado.", "alerta": "FRIO INTENSO: Evite trabalhar o solo se este estiver encharcado ou gelado." }
-            };
-
-            const regionalVarieties = { "norte": "Alvarinho, Loureiro, Vinhão", "centro": "Touriga Nacional, Bical, Arinto", "alentejo": "Aragonez, Trincadeira, Antão Vaz", "algarve": "Negra Mole, Castelão" };
-
+            // 1. Função de Inicialização de Dados
             async function inicializarPagina() {
                 try {
                     const r = await fetch('/data/bioregioes.json');
-                    const data = await r.json();
+                    locationsDB = await r.json();
+                    
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const regionParam = urlParams.get('region');
                     const savedId = localStorage.getItem('biocultura_region');
-                    let info = data.find(i => i.id === savedId) || data.find(i => i.id === "portugal-nacional");
+                    
+                    let info = null;
+                    if (regionParam) info = locationsDB.find(i => i.id === regionParam);
+                    if (!info && savedId) info = locationsDB.find(i => i.id === savedId);
 
                     if (info) {
-                        document.getElementById('reg-name').innerText = info.titulo;
-                        document.getElementById('soil-type').innerText = info.biomas?.solo || "Misto";
-                        
-                        const intel = agroIntelligence[mesKey];
-                        
-                        document.getElementById('task-pomar-main').innerText = intel.pomar;
-                        document.getElementById('task-pomar-detail').innerText = intel.pomar_detail;
-                        document.getElementById('task-vinha-main').innerText = intel.vinha;
-                        document.getElementById('task-vinha-detail').innerText = intel.vinha_detail;
-                        document.getElementById('task-jardim-main').innerText = intel.jardim;
-                        document.getElementById('task-jardim-detail').innerText = intel.jardim_detail;
-                        document.getElementById('task-adega-main').innerText = intel.adega;
-                        document.getElementById('task-adega-detail').innerText = intel.adega_detail;
-                        document.getElementById('task-sementeiras-main').innerText = intel.sementeiras;
-                        document.getElementById('task-sementeiras-detail').innerText = intel.sementeiras_detail;
-                        document.getElementById('climate-alert').innerText = intel.alerta;
-
-                        const reg = info.regiao || "centro";
-                        document.getElementById('vinha-castas').innerHTML = `<strong>Castas sugeridas:</strong> ${regionalVarieties[reg]}`;
-
-                        document.getElementById('tasks-container').style.display = 'grid';
-                        document.getElementById('soil-card').style.display = 'flex';
-                        document.getElementById('no-gps-warning').style.display = 'none';
+                        renderDashboard(info); // Esta função deve ter o nome correto em cada página
+                    } else {
+                        const nacional = locationsDB.find(i => i.id === "portugal-nacional");
+                        if (nacional) renderDashboard(nacional);
                     }
-                } catch(e) { console.error(e); }
+                } catch(e) { console.error("Erro ao carregar banco de dados:", e); }
             }
 
-            fetch('/sidebar-content.html').then(r => r.text()).then(html => {
-                document.getElementById('sidebar').innerHTML = html;
-                var s = document.createElement('script'); s.src = '/assets/js/main.js'; document.body.appendChild(s);
-                inicializarPagina();
-            });
+            // 2. Lógica da Sidebar (Pesquisa e GPS)
+            function setupSidebarLogic() {
+                const input = document.getElementById('loc-search-input');
+                const dropdown = document.getElementById('loc-dropdown');
+                const gpsBtn = document.getElementById('btn-gps-trigger');
+
+                if (!input) return;
+
+                // Ação do GPS
+                gpsBtn.onclick = () => {
+                    if (!navigator.geolocation) return;
+                    input.value = "A localizar...";
+                    localStorage.clear(); sessionStorage.clear();
+                    navigator.geolocation.getCurrentPosition(() => {
+                        window.location.href = window.location.pathname;
+                    }, () => { window.location.href = window.location.pathname; });
+                };
+
+                // Pesquisa Manual
+                input.addEventListener('input', function() {
+                    const val = this.value.toLowerCase();
+                    dropdown.innerHTML = '';
+                    if (val.length < 2) { dropdown.style.display = 'none'; return; }
+
+                    const matches = locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0, 6);
+                    if (matches.length > 0) {
+                        dropdown.style.display = 'block';
+                        matches.forEach(m => {
+                            const div = document.createElement('div');
+                            div.className = 'bio-res-item';
+                            div.innerText = m.titulo;
+                            div.onclick = () => {
+                                localStorage.setItem('biocultura_region', m.id);
+                                sessionStorage.clear();
+                                window.location.href = window.location.pathname;
+                            };
+                            dropdown.appendChild(div);
+                        });
+                    } else { dropdown.style.display = 'none'; }
+                });
+
+                // Enter na pesquisa
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        const val = input.value.toLowerCase().trim();
+                        const match = locationsDB.find(i => i.titulo.toLowerCase() === val || i.id === val);
+                        if (match) {
+                            localStorage.setItem('biocultura_region', match.id);
+                            sessionStorage.clear();
+                            window.location.href = window.location.pathname;
+                        }
+                    }
+                });
+            }
+
+            // 3. Carregamento da Sidebar e Ativação
+            fetch('/sidebar-content.html')
+                .then(r => r.text())
+                .then(html => {
+                    document.getElementById('sidebar').innerHTML = html;
+                    // Carregar o JS original do template
+                    var s = document.createElement('script'); 
+                    s.src = '/assets/js/main.js'; 
+                    document.body.appendChild(s);
+                    
+                    // Iniciar lógica após a injeção do HTML
+                    inicializarPagina();
+                    setupSidebarLogic();
+                    
+                    // Atualizar o input com o nome atual
+                    setTimeout(() => {
+                        const savedId = localStorage.getItem('biocultura_region');
+                        const input = document.getElementById('loc-search-input');
+                        if(savedId && input && locationsDB.length > 0) {
+                            const info = locationsDB.find(i => i.id === savedId);
+                            if(info) input.value = info.titulo;
+                        }
+                    }, 500);
+                });
         </script>
 	</body>
 </html>
