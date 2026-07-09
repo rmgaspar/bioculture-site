@@ -126,15 +126,22 @@
 
 		<script src="/assets/js/jquery.min.js"></script>
         <script>
+            let locationsDB = [];
             const mesesMap = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
             const mesesFull = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
             const dataAtual = new Date();
             const mesIndex = dataAtual.getMonth();
             const mesKey = mesesMap[mesIndex];
-
             document.getElementById('display-month').innerText = mesesFull[mesIndex];
 
-            // 1. Lógica Lunar
+            function calcularDistancia(lat1, lon1, lat2, lon2) {
+                const R = 6371;
+                const dLat = (lat2 - lat1) * Math.PI / 180;
+                const dLon = (lon2 - lon1) * Math.PI / 180;
+                const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
+                return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+            }
+
             function getLunarPhase() {
                 const lp = 2551443; 
                 const new_moon = new Date(1970, 0, 7, 20, 35, 0);
@@ -149,80 +156,93 @@
             document.getElementById('lunar-phase-name').innerText = moon.name;
             document.getElementById('lunar-tip').innerText = moon.tip;
 
-            // 2. Base de Dados de Tratamentos Bio
-            function getBioTreatment(mes) {
-                const library = {
-                    "jul": { title: "Infusão de Alho (Repelente)", desc: "Eficaz contra afídeos e ácaros no pomar. Ferva 5 dentes de alho em 1L de água, deixe repousar 24h e pulverize as folhas ao entardecer." },
-                    "ago": { title: "Sabão de Potássio", desc: "Ideal para limpar a melada deixada pela mosca branca. Misture 20g de sabão neutro em 1L de água morna e aplique nas zonas afetadas." },
-                    "set": { title: "Bicarbonato de Sódio (Fungicida)", desc: "Proteja as suas roseiras e vinha do Oídio. Misture 1 colher de chá em 1L de água com um fio de azeite e borrife preventivamente." },
-                    "out": { title: "Chorume de Urtiga", desc: "Excelente fertilizante e preventivo de pragas. Deixe urtigas em água 15 dias, dilua (1:10) e regue a base das plantas para fortalecer antes do inverno." }
-                };
-                return library[mes] || { title: "Calda Bordalesa (Inverno)", desc: "Tratamento clássico à base de cobre para proteger árvores de fruto contra fungos durante o repouso vegetativo." };
-            }
-
-            function getSmartHints(mes, solo) {
-                const hints = {
-                    "jul": {
-                        "pomar": "Colha agora: Pêssegos, Ameixas e Alperces. Vigie a mosca da fruta.",
-                        "jardim": "Stress Hídrico: Regue ao amanhecer. Use 'Mulching' para manter a frescura.",
-                        "vinha": "Poda em Verde: Remova rebentos ladrões para fortalecer os cachos.",
-                        "sementeiras": "Resistência: Semeie Couves e Alfaces resistentes ao calor."
-                    }
-                };
-                let soilHint = "";
-                if(solo.includes("Arenoso")) soilHint = "Solo Arenoso: Regas curtas mas mais frequentes.";
-                if(solo.includes("Argiloso")) soilHint = "Solo Argiloso: Evite encharcar no calor para não asfixiar as raízes.";
-                return { tasks: hints[mes] || {}, soil: soilHint };
-            }
-
             async function inicializarPagina() {
-                const savedRegionId = localStorage.getItem('biocultura_region');
-                const cachedData = sessionStorage.getItem('biocultura_data_cache');
-                if (cachedData && JSON.parse(cachedData).id === savedRegionId) {
-                    renderCalendar(JSON.parse(cachedData));
-                } else {
-                    try {
-                        const r = await fetch('/data/bioregioes.json');
-                        const data = await r.json();
-                        let info = data.find(item => item.id === savedRegionId);
-                        if (info) renderCalendar(info);
-                    } catch(e) { console.error("Erro", e); }
-                }
+                try {
+                    const r = await fetch('/data/bioregioes.json');
+                    locationsDB = await r.json();
+                    const savedId = localStorage.getItem('biocultura_region');
+                    let info = locationsDB.find(item => item.id === savedId);
+                    if (info) renderCalendar(info);
+                    else tentarGPSOuNacional();
+                } catch(e) { console.error(e); }
+            }
+
+            function tentarGPSOuNacional() {
+                if (navigator.geolocation) {
+                    const timeout = setTimeout(() => carregarNacional(), 3000);
+                    navigator.geolocation.getCurrentPosition(pos => {
+                        clearTimeout(timeout);
+                        let minD = Infinity; let closest = null;
+                        locationsDB.forEach(c => { if(c.lat && c.lon) { let d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon); if(d < minD) { minD = d; closest = c; } } });
+                        if(closest) { localStorage.setItem('biocultura_region', closest.id); renderCalendar(closest); }
+                    }, () => { clearTimeout(timeout); carregarNacional(); });
+                } else carregarNacional();
+            }
+
+            function carregarNacional() {
+                const nacional = locationsDB.find(i => i.id === "portugal-nacional");
+                if (nacional) { renderCalendar(nacional); document.getElementById('reg-name').innerHTML = "Portugal <span style='font-size:0.5em; color:#bbb'>(Média Nacional)</span>"; }
             }
 
             function renderCalendar(info) {
+                if(!info) return;
                 document.getElementById('no-gps-warning').style.display = 'none';
                 document.getElementById('tasks-container').style.display = 'grid';
                 document.getElementById('soil-card').style.display = 'flex';
-                document.getElementById('bio-lab').style.display = 'block';
                 document.getElementById('reg-name').innerText = info.titulo;
-                const soloDetectado = info.biomas?.solo || "N/A";
-                document.getElementById('soil-type').innerText = soloDetectado;
-
-                const hints = getSmartHints(mesKey, soloDetectado);
-                const treatment = getBioTreatment(mesKey);
-
-                document.getElementById('treatment-title').innerText = treatment.title;
-                document.getElementById('treatment-desc').innerText = treatment.desc;
-
+                document.getElementById('soil-type').innerText = info.biomas?.solo || "N/A";
                 if (info.calendario) {
                     document.getElementById('task-pomar').innerText = info.calendario.pomar[mesKey] || "Manutenção.";
-                    document.getElementById('hint-pomar').innerText = hints.tasks.pomar || "Vigie pragas.";
-                    document.getElementById('task-vinha').innerText = info.calendario.vinha[mesKey] || "Acompanhar maturação.";
-                    document.getElementById('hint-vinha').innerText = hints.tasks.vinha || "Mantenha o solo limpo.";
-                    document.getElementById('task-jardim').innerText = info.calendario.jardim[mesKey] || "Rega controlada.";
-                    document.getElementById('hint-jardim').innerText = hints.tasks.jardim || "Proteja do sol direto.";
+                    document.getElementById('task-vinha').innerText = info.calendario.vinha[mesKey] || "Acompanhar.";
+                    document.getElementById('task-jardim').innerText = info.calendario.jardim[mesKey] || "Rega.";
                     document.getElementById('task-adega').innerText = info.calendario.adega[mesKey] || "Preparação.";
-                    document.getElementById('hint-adega').innerText = "Dica: Higienize bem as cubas.";
-                    document.getElementById('task-sementeiras').innerText = info.calendario.sementeiras[mesKey] || "Semear da época.";
-                    document.getElementById('hint-sementeiras').innerText = hints.soil || "Mantenha a humidade.";
+                    document.getElementById('task-sementeiras').innerText = info.calendario.sementeiras[mesKey] || "Semear.";
                 }
+            }
+
+            function setupSidebarEvents() {
+                const input = document.getElementById('loc-search-input');
+                const dropdown = document.getElementById('loc-dropdown');
+                const gpsBtn = document.getElementById('btn-gps-trigger');
+                if(!input) return;
+                if(gpsBtn) {
+                    gpsBtn.onclick = function(e) {
+                        e.preventDefault();
+                        input.value = "A localizar...";
+                        localStorage.clear(); sessionStorage.clear();
+                        navigator.geolocation.getCurrentPosition(() => { window.location.href = window.location.pathname; }, () => { window.location.href = window.location.pathname; });
+                    };
+                }
+                input.addEventListener('input', function() {
+                    const val = this.value.toLowerCase();
+                    dropdown.innerHTML = '';
+                    if(val.length < 2) { dropdown.style.display = 'none'; return; }
+                    const matches = locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0, 6);
+                    if(matches.length > 0) {
+                        dropdown.style.display = 'block';
+                        matches.forEach(m => {
+                            const item = document.createElement('div');
+                            item.className = 'bio-res-item';
+                            item.innerText = m.titulo;
+                            item.onclick = () => { localStorage.setItem('biocultura_region', m.id); sessionStorage.clear(); window.location.href = window.location.pathname; };
+                            dropdown.appendChild(item);
+                        });
+                    } else dropdown.style.display = 'none';
+                });
+                input.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        const val = this.value.toLowerCase().trim();
+                        const match = locationsDB.find(i => i.titulo.toLowerCase() === val || i.id === val);
+                        if(match) { localStorage.setItem('biocultura_region', match.id); sessionStorage.clear(); window.location.href = window.location.pathname; }
+                    }
+                });
             }
 
             fetch('/sidebar-content.html').then(r => r.text()).then(html => {
                 document.getElementById('sidebar').innerHTML = html;
                 var s = document.createElement('script'); s.src = '/assets/js/main.js'; document.body.appendChild(s);
                 inicializarPagina();
+                setTimeout(setupSidebarEvents, 1000);
             });
         </script>
 	</body>
