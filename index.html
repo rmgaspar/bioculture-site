@@ -15,7 +15,7 @@
 
             /* HERO SPLIT */
             .hero-split { 
-                padding: 12em 0 6em 0; 
+                padding: 10em 0 6em 0; 
                 max-width: 1100px; 
                 margin: 0 auto; 
                 display: flex;
@@ -25,83 +25,72 @@
             .hero-text { flex: 1.2; }
             .hero-visual { flex: 1.5; display: flex; justify-content: center; align-items: center; }
 
-            .hero-text span.obs-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; display: block; margin-bottom: 15px; }
-            .hero-text h1 { font-size: 3.5em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; line-height: 0.95; margin-bottom: 25px; }
-            .hero-text p { font-size: 1.15em; color: #777; line-height: 1.6; border-left: 5px solid #c62828; padding-left: 25px; font-style: italic; }
+            .hero-text h1 { 
+                font-size: 3.8em; font-weight: 900; color: #1a1a1a; 
+                letter-spacing: -2.5px; line-height: 0.95; margin-bottom: 25px; 
+            }
+            .hero-text p { 
+                font-size: 1.2em; color: #777; line-height: 1.6; 
+                border-left: 5px solid #c62828; padding-left: 25px; font-style: italic;
+            }
             
-            /* ESTRUTURA REALISTA DE BINÓCULOS */
-            .binocular-container {
-                position: relative;
-                width: 100%;
-                max-width: 550px;
-                height: 320px;
-                background: #111; /* Corpo dos binóculos */
-                border-radius: 60px;
-                overflow: hidden;
-                box-shadow: 0 40px 100px rgba(0,0,0,0.25);
+            /* BINÓCULOS REAIS (DOIS CÍRCULOS UNIDOS) */
+            .binoculars-frame {
                 display: flex;
-            }
-
-            /* Máscara de Lentes Unidas */
-            .binocular-container::after {
-                content: '';
-                position: absolute;
-                top: 0; left: 0; width: 100%; height: 100%;
-                background: radial-gradient(circle at 32% 50%, transparent 35%, #111 35.5%),
-                            radial-gradient(circle at 68% 50%, transparent 35%, #111 35.5%);
-                pointer-events: none;
-                z-index: 5;
-            }
-
-            /* Lente Esquerda: Natureza */
-            .view-left {
-                flex: 1;
-                background-image: url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=1000&auto=format&fit=crop');
-                background-size: cover;
-                background-position: center;
+                align-items: center;
+                justify-content: center;
+                background: #000; /* Fundo preto para destacar as lentes */
+                padding: 40px;
+                border-radius: 60px;
                 position: relative;
+                box-shadow: 0 40px 100px rgba(0,0,0,0.2);
             }
 
-            /* Lente Direita: Exploração */
-            .view-right {
-                flex: 1;
-                background-image: url('https://images.unsplash.com/photo-1509391366360-fe5bb58583bb?q=80&w=1000&auto=format&fit=crop');
-                background-size: cover;
-                background-position: center;
-                filter: saturate(1.5) contrast(1.1);
+            .lens {
+                width: 240px;
+                height: 240px;
+                border-radius: 50%;
+                overflow: hidden;
+                position: relative;
+                border: 2px solid rgba(255,255,255,0.1);
             }
 
-            /* Escala Técnica Central (Crosshair) */
-            .binocular-scale {
+            /* Sobreposição das lentes para o efeito unido */
+            .lens-left { margin-right: -30px; z-index: 1; }
+            .lens-right { margin-left: -30px; z-index: 1; }
+
+            .lens img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transition: transform 0.8s ease;
+            }
+            .binoculars-frame:hover img { transform: scale(1.1); }
+
+            /* Escala Técnica Central */
+            .crosshair {
                 position: absolute;
                 top: 50%; left: 50%;
                 transform: translate(-50%, -50%);
-                width: 2px;
-                height: 120px;
-                background: rgba(255,255,255,0.3);
+                width: 100px;
+                height: 100px;
                 z-index: 10;
+                pointer-events: none;
             }
-            .binocular-scale::before {
-                content: '';
-                position: absolute;
-                top: 50%; left: -40px;
-                width: 80px;
-                height: 1px;
-                background: rgba(255,255,255,0.3);
-            }
+            .crosshair::before { content: ''; position: absolute; top: 50%; left: 0; width: 100%; height: 1px; background: rgba(255,255,255,0.3); }
+            .crosshair::after { content: ''; position: absolute; left: 50%; top: 0; width: 1px; height: 100%; background: rgba(255,255,255,0.3); }
 
-            /* Labels dentro das lentes */
-            .view-label {
+            .lens-label {
                 position: absolute;
-                bottom: 40px;
+                bottom: 25px;
                 width: 100%;
                 text-align: center;
                 font-size: 0.5em;
                 font-weight: 900;
                 text-transform: uppercase;
                 letter-spacing: 2px;
-                color: rgba(255,255,255,0.5);
-                z-index: 10;
+                color: rgba(255,255,255,0.6);
+                z-index: 11;
             }
 
             /* GRID DE INVESTIGAÇÃO */
@@ -109,7 +98,7 @@
             .news-card { background: #fff; border-radius: 35px; border: 1px solid #f0f0f0; padding: 2.5em; transition: all 0.4s ease; display: flex; flex-direction: column; }
             .news-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.04); border-color: #2e7d32; }
             
-            .news-tag { font-size: 0.6em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin-bottom: 15px; display: block; }
+            .news-tag { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; color: #bbb; margin-bottom: 10px; display: block; }
             .news-card h3 { font-size: 1.25em; color: #1a1a1a; margin-bottom: 15px; line-height: 1.2; font-weight: 800; }
             .news-card p { font-size: 0.9em; color: #777; line-height: 1.7; margin-bottom: 2em; }
             .news-link { font-size: 0.7em; font-weight: 800; text-transform: uppercase; text-decoration: none; border: none !important; }
@@ -117,7 +106,6 @@
             .c-mining { color: #c62828 !important; }
             .c-energy { color: #f57f17 !important; }
             .c-water { color: #0277bd !important; }
-            .c-nature { color: #2e7d32 !important; }
 
             .info-footer { text-align: left; padding: 4em 0; border-top: 1px solid #f2f2f2; }
             .info-footer p { font-size: 1.1em; color: #bbb; font-style: italic; max-width: 800px; }
@@ -125,9 +113,8 @@
             @media screen and (max-width: 1280px) {
                 #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
                 #wrapper { padding-left: 0 !important; }
-                .hero-split { flex-direction: column; padding-top: 6em; text-align: center; gap: 3em; }
-                .hero-text h1 { font-size: 2.8em; }
-                .binocular-container { height: 220px; }
+                .hero-split { flex-direction: column; padding-top: 6em; text-align: center; }
+                .lens { width: 160px; height: 160px; }
             }
 		</style>
 	</head>
@@ -137,25 +124,27 @@
                 <div class="inner">
 					<header id="header" style="height: 0; margin: 0; padding: 0; overflow: hidden;"></header>
 					
-                    <!-- HERO SPLIT COM BINÓCULOS REAIS -->
                     <section class="hero-split">
                         <div class="hero-text">
-                            <span class="obs-label">Observatório bioCultura</span>
+                            <span style="font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; display: block; margin-bottom: 15px;">Observatório bioCultura</span>
                             <h1>O progresso não pode ser o fim do seu horizonte.</h1>
                             <p>Entre minas de lítio e espelhos de silício, o seu lar está a perder a cor. Enquanto nos vendem um futuro "verde", o seu território está a ser silenciado. Descubra a verdade oculta sob os seus pés.</p>
                         </div>
                         <div class="hero-visual">
-                            <div class="binocular-container">
-                                <div class="binocular-scale"></div>
+                            <!-- ESTRUTURA DOS BINÓCULOS -->
+                            <div class="binoculars-frame">
+                                <div class="crosshair"></div>
                                 
-                                <!-- LENTE ESQUERDA -->
-                                <div class="view-left">
-                                    <div class="view-label" style="left: -18%;">Preservação</div>
+                                <!-- LENTE ESQUERDA: NATUREZA -->
+                                <div class="lens lens-left">
+                                    <img src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=1000&auto=format&fit=crop" />
+                                    <div class="lens-label">Preservação</div>
                                 </div>
                                 
-                                <!-- LENTE DIREITA -->
-                                <div class="view-right">
-                                    <div class="view-label" style="right: -18%;">Exploração</div>
+                                <!-- LENTE DIREITA: INDÚSTRIA -->
+                                <div class="lens lens-right">
+                                    <img src="https://images.unsplash.com/photo-1509391366360-fe5bb58583bb?q=80&w=1000&auto=format&fit=crop" />
+                                    <div class="lens-label">Exploração</div>
                                 </div>
                             </div>
                         </div>
@@ -213,7 +202,6 @@
                         <p>Saiba mais sobre mineração, água e solo da sua região, ativando a localização na barra lateral.</p>
                     </section>
 
-                    <!-- FOOTER -->
                     <footer style="padding: 4em 0 2em 0; border-top: 1px solid #f2f2f2;">
                         <div style="display: flex; align-items: center; justify-content: flex-end; gap: 10px; opacity: 0.3;">
                             <div style="text-align: right; line-height: 1;">
