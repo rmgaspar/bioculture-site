@@ -18,18 +18,41 @@
             .data-row { display: grid; grid-template-columns: 180px 1fr; gap: 40px; padding: 1.5em 0; border-bottom: 1px solid #f2f2f2; }
             .data-row h4 { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin: 0; padding-top: 5px; }
 
-            /* BADGES DE ESPÉCIES */
+            /* BADGES DE ESPÉCIES - CORES DE IMPACTO */
             .species-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
-            .species-badge { background: #f4f7fb; color: #5c6bc0; padding: 4px 12px; border-radius: 50px; font-size: 0.75em; font-weight: 700; border: 1px solid #eef2f7; }
-            .species-badge.protected { background: #e8f5e9; color: #2e7d32; border-color: #c8e6c9; }
-            .species-badge.invasive { background: #fff3e0; color: #e65100; border-color: #ffe0b2; }
+            .species-badge { 
+                background: #f4f7fb; 
+                color: #5c6bc0; 
+                padding: 5px 14px; 
+                border-radius: 50px; 
+                font-size: 0.7em; 
+                font-weight: 800; 
+                text-transform: uppercase;
+                border: 1px solid #eef2f7; 
+            }
 
-            .tech-content { display: flex; flex-direction: column; gap: 15px; }
-            .tech-main { font-size: 1.1em; font-weight: 700; color: #1a1a1a; line-height: 1.3; }
+            /* Verde para Protegidas */
+            .species-badge.protected { 
+                background: #e8f5e9; 
+                color: #2e7d32; 
+                border-color: #c8e6c9; 
+            }
 
-            .section-break { margin: 4em 0 2em 0; padding: 3em 0; border-top: 2px solid #f2f2f2; text-align: center; }
-            .section-break h2 { font-size: 2em; font-weight: 300; color: #2e7d32; letter-spacing: -1px; margin: 0; }
-            .section-break .sub-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; }
+            /* Vermelho para Ameaçadas (Alerta Crítico) */
+            .species-badge.threatened { 
+                background: #ffebee; 
+                color: #c62828; 
+                border-color: #ffcdd2; 
+            }
+
+            /* Laranja para Invasoras */
+            .species-badge.invasive { 
+                background: #fff3e0; 
+                color: #e65100; 
+                border-color: #ffe0b2; 
+            }
+
+            .label-mini { font-size: 0.6em; font-weight: 900; color: #bbb; text-transform: uppercase; margin-top: 15px; display: block; }
 
             /* GRELHA DE NOTÍCIAS */
             .observatorio-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 40px; margin-top: 2em; }
@@ -124,7 +147,6 @@
         <script>
             let locationsDB = [];
             let noticiasBio = [];
-            let visiveisBio = 4;
 
             async function inicializarPagina() {
                 try {
@@ -133,12 +155,13 @@
                     const savedId = localStorage.getItem('biocultura_region');
                     let info = locationsDB.find(i => i.id === savedId) || locationsDB.find(i => i.id === "proenca-a-nova");
                     
-                    renderDashboard(info);
+                    renderDashboard(info); // AQUI É CHAMADA A FUNÇÃO
                     setupSidebarLogic();
                     await carregarNoticiasBio();
                 } catch(e) { console.error(e); }
             }
 
+            // ESTA É A FUNÇÃO QUE PREENCHE O TEU bio-dashboard
             function renderDashboard(info) {
                 if(!info) return;
                 document.getElementById('no-gps-warning').style.display = 'none';
@@ -148,18 +171,28 @@
                 const bioma = info.biomas || {};
                 
                 // Render Fauna
-                const fList = document.getElementById('fauna-list');
-                fList.innerHTML = (bioma.fauna || []).map(f => `<span class="species-badge">${f}</span>`).join('');
-                
-                const fpList = document.getElementById('fauna-protected-list');
-                fpList.innerHTML = (bioma.fauna_protegida || []).map(f => `<span class="species-badge protected">${f}</span>`).join('');
+                const fContainer = document.getElementById('fauna-list');
+                fContainer.innerHTML = '';
+                if(bioma.fauna_ameacada) {
+                    fContainer.innerHTML += '<span class="label-mini">Risco de Extinção</span>';
+                    bioma.fauna_ameacada.forEach(f => fContainer.innerHTML += `<span class="species-badge threatened">${f}</span>`);
+                }
+                if(bioma.fauna_protegida) {
+                    fContainer.innerHTML += '<span class="label-mini">Espécies Protegidas</span>';
+                    bioma.fauna_protegida.forEach(f => fContainer.innerHTML += `<span class="species-badge protected">${f}</span>`);
+                }
 
                 // Render Flora
-                const flList = document.getElementById('flora-list');
-                flList.innerHTML = (bioma.flora || []).map(f => `<span class="species-badge">${f}</span>`).join('');
-                
-                const fiList = document.getElementById('flora-invasive-list');
-                fiList.innerHTML = (bioma.flora_invasora || []).map(f => `<span class="species-badge invasive">${f}</span>`).join('');
+                const flContainer = document.getElementById('flora-list');
+                flContainer.innerHTML = '';
+                if(bioma.flora_protegida) {
+                    flContainer.innerHTML += '<span class="label-mini">Flora Protegida</span>';
+                    bioma.flora_protegida.forEach(f => flContainer.innerHTML += `<span class="species-badge protected">${f}</span>`);
+                }
+                if(bioma.flora_invasora) {
+                    flContainer.innerHTML += '<span class="label-mini">Espécies Invasoras</span>';
+                    bioma.flora_invasora.forEach(f => flContainer.innerHTML += `<span class="species-badge invasive">${f}</span>`);
+                }
 
                 const input = document.getElementById('loc-search-input');
                 if(input) input.value = info.titulo;
@@ -169,7 +202,6 @@
                 const input = document.getElementById('loc-search-input');
                 const dropdown = document.getElementById('loc-dropdown');
                 if(!input) { setTimeout(setupSidebarLogic, 500); return; }
-
                 input.addEventListener('input', function() {
                     const val = this.value.toLowerCase();
                     dropdown.innerHTML = '';
@@ -193,28 +225,17 @@
                     const r = await fetch('/data/noticias.json');
                     const todas = await r.json();
                     noticiasBio = todas.filter(n => n.categoria.toLowerCase().includes('biodiversidade'));
-                    renderizarCardsBio();
+                    const container = document.getElementById('noticias-bio-dinamico');
+                    if(!container) return;
+                    container.innerHTML = '';
+                    noticiasBio.forEach(n => {
+                        const card = document.createElement('a');
+                        card.href = `/observatorio/noticia-detalhe.html?id=${n.id}`;
+                        card.className = 'news-card';
+                        card.innerHTML = `<div class="card-image-wrap"><img src="${n.imagem}"><span class="badge-cat">BIODIVERSIDADE</span></div><h3>${n.titulo}</h3>`;
+                        container.appendChild(card);
+                    });
                 } catch(e) { console.error(e); }
-            }
-
-            function renderizarCardsBio() {
-                const container = document.getElementById('noticias-bio-dinamico');
-                if(!container) return;
-                container.innerHTML = '';
-                noticiasBio.forEach((n, index) => {
-                    const card = document.createElement('a');
-                    card.href = `/observatorio/noticia-detalhe.html?id=${n.id}`;
-                    card.className = `news-card ${index >= visiveisBio ? 'hidden-card' : ''}`;
-                    card.innerHTML = `
-                        <div class="card-image-wrap"><img src="${n.imagem}"><span class="badge-cat">${n.categoria}</span></div>
-                        <div class="card-meta"><div class="source-circle">${n.fonte.charAt(0)}</div><span>${n.fonte}</span></div>
-                        <h3>${n.titulo}</h3>
-                        <p>${n.resumo_biocultura.substring(0, 100)}...</p>
-                    `;
-                    container.appendChild(card);
-                });
-                const btn = document.getElementById('btn-load-more-bio');
-                if(btn) btn.style.display = noticiasBio.length > visiveisBio ? 'inline-block' : 'none';
             }
 
             fetch('/sidebar-content.html').then(r => r.text()).then(html => {
@@ -222,8 +243,6 @@
                 inicializarPagina();
                 var s = document.createElement('script'); s.src = '/assets/js/main.js'; document.body.appendChild(s);
             });
-
-            document.getElementById('btn-load-more-bio').onclick = () => { visiveisBio += 4; renderizarCardsBio(); };
         </script>
 	</body>
 </html>
