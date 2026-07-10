@@ -6,7 +6,6 @@
 		<meta name="viewport" content="width=device-width, initial-scale, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
 		<style>
-            /* --- ESTILOS GLOBAIS --- */
             body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
 			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
             section { padding-top: 2em !important; min-height: 100vh; display: flex; flex-direction: column; }
@@ -29,13 +28,10 @@
             .bar-wind { background: linear-gradient(to right, #e1f5fe, #0288d1); }
             .gauge-marker { position: absolute; top: -6px; left: 0%; width: 3px; height: 20px; background: #1a1a1a; border-radius: 2px; transition: left 1.5s cubic-bezier(0.4, 0, 0.2, 1); }
 
-            .tech-detail { font-size: 0.95em; color: #777; line-height: 1.6; margin: 0; }
-            
             .section-break { margin: 4em 0 2em 0; padding: 3em 0; border-top: 2px solid #f2f2f2; text-align: center; }
             .section-break h2 { font-size: 2em; font-weight: 300; color: #5c6bc0; letter-spacing: -1px; margin: 0; }
             .section-break .sub-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; }
 
-            /* GRELHA DE NOTÍCIAS */
             .observatorio-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 40px; margin-top: 2em; }
             .news-card { text-decoration: none; color: inherit; display: flex; flex-direction: column; transition: all 0.3s ease; }
             .news-card:hover { transform: translateY(-8px); opacity: 0.85; }
@@ -62,7 +58,6 @@
                             <p style="font-size: 0.9em; font-style: italic; color: #bbb; margin-top: 5px;">Radar de impacto territorial: <strong id="reg-name" style="color:#888">...</strong></p>
                         </div>
 
-                        <!-- DASHBOARD DINÂMICO -->
                         <div id="energy-dashboard" style="display:none;">
                             <div class="data-row">
                                 <h4>Recursos Naturais</h4>
@@ -75,7 +70,7 @@
                                         <div class="gauge-label"><span class="current-val" id="val-wind">-- km/h</span><span class="unit">Vento a 100m (Live)</span></div>
                                         <div class="gauge-bar bar-wind"><div id="marker-wind" class="gauge-marker"></div></div>
                                     </div>
-                                    <p class="tech-detail" id="energy-summary">A analisar recursos para regeneração energética...</p>
+                                    <p class="tech-detail" id="energy-summary" style="color:#777">A analisar recursos para regeneração energética...</p>
                                 </div>
                             </div>
                         </div>
@@ -115,16 +110,8 @@
                 try {
                     const rLoc = await fetch('/data/bioregioes.json');
                     locationsDB = await rLoc.json();
-                    
                     const savedId = localStorage.getItem('biocultura_region');
-                    const urlParams = new URLSearchParams(window.location.search);
-                    const regionParam = urlParams.get('region');
-
-                    let info = locationsDB.find(i => i.id === regionParam) || 
-                               locationsDB.find(i => i.id === savedId) || 
-                               locationsDB.find(i => i.id === "proenca-a-nova") ||
-                               locationsDB[0];
-                    
+                    let info = locationsDB.find(i => i.id === savedId) || locationsDB.find(i => i.id === "proenca-a-nova") || locationsDB[0];
                     renderDashboard(info);
                     carregarNoticiasEnergy();
                 } catch(e) { console.error(e); }
@@ -153,11 +140,12 @@
                     document.getElementById('energy-summary').innerText = (sun > 500 || wind > 20) ? "Potencial Renovável Elevado detetado." : "Condições de produção moderadas no momento.";
                 } catch (err) { console.error(err); }
 
+                // Sincroniza o input da sidebar se ele já existir
                 const input = document.getElementById('loc-search-input');
                 if(input) input.value = info.titulo;
             }
 
-            // LÓGICA DE SIDEBAR COM DELEGAÇÃO DE EVENTOS
+            // LÓGICA DE SIDEBAR GLOBAL (DELEGAÇÃO DE EVENTOS)
             $(document).on('input', '#loc-search-input', function() {
                 const val = $(this).val().toLowerCase();
                 const dropdown = $('#loc-dropdown');
@@ -202,13 +190,13 @@
                         container.innerHTML += `
                             <a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-card">
                                 <div class="card-image-wrap"><img src="${n.imagem}"></div>
-                                <span class="news-meta" style="font-size:0.65em; color:#bbb; font-weight:800; text-transform:uppercase">${n.fonte}</span>
                                 <h3 style="font-size:1.1em; margin-top:5px">${n.titulo}</h3>
                             </a>`;
                     });
                 } catch(e) { console.error(e); }
             }
 
+            // CARREGAMENTO DA SIDEBAR
             fetch('/sidebar-content.html').then(r => r.text()).then(html => {
                 document.getElementById('sidebar').innerHTML = html;
                 inicializarPagina();
