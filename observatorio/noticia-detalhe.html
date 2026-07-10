@@ -77,40 +77,41 @@
 		<script src="/assets/js/jquery.min.js"></script>
         <script>
             async function carregarNoticia() {
-                const statusText = document.getElementById('news-title');
+                const titleElem = document.getElementById('news-title');
+                const summaryElem = document.getElementById('news-summary');
+
                 try {
-                    // Tentamos carregar o JSON (ajustado para subir uma pasta se necessário)
                     const r = await fetch('/data/noticias.json');
-                    if (!r.ok) throw new Error("Não foi possível encontrar o ficheiro noticias.json");
+                    if (!r.ok) throw new Error("Ficheiro noticias.json não encontrado na pasta /data/");
                     
                     const noticias = await r.json();
                     const urlParams = new URLSearchParams(window.location.search);
                     const id = urlParams.get('id');
                     
-                    // Procura a notícia. Se não encontrar o ID, carrega a primeira da lista por defeito.
-                    const artigo = noticias.find(n => n.id === id) || noticias[0];
-                    
-                    if (!artigo) {
-                        statusText.innerText = "Notícia não encontrada.";
+                    if (!id) {
+                        titleElem.innerText = "Nenhum ID fornecido no link.";
                         return;
                     }
 
-                    // Preencher os dados
-                    document.title = "bioCultura - " + artigo.titulo;
+                    const artigo = noticias.find(n => n.id === id);
+                    
+                    if (!artigo) {
+                        titleElem.innerText = "ID não encontrado";
+                        summaryElem.innerText = `O ID "${id}" não existe no teu ficheiro noticias.json. Verifica se escreveste bem no link e no JSON.`;
+                        return;
+                    }
+
+                    // Se encontrou, preenche a página
                     document.getElementById('news-title').innerText = artigo.titulo;
                     document.getElementById('news-summary').innerText = artigo.resumo_biocultura;
                     document.getElementById('news-body').innerHTML = artigo.corpo;
                     document.getElementById('news-category').innerText = artigo.categoria;
                     document.getElementById('news-meta').innerHTML = `Fonte: <strong>${artigo.fonte}</strong> | Data: <strong>${artigo.data}</strong>`;
                     
-                    if(artigo.categoria === 'ar') {
-                        document.getElementById('summary-container').classList.add('ar');
-                        document.getElementById('back-btn').href = "/recursos/ar.html";
-                    } else {
-                        document.getElementById('back-btn').href = "/recursos/agua.html";
-                    }
+                    // Ajustar botão de voltar
+                    document.getElementById('back-btn').href = (artigo.categoria === 'ar') ? "/recursos/ar.html" : "/recursos/agua.html";
 
-                    // Relacionados
+                    // Mostrar Relacionados
                     const grid = document.getElementById('related-grid');
                     noticias.filter(n => n.id !== artigo.id).slice(0, 2).forEach(rel => {
                         const item = document.createElement('a');
@@ -125,9 +126,9 @@
                     });
 
                 } catch(e) {
+                    titleElem.innerText = "Erro de Leitura";
+                    summaryElem.innerText = "Houve um erro ao ler o ficheiro JSON. Verifica se o ficheiro tem erros de vírgulas ou chavetas no VS Code.";
                     console.error(e);
-                    statusText.innerText = "Erro ao carregar a notícia.";
-                    document.getElementById('news-summary').innerText = "Verifique se o ficheiro /data/noticias.json existe e se o ID no link está correto.";
                 }
             }
 
