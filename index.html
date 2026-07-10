@@ -54,6 +54,36 @@
                 .hero-split { flex-direction: column; padding-top: 6em; text-align: center; gap: 3em; }
                 .hero-globe { width: 300px; height: 300px; }
             }
+            /* Estilos para o Botão Ver Mais e Grelha */
+            .ver-mais-container { text-align: center; margin: 4em 0; }
+            .btn-ver-mais { 
+                background: transparent !important; 
+                box-shadow: none !important; 
+                border: 1px solid #eee !important; 
+                color: #bbb !important; 
+                border-radius: 50px; 
+                padding: 0 40px; 
+                font-size: 0.7em; 
+                font-weight: 900; 
+                letter-spacing: 2px;
+                transition: all 0.3s;
+                cursor: pointer;
+            }
+            .btn-ver-mais:hover { border-color: #333 !important; color: #333 !important; }
+            .hidden-card { display: none; }
+
+            .observatorio-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 40px; margin-top: 3em; }
+            .news-card { text-decoration: none; color: inherit; display: flex; flex-direction: column; transition: all 0.3s ease; }
+            .news-card:hover { transform: translateY(-8px); opacity: 0.85; }
+            .card-image-wrap { position: relative; width: 100%; height: 200px; overflow: hidden; border-radius: 16px; background: #f5f5f5; margin-bottom: 15px; }
+            .card-image-wrap img { width: 100%; height: 100%; object-fit: cover; }
+            .badge-cat { position: absolute; bottom: 12px; left: 12px; background: #81c784; color: white; padding: 4px 12px; border-radius: 50px; font-size: 0.6em; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; }
+            .badge-cat.ar { background: #ffb74d; }
+            .badge-cat.agua { background: #4fc3f7; }
+            .badge-cat.energia { background: #5c6bc0; }
+            .badge-cat.mineracao { background: #ef5350; }
+            .card-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 0.7em; font-weight: 800; color: #bbb; text-transform: uppercase; }
+            .source-circle { width: 20px; height: 20px; background: #333; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; }
 		</style>
 	</head>
 	<body class="is-preload">
@@ -77,12 +107,15 @@
                     </section>
 
                     <header class="major">
-                        <h2>Observatório de Impacto</h2>
+                    <h2>Observatório de Impacto</h2>
                     </header>
 
-                    <!-- GRELHA DINÂMICA -->
-                    <div id="observatorio-dinamico" class="observatorio-grid">
-                        <!-- Conteúdo gerado por JS -->
+                    <!-- Contentor Dinâmico -->
+                    <div id="observatorio-dinamico" class="observatorio-grid"></div>
+
+                    <!-- Botão Ver Mais -->
+                    <div class="ver-mais-container">
+                        <button id="btn-load-more" class="btn-ver-mais">Ver Mais Notícias</button>
                     </div>
 
                     <footer class="page-footer">
@@ -101,37 +134,54 @@
 
 		<script src="/assets/js/jquery.min.js"></script>
         <script>
+            let todasNoticias = [];
+            let visiveis = 6;
+
             async function carregarObservatorio() {
                 try {
                     const r = await fetch('/data/noticias.json');
-                    const noticias = await r.json();
-                    const container = document.getElementById('observatorio-dinamico');
-
-                    noticias.forEach(n => {
-                        const card = document.createElement('a');
-                        card.href = `/observatorio/noticia-detalhe.html?id=${n.id}`;
-                        card.className = 'news-card';
-                        
-                        // Limpa acentos da categoria para a classe CSS
-                        const catClass = n.categoria.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-
-                        card.innerHTML = `
-                            <div class="card-image-wrap">
-                                <img src="${n.imagem}" alt="${n.titulo}">
-                                <span class="badge-cat ${catClass}">${n.categoria}</span>
-                            </div>
-                            <div class="card-meta">
-                                <div class="source-circle">${n.fonte.charAt(0)}</div>
-                                <span>${n.fonte}</span>
-                            </div>
-                            <h3>${n.titulo}</h3>
-                            <p>${n.resumo_biocultura.substring(0, 120)}...</p>
-                        `;
-                        container.appendChild(card);
-                    });
-                } catch(e) { console.error(e); }
+                    todasNoticias = await r.json();
+                    renderizarCards();
+                } catch(e) { console.error("Erro ao carregar JSON:", e); }
             }
 
+            function renderizarCards() {
+                const container = document.getElementById('observatorio-dinamico');
+                container.innerHTML = '';
+
+                todasNoticias.forEach((n, index) => {
+                    const card = document.createElement('a');
+                    card.href = `/observatorio/noticia-detalhe.html?id=${n.id}`;
+                    card.className = `news-card ${index >= visiveis ? 'hidden-card' : ''}`;
+                    
+                    const catClass = n.categoria.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(" ", "-");
+
+                    card.innerHTML = `
+                        <div class="card-image-wrap">
+                            <img src="${n.imagem}" alt="${n.titulo}">
+                            <span class="badge-cat ${catClass}">${n.categoria}</span>
+                        </div>
+                        <div class="card-meta">
+                            <div class="source-circle">${n.fonte.charAt(0)}</div>
+                            <span>${n.fonte}</span>
+                        </div>
+                        <h3>${n.titulo}</h3>
+                        <p>${n.resumo_biocultura.substring(0, 110)}...</p>
+                    `;
+                    container.appendChild(card);
+                });
+
+                const btn = document.getElementById('btn-load-more');
+                if (visiveis >= todasNoticias.length) btn.style.display = 'none';
+                else btn.style.display = 'inline-block';
+            }
+
+            document.getElementById('btn-load-more').onclick = function() {
+                visiveis += 6;
+                renderizarCards();
+            };
+
+            // Inicializa a sidebar e depois as notícias
             fetch('/sidebar-content.html').then(r => r.text()).then(html => {
                 document.getElementById('sidebar').innerHTML = html;
                 var s = document.createElement('script'); s.src = '/assets/js/main.js'; document.body.appendChild(s);
