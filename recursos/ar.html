@@ -162,27 +162,46 @@
                 } catch(e) { console.error(e); }
             }
 
-            function renderDashboard(info) {
+            async function renderDashboard(info) {
                 if(!info) return;
                 document.getElementById('no-gps-warning').style.display = 'none';
                 document.getElementById('air-dashboard').style.display = 'block';
                 document.getElementById('reg-name').innerText = info.titulo;
 
-                // Simulação de dados AQI baseados na região (ou valores default)
-                // Se o teu JSON tiver campos de ar, podes mapeá-los aqui
-                // Substitui a linha anterior por esta:
-                const aqiVal = info.qualidade_ar_valor || 42;  
-                document.getElementById('label-aqi').innerText = "AQI " + aqiVal;
-                
-                let status = "Bom";
-                let pos = (aqiVal / 200) * 100; // Escala simplificada 0-200
-                if(aqiVal > 50) status = "Moderado";
-                if(aqiVal > 100) status = "Fraco";
-                
-                document.getElementById('status-aqi').innerText = status;
-                setTimeout(() => {
-                    document.getElementById('marker-aqi').style.left = Math.min(pos, 100) + "%";
-                }, 300);
+                const token = "TEU_TOKEN_AQUI"; // Coloca aqui o token que receberes por email
+                const cidade = info.titulo.split(' ')[0]; // Pega no primeiro nome da localidade (ex: "Proença")
+
+                try {
+                    // Chamada à API real
+                    const response = await fetch(`https://api.waqi.info/feed/${cidade}/?token=${token}`);
+                    const data = await response.json();
+                    
+                    let aqiVal;
+                    if (data.status === "ok") {
+                        aqiVal = data.data.aqi; // Valor real da estação mais próxima
+                        document.getElementById('air-description').innerText = `Dados reais da estação de monitorização mais próxima de ${info.titulo}.`;
+                    } else {
+                        // Fallback caso a API falhe ou não encontre a cidade
+                        aqiVal = 42; 
+                        document.getElementById('air-description').innerText = "Dados médios estimados para a região.";
+                    }
+
+                    document.getElementById('label-aqi').innerText = "AQI " + aqiVal;
+                    
+                    let status = "Bom";
+                    let pos = (aqiVal / 200) * 100;
+                    if(aqiVal > 50) status = "Moderado";
+                    if(aqiVal > 100) status = "Fraco";
+                    if(aqiVal > 150) status = "Insalubre";
+                    
+                    document.getElementById('status-aqi').innerText = status;
+                    setTimeout(() => {
+                        document.getElementById('marker-aqi').style.left = Math.min(pos, 100) + "%";
+                    }, 300);
+
+                } catch (error) {
+                    console.error("Erro ao carregar AQI real:", error);
+                }
 
                 const input = document.getElementById('loc-search-input');
                 if(input) input.value = info.titulo;
