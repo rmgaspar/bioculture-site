@@ -6,6 +6,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
 		<style>
+            /* --- ESTILOS GLOBAIS --- */
             body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
 			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
             section { padding-top: 2em !important; min-height: 100vh; display: flex; flex-direction: column; }
@@ -28,12 +29,13 @@
             .bar-wind { background: linear-gradient(to right, #e1f5fe, #0288d1); }
             .gauge-marker { position: absolute; top: -6px; left: 0%; width: 3px; height: 20px; background: #1a1a1a; border-radius: 2px; transition: left 1.5s cubic-bezier(0.4, 0, 0.2, 1); }
 
-            .tech-detail { font-size: 0.9em; color: #777; line-height: 1.6; margin: 0; }
+            .tech-detail { font-size: 0.95em; color: #777; line-height: 1.6; margin: 0; }
             
             .section-break { margin: 4em 0 2em 0; padding: 3em 0; border-top: 2px solid #f2f2f2; text-align: center; }
             .section-break h2 { font-size: 2em; font-weight: 300; color: #5c6bc0; letter-spacing: -1px; margin: 0; }
             .section-break .sub-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; }
 
+            /* GRELHA DE NOTÍCIAS */
             .observatorio-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 40px; margin-top: 2em; }
             .news-card { text-decoration: none; color: inherit; display: flex; flex-direction: column; transition: all 0.3s ease; }
             .news-card:hover { transform: translateY(-8px); opacity: 0.85; }
@@ -56,37 +58,39 @@
                     <section>
                         <div style="text-align: center; margin-bottom: 3em;">
                             <span class="category-label">Engenharia & Soluções</span>
-                            <h1 style="font-size: 3.5em; font-weight: 300; color: #1a1a1a; letter-spacing: -2px; margin: 0;">Energia: Potencial Local</h1>
+                            <h1 style="font-size: 3.5em; font-weight: 300; color: #1a1a1a; letter-spacing: -2px; margin: 0;">Energia & Extracção</h1>
                             <p style="font-size: 0.9em; font-style: italic; color: #bbb; margin-top: 5px;">Radar de impacto territorial: <strong id="reg-name" style="color:#888">...</strong></p>
                         </div>
 
+                        <!-- DASHBOARD DINÂMICO -->
                         <div id="energy-dashboard" style="display:none;">
                             <div class="data-row">
                                 <h4>Recursos Naturais</h4>
                                 <div class="tech-content">
-                                    <!-- Solar -->
                                     <div class="gauge-container">
-                                        <div class="gauge-label">
-                                            <span class="current-val" id="val-solar">-- W/m²</span>
-                                            <span class="unit">Radiação Solar (Agora)</span>
-                                        </div>
+                                        <div class="gauge-label"><span class="current-val" id="val-solar">-- W/m²</span><span class="unit">Radiação Solar (Agora)</span></div>
                                         <div class="gauge-bar bar-solar"><div id="marker-solar" class="gauge-marker"></div></div>
                                     </div>
-                                    <!-- Vento -->
                                     <div class="gauge-container">
-                                        <div class="gauge-label">
-                                            <span class="current-val" id="val-wind">-- km/h</span>
-                                            <span class="unit">Velocidade Vento (100m)</span>
-                                        </div>
+                                        <div class="gauge-label"><span class="current-val" id="val-wind">-- km/h</span><span class="unit">Velocidade Vento (100m)</span></div>
                                         <div class="gauge-bar bar-wind"><div id="marker-wind" class="gauge-marker"></div></div>
                                     </div>
-                                    <p class="tech-detail" id="energy-summary">A analisar o potencial de regeneração energética da região...</p>
+                                    <p class="tech-detail" id="energy-summary">A analisar o potencial energético da região...</p>
                                 </div>
                             </div>
                         </div>
 
+                        <!-- AVISO SEM LOCALIZAÇÃO -->
                         <div id="no-gps-warning" style="text-align: center; padding: 4em; color: #bbb;">
                             <p>Selecione uma localidade na barra lateral para activar o radar energético.</p>
+                        </div>
+
+                        <div class="alert-box" style="background: #fcfcfc; border-left-color: #2e7d32; margin-top: 4em;">
+                            <h5 style="color: #2e7d32;">O Paradoxo da Transição "Verde"</h5>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 15px;">
+                                <p style="font-size: 0.85em; color: #666;"><strong>O Custo do Silício:</strong> A instalação de parques fotovoltaicos industriais exige frequentemente a desflorestação e a impermeabilização de solos férteis.</p>
+                                <p style="font-size: 0.85em; color: #666;"><strong>A Ilusão das Baterias:</strong> O armazenamento em baterias de lítio mascara a destruição de ecossistemas remotos.</p>
+                            </div>
                         </div>
 
                         <div class="section-break">
@@ -96,7 +100,7 @@
 
                         <div class="data-row" style="border-bottom: none;">
                             <h4>Notícias e Relatórios</h4>
-                            <div class="tech-content" id="noticias-energy-dinamico"></div>
+                            <div id="noticias-energy-dinamico" class="observatorio-grid"></div>
                         </div>
 					</section>
 				</div>
@@ -120,11 +124,18 @@
                 try {
                     const rLoc = await fetch('/data/bioregioes.json');
                     locationsDB = await rLoc.json();
+                    
                     const savedId = localStorage.getItem('biocultura_region');
-                    let info = locationsDB.find(i => i.id === savedId) || locationsDB.find(i => i.id === "proenca-a-nova");
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const regionParam = urlParams.get('region');
+
+                    let info = locationsDB.find(i => i.id === regionParam) || 
+                               locationsDB.find(i => i.id === savedId) || 
+                               locationsDB.find(i => i.id === "proenca-a-nova");
+                    
                     if (info) renderDashboard(info);
                     setupSidebarLogic();
-                    carregarNoticiasEnergy();
+                    await carregarNoticiasEnergy();
                 } catch(e) { console.error(e); }
             }
 
@@ -135,7 +146,6 @@
                 document.getElementById('reg-name').innerText = info.titulo;
 
                 try {
-                    // Chamada API real-time para Sol e Vento (100m de altura)
                     const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${info.lat}&longitude=${info.lon}&current=shortwave_radiation,wind_speed_100m`);
                     const weather = await res.json();
                     
@@ -216,7 +226,6 @@
                     const todas = await r.json();
                     const container = document.getElementById('noticias-energy-dinamico');
                     container.innerHTML = '';
-                    container.className = 'observatorio-grid';
                     todas.filter(n => n.categoria.toLowerCase().includes('energia')).forEach(n => {
                         container.innerHTML += `
                             <a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-card">
