@@ -8,73 +8,34 @@
 		<style>
             body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
 			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
-            section { padding-top: 4em !important; min-height: 100vh; display: flex; flex-direction: column; }
-
+            section { padding-top: 2em !important; min-height: 100vh; display: flex; flex-direction: column; }
             #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
-            #sidebar > .inner { height: 100% !important; overflow: hidden !important; display: flex; flex-direction: column; }
+            #sidebar > .inner { height: 100% !important; display: flex; flex-direction: column; }
             #wrapper { padding-left: 18em !important; }
-
             .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; color: #bbb; margin-bottom: 10px; display: block; text-align: center; }
-            .data-row { display: grid; grid-template-columns: 180px 1fr; gap: 40px; padding: 1.5em 0; border-bottom: 1px solid #f2f2f2; }
+            .data-row { display: grid; grid-template-columns: 180px 1fr; gap: 40px; padding: 2.5em 0; border-bottom: 1px solid #f2f2f2; }
             .data-row h4 { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin: 0; padding-top: 5px; }
-
-            /* BADGES DE ESPÉCIES - CORES DE IMPACTO */
-            .species-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
-            .species-badge { 
-                background: #f4f7fb; 
-                color: #5c6bc0; 
-                padding: 5px 14px; 
-                border-radius: 50px; 
-                font-size: 0.7em; 
-                font-weight: 800; 
-                text-transform: uppercase;
-                border: 1px solid #eef2f7; 
-            }
-
-            /* Verde para Protegidas */
-            .species-badge.protected { 
-                background: #e8f5e9; 
-                color: #2e7d32; 
-                border-color: #c8e6c9; 
-            }
-
-            /* Vermelho para Ameaçadas (Alerta Crítico) */
-            .species-badge.threatened { 
-                background: #ffebee; 
-                color: #c62828; 
-                border-color: #ffcdd2; 
-            }
-
-            /* Laranja para Invasoras */
-            .species-badge.invasive { 
-                background: #fff3e0; 
-                color: #e65100; 
-                border-color: #ffe0b2; 
-            }
-
-            .label-mini { font-size: 0.6em; font-weight: 900; color: #bbb; text-transform: uppercase; margin-top: 15px; display: block; }
-
-            /* GRELHA DE NOTÍCIAS */
+            .tech-content > div { margin-bottom: 25px; width: 100%; }
+            .label-mini { font-size: 0.6em; font-weight: 900; color: #bbb; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; display: block; }
+            .species-list { display: flex; flex-wrap: wrap; gap: 8px; }
+            .species-badge { background: #f4f7fb; color: #5c6bc0; padding: 5px 14px; border-radius: 50px; font-size: 0.7em; font-weight: 800; text-transform: uppercase; border: 1px solid #eef2f7; }
+            .species-badge.protected { background: #e8f5e9; color: #2e7d32; border-color: #c8e6c9; }
+            .species-badge.threatened { background: #ffebee; color: #c62828; border-color: #ffcdd2; }
+            .species-badge.invasive { background: #fff3e0; color: #e65100; border-color: #ffe0b2; }
+            .section-break { margin: 4em 0 2em 0; padding: 3em 0; border-top: 2px solid #f2f2f2; text-align: center; }
+            .section-break h2 { font-size: 2em; font-weight: 300; color: #2e7d32; letter-spacing: -1px; margin: 0; }
             .observatorio-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 40px; margin-top: 2em; }
             .news-card { text-decoration: none; color: inherit; display: flex; flex-direction: column; transition: all 0.3s ease; }
             .news-card:hover { transform: translateY(-8px); opacity: 0.85; }
             .card-image-wrap { position: relative; width: 100%; height: 180px; overflow: hidden; border-radius: 12px; background: #f5f5f5; margin-bottom: 15px; }
             .card-image-wrap img { width: 100%; height: 100%; object-fit: cover; }
             .badge-cat { position: absolute; bottom: 10px; left: 10px; background: #2e7d32; color: white; padding: 4px 12px; border-radius: 50px; font-size: 0.55em; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; }
-            
             .card-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 0.65em; font-weight: 800; color: #bbb; text-transform: uppercase; }
             .source-circle { width: 18px; height: 18px; background: #333; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 8px; }
-
             .ver-mais-container { text-align: center; margin: 3em 0; }
             .btn-ver-mais { background: transparent !important; border: 1px solid #eee !important; color: #bbb !important; border-radius: 50px; padding: 0 40px; font-size: 0.7em; font-weight: 900; letter-spacing: 2px; cursor: pointer; }
             .hidden-card { display: none; }
-            .page-footer { margin-top: auto; padding: 4em 0 2em 0; border-top: 1px solid #f2f2f2; }
-
-            @media screen and (max-width: 1280px) {
-                #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
-                #wrapper { padding-left: 0 !important; }
-                .data-row { grid-template-columns: 1fr; gap: 15px; }
-            }
+            @media screen and (max-width: 1280px) { #sidebar { position: relative !important; width: 100% !important; height: auto !important; } #wrapper { padding-left: 0 !important; } .data-row { grid-template-columns: 1fr; } }
 		</style>
 	</head>
 	<body class="is-preload">
@@ -89,35 +50,32 @@
                             <p style="font-size: 0.9em; font-style: italic; color: #bbb; margin-top: 5px;">Análise regional: <strong id="reg-name" style="color:#888">...</strong></p>
                         </div>
 
-                        <!-- DASHBOARD LOCAL -->
                         <div id="bio-dashboard" style="display:none;">
                             <div class="data-row">
                                 <h4>Fauna Local</h4>
                                 <div class="tech-content">
-                                    <span class="tech-main">Principais Espécies Observadas</span>
-                                    <div id="fauna-list" class="species-list"></div>
-                                    <div id="fauna-protected-list" class="species-list" style="margin-top: 5px;"></div>
+                                    <div id="group-fauna-threatened"></div>
+                                    <div id="group-fauna-protected"></div>
+                                    <div id="group-fauna-common"></div>
                                 </div>
                             </div>
-
                             <div class="data-row">
-                                <h4>Flora e Biomas</h4>
+                                <h4>Flora Local</h4>
                                 <div class="tech-content">
-                                    <span class="tech-main">Vegetação e Espécies Críticas</span>
-                                    <div id="flora-list" class="species-list"></div>
-                                    <div id="flora-invasive-list" class="species-list" style="margin-top: 5px;"></div>
+                                    <div id="group-flora-protected"></div>
+                                    <div id="group-flora-invasive"></div>
+                                    <div id="group-flora-common"></div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- PANORAMA GLOBAL -->
                         <div class="section-break">
                             <span class="sub-label">Panorama Nacional e Global</span>
                             <h2>Alerta de Perda de Biodiversidade</h2>
                         </div>
 
                         <div class="data-row" style="border-bottom: none;">
-                            <h4>Relatórios de Impacto</h4>
+                            <h4>Relatórios</h4>
                             <div class="tech-content">
                                 <div id="noticias-bio-dinamico" class="observatorio-grid"></div>
                                 <div class="ver-mais-container">
@@ -127,16 +85,6 @@
                         </div>
 
                         <div id="no-gps-warning" style="text-align: center; padding: 4em; color: #bbb;"><p>Selecione uma localidade na barra lateral.</p></div>
-
-                        <footer class="page-footer">
-                            <div style="display: flex; align-items: center; justify-content: flex-end; gap: 10px; opacity: 0.3;">
-                                <div style="text-align: right; line-height: 1;">
-                                    <span style="display: block; font-size: 0.85em; font-weight: 900; color: #333;">bioCultura</span>
-                                    <span style="display: block; font-size: 0.5em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Global Regeneration</span>
-                                </div>
-                                <svg width="22" height="22" viewBox="0 0 100 100"><path d="M50 5 L89 27.5 L89 72.5 L50 95 L11 72.5 L11 27.5 Z" fill="#333" /><path d="M50 20 C50 20 75 45 75 70 C75 85 65 85 50 85 C35 85 25 85 25 70 C25 45 50 20 50 20Z" fill="#fff" /></svg>
-                            </div>
-                        </footer>
 					</section>
 				</div>
             </div>
@@ -147,6 +95,7 @@
         <script>
             let locationsDB = [];
             let noticiasBio = [];
+            let visiveisBio = 4;
 
             async function inicializarPagina() {
                 try {
@@ -154,45 +103,35 @@
                     locationsDB = await rLoc.json();
                     const savedId = localStorage.getItem('biocultura_region');
                     let info = locationsDB.find(i => i.id === savedId) || locationsDB.find(i => i.id === "proenca-a-nova");
-                    
-                    renderDashboard(info); // AQUI É CHAMADA A FUNÇÃO
+                    renderDashboard(info);
                     setupSidebarLogic();
                     await carregarNoticiasBio();
                 } catch(e) { console.error(e); }
             }
 
-            // ESTA É A FUNÇÃO QUE PREENCHE O TEU bio-dashboard
             function renderDashboard(info) {
                 if(!info) return;
                 document.getElementById('no-gps-warning').style.display = 'none';
                 document.getElementById('bio-dashboard').style.display = 'block';
                 document.getElementById('reg-name').innerText = info.titulo;
-
                 const bioma = info.biomas || {};
-                
-                // Render Fauna
-                const fContainer = document.getElementById('fauna-list');
-                fContainer.innerHTML = '';
-                if(bioma.fauna_ameacada) {
-                    fContainer.innerHTML += '<span class="label-mini">Risco de Extinção</span>';
-                    bioma.fauna_ameacada.forEach(f => fContainer.innerHTML += `<span class="species-badge threatened">${f}</span>`);
-                }
-                if(bioma.fauna_protegida) {
-                    fContainer.innerHTML += '<span class="label-mini">Espécies Protegidas</span>';
-                    bioma.fauna_protegida.forEach(f => fContainer.innerHTML += `<span class="species-badge protected">${f}</span>`);
-                }
 
-                // Render Flora
-                const flContainer = document.getElementById('flora-list');
-                flContainer.innerHTML = '';
-                if(bioma.flora_protegida) {
-                    flContainer.innerHTML += '<span class="label-mini">Flora Protegida</span>';
-                    bioma.flora_protegida.forEach(f => flContainer.innerHTML += `<span class="species-badge protected">${f}</span>`);
-                }
-                if(bioma.flora_invasora) {
-                    flContainer.innerHTML += '<span class="label-mini">Espécies Invasoras</span>';
-                    bioma.flora_invasora.forEach(f => flContainer.innerHTML += `<span class="species-badge invasive">${f}</span>`);
-                }
+                const inject = (id, label, list, cssClass) => {
+                    const container = document.getElementById(id);
+                    container.innerHTML = '';
+                    if (list && list.length > 0) {
+                        container.innerHTML = `<span class="label-mini">${label}</span><div class="species-list"></div>`;
+                        const listDiv = container.querySelector('.species-list');
+                        list.forEach(item => { listDiv.innerHTML += `<span class="species-badge ${cssClass}">${item}</span>`; });
+                    }
+                };
+
+                inject('group-fauna-threatened', 'Risco de Extinção', bioma.fauna_ameacada, 'threatened');
+                inject('group-fauna-protected', 'Espécies Protegidas', bioma.fauna_protegida, 'protected');
+                inject('group-fauna-common', 'Outras Espécies', bioma.fauna, '');
+                inject('group-flora-protected', 'Flora Protegida', bioma.flora_protegida, 'protected');
+                inject('group-flora-invasive', 'Espécies Invasoras (Alerta)', bioma.flora_invasora, 'invasive');
+                inject('group-flora-common', 'Vegetação Nativa', bioma.flora, '');
 
                 const input = document.getElementById('loc-search-input');
                 if(input) input.value = info.titulo;
@@ -225,17 +164,28 @@
                     const r = await fetch('/data/noticias.json');
                     const todas = await r.json();
                     noticiasBio = todas.filter(n => n.categoria.toLowerCase().includes('biodiversidade'));
-                    const container = document.getElementById('noticias-bio-dinamico');
-                    if(!container) return;
-                    container.innerHTML = '';
-                    noticiasBio.forEach(n => {
-                        const card = document.createElement('a');
-                        card.href = `/observatorio/noticia-detalhe.html?id=${n.id}`;
-                        card.className = 'news-card';
-                        card.innerHTML = `<div class="card-image-wrap"><img src="${n.imagem}"><span class="badge-cat">BIODIVERSIDADE</span></div><h3>${n.titulo}</h3>`;
-                        container.appendChild(card);
-                    });
+                    renderizarCardsBio();
                 } catch(e) { console.error(e); }
+            }
+
+            function renderizarCardsBio() {
+                const container = document.getElementById('noticias-bio-dinamico');
+                if(!container) return;
+                container.innerHTML = '';
+                noticiasBio.forEach((n, index) => {
+                    const card = document.createElement('a');
+                    card.href = `/observatorio/noticia-detalhe.html?id=${n.id}`;
+                    card.className = `news-card ${index >= visiveisBio ? 'hidden-card' : ''}`;
+                    card.innerHTML = `
+                        <div class="card-image-wrap"><img src="${n.imagem}"><span class="badge-cat">${n.categoria}</span></div>
+                        <div class="card-meta"><div class="source-circle">${n.fonte.charAt(0)}</div><span>${n.fonte}</span></div>
+                        <h3>${n.titulo}</h3>
+                        <p>${n.resumo_biocultura.substring(0, 100)}...</p>
+                    `;
+                    container.appendChild(card);
+                });
+                const btn = document.getElementById('btn-load-more-bio');
+                if(btn) btn.style.display = noticiasBio.length > visiveisBio ? 'inline-block' : 'none';
             }
 
             fetch('/sidebar-content.html').then(r => r.text()).then(html => {
@@ -243,6 +193,8 @@
                 inicializarPagina();
                 var s = document.createElement('script'); s.src = '/assets/js/main.js'; document.body.appendChild(s);
             });
+
+            document.getElementById('btn-load-more-bio').onclick = () => { visiveisBio += 4; renderizarCardsBio(); };
         </script>
 	</body>
 </html>
