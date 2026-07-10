@@ -3,91 +3,56 @@
 	<head>
 		<title>bioCultura - Observatório de Regeneração Planetária</title>
 		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<meta name="viewport" content="width=device-width, initial-scale, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
 		<style>
-            /* --- ESTRUTURA GLOBAL & TIPOGRAFIA --- */
+            /* --- ESTRUTURA GLOBAL --- */
             body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
 			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
             
-            /* SIDEBAR FIXA */
             #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
             #wrapper { padding-left: 18em !important; }
 
-            /* HERO SPLIT COM GLOBO */
-            .hero-split { padding: 12em 0 6em 0; max-width: 1100px; margin: 0 auto; display: flex; align-items: center; gap: 5em; }
+            /* HERO SPLIT */
+            .hero-split { padding: 10em 0 6em 0; max-width: 1100px; margin: 0 auto; display: flex; align-items: center; gap: 5em; }
             .hero-text { flex: 1.4; }
-            .hero-visual { flex: 1; display: flex; justify-content: center; align-items: center; position: relative; margin-top: 40px; /* Desce a imagem ligeiramente */ }
-
             .hero-text h1 { font-size: 3.8em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; line-height: 0.95; margin-bottom: 25px; }
             .hero-text p { font-size: 1.2em; color: #777; line-height: 1.6; border-left: 5px solid #c62828; padding-left: 25px; font-style: italic; }
-            
-            .hero-globe { width: 400px; height: 400px; border-radius: 50%; overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,0.15); border: 1px solid rgba(0,0,0,0.05); position: relative; }
+            .hero-visual { flex: 1; display: flex; justify-content: center; }
+            .hero-globe { width: 400px; height: 400px; border-radius: 50%; overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,0.15); border: 1px solid rgba(0,0,0,0.05); }
             .hero-globe img { width: 100%; height: 100%; object-fit: cover; }
 
-            /* GRID DE INVESTIGAÇÃO */
-            .news-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; margin-bottom: 4em; }
-            .news-card { background: #fff; border-radius: 35px; border: 1px solid #f0f0f0; padding: 2.5em; transition: all 0.4s ease; display: flex; flex-direction: column; }
-            .news-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.04); border-color: #2e7d32; }
+            /* GRELHA DE NOTÍCIAS (ESTILO SAPO) */
+            .observatorio-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 40px; margin-top: 3em; margin-bottom: 6em; }
             
-            .news-tag { font-size: 0.6em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin-bottom: 15px; display: block; }
-            .news-card h3 { font-size: 1.25em; color: #1a1a1a; margin-bottom: 15px; line-height: 1.2; font-weight: 800; }
-            .news-card p { font-size: 0.9em; color: #777; line-height: 1.7; margin-bottom: 2em; }
-            .news-link { font-size: 0.7em; font-weight: 800; text-transform: uppercase; text-decoration: none; border: none !important; }
+            .news-card { text-decoration: none; color: inherit; display: flex; flex-direction: column; transition: all 0.3s ease; border: none !important; }
+            .news-card:hover { transform: translateY(-8px); opacity: 0.85; }
 
-            .c-mining { color: #c62828 !important; }
-            .c-energy { color: #f57f17 !important; }
-            .c-water { color: #0277bd !important; }
-            .c-nature { color: #2e7d32 !important; }
+            .card-image-wrap { position: relative; width: 100%; height: 200px; overflow: hidden; border-radius: 16px; background: #f5f5f5; margin-bottom: 15px; }
+            .card-image-wrap img { width: 100%; height: 100%; object-fit: cover; }
 
-            /* INFO FOOTER */
-            .info-footer { text-align: left; padding: 4em 0; border-top: 1px solid #f2f2f2; }
-            .info-footer p { font-size: 1.1em; color: #bbb; font-style: italic; max-width: 800px; }
+            /* Badges de Categoria */
+            .badge-cat { position: absolute; bottom: 12px; left: 12px; background: #81c784; color: white; padding: 4px 12px; border-radius: 50px; font-size: 0.6em; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; }
+            .badge-cat.ar { background: #ffb74d; }
+            .badge-cat.agua { background: #4fc3f7; }
+            .badge-cat.energia { background: #5c6bc0; }
+            .badge-cat.mineracao { background: #ef5350; }
+            .badge-cat.solo { background: #8d6e63; }
 
-            /* RODAPÉ */
-            .page-footer { padding: 4em 0 2em 0; }
+            /* Meta Info (Fonte) */
+            .card-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 0.7em; font-weight: 800; color: #bbb; text-transform: uppercase; }
+            .source-circle { width: 20px; height: 20px; background: #333; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; }
+
+            .news-card h3 { font-size: 1.2em; line-height: 1.25; margin: 0 0 10px 0; font-weight: 700; color: #1a1a1a; }
+            .news-card p { font-size: 0.9em; line-height: 1.5; color: #777; margin: 0; }
+
+            .page-footer { padding: 4em 0 2em 0; border-top: 1px solid #f2f2f2; }
 
             @media screen and (max-width: 1280px) {
-                #sidebar { position: relative !important; width: 100% !important; height: auto !important; overflow: visible !important; }
+                #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
                 #wrapper { padding-left: 0 !important; }
                 .hero-split { flex-direction: column; padding-top: 6em; text-align: center; gap: 3em; }
-                .hero-text h1 { font-size: 3em; }
                 .hero-globe { width: 300px; height: 300px; }
-            }
-            /* Estilo para o Observatório de Impacto Minimalista */
-            .posts article {
-                border: none !important;
-                box-shadow: none !important;
-                padding: 0 !important;
-                margin-bottom: 3em;
-            }
-
-            .posts article .category-label {
-                margin-bottom: 0.5em;
-            }
-
-            /* Faz com que o título e o parágrafo pareçam um bloco clicável */
-            .news-link-block {
-                text-decoration: none !important;
-                color: inherit !important;
-                display: block;
-                transition: opacity 0.3s ease;
-            }
-
-            .news-link-block:hover {
-                opacity: 0.7;
-            }
-
-            .news-link-block h3 {
-                margin-bottom: 0.5em;
-                color: #1a1a1a;
-            }
-
-            .news-link-block p {
-                font-size: 0.95em;
-                line-height: 1.6;
-                color: #666;
-                margin: 0;
             }
 		</style>
 	</head>
@@ -97,97 +62,36 @@
                 <div class="inner">
 					<header id="header" style="height: 0; margin: 0; padding: 0; overflow: hidden;"></header>
 					
-                    <!-- HERO SPLIT COM GLOBO -->
+                    <!-- HERO -->
                     <section class="hero-split">
                         <div class="hero-text">
                             <span style="font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; display: block; margin-bottom: 15px;">Observatório bioCultura</span>
                             <h1>O progresso não pode ser o fim do seu horizonte.</h1>
-                            <p>Entre minas de lítio e espelhos de silício, o seu lar está a perder a cor. Enquanto nos vendem um futuro "verde", o seu território está a ser silenciado. Descubra a verdade oculta sob os seus pés.</p>
+                            <p>Descubra os impactos e as soluções de regeneração sob os seus pés.</p>
                         </div>
                         <div class="hero-visual">
                             <div class="hero-globe">
-                                <img src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=2000&auto=format&fit=crop" alt="O Horizonte bioCultura" />
+                                <img src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=1000&auto=format&fit=crop" alt="bioCultura" />
                             </div>
                         </div>
                     </section>
 
-                    <!-- Título da Secção Alterado -->
                     <header class="major">
-                    <h2>Observatório de Impacto</h2>
+                        <h2>Observatório de Impacto</h2>
                     </header>
 
-                    <div class="posts">
-                        <!-- Caso 1: Lítio -->
-                        <article>
-                            <span class="category-label" style="text-align:left">Mineração & Conflito</span>
-                            <a href="/observatorio/noticia-detalhe.html?id=litio-barroso" class="news-link-block">
-                                <h3>A Fronteira do Lítio: Barroso e Arga</h3>
-                                <p>Boticas e a Serra d'Arga enfrentam a destruição de aquíferos milenares para extração a céu aberto. O projeto avança, mas o que os relatórios de impacto ambiental escondem é que...</p>
-                            </a>
-                        </article>
-
-                        <!-- Caso 2: Alviela -->
-                        <article>
-                            <span class="category-label" style="text-align:left">Recursos Hídricos</span>
-                            <a href="/observatorio/noticia-detalhe.html?id=alviela-calcario" class="news-link-block">
-                                <h3>Alviela: O Gigante sob o Calcário</h3>
-                                <p>Em Porto de Mós, o maior aquífero de Portugal sobrevive sob um sistema cárstico frágil. A poluição descontrolada atingiu níveis históricos e a solução proposta pelas autoridades pode...</p>
-                            </a>
-                        </article>
-
-                        <!-- Caso 3: Alentejo Solar -->
-                        <article>
-                            <span class="category-label" style="text-align:left">Energia Ética</span>
-                            <a href="/observatorio/noticia-detalhe.html?id=alentejo-solar" class="news-link-block">
-                                <h3>Alentejo: O Sol que apaga o Montado</h3>
-                                <p>O programa PSZAER acelera a instalação de mega-centrais solares em Beja, sacrificando milhares de azinheiras. O que ninguém diz é que o custo real desta energia "verde" será pago por...</p>
-                            </a>
-                        </article>
-
-                        <!-- Caso 4: Debate Público -->
-                        <article>
-                            <span class="category-label" style="text-align:left">Debate Público</span>
-                            <a href="/observatorio/noticia-detalhe.html?id=debate-beira-baixa" class="news-link-block">
-                                <h3>"Não à custa da vida"</h3>
-                                <p>O Movimento Cidadãos pela Beira Baixa alerta: a transição energética não assegura o equilíbrio. Numa carta aberta, os detalhes sobre os riscos para a saúde pública revelam...</p>
-                            </a>
-                        </article>
-
-                        <!-- Caso 5: Monchique -->
-                        <article>
-                            <span class="category-label" style="text-align:left">Geologia Única</span>
-                            <a href="/observatorio/noticia-detalhe.html?id=monchique-solo" class="news-link-block">
-                                <h3>Monchique: O Solo que não devia existir</h3>
-                                <p>O solo Sienítico sustenta uma flora que não encontraria em mais lado nenhum. No entanto, a recente exploração mineira descobriu algo no subsolo que muda completamente a história de...</p>
-                            </a>
-                        </article>
-
-                        <!-- Caso 6: Rio Maior -->
-                        <article>
-                            <span class="category-label" style="text-align:left">Curiosidade Territorial</span>
-                            <a href="/observatorio/noticia-detalhe.html?id=rio-maior-sal" class="news-link-block">
-                                <h3>Rio Maior: Mar no Interior</h3>
-                                <p>Uma nascente de água salgada a quilómetros do oceano. A geologia de Rio Maior esconde segredos milenares, mas o recente abaixamento do nível das águas trouxe à superfície...</p>
-                            </a>
-                        </article>
+                    <!-- GRELHA DINÂMICA -->
+                    <div id="observatorio-dinamico" class="observatorio-grid">
+                        <!-- Conteúdo gerado por JS -->
                     </div>
 
-                    <!-- INFO FINAL -->
-                    <section class="info-footer">
-                        <p>Saiba mais sobre mineração, água e solo da sua região, ativando a localização na barra lateral.</p>
-                    </section>
-
-                    <!-- FOOTER -->
                     <footer class="page-footer">
                         <div style="display: flex; align-items: center; justify-content: flex-end; gap: 10px; opacity: 0.3;">
                             <div style="text-align: right; line-height: 1;">
                                 <span style="display: block; font-size: 0.85em; font-weight: 900; color: #333;">bioCultura</span>
                                 <span style="display: block; font-size: 0.5em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Global Regeneration</span>
                             </div>
-                            <svg width="22" height="22" viewBox="0 0 100 100">
-                                <path d="M50 5 L89 27.5 L89 72.5 L50 95 L11 72.5 L11 27.5 Z" fill="#333" />
-                                <path d="M50 20 C50 20 75 45 75 70 C75 85 65 85 50 85 C35 85 25 85 25 70 C25 45 50 20 50 20Z" fill="#fff" />
-                            </svg>
+                            <svg width="22" height="22" viewBox="0 0 100 100"><path d="M50 5 L89 27.5 L89 72.5 L50 95 L11 72.5 L11 27.5 Z" fill="#333" /><path d="M50 20 C50 20 75 45 75 70 C75 85 65 85 50 85 C35 85 25 85 25 70 C25 45 50 20 50 20Z" fill="#fff" /></svg>
                         </div>
                     </footer>
 				</div>
@@ -197,9 +101,41 @@
 
 		<script src="/assets/js/jquery.min.js"></script>
         <script>
+            async function carregarObservatorio() {
+                try {
+                    const r = await fetch('/data/noticias.json');
+                    const noticias = await r.json();
+                    const container = document.getElementById('observatorio-dinamico');
+
+                    noticias.forEach(n => {
+                        const card = document.createElement('a');
+                        card.href = `/observatorio/noticia-detalhe.html?id=${n.id}`;
+                        card.className = 'news-card';
+                        
+                        // Limpa acentos da categoria para a classe CSS
+                        const catClass = n.categoria.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+                        card.innerHTML = `
+                            <div class="card-image-wrap">
+                                <img src="${n.imagem}" alt="${n.titulo}">
+                                <span class="badge-cat ${catClass}">${n.categoria}</span>
+                            </div>
+                            <div class="card-meta">
+                                <div class="source-circle">${n.fonte.charAt(0)}</div>
+                                <span>${n.fonte}</span>
+                            </div>
+                            <h3>${n.titulo}</h3>
+                            <p>${n.resumo_biocultura.substring(0, 120)}...</p>
+                        `;
+                        container.appendChild(card);
+                    });
+                } catch(e) { console.error(e); }
+            }
+
             fetch('/sidebar-content.html').then(r => r.text()).then(html => {
                 document.getElementById('sidebar').innerHTML = html;
                 var s = document.createElement('script'); s.src = '/assets/js/main.js'; document.body.appendChild(s);
+                carregarObservatorio();
             });
         </script>
 	</body>
