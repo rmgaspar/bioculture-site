@@ -182,20 +182,25 @@
             }
 
             async function renderDashboard(info) {
-                if(!info) return;
+                if(!info || !info.lat) return;
                 document.getElementById('no-gps-warning').style.display = 'none';
                 document.getElementById('air-dashboard').style.display = 'block';
                 document.getElementById('reg-name').innerText = info.titulo;
 
+                // USA O TEU TOKEN REAL AQUI
+                const AIR_TOKEN = "69894e75878f7129532579a37c95e1358742880c"; 
+
                 try {
-                    // Chamada à API usando as coordenadas do JSON
+                    // Chamada usando as coordenadas exatas do teu bioregioes.json
                     const response = await fetch(`https://api.waqi.info/feed/geo:${info.lat};${info.lon}/?token=${AIR_TOKEN}`);
                     const data = await response.json();
                     
                     if (data.status === "ok") {
                         const aqiVal = data.data.aqi;
                         document.getElementById('label-aqi').innerText = "AQI " + aqiVal;
-                        document.getElementById('air-description').innerText = `Valores reais medidos em tempo real na estação de ${data.data.city.name}.`;
+                        
+                        // Isto vai mostrar o nome da cidade portuguesa onde está a estação (ex: Castelo Branco ou Abrantes)
+                        document.getElementById('air-description').innerText = `Valores reais medidos pela estação oficial em ${data.data.city.name}.`;
 
                         let pos = (aqiVal / 200) * 100;
                         let status = "Bom";
@@ -206,13 +211,14 @@
                         setTimeout(() => {
                             document.getElementById('marker-aqi').style.left = Math.min(pos, 100) + "%";
                         }, 300);
-                    } else { throw new Error(); }
+                    } else {
+                        throw new Error();
+                    }
                 } catch (error) {
                     document.getElementById('label-aqi').innerText = "AQI --";
-                    document.getElementById('air-description').innerText = "Estação de medição temporariamente indisponível para esta região.";
+                    document.getElementById('air-description').innerText = "Estação de medição indisponível para esta localização.";
                 }
 
-                // Atualiza o input da sidebar para mostrar a localização atual
                 const input = document.getElementById('loc-search-input');
                 if(input) input.value = info.titulo;
             }
