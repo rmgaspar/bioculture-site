@@ -50,10 +50,6 @@
             .card-image-wrap img { width: 100%; height: 100%; object-fit: cover; }
             .badge-cat { position: absolute; bottom: 10px; left: 10px; background: #5c6bc0; color: white; padding: 4px 12px; border-radius: 50px; font-size: 0.55em; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; }
 
-            .ver-mais-container { text-align: center; margin: 3em 0; }
-            .btn-ver-mais { background: transparent !important; border: 1px solid #eee !important; color: #bbb !important; border-radius: 50px; padding: 0 40px; font-size: 0.7em; font-weight: 900; letter-spacing: 2px; cursor: pointer; }
-            .hidden-card { display: none; }
-
             @media screen and (max-width: 1280px) {
                 #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
                 #wrapper { padding-left: 0 !important; }
@@ -108,16 +104,14 @@
                             <p>Selecione uma localidade na barra lateral para activar o radar energético.</p>
                         </div>
 
-                        <!-- CONTEXTO ESTÁTICO (O que tinhas no print) -->
                         <div class="alert-box" style="background: #fcfcfc; border-left-color: #2e7d32; margin-top: 4em;">
                             <h5 style="color: #2e7d32;">O Paradoxo da Transição "Verde"</h5>
                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 15px;">
                                 <p style="font-size: 0.85em; color: #666;"><strong>O Custo do Silício:</strong> A instalação de parques fotovoltaicos industriais exige frequentemente a desflorestação e a impermeabilização de solos férteis.</p>
-                                <p style="font-size: 0.85em; color: #666;"><strong>A Ilusão das Baterias:</strong> O armazenamento em baterias de lítio mascara a destruição de ecossistemas remotos e a extração mineira consome milhões de litros de água.</p>
+                                <p style="font-size: 0.85em; color: #666;"><strong>A Ilusão das Baterias:</strong> O armazenamento em baterias de lítio mascara a destruição de ecossistemas remotos.</p>
                             </div>
                         </div>
 
-                        <!-- PANORAMA GLOBAL -->
                         <div class="section-break">
                             <span class="sub-label">Panorama Nacional e Global</span>
                             <h2>Alerta de Transição Energética</h2>
@@ -127,9 +121,6 @@
                             <h4>Notícias e Relatórios</h4>
                             <div class="tech-content">
                                 <div id="noticias-energy-dinamico" class="observatorio-grid"></div>
-                                <div class="ver-mais-container">
-                                    <button id="btn-load-more-energy" class="btn-ver-mais" style="display:none;">Ver Mais Notícias</button>
-                                </div>
                                 <div style="margin-top: 2em; text-align: center;">
                                     <a href="/observatorio/estatisticas-energia.html" class="tech-detail" style="color: #5c6bc0; font-weight: 800; text-decoration: none;">Ver Balanço da Rede Nacional (REN) Live →</a>
                                 </div>
@@ -145,7 +136,6 @@
         <script>
             let locationsDB = [];
             let noticiasEnergy = [];
-            let visiveisEnergy = 4;
 
             function calcularDistancia(lat1, lon1, lat2, lon2) {
                 const R = 6371;
@@ -159,15 +149,8 @@
                 try {
                     const rLoc = await fetch('/data/bioregioes.json');
                     locationsDB = await rLoc.json();
-                    
                     const savedId = localStorage.getItem('biocultura_region');
-                    const urlParams = new URLSearchParams(window.location.search);
-                    const regionParam = urlParams.get('region');
-
-                    let info = locationsDB.find(i => i.id === regionParam) || 
-                               locationsDB.find(i => i.id === savedId) || 
-                               locationsDB.find(i => i.id === "proenca-a-nova");
-                    
+                    let info = locationsDB.find(i => i.id === savedId) || locationsDB.find(i => i.id === "proenca-a-nova");
                     if (info) renderDashboard(info);
                     setupSidebarLogic();
                     await carregarNoticiasEnergy();
@@ -189,8 +172,7 @@
                     const weather = await res.json();
                     const windSpeed = weather.current.wind_speed_100m; 
                     const solarRad = weather.current.shortwave_radiation; 
-
-                    document.getElementById('weather-context').innerText = `Condições locais: Vento a ${windSpeed} km/h | Radiação Solar: ${solarRad} W/m².`;
+                    document.getElementById('weather-context').innerText = `Vento: ${windSpeed} km/h | Sol: ${solarRad} W/m².`;
 
                     let totalInstalada = 0;
                     let totalEstimada = 0;
@@ -200,36 +182,27 @@
                         lista.forEach(item => {
                             const mw = parseFloat(item.capacidade_mw) || 0;
                             totalInstalada += mw;
-                            let eficiencia = tipo === 'eolica' ? Math.min(Math.max((windSpeed - 10) / 35, 0), 1) : Math.min(solarRad / 1000, 1);
-                            const producao = (mw * eficiencia).toFixed(1);
-                            totalEstimada += parseFloat(producao);
-
+                            let ef = tipo === 'eolica' ? Math.min(Math.max((windSpeed - 10) / 35, 0), 1) : Math.min(solarRad / 1000, 1);
+                            const prod = (mw * ef).toFixed(1);
+                            totalEstimada += parseFloat(prod);
                             infraContainer.innerHTML += `
                                 <div class="infra-item">
                                     <span class="infra-type ${tipo}">${tipo === 'eolica' ? '🌬️ Eólica' : '☀️ Solar'}</span>
                                     <span class="infra-owner">${item.proprietario || "Operador Local"}</span>
                                     <span class="tech-main" style="display:block; margin: 5px 0">${item.nome || "Central Local"}</span>
                                     <div style="display:flex; justify-content:space-between; align-items:flex-end">
-                                        <span class="infra-capacity">${mw} MW <small>CAP.</small></span>
-                                        <span class="tech-main" style="color: #2e7d32">${producao} MW <small>LIVE</small></span>
+                                        <span class="infra-capacity">${mw} MW</span>
+                                        <span class="tech-main" style="color: #2e7d32">${prod} MW</span>
                                     </div>
-                                    <div class="gauge-bar"><div class="gauge-fill" style="width:${eficiencia * 100}%"></div></div>
+                                    <div class="gauge-bar"><div class="gauge-fill" style="width:${ef * 100}%"></div></div>
                                 </div>`;
                         });
                     };
-
                     processar(eData.parques_eolicos, 'eolica');
                     processar(eData.parques_solares, 'solar');
                     document.getElementById('total-production').innerText = totalEstimada.toFixed(1) + " MW";
                     document.getElementById('total-installed').innerText = totalInstalada.toFixed(1) + " MW";
                 } catch (err) { console.error(err); }
-
-                const alertBox = document.getElementById('energy-impact-alert');
-                if(eData.alerta_impacto && eData.alerta_impacto !== "N/A") {
-                    alertBox.style.display = 'block';
-                    document.getElementById('energy-impact-text').innerText = eData.alerta_impacto;
-                } else { alertBox.style.display = 'none'; }
-                
                 const input = document.getElementById('loc-search-input');
                 if(input) input.value = info.titulo;
             }
@@ -238,9 +211,7 @@
                 const input = document.getElementById('loc-search-input');
                 const gpsBtn = document.getElementById('btn-gps-trigger');
                 const dropdown = document.getElementById('loc-dropdown');
-
                 if(!input) { setTimeout(setupSidebarLogic, 500); return; }
-
                 input.addEventListener('input', function() {
                     const val = this.value.toLowerCase();
                     dropdown.innerHTML = '';
@@ -252,27 +223,19 @@
                             const div = document.createElement('div');
                             div.className = 'bio-res-item';
                             div.innerText = m.titulo;
-                            div.onclick = () => { 
-                                localStorage.setItem('biocultura_region', m.id); 
-                                renderDashboard(m); 
-                                dropdown.style.display = 'none'; 
-                            };
+                            div.onclick = () => { localStorage.setItem('biocultura_region', m.id); renderDashboard(m); dropdown.style.display = 'none'; };
                             dropdown.appendChild(div);
                         });
                     } else dropdown.style.display = 'none';
                 });
-
                 if(gpsBtn) {
                     gpsBtn.onclick = () => {
                         input.value = "A localizar...";
                         navigator.geolocation.getCurrentPosition(pos => {
-                            const uLat = pos.coords.latitude;
-                            const uLon = pos.coords.longitude;
-                            let closest = locationsDB[0];
-                            let minD = Infinity;
+                            let closest = locationsDB[0]; let minD = Infinity;
                             locationsDB.forEach(c => {
                                 if(c.lat && c.lon) {
-                                    let d = calcularDistancia(uLat, uLon, c.lat, c.lon);
+                                    let d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon);
                                     if(d < minD) { minD = d; closest = c; }
                                 }
                             });
@@ -287,28 +250,17 @@
                 try {
                     const r = await fetch('/data/noticias.json');
                     const todas = await r.json();
-                    noticiasEnergy = todas.filter(n => n.categoria.toLowerCase().includes('energia'));
-                    renderizarCardsEnergy();
+                    const container = document.getElementById('noticias-energy-dinamico');
+                    container.innerHTML = '';
+                    todas.filter(n => n.categoria.toLowerCase().includes('energia')).forEach(n => {
+                        container.innerHTML += `
+                            <a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-card">
+                                <div class="card-image-wrap"><img src="${n.imagem}"><span class="badge-cat">ENERGIA</span></div>
+                                <div class="card-meta"><div class="source-circle">${n.fonte.charAt(0)}</div><span>${n.fonte}</span></div>
+                                <h3>${n.titulo}</h3>
+                            </a>`;
+                    });
                 } catch(e) { console.error(e); }
-            }
-
-            function renderizarCardsEnergy() {
-                const container = document.getElementById('noticias-energy-dinamico');
-                if(!container) return;
-                container.innerHTML = '';
-                noticiasEnergy.forEach((n, index) => {
-                    const card = document.createElement('a');
-                    card.href = `/observatorio/noticia-detalhe.html?id=${n.id}`;
-                    card.className = `news-card ${index >= visiveisEnergy ? 'hidden-card' : ''}`;
-                    card.innerHTML = `
-                        <div class="card-image-wrap"><img src="${n.imagem}"><span class="badge-cat">ENERGIA</span></div>
-                        <div class="card-meta"><div class="source-circle">${n.fonte.charAt(0)}</div><span>${n.fonte}</span></div>
-                        <h3>${n.titulo}</h3>
-                        <p>${n.resumo_biocultura.substring(0, 100)}...</p>`;
-                    container.appendChild(card);
-                });
-                const btn = document.getElementById('btn-load-more-energy');
-                if(btn) btn.style.display = noticiasEnergy.length > visiveisEnergy ? 'inline-block' : 'none';
             }
 
             fetch('/sidebar-content.html').then(r => r.text()).then(html => {
@@ -316,7 +268,6 @@
                 inicializarPagina();
                 var s = document.createElement('script'); s.src = '/assets/js/main.js'; document.body.appendChild(s);
             });
-            document.getElementById('btn-load-more-energy').onclick = () => { visiveisEnergy += 4; renderizarCardsEnergy(); };
         </script>
 	</body>
 </html>
