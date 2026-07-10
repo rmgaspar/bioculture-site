@@ -162,45 +162,44 @@
                 } catch(e) { console.error(e); }
             }
 
-            async function renderDashboard(info) {
+           async function renderDashboard(info) {
                 if(!info) return;
                 document.getElementById('no-gps-warning').style.display = 'none';
                 document.getElementById('air-dashboard').style.display = 'block';
                 document.getElementById('reg-name').innerText = info.titulo;
 
-                const token = "TEU_TOKEN_AQUI"; // Coloca aqui o token que receberes por email
-                const cidade = info.titulo.split(' ')[0]; // Pega no primeiro nome da localidade (ex: "Proença")
+                // 1. COLOCA AQUI O TEU TOKEN (pede em aqicn.org/data-platform/token/)
+                const token = "DEMO_TOKEN_OU_O_TEU"; 
 
                 try {
-                    // Chamada à API real
-                    const response = await fetch(`https://api.waqi.info/feed/${cidade}/?token=${token}`);
+                    // 2. PEDIR DADOS PELAS COORDENADAS (Muito mais preciso que o nome)
+                    const response = await fetch(`https://api.waqi.info/feed/geo:${info.lat};${info.lon}/?token=${token}`);
                     const data = await response.json();
                     
-                    let aqiVal;
                     if (data.status === "ok") {
-                        aqiVal = data.data.aqi; // Valor real da estação mais próxima
-                        document.getElementById('air-description').innerText = `Dados reais da estação de monitorização mais próxima de ${info.titulo}.`;
+                        const aqiVal = data.data.aqi;
+                        document.getElementById('label-aqi').innerText = "AQI " + aqiVal;
+                        
+                        // Mudar o texto para confirmar que são REAIS
+                        document.getElementById('air-description').innerText = `Valores reais medidos pela estação oficial em ${data.data.city.name}.`;
+
+                        let status = "Bom";
+                        let pos = (aqiVal / 200) * 100;
+                        if(aqiVal > 50) status = "Moderado";
+                        if(aqiVal > 100) status = "Fraco";
+                        
+                        document.getElementById('status-aqi').innerText = status;
+                        setTimeout(() => {
+                            document.getElementById('marker-aqi').style.left = Math.min(pos, 100) + "%";
+                        }, 300);
                     } else {
-                        // Fallback caso a API falhe ou não encontre a cidade
-                        aqiVal = 42; 
-                        document.getElementById('air-description').innerText = "Dados médios estimados para a região.";
+                        throw new Error("API retornou erro");
                     }
 
-                    document.getElementById('label-aqi').innerText = "AQI " + aqiVal;
-                    
-                    let status = "Bom";
-                    let pos = (aqiVal / 200) * 100;
-                    if(aqiVal > 50) status = "Moderado";
-                    if(aqiVal > 100) status = "Fraco";
-                    if(aqiVal > 150) status = "Insalubre";
-                    
-                    document.getElementById('status-aqi').innerText = status;
-                    setTimeout(() => {
-                        document.getElementById('marker-aqi').style.left = Math.min(pos, 100) + "%";
-                    }, 300);
-
                 } catch (error) {
-                    console.error("Erro ao carregar AQI real:", error);
+                    // Só aparece isto se a internet falhar ou o token estiver errado
+                    document.getElementById('label-aqi').innerText = "AQI --";
+                    document.getElementById('air-description').innerText = "Não foi possível ligar às estações de medição em tempo real.";
                 }
 
                 const input = document.getElementById('loc-search-input');
