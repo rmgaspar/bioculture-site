@@ -54,6 +54,18 @@
                 #wrapper { padding-left: 0 !important; }
                 .data-row { grid-template-columns: 1fr; gap: 15px; }
             }
+            /* Grelha e Cards */
+            .observatorio-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 40px; margin-top: 3em; }
+            .news-card { text-decoration: none; color: inherit; display: flex; flex-direction: column; transition: all 0.3s ease; }
+            .news-card:hover { transform: translateY(-8px); opacity: 0.85; }
+            .card-image-wrap { position: relative; width: 100%; height: 200px; overflow: hidden; border-radius: 16px; background: #f5f5f5; margin-bottom: 15px; }
+            .card-image-wrap img { width: 100%; height: 100%; object-fit: cover; }
+            .badge-cat { position: absolute; bottom: 12px; left: 12px; background: #4fc3f7; color: white; padding: 4px 12px; border-radius: 50px; font-size: 0.6em; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; }
+            .card-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 0.7em; font-weight: 800; color: #bbb; text-transform: uppercase; }
+            .source-circle { width: 20px; height: 20px; background: #333; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; }
+            .ver-mais-container { text-align: center; margin: 4em 0; }
+            .btn-ver-mais { background: transparent !important; border: 1px solid #eee !important; color: #bbb !important; border-radius: 50px; padding: 0 40px; font-size: 0.7em; font-weight: 900; letter-spacing: 2px; cursor: pointer; }
+            .hidden-card { display: none; }
 		</style>
 	</head>
 	<body class="is-preload">
@@ -171,77 +183,36 @@
         <script>
             let locationsDB = [];
             let noticiasAgua = [];
-            let visiveisAgua = 4; // Mostra 4 notícias inicialmente na página da água
+            let visiveisAgua = 4;
 
+            // 1. Função GPS
+            function calcularDistancia(lat1, lon1, lat2, lon2) {
+                const R = 6371;
+                const dLat = (lat2 - lat1) * Math.PI / 180;
+                const dLon = (lon2 - lon1) * Math.PI / 180;
+                const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
+                return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+            }
+
+            // 2. Inicialização Principal
             async function inicializarPagina() {
                 try {
-                    // 1. Carregar Bioregiões
+                    // Carregar base de dados de regiões
                     const rLoc = await fetch('/data/bioregioes.json');
                     locationsDB = await rLoc.json();
                     
+                    // Determinar região atual
                     const savedId = localStorage.getItem('biocultura_region');
                     let info = locationsDB.find(i => i.id === savedId) || locationsDB.find(i => i.id === "proenca-a-nova");
                     
                     renderDashboard(info);
-                    setupSidebarLogic();
+                    setupSidebarLogic(); // Ativa procura e GPS
+                    await carregarNoticiasAgua(); // Carrega notícias
                     
-                    // 2. Carregar Notícias da Categoria Água
-                    await carregarNoticiasAgua();
-                    
-                } catch(e) { console.error("Erro ao inicializar:", e); }
+                } catch(e) { console.error("Erro na inicialização:", e); }
             }
 
-            async function carregarNoticiasAgua() {
-                try {
-                    const rNot = await fetch('/data/noticias.json');
-                    const todas = await rNot.json();
-                    
-                    // FILTRO: Apenas notícias de "água"
-                    noticiasAgua = todas.filter(n => n.categoria.toLowerCase().includes('agua'));
-                    
-                    renderizarCardsAgua();
-                } catch(e) { console.error("Erro nas notícias:", e); }
-            }
-
-            function renderizarCardsAgua() {
-                const container = document.getElementById('noticias-agua-dinamico');
-                container.innerHTML = '';
-
-                noticiasAgua.forEach((n, index) => {
-                    const card = document.createElement('a');
-                    card.href = `/observatorio/noticia-detalhe.html?id=${n.id}`;
-                    card.className = `news-card ${index >= visiveisAgua ? 'hidden-card' : ''}`;
-                    
-                    card.innerHTML = `
-                        <div class="card-image-wrap">
-                            <img src="${n.imagem}" alt="${n.titulo}">
-                            <span class="badge-cat agua">${n.categoria}</span>
-                        </div>
-                        <div class="card-meta">
-                            <div class="source-circle">${n.fonte.charAt(0)}</div>
-                            <span>${n.fonte}</span>
-                        </div>
-                        <h3>${n.titulo}</h3>
-                        <p>${n.resumo_biocultura.substring(0, 100)}...</p>
-                    `;
-                    container.appendChild(card);
-                });
-
-                // Lógica do botão Ver Mais
-                const btnContainer = document.getElementById('container-btn-agua');
-                if (noticiasAgua.length > visiveisAgua) {
-                    btnContainer.style.display = 'block';
-                } else {
-                    btnContainer.style.display = 'none';
-                }
-            }
-
-            document.getElementById('btn-load-more-agua').onclick = function() {
-                visiveisAgua += 4;
-                renderizarCardsAgua();
-            };
-
-            // Funções de suporte (Dashboard e Sidebar) permanecem iguais
+            // 3. Renderizar Dashboard (Dados Técnicos)
             function renderDashboard(info) {
                 if(!info) return;
                 document.getElementById('no-gps-warning').style.display = 'none';
@@ -266,15 +237,25 @@
                     document.getElementById('reg-aquifer').innerText = "Aquífero: " + (info.agua.aquiferos || "Em levantamento.");
                     document.getElementById('reg-dams').innerText = "Barragens: " + ((info.agua.barragens_proximas && Array.isArray(info.agua.barragens_proximas)) ? info.agua.barragens_proximas.join(', ') : "Nenhuma detetada.");
                 }
+                
+                // Sincroniza o texto da sidebar
                 const input = document.getElementById('loc-search-input');
                 if(input) input.value = info.titulo;
             }
 
+            // 4. Lógica da Sidebar (AQUI ESTAVA O PROBLEMA)
             function setupSidebarLogic() {
                 const input = document.getElementById('loc-search-input');
+                const gpsBtn = document.getElementById('btn-gps-trigger');
                 const dropdown = document.getElementById('loc-dropdown');
-                if(!input) return;
 
+                if(!input) {
+                    console.warn("Sidebar ainda não carregada. Tentando novamente...");
+                    setTimeout(setupSidebarLogic, 500);
+                    return;
+                }
+
+                // Evento de Procura
                 input.addEventListener('input', function() {
                     const val = this.value.toLowerCase();
                     dropdown.innerHTML = '';
@@ -286,18 +267,76 @@
                             const div = document.createElement('div');
                             div.className = 'bio-res-item';
                             div.innerText = m.titulo;
-                            div.onclick = () => { localStorage.setItem('biocultura_region', m.id); renderDashboard(m); dropdown.style.display = 'none'; };
+                            div.onclick = () => { 
+                                localStorage.setItem('biocultura_region', m.id); 
+                                renderDashboard(m); 
+                                dropdown.style.display = 'none'; 
+                            };
                             dropdown.appendChild(div);
                         });
                     } else dropdown.style.display = 'none';
                 });
+
+                // Evento GPS
+                if(gpsBtn) {
+                    gpsBtn.onclick = () => {
+                        input.value = "A localizar...";
+                        navigator.geolocation.getCurrentPosition(pos => {
+                            const uLat = pos.coords.latitude;
+                            const uLon = pos.coords.longitude;
+                            let closest = locationsDB[0];
+                            let minD = Infinity;
+                            locationsDB.forEach(c => {
+                                if(c.lat && c.lon) {
+                                    let d = calcularDistancia(uLat, uLon, c.lat, c.lon);
+                                    if(d < minD) { minD = d; closest = c; }
+                                }
+                            });
+                            localStorage.setItem('biocultura_region', closest.id);
+                            renderDashboard(closest);
+                        });
+                    };
+                }
             }
 
+            // 5. Carregar Notícias da Água
+            async function carregarNoticiasAgua() {
+                try {
+                    const r = await fetch('/data/noticias.json');
+                    const todas = await r.json();
+                    noticiasAgua = todas.filter(n => n.categoria.toLowerCase().includes('agua'));
+                    renderizarCardsAgua();
+                } catch(e) { console.error(e); }
+            }
+
+            function renderizarCardsAgua() {
+                const container = document.getElementById('noticias-agua-dinamico');
+                if(!container) return;
+                container.innerHTML = '';
+                noticiasAgua.forEach((n, index) => {
+                    const card = document.createElement('a');
+                    card.href = `/observatorio/noticia-detalhe.html?id=${n.id}`;
+                    card.className = `news-card ${index >= visiveisAgua ? 'hidden-card' : ''}`;
+                    card.innerHTML = `
+                        <div class="card-image-wrap"><img src="${n.imagem}"><span class="badge-cat agua">${n.categoria}</span></div>
+                        <div class="card-meta"><div class="source-circle">${n.fonte.charAt(0)}</div><span>${n.fonte}</span></div>
+                        <h3>${n.titulo}</h3>
+                        <p>${n.resumo_biocultura.substring(0, 100)}...</p>
+                    `;
+                    container.appendChild(card);
+                });
+                const btn = document.getElementById('container-btn-agua');
+                if(btn) btn.style.display = noticiasAgua.length > visiveisAgua ? 'block' : 'none';
+            }
+
+            // 6. EXECUÇÃO: Primeiro a Sidebar, depois o resto
             fetch('/sidebar-content.html').then(r => r.text()).then(html => {
                 document.getElementById('sidebar').innerHTML = html;
-                inicializarPagina();
+                inicializarPagina(); // Agora sim, tudo em ordem
                 var s = document.createElement('script'); s.src = '/assets/js/main.js'; document.body.appendChild(s);
             });
+
+            document.getElementById('btn-load-more-agua').onclick = () => { visiveisAgua += 4; renderizarCardsAgua(); };
         </script>
 	</body>
 </html>
