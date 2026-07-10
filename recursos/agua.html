@@ -6,55 +6,51 @@
 		<meta name="viewport" content="width=device-width, initial-scale, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
 		<style>
-            /* --- ESTRUTURA GLOBAL (ESTILO CALENDÁRIO) --- */
             body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
 			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
             section { padding-top: 4em !important; min-height: 100vh; display: flex; flex-direction: column; }
 
-            /* SIDEBAR FIXA E SEM SCROLL */
             #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
             #sidebar > .inner { height: 100% !important; overflow: hidden !important; display: flex; flex-direction: column; }
             #wrapper { padding-left: 18em !important; }
 
-            /* CABEÇALHOS CINZENTOS */
             .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; color: #bbb; margin-bottom: 10px; display: block; text-align: center; }
             
-            /* LINHAS DE DADOS */
-            .data-row { display: grid; grid-template-columns: 180px 1fr; gap: 40px; padding: 2.5em 0; border-bottom: 1px solid #f2f2f2; }
+            /* LINHAS DE DADOS COMPACTADAS */
+            .data-row { display: grid; grid-template-columns: 180px 1fr; gap: 40px; padding: 1.5em 0; border-bottom: 1px solid #f2f2f2; }
             .data-row h4 { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin: 0; padding-top: 5px; }
 
-            /* ESCALAS HORIZONTAIS */
-            .gauge-container { margin-bottom: 35px; width: 100%; max-width: 500px; }
-            .gauge-label { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 10px; }
-            .gauge-label .current-val { font-size: 1.4em; font-weight: 700; color: #1a1a1a; }
-            .gauge-label .unit { font-size: 0.7em; font-weight: 800; color: #bbb; text-transform: uppercase; }
-            .gauge-bar { height: 8px; width: 100%; border-radius: 10px; position: relative; background: #eee; }
+            /* ESCALAS */
+            .gauge-container { margin-bottom: 20px; width: 100%; max-width: 500px; }
+            .gauge-label { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px; }
+            .gauge-label .current-val { font-size: 1.2em; font-weight: 700; color: #1a1a1a; }
+            .gauge-label .unit { font-size: 0.6em; font-weight: 800; color: #bbb; text-transform: uppercase; }
+            .gauge-bar { height: 6px; width: 100%; border-radius: 10px; position: relative; background: #eee; }
             .bar-ph { background: linear-gradient(to right, #ffd54f 0%, #81c784 50%, #4fc3f7 100%); }
             .bar-dureza { background: linear-gradient(to right, #4fc3f7 0%, #ffb74d 50%, #ef5350 100%); }
+            .gauge-marker { position: absolute; top: -5px; left: 0%; width: 3px; height: 16px; background: #1a1a1a; border-radius: 2px; transition: left 1.5s cubic-bezier(0.4, 0, 0.2, 1); }
 
-            .gauge-marker { position: absolute; top: -6px; left: 0%; width: 3px; height: 20px; background: #1a1a1a; border-radius: 2px; transition: left 1.5s cubic-bezier(0.4, 0, 0.2, 1); }
-
-            .tech-content { display: flex; flex-direction: column; gap: 15px; }
+            .tech-content { display: flex; flex-direction: column; gap: 10px; }
             .tech-main { font-size: 1.1em; font-weight: 700; color: #1a1a1a; line-height: 1.3; }
-            .tech-detail { font-size: 0.95em; color: #777; line-height: 1.6; margin: 0; }
+            .tech-detail { font-size: 0.9em; color: #777; line-height: 1.5; margin: 0; }
 
-            .alert-box { background: #fff8f8; padding: 2em; border-radius: 25px; border-left: 5px solid #ef5350; margin-top: 20px; }
-            .alert-box h5 { color: #ef5350; font-weight: 900; text-transform: uppercase; font-size: 0.7em; margin-bottom: 8px; }
-            .alert-box p { color: #7f1d1d; font-size: 0.95em; margin: 0; font-weight: 600; }
+            /* SEPARADOR DE SECÇÃO: ALERTA GLOBAL */
+            .section-break { margin: 4em 0 2em 0; padding: 3em 0; border-top: 2px solid #f2f2f2; text-align: center; }
+            .section-break h2 { font-size: 2em; font-weight: 300; color: #ef5350; letter-spacing: -1px; margin: 0; }
+            .section-break .sub-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; }
 
-            .temp-badge { background: #f4f7fb; color: #5c6bc0; padding: 6px 15px; border-radius: 50px; font-size: 0.75em; font-weight: 800; display: inline-block; margin-top: 20px; }
-            
-            /* ESTILO NOTÍCIAS */
+            /* NOTÍCIAS */
             .news-item { margin-bottom: 2em; padding-bottom: 2em; border-bottom: 1px dashed #eee; }
             .news-item:last-child { border-bottom: none; }
             .news-meta { font-size: 0.7em; font-weight: 800; color: #bbb; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; display: block; }
-            .news-link { color: #1a1a1a; text-decoration: none; border-bottom: 1px solid transparent; transition: border 0.3s; }
-            .news-link:hover { border-bottom: 1px solid #1a1a1a; }
+            .news-link { color: #1a1a1a; text-decoration: none; transition: opacity 0.3s; }
+            .news-link:hover { opacity: 0.7; }
 
+            .temp-badge { background: #f4f7fb; color: #5c6bc0; padding: 5px 12px; border-radius: 50px; font-size: 0.7em; font-weight: 800; display: inline-block; }
             .page-footer { margin-top: auto; padding: 4em 0 2em 0; border-top: 1px solid #f2f2f2; }
 
             @media screen and (max-width: 1280px) {
-                #sidebar { position: relative !important; width: 100% !important; height: auto !important; overflow: visible !important; }
+                #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
                 #wrapper { padding-left: 0 !important; }
                 .data-row { grid-template-columns: 1fr; gap: 15px; }
             }
@@ -66,70 +62,72 @@
                 <div class="inner">
 					<header id="header" style="height: 0; margin: 0; padding: 0; overflow: hidden;"></header>
                     <section>
-                        <div style="text-align: center; margin-bottom: 4em;">
+                        <!-- Cabeçalho Principal -->
+                        <div style="text-align: center; margin-bottom: 3em;">
                             <span class="category-label">Recursos Vitais</span>
                             <h1 style="font-size: 3.5em; font-weight: 300; color: #1a1a1a; letter-spacing: -2px; margin: 0;">Água: O Sangue da Terra</h1>
                             <p style="font-size: 0.9em; font-style: italic; color: #bbb; margin-top: 5px;">Análise regional: <strong id="reg-name" style="color:#888">...</strong></p>
                         </div>
 
                         <div id="water-dashboard" style="display:none;">
-                            <!-- Perfil Químico -->
+                            <!-- ANÁLISE REGIONAL (COMPACTA) -->
                             <div class="data-row">
                                 <h4>Perfil Químico</h4>
                                 <div class="tech-content">
-                                    <div class="gauge-container">
-                                        <div class="gauge-label"><span class="current-val" id="label-ph">pH --</span><span class="unit">Escala 0-14</span></div>
-                                        <div class="gauge-bar bar-ph"><div id="marker-ph" class="gauge-marker"></div></div>
+                                    <div style="display: flex; gap: 40px; flex-wrap: wrap;">
+                                        <div class="gauge-container">
+                                            <div class="gauge-label"><span class="current-val" id="label-ph">pH --</span><span class="unit">Escala 0-14</span></div>
+                                            <div class="gauge-bar bar-ph"><div id="marker-ph" class="gauge-marker"></div></div>
+                                        </div>
+                                        <div class="gauge-container">
+                                            <div class="gauge-label"><span class="current-val" id="label-dureza">-- ºf</span><span class="unit">Dureza Francesa</span></div>
+                                            <div class="gauge-bar bar-dureza"><div id="marker-dureza" class="gauge-marker"></div></div>
+                                        </div>
                                     </div>
-                                    <div class="gauge-container">
-                                        <div class="gauge-label"><span class="current-val" id="label-dureza">-- ºf</span><span class="unit">Dureza Francesa</span></div>
-                                        <div class="gauge-bar bar-dureza"><div id="marker-dureza" class="gauge-marker"></div></div>
-                                    </div>
-                                    <p class="tech-detail" id="water-advantages">A analisar composição mineral...</p>
+                                    <p class="tech-detail" id="water-advantages" style="margin-top: -10px;">A analisar composição mineral...</p>
                                 </div>
                             </div>
 
-                            <!-- Disponibilidade -->
                             <div class="data-row">
                                 <h4>Disponibilidade</h4>
                                 <div class="tech-content">
-                                    <div id="impact-alert" class="alert-box" style="display:none;">
-                                        <h5>Alerta de Vulnerabilidade</h5>
-                                        <p id="impact-text"></p>
+                                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
+                                        <div>
+                                            <span class="tech-main" id="reg-aquifer">--</span><br>
+                                            <p class="tech-detail" id="reg-dams">--</p>
+                                        </div>
+                                        <div id="temp-container"></div>
                                     </div>
-                                    <span class="tech-main" id="reg-aquifer">--</span>
-                                    <p class="tech-detail" id="reg-dams">--</p>
-                                    <div id="temp-container"></div>
                                 </div>
                             </div>
 
-                            <!-- Notícias e Relatórios (NOVA SECÇÃO) -->
-                            <div class="data-row">
-                                <h4>Notícias e Relatórios</h4>
+                            <!-- SEPARADOR PARA ANÁLISE GLOBAL -->
+                            <div class="section-break">
+                                <span class="sub-label">Panorama Nacional e Global</span>
+                                <h2>Alerta de Escassez de Água</h2>
+                            </div>
+
+                            <!-- NOTÍCIAS E RELATÓRIOS -->
+                            <div class="data-row" style="border-bottom: none;">
+                                <h4>Crise Hídrica</h4>
                                 <div class="tech-content">
                                     
                                     <div class="news-item">
                                         <span class="news-meta">9 Jul 2026 | SMAS Almada | Fonte: Diário do Distrito</span>
                                         <a href="/observatorio/noticia-almada.html" class="news-link"><span class="tech-main">Estado de Alerta em Almada: Reservatórios em níveis críticos</span></a>
-                                        <p class="tech-detail">Consumo médio ultrapassa os 300 litros por habitante, quase o dobro da média nacional. Decretada situação de alerta e cortes noturnos para recuperação do sistema.</p>
-                                    </div>
-
-                                    <div class="news-item">
-                                        <span class="news-meta">8 Jul 2026 | Ministério do Ambiente | Fonte: Jornal Almadense</span>
-                                        <a href="/observatorio/noticia-almada.html" class="news-link"><span class="tech-main">Almada regista as maiores perdas de água do país</span></a>
-                                        <p class="tech-detail">Ministra aponta fugas superiores a 35% na rede. APA autoriza licenciamento imediato de novos furos para reforçar o abastecimento urgente no concelho.</p>
+                                        <p class="tech-detail">Consumo médio ultrapassa os 300 litros por habitante. Decretada situação de alerta e cortes noturnos para recuperação do sistema.</p>
                                     </div>
 
                                     <div class="news-item">
                                         <span class="news-meta">Maio 2026 | APA | Fonte: Sul Informação</span>
-                                        <a href="/observatorio/noticia-algarve.html" class="news-link"><span class="tech-main">Algarve: Recuperação hídrica e foco na eficiência</span></a>
-                                        <p class="tech-detail">Barragens recuperam mas restrições de 5% mantêm-se. Plano "Água que Une" avança com investimentos em dessalinização para garantir resiliência a longo prazo.</p>
+                                        <a href="/observatorio/noticia-algarve.html" class="news-link"><span class="tech-main">Algarve: Recuperação hídrica e foco na resiliência</span></a>
+                                        <p class="tech-detail">Barragens recuperam mas restrições de 5% mantêm-se. Plano "Água que Une" avança com investimentos em dessalinização.</p>
                                     </div>
 
                                     <div class="news-item">
-                                        <span class="news-meta">Relatório 2025/26 | ERSAR | Fonte: RASARP</span>
-                                        <a href="/observatorio/noticia-nacional.html" class="news-link"><span class="tech-main">Sustentabilidade do setor hídrico em Portugal</span></a>
-                                        <p class="tech-detail">Relatório anual sublinha a urgência na reabilitação de infraestruturas e no reaproveitamento de águas residuais tratadas para fins não potáveis.</p>
+                                        <span class="news-meta">Junho 2026 | ONU | Fonte: UNRIC</span>
+                                        <a href="/observatorio/noticia-global.html" class="news-link"><span class="tech-main">Alerta Global: A urgência de racionar e reaproveitar</span></a>
+                                        <p class="tech-detail">Nações Unidas reforçam a necessidade de transição para uma economia circular hídrica perante o stress hídrico crescente.</p>
                                     </div>
 
                                 </div>
@@ -184,7 +182,6 @@
                 document.getElementById('no-gps-warning').style.display = 'none';
                 document.getElementById('water-dashboard').style.display = 'block';
                 document.getElementById('reg-name').innerText = info.titulo;
-                document.getElementById('reg-name').style.color = "#888";
 
                 if (info.recursos_hidricos) {
                     const ph = parseFloat(info.recursos_hidricos.ph_agua) || 7.0;
@@ -195,75 +192,24 @@
                         document.getElementById('marker-ph').style.left = (ph / 14 * 100) + "%";
                         document.getElementById('marker-dureza').style.left = (Math.min(dur / 50 * 100, 100)) + "%";
                     }, 300);
-                    document.getElementById('water-advantages').innerText = ph < 7 ? "Água ligeiramente ácida: Ideal para a absorção de micronutrientes. Favorece mirtilos e batatas." : "Água equilibrada: Rica em carbonatos, excelente para neutralizar solos ácidos.";
+                    document.getElementById('water-advantages').innerText = ph < 7 ? "Água ligeiramente ácida: Ideal para mirtilos e batatas." : "Água equilibrada: Excelente para neutralizar solos ácidos.";
                     const mes = new Date().getMonth();
                     const temp = (info.recursos_hidricos.temp_media_agua && info.recursos_hidricos.temp_media_agua[mes]) ? info.recursos_hidricos.temp_media_agua[mes] : '--';
-                    document.getElementById('temp-container').innerHTML = `<div class="temp-badge"><i class="fas fa-thermometer-half"></i> Água hoje: ${temp}ºC</div>`;
+                    document.getElementById('temp-container').innerHTML = `<div class="temp-badge">Água hoje: ${temp}ºC</div>`;
                 }
 
                 if (info.agua) {
                     document.getElementById('reg-aquifer').innerText = "Aquífero: " + (info.agua.aquiferos || "Em levantamento.");
-                    document.getElementById('reg-dams').innerText = "Barragens próximas: " + ((info.agua.barragens_proximas && Array.isArray(info.agua.barragens_proximas)) ? info.agua.barragens_proximas.join(', ') : "Nenhuma detetada.");
-                    const impactAlert = document.getElementById('impact-alert');
-                    if (info.id === "porto-de-mos") {
-                        impactAlert.style.display = 'block';
-                        document.getElementById('impact-text').innerText = "A poluição industrial e a extração descontrolada ameaçam a integridade deste aquífero vital.";
-                    } else { impactAlert.style.display = 'none'; }
+                    document.getElementById('reg-dams').innerText = "Barragens: " + ((info.agua.barragens_proximas && Array.isArray(info.agua.barragens_proximas)) ? info.agua.barragens_proximas.join(', ') : "Nenhuma detetada.");
                 }
                 const input = document.getElementById('loc-search-input');
                 if(input) input.value = info.titulo;
-            }
-
-            function setupSidebarLogic() {
-                const input = document.getElementById('loc-search-input');
-                const gpsBtn = document.getElementById('btn-gps-trigger');
-                if(!input || !gpsBtn) return;
-
-                gpsBtn.onclick = () => {
-                    input.value = "A localizar...";
-                    navigator.geolocation.getCurrentPosition(pos => {
-                        const userLat = pos.coords.latitude;
-                        const userLon = pos.coords.longitude;
-                        let minD = Infinity;
-                        let closest = null;
-                        locationsDB.forEach(c => {
-                            if(c.lat && c.lon) {
-                                let d = calcularDistancia(userLat, userLon, c.lat, c.lon);
-                                if(d < minD) { minD = d; closest = c; }
-                            }
-                        });
-                        if(closest) {
-                            localStorage.setItem('biocultura_region', closest.id);
-                            sessionStorage.clear();
-                            window.location.href = window.location.pathname;
-                        }
-                    }, () => { window.location.href = window.location.pathname; });
-                };
-
-                input.addEventListener('input', function() {
-                    const val = this.value.toLowerCase();
-                    const dropdown = document.getElementById('loc-dropdown');
-                    dropdown.innerHTML = '';
-                    if(val.length < 2) { dropdown.style.display = 'none'; return; }
-                    const matches = locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0, 6);
-                    if(matches.length > 0) {
-                        dropdown.style.display = 'block';
-                        matches.forEach(m => {
-                            const div = document.createElement('div');
-                            div.className = 'bio-res-item';
-                            div.innerText = m.titulo;
-                            div.onclick = () => { localStorage.setItem('biocultura_region', m.id); location.reload(); };
-                            dropdown.appendChild(div);
-                        });
-                    } else dropdown.style.display = 'none';
-                });
             }
 
             fetch('/sidebar-content.html').then(r => r.text()).then(html => {
                 document.getElementById('sidebar').innerHTML = html;
                 var s = document.createElement('script'); s.src = '/assets/js/main.js'; document.body.appendChild(s);
                 inicializarPagina();
-                setTimeout(setupSidebarLogic, 1000);
             });
         </script>
 	</body>
