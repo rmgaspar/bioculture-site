@@ -18,7 +18,7 @@
             .data-row { display: grid; grid-template-columns: 180px 1fr; gap: 40px; padding: 2.5em 0; border-bottom: 1px solid #f2f2f2; }
             .data-row h4 { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin: 0; padding-top: 5px; }
 
-            /* GAUGES ENERGIA (ESTILO AR.HTML) */
+            /* GAUGES ENERGIA */
             .gauge-container { margin-bottom: 25px; width: 100%; max-width: 500px; }
             .gauge-label { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px; }
             .current-val { font-size: 1.4em; font-weight: 700; color: #1a1a1a; }
@@ -34,6 +34,7 @@
             .section-break h2 { font-size: 2em; font-weight: 300; color: #5c6bc0; letter-spacing: -1px; margin: 0; }
             .section-break .sub-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; }
 
+            /* GRELHA DE NOTÍCIAS */
             .observatorio-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 40px; margin-top: 2em; }
             .news-card { text-decoration: none; color: inherit; display: flex; flex-direction: column; transition: all 0.3s ease; }
             .news-card:hover { transform: translateY(-8px); opacity: 0.85; }
@@ -56,29 +57,30 @@
                     <section>
                         <div style="text-align: center; margin-bottom: 3em;">
                             <span class="category-label">Engenharia & Soluções</span>
-                            <h1 style="font-size: 3.5em; font-weight: 300; color: #1a1a1a; letter-spacing: -2px; margin: 0;">Energia: Potencial Local</h1>
+                            <h1 style="font-size: 3.5em; font-weight: 300; color: #1a1a1a; letter-spacing: -2px; margin: 0;">Energia & Extracção</h1>
                             <p style="font-size: 0.9em; font-style: italic; color: #bbb; margin-top: 5px;">Radar de impacto territorial: <strong id="reg-name" style="color:#888">...</strong></p>
                         </div>
 
+                        <!-- DASHBOARD DINÂMICO -->
                         <div id="energy-dashboard" style="display:none;">
                             <div class="data-row">
-                                <h4>Recursos Naturais</h4>
+                                <h4>Potencial Renovável</h4>
                                 <div class="tech-content">
                                     <div class="gauge-container">
-                                        <div class="gauge-label"><span class="current-val" id="val-solar">-- W/m²</span><span class="unit">Radiação Solar (Agora)</span></div>
+                                        <div class="gauge-label"><span class="current-val" id="val-solar">-- W/m²</span><span class="unit">Radiação Solar (Live)</span></div>
                                         <div class="gauge-bar bar-solar"><div id="marker-solar" class="gauge-marker"></div></div>
                                     </div>
                                     <div class="gauge-container">
-                                        <div class="gauge-label"><span class="current-val" id="val-wind">-- km/h</span><span class="unit">Velocidade Vento (100m)</span></div>
+                                        <div class="gauge-label"><span class="current-val" id="val-wind">-- km/h</span><span class="unit">Vento a 100m (Live)</span></div>
                                         <div class="gauge-bar bar-wind"><div id="marker-wind" class="gauge-marker"></div></div>
                                     </div>
-                                    <p class="tech-detail" id="energy-summary">A analisar o potencial energético da região...</p>
+                                    <p class="tech-detail" id="energy-summary">A analisar recursos naturais para regeneração energética...</p>
                                 </div>
                             </div>
                         </div>
 
                         <div id="no-gps-warning" style="text-align: center; padding: 4em; color: #bbb;">
-                            <p>A carregar observatório...</p>
+                            <p>A carregar base de dados...</p>
                         </div>
 
                         <div class="section-break">
@@ -114,16 +116,10 @@
                     locationsDB = await rLoc.json();
                     
                     const savedId = localStorage.getItem('biocultura_region');
-                    const urlParams = new URLSearchParams(window.location.search);
-                    const regionParam = urlParams.get('region');
-
-                    let info = locationsDB.find(i => i.id === regionParam) || 
-                               locationsDB.find(i => i.id === savedId) || 
-                               locationsDB.find(i => i.id === "proenca-a-nova") ||
-                               locationsDB[0];
+                    let info = locationsDB.find(i => i.id === savedId) || locationsDB.find(i => i.id === "proenca-a-nova");
                     
                     renderDashboard(info);
-                    setupSidebarLogic();
+                    setupSidebarListeners(); // Liga os botões
                     carregarNoticiasEnergy();
                 } catch(e) { console.error(e); }
             }
@@ -148,22 +144,24 @@
                         document.getElementById('marker-wind').style.left = Math.min(wind * 1.5, 100) + "%";
                     }, 300);
 
-                    let summary = (sun > 500 || wind > 20) ? "Potencial Elevado detetado para fontes renováveis." : "Produção condicionada pelas condições atmosféricas atuais.";
+                    let summary = (sun > 500 || wind > 20) ? "Potencial Híbrido Elevado: Condições ideais para produção renovável." : "Produção condicionada pela baixa disponibilidade de recursos no momento.";
                     document.getElementById('energy-summary').innerText = summary;
                 } catch (err) { console.error(err); }
 
+                // Sincroniza o input da sidebar
                 const input = document.getElementById('loc-search-input');
                 if(input) input.value = info.titulo;
             }
 
-            function setupSidebarLogic() {
+            function setupSidebarListeners() {
                 const input = document.getElementById('loc-search-input');
                 const gpsBtn = document.getElementById('btn-gps-trigger');
                 const dropdown = document.getElementById('loc-dropdown');
 
-                if(!input) return;
+                if(!input || !gpsBtn) return;
 
-                input.addEventListener('input', function() {
+                // Pesquisa
+                input.oninput = function() {
                     const val = this.value.toLowerCase();
                     dropdown.innerHTML = '';
                     if(val.length < 2) { dropdown.style.display = 'none'; return; }
@@ -182,24 +180,23 @@
                             dropdown.appendChild(div);
                         });
                     } else dropdown.style.display = 'none';
-                });
+                };
 
-                if(gpsBtn) {
-                    gpsBtn.onclick = () => {
-                        input.value = "A localizar...";
-                        navigator.geolocation.getCurrentPosition(pos => {
-                            let closest = locationsDB[0]; let minD = Infinity;
-                            locationsDB.forEach(c => {
-                                if(c.lat && c.lon) {
-                                    let d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon);
-                                    if(d < minD) { minD = d; closest = c; }
-                                }
-                            });
-                            localStorage.setItem('biocultura_region', closest.id);
-                            renderDashboard(closest);
-                        }, () => { input.value = "Erro GPS"; });
-                    };
-                }
+                // Seta GPS
+                gpsBtn.onclick = () => {
+                    input.value = "A localizar...";
+                    navigator.geolocation.getCurrentPosition(pos => {
+                        let closest = locationsDB[0]; let minD = Infinity;
+                        locationsDB.forEach(c => {
+                            if(c.lat && c.lon) {
+                                let d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon);
+                                if(d < minD) { minD = d; closest = c; }
+                            }
+                        });
+                        localStorage.setItem('biocultura_region', closest.id);
+                        renderDashboard(closest);
+                    }, () => { input.value = "Erro GPS"; });
+                };
             }
 
             async function carregarNoticiasEnergy() {
@@ -219,9 +216,12 @@
                 } catch(e) { console.error(e); }
             }
 
+            // CARREGAMENTO DA SIDEBAR (A ORDEM AQUI É CRÍTICA)
             fetch('/sidebar-content.html').then(r => r.text()).then(html => {
                 document.getElementById('sidebar').innerHTML = html;
+                // Só inicializa após a sidebar estar no HTML
                 inicializarPagina();
+                // Carrega o JS principal do template
                 var s = document.createElement('script'); s.src = '/assets/js/main.js'; document.body.appendChild(s);
             });
         </script>
