@@ -15,12 +15,10 @@
             #wrapper { padding-left: 18em !important; }
 
             .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; color: #bbb; margin-bottom: 10px; display: block; text-align: center; }
-            
-            /* LINHAS DE DADOS COMPACTADAS */
             .data-row { display: grid; grid-template-columns: 180px 1fr; gap: 40px; padding: 1.5em 0; border-bottom: 1px solid #f2f2f2; }
             .data-row h4 { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin: 0; padding-top: 5px; }
 
-            /* INDICADOR AQI COMPACTO */
+            /* INDICADOR AQI */
             .aqi-container { margin-bottom: 20px; width: 100%; max-width: 500px; }
             .aqi-label { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px; }
             .aqi-val { font-size: 1.4em; font-weight: 700; color: #1a1a1a; }
@@ -32,21 +30,25 @@
             .tech-main { font-size: 1.1em; font-weight: 700; color: #1a1a1a; line-height: 1.3; }
             .tech-detail { font-size: 0.9em; color: #777; line-height: 1.5; margin: 0; }
 
-            /* SEPARADOR PARA ANÁLISE GLOBAL */
             .section-break { margin: 4em 0 2em 0; padding: 3em 0; border-top: 2px solid #f2f2f2; text-align: center; }
             .section-break h2 { font-size: 2em; font-weight: 300; color: #ef5350; letter-spacing: -1px; margin: 0; }
             .section-break .sub-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; }
 
-            /* WIDGET AQI GLOBAL */
-            .aqi-widget-box { background: #fdfdfd; border: 1px solid #f2f2f2; padding: 2em; border-radius: 20px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 2em; }
-            .aqi-widget-val { font-size: 3em; font-weight: 300; color: #1a1a1a; }
-            .aqi-widget-info { text-align: right; }
+            /* GRELHA DE NOTÍCIAS */
+            .observatorio-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 40px; margin-top: 2em; }
+            .news-card { text-decoration: none; color: inherit; display: flex; flex-direction: column; transition: all 0.3s ease; }
+            .news-card:hover { transform: translateY(-8px); opacity: 0.85; }
+            .card-image-wrap { position: relative; width: 100%; height: 180px; overflow: hidden; border-radius: 12px; background: #f5f5f5; margin-bottom: 15px; }
+            .card-image-wrap img { width: 100%; height: 100%; object-fit: cover; }
+            .badge-cat { position: absolute; bottom: 10px; left: 10px; background: #ffb74d; color: white; padding: 4px 12px; border-radius: 50px; font-size: 0.55em; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; }
+            
+            .card-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 0.65em; font-weight: 800; color: #bbb; text-transform: uppercase; }
+            .source-circle { width: 18px; height: 18px; background: #333; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 8px; }
 
-            .news-item { margin-bottom: 2em; padding-bottom: 2em; border-bottom: 1px dashed #eee; }
-            .news-item:last-child { border-bottom: none; }
-            .news-meta { font-size: 0.7em; font-weight: 800; color: #bbb; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; display: block; }
-            .news-link { color: #1a1a1a; text-decoration: none; transition: opacity 0.3s; }
-            .news-link:hover { opacity: 0.7; }
+            .ver-mais-container { text-align: center; margin: 3em 0; }
+            .btn-ver-mais { background: transparent !important; border: 1px solid #eee !important; color: #bbb !important; border-radius: 50px; padding: 0 40px; font-size: 0.7em; font-weight: 900; letter-spacing: 2px; cursor: pointer; }
+            .hidden-card { display: none; }
+            .page-footer { margin-top: auto; padding: 4em 0 2em 0; border-top: 1px solid #f2f2f2; }
 
             @media screen and (max-width: 1280px) {
                 #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
@@ -61,15 +63,14 @@
                 <div class="inner">
 					<header id="header" style="height: 0; margin: 0; padding: 0; overflow: hidden;"></header>
                     <section>
-                        <!-- Cabeçalho Principal -->
                         <div style="text-align: center; margin-bottom: 3em;">
                             <span class="category-label">Recursos Vitais</span>
                             <h1 style="font-size: 3.5em; font-weight: 300; color: #1a1a1a; letter-spacing: -2px; margin: 0;">Ar: O Sopro da Vida</h1>
                             <p style="font-size: 0.9em; font-style: italic; color: #bbb; margin-top: 5px;">Análise regional: <strong id="reg-name" style="color:#888">...</strong></p>
                         </div>
 
+                        <!-- DASHBOARD LOCAL -->
                         <div id="air-dashboard" style="display:none;">
-                            <!-- ANÁLISE REGIONAL -->
                             <div class="data-row">
                                 <h4>Qualidade Local</h4>
                                 <div class="tech-content">
@@ -77,51 +78,43 @@
                                         <div class="aqi-label"><span class="aqi-val" id="label-aqi">AQI --</span><span class="aqi-status" id="status-aqi">A analisar...</span></div>
                                         <div class="aqi-bar"><div id="marker-aqi" class="aqi-marker"></div></div>
                                     </div>
-                                    <p class="tech-detail" id="air-description">Dados em tempo real sobre partículas PM2.5 e PM10 na sua localidade.</p>
+                                    <p class="tech-detail" id="air-description">Dados em tempo real sobre a pureza do ar na sua localidade.</p>
                                 </div>
-                            </div>
-
-                            <!-- SEPARADOR PARA ANÁLISE GLOBAL -->
-                            <div class="section-break">
-                                <span class="sub-label">Panorama Nacional e Global</span>
-                                <h2>Alerta de Poluição e Qualidade do Ar</h2>
-                            </div>
-
-                           <!-- INDICADOR NACIONAL COMPACTO (Substituindo a widget box anterior) -->
-                            <div class="data-row" style="border-bottom: none;">
-                            <h4>Notícias e Relatórios</h4>
-                            <div class="tech-content">
-                                
-                                <!-- Notícia 1: Saara -->
-                                <div class="news-item">
-                                    <span class="news-meta">10 Jul 2026 | IPMA | Fonte: Tempo.pt</span>
-                                    <a href="/observatorio/noticia-detalhe.html?id=ar-saara" class="news-link"><span class="tech-main">Poeiras do Saara avançam para norte e afetam Portugal</span></a>
-                                    <p class="tech-detail">Uma pluma de partículas minerais do Norte de África deverá aumentar a turbidez da atmosfera este fim de semana, com maior incidência no interior e sul.</p>
-                                </div>
-
-                                <!-- Notícia 2: Poluição Urbana -->
-                                <div class="news-item">
-                                    <span class="news-meta">12 Abr 2026 | Saúde Pública | Fonte: SIC Notícias</span>
-                                    <a href="/observatorio/noticia-detalhe.html?id=ar-poluicao-urbana" class="news-link"><span class="tech-main">Poluição automóvel causa 5 mil mortes anuais em Portugal</span></a>
-                                    <p class="tech-detail">Lisboa, Porto e Braga continuam no centro do problema. Apesar da melhoria geral, as emissões urbanas continuam a ser um desafio crítico para a saúde.</p>
-                                </div>
-
-                                <!-- Notícia 3: Ranking 2025 -->
-                                <div class="news-item">
-                                    <span class="news-meta">25 Mar 2026 | Ranking Mundial | Fonte: Jornal SOL</span>
-                                    <a href="/observatorio/noticia-detalhe.html?id=ar-ranking-2025" class="news-link"><span class="tech-main">Qualidade do ar em Portugal piorou em 2025</span></a>
-                                    <p class="tech-detail">O maior ranking mundial do setor revela um retrocesso nos níveis de pureza do ar respirado pelos portugueses, com agravamento em várias cidades.</p>
-                                </div>
-
-                                <!-- Notícia 4: Relatório APA (A que faltava) -->
-                                <div class="news-item">
-                                    <span class="news-meta">Edição 2026 | APA | Fonte: REA</span>
-                                    <a href="/observatorio/noticia-detalhe.html?id=ar-relatorio-apa" class="news-link"><span class="tech-main">Relatório do Estado do Ambiente: Qualidade do Ar</span></a>
-                                    <p class="tech-detail">Análise detalhada da Agência Portuguesa do Ambiente sobre os poluentes atmosféricos e o cumprimento das metas europeias em território nacional.</p>
-                                </div>
-
                             </div>
                         </div>
+
+                        <!-- PANORAMA GLOBAL -->
+                        <div class="section-break">
+                            <span class="sub-label">Panorama Nacional e Global</span>
+                            <h2>Alerta de Poluição e Qualidade do Ar</h2>
+                        </div>
+
+                        <!-- ÍNDICE NACIONAL COMPACTO -->
+                        <div class="data-row">
+                            <h4>Índice Portugal</h4>
+                            <div class="tech-content">
+                                <div class="aqi-container">
+                                    <div class="aqi-label">
+                                        <span class="aqi-val">42</span>
+                                        <span class="aqi-status" style="color: #81c784;">BOM (MÉDIA NACIONAL)</span>
+                                    </div>
+                                    <div class="aqi-bar"><div class="aqi-marker" style="left: 21%;"></div></div>
+                                </div>
+                                <div style="display: flex; gap: 15px;">
+                                    <a href="/observatorio/estatisticas-ar.html" class="news-meta" style="color: #5c6bc0; border-bottom: 1px solid #5c6bc0; text-decoration: none; font-size: 0.7em; font-weight: 800;">Ver Monitorização Live →</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- NOTÍCIAS DINÂMICAS DO AR -->
+                        <div class="data-row" style="border-bottom: none;">
+                            <h4>Notícias e Relatórios</h4>
+                            <div class="tech-content">
+                                <div id="noticias-ar-dinamico" class="observatorio-grid"></div>
+                                <div class="ver-mais-container">
+                                    <button id="btn-load-more-ar" class="btn-ver-mais" style="display:none;">Ver Mais Relatórios</button>
+                                </div>
+                            </div>
                         </div>
 
                         <div id="no-gps-warning" style="text-align: center; padding: 4em; color: #bbb;"><p>Selecione uma localidade na barra lateral.</p></div>
@@ -144,9 +137,9 @@
 		<script src="/assets/js/jquery.min.js"></script>
         <script>
             let locationsDB = [];
-            const AIR_TOKEN = "demo"; // Substitui pelo teu token de aqicn.org quando o tiveres
+            let noticiasAr = [];
+            let visiveisAr = 4;
 
-            // Função para calcular distância (usada no GPS)
             function calcularDistancia(lat1, lon1, lat2, lon2) {
                 const R = 6371;
                 const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -157,56 +150,35 @@
 
             async function inicializarPagina() {
                 try {
-                    const r = await fetch('/data/bioregioes.json');
-                    locationsDB = await r.json();
-                    
-                    const urlParams = new URLSearchParams(window.location.search);
-                    const regionParam = urlParams.get('region');
+                    const rLoc = await fetch('/data/bioregioes.json');
+                    locationsDB = await rLoc.json();
                     const savedId = localStorage.getItem('biocultura_region');
-                    
-                    let info = regionParam ? locationsDB.find(i => i.id === regionParam) : locationsDB.find(i => i.id === savedId);
-                    
-                    // Se não houver nada, assume Portugal Nacional ou Proença
-                    if (!info) info = locationsDB.find(i => i.id === "proenca-a-nova") || locationsDB[0];
+                    let info = locationsDB.find(i => i.id === savedId) || locationsDB.find(i => i.id === "proenca-a-nova");
                     
                     renderDashboard(info);
-                    setupSidebarLogic(); // Configura a busca só depois de ter os dados
-                } catch(e) { console.error("Erro ao inicializar:", e); }
+                    setupSidebarLogic();
+                    await carregarNoticiasAr();
+                } catch(e) { console.error(e); }
             }
 
-           async function renderDashboard(info) {
+            async function renderDashboard(info) {
                 if(!info) return;
                 document.getElementById('no-gps-warning').style.display = 'none';
                 document.getElementById('air-dashboard').style.display = 'block';
                 document.getElementById('reg-name').innerText = info.titulo;
 
-                // 1. Valores de reserva (Fallback) - Se a API falhar, usa estes valores fixos
-                // Assim os teus dois PC's mostrarão sempre o mesmo valor para Lisboa ou Proença.
-                const valoresReserva = {
-                    "lisboa": 31,
-                    "porto": 28,
-                    "proenca-a-nova": 22,
-                    "castelo-branco": 25,
-                    "coimbra": 27
-                };
+                const valoresReserva = { "lisboa": 31, "porto": 28, "proenca-a-nova": 22, "castelo-branco": 25, "coimbra": 27 };
 
                 try {
-                    // 2. Tentativa de obter dados REAIS (Open-Meteo)
                     const response = await fetch(`https://air-quality-api.open-meteo.com/v1/air_quality?latitude=${info.lat}&longitude=${info.lon}&current=european_aqi`);
-                    
                     if (!response.ok) throw new Error();
-                    
                     const data = await response.json();
-                    
-                    if (data && data.current && data.current.european_aqi !== undefined) {
+                    if (data && data.current) {
                         atualizarInterfaceAr(data.current.european_aqi, `Valores reais (EAQI) obtidos em tempo real para ${info.titulo}.`);
-                    } else {
-                        throw new Error();
-                    }
+                    } else throw new Error();
                 } catch (error) {
-                    // 3. SE A API FALHAR (CORS ou falta de internet), usa o valor fixo do ID
                     const id = info.id.toLowerCase();
-                    const valorFixo = valoresReserva[id] || 35; // 35 é o valor padrão se não estiver na lista
+                    const valorFixo = valoresReserva[id] || 35;
                     atualizarInterfaceAr(valorFixo, `Dados baseados na média histórica para a região de ${info.titulo}.`);
                 }
 
@@ -214,17 +186,14 @@
                 if(input) input.value = info.titulo;
             }
 
-            // Função auxiliar para não repetir código
             function atualizarInterfaceAr(aqiVal, descricao) {
                 document.getElementById('label-aqi').innerText = "AQI " + aqiVal;
                 document.getElementById('air-description').innerText = descricao;
-
-                let pos = (aqiVal / 100) * 100; // Escala 0-100
+                let pos = (aqiVal / 100) * 100;
                 let status = "Bom";
                 if(aqiVal > 20) status = "Satisfatório";
                 if(aqiVal > 40) status = "Moderado";
                 if(aqiVal > 60) status = "Fraco";
-                
                 document.getElementById('status-aqi').innerText = status;
                 setTimeout(() => {
                     const marker = document.getElementById('marker-aqi');
@@ -236,15 +205,12 @@
                 const input = document.getElementById('loc-search-input');
                 const gpsBtn = document.getElementById('btn-gps-trigger');
                 const dropdown = document.getElementById('loc-dropdown');
+                if(!input) { setTimeout(setupSidebarLogic, 500); return; }
 
-                if(!input) return;
-
-                // Lógica da Busca/Dropdown
                 input.addEventListener('input', function() {
                     const val = this.value.toLowerCase();
                     dropdown.innerHTML = '';
                     if(val.length < 2) { dropdown.style.display = 'none'; return; }
-                    
                     const matches = locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0, 6);
                     if(matches.length > 0) {
                         dropdown.style.display = 'block';
@@ -252,17 +218,12 @@
                             const div = document.createElement('div');
                             div.className = 'bio-res-item';
                             div.innerText = m.titulo;
-                            div.onclick = () => { 
-                                localStorage.setItem('biocultura_region', m.id); 
-                                renderDashboard(m); // Atualiza sem recarregar a página toda
-                                dropdown.style.display = 'none';
-                            };
+                            div.onclick = () => { localStorage.setItem('biocultura_region', m.id); renderDashboard(m); dropdown.style.display = 'none'; };
                             dropdown.appendChild(div);
                         });
                     } else dropdown.style.display = 'none';
                 });
 
-                // Lógica do GPS
                 if(gpsBtn) {
                     gpsBtn.onclick = () => {
                         input.value = "A localizar...";
@@ -271,12 +232,12 @@
                             const uLon = pos.coords.longitude;
                             let closest = locationsDB[0];
                             let minD = Infinity;
-                            
                             locationsDB.forEach(c => {
-                                let d = calcularDistancia(uLat, uLon, c.lat, c.lon);
-                                if(d < minD) { minD = d; closest = c; }
+                                if(c.lat && c.lon) {
+                                    let d = calcularDistancia(uLat, uLon, c.lat, c.lon);
+                                    if(d < minD) { minD = d; closest = c; }
+                                }
                             });
-                            
                             localStorage.setItem('biocultura_region', closest.id);
                             renderDashboard(closest);
                         });
@@ -284,14 +245,42 @@
                 }
             }
 
-            // Carregar Sidebar e Iniciar tudo
+            async function carregarNoticiasAr() {
+                try {
+                    const r = await fetch('/data/noticias.json');
+                    const todas = await r.json();
+                    noticiasAr = todas.filter(n => n.categoria.toLowerCase().includes('ar'));
+                    renderizarCardsAr();
+                } catch(e) { console.error(e); }
+            }
+
+            function renderizarCardsAr() {
+                const container = document.getElementById('noticias-ar-dinamico');
+                if(!container) return;
+                container.innerHTML = '';
+                noticiasAr.forEach((n, index) => {
+                    const card = document.createElement('a');
+                    card.href = `/observatorio/noticia-detalhe.html?id=${n.id}`;
+                    card.className = `news-card ${index >= visiveisAr ? 'hidden-card' : ''}`;
+                    card.innerHTML = `
+                        <div class="card-image-wrap"><img src="${n.imagem}"><span class="badge-cat ar">${n.categoria}</span></div>
+                        <div class="card-meta"><div class="source-circle">${n.fonte.charAt(0)}</div><span>${n.fonte}</span></div>
+                        <h3>${n.titulo}</h3>
+                        <p>${n.resumo_biocultura.substring(0, 100)}...</p>
+                    `;
+                    container.appendChild(card);
+                });
+                const btn = document.getElementById('btn-load-more-ar');
+                if(btn) btn.style.display = noticiasAr.length > visiveisAr ? 'inline-block' : 'none';
+            }
+
             fetch('/sidebar-content.html').then(r => r.text()).then(html => {
                 document.getElementById('sidebar').innerHTML = html;
-                // Importante: Iniciar a lógica APÓS o HTML da sidebar estar no DOM
                 inicializarPagina();
-                // Carrega o main.js do template original
                 var s = document.createElement('script'); s.src = '/assets/js/main.js'; document.body.appendChild(s);
             });
+
+            document.getElementById('btn-load-more-ar').onclick = () => { visiveisAr += 4; renderizarCardsAr(); };
         </script>
 	</body>
 </html>
