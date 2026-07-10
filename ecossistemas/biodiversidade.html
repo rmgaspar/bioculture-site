@@ -3,45 +3,52 @@
 	<head>
 		<title>bioCultura - Observatório da Biodiversidade</title>
 		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<meta name="viewport" content="width=device-width, initial-scale, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
 		<style>
-            /* --- ESTRUTURA GLOBAL & TIPOGRAFIA --- */
             body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
 			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
             section { padding-top: 4em !important; min-height: 100vh; display: flex; flex-direction: column; }
 
-            /* SIDEBAR FIXA E SEM SCROLL */
             #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
             #sidebar > .inner { height: 100% !important; overflow: hidden !important; display: flex; flex-direction: column; }
             #wrapper { padding-left: 18em !important; }
 
-            /* CABEÇALHOS CINZENTOS */
             .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; color: #bbb; margin-bottom: 10px; display: block; text-align: center; }
-            
-            /* LINHAS DE DADOS (ESTILO DIÁRIO) */
-            .data-row { display: grid; grid-template-columns: 180px 1fr; gap: 40px; padding: 2.5em 0; border-bottom: 1px solid #f2f2f2; }
+            .data-row { display: grid; grid-template-columns: 180px 1fr; gap: 40px; padding: 1.5em 0; border-bottom: 1px solid #f2f2f2; }
             .data-row h4 { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin: 0; padding-top: 5px; }
 
-            /* LISTAS DE ESPÉCIES */
-            .species-list { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 10px 30px; }
-            .species-item { display: flex; align-items: center; gap: 12px; padding: 8px 0; font-size: 0.95em; color: #444; }
-            .species-item i { color: #81c784; font-size: 0.8em; width: 15px; }
+            /* BADGES DE ESPÉCIES */
+            .species-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+            .species-badge { background: #f4f7fb; color: #5c6bc0; padding: 4px 12px; border-radius: 50px; font-size: 0.75em; font-weight: 700; border: 1px solid #eef2f7; }
+            .species-badge.protected { background: #e8f5e9; color: #2e7d32; border-color: #c8e6c9; }
+            .species-badge.invasive { background: #fff3e0; color: #e65100; border-color: #ffe0b2; }
 
-            /* BADGES DE STATUS */
-            .status-badge { font-size: 0.55em; padding: 2px 8px; border-radius: 10px; text-transform: uppercase; font-weight: 800; margin-left: 8px; letter-spacing: 0.5px; }
-            .status-protected { background: #e8f5e9; color: #2e7d32; }
-            .status-danger { background: #ffebee; color: #c62828; }
-            .status-invasive { background: #fff3e0; color: #e65100; }
+            .tech-content { display: flex; flex-direction: column; gap: 15px; }
+            .tech-main { font-size: 1.1em; font-weight: 700; color: #1a1a1a; line-height: 1.3; }
 
-            .conservation-note { background: #f9fbf9; padding: 2em; border-radius: 20px; margin-top: 20px; border: 1px solid #f0f4f0; }
-            .conservation-note h5 { font-size: 0.65em; font-weight: 900; text-transform: uppercase; color: #2e7d32; margin-bottom: 8px; }
-            .conservation-note p { font-size: 0.9em; margin: 0; line-height: 1.5; color: #666; }
+            .section-break { margin: 4em 0 2em 0; padding: 3em 0; border-top: 2px solid #f2f2f2; text-align: center; }
+            .section-break h2 { font-size: 2em; font-weight: 300; color: #2e7d32; letter-spacing: -1px; margin: 0; }
+            .section-break .sub-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; }
 
+            /* GRELHA DE NOTÍCIAS */
+            .observatorio-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 40px; margin-top: 2em; }
+            .news-card { text-decoration: none; color: inherit; display: flex; flex-direction: column; transition: all 0.3s ease; }
+            .news-card:hover { transform: translateY(-8px); opacity: 0.85; }
+            .card-image-wrap { position: relative; width: 100%; height: 180px; overflow: hidden; border-radius: 12px; background: #f5f5f5; margin-bottom: 15px; }
+            .card-image-wrap img { width: 100%; height: 100%; object-fit: cover; }
+            .badge-cat { position: absolute; bottom: 10px; left: 10px; background: #2e7d32; color: white; padding: 4px 12px; border-radius: 50px; font-size: 0.55em; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; }
+            
+            .card-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 0.65em; font-weight: 800; color: #bbb; text-transform: uppercase; }
+            .source-circle { width: 18px; height: 18px; background: #333; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 8px; }
+
+            .ver-mais-container { text-align: center; margin: 3em 0; }
+            .btn-ver-mais { background: transparent !important; border: 1px solid #eee !important; color: #bbb !important; border-radius: 50px; padding: 0 40px; font-size: 0.7em; font-weight: 900; letter-spacing: 2px; cursor: pointer; }
+            .hidden-card { display: none; }
             .page-footer { margin-top: auto; padding: 4em 0 2em 0; border-top: 1px solid #f2f2f2; }
 
             @media screen and (max-width: 1280px) {
-                #sidebar { position: relative !important; width: 100% !important; height: auto !important; overflow: visible !important; }
+                #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
                 #wrapper { padding-left: 0 !important; }
                 .data-row { grid-template-columns: 1fr; gap: 15px; }
             }
@@ -53,38 +60,50 @@
                 <div class="inner">
 					<header id="header" style="height: 0; margin: 0; padding: 0; overflow: hidden;"></header>
                     <section>
-                        <div style="text-align: center; margin-bottom: 4em;">
-                            <span class="category-label">Vida & Ecossistemas</span>
-                            <h1 style="font-size: 3.5em; font-weight: 300; color: #1a1a1a; letter-spacing: -2px; margin: 0;">Biodiversidade Local</h1>
-                            <p style="font-size: 0.9em; font-style: italic; color: #bbb; margin-top: 5px;">Inventário biológico: <strong id="reg-name" style="color:#888">...</strong></p>
+                        <div style="text-align: center; margin-bottom: 3em;">
+                            <span class="category-label">Ecossistemas</span>
+                            <h1 style="font-size: 3.5em; font-weight: 300; color: #1a1a1a; letter-spacing: -2px; margin: 0;">Biodiversidade: A Teia da Vida</h1>
+                            <p style="font-size: 0.9em; font-style: italic; color: #bbb; margin-top: 5px;">Análise regional: <strong id="reg-name" style="color:#888">...</strong></p>
                         </div>
 
+                        <!-- DASHBOARD LOCAL -->
                         <div id="bio-dashboard" style="display:none;">
-                            <!-- FAUNA -->
                             <div class="data-row">
-                                <h4>Fauna</h4>
-                                <div style="width: 100%;">
-                                    <ul class="species-list" id="fauna-list"></ul>
-                                    <div class="conservation-note">
-                                        <h5>Estado de Conservação</h5>
-                                        <p>A presença de espécies protegidas exige um maneio de solo regenerativo e a ausência de pesticidas.</p>
-                                    </div>
+                                <h4>Fauna Local</h4>
+                                <div class="tech-content">
+                                    <span class="tech-main">Principais Espécies Observadas</span>
+                                    <div id="fauna-list" class="species-list"></div>
+                                    <div id="fauna-protected-list" class="species-list" style="margin-top: 5px;"></div>
                                 </div>
                             </div>
-                            <!-- FLORA -->
+
                             <div class="data-row">
-                                <h4>Flora</h4>
-                                <div style="width: 100%;">
-                                    <ul class="species-list" id="flora-list"></ul>
-                                    <div class="conservation-note" style="background: #f1f8e9; border-color: #dcedc8;">
-                                        <h5 style="color: #33691e;">Gestão Vegetal</h5>
-                                        <p style="color: #33691e;">Priorize a flora autóctone para garantir a retenção de água e o sequestro de carbono.</p>
-                                    </div>
+                                <h4>Flora e Biomas</h4>
+                                <div class="tech-content">
+                                    <span class="tech-main">Vegetação e Espécies Críticas</span>
+                                    <div id="flora-list" class="species-list"></div>
+                                    <div id="flora-invasive-list" class="species-list" style="margin-top: 5px;"></div>
                                 </div>
                             </div>
                         </div>
 
-                        <div id="no-gps-warning" style="text-align: center; padding: 4em; color: #bbb;"><p>A carregar inteligência regional...</p></div>
+                        <!-- PANORAMA GLOBAL -->
+                        <div class="section-break">
+                            <span class="sub-label">Panorama Nacional e Global</span>
+                            <h2>Alerta de Perda de Biodiversidade</h2>
+                        </div>
+
+                        <div class="data-row" style="border-bottom: none;">
+                            <h4>Relatórios de Impacto</h4>
+                            <div class="tech-content">
+                                <div id="noticias-bio-dinamico" class="observatorio-grid"></div>
+                                <div class="ver-mais-container">
+                                    <button id="btn-load-more-bio" class="btn-ver-mais" style="display:none;">Ver Mais Notícias</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="no-gps-warning" style="text-align: center; padding: 4em; color: #bbb;"><p>Selecione uma localidade na barra lateral.</p></div>
 
                         <footer class="page-footer">
                             <div style="display: flex; align-items: center; justify-content: flex-end; gap: 10px; opacity: 0.3;">
@@ -104,130 +123,55 @@
 		<script src="/assets/js/jquery.min.js"></script>
         <script>
             let locationsDB = [];
-
-            function calcularDistancia(lat1, lon1, lat2, lon2) {
-                const R = 6371;
-                const dLat = (lat2 - lat1) * Math.PI / 180;
-                const dLon = (lon2 - lon1) * Math.PI / 180;
-                const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
-                return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
-            }
+            let noticiasBio = [];
+            let visiveisBio = 4;
 
             async function inicializarPagina() {
                 try {
-                    const r = await fetch('/data/bioregioes.json');
-                    locationsDB = await r.json();
-                    
-                    const urlParams = new URLSearchParams(window.location.search);
-                    const regionParam = urlParams.get('region');
+                    const rLoc = await fetch('/data/bioregioes.json');
+                    locationsDB = await rLoc.json();
                     const savedId = localStorage.getItem('biocultura_region');
+                    let info = locationsDB.find(i => i.id === savedId) || locationsDB.find(i => i.id === "proenca-a-nova");
                     
-                    let info = null;
-                    if (regionParam) info = locationsDB.find(i => i.id === regionParam);
-                    if (!info && savedId) info = locationsDB.find(i => i.id === savedId);
-
-                    if (info) {
-                        renderDashboard(info);
-                    } else {
-                        tentarGPSOuNacional();
-                    }
-                } catch(e) { console.error("Erro:", e); }
-            }
-
-            function tentarGPSOuNacional() {
-                if (navigator.geolocation) {
-                    const timeout = setTimeout(() => carregarNacional(), 4000);
-                    navigator.geolocation.getCurrentPosition(pos => {
-                        clearTimeout(timeout);
-                        let minD = Infinity; let closest = null;
-                        locationsDB.forEach(c => {
-                            if(c.lat && c.lon) {
-                                let d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon);
-                                if(d < minD) { minD = d; closest = c; }
-                            }
-                        });
-                        if(closest) {
-                            localStorage.setItem('biocultura_region', closest.id);
-                            renderDashboard(closest);
-                        }
-                    }, () => { clearTimeout(timeout); carregarNacional(); });
-                } else carregarNacional();
-            }
-
-            function carregarNacional() {
-                const nac = locationsDB.find(i => i.id === "portugal-nacional");
-                if(nac) renderDashboard(nac);
+                    renderDashboard(info);
+                    setupSidebarLogic();
+                    await carregarNoticiasBio();
+                } catch(e) { console.error(e); }
             }
 
             function renderDashboard(info) {
                 if(!info) return;
                 document.getElementById('no-gps-warning').style.display = 'none';
                 document.getElementById('bio-dashboard').style.display = 'block';
-                const regName = document.getElementById('reg-name');
-                regName.innerText = info.titulo;
-                regName.style.color = "#888";
+                document.getElementById('reg-name').innerText = info.titulo;
 
-                if (info.biomas) {
-                    // --- FAUNA ---
-                    const faunaList = document.getElementById('fauna-list');
-                    faunaList.innerHTML = '';
-                    const fGeral = info.biomas.fauna || [], fProt = info.biomas.fauna_protegida || [], fAmea = info.biomas.fauna_ameacada || [];
-                    const faunaMap = new Map();
-                    [...fGeral, ...fProt, ...fAmea].forEach(nome => {
-                        const raiz = nome.split('(')[0].trim().toLowerCase();
-                        let status = "";
-                        if (fAmea.some(a => a.toLowerCase().includes(raiz))) status = '<span class="status-badge status-danger">Ameaçada</span>';
-                        else if (fProt.some(p => p.toLowerCase().includes(raiz))) status = '<span class="status-badge status-protected">Protegida</span>';
-                        if (!faunaMap.has(raiz) || nome.includes('(')) faunaMap.set(raiz, { nome: nome, status: status });
-                    });
-                    faunaMap.forEach(item => { faunaList.innerHTML += `<li class="species-item"><i class="fas fa-paw"></i> <span>${item.nome}</span> ${item.status}</li>`; });
+                const bioma = info.biomas || {};
+                
+                // Render Fauna
+                const fList = document.getElementById('fauna-list');
+                fList.innerHTML = (bioma.fauna || []).map(f => `<span class="species-badge">${f}</span>`).join('');
+                
+                const fpList = document.getElementById('fauna-protected-list');
+                fpList.innerHTML = (bioma.fauna_protegida || []).map(f => `<span class="species-badge protected">${f}</span>`).join('');
 
-                    // --- FLORA ---
-                    const floraList = document.getElementById('flora-list');
-                    floraList.innerHTML = '';
-                    const flGeral = info.biomas.flora || [], flProt = info.biomas.flora_protegida || [], flInva = info.biomas.flora_invasora || [];
-                    const floraMap = new Map();
-                    [...flGeral, ...flProt, ...flInva].forEach(nome => {
-                        const raiz = nome.split('(')[0].trim().toLowerCase();
-                        let status = "";
-                        if (flInva.some(i => i.toLowerCase().includes(raiz))) status = '<span class="status-badge status-invasive">Invasora</span>';
-                        else if (flProt.some(p => p.toLowerCase().includes(raiz))) status = '<span class="status-badge status-protected">Protegida</span>';
-                        if (!floraMap.has(raiz) || nome.includes('(')) floraMap.set(raiz, { nome: nome, status: status });
-                    });
-                    floraMap.forEach(item => { floraList.innerHTML += `<li class="species-item"><i class="fas fa-leaf"></i> <span>${item.nome}</span> ${item.status}</li>`; });
-                }
+                // Render Flora
+                const flList = document.getElementById('flora-list');
+                flList.innerHTML = (bioma.flora || []).map(f => `<span class="species-badge">${f}</span>`).join('');
+                
+                const fiList = document.getElementById('flora-invasive-list');
+                fiList.innerHTML = (bioma.flora_invasora || []).map(f => `<span class="species-badge invasive">${f}</span>`).join('');
+
                 const input = document.getElementById('loc-search-input');
                 if(input) input.value = info.titulo;
             }
 
             function setupSidebarLogic() {
                 const input = document.getElementById('loc-search-input');
-                const gpsBtn = document.getElementById('btn-gps-trigger');
-                if(!input || !gpsBtn) return;
-
-                gpsBtn.onclick = () => {
-                    input.value = "A localizar...";
-                    navigator.geolocation.getCurrentPosition(pos => {
-                        const userLat = pos.coords.latitude;
-                        const userLon = pos.coords.longitude;
-                        let minD = Infinity; let closest = null;
-                        locationsDB.forEach(c => {
-                            if(c.lat && c.lon) {
-                                let d = calcularDistancia(userLat, userLon, c.lat, c.lon);
-                                if(d < minD) { minD = d; closest = c; }
-                            }
-                        });
-                        if(closest) {
-                            localStorage.setItem('biocultura_region', closest.id);
-                            sessionStorage.clear();
-                            window.location.href = window.location.pathname;
-                        }
-                    }, () => { window.location.href = window.location.pathname; });
-                };
+                const dropdown = document.getElementById('loc-dropdown');
+                if(!input) { setTimeout(setupSidebarLogic, 500); return; }
 
                 input.addEventListener('input', function() {
                     const val = this.value.toLowerCase();
-                    const dropdown = document.getElementById('loc-dropdown');
                     dropdown.innerHTML = '';
                     if(val.length < 2) { dropdown.style.display = 'none'; return; }
                     const matches = locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0, 6);
@@ -237,19 +181,49 @@
                             const div = document.createElement('div');
                             div.className = 'bio-res-item';
                             div.innerText = m.titulo;
-                            div.onclick = () => { localStorage.setItem('biocultura_region', m.id); location.reload(); };
+                            div.onclick = () => { localStorage.setItem('biocultura_region', m.id); renderDashboard(m); dropdown.style.display = 'none'; };
                             dropdown.appendChild(div);
                         });
                     } else dropdown.style.display = 'none';
                 });
             }
 
+            async function carregarNoticiasBio() {
+                try {
+                    const r = await fetch('/data/noticias.json');
+                    const todas = await r.json();
+                    noticiasBio = todas.filter(n => n.categoria.toLowerCase().includes('biodiversidade'));
+                    renderizarCardsBio();
+                } catch(e) { console.error(e); }
+            }
+
+            function renderizarCardsBio() {
+                const container = document.getElementById('noticias-bio-dinamico');
+                if(!container) return;
+                container.innerHTML = '';
+                noticiasBio.forEach((n, index) => {
+                    const card = document.createElement('a');
+                    card.href = `/observatorio/noticia-detalhe.html?id=${n.id}`;
+                    card.className = `news-card ${index >= visiveisBio ? 'hidden-card' : ''}`;
+                    card.innerHTML = `
+                        <div class="card-image-wrap"><img src="${n.imagem}"><span class="badge-cat">${n.categoria}</span></div>
+                        <div class="card-meta"><div class="source-circle">${n.fonte.charAt(0)}</div><span>${n.fonte}</span></div>
+                        <h3>${n.titulo}</h3>
+                        <p>${n.resumo_biocultura.substring(0, 100)}...</p>
+                    `;
+                    container.appendChild(card);
+                });
+                const btn = document.getElementById('btn-load-more-bio');
+                if(btn) btn.style.display = noticiasBio.length > visiveisBio ? 'inline-block' : 'none';
+            }
+
             fetch('/sidebar-content.html').then(r => r.text()).then(html => {
                 document.getElementById('sidebar').innerHTML = html;
-                var s = document.createElement('script'); s.src = '/assets/js/main.js'; document.body.appendChild(s);
                 inicializarPagina();
-                setTimeout(setupSidebarLogic, 1000);
+                var s = document.createElement('script'); s.src = '/assets/js/main.js'; document.body.appendChild(s);
             });
+
+            document.getElementById('btn-load-more-bio').onclick = () => { visiveisBio += 4; renderizarCardsBio(); };
         </script>
 	</body>
 </html>
