@@ -42,7 +42,7 @@
             .section-break h2 { font-size: 2em; font-weight: 300; color: #5c6bc0; letter-spacing: -1px; margin: 0; }
             .section-break .sub-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; }
 
-            /* NOTÍCIAS */
+            /* GRELHA DE NOTÍCIAS */
             .observatorio-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 40px; margin-top: 2em; }
             .news-card { text-decoration: none; color: inherit; display: flex; flex-direction: column; transition: all 0.3s ease; }
             .news-card:hover { transform: translateY(-8px); opacity: 0.85; }
@@ -84,7 +84,7 @@
                                     </div>
                                     <div style="display: flex; gap: 50px; flex-wrap: wrap;">
                                         <div>
-                                            <span class="category-label" style="text-align:left; margin:0">Estimativa de Produção Agora</span>
+                                            <span class="category-label" style="text-align:left; margin:0">Produção Estimada Agora</span>
                                             <span class="tech-main" id="total-production" style="font-size: 2.5em; color: #2e7d32;">0.0 MW</span>
                                         </div>
                                         <div>
@@ -92,23 +92,29 @@
                                             <span class="tech-main" id="total-installed" style="font-size: 2.5em; color: #1a1a1a;">0.0 MW</span>
                                         </div>
                                     </div>
-                                    <p class="tech-detail" id="weather-context" style="margin-top: 10px;">A obter dados atmosféricos para cálculo de eficiência...</p>
+                                    <p class="tech-detail" id="weather-context" style="margin-top: 10px;">A obter dados atmosféricos...</p>
                                 </div>
                             </div>
 
                             <div class="data-row">
                                 <h4>Infraestruturas e Operadores</h4>
                                 <div class="tech-content">
-                                    <div id="infra-list" class="infra-grid">
-                                        <!-- Injetado via JS -->
-                                    </div>
+                                    <div id="infra-list" class="infra-grid"></div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- AVISO SEM LOCALIZAÇÃO -->
                         <div id="no-gps-warning" style="text-align: center; padding: 4em; color: #bbb;">
                             <p>Selecione uma localidade na barra lateral para activar o radar energético.</p>
+                        </div>
+
+                        <!-- CONTEXTO ESTÁTICO (O que tinhas no print) -->
+                        <div class="alert-box" style="background: #fcfcfc; border-left-color: #2e7d32; margin-top: 4em;">
+                            <h5 style="color: #2e7d32;">O Paradoxo da Transição "Verde"</h5>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 15px;">
+                                <p style="font-size: 0.85em; color: #666;"><strong>O Custo do Silício:</strong> A instalação de parques fotovoltaicos industriais exige frequentemente a desflorestação e a impermeabilização de solos férteis.</p>
+                                <p style="font-size: 0.85em; color: #666;"><strong>A Ilusão das Baterias:</strong> O armazenamento em baterias de lítio mascara a destruição de ecossistemas remotos e a extração mineira consome milhões de litros de água.</p>
+                            </div>
                         </div>
 
                         <!-- PANORAMA GLOBAL -->
@@ -223,6 +229,7 @@
                     alertBox.style.display = 'block';
                     document.getElementById('energy-impact-text').innerText = eData.alerta_impacto;
                 } else { alertBox.style.display = 'none'; }
+                
                 const input = document.getElementById('loc-search-input');
                 if(input) input.value = info.titulo;
             }
@@ -231,6 +238,7 @@
                 const input = document.getElementById('loc-search-input');
                 const gpsBtn = document.getElementById('btn-gps-trigger');
                 const dropdown = document.getElementById('loc-dropdown');
+
                 if(!input) { setTimeout(setupSidebarLogic, 500); return; }
 
                 input.addEventListener('input', function() {
@@ -244,7 +252,11 @@
                             const div = document.createElement('div');
                             div.className = 'bio-res-item';
                             div.innerText = m.titulo;
-                            div.onclick = () => { localStorage.setItem('biocultura_region', m.id); renderDashboard(m); dropdown.style.display = 'none'; };
+                            div.onclick = () => { 
+                                localStorage.setItem('biocultura_region', m.id); 
+                                renderDashboard(m); 
+                                dropdown.style.display = 'none'; 
+                            };
                             dropdown.appendChild(div);
                         });
                     } else dropdown.style.display = 'none';
