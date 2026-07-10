@@ -6,7 +6,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
 		<style>
-            /* --- ESTILOS GLOBAIS --- */
+            /* --- ESTRUTURA GLOBAL --- */
             body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
 			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
             section { padding-top: 2em !important; min-height: 100vh; display: flex; flex-direction: column; }
@@ -42,7 +42,7 @@
             .section-break h2 { font-size: 2em; font-weight: 300; color: #5c6bc0; letter-spacing: -1px; margin: 0; }
             .section-break .sub-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; }
 
-            /* GRELHA DE NOTÍCIAS */
+            /* NOTÍCIAS */
             .observatorio-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 40px; margin-top: 2em; }
             .news-card { text-decoration: none; color: inherit; display: flex; flex-direction: column; transition: all 0.3s ease; }
             .news-card:hover { transform: translateY(-8px); opacity: 0.85; }
@@ -100,6 +100,7 @@
                             </div>
                         </div>
 
+                        <!-- AVISO SEM LOCALIZAÇÃO -->
                         <div id="no-gps-warning" style="text-align: center; padding: 4em; color: #bbb;">
                             <p>Selecione uma localidade na barra lateral para activar o radar energético.</p>
                         </div>
@@ -122,7 +123,7 @@
                             <div class="tech-content">
                                 <div id="noticias-energy-dinamico" class="observatorio-grid"></div>
                                 <div style="margin-top: 2em; text-align: center;">
-                                    <a href="/observatorio/estatisticas-energia.html" class="tech-detail" style="color: #5c6bc0; font-weight: 800; text-decoration: none;">Ver Balanço da Rede Nacional (REN) Live →</a>
+                                    <a href="/observatorio/estatisticas-energy.html" class="tech-detail" style="color: #5c6bc0; font-weight: 800; text-decoration: none;">Ver Balanço da Rede Nacional (REN) Live →</a>
                                 </div>
                             </div>
                         </div>
@@ -135,7 +136,6 @@
 		<script src="/assets/js/jquery.min.js"></script>
         <script>
             let locationsDB = [];
-            let noticiasEnergy = [];
 
             function calcularDistancia(lat1, lon1, lat2, lon2) {
                 const R = 6371;
@@ -149,8 +149,15 @@
                 try {
                     const rLoc = await fetch('/data/bioregioes.json');
                     locationsDB = await rLoc.json();
+                    
                     const savedId = localStorage.getItem('biocultura_region');
-                    let info = locationsDB.find(i => i.id === savedId) || locationsDB.find(i => i.id === "proenca-a-nova");
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const regionParam = urlParams.get('region');
+
+                    let info = locationsDB.find(i => i.id === regionParam) || 
+                               locationsDB.find(i => i.id === savedId) || 
+                               locationsDB.find(i => i.id === "proenca-a-nova");
+                    
                     if (info) renderDashboard(info);
                     setupSidebarLogic();
                     await carregarNoticiasEnergy();
@@ -212,6 +219,7 @@
                 const gpsBtn = document.getElementById('btn-gps-trigger');
                 const dropdown = document.getElementById('loc-dropdown');
                 if(!input) { setTimeout(setupSidebarLogic, 500); return; }
+
                 input.addEventListener('input', function() {
                     const val = this.value.toLowerCase();
                     dropdown.innerHTML = '';
@@ -228,6 +236,7 @@
                         });
                     } else dropdown.style.display = 'none';
                 });
+
                 if(gpsBtn) {
                     gpsBtn.onclick = () => {
                         input.value = "A localizar...";
