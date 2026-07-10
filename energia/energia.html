@@ -1,192 +1,192 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<title>bioCultura - Energia Ética</title>
+		<title>bioCultura - Observatório da Energia</title>
 		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-		<link rel="stylesheet" href="../assets/css/main.css" />
+		<meta name="viewport" content="width=device-width, initial-scale, user-scalable=no" />
+		<link rel="stylesheet" href="/assets/css/main.css" />
 		<style>
-			/* 1. LIMPEZA E ESTRUTURA bioCultura */
-			section, #header, hr, .major, .features article { border: none !important; box-shadow: none !important; padding: 0 !important; }
-			#header .toggle { background: none !important; top: 2em !important; left: 2em !important; border: none !important; text-decoration: none !important; }
-			#header .toggle:before { content: '\f06c' !important; font-family: "Font Awesome 5 Free" !important; font-weight: 900; color: #2e7d32 !important; font-size: 1.6em !important; }
-            #header .toggle:after { display: none !important; }
-            section { padding-top: 2em !important; margin-bottom: 4em !important; }
-
-            /* 2. TIPOGRAFIA EDITORIAL */
-            p { font-size: 1.30em !important; color: #444 !important; line-height: 1.8 !important; }
-            .features h3 { font-size: 1.8em !important; font-weight: 700; color: #1a237e !important; margin-bottom: 0.5em !important; }
-            .features p { font-size: 1.20em !important; max-width: 100%; }
-
-            /* 3. BANNER SUPERIOR (ESTILO PROVÉRBIO) */
-            .banner-container { display: flex; gap: 20px; margin-bottom: 5em; flex-wrap: wrap; }
-            .banner-box { flex: 1; min-width: 320px; height: 400px; border-radius: 30px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
-            
-            .intro-box {
-                background: linear-gradient(135deg, #e8eaf6 0%, #c5cae9 100%);
-                display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2.5em; text-align: center; position: relative; border: 1px solid rgba(26, 35, 126, 0.05);
-            }
-            .intro-tag { position: absolute; top: 30px; font-size: 0.8em; font-weight: 900; letter-spacing: 5px; color: #3f51b5; text-transform: uppercase; opacity: 0.5; }
-            .intro-quote-mark { font-family: serif; font-size: 6em; color: #3f51b5; opacity: 0.1; line-height: 1; margin-top: 0.5em; }
-            .intro-title-text { font-family: 'Source Sans Pro', sans-serif; font-size: 1.7em !important; font-style: italic; color: #1a237e !important; line-height: 1.3 !important; font-weight: 300 !important; }
-            .intro-divider { width: 40px; height: 3px; background: #3f51b5; margin: 1.2em auto; border-radius: 2px; opacity: 0.3; }
-            .banner-box img { width: 100%; height: 100%; object-fit: cover; }
-
-            /* 4. BLOCO REGIONAL DINÂMICO */
-            #regional-data-block { 
-                background: #f4f7fb; border-radius: 40px; padding: 3em; margin-bottom: 8em; 
-                display: none; border: 1px solid #e3f2fd;
-            }
-            .reg-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2em; }
-            .reg-item h5 { color: #3f51b5; text-transform: uppercase; letter-spacing: 1px; font-size: 0.75em; margin-bottom: 10px; font-weight: 800; }
-            .reg-item p { font-size: 1em !important; line-height: 1.5 !important; color: #555 !important; margin: 0 !important; }
-
-            /* 5. LAYOUT ALTERNADO (ZIGUEZAGUE) */
-            .features-flow { display: flex; flex-direction: column; gap: 8em; }
-            .feature-row { display: flex; align-items: center; gap: 5em; flex-wrap: wrap; flex-direction: row-reverse; } 
-            .feature-row:nth-child(even) { flex-direction: row; } 
-            
-            .feature-content { flex: 1.2; min-width: 300px; }
-            .feature-image { flex: 1; min-width: 300px; height: 420px; border-radius: 40px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.06); }
-            .feature-image img { width: 100%; height: 100%; object-fit: cover; }
-            
-            .feature-header { display: flex; align-items: center; gap: 1em; margin-bottom: 1.5em; }
-            .feature-header .icon { color: #3f51b5; font-size: 2em; }
-
-			.footer-signature-right { text-align: right; padding: 6em 2em 2em 0; opacity: 0.9; }
+            body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
+			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
+            section { padding-top: 2em !important; min-height: 100vh; display: flex; flex-direction: column; }
+            #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
+            #sidebar > .inner { height: 100% !important; display: flex; flex-direction: column; }
+            #wrapper { padding-left: 18em !important; }
+            .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; color: #bbb; margin-bottom: 10px; display: block; text-align: center; }
+            .data-row { display: grid; grid-template-columns: 180px 1fr; gap: 40px; padding: 2.5em 0; border-bottom: 1px solid #f2f2f2; }
+            .data-row h4 { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin: 0; padding-top: 5px; }
+            .tech-main { font-size: 1.1em; font-weight: 700; color: #1a1a1a; line-height: 1.3; }
+            .tech-detail { font-size: 0.9em; color: #777; line-height: 1.5; margin: 0; }
+            .energy-badge { display: inline-block; background: #f4f7fb; color: #5c6bc0; padding: 6px 15px; border-radius: 50px; font-size: 0.75em; font-weight: 800; margin-top: 10px; border: 1px solid #eef2f7; }
+            .alert-box { background: #fff8f8; padding: 1.5em; border-radius: 15px; border-left: 5px solid #ef5350; margin-bottom: 15px; }
+            .alert-box h5 { color: #ef5350; font-weight: 900; text-transform: uppercase; font-size: 0.65em; margin-bottom: 5px; }
+            .alert-box p { color: #7f1d1d; font-size: 0.9em; margin: 0; font-weight: 600; }
+            .section-break { margin: 4em 0 2em 0; padding: 3em 0; border-top: 2px solid #f2f2f2; text-align: center; }
+            .section-break h2 { font-size: 2em; font-weight: 300; color: #5c6bc0; letter-spacing: -1px; margin: 0; }
+            .observatorio-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 40px; margin-top: 2em; }
+            .news-card { text-decoration: none; color: inherit; display: flex; flex-direction: column; transition: all 0.3s ease; }
+            .news-card:hover { transform: translateY(-8px); opacity: 0.85; }
+            .card-image-wrap { position: relative; width: 100%; height: 180px; overflow: hidden; border-radius: 12px; background: #f5f5f5; margin-bottom: 15px; }
+            .card-image-wrap img { width: 100%; height: 100%; object-fit: cover; }
+            .badge-cat { position: absolute; bottom: 10px; left: 10px; background: #5c6bc0; color: white; padding: 4px 12px; border-radius: 50px; font-size: 0.55em; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; }
+            .ver-mais-container { text-align: center; margin: 3em 0; }
+            .btn-ver-mais { background: transparent !important; border: 1px solid #eee !important; color: #bbb !important; border-radius: 50px; padding: 0 40px; font-size: 0.7em; font-weight: 900; letter-spacing: 2px; cursor: pointer; }
+            .hidden-card { display: none; }
+            @media screen and (max-width: 1280px) { #sidebar { position: relative !important; width: 100% !important; height: auto !important; } #wrapper { padding-left: 0 !important; } .data-row { grid-template-columns: 1fr; } }
 		</style>
 	</head>
 	<body class="is-preload">
 		<div id="wrapper">
-			<div id="main"><div class="inner">
+			<div id="main">
+                <div class="inner">
 					<header id="header" style="height: 0; margin: 0; padding: 0; overflow: hidden;"></header>
-					
                     <section>
-                        <!-- Banner Superior -->
-                        <div class="banner-container">
-                            <div class="banner-box intro-box">
-                                <div class="intro-tag">Energia Ética</div>
-                                <div class="intro-quote-mark">“</div>
-                                <div class="intro-content">
-                                    <p class="intro-title-text">Energia Ética.<br>A utilização racional como<br>primeira fonte de produção.</p>
-                                    <div class="intro-divider"></div>
-                                </div>
-                            </div>
-                            <div class="banner-box">
-                                <img src="https://images.unsplash.com/photo-1509391366360-2e959784a276?q=80&w=2072&auto=format&fit=crop" alt="Energia bioCultura" />
-                            </div>
+                        <div style="text-align: center; margin-bottom: 3em;">
+                            <span class="category-label">Engenharia Ética</span>
+                            <h1 style="font-size: 3.5em; font-weight: 300; color: #1a1a1a; letter-spacing: -2px; margin: 0;">Energia: A Força da Transição</h1>
+                            <p style="font-size: 0.9em; font-style: italic; color: #bbb; margin-top: 5px;">Análise regional: <strong id="reg-name" style="color:#888">...</strong></p>
                         </div>
 
-                        <!-- BLOCO DINÂMICO: O TEU TERRITÓRIO -->
-                        <div id="regional-data-block">
-                            <h4 style="color: #3f51b5; text-transform: uppercase; letter-spacing: 2px; font-size: 0.8em; margin-bottom: 2em;">
-                                <i class="fas fa-broadcast-tower"></i> O Teu Território: <span id="reg-name">...</span>
-                            </h4>
-                            <div class="reg-grid">
-                                <div class="reg-item">
-                                    <h5>Parques Eólicos</h5>
-                                    <p id="reg-wind"></p>
-                                </div>
-                                <div class="reg-item">
-                                    <h5>Mineração & Lítio</h5>
-                                    <p id="reg-mining"></p>
-                                </div>
-                                <div class="reg-item">
-                                    <h5>Potencial Solar</h5>
-                                    <p id="reg-sun"></p>
+                        <div id="energy-dashboard" style="display:none;">
+                            <div class="data-row">
+                                <h4>Produção Local</h4>
+                                <div class="tech-content">
+                                    <div id="energy-impact-alert" class="alert-box" style="display:none;">
+                                        <h5>Alerta de Impacto</h5>
+                                        <p id="energy-impact-text"></p>
+                                    </div>
+                                    <span class="tech-main" id="reg-usage">--</span>
+                                    <p class="tech-detail" id="reg-production-info">--</p>
+                                    <div id="energy-badges-container"></div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="features-flow">
-                            
-                            <!-- ITEM 1: URE -->
-                            <div class="feature-row">
-                                <div class="feature-content">
-                                    <div class="feature-header">
-                                        <span class="icon solid fa-lightbulb"></span>
-                                        <h3>Utilização Racional (URE)</h3>
-                                    </div>
-                                    <p>A energia mais barata e ética é aquela que não chega a ser necessária. A Utilização Racional de Energia (URE) foca na eliminação do desperdício através de isolamento térmico eficiente e gestão inteligente de cargas antes de dimensionar a produção.</p>
-                                </div>
-                                <div class="feature-image">
-                                    <img src="https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?q=80&w=2000&auto=format&fit=crop" alt="Eficiência Energética" />
-                                </div>
-                            </div>
-
-                            <!-- ITEM 2: TÉRMICO VS FOTOVOLTAICO -->
-                            <div class="feature-row">
-                                <div class="feature-content">
-                                    <div class="feature-header">
-                                        <span class="icon solid fa-solar-panel"></span>
-                                        <h3>Sinergia Solar</h3>
-                                    </div>
-                                    <p>O equilíbrio entre o aquecimento de águas (Solar Térmico) e a geração de eletrões (Fotovoltaico) é a chave para a autonomia doméstica. Enquanto o fotovoltaico alimenta os seus aparelhos, o térmico é até 4x mais eficiente para garantir o seu conforto hídrico.</p>
-                                </div>
-                                <div class="feature-image">
-                                    <img src="https://images.unsplash.com/photo-1559302995-f0923058920d?q=80&w=2000&auto=format&fit=crop" alt="Solar Térmico" />
-                                </div>
-                            </div>
-
-                            <!-- ITEM 3: ROI E RENTABILIDADE -->
-                            <div class="feature-row">
-                                <div class="feature-content">
-                                    <div class="feature-header">
-                                        <span class="icon solid fa-chart-line"></span>
-                                        <h3>Rentabilidade Endógena</h3>
-                                    </div>
-                                    <p>Investir em recursos próprios (Sol e Vento) garante um retorno (ROI) médio em apenas 5 anos. Além da poupança financeira direta, este investimento valoriza o território rural e reduz a dependência de energia importada.</p>
-                                </div>
-                                <div class="feature-image">
-                                    <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=2000&auto=format&fit=crop" alt="Retorno Financeiro" />
-                                </div>
-                            </div>
-
+                        <div class="section-break">
+                            <span class="sub-label">Panorama Nacional e Global</span>
+                            <h2>Alerta de Transição Energética</h2>
                         </div>
+
+                        <div class="data-row" style="border-bottom: none;">
+                            <h4>Notícias</h4>
+                            <div class="tech-content">
+                                <div id="noticias-energy-dinamico" class="observatorio-grid"></div>
+                                <div class="ver-mais-container">
+                                    <button id="btn-load-more-energy" class="btn-ver-mais" style="display:none;">Ver Mais Notícias</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="no-gps-warning" style="text-align: center; padding: 4em; color: #bbb;"><p>Selecione uma localidade na barra lateral.</p></div>
 					</section>
-
-					<div class="footer-signature-right">
-						<a href="../index.html" style="border: none; display: inline-block; text-decoration: none;">
-							<div style="font-family: 'Source Sans Pro', sans-serif; font-size: 1.4em; line-height: 1; display: flex; align-items: flex-end; justify-content: flex-end;">
-                                <b style="font-weight: 700; color: #2e7d32; margin-right: -3px; position: relative; z-index: 2;">b</b>
-                                <div style="width: 32px; margin: 0 -7px; position: relative; line-height: 0; transform: translateY(4px); z-index: 1;">
-                                    <svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: auto;">
-                                        <path d="M-20 110 Q50 102 120 110" stroke="#634832" stroke-width="4" fill="none" opacity="0.3" />
-                                        <path d="M50 110 C50 80 35 70 50 45 C65 70 50 80 50 110" fill="#2e7d32" />
-                                        <path d="M50 80 C75 75 85 50 65 40 C50 55 50 65 50 80" fill="#4CAF50" />
-                                    </svg>
-                                </div>
-                                <b style="font-weight: 700; color: #2e7d32; margin-left: -3px; position: relative; z-index: 2;">o</b>
-                                <span style="font-weight: 300; color: #444; margin-left: 2px;">Cultura</span>
-                            </div>
-						</a>
-					</div>
-				</div></div>
+				</div>
+            </div>
 			<div id="sidebar"></div>
 		</div>
 
-		<script src="../assets/js/jquery.min.js"></script>
+		<script src="/assets/js/jquery.min.js"></script>
         <script>
-            // Lógica para injetar dados regionais
-            fetch('../data/bioregioes.json')
-                .then(r => r.json())
-                .then(data => {
-                    const savedRegion = localStorage.getItem('biocultura_region');
-                    if (savedRegion && data[savedRegion]) {
-                        const info = data[savedRegion];
-                        document.getElementById('reg-name').innerText = info.titulo;
-                        document.getElementById('reg-wind').innerText = info.energia.eolica;
-                        document.getElementById('reg-mining').innerText = info.energia.litio;
-                        document.getElementById('reg-sun').innerText = info.energia.hps + " Horas de Pico Solar";
-                        document.getElementById('regional-data-block').style.display = 'block';
-                    }
-                });
+            let locationsDB = [];
+            let noticiasEnergy = [];
+            let visiveisEnergy = 4;
 
-            // Sidebar
-            fetch('../sidebar-content.html').then(r => r.text()).then(html => {
+            async function inicializarPagina() {
+                try {
+                    const rLoc = await fetch('/data/bioregioes.json');
+                    locationsDB = await rLoc.json();
+                    const savedId = localStorage.getItem('biocultura_region');
+                    let info = locationsDB.find(i => i.id === savedId) || locationsDB.find(i => i.id === "proenca-a-nova");
+                    renderDashboard(info);
+                    setupSidebarLogic();
+                    await carregarNoticiasEnergy();
+                } catch(e) { console.error(e); }
+            }
+
+            function renderDashboard(info) {
+                if(!info) return;
+                document.getElementById('no-gps-warning').style.display = 'none';
+                document.getElementById('energy-dashboard').style.display = 'block';
+                document.getElementById('reg-name').innerText = info.titulo;
+
+                const eData = info.energia_etica || {};
+                document.getElementById('reg-usage').innerText = "Balanço de Uso: " + (eData.balanco_uso || "Rede Nacional");
+                document.getElementById('reg-production-info').innerText = "Capacidade Instalada Estimada: " + (eData.exploracao_atual_mw || "0") + " MW";
+
+                const alertBox = document.getElementById('energy-impact-alert');
+                if(eData.alerta_impacto && eData.alerta_impacto !== "N/A") {
+                    alertBox.style.display = 'block';
+                    document.getElementById('energy-impact-text').innerText = eData.alerta_impacto;
+                } else { alertBox.style.display = 'none'; }
+
+                const badgeContainer = document.getElementById('energy-badges-container');
+                badgeContainer.innerHTML = '';
+                if(eData.parques_eolicos && eData.parques_eolicos.length > 0) 
+                    eData.parques_eolicos.forEach(p => badgeContainer.innerHTML += `<span class="energy-badge">Eólico: ${p}</span> `);
+                if(eData.parques_solares && eData.parques_solares.length > 0) 
+                    eData.parques_solares.forEach(p => badgeContainer.innerHTML += `<span class="energy-badge">Solar: ${p}</span> `);
+
+                const input = document.getElementById('loc-search-input');
+                if(input) input.value = info.titulo;
+            }
+
+            function setupSidebarLogic() {
+                const input = document.getElementById('loc-search-input');
+                const dropdown = document.getElementById('loc-dropdown');
+                if(!input) { setTimeout(setupSidebarLogic, 500); return; }
+                input.addEventListener('input', function() {
+                    const val = this.value.toLowerCase();
+                    dropdown.innerHTML = '';
+                    if(val.length < 2) { dropdown.style.display = 'none'; return; }
+                    const matches = locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0, 6);
+                    if(matches.length > 0) {
+                        dropdown.style.display = 'block';
+                        matches.forEach(m => {
+                            const div = document.createElement('div');
+                            div.className = 'bio-res-item';
+                            div.innerText = m.titulo;
+                            div.onclick = () => { localStorage.setItem('biocultura_region', m.id); renderDashboard(m); dropdown.style.display = 'none'; };
+                            dropdown.appendChild(div);
+                        });
+                    } else dropdown.style.display = 'none';
+                });
+            }
+
+            async function carregarNoticiasEnergy() {
+                try {
+                    const r = await fetch('/data/noticias.json');
+                    const todas = await r.json();
+                    noticiasEnergy = todas.filter(n => n.categoria.toLowerCase().includes('energia'));
+                    renderizarCardsEnergy();
+                } catch(e) { console.error(e); }
+            }
+
+            function renderizarCardsEnergy() {
+                const container = document.getElementById('noticias-energy-dinamico');
+                if(!container) return;
+                container.innerHTML = '';
+                noticiasEnergy.forEach((n, index) => {
+                    const card = document.createElement('a');
+                    card.href = `/observatorio/noticia-detalhe.html?id=${n.id}`;
+                    card.className = `news-card ${index >= visiveisEnergy ? 'hidden-card' : ''}`;
+                    card.innerHTML = `
+                        <div class="card-image-wrap"><img src="${n.imagem}"><span class="badge-cat">ENERGIA</span></div>
+                        <div class="card-meta"><div class="source-circle">${n.fonte.charAt(0)}</div><span>${n.fonte}</span></div>
+                        <h3>${n.titulo}</h3>
+                        <p>${n.resumo_biocultura.substring(0, 100)}...</p>
+                    `;
+                    container.appendChild(card);
+                });
+                const btn = document.getElementById('btn-load-more-energy');
+                if(btn) btn.style.display = noticiasEnergy.length > visiveisEnergy ? 'inline-block' : 'none';
+            }
+
+            fetch('/sidebar-content.html').then(r => r.text()).then(html => {
                 document.getElementById('sidebar').innerHTML = html;
-                var s = document.createElement('script'); s.src = '../assets/js/main.js'; document.body.appendChild(s);
+                inicializarPagina();
+                var s = document.createElement('script'); s.src = '/assets/js/main.js'; document.body.appendChild(s);
             });
+
+            document.getElementById('btn-load-more-energy').onclick = () => { visiveisEnergy += 4; renderizarCardsEnergy(); };
         </script>
 	</body>
 </html>
