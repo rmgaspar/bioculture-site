@@ -182,24 +182,29 @@
             }
 
             async function renderDashboard(info) {
-                if(!info || !info.lat) return;
+                if(!info) return;
                 document.getElementById('no-gps-warning').style.display = 'none';
                 document.getElementById('air-dashboard').style.display = 'block';
                 document.getElementById('reg-name').innerText = info.titulo;
 
-                // USA O TEU TOKEN REAL AQUI
+                // Tenta usar este token público (é mais estável que o "demo")
                 const AIR_TOKEN = "69894e75878f7129532579a37c95e1358742880c"; 
 
+                // Verifica se temos coordenadas. Se não tivermos, usamos o nome da cidade.
+                let apiUrl;
+                if (info.lat && info.lon) {
+                    apiUrl = `https://api.waqi.info/feed/geo:${info.lat};${info.lon}/?token=${AIR_TOKEN}`;
+                } else {
+                    apiUrl = `https://api.waqi.info/feed/${info.titulo}/?token=${AIR_TOKEN}`;
+                }
+
                 try {
-                    // Chamada usando as coordenadas exatas do teu bioregioes.json
-                    const response = await fetch(`https://api.waqi.info/feed/geo:${info.lat};${info.lon}/?token=${AIR_TOKEN}`);
+                    const response = await fetch(apiUrl);
                     const data = await response.json();
                     
                     if (data.status === "ok") {
                         const aqiVal = data.data.aqi;
                         document.getElementById('label-aqi').innerText = "AQI " + aqiVal;
-                        
-                        // Isto vai mostrar o nome da cidade portuguesa onde está a estação (ex: Castelo Branco ou Abrantes)
                         document.getElementById('air-description').innerText = `Valores reais medidos pela estação oficial em ${data.data.city.name}.`;
 
                         let pos = (aqiVal / 200) * 100;
@@ -212,11 +217,13 @@
                             document.getElementById('marker-aqi').style.left = Math.min(pos, 100) + "%";
                         }, 300);
                     } else {
-                        throw new Error();
+                        console.warn("API WAQI Status:", data.data);
+                        throw new Error("Dados não encontrados");
                     }
                 } catch (error) {
+                    console.error("Erro na API:", error);
                     document.getElementById('label-aqi').innerText = "AQI --";
-                    document.getElementById('air-description').innerText = "Estação de medição indisponível para esta localização.";
+                    document.getElementById('air-description').innerText = "Estação de medição indisponível. Verifique a consola (F12) para detalhes.";
                 }
 
                 const input = document.getElementById('loc-search-input');
