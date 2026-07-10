@@ -15,8 +15,7 @@
             #wrapper { padding-left: 18em !important; }
 
             .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; color: #bbb; margin-bottom: 10px; display: block; text-align: center; }
-            
-            .data-row { display: grid; grid-template-columns: 180px 1fr; gap: 40px; padding: 1.5em 0; border-bottom: 1px solid #f2f2f2; }
+            .data-row { display: grid; grid-template-columns: 180px 1fr; gap: 40px; padding: 2.5em 0; border-bottom: 1px solid #f2f2f2; }
             .data-row h4 { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin: 0; padding-top: 5px; }
 
             .gauge-container { margin-bottom: 20px; width: 100%; max-width: 500px; }
@@ -36,17 +35,20 @@
             .section-break h2 { font-size: 2em; font-weight: 300; color: #ef5350; letter-spacing: -1px; margin: 0; }
             .section-break .sub-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; }
 
-            .news-item { margin-bottom: 2em; padding-bottom: 2em; border-bottom: 1px dashed #eee; }
-            .news-item:last-child { border-bottom: none; }
-            .news-meta { font-size: 0.7em; font-weight: 800; color: #bbb; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; display: block; }
-            .news-link { color: #1a1a1a; text-decoration: none; transition: opacity 0.3s; }
-            .news-link:hover { opacity: 0.7; }
-
-            .alert-box { background: #fff8f8; padding: 1.5em; border-radius: 15px; border-left: 5px solid #ef5350; margin-bottom: 15px; }
-            .alert-box h5 { color: #ef5350; font-weight: 900; text-transform: uppercase; font-size: 0.65em; margin-bottom: 5px; }
-            .alert-box p { color: #7f1d1d; font-size: 0.9em; margin: 0; font-weight: 600; }
+            .observatorio-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 40px; margin-top: 2em; }
+            .news-card { text-decoration: none; color: inherit; display: flex; flex-direction: column; transition: all 0.3s ease; }
+            .news-card:hover { transform: translateY(-8px); opacity: 0.85; }
+            .card-image-wrap { position: relative; width: 100%; height: 180px; overflow: hidden; border-radius: 12px; background: #f5f5f5; margin-bottom: 15px; }
+            .card-image-wrap img { width: 100%; height: 100%; object-fit: cover; }
+            .badge-cat { position: absolute; bottom: 10px; left: 10px; background: #4fc3f7; color: white; padding: 4px 12px; border-radius: 50px; font-size: 0.55em; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; }
+            
+            .card-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 0.65em; font-weight: 800; color: #bbb; text-transform: uppercase; }
+            .source-circle { width: 18px; height: 18px; background: #333; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 8px; }
 
             .temp-badge { background: #f4f7fb; color: #5c6bc0; padding: 5px 12px; border-radius: 50px; font-size: 0.7em; font-weight: 800; display: inline-block; }
+            .ver-mais-container { text-align: center; margin: 3em 0; }
+            .btn-ver-mais { background: transparent !important; border: 1px solid #eee !important; color: #bbb !important; border-radius: 50px; padding: 0 40px; font-size: 0.7em; font-weight: 900; letter-spacing: 2px; cursor: pointer; }
+            .hidden-card { display: none; }
             .page-footer { margin-top: auto; padding: 4em 0 2em 0; border-top: 1px solid #f2f2f2; }
 
             @media screen and (max-width: 1280px) {
@@ -54,18 +56,6 @@
                 #wrapper { padding-left: 0 !important; }
                 .data-row { grid-template-columns: 1fr; gap: 15px; }
             }
-            /* Grelha e Cards */
-            .observatorio-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 40px; margin-top: 3em; }
-            .news-card { text-decoration: none; color: inherit; display: flex; flex-direction: column; transition: all 0.3s ease; }
-            .news-card:hover { transform: translateY(-8px); opacity: 0.85; }
-            .card-image-wrap { position: relative; width: 100%; height: 200px; overflow: hidden; border-radius: 16px; background: #f5f5f5; margin-bottom: 15px; }
-            .card-image-wrap img { width: 100%; height: 100%; object-fit: cover; }
-            .badge-cat { position: absolute; bottom: 12px; left: 12px; background: #4fc3f7; color: white; padding: 4px 12px; border-radius: 50px; font-size: 0.6em; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; }
-            .card-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 0.7em; font-weight: 800; color: #bbb; text-transform: uppercase; }
-            .source-circle { width: 20px; height: 20px; background: #333; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; }
-            .ver-mais-container { text-align: center; margin: 4em 0; }
-            .btn-ver-mais { background: transparent !important; border: 1px solid #eee !important; color: #bbb !important; border-radius: 50px; padding: 0 40px; font-size: 0.7em; font-weight: 900; letter-spacing: 2px; cursor: pointer; }
-            .hidden-card { display: none; }
 		</style>
 	</head>
 	<body class="is-preload">
@@ -80,6 +70,7 @@
                             <p style="font-size: 0.9em; font-style: italic; color: #bbb; margin-top: 5px;">Análise regional: <strong id="reg-name" style="color:#888">...</strong></p>
                         </div>
 
+                        <!-- DASHBOARD LOCAL -->
                         <div id="water-dashboard" style="display:none;">
                             <div class="data-row">
                                 <h4>Perfil Químico</h4>
@@ -98,68 +89,36 @@
                                 </div>
                             </div>
 
-                            <!-- Secção de Notícias Dinâmicas da Água -->
-                            <div class="data-row" style="border-bottom: none;">
-                                <h4>Crise Hídrica</h4>
+                            <div class="data-row">
+                                <h4>Disponibilidade</h4>
                                 <div class="tech-content">
-                                    <!-- Contentor onde as notícias da ÁGUA vão aparecer -->
-                                    <div id="noticias-agua-dinamico" class="observatorio-grid">
-                                        <!-- Gerado automaticamente pelo JavaScript -->
+                                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
+                                        <div>
+                                            <span class="tech-main" id="reg-aquifer">--</span><br>
+                                            <p class="tech-detail" id="reg-dams">--</p>
+                                        </div>
+                                        <div id="temp-container"></div>
                                     </div>
-                                    
-                                    <div class="ver-mais-container" id="container-btn-agua" style="display: none; margin-top: 3em;">
-                                        <button id="btn-load-more-agua" class="btn-ver-mais">Ver Mais Relatórios</button>
-                                    </div>
                                 </div>
-                            </div>
-                            </div>
-
-                            <div class="section-break">
-                                <span class="sub-label">Panorama Nacional e Global</span>
-                                <h2>Alerta de Escassez de Água</h2>
-                            </div>
-
-                            <div class="data-row" style="border-bottom: none;">
-                            <h4>Crise Hídrica</h4>
-                            <div class="tech-content">
-                                
-                                <!-- Notícia 1 -->
-                                <div class="news-item">
-                                    <span class="news-meta">9 Jul 2026 | SMAS Almada | Fonte: Diário do Distrito</span>
-                                    <a href="/observatorio/noticia-detalhe.html?id=almada-alerta" class="news-link"><span class="tech-main">Estado de Alerta em Almada: Reservatórios em níveis críticos</span></a>
-                                    <p class="tech-detail">Consumo médio ultrapassa os 300 litros por habitante. Decretada situação de alerta e cortes noturnos para recuperação do sistema.</p>
-                                </div>
-
-                                <!-- Notícia 2 (A que faltava) -->
-                                <div class="news-item">
-                                    <span class="news-meta">8 Jul 2026 | Ministério do Ambiente | Fonte: Jornal Almadense</span>
-                                    <a href="/observatorio/noticia-detalhe.html?id=almada-perdas" class="news-link"><span class="tech-main">Almada regista as maiores perdas de água do país</span></a>
-                                    <p class="tech-detail">Ministra aponta fugas superiores a 35% na rede. APA autoriza licenciamento imediato de novos furos para reforçar o abastecimento.</p>
-                                </div>
-
-                                <!-- Notícia 3 -->
-                                <div class="news-item">
-                                    <span class="news-meta">Maio 2026 | APA | Fonte: Sul Informação</span>
-                                    <a href="/observatorio/noticia-detalhe.html?id=algarve-resiliencia" class="news-link"><span class="tech-main">Algarve: Recuperação hídrica e foco na resiliência</span></a>
-                                    <p class="tech-detail">Barragens recuperam mas restrições de 5% mantêm-se. Plano "Água que Une" avança com investimentos em dessalinização.</p>
-                                </div>
-
-                                <!-- Notícia 4 -->
-                                <div class="news-item">
-                                    <span class="news-meta">Relatório 2025/26 | ERSAR | Fonte: RASARP</span>
-                                    <a href="/observatorio/noticia-detalhe.html?id=ersar-sustentabilidade" class="news-link"><span class="tech-main">Sustentabilidade do setor hídrico em Portugal</span></a>
-                                    <p class="tech-detail">Relatório anual sublinha a urgência na reabilitação de infraestruturas e no combate às perdas de água na rede pública.</p>
-                                </div>
-
-                                <!-- Notícia 5 -->
-                                <div class="news-item">
-                                    <span class="news-meta">Junho 2026 | ONU | Fonte: UNRIC</span>
-                                    <a href="/observatorio/noticia-detalhe.html?id=onu-alerta-global" class="news-link"><span class="tech-main">Alerta Global: A urgência de racionar e reaproveitar</span></a>
-                                    <p class="tech-detail">Nações Unidas reforçam a necessidade de transição para uma economia circular hídrica perante o stress hídrico crescente.</p>
-                                </div>
-
                             </div>
                         </div>
+
+                        <!-- PANORAMA GLOBAL (SEMPRE VISÍVEL) -->
+                        <div class="section-break">
+                            <span class="sub-label">Panorama Nacional e Global</span>
+                            <h2>Alerta de Escassez de Água</h2>
+                        </div>
+
+                        <div class="data-row" style="border-bottom: none;">
+                            <h4>Crise Hídrica</h4>
+                            <div class="tech-content">
+                                <!-- Contentor Único e Dinâmico -->
+                                <div id="noticias-agua-dinamico" class="observatorio-grid"></div>
+                                
+                                <div class="ver-mais-container">
+                                    <button id="btn-load-more-agua" class="btn-ver-mais" style="display:none;">Ver Mais Relatórios</button>
+                                </div>
+                            </div>
                         </div>
 
                         <div id="no-gps-warning" style="text-align: center; padding: 4em; color: #bbb;"><p>Selecione uma localidade na barra lateral.</p></div>
@@ -185,7 +144,6 @@
             let noticiasAgua = [];
             let visiveisAgua = 4;
 
-            // 1. Função GPS
             function calcularDistancia(lat1, lon1, lat2, lon2) {
                 const R = 6371;
                 const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -194,25 +152,20 @@
                 return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
             }
 
-            // 2. Inicialização Principal
             async function inicializarPagina() {
                 try {
-                    // Carregar base de dados de regiões
                     const rLoc = await fetch('/data/bioregioes.json');
                     locationsDB = await rLoc.json();
                     
-                    // Determinar região atual
                     const savedId = localStorage.getItem('biocultura_region');
                     let info = locationsDB.find(i => i.id === savedId) || locationsDB.find(i => i.id === "proenca-a-nova");
                     
                     renderDashboard(info);
-                    setupSidebarLogic(); // Ativa procura e GPS
-                    await carregarNoticiasAgua(); // Carrega notícias
-                    
-                } catch(e) { console.error("Erro na inicialização:", e); }
+                    setupSidebarLogic();
+                    await carregarNoticiasAgua();
+                } catch(e) { console.error(e); }
             }
 
-            // 3. Renderizar Dashboard (Dados Técnicos)
             function renderDashboard(info) {
                 if(!info) return;
                 document.getElementById('no-gps-warning').style.display = 'none';
@@ -237,25 +190,17 @@
                     document.getElementById('reg-aquifer').innerText = "Aquífero: " + (info.agua.aquiferos || "Em levantamento.");
                     document.getElementById('reg-dams').innerText = "Barragens: " + ((info.agua.barragens_proximas && Array.isArray(info.agua.barragens_proximas)) ? info.agua.barragens_proximas.join(', ') : "Nenhuma detetada.");
                 }
-                
-                // Sincroniza o texto da sidebar
                 const input = document.getElementById('loc-search-input');
                 if(input) input.value = info.titulo;
             }
 
-            // 4. Lógica da Sidebar (AQUI ESTAVA O PROBLEMA)
             function setupSidebarLogic() {
                 const input = document.getElementById('loc-search-input');
                 const gpsBtn = document.getElementById('btn-gps-trigger');
                 const dropdown = document.getElementById('loc-dropdown');
 
-                if(!input) {
-                    console.warn("Sidebar ainda não carregada. Tentando novamente...");
-                    setTimeout(setupSidebarLogic, 500);
-                    return;
-                }
+                if(!input) { setTimeout(setupSidebarLogic, 500); return; }
 
-                // Evento de Procura
                 input.addEventListener('input', function() {
                     const val = this.value.toLowerCase();
                     dropdown.innerHTML = '';
@@ -277,7 +222,6 @@
                     } else dropdown.style.display = 'none';
                 });
 
-                // Evento GPS
                 if(gpsBtn) {
                     gpsBtn.onclick = () => {
                         input.value = "A localizar...";
@@ -299,12 +243,12 @@
                 }
             }
 
-            // 5. Carregar Notícias da Água
             async function carregarNoticiasAgua() {
                 try {
                     const r = await fetch('/data/noticias.json');
                     const todas = await r.json();
-                    noticiasAgua = todas.filter(n => n.categoria.toLowerCase().includes('agua'));
+                    // Filtro corrigido para aceitar "água" ou "agua"
+                    noticiasAgua = todas.filter(n => n.categoria.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes('agua'));
                     renderizarCardsAgua();
                 } catch(e) { console.error(e); }
             }
@@ -325,14 +269,13 @@
                     `;
                     container.appendChild(card);
                 });
-                const btn = document.getElementById('container-btn-agua');
-                if(btn) btn.style.display = noticiasAgua.length > visiveisAgua ? 'block' : 'none';
+                const btn = document.getElementById('btn-load-more-agua');
+                if(btn) btn.style.display = noticiasAgua.length > visiveisAgua ? 'inline-block' : 'none';
             }
 
-            // 6. EXECUÇÃO: Primeiro a Sidebar, depois o resto
             fetch('/sidebar-content.html').then(r => r.text()).then(html => {
                 document.getElementById('sidebar').innerHTML = html;
-                inicializarPagina(); // Agora sim, tudo em ordem
+                inicializarPagina();
                 var s = document.createElement('script'); s.src = '/assets/js/main.js'; document.body.appendChild(s);
             });
 
