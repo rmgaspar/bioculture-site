@@ -6,6 +6,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
 		<style>
+            /* --- ESTILOS GLOBAIS --- */
             body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
 			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
             section { padding-top: 2em !important; min-height: 100vh; display: flex; flex-direction: column; }
@@ -18,7 +19,10 @@
             .data-row { display: grid; grid-template-columns: 180px 1fr; gap: 40px; padding: 2.5em 0; border-bottom: 1px solid #f2f2f2; }
             .data-row h4 { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin: 0; padding-top: 5px; }
 
-            /* CARDS DE INFRAESTRUTURA */
+            /* DASHBOARD ENERGIA */
+            .tech-main { font-size: 1.1em; font-weight: 700; color: #1a1a1a; line-height: 1.3; }
+            .tech-detail { font-size: 0.9em; color: #777; line-height: 1.5; margin: 0; }
+            
             .infra-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; margin-top: 20px; }
             .infra-item { background: #fdfdfd; border: 1px solid #f2f2f2; padding: 1.5em; border-radius: 15px; }
             .infra-type { font-size: 0.6em; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 5px; }
@@ -38,15 +42,13 @@
             .section-break h2 { font-size: 2em; font-weight: 300; color: #5c6bc0; letter-spacing: -1px; margin: 0; }
             .section-break .sub-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; }
 
-            /* GRELHA DE NOTÍCIAS */
+            /* NOTÍCIAS */
             .observatorio-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 40px; margin-top: 2em; }
             .news-card { text-decoration: none; color: inherit; display: flex; flex-direction: column; transition: all 0.3s ease; }
             .news-card:hover { transform: translateY(-8px); opacity: 0.85; }
             .card-image-wrap { position: relative; width: 100%; height: 180px; overflow: hidden; border-radius: 12px; background: #f5f5f5; margin-bottom: 15px; }
             .card-image-wrap img { width: 100%; height: 100%; object-fit: cover; }
             .badge-cat { position: absolute; bottom: 10px; left: 10px; background: #5c6bc0; color: white; padding: 4px 12px; border-radius: 50px; font-size: 0.55em; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; }
-            .card-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 0.65em; font-weight: 800; color: #bbb; text-transform: uppercase; }
-            .source-circle { width: 18px; height: 18px; background: #333; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 8px; }
 
             .ver-mais-container { text-align: center; margin: 3em 0; }
             .btn-ver-mais { background: transparent !important; border: 1px solid #eee !important; color: #bbb !important; border-radius: 50px; padding: 0 40px; font-size: 0.7em; font-weight: 900; letter-spacing: 2px; cursor: pointer; }
@@ -66,11 +68,12 @@
 					<header id="header" style="height: 0; margin: 0; padding: 0; overflow: hidden;"></header>
                     <section>
                         <div style="text-align: center; margin-bottom: 3em;">
-                            <span class="category-label">Engenharia Ética</span>
-                            <h1 style="font-size: 3.5em; font-weight: 300; color: #1a1a1a; letter-spacing: -2px; margin: 0;">Energia: A Força da Transição</h1>
-                            <p style="font-size: 0.9em; font-style: italic; color: #bbb; margin-top: 5px;">Análise regional: <strong id="reg-name" style="color:#888">...</strong></p>
+                            <span class="category-label">Engenharia & Soluções</span>
+                            <h1 style="font-size: 3.5em; font-weight: 300; color: #1a1a1a; letter-spacing: -2px; margin: 0;">Energia & Extracção</h1>
+                            <p style="font-size: 0.9em; font-style: italic; color: #bbb; margin-top: 5px;">Radar de impacto territorial: <strong id="reg-name" style="color:#888">...</strong></p>
                         </div>
 
+                        <!-- DASHBOARD DINÂMICO -->
                         <div id="energy-dashboard" style="display:none;">
                             <div class="data-row">
                                 <h4>Balanço em Tempo Real</h4>
@@ -96,11 +99,19 @@
                             <div class="data-row">
                                 <h4>Infraestruturas e Operadores</h4>
                                 <div class="tech-content">
-                                    <div id="infra-list" class="infra-grid"></div>
+                                    <div id="infra-list" class="infra-grid">
+                                        <!-- Injetado via JS -->
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
+                        <!-- AVISO SEM LOCALIZAÇÃO -->
+                        <div id="no-gps-warning" style="text-align: center; padding: 4em; color: #bbb;">
+                            <p>Selecione uma localidade na barra lateral para activar o radar energético.</p>
+                        </div>
+
+                        <!-- PANORAMA GLOBAL -->
                         <div class="section-break">
                             <span class="sub-label">Panorama Nacional e Global</span>
                             <h2>Alerta de Transição Energética</h2>
@@ -118,8 +129,6 @@
                                 </div>
                             </div>
                         </div>
-
-                        <div id="no-gps-warning" style="text-align: center; padding: 4em; color: #bbb;"><p>Selecione uma localidade na barra lateral.</p></div>
 					</section>
 				</div>
             </div>
@@ -132,7 +141,6 @@
             let noticiasEnergy = [];
             let visiveisEnergy = 4;
 
-            // 1. Função GPS
             function calcularDistancia(lat1, lon1, lat2, lon2) {
                 const R = 6371;
                 const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -141,7 +149,6 @@
                 return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
             }
 
-            // 2. Inicialização Principal
             async function inicializarPagina() {
                 try {
                     const rLoc = await fetch('/data/bioregioes.json');
@@ -153,16 +160,14 @@
 
                     let info = locationsDB.find(i => i.id === regionParam) || 
                                locationsDB.find(i => i.id === savedId) || 
-                               locationsDB.find(i => i.id === "proenca-a-nova") || 
-                               locationsDB[0];
+                               locationsDB.find(i => i.id === "proenca-a-nova");
                     
-                    renderDashboard(info);
+                    if (info) renderDashboard(info);
                     setupSidebarLogic();
                     await carregarNoticiasEnergy();
                 } catch(e) { console.error(e); }
             }
 
-            // 3. Render Dashboard com Cálculo Real-Time
             async function renderDashboard(info) {
                 if(!info) return;
                 document.getElementById('no-gps-warning').style.display = 'none';
@@ -174,10 +179,8 @@
                 infraContainer.innerHTML = '';
 
                 try {
-                    // Obter Vento e Sol em tempo real
                     const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${info.lat}&longitude=${info.lon}&current=shortwave_radiation,wind_speed_100m`);
                     const weather = await res.json();
-                    
                     const windSpeed = weather.current.wind_speed_100m; 
                     const solarRad = weather.current.shortwave_radiation; 
 
@@ -191,14 +194,7 @@
                         lista.forEach(item => {
                             const mw = parseFloat(item.capacidade_mw) || 0;
                             totalInstalada += mw;
-                            
-                            let eficiencia = 0;
-                            if (tipo === 'eolica') {
-                                eficiencia = Math.min(Math.max((windSpeed - 10) / 35, 0), 1);
-                            } else {
-                                eficiencia = Math.min(solarRad / 1000, 1);
-                            }
-
+                            let eficiencia = tipo === 'eolica' ? Math.min(Math.max((windSpeed - 10) / 35, 0), 1) : Math.min(solarRad / 1000, 1);
                             const producao = (mw * eficiencia).toFixed(1);
                             totalEstimada += parseFloat(producao);
 
@@ -212,37 +208,29 @@
                                         <span class="tech-main" style="color: #2e7d32">${producao} MW <small>LIVE</small></span>
                                     </div>
                                     <div class="gauge-bar"><div class="gauge-fill" style="width:${eficiencia * 100}%"></div></div>
-                                </div>
-                            `;
+                                </div>`;
                         });
                     };
 
                     processar(eData.parques_eolicos, 'eolica');
                     processar(eData.parques_solares, 'solar');
-
                     document.getElementById('total-production').innerText = totalEstimada.toFixed(1) + " MW";
                     document.getElementById('total-installed').innerText = totalInstalada.toFixed(1) + " MW";
-
-                } catch (err) {
-                    document.getElementById('total-installed').innerText = (eData.exploracao_atual_mw || "0") + " MW";
-                }
+                } catch (err) { console.error(err); }
 
                 const alertBox = document.getElementById('energy-impact-alert');
                 if(eData.alerta_impacto && eData.alerta_impacto !== "N/A") {
                     alertBox.style.display = 'block';
                     document.getElementById('energy-impact-text').innerText = eData.alerta_impacto;
                 } else { alertBox.style.display = 'none'; }
-
                 const input = document.getElementById('loc-search-input');
                 if(input) input.value = info.titulo;
             }
 
-            // 4. Lógica da Sidebar (Pesquisa e Seta GPS)
             function setupSidebarLogic() {
                 const input = document.getElementById('loc-search-input');
                 const gpsBtn = document.getElementById('btn-gps-trigger');
                 const dropdown = document.getElementById('loc-dropdown');
-
                 if(!input) { setTimeout(setupSidebarLogic, 500); return; }
 
                 input.addEventListener('input', function() {
@@ -256,11 +244,7 @@
                             const div = document.createElement('div');
                             div.className = 'bio-res-item';
                             div.innerText = m.titulo;
-                            div.onclick = () => { 
-                                localStorage.setItem('biocultura_region', m.id); 
-                                renderDashboard(m); 
-                                dropdown.style.display = 'none'; 
-                            };
+                            div.onclick = () => { localStorage.setItem('biocultura_region', m.id); renderDashboard(m); dropdown.style.display = 'none'; };
                             dropdown.appendChild(div);
                         });
                     } else dropdown.style.display = 'none';
@@ -308,8 +292,7 @@
                         <div class="card-image-wrap"><img src="${n.imagem}"><span class="badge-cat">ENERGIA</span></div>
                         <div class="card-meta"><div class="source-circle">${n.fonte.charAt(0)}</div><span>${n.fonte}</span></div>
                         <h3>${n.titulo}</h3>
-                        <p>${n.resumo_biocultura.substring(0, 100)}...</p>
-                    `;
+                        <p>${n.resumo_biocultura.substring(0, 100)}...</p>`;
                     container.appendChild(card);
                 });
                 const btn = document.getElementById('btn-load-more-energy');
@@ -321,7 +304,6 @@
                 inicializarPagina();
                 var s = document.createElement('script'); s.src = '/assets/js/main.js'; document.body.appendChild(s);
             });
-
             document.getElementById('btn-load-more-energy').onclick = () => { visiveisEnergy += 4; renderizarCardsEnergy(); };
         </script>
 	</body>
