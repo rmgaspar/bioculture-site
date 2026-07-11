@@ -3,153 +3,200 @@
 	<head>
 		<title>bioCultura - Mineração: O Custo Oculto</title>
 		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<meta name="viewport" content="width=device-width, initial-scale, user-scalable=no" />
 		<link rel="stylesheet" href="../assets/css/main.css" />
 		<style>
-			/* 1. ESTRUTURA FLUIDA */
+			/* --- 1. ESTRUTURA GERAL --- */
 			section, #header, hr, .major, .features article { border: none !important; box-shadow: none !important; padding: 0 !important; }
-			#header .toggle { background: none !important; top: 2em !important; left: 2em !important; border: none !important; text-decoration: none !important; }
-			#header .toggle:before { content: '\f06c' !important; font-family: "Font Awesome 5 Free" !important; font-weight: 900; color: #2e7d32 !important; font-size: 1.6em !important; }
-            #header .toggle:after { display: none !important; }
             section { padding-top: 2em !important; margin-bottom: 4em !important; }
 
-            /* 2. TIPOGRAFIA EDITORIAL */
-            p { font-size: 1.30em !important; color: #444 !important; line-height: 1.8 !important; }
-            .features h3 { font-size: 1.8em !important; font-weight: 700; color: #37474f !important; margin-bottom: 0.5em !important; }
-            .features p { font-size: 1.20em !important; max-width: 100%; }
+            #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
+            #sidebar > .inner { height: 100% !important; display: flex; flex-direction: column; }
+            #wrapper { padding-left: 18em !important; }
 
-            /* 3. BANNER INICIAL */
+            /* --- 2. TIPOGRAFIA E CORES --- */
+            p { font-size: 1.30em !important; color: #444 !important; line-height: 1.8 !important; }
+            .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; color: #bbb; margin-bottom: 10px; display: block; text-align: center; }
+            .data-row { display: grid; grid-template-columns: 180px 1fr; gap: 40px; padding: 2.5em 0; border-bottom: 1px solid #f2f2f2; }
+            .data-row h4 { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin: 0; padding-top: 5px; }
+
+            /* --- 3. GRELHA DE NOTÍCIAS (ESTILO PORTAL) --- */
+            .observatorio-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 40px; margin-top: 2em; }
+            .news-card { text-decoration: none; color: inherit; display: flex; flex-direction: column; transition: all 0.3s ease; }
+            .news-card:hover { transform: translateY(-8px); opacity: 0.85; }
+            .card-image-wrap { position: relative; width: 100%; height: 180px; overflow: hidden; border-radius: 12px; background: #f5f5f5; margin-bottom: 15px; }
+            .card-image-wrap img { width: 100%; height: 100%; object-fit: cover; }
+            .badge-cat { position: absolute; bottom: 10px; left: 10px; background: #ef5350; color: white; padding: 4px 12px; border-radius: 50px; font-size: 0.55em; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; }
+            .source-circle { width: 18px; height: 18px; background: #333; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 8px; margin-right: 8px; }
+
+            /* --- 4. BANNERS E FEATURES --- */
             .banner-container { display: flex; gap: 20px; margin-bottom: 5em; flex-wrap: wrap; }
             .banner-box { flex: 1; min-width: 320px; height: 400px; border-radius: 30px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
-            
-            .intro-box {
-                background: linear-gradient(135deg, #cfd8dc 0%, #90a4ae 100%);
-                display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2em; text-align: center; position: relative;
-            }
+            .intro-box { background: linear-gradient(135deg, #cfd8dc 0%, #90a4ae 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2em; text-align: center; position: relative; }
             .intro-tag { position: absolute; top: 30px; font-size: 0.8em; font-weight: 900; letter-spacing: 5px; color: #455a64; text-transform: uppercase; opacity: 0.5; }
-            .intro-quote-mark { font-family: serif; font-size: 6em; color: #455a64; opacity: 0.1; line-height: 1; margin-top: 0.5em; }
             .intro-title-text { font-family: 'Source Sans Pro', sans-serif; font-size: 1.7em !important; font-style: italic; color: #263238 !important; line-height: 1.3 !important; font-weight: 300 !important; }
-            .intro-divider { width: 40px; height: 3px; background: #455a64; margin: 1.2em auto; border-radius: 2px; opacity: 0.3; }
-            .banner-box img { width: 100%; height: 100%; object-fit: cover; }
-
-            /* 4. TRANSIÇÃO: MANIFESTO FLOW */
-            .manifesto-flow { 
-                display: flex; gap: 4em; margin-bottom: 8em; padding: 4em 0 0 0;
-                border-top: 1px solid rgba(0,0,0,0.05);
-            }
-            .manifesto-item { flex: 1; }
-            .manifesto-item h4 { font-size: 0.8em; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 1.5em; }
-            .desafio h4 { color: #c53030; }
-            .compromisso h4 { color: #2e7d32; }
-            .manifesto-item p { font-size: 1.1em !important; font-style: italic; color: #555 !important; }
-
-            /* 5. CONTEÚDO EM FLUXO */
-            .features { display: flex; flex-direction: column; gap: 8em; }
-            .feature-row { display: flex; align-items: center; gap: 5em; flex-wrap: wrap; flex-direction: row-reverse; } 
-            .feature-row:nth-child(even) { flex-direction: row; } 
             
+            .feature-row { display: flex; align-items: center; gap: 5em; flex-wrap: wrap; margin-bottom: 8em; }
+            .feature-row:nth-child(even) { flex-direction: row-reverse; }
             .feature-content { flex: 1.2; min-width: 300px; }
             .feature-image { flex: 1; min-width: 300px; height: 420px; border-radius: 40px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.06); }
             .feature-image img { width: 100%; height: 100%; object-fit: cover; }
-            
-            .feature-header { display: flex; align-items: center; gap: 1em; margin-bottom: 1.5em; }
-            .feature-header .icon { color: #546e7a; font-size: 2em; }
 
-            .nota-subtil { font-size: 0.9em !important; font-weight: 700; color: #78909c; text-transform: uppercase; letter-spacing: 1px; margin-top: 1.5em; display: block; }
-
-			.footer-signature-right { text-align: right; padding: 6em 0 2em 0; opacity: 0.9; }
+            @media screen and (max-width: 1280px) {
+                #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
+                #wrapper { padding-left: 0 !important; }
+                .banner-container { flex-direction: column; }
+            }
 		</style>
 	</head>
 	<body class="is-preload">
 		<div id="wrapper">
-			<div id="main"><div class="inner">
+			<div id="main">
+                <div class="inner">
 					<header id="header" style="height: 0; margin: 0; padding: 0; overflow: hidden;"></header>
 					
                     <section>
                         <div class="banner-container">
                             <div class="banner-box intro-box">
-                                <div class="intro-tag">Energia Ética</div>
-                                <div class="intro-quote-mark">“</div>
+                                <div class="intro-tag">Recursos Finitos</div>
                                 <div class="intro-content">
                                     <p class="intro-title-text">Mineração: O Custo Oculto.<br>Não existe tecnologia limpa<br>sem um solo sacrificado.</p>
-                                    <div class="intro-divider"></div>
+                                    <p style="font-size: 0.8em !important; color: #455a64; margin-top: 10px;">Análise regional: <strong id="reg-name" style="color:#607d8b">...</strong></p>
                                 </div>
                             </div>
                             <div class="banner-box">
-                                <img src="https://plus.unsplash.com/premium_photo-1682142132041-705bcf44c2ff?q=80&w=2142&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Mineração e Meio Ambiente" />
+                                <img src="https://plus.unsplash.com/premium_photo-1682142132041-705bcf44c2ff?q=80&w=2142&auto=format&fit=crop" alt="Mineração" />
                             </div>
                         </div>
 
-                        <div class="manifesto-flow">
-                            <div class="manifesto-item desafio">
-                                <h4>O Dilema do Lítio</h4>
-                                <p>A transição energética atual depende da extração massiva de minérios que, muitas vezes, destrói os mesmos ecossistemas que tentamos proteger.</p>
-                            </div>
-                            <div class="manifesto-item compromisso">
-                                <h4>A Ética dos Materiais</h4>
-                                <p>Privilegiar a durabilidade extrema e a reciclagem. Usar cobre pela sua longevidade e reduzir a necessidade de baterias através da acumulação hídrica.</p>
-                            </div>
-                        </div>
-
+                        <!-- CONTEÚDO EDITORIAL -->
                         <div class="features">
                             <div class="feature-row">
                                 <div class="feature-content">
-                                    <div class="feature-header">
-                                        <span class="icon solid fa-gem"></span>
-                                        <h3>Durabilidade Mineral: O Cobre</h3>
-                                    </div>
-                                    <p>Na bioCultura, escolhemos materiais que atravessam gerações. O cobre, embora exija mineração, oferece uma resistência extrema à corrosão e é 100% reciclável. Um sistema bem desenhado hoje evita a mineração de amanhã.</p>
-                                    <span class="nota-subtil">Princípio: Longevidade é a forma mais pura de sustentabilidade.</span>
+                                    <h3>A Fronteira do Lítio</h3>
+                                    <p>A transição energética atual depende da extração massiva de minérios que, muitas vezes, destrói os mesmos ecossistemas que tentamos proteger. O solo, uma vez removido, leva milénios a regenerar.</p>
                                 </div>
                                 <div class="feature-image">
-                                    <img src="https://images.unsplash.com/photo-1584774354932-62ceb99e6053?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Cobre e Durabilidade" />
+                                    <img src="https://images.unsplash.com/photo-1578319914016-7f35026975d9?q=80&w=800" alt="Lítio" />
                                 </div>
                             </div>
+                        </div>
 
-                            <div class="feature-row">
-                                <div class="feature-content">
-                                    <div class="feature-header">
-                                        <span class="icon solid fa-recycle"></span>
-                                        <h3>Economia Circular de Baterias</h3>
-                                    </div>
-                                    <p>O armazenamento de energia é o maior desafio mineral. Defendemos o uso de acumuladores com ciclo de vida longo e a entrega de componentes velhos a centros de reciclagem especializados para fechar o ciclo mineral.</p>
-                                </div>
-                                <div class="feature-image">
-                                    <img src="https://plus.unsplash.com/premium_photo-1716999684531-b8f40731a827?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Reciclagem de Componentes" />
+                        <!-- SECÇÃO DE NOTÍCIAS DINÂMICAS -->
+                        <div class="data-row" style="border-bottom: none; margin-top: 4em;">
+                            <h4>Notícias e Impactos</h4>
+                            <div class="tech-content">
+                                <div id="noticias-mineracao-dinamico" class="observatorio-grid">
+                                    <!-- Injetado via JS -->
                                 </div>
                             </div>
                         </div>
 					</section>
 
 					<div class="footer-signature-right">
-						<a href="../index.html" style="border: none; display: inline-block; text-decoration: none;">
-							<div style="font-family: 'Source Sans Pro', sans-serif; font-size: 1.4em; line-height: 1; display: flex; align-items: flex-end; justify-content: flex-end;">
-                                <b style="font-weight: 700; color: #2e7d32; margin-right: -3px; position: relative; z-index: 2;">b</b>
-                                <div style="width: 32px; margin: 0 -7px; position: relative; line-height: 0; transform: translateY(4px); z-index: 1;">
-                                    <svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: auto;">
-                                        <path d="M-20 110 Q50 102 120 110" stroke="#634832" stroke-width="4" fill="none" opacity="0.3" />
-                                        <path d="M50 110 C50 80 35 70 50 45 C65 70 50 80 50 110" fill="#2e7d32" />
-                                        <path d="M50 80 C75 75 85 50 65 40 C50 55 50 65 50 80" fill="#4CAF50" />
-                                    </svg>
-                                </div>
-                                <b style="font-weight: 700; color: #2e7d32; margin-left: -3px; position: relative; z-index: 2;">o</b>
-                                <span style="font-weight: 300; color: #444; margin-left: 2px;">Cultura</span>
-                            </div>
-						</a>
+                        <div style="text-align: right; opacity: 0.3;">
+                            <span style="display: block; font-size: 0.85em; font-weight: 900; color: #333;">bioCultura</span>
+                            <span style="display: block; font-size: 0.5em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Global Regeneration</span>
+                        </div>
 					</div>
-				</div></div>
+				</div>
+            </div>
 			<div id="sidebar"></div>
 		</div>
+
 		<script src="../assets/js/jquery.min.js"></script>
-        <script src="../assets/js/browser.min.js"></script>
-        <script src="../assets/js/breakpoints.min.js"></script>
-        <script src="../assets/js/util.js"></script>
         <script>
-            fetch('../sidebar-content.html').then(response => response.text()).then(data => {
-                document.getElementById('sidebar').innerHTML = data;
-                var script = document.createElement('script');
-                script.src = '../assets/js/main.js';
-                document.body.appendChild(script);
+            let locationsDB = [];
+
+            function calcularDistancia(lat1, lon1, lat2, lon2) {
+                const R = 6371;
+                const dLat = (lat2 - lat1) * Math.PI / 180;
+                const dLon = (lon2 - lon1) * Math.PI / 180;
+                const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
+                return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+            }
+
+            async function inicializarPagina() {
+                try {
+                    const rLoc = await fetch('../data/bioregioes.json');
+                    locationsDB = await rLoc.json();
+                    const savedId = localStorage.getItem('biocultura_region');
+                    let info = locationsDB.find(i => i.id === savedId) || locationsDB.find(i => i.id === "proenca-a-nova");
+                    
+                    renderDashboard(info);
+                    carregarNoticiasMineracao();
+                } catch(e) { console.error(e); }
+            }
+
+            function renderDashboard(info) {
+                if(!info) return;
+                document.getElementById('reg-name').innerText = info.titulo;
+                const input = document.getElementById('loc-search-input');
+                if(input) input.value = info.titulo;
+            }
+
+            // LÓGICA DE LOCALIZAÇÃO (DELEGAÇÃO PARA FUNCIONAR COM SIDEBAR EXTERNA)
+            $(document).on('input', '#loc-search-input', function() {
+                const val = $(this).val().toLowerCase();
+                const dropdown = $('#loc-dropdown');
+                dropdown.empty();
+                if(val.length < 2) { dropdown.hide(); return; }
+                const matches = locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0, 6);
+                if(matches.length > 0) {
+                    dropdown.show();
+                    matches.forEach(m => {
+                        $('<div class="bio-res-item"></div>').text(m.titulo).on('click', function() {
+                            localStorage.setItem('biocultura_region', m.id);
+                            renderDashboard(m);
+                            dropdown.hide();
+                        }).appendTo(dropdown);
+                    });
+                } else dropdown.hide();
+            });
+
+            $(document).on('click', '#btn-gps-trigger', function() {
+                const input = $('#loc-search-input');
+                input.val("A localizar...");
+                navigator.geolocation.getCurrentPosition(pos => {
+                    let closest = locationsDB[0]; let minD = Infinity;
+                    locationsDB.forEach(c => {
+                        if(c.lat && c.lon) {
+                            let d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon);
+                            if(d < minD) { minD = d; closest = c; }
+                        }
+                    });
+                    localStorage.setItem('biocultura_region', closest.id);
+                    renderDashboard(closest);
+                }, () => { input.val("Erro GPS"); });
+            });
+
+            async function carregarNoticiasMineracao() {
+                try {
+                    const r = await fetch('../data/noticias.json');
+                    const todas = await r.json();
+                    const container = document.getElementById('noticias-mineracao-dinamico');
+                    container.innerHTML = '';
+                    
+                    // Filtra por mineração
+                    todas.filter(n => n.categoria.toLowerCase().includes('mineração')).forEach(n => {
+                        container.innerHTML += `
+                            <a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-card">
+                                <div class="card-image-wrap"><img src="${n.imagem}"></div>
+                                <div style="display:flex; align-items:center; margin-bottom:5px">
+                                    <div class="source-circle">${n.fonte.charAt(0)}</div>
+                                    <span style="font-size:0.65em; color:#bbb; font-weight:800; text-transform:uppercase">${n.fonte}</span>
+                                </div>
+                                <h3 style="font-size:1.1em; margin-top:5px">${n.titulo}</h3>
+                            </a>`;
+                    });
+                } catch(e) { console.error(e); }
+            }
+
+            // CARREGAMENTO DA SIDEBAR
+            fetch('../sidebar-content.html').then(r => r.text()).then(html => {
+                document.getElementById('sidebar').innerHTML = html;
+                inicializarPagina();
+                var s = document.createElement('script'); s.src = '../assets/js/main.js'; document.body.appendChild(s);
             });
         </script>
 	</body>
