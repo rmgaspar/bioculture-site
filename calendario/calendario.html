@@ -16,8 +16,8 @@
             #wrapper { padding-left: 18em !important; }
 
             /* CORES DOS ÍCONES */
-            .fa-sun, .fa-cloud-sun { color: #fbc02d !important; } /* Amarelo Carregado */
-            .fa-seedling { color: #4caf50 !important; } /* Verde bioCultura */
+            .fa-sun, .fa-cloud-sun { color: #fbc02d !important; }
+            .fa-seedling { color: #4caf50 !important; }
             
             /* TEXTO DAS NOTAS A PRETO */
             .val, .task-detail, .lunar-advice, #climate-alert, .task-main { color: #1a1a1a !important; }
@@ -36,11 +36,15 @@
             .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; text-align: center; }
             .cal-day-label { font-size: 0.55em; font-weight: 900; text-transform: uppercase; color: #ccc; margin-bottom: 10px; }
             
+            /* DESTAQUE FIM DE SEMANA */
+            .cal-day-label.weekend { color: #ef5350 !important; }
+            .cal-date.weekend-date { color: #ef5350; opacity: 0.8; }
+
             .cal-date { font-size: 0.85em; font-weight: 600; padding: 10px 0; border-radius: 12px; color: #bbb; min-height: 45px; display: flex; align-items: center; justify-content: center; }
             .cal-date.today { background: #f1f8e9; color: #1b5e20; border: 1px solid #dcedc8; }
             .cal-date i { font-size: 1.1em; }
 
-            /* WEATHER UNIFICADO & ALINHADO */
+            /* WEATHER UNIFICADO */
             .weather-unified { 
                 background: #fcfdfc; 
                 padding: 2.5em; 
@@ -99,7 +103,7 @@
                         <div class="info-row">
                             <div class="info-card" id="soil-card">
                                 <i class="fas fa-seedling"></i>
-                                <div><span class="label">Solo local</span><span id="soil-type" class="val">Xistoso/Granítico</span></div>
+                                <div><span class="label">Solo local</span><span id="soil-type" class="val">...</span></div>
                             </div>
                             <div class="info-card">
                                 <i class="fas fa-moon" id="main-lunar-icon"></i>
@@ -127,9 +131,7 @@
                             </div>
                         </div>
 
-                        <div class="tasks-grid" id="tasks-container">
-                            <!-- Injetado via JS -->
-                        </div>
+                        <div class="tasks-grid" id="tasks-container"></div>
 
 					</section>
 				</div>
@@ -140,7 +142,6 @@
 		<script src="/assets/js/jquery.min.js"></script>
         <script>
             let locationsDB = [];
-            const mesesMap = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
             
             const agroIntelligence = {
                 "jul": { 
@@ -153,18 +154,17 @@
                 }
             };
 
+            // LÓGICA LUNAR CALIBRADA PARA JULHO 2026
             function getLunarData(date = new Date()) {
-                const lp = 2551443; 
-                const new_moon = new Date(1970, 0, 7, 20, 35, 0);
-                const phase = ((date.getTime() - new_moon.getTime()) / 1000) % lp;
-                const day = Math.floor(phase / (24 * 3600)) + 1;
-                
-                // Configurações exatas pedidas pelo Gaspar
-                if (day <= 1 || day >= 29) return { name: "Lua Nova", icon: "fa-circle-notch", color: "#263238", tip: "Recolhimento e limpeza.", advice: "Aconselhável: Colher raízes, retirar ervas daninhas e reduzir regas." };
-                if (day >= 7 && day <= 8) return { name: "Lua Crescente", icon: "fa-moon", color: "#fb8c00", tip: "Vigor e crescimento.", advice: "Aconselhável: Semear plantas acima do solo e aplicar adubos." };
-                if (day >= 14 && day <= 15) return { name: "Lua Cheia", icon: "fa-circle", color: "#fbc02d", tip: "Máxima energia hídrica.", advice: "Aconselhável: Colher frutos/folhas, aumentar regas e transplantes." };
-                if (day >= 21 && day <= 22) return { name: "Lua Minguante", icon: "fa-moon", color: "#7b1fa2", tip: "Enraizamento e poda.", advice: "Aconselhável: Semear raízes, podar e controlar pragas." };
-                
+                const day = date.getDate();
+                const month = date.getMonth(); // 6 = Julho
+
+                if (month === 6) {
+                    if (day === 14) return { name: "Lua Nova", icon: "fa-circle", color: "#757575", tip: "Recolhimento e limpeza.", advice: "Aconselhável: Colher raízes, retirar ervas daninhas e reduzir regas." };
+                    if (day === 21) return { name: "Lua Crescente", icon: "fa-moon", color: "#fb8c00", tip: "Vigor e crescimento.", advice: "Aconselhável: Semear plantas acima do solo e aplicar adubos." };
+                    if (day === 29) return { name: "Lua Cheia", icon: "fa-circle", color: "#fbc02d", tip: "Máxima energia hídrica.", advice: "Aconselhável: Colher frutos/folhas, aumentar regas e transplantes." };
+                    if (day === 7) return { name: "Lua Minguante", icon: "fa-moon", color: "#7b1fa2", tip: "Enraizamento e poda.", advice: "Aconselhável: Semear raízes, podar e controlar pragas." };
+                }
                 return null;
             }
 
@@ -172,9 +172,14 @@
                 const grid = document.getElementById('calendar-week-grid');
                 if(!grid) return;
                 grid.innerHTML = '';
-                const days = ['S','T','Q','Q','S','S','D'];
+                const daysLabels = ['S','T','Q','Q','S','S','D'];
                 const today = new Date();
-                days.forEach(d => grid.innerHTML += `<div class="cal-day-label">${d}</div>`);
+                
+                // Header com S e D a vermelho
+                daysLabels.forEach((d, i) => {
+                    const isWeekend = (i >= 5);
+                    grid.innerHTML += `<div class="cal-day-label ${isWeekend ? 'weekend' : ''}">${d}</div>`;
+                });
                 
                 let start = new Date();
                 let dayOffset = today.getDay() === 0 ? 6 : today.getDay() - 1;
@@ -184,10 +189,11 @@
                     let current = new Date(start);
                     current.setDate(start.getDate() + i);
                     const isToday = current.toDateString() === today.toDateString() ? 'today' : '';
+                    const isWeekend = (current.getDay() === 0 || current.getDay() === 6);
                     const moon = getLunarData(current);
                     
                     const content = moon ? `<i class="fas ${moon.icon}" style="color: ${moon.color}"></i>` : current.getDate();
-                    grid.innerHTML += `<div class="cal-date ${isToday}">${content}</div>`;
+                    grid.innerHTML += `<div class="cal-date ${isToday} ${isWeekend ? 'weekend-date' : ''}">${content}</div>`;
                 }
             }
 
