@@ -6,6 +6,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
 		<style>
+            /* --- ESTILOS GLOBAIS --- */
             body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
 			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
             section { padding-top: 2em !important; min-height: 100vh; display: flex; flex-direction: column; }
@@ -41,8 +42,7 @@
             .card-image-wrap { position: relative; width: 100%; height: 180px; overflow: hidden; border-radius: 12px; background: #f5f5f5; margin-bottom: 15px; }
             .card-image-wrap img { width: 100%; height: 100%; object-fit: cover; }
             .badge-cat { position: absolute; bottom: 10px; left: 10px; background: #5c6bc0; color: white; padding: 4px 12px; border-radius: 50px; font-size: 0.55em; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; }
-            .card-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 0.65em; font-weight: 800; color: #bbb; text-transform: uppercase; }
-            .source-circle { width: 18px; height: 18px; background: #333; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 8px; }
+            .source-circle { width: 18px; height: 18px; background: #333; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 8px; margin-right: 8px; }
 
             .ver-mais-container { text-align: center; margin: 3em 0; }
             .btn-ver-mais { background: transparent !important; border: 1px solid #eee !important; color: #bbb !important; border-radius: 50px; padding: 0 40px; font-size: 0.7em; font-weight: 900; letter-spacing: 2px; cursor: pointer; }
@@ -86,7 +86,7 @@
                         </div>
 
                         <div id="no-gps-warning" style="text-align: center; padding: 4em; color: #bbb;">
-                            <p>Selecione uma localidade na barra lateral.</p>
+                            <p>A carregar observatório...</p>
                         </div>
 
                         <div class="section-break">
@@ -127,10 +127,17 @@
                 try {
                     const rLoc = await fetch('/data/bioregioes.json');
                     locationsDB = await rLoc.json();
+                    
                     const savedId = localStorage.getItem('biocultura_region');
-                    let info = locationsDB.find(i => i.id === savedId) || locationsDB.find(i => i.id === "proenca-a-nova");
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const regionParam = urlParams.get('region');
+
+                    let info = locationsDB.find(i => i.id === regionParam) || 
+                               locationsDB.find(i => i.id === savedId) || 
+                               locationsDB.find(i => i.id === "proenca-a-nova") ||
+                               locationsDB[0];
+                    
                     renderDashboard(info);
-                    setupSidebarLogic();
                     await carregarNoticiasEnergy();
                 } catch(e) { console.error(e); }
             }
@@ -141,7 +148,7 @@
                 document.getElementById('energy-dashboard').style.display = 'block';
                 document.getElementById('reg-name').innerText = info.titulo;
 
-                // Sincroniza o input da sidebar IMEDIATAMENTE
+                // Sincroniza o input da sidebar se ele já existir
                 const input = document.getElementById('loc-search-input');
                 if(input) input.value = info.titulo;
 
@@ -163,47 +170,40 @@
                 } catch (err) { console.error(err); }
             }
 
-            function setupSidebarLogic() {
-                const input = document.getElementById('loc-search-input');
-                const gpsBtn = document.getElementById('btn-gps-trigger');
-                const dropdown = document.getElementById('loc-dropdown');
+            // LÓGICA DE SIDEBAR COM DELEGAÇÃO (Resolve o problema de não funcionar)
+            $(document).on('input', '#loc-search-input', function() {
+                const val = $(this).val().toLowerCase();
+                const dropdown = $('#loc-dropdown');
+                dropdown.empty();
+                if(val.length < 2) { dropdown.hide(); return; }
+                const matches = locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0, 6);
+                if(matches.length > 0) {
+                    dropdown.show();
+                    matches.forEach(m => {
+                        $('<div class="bio-res-item"></div>').text(m.titulo).on('click', function() {
+                            localStorage.setItem('biocultura_region', m.id);
+                            renderDashboard(m);
+                            dropdown.hide();
+                        }).appendTo(dropdown);
+                    });
+                } else dropdown.hide();
+            });
 
-                if(!input) { setTimeout(setupSidebarLogic, 500); return; }
-
-                input.addEventListener('input', function() {
-                    const val = this.value.toLowerCase();
-                    dropdown.innerHTML = '';
-                    if(val.length < 2) { dropdown.style.display = 'none'; return; }
-                    const matches = locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0, 6);
-                    if(matches.length > 0) {
-                        dropdown.style.display = 'block';
-                        matches.forEach(m => {
-                            const div = document.createElement('div');
-                            div.className = 'bio-res-item';
-                            div.innerText = m.titulo;
-                            div.onclick = () => { localStorage.setItem('biocultura_region', m.id); renderDashboard(m); dropdown.style.display = 'none'; };
-                            dropdown.appendChild(div);
-                        });
-                    } else dropdown.style.display = 'none';
-                });
-
-                if(gpsBtn) {
-                    gpsBtn.onclick = () => {
-                        input.value = "A localizar...";
-                        navigator.geolocation.getCurrentPosition(pos => {
-                            let closest = locationsDB[0]; let minD = Infinity;
-                            locationsDB.forEach(c => {
-                                if(c.lat && c.lon) {
-                                    let d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon);
-                                    if(d < minD) { minD = d; closest = c; }
-                                }
-                            });
-                            localStorage.setItem('biocultura_region', closest.id);
-                            renderDashboard(closest);
-                        }, () => { input.value = "Erro GPS"; });
-                    };
-                }
-            }
+            $(document).on('click', '#btn-gps-trigger', function() {
+                const input = $('#loc-search-input');
+                input.val("A localizar...");
+                navigator.geolocation.getCurrentPosition(pos => {
+                    let closest = locationsDB[0]; let minD = Infinity;
+                    locationsDB.forEach(c => {
+                        if(c.lat && c.lon) {
+                            let d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon);
+                            if(d < minD) { minD = d; closest = c; }
+                        }
+                    });
+                    localStorage.setItem('biocultura_region', closest.id);
+                    renderDashboard(closest);
+                }, () => { input.val("Erro GPS"); });
+            });
 
             async function carregarNoticiasEnergy() {
                 try {
@@ -224,7 +224,10 @@
                     card.className = `news-card ${index >= visiveisEnergy ? 'hidden-card' : ''}`;
                     card.innerHTML = `
                         <div class="card-image-wrap"><img src="${n.imagem}"></div>
-                        <div class="card-meta"><div class="source-circle">${n.fonte.charAt(0)}</div><span>${n.fonte}</span></div>
+                        <div style="display:flex; align-items:center; margin-bottom:5px">
+                            <div class="source-circle">${n.fonte.charAt(0)}</div>
+                            <span style="font-size:0.65em; color:#bbb; font-weight:800; text-transform:uppercase">${n.fonte}</span>
+                        </div>
                         <h3>${n.titulo}</h3>
                     `;
                     container.appendChild(card);
@@ -233,6 +236,7 @@
                 if(btn) btn.style.display = noticiasEnergy.length > visiveisEnergy ? 'inline-block' : 'none';
             }
 
+            // CARREGAMENTO DA SIDEBAR
             fetch('/sidebar-content.html').then(r => r.text()).then(html => {
                 document.getElementById('sidebar').innerHTML = html;
                 inicializarPagina();
