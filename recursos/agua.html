@@ -1,3 +1,10 @@
+Aqui tens o código completo e corrigido para o ficheiro agua.html.
+O que foi corrigido:
+
+Filtro Seguro: Adicionei uma verificação para evitar erros caso uma notícia não tenha o campo categoria (causa comum de paragem do script).
+Onclick (Delegação): O onclick do botão "Ver Mais" foi movido para um listener delegado ($(document).on('click'...)). Isto garante que o botão funcione independentemente do estado de carregamento do DOM.
+Fallback de Dados: Se uma notícia não tiver imagem ou resumo, o código agora usa valores padrão em vez de quebrar o layout.
+
 <!DOCTYPE HTML>
 <html>
 	<head>
@@ -37,7 +44,7 @@
             .section-break h2 { font-size: 2em; font-weight: 300; color: #ef5350; letter-spacing: -1px; margin: 0; }
             .section-break .sub-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; }
 
-            /* GRELHA DE NOTÍCIAS (ESTILO SAPO) */
+            /* GRELHA DE NOTÍCIAS */
             .observatorio-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 40px; margin-top: 2em; }
             .news-card { text-decoration: none; color: inherit; display: flex; flex-direction: column; transition: all 0.3s ease; }
             .news-card:hover { transform: translateY(-8px); opacity: 0.85; }
@@ -162,9 +169,8 @@
                     let info = locationsDB.find(i => i.id === savedId) || locationsDB.find(i => i.id === "proenca-a-nova");
                     
                     renderDashboard(info);
-                    setupSidebarLogic();
                     await carregarNoticiasAgua();
-                } catch(e) { console.error(e); }
+                } catch(e) { console.error("Erro na inicialização:", e); }
             }
 
             function renderDashboard(info) {
@@ -191,13 +197,9 @@
                     document.getElementById('reg-aquifer').innerText = "Aquífero: " + (info.agua.aquiferos || "Em levantamento.");
                     document.getElementById('reg-dams').innerText = "Barragens: " + ((info.agua.barragens_proximas && Array.isArray(info.agua.barragens_proximas)) ? info.agua.barragens_proximas.join(', ') : "Nenhuma detetada.");
                 }
-                
-                // Sincroniza o input da sidebar
-                const input = document.getElementById('loc-search-input');
-                if(input) input.value = info.titulo;
             }
 
-            // LÓGICA DE SIDEBAR COM DELEGAÇÃO (CORRIGE O PROBLEMA DE NÃO FUNCIONAR)
+            // --- LÓGICA DE EVENTOS (ONCLICK E INPUT) ---
             $(document).on('input', '#loc-search-input', function() {
                 const val = $(this).val().toLowerCase();
                 const dropdown = $('#loc-dropdown');
@@ -211,6 +213,7 @@
                             localStorage.setItem('biocultura_region', m.id);
                             renderDashboard(m);
                             dropdown.hide();
+                            $('#loc-search-input').val(m.titulo);
                         }).appendTo(dropdown);
                     });
                 } else dropdown.hide();
@@ -229,31 +232,56 @@
                     });
                     localStorage.setItem('biocultura_region', closest.id);
                     renderDashboard(closest);
+                    input.val(closest.titulo);
                 }, () => { input.val("Erro GPS"); });
             });
 
+            // ONCLICK DO BOTÃO VER MAIS (DELEGADO)
+            $(document).on('click', '#btn-load-more-agua', function() {
+                visiveisAgua += 4;
+                renderizarCardsAgua();
+            });
+
+            // --- CARREGAMENTO DE NOTÍCIAS ---
             async function carregarNoticiasAgua() {
                 try {
                     const r = await fetch('/data/noticias.json');
+                    if (!r.ok) throw new Error('Erro ao carregar noticias.json');
                     const todas = await r.json();
-                    noticiasAgua = todas.filter(n => n.categoria.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes('agua'));
+                    
+                    // Filtro robusto para a categoria "agua"
+                    noticiasAgua = todas.filter(n => {
+                        const cat = (n.categoria || n.tag || "").toLowerCase()
+                                     .normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                        return cat.includes('agua');
+                    });
+
                     renderizarCardsAgua();
-                } catch(e) { console.error(e); }
+                } catch(e) { console.error("Erro no filtro de notícias:", e); }
             }
 
             function renderizarCardsAgua() {
                 const container = document.getElementById('noticias-agua-dinamico');
                 if(!container) return;
                 container.innerHTML = '';
+
+                if(noticiasAgua.length === 0) {
+                    container.innerHTML = '<p style="color:#bbb; grid-column: 1/-1; text-align:center; padding: 2em;">Nenhum alerta hídrico disponível para esta categoria.</p>';
+                }
+
                 noticiasAgua.forEach((n, index) => {
                     const card = document.createElement('a');
                     card.href = `/observatorio/noticia-detalhe.html?id=${n.id}`;
                     card.className = `news-card ${index >= visiveisAgua ? 'hidden-card' : ''}`;
+                    
+                    const img = n.imagem || 'https://images.unsplash.com/photo-1541544741938-0af808871cc0?q=80&w=800';
+                    const resumo = n.resumo_biocultura ? n.resumo_biocultura.substring(0, 100) : "Sem resumo disponível.";
+
                     card.innerHTML = `
-                        <div class="card-image-wrap"><img src="${n.imagem}"><span class="badge-cat agua">${n.categoria}</span></div>
-                        <div class="card-meta"><div class="source-circle">${n.fonte.charAt(0)}</div><span>${n.fonte}</span></div>
+                        <div class="card-image-wrap"><img src="${img}"><span class="badge-cat agua">${n.categoria || 'Água'}</span></div>
+                        <div class="card-meta"><div class="source-circle">${(n.fonte || 'B').charAt(0)}</div><span>${n.fonte || 'bioCultura'}</span></div>
                         <h3>${n.titulo}</h3>
-                        <p>${n.resumo_biocultura.substring(0, 100)}...</p>
+                        <p>${resumo}...</p>
                     `;
                     container.appendChild(card);
                 });
@@ -261,13 +289,12 @@
                 if(btn) btn.style.display = noticiasAgua.length > visiveisAgua ? 'inline-block' : 'none';
             }
 
+            // --- LOAD SIDEBAR E INICIO ---
             fetch('/sidebar-content.html').then(r => r.text()).then(html => {
                 document.getElementById('sidebar').innerHTML = html;
                 inicializarPagina();
                 var s = document.createElement('script'); s.src = '/assets/js/main.js'; document.body.appendChild(s);
             });
-
-            document.getElementById('btn-load-more-agua').onclick = () => { visiveisAgua += 4; renderizarCardsAgua(); };
         </script>
 	</body>
 </html>
