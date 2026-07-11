@@ -6,22 +6,24 @@
 		<meta name="viewport" content="width=device-width, initial-scale, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
 		<style>
+            /* --- ESTILOS GLOBAIS --- */
             body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
 			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
             section { padding-top: 4em !important; min-height: 100vh; display: flex; flex-direction: column; }
 
             #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
-            #sidebar > .inner { height: 100% !important; overflow: hidden !important; display: flex; flex-direction: column; }
+            #sidebar > .inner { height: 100% !important; display: flex; flex-direction: column; }
             #wrapper { padding-left: 18em !important; }
 
             .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; color: #bbb; margin-bottom: 10px; display: block; text-align: center; }
             .data-row { display: grid; grid-template-columns: 180px 1fr; gap: 40px; padding: 2.5em 0; border-bottom: 1px solid #f2f2f2; }
             .data-row h4 { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin: 0; padding-top: 5px; }
 
+            /* GAUGES TÉCNICOS */
             .gauge-container { margin-bottom: 20px; width: 100%; max-width: 500px; }
             .gauge-label { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px; }
-            .gauge-label .current-val { font-size: 1.2em; font-weight: 700; color: #1a1a1a; }
-            .gauge-label .unit { font-size: 0.6em; font-weight: 800; color: #bbb; text-transform: uppercase; }
+            .current-val { font-size: 1.2em; font-weight: 700; color: #1a1a1a; }
+            .unit { font-size: 0.6em; font-weight: 800; color: #bbb; text-transform: uppercase; }
             .gauge-bar { height: 6px; width: 100%; border-radius: 10px; position: relative; background: #eee; }
             .bar-ph { background: linear-gradient(to right, #ffd54f 0%, #81c784 50%, #4fc3f7 100%); }
             .bar-dureza { background: linear-gradient(to right, #4fc3f7 0%, #ffb74d 50%, #ef5350 100%); }
@@ -35,6 +37,7 @@
             .section-break h2 { font-size: 2em; font-weight: 300; color: #ef5350; letter-spacing: -1px; margin: 0; }
             .section-break .sub-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; }
 
+            /* GRELHA DE NOTÍCIAS (ESTILO SAPO) */
             .observatorio-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 40px; margin-top: 2em; }
             .news-card { text-decoration: none; color: inherit; display: flex; flex-direction: column; transition: all 0.3s ease; }
             .news-card:hover { transform: translateY(-8px); opacity: 0.85; }
@@ -54,7 +57,7 @@
             @media screen and (max-width: 1280px) {
                 #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
                 #wrapper { padding-left: 0 !important; }
-                .data-row { grid-template-columns: 1fr; gap: 15px; }
+                .data-row { grid-template-columns: 1fr; }
             }
 		</style>
 	</head>
@@ -103,7 +106,7 @@
                             </div>
                         </div>
 
-                        <!-- PANORAMA GLOBAL (SEMPRE VISÍVEL) -->
+                        <!-- PANORAMA GLOBAL -->
                         <div class="section-break">
                             <span class="sub-label">Panorama Nacional e Global</span>
                             <h2>Alerta de Escassez de Água</h2>
@@ -112,9 +115,7 @@
                         <div class="data-row" style="border-bottom: none;">
                             <h4>Crise Hídrica</h4>
                             <div class="tech-content">
-                                <!-- Contentor Único e Dinâmico -->
                                 <div id="noticias-agua-dinamico" class="observatorio-grid"></div>
-                                
                                 <div class="ver-mais-container">
                                     <button id="btn-load-more-agua" class="btn-ver-mais" style="display:none;">Ver Mais Relatórios</button>
                                 </div>
@@ -181,7 +182,7 @@
                         document.getElementById('marker-ph').style.left = (ph / 14 * 100) + "%";
                         document.getElementById('marker-dureza').style.left = (Math.min(dur / 50 * 100, 100)) + "%";
                     }, 300);
-                    document.getElementById('water-advantages').innerText = ph < 7 ? "Água ligeiramente ácida: Ideal para mirtilos e batatas." : "Água equilibrada: Excelente para neutralizar solos ácidos.";
+                    document.getElementById('water-advantages').innerText = ph < 7 ? "Água ligeiramente ácida: Ideal para mirtilos." : "Água equilibrada: Excelente para neutralizar solos ácidos.";
                     const mes = new Date().getMonth();
                     const temp = (info.recursos_hidricos.temp_media_agua && info.recursos_hidricos.temp_media_agua[mes]) ? info.recursos_hidricos.temp_media_agua[mes] : '--';
                     document.getElementById('temp-container').innerHTML = `<div class="temp-badge">Água hoje: ${temp}ºC</div>`;
@@ -190,64 +191,51 @@
                     document.getElementById('reg-aquifer').innerText = "Aquífero: " + (info.agua.aquiferos || "Em levantamento.");
                     document.getElementById('reg-dams').innerText = "Barragens: " + ((info.agua.barragens_proximas && Array.isArray(info.agua.barragens_proximas)) ? info.agua.barragens_proximas.join(', ') : "Nenhuma detetada.");
                 }
+                
+                // Sincroniza o input da sidebar
                 const input = document.getElementById('loc-search-input');
                 if(input) input.value = info.titulo;
             }
 
-            function setupSidebarLogic() {
-                const input = document.getElementById('loc-search-input');
-                const gpsBtn = document.getElementById('btn-gps-trigger');
-                const dropdown = document.getElementById('loc-dropdown');
+            // LÓGICA DE SIDEBAR COM DELEGAÇÃO (CORRIGE O PROBLEMA DE NÃO FUNCIONAR)
+            $(document).on('input', '#loc-search-input', function() {
+                const val = $(this).val().toLowerCase();
+                const dropdown = $('#loc-dropdown');
+                dropdown.empty();
+                if(val.length < 2) { dropdown.hide(); return; }
+                const matches = locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0, 6);
+                if(matches.length > 0) {
+                    dropdown.show();
+                    matches.forEach(m => {
+                        $('<div class="bio-res-item"></div>').text(m.titulo).on('click', function() {
+                            localStorage.setItem('biocultura_region', m.id);
+                            renderDashboard(m);
+                            dropdown.hide();
+                        }).appendTo(dropdown);
+                    });
+                } else dropdown.hide();
+            });
 
-                if(!input) { setTimeout(setupSidebarLogic, 500); return; }
-
-                input.addEventListener('input', function() {
-                    const val = this.value.toLowerCase();
-                    dropdown.innerHTML = '';
-                    if(val.length < 2) { dropdown.style.display = 'none'; return; }
-                    const matches = locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0, 6);
-                    if(matches.length > 0) {
-                        dropdown.style.display = 'block';
-                        matches.forEach(m => {
-                            const div = document.createElement('div');
-                            div.className = 'bio-res-item';
-                            div.innerText = m.titulo;
-                            div.onclick = () => { 
-                                localStorage.setItem('biocultura_region', m.id); 
-                                renderDashboard(m); 
-                                dropdown.style.display = 'none'; 
-                            };
-                            dropdown.appendChild(div);
-                        });
-                    } else dropdown.style.display = 'none';
-                });
-
-                if(gpsBtn) {
-                    gpsBtn.onclick = () => {
-                        input.value = "A localizar...";
-                        navigator.geolocation.getCurrentPosition(pos => {
-                            const uLat = pos.coords.latitude;
-                            const uLon = pos.coords.longitude;
-                            let closest = locationsDB[0];
-                            let minD = Infinity;
-                            locationsDB.forEach(c => {
-                                if(c.lat && c.lon) {
-                                    let d = calcularDistancia(uLat, uLon, c.lat, c.lon);
-                                    if(d < minD) { minD = d; closest = c; }
-                                }
-                            });
-                            localStorage.setItem('biocultura_region', closest.id);
-                            renderDashboard(closest);
-                        });
-                    };
-                }
-            }
+            $(document).on('click', '#btn-gps-trigger', function() {
+                const input = $('#loc-search-input');
+                input.val("A localizar...");
+                navigator.geolocation.getCurrentPosition(pos => {
+                    let closest = locationsDB[0]; let minD = Infinity;
+                    locationsDB.forEach(c => {
+                        if(c.lat && c.lon) {
+                            let d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon);
+                            if(d < minD) { minD = d; closest = c; }
+                        }
+                    });
+                    localStorage.setItem('biocultura_region', closest.id);
+                    renderDashboard(closest);
+                }, () => { input.val("Erro GPS"); });
+            });
 
             async function carregarNoticiasAgua() {
                 try {
                     const r = await fetch('/data/noticias.json');
                     const todas = await r.json();
-                    // Filtro corrigido para aceitar "água" ou "agua"
                     noticiasAgua = todas.filter(n => n.categoria.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes('agua'));
                     renderizarCardsAgua();
                 } catch(e) { console.error(e); }
