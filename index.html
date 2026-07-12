@@ -13,18 +13,24 @@
             #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
             #wrapper { padding-left: 18em !important; }
 
-            /* HERO SPLIT - CORREÇÃO DE ALINHAMENTO */
-            .hero-split { padding: 8em 0 4em 0; max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 5em; }
-            .hero-text { flex: 1.4; text-align: left; }
+            /* HERO SPLIT - ALINHAMENTO CORRIGIDO */
+            .hero-split { padding: 10em 0 4em 0; max-width: 1100px; margin: 0 auto; display: flex; align-items: flex-start; justify-content: space-between; gap: 5em; }
+            .hero-text { flex: 1.4; padding-top: 10px; } /* Ajuste fino para alinhar com o topo da imagem */
             .hero-text h1 { font-size: 3.8em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; line-height: 0.95; margin-bottom: 25px; }
             .hero-text p { font-size: 1.2em; color: #777; line-height: 1.6; border-left: 5px solid #c62828; padding-left: 25px; font-style: italic; }
+            
             .hero-visual { flex: 1; display: flex; justify-content: flex-end; }
-            .hero-globe { width: 400px; height: 400px; border-radius: 50%; overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,0.15); }
+            .hero-globe { width: 420px; height: 420px; border-radius: 50%; overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,0.12); }
             .hero-globe img { width: 100%; height: 100%; object-fit: cover; }
 
-            /* TEXTO DE RESUMO CRÍTICO */
-            .critical-summary { margin: 2em 0 4em 0; padding-bottom: 2em; border-bottom: 1px solid #f2f2f2; }
-            .critical-summary p { font-size: 1.1em !important; line-height: 1.8 !important; color: #555 !important; max-width: 850px; }
+            /* RESUMOS CRÍTICOS E INFORMATIVOS */
+            .summary-box { margin-bottom: 3em; }
+            .summary-box p { font-size: 1.1em !important; line-height: 1.8 !important; color: #555 !important; max-width: 900px; }
+            .mission-statement { background: #fcfdfc; padding: 3em; border-radius: 30px; border: 1px solid #f0f0f0; margin: 2em 0 4em 0; }
+            .mission-statement h3 { font-size: 1.5em; font-weight: 700; color: #2e7d32; margin-bottom: 1.5em; }
+            .mission-statement ul { list-style: none; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+            .mission-statement li b { color: #1a1a1a; display: block; margin-bottom: 5px; }
+            .mission-statement li { font-size: 0.95em; color: #666; line-height: 1.6; }
 
             /* GRELHA DE NOTÍCIAS */
             .observatorio-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 40px; margin-top: 2em; }
@@ -33,40 +39,29 @@
             .card-image-wrap { position: relative; width: 100%; height: 200px; overflow: hidden; border-radius: 16px; background: #f5f5f5; margin-bottom: 15px; }
             .card-image-wrap img { width: 100%; height: 100%; object-fit: cover; }
 
-            /* Badges */
-            .badge-cat { position: absolute; bottom: 12px; left: 12px; background: #81c784; color: white; padding: 4px 12px; border-radius: 50px; font-size: 0.6em; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; }
-            .badge-cat.ar { background: #ffb74d; }
-            .badge-cat.agua { background: #4fc3f7; }
-            .badge-cat.energia { background: #5c6bc0; }
-            .badge-cat.mineracao { background: #ef5350; }
-            .badge-cat.solo { background: #8d6e63; }
-
-            .card-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; font-size: 0.65em; font-weight: 800; color: #bbb; text-transform: uppercase; letter-spacing: 1px; }
-            .source-circle { width: 20px; height: 20px; background: #333; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; }
-
-            /* BOTÕES TIPO LINK (SEM BORDAS, ALINHADOS À ESQUERDA) */
-            .pagination-container { display: flex; gap: 25px; margin: 3em 0; justify-content: flex-start; }
+            /* PAGINAÇÃO - CINZENTO E SEM BORDAS */
+            .pagination-container { display: flex; gap: 30px; margin: 4em 0; justify-content: flex-start; }
             .btn-pagination { 
                 background: none !important; 
                 border: none !important; 
                 padding: 0 !important; 
-                color: #5c6bc0 !important; 
-                font-size: 0.75em; 
+                color: #bbb !important; 
+                font-size: 0.7em; 
                 font-weight: 900; 
                 text-transform: uppercase; 
                 letter-spacing: 2px; 
                 cursor: pointer; 
-                transition: opacity 0.3s;
-                text-decoration: none;
+                transition: color 0.3s;
             }
-            .btn-pagination:hover { opacity: 0.7; text-decoration: underline; }
+            .btn-pagination:hover { color: #333 !important; text-decoration: underline; }
             .hidden-card { display: none; }
 
             @media screen and (max-width: 1280px) {
                 #sidebar { position: relative !important; width: 100% !important; }
                 #wrapper { padding-left: 0 !important; }
                 .hero-split { flex-direction: column-reverse; padding-top: 4em; text-align: center; }
-                .hero-visual { justify-content: center; margin-bottom: 2em; }
+                .hero-visual { justify-content: center; margin-bottom: 3em; }
+                .mission-statement ul { grid-template-columns: 1fr; }
             }
 		</style>
 	</head>
@@ -90,13 +85,39 @@
                         </div>
                     </section>
 
-                    <!-- OBSERVATÓRIO DE IMPACTO -->
-                    <h2 id="observatorio-de-impacto" style="border:none !important; margin-bottom: 0.5em;">Observatório de Impacto</h2>
+                    <!-- RELATÓRIO DE IMPACTO -->
+                    <h2 id="observatorio-de-impacto" style="border:none !important;">Observatório de Impacto</h2>
                     
-                    <div class="critical-summary">
+                    <div class="summary-box">
                         <p>
-                            Portugal enfrenta hoje um desafio ético sem precedentes na gestão do território. O <strong>PSZAER</strong> (Plano Setorial das Zonas de Aceleração de Energias Renováveis) ameaça converter até 30% de concelhos críticos em zonas de sacrifício industrial, ignorando a biodiversidade e a resiliência dos solos. Somando-se a isto, a pressão da <strong>mineração de lítio</strong> a céu aberto e o crescimento exponencial de <strong>Data Centers de IA</strong> — famintos por água e energia — colocam em risco os nossos recursos vitais. Este observatório monitoriza estes vetores de pressão, defendendo que a transição energética deve ser regenerativa, e não apenas extrativa.
+                            Portugal enfrenta um desafio ético na gestão do território. O <strong>PSZAER</strong> e a pressão da <strong>mineração</strong> e dos <strong>Data Centers</strong> colocam em risco os nossos recursos vitais. Este observatório monitoriza estes vetores, defendendo uma transição regenerativa.
                         </p>
+                    </div>
+
+                    <!-- PROPÓSITO BIOCULTURA (O QUE É O PORTAL) -->
+                    <div class="mission-statement">
+                        <h3>A Nossa Missão: Entender a Teia da Vida</h3>
+                        <p style="font-size: 1em !important; color: #666 !important; margin-bottom: 2em;">
+                            A bioCultura nasceu para tornar visível o que é invisível. Acreditamos que a preservação da biodiversidade não é um ato isolado, mas uma consequência do equilíbrio entre todos os recursos.
+                        </p>
+                        <ul>
+                            <li>
+                                <b>Interdependência Vital</b>
+                                O solo não é apenas terra; ele regula a meteorologia local através da humidade e sequestro de carbono. Um solo morto por pesticidas resulta em ar mais quente e águas contaminadas.
+                            </li>
+                            <li>
+                                <b>Agricultura Biológica</b>
+                                Sugerimos a transição para modelos biológicos que restauram a rede trófica. Menos químicos significam mais polinizadores e águas subterrâneas puras para a sua região.
+                            </li>
+                            <li>
+                                <b>Calendário Hortícola</b>
+                                Aprenda a cultivar ao ritmo da natureza. O nosso calendário indica as tarefas ideais (pomar, horta, adega) baseadas nas fases da lua e no clima real da sua zona.
+                            </li>
+                            <li>
+                                <b>Inteligência Regional</b>
+                                Utilize a <b>seta (GPS)</b> na barra lateral para detetar automaticamente a sua localização ou escreva o seu concelho. O portal ajustará todos os dados de Ar, Solo e Energia para o seu raio de proximidade.
+                            </li>
+                        </ul>
                     </div>
 
                     <!-- Grelha Dinâmica -->
@@ -142,7 +163,7 @@
                     card.className = `news-card ${index >= visiveis ? 'hidden-card' : ''}`;
                     
                     const catClass = n.categoria.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(" ", "-");
-                    const resumoLimpo = n.resumo ? n.resumo.substring(0, 120) : "";
+                    const resumoLimpo = n.resumo ? n.resumo.substring(0, 110) : "";
 
                     card.innerHTML = `
                         <div class="card-image-wrap">
@@ -159,7 +180,6 @@
                     container.appendChild(card);
                 });
 
-                // Lógica de visibilidade dos botões
                 document.getElementById('btn-load-more').style.display = visiveis < todasNoticias.length ? 'inline-block' : 'none';
                 document.getElementById('btn-show-less').style.display = visiveis > 6 ? 'inline-block' : 'none';
             }
