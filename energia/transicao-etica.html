@@ -1,61 +1,45 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<title>bioCultura - Transição Ética e Impacto</title>
+		<title>bioCultura - Energia & Impacto Territorial</title>
 		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<meta name="viewport" content="width=device-width, initial-scale, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
 		<style>
-            /* --- ESTRUTURA GLOBAL --- */
+            /* --- ESTILOS GLOBAIS --- */
             body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
 			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
             section { padding-top: 4em !important; min-height: 100vh; display: flex; flex-direction: column; }
 
-            /* SIDEBAR FIXA E SEM SCROLL */
             #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
-            #sidebar > .inner { height: 100% !important; overflow: hidden !important; display: flex; flex-direction: column; }
+            #sidebar > .inner { height: 100% !important; display: flex; flex-direction: column; }
             #wrapper { padding-left: 18em !important; }
 
-            /* CABEÇALHOS CINZENTOS */
             .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; color: #bbb; margin-bottom: 10px; display: block; text-align: center; }
-            
-            /* LINHAS DE DADOS (ESTILO DIÁRIO) */
-            .data-row { 
-                display: grid; 
-                grid-template-columns: 180px 1fr; 
-                gap: 40px; 
-                padding: 2.5em 0;
-                border-bottom: 1px solid #f2f2f2;
-            }
+            .data-row { display: grid; grid-template-columns: 180px 1fr; gap: 40px; padding: 2.5em 0; border-bottom: 1px solid #f2f2f2; }
             .data-row h4 { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin: 0; padding-top: 5px; }
 
-            /* ALERTAS CRÍTICOS */
-            .alert-box { background: #fff5f5; padding: 2em; border-radius: 25px; border-left: 5px solid #c62828; margin-bottom: 20px; }
-            .alert-box h5 { color: #c62828; font-weight: 900; text-transform: uppercase; font-size: 0.7em; margin-bottom: 8px; }
-            .alert-box p { color: #7f1d1d; font-size: 0.95em; margin: 0; font-weight: 600; }
+            /* ALERTAS ZAER & MINERAÇÃO */
+            .alert-box { padding: 1.5em; border-radius: 12px; margin-bottom: 1em; display: flex; gap: 20px; align-items: center; }
+            .alert-zaer { background: #fff3e0; border-left: 4px solid #ff9800; }
+            .alert-critical { background: #ffebee; border-left: 4px solid #ef5350; }
+            .alert-box i { font-size: 1.5em; }
+            .alert-content h5 { margin: 0; font-size: 0.85em; font-weight: 900; text-transform: uppercase; }
+            .alert-content p { margin: 5px 0 0 0; font-size: 0.9em; color: #666; }
 
-            .tech-main { font-size: 1.15em; font-weight: 700; color: #1a1a1a; display: block; margin-bottom: 8px; }
-            .tech-detail { font-size: 0.95em; color: #777; line-height: 1.6; margin: 0; }
+            /* TABELAS TÉCNICAS */
+            .plants-table { width: 100%; border-collapse: collapse; }
+            .plants-table th { text-align: left; color: #bbb; text-transform: uppercase; font-size: 0.6em; letter-spacing: 1px; padding: 10px; border-bottom: 1px solid #eee; }
+            .plants-table td { padding: 12px 10px; font-size: 0.85em; border-bottom: 1px solid #f9f9f9; }
+            .dist-tag { font-family: monospace; font-weight: 700; color: #00acc1; }
 
-            /* ESCALA DE RISCO */
-            .risk-meter { height: 8px; width: 100%; max-width: 300px; border-radius: 10px; background: #eee; position: relative; margin-top: 10px; }
-            .risk-fill { height: 100%; border-radius: 10px; transition: width 1.5s ease; }
-            .risk-high { background: #ef5350; }
-            .risk-med { background: #ffa000; }
-
-            /* SECÇÃO PARADOXO */
-            .paradox-container { background: #fafafa; padding: 4em; border-radius: 40px; margin: 4em 0; border: 1px solid #eee; }
-            .paradox-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; }
-            .paradox-item h3 { font-size: 1.1em; color: #1b5e20; font-weight: 800; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
-            .paradox-item p { font-size: 0.9em; color: #666; line-height: 1.7; text-align: justify; }
-
-            .page-footer { margin-top: auto; padding: 4em 0 2em 0; border-top: 1px solid #f2f2f2; }
+            .section-break { margin: 4em 0 2em 0; padding: 3em 0; border-top: 2px solid #f2f2f2; text-align: center; }
+            .section-break h2 { font-size: 2em; font-weight: 300; color: #ef5350; letter-spacing: -1px; margin: 0; }
 
             @media screen and (max-width: 1280px) {
-                #sidebar { position: relative !important; width: 100% !important; height: auto !important; overflow: visible !important; }
+                #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
                 #wrapper { padding-left: 0 !important; }
-                .data-row { grid-template-columns: 1fr; gap: 15px; }
-                .paradox-grid { grid-template-columns: 1fr; }
+                .data-row { grid-template-columns: 1fr; }
             }
 		</style>
 	</head>
@@ -63,64 +47,47 @@
 		<div id="wrapper">
 			<div id="main">
                 <div class="inner">
-					<header id="header" style="height: 0; margin: 0; padding: 0; overflow: hidden;"></header>
                     <section>
-                        <div style="text-align: center; margin-bottom: 5em;">
-                            <span class="category-label">Engenharia & Soluções</span>
-                            <h1 style="font-size: 3.5em; font-weight: 300; color: #1a1a1a; letter-spacing: -2px; margin: 0;">Energia & Extração</h1>
-                            <p style="font-size: 0.9em; font-style: italic; color: #bbb; margin-top: 5px;">Radar de impacto territorial: <strong id="reg-name" style="color:#c62828">...</strong></p>
+                        <div style="text-align: center; margin-bottom: 3em;">
+                            <span class="category-label">Observatório de Impacto Energético</span>
+                            <h1 style="font-size: 3.5em; font-weight: 300; color: #1a1a1a; letter-spacing: -2px; margin: 0;">O Peso da Transição</h1>
+                            <p style="font-size: 0.9em; font-style: italic; color: #bbb; margin-top: 5px;">Análise de ZAER e Conflitos Territoriais em <strong id="reg-name">...</strong></p>
                         </div>
 
-                        <div id="impact-dashboard" style="display:none;">
-                            
-                            <!-- LINHA 1: FOTOVOLTAICO -->
-                            <div class="data-row">
-                                <h4>Infraestrutura</h4>
-                                <div style="width: 100%;">
-                                    <div id="energy-alert" class="alert-box" style="display:none;">
-                                        <h5>Alerta de Ecossistema</h5>
-                                        <p id="energy-alert-text"></p>
-                                    </div>
-                                    <span class="tech-main">Capacidade Instalada: <span id="val-energy-mw">--</span> MW</span>
-                                    <p class="tech-detail" id="solar-list">A analisar parques de larga escala...</p>
-                                </div>
-                            </div>
-
-                            <!-- LINHA 2: MINERAÇÃO -->
-                            <div class="data-row">
-                                <h4>Geologia & Minas</h4>
-                                <div style="width: 100%;">
-                                    <div id="mining-alert" class="alert-box" style="display:none;">
-                                        <h5>Conflito de Mineração</h5>
-                                        <p id="mining-alert-text"></p>
-                                    </div>
-                                    <span class="tech-main">Zonas de Prospeção</span>
-                                    <p class="tech-detail" id="prospect-list">--</p>
-                                    <div style="margin-top: 20px;">
-                                        <span style="font-size: 0.65em; font-weight: 800; color: #bbb; text-transform: uppercase;">Risco de Incêndio Estatístico</span>
-                                        <p id="val-fire-risk" style="font-weight: 700; margin: 5px 0;"></p>
-                                        <div class="risk-meter"><div id="risk-fill" class="risk-fill"></div></div>
-                                    </div>
-                                </div>
+                        <!-- STATUS TERRITORIAL -->
+                        <div class="data-row">
+                            <h4>Estatuto Territorial</h4>
+                            <div class="tech-content" id="status-container">
+                                <p style="color:#bbb;">A analisar sobreposição com Zonas de Aceleração (ZAER)...</p>
                             </div>
                         </div>
 
-                        <!-- O PARADOXO -->
-                        <div class="paradox-container">
-                            <h2 style="text-align: center; font-weight: 300; margin-bottom: 1.5em;">O Paradoxo da Transição "Verde"</h2>
-                            <div class="paradox-grid">
-                                <div class="paradox-item">
-                                    <h3><i class="fas fa-microchip"></i> O Custo do Silício</h3>
-                                    <p>A instalação de parques fotovoltaicos industriais exige frequentemente a desflorestação e a impermeabilização de solos férteis. O silício requer processos de purificação químicos que, se não geridos, contaminam a biodiversidade local sob o pretexto de reduzir emissões de CO2.</p>
-                                </div>
-                                <div class="paradox-item">
-                                    <h3><i class="fas fa-car-battery"></i> A Ilusão das Baterias</h3>
-                                    <p>O armazenamento em baterias de lítio mascara a destruição de ecossistemas remotos. A extração mineira consome milhões de litros de água doce, baixando o nível dos aquíferos e sufocando a fauna endémica. A bioCultura questiona a ética de salvar o clima destruindo a vida local.</p>
-                                </div>
+                        <!-- PROXIMIDADE DE INFRAESTRUTURA -->
+                        <div class="section-break">
+                            <span class="sub-label">Infraestrutura Local</span>
+                            <h2>Centrais num raio de proximidade</h2>
+                        </div>
+
+                        <div class="data-row" style="border-bottom: none;">
+                            <h4>Produção Local</h4>
+                            <div class="tech-content">
+                                <table class="plants-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Central / Parque</th>
+                                            <th>Tecnologia</th>
+                                            <th>Potência</th>
+                                            <th>Distância</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="lista-proximidade">
+                                        <!-- Dinâmico -->
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
 
-                        <div id="no-gps-warning" style="text-align: center; padding: 4em; color: #bbb;"><p>Selecione uma localidade na barra lateral.</p></div>
+                        <div id="no-gps-warning" style="text-align: center; padding: 4em; color: #bbb;"><p>Selecione uma bioregião na barra lateral.</p></div>
 
                         <footer class="page-footer">
                             <div style="display: flex; align-items: center; justify-content: flex-end; gap: 10px; opacity: 0.3;">
@@ -131,8 +98,8 @@
                                 <svg width="22" height="22" viewBox="0 0 100 100"><path d="M50 5 L89 27.5 L89 72.5 L50 95 L11 72.5 L11 27.5 Z" fill="#333" /><path d="M50 20 C50 20 75 45 75 70 C75 85 65 85 50 85 C35 85 25 85 25 70 C25 45 50 20 50 20Z" fill="#fff" /></svg>
                             </div>
                         </footer>
-					</section>
-				</div>
+                    </section>
+                </div>
             </div>
 			<div id="sidebar"></div>
 		</div>
@@ -140,6 +107,9 @@
 		<script src="/assets/js/jquery.min.js"></script>
         <script>
             let locationsDB = [];
+            let allPlants = [];
+            let zaerData = [];
+
             function calcularDistancia(lat1, lon1, lat2, lon2) {
                 const R = 6371;
                 const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -148,64 +118,75 @@
                 return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
             }
 
-            async function inicializarPagina() {
+            async function inicializarEnergia() {
                 try {
-                    const r = await fetch('/data/bioregioes.json');
-                    locationsDB = await r.json();
-                    const urlParams = new URLSearchParams(window.location.search);
-                    const regionParam = urlParams.get('region');
-                    const savedId = localStorage.getItem('biocultura_region');
-                    let info = regionParam ? locationsDB.find(i => i.id === regionParam) : locationsDB.find(i => i.id === savedId);
-                    if (info) renderDashboard(info);
-                    else renderDashboard(locationsDB.find(i => i.id === "portugal-nacional"));
-                } catch(e) { console.error(e); }
+                    const [rLoc, rPlants, rZaer] = await Promise.all([
+                        fetch('/data/bioregioes.json'),
+                        fetch('/data/centrais_full.json'),
+                        fetch('/data/zaer_critico.json')
+                    ]);
+                    
+                    locationsDB = await rLoc.json();
+                    allPlants = await rPlants.json();
+                    zaerData = await rZaer.json();
+
+                    const savedId = localStorage.getItem('biocultura_region') || "proenca-a-nova";
+                    const info = locationsDB.find(i => i.id === savedId);
+                    if(info) renderDashboard(info);
+
+                } catch(e) { console.error("Erro no carregamento de dados:", e); }
             }
 
             function renderDashboard(info) {
                 if(!info) return;
                 document.getElementById('no-gps-warning').style.display = 'none';
-                document.getElementById('impact-dashboard').style.display = 'block';
                 document.getElementById('reg-name').innerText = info.titulo;
 
-                if (info.energia_etica) {
-                    document.getElementById('val-energy-mw').innerText = info.energia_etica.exploracao_atual_mw || '0';
-                    const solarParks = info.energia_etica.parques_solares || [];
-                    document.getElementById('solar-list').innerText = solarParks.length > 0 ? "Parques detetados: " + solarParks.join(', ') : "Sem registo de parques industriais próximos.";
-                    const eAlert = document.getElementById('energy-alert');
-                    if(info.energia_etica.alerta_impacto && info.energia_etica.alerta_impacto !== "N/A") {
-                        eAlert.style.display = 'block';
-                        document.getElementById('energy-alert-text').innerText = info.energia_etica.alerta_impacto;
-                    } else eAlert.style.display = 'none';
-                }
+                // 1. Lógica de Proximidade Centrais (Top 6)
+                const proximas = allPlants.map(p => ({
+                    ...p,
+                    dist: calcularDistancia(info.lat, info.lon, p.lat, p.lon)
+                })).sort((a, b) => a.dist - b.dist).slice(0, 6);
 
-                if (info.mineracao) {
-                    const prospects = info.mineracao.zonas_prospeccao || [];
-                    document.getElementById('prospect-list').innerText = prospects.length > 0 ? prospects.join(', ') : "Sem prospeção ativa detetada.";
-                    
-                    const riskVal = info.mineracao.risco_incendio_estatistico || "Moderado";
-                    const riskEl = document.getElementById('val-fire-risk');
-                    const riskFill = document.getElementById('risk-fill');
-                    riskEl.innerText = riskVal;
-                    
-                    if(riskVal.includes("Muito Elevado")) { riskFill.style.width = "100%"; riskFill.className = "risk-fill risk-high"; riskEl.style.color = "#c62828"; }
-                    else if(riskVal.includes("Elevado")) { riskFill.style.width = "75%"; riskFill.className = "risk-fill risk-high"; riskEl.style.color = "#c62828"; }
-                    else { riskFill.style.width = "40%"; riskFill.className = "risk-fill risk-med"; riskEl.style.color = "#ffa000"; }
+                document.getElementById('lista-proximidade').innerHTML = proximas.map(p => `
+                    <tr>
+                        <td style="font-weight: 700;">${p.nome}</td>
+                        <td style="color: #888;">${p.tipo}</td>
+                        <td style="font-family: monospace;">${p.potencia}</td>
+                        <td class="dist-tag">${p.dist.toFixed(1)} KM</td>
+                    </tr>
+                `).join('');
 
-                    const mAlert = document.getElementById('mining-alert');
-                    if(info.mineracao.conflito_litio && info.mineracao.conflito_litio !== "N/A") {
-                        mAlert.style.display = 'block';
-                        document.getElementById('mining-alert-text').innerText = info.mineracao.conflito_litio;
-                    } else mAlert.style.display = 'none';
+                // 2. Lógica ZAER / Zonas Críticas
+                const statusContainer = document.getElementById('status-container');
+                const conflitosLocais = zaerData.filter(z => calcularDistancia(info.lat, info.lon, z.lat, z.lon) < 30);
+
+                if(conflitosLocais.length === 0) {
+                    statusContainer.innerHTML = '<p style="color:#81c784; font-weight:700;"><i class="fas fa-check-circle"></i> Sem sobreposição direta com ZAER ou Projetos de Mineração Críticos.</p>';
+                } else {
+                    statusContainer.innerHTML = conflitosLocais.map(z => `
+                        <div class="alert-box ${z.tipo === 'Mineração' ? 'alert-critical' : 'alert-zaer'}">
+                            <i class="fas ${z.tipo === 'Mineração' ? 'fa-mound' : 'fa-bolt'}"></i>
+                            <div class="alert-content">
+                                <h5>${z.tipo}: ${z.titulo}</h5>
+                                <p>${z.impacto} (Distância: ${calcularDistancia(info.lat, info.lon, z.lat, z.lon).toFixed(1)} km)</p>
+                            </div>
+                        </div>
+                    `).join('');
                 }
-                const input = document.getElementById('loc-search-input');
-                if(input) input.value = info.titulo;
             }
+
+            // Sync com Sidebar
+            $(document).on('click', '.bio-res-item', function() {
+                const id = localStorage.getItem('biocultura_region');
+                const info = locationsDB.find(i => i.id === id);
+                renderDashboard(info);
+            });
 
             fetch('/sidebar-content.html').then(r => r.text()).then(html => {
                 document.getElementById('sidebar').innerHTML = html;
-                var s = document.createElement('script'); s.src = '/assets/js/main.js'; document.body.appendChild(s);
-                inicializarPagina();
-                setTimeout(() => { /* Lógica sidebar unificada */ }, 1000);
+                inicializarEnergia();
+                const s = document.createElement('script'); s.src = '/assets/js/main.js'; document.body.appendChild(s);
             });
         </script>
 	</body>
