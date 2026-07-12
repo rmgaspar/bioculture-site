@@ -13,22 +13,38 @@
             #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
             #wrapper { padding-left: 18em !important; }
 
-            /* CONTENTOR DE ALINHAMENTO INDEX */
+            /* CONTENTOR DE ALINHAMENTO */
             .index-container { max-width: 1100px; margin: 0 auto; width: 100%; }
             .index-indent { padding-left: 2.5em; padding-right: 2.5em; }
 
-            /* HERO SPLIT */
+            /* HERO SPLIT & CICLO VISUAL */
             .hero-split { padding: 10em 0 5em 0; display: flex; align-items: flex-start; justify-content: space-between; gap: 5em; }
             .hero-text { flex: 1.4; padding-top: 5px; text-align: left; } 
             .hero-text h1 { font-size: 3.8em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; line-height: 0.95; margin-bottom: 25px; }
             .hero-text p { font-size: 1.2em; color: #777; line-height: 1.6; border-left: 5px solid #c62828; padding-left: 25px; font-style: italic; }
             
             .hero-visual { flex: 1; display: flex; justify-content: flex-end; }
-            .hero-globe { width: 420px; height: 420px; border-radius: 50%; overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,0.12); }
-            .hero-globe img { width: 100%; height: 100%; object-fit: cover; }
+            .hero-globe { 
+                position: relative; 
+                width: 420px; 
+                height: 420px; 
+                border-radius: 50%; 
+                overflow: hidden; 
+                box-shadow: 0 40px 100px rgba(0,0,0,0.12); 
+                background: #f5f5f5;
+            }
+            .hero-globe img { 
+                position: absolute; 
+                top: 0; left: 0; 
+                width: 100%; height: 100%; 
+                object-fit: cover; 
+                transition: opacity 1.5s ease-in-out; 
+                opacity: 0; 
+            }
+            .hero-globe img.active { opacity: 1; }
 
-            /* MANIFESTO E RESUMO CRÍTICO */
-            .critical-summary { margin: 2em 0 4em 0; padding-bottom: 3em; border-bottom: 1px solid #f2f2f2; }
+            /* MANIFESTO CONTÍNUO */
+            .critical-summary { margin: 2em 0 4em 0; max-width: 950px; padding-bottom: 3em; border-bottom: 1px solid #f2f2f2; }
             .critical-summary p { font-size: 1.15em !important; line-height: 1.8 !important; color: #555 !important; margin-bottom: 1.5em; text-align: justify; }
             .critical-summary b { color: #1a1a1a; }
             .critical-summary a { color: #5c6bc0; text-decoration: underline; }
@@ -51,7 +67,7 @@
             .card-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; font-size: 0.65em; font-weight: 800; color: #bbb; text-transform: uppercase; letter-spacing: 1px; }
             .source-circle { width: 20px; height: 20px; background: #333; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; }
 
-            /* PAGINAÇÃO */
+            /* PAGINAÇÃO - CINZENTO E SEM BORDAS */
             .pagination-container { display: flex; gap: 30px; margin: 4em 0; justify-content: flex-start; }
             .btn-pagination { 
                 background: none !important; 
@@ -75,6 +91,7 @@
                 .index-indent { padding-left: 1.5em; padding-right: 1.5em; }
                 .hero-split { flex-direction: column-reverse; padding-top: 4em; text-align: center; }
                 .hero-visual { justify-content: center; margin-bottom: 3em; }
+                .hero-globe { width: 320px; height: 320px; }
             }
 		</style>
 	</head>
@@ -85,7 +102,7 @@
 					<header id="header" style="height: 0; margin: 0; padding: 0; overflow: hidden;"></header>
 					
                     <div class="index-container">
-                        <!-- HERO INDENTADO -->
+                        <!-- HERO COM CICLO VISUAL -->
                         <section class="hero-split index-indent">
                             <div class="hero-text">
                                 <span style="font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; display: block; margin-bottom: 15px;">Observatório bioCultura</span>
@@ -93,13 +110,16 @@
                                 <p>Descubra os impactos e as soluções de regeneração sob os seus pés.</p>
                             </div>
                             <div class="hero-visual">
-                                <div class="hero-globe">
-                                    <img src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=1000&auto=format&fit=crop" alt="bioCultura">
+                                <div class="hero-globe" id="hero-cycler">
+                                    <img src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=1000" class="active" alt="Natureza">
+                                    <img src="https://images.unsplash.com/photo-1509391366360-fe5bb58583bb?q=80&w=1000" alt="Solar">
+                                    <img src="https://images.unsplash.com/photo-1621431217036-72b225381861?q=80&w=1000" alt="Corte Árvores">
+                                    <img src="https://images.unsplash.com/photo-1578319914016-7f35026975d9?q=80&w=1000" alt="Mineração">
                                 </div>
                             </div>
                         </section>
 
-                        <!-- CONTEÚDO EDITORIAL INDENTADO -->
+                        <!-- MANIFESTO E OBJETIVOS -->
                         <div class="index-indent">
                             <h2 id="observatorio-de-impacto" style="border:none !important; margin-bottom: 1em;">Observatório de Impacto</h2>
                             
@@ -111,17 +131,20 @@
                                     Acreditamos que a preservação da <b>biodiversidade</b> depende da compreensão da teia que une todos os recursos. O <b>Solo</b> não é uma superfície inerte; ele regula a meteorologia local através da humidade e sequestro de carbono. Um solo degradado por pesticidas e monoculturas intensivas resulta em ar mais quente e águas subterrâneas contaminadas. Por isso, as nossas páginas de <b>Água</b>, <b>Terra</b> e <b>Ar</b> oferecem uma auditoria detalhada sobre a saúde destes elementos na sua região.
                                 </p>
                                 <p>
-                                    Como alternativa, a bioCultura promove a <b>Agricultura Biológica</b> e a regeneração de ecossistemas como barreiras naturais contra as alterações climáticas. No nosso <b>Calendário Hortícola</b>, pode aprender a cultivar ao ritmo da natureza, utilizando as fases da lua e orientações climáticas específicas. Para interagir com o portal, utilize a <b>seta (GPS)</b> na barra lateral para detetar a área de impacto da sua localização atual, ou pesquise concelhos específicos para obter resultados de proximidade sobre infraestruturas industriais e qualidade ambiental.
+                                    Como alternativa, a bioCultura promove a <b>Agricultura Biológica</b> e a regeneração de ecossistemas como barreiras naturais contra as alterações climáticas. No nosso <b>Calendário Hortícola</b>, pode aprender a cultivar ao ritmo da natureza, utilizando as fases da lua e orientações climáticas específicas para o pomar, horta ou adega. 
                                 </p>
-                                <p style="font-size: 0.95em !important; font-style: italic; border-left: none; padding-left: 0;">
-                                    A bioCultura encontra-se em constante evolução. Se pretender sugerir algum tipo de conteúdo que considere relevante para a regeneração do nosso território, não hesite em contactar-nos através da nossa <a href="/contacto.html">página de contacto</a>.
+                                <p>
+                                    Para interagir com o portal, utilize a <b>seta (GPS)</b> na barra lateral para detetar a área de impacto da sua localização atual, ou pesquise concelhos específicos para obter resultados de proximidade sobre infraestruturas industriais e qualidade ambiental.
+                                </p>
+                                <p style="font-size: 0.95em !important; font-style: italic; color: #888;">
+                                    A bioCultura encontra-se em constante evolução. Se pretender sugerir conteúdos relevantes para a regeneração do nosso território, contacte-nos através da nossa <a href="/contacto.html">página de contacto</a>.
                                 </p>
                             </div>
 
-                            <!-- Grelha Dinâmica -->
+                            <!-- GRELHA DINÂMICA -->
                             <div id="observatorio-dinamico" class="observatorio-grid"></div>
 
-                            <!-- Paginação -->
+                            <!-- PAGINAÇÃO -->
                             <div class="pagination-container">
                                 <button id="btn-load-more" class="btn-pagination">Ver Mais Notícias</button>
                                 <button id="btn-show-less" class="btn-pagination" style="display:none;">Ver Menos</button>
@@ -143,6 +166,21 @@
             let todasNoticias = [];
             let visiveis = 6;
 
+            // 1. CICLO VISUAL (Natureza -> Impacto -> Natureza)
+            function iniciarCicloVisual() {
+                const container = document.getElementById('hero-cycler');
+                const imgs = container.getElementsByTagName('img');
+                const sequencia = [0, 1, 0, 2, 0, 3]; // 0 é a Natureza
+                let passo = 0;
+
+                setInterval(() => {
+                    for (let img of imgs) { img.classList.remove('active'); }
+                    passo = (passo + 1) % sequencia.length;
+                    imgs[sequencia[passo]].classList.add('active');
+                }, 4500);
+            }
+
+            // 2. CARREGAR NOTÍCIAS
             async function carregarObservatorio() {
                 try {
                     const r = await fetch('/data/noticias.json');
@@ -161,10 +199,8 @@
                     const card = document.createElement('a');
                     card.href = `/observatorio/noticia-detalhe.html?id=${n.id}`;
                     card.className = `news-card ${index >= visiveis ? 'hidden-card' : ''}`;
-                    
                     const catClass = n.categoria.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(" ", "-");
-                    const resumoLimpo = n.resumo ? n.resumo.substring(0, 110) : "";
-
+                    
                     card.innerHTML = `
                         <div class="card-image-wrap">
                             <img src="${n.imagem}" alt="${n.titulo}">
@@ -175,7 +211,7 @@
                             <span>${n.fonte}</span>
                         </div>
                         <h3>${n.titulo}</h3>
-                        <p>${resumoLimpo}...</p>
+                        <p>${n.resumo.substring(0, 110)}...</p>
                     `;
                     container.appendChild(card);
                 });
@@ -184,21 +220,18 @@
                 document.getElementById('btn-show-less').style.display = visiveis > 6 ? 'inline-block' : 'none';
             }
 
-            document.getElementById('btn-load-more').onclick = function() {
-                visiveis += 6;
-                renderizarCards();
-            };
-
-            document.getElementById('btn-show-less').onclick = function() {
-                visiveis = 6;
-                renderizarCards();
+            document.getElementById('btn-load-more').onclick = () => { visiveis += 6; renderizarCards(); };
+            document.getElementById('btn-show-less').onclick = () => { 
+                visiveis = 6; renderizarCards(); 
                 document.getElementById('observatorio-de-impacto').scrollIntoView({ behavior: 'smooth' });
             };
 
+            // 3. INICIALIZAÇÃO
             fetch('/sidebar-content.html').then(r => r.text()).then(html => {
                 document.getElementById('sidebar').innerHTML = html;
                 var s = document.createElement('script'); s.src = '/assets/js/main.js'; document.body.appendChild(s);
                 carregarObservatorio();
+                iniciarCicloVisual();
             });
         </script>
 	</body>
