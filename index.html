@@ -13,9 +13,9 @@
             #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
             #wrapper { padding-left: 18em !important; }
 
-            /* HERO SPLIT - ALINHAMENTO CORRIGIDO */
+            /* HERO SPLIT - ALINHAMENTO AO NÍVEL DO TÍTULO */
             .hero-split { padding: 10em 0 4em 0; max-width: 1100px; margin: 0 auto; display: flex; align-items: flex-start; justify-content: space-between; gap: 5em; }
-            .hero-text { flex: 1.4; padding-top: 10px; } /* Ajuste fino para alinhar com o topo da imagem */
+            .hero-text { flex: 1.4; padding-top: 5px; } 
             .hero-text h1 { font-size: 3.8em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; line-height: 0.95; margin-bottom: 25px; }
             .hero-text p { font-size: 1.2em; color: #777; line-height: 1.6; border-left: 5px solid #c62828; padding-left: 25px; font-style: italic; }
             
@@ -23,14 +23,10 @@
             .hero-globe { width: 420px; height: 420px; border-radius: 50%; overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,0.12); }
             .hero-globe img { width: 100%; height: 100%; object-fit: cover; }
 
-            /* RESUMOS CRÍTICOS E INFORMATIVOS */
-            .summary-box { margin-bottom: 3em; }
-            .summary-box p { font-size: 1.1em !important; line-height: 1.8 !important; color: #555 !important; max-width: 900px; }
-            .mission-statement { background: #fcfdfc; padding: 3em; border-radius: 30px; border: 1px solid #f0f0f0; margin: 2em 0 4em 0; }
-            .mission-statement h3 { font-size: 1.5em; font-weight: 700; color: #2e7d32; margin-bottom: 1.5em; }
-            .mission-statement ul { list-style: none; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
-            .mission-statement li b { color: #1a1a1a; display: block; margin-bottom: 5px; }
-            .mission-statement li { font-size: 0.95em; color: #666; line-height: 1.6; }
+            /* MANIFESTO E RESUMO CRÍTICO (FLUXO CONTÍNUO) */
+            .critical-summary { margin: 2em 0 4em 0; max-width: 900px; }
+            .critical-summary p { font-size: 1.15em !important; line-height: 1.8 !important; color: #555 !important; margin-bottom: 1.5em; text-align: justify; }
+            .critical-summary b { color: #1a1a1a; }
 
             /* GRELHA DE NOTÍCIAS */
             .observatorio-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 40px; margin-top: 2em; }
@@ -39,14 +35,26 @@
             .card-image-wrap { position: relative; width: 100%; height: 200px; overflow: hidden; border-radius: 16px; background: #f5f5f5; margin-bottom: 15px; }
             .card-image-wrap img { width: 100%; height: 100%; object-fit: cover; }
 
-            /* PAGINAÇÃO - CINZENTO E SEM BORDAS */
+            /* Badges */
+            .badge-cat { position: absolute; bottom: 12px; left: 12px; background: #81c784; color: white; padding: 4px 12px; border-radius: 50px; font-size: 0.6em; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; }
+            .badge-cat.ar { background: #ffb74d; }
+            .badge-cat.agua { background: #4fc3f7; }
+            .badge-cat.energia { background: #5c6bc0; }
+            .badge-cat.mineracao { background: #ef5350; }
+            .badge-cat.solo { background: #8d6e63; }
+
+            .card-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; font-size: 0.65em; font-weight: 800; color: #bbb; text-transform: uppercase; letter-spacing: 1px; }
+            .source-circle { width: 20px; height: 20px; background: #333; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; }
+
+            /* PAGINAÇÃO - SEM BORDAS E CINZENTO */
             .pagination-container { display: flex; gap: 30px; margin: 4em 0; justify-content: flex-start; }
             .btn-pagination { 
                 background: none !important; 
                 border: none !important; 
+                box-shadow: none !important;
                 padding: 0 !important; 
                 color: #bbb !important; 
-                font-size: 0.7em; 
+                font-size: 0.75em; 
                 font-weight: 900; 
                 text-transform: uppercase; 
                 letter-spacing: 2px; 
@@ -61,7 +69,6 @@
                 #wrapper { padding-left: 0 !important; }
                 .hero-split { flex-direction: column-reverse; padding-top: 4em; text-align: center; }
                 .hero-visual { justify-content: center; margin-bottom: 3em; }
-                .mission-statement ul { grid-template-columns: 1fr; }
             }
 		</style>
 	</head>
@@ -85,39 +92,19 @@
                         </div>
                     </section>
 
-                    <!-- RELATÓRIO DE IMPACTO -->
-                    <h2 id="observatorio-de-impacto" style="border:none !important;">Observatório de Impacto</h2>
+                    <!-- OBSERVATÓRIO DE IMPACTO E MANIFESTO -->
+                    <h2 id="observatorio-de-impacto" style="border:none !important; margin-bottom: 1em;">Observatório de Impacto</h2>
                     
-                    <div class="summary-box">
+                    <div class="critical-summary">
                         <p>
-                            Portugal enfrenta um desafio ético na gestão do território. O <strong>PSZAER</strong> e a pressão da <strong>mineração</strong> e dos <strong>Data Centers</strong> colocam em risco os nossos recursos vitais. Este observatório monitoriza estes vetores, defendendo uma transição regenerativa.
+                            Portugal enfrenta hoje um desafio ético profundo na gestão do seu território. O <b>PSZAER</b> (Plano Setorial das Zonas de Aceleração de Energias Renováveis), a pressão crescente da <b>mineração de lítio</b> e a expansão de <b>Data Centers de IA</b> — infraestruturas famintas por água e energia — colocam em risco os nossos recursos vitais. Este observatório monitoriza estes vetores de pressão em tempo real, defendendo uma transição que seja verdadeiramente regenerativa e não apenas extrativa.
                         </p>
-                    </div>
-
-                    <!-- PROPÓSITO BIOCULTURA (O QUE É O PORTAL) -->
-                    <div class="mission-statement">
-                        <h3>A Nossa Missão: Entender a Teia da Vida</h3>
-                        <p style="font-size: 1em !important; color: #666 !important; margin-bottom: 2em;">
-                            A bioCultura nasceu para tornar visível o que é invisível. Acreditamos que a preservação da biodiversidade não é um ato isolado, mas uma consequência do equilíbrio entre todos os recursos.
+                        <p>
+                            Acreditamos que a preservação da <b>biodiversidade</b> depende da compreensão da teia que une todos os recursos. O <b>Solo</b> não é uma superfície inerte; ele regula a meteorologia local através da humidade e sequestro de carbono. Um solo degradado por pesticidas e monoculturas intensivas resulta em ar mais quente e águas subterrâneas contaminadas. Por isso, as nossas páginas de <b>Água</b>, <b>Terra</b> e <b>Ar</b> oferecem uma auditoria detalhada sobre a saúde destes elementos na sua região.
                         </p>
-                        <ul>
-                            <li>
-                                <b>Interdependência Vital</b>
-                                O solo não é apenas terra; ele regula a meteorologia local através da humidade e sequestro de carbono. Um solo morto por pesticidas resulta em ar mais quente e águas contaminadas.
-                            </li>
-                            <li>
-                                <b>Agricultura Biológica</b>
-                                Sugerimos a transição para modelos biológicos que restauram a rede trófica. Menos químicos significam mais polinizadores e águas subterrâneas puras para a sua região.
-                            </li>
-                            <li>
-                                <b>Calendário Hortícola</b>
-                                Aprenda a cultivar ao ritmo da natureza. O nosso calendário indica as tarefas ideais (pomar, horta, adega) baseadas nas fases da lua e no clima real da sua zona.
-                            </li>
-                            <li>
-                                <b>Inteligência Regional</b>
-                                Utilize a <b>seta (GPS)</b> na barra lateral para detetar automaticamente a sua localização ou escreva o seu concelho. O portal ajustará todos os dados de Ar, Solo e Energia para o seu raio de proximidade.
-                            </li>
-                        </ul>
+                        <p>
+                            Como alternativa, a bioCultura promove a <b>Agricultura Biológica</b> e a regeneração de ecossistemas como barreiras naturais contra as alterações climáticas. No nosso <b>Calendário Hortícola</b>, pode aprender a cultivar ao ritmo da natureza, utilizando as fases da lua e orientações climáticas específicas. Para interagir com o portal, utilize a <b>seta (GPS)</b> na barra lateral para detetar a área de impacto da sua localização atual, ou pesquise concelhos específicos para obter resultados de proximidade sobre infraestruturas industriais e qualidade ambiental.
+                        </p>
                     </div>
 
                     <!-- Grelha Dinâmica -->
