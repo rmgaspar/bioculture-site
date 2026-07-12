@@ -6,45 +6,37 @@
 		<meta name="viewport" content="width=device-width, initial-scale, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
 		<style>
-            body { font-family: 'Source Sans Pro', sans-serif; color: #444; }
-            #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; background: #fff; border-right: 1px solid #f2f2f2 !important; z-index: 10000; }
-            #sidebar > .inner { padding: 2.2em 1.5em !important; }
+            body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
+			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
+            section { padding-top: 4em !important; min-height: 100vh; }
+
+            #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
             #wrapper { padding-left: 18em !important; }
-            section { padding-top: 2em !important; min-height: 100vh; display: flex; flex-direction: column; }
+
+            .btn-voltar { text-decoration: none; font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; display: inline-flex; align-items: center; gap: 10px; margin-bottom: 2em; transition: color 0.3s; }
+            .btn-voltar:hover { color: #1a1a1a; }
+
+            .noticia-header { margin-bottom: 3em; }
+            .noticia-cat { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; color: #bbb; margin-bottom: 10px; display: block; }
+            .noticia-titulo { font-size: 3.5em; font-weight: 900; color: #1a1a1a; letter-spacing: -2px; line-height: 1; margin: 0 0 20px 0; }
             
-            .article-container { max-width: 900px; margin-left: 0; padding: 2em 5em 4em 5em; }
-            .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; color: #bbb; margin-bottom: 10px; display: block; }
-            
-            /* IMAGEM DE DESTAQUE */
-            .main-news-image { width: 100%; height: 450px; object-fit: cover; border-radius: 20px; margin-bottom: 2em; background: #f5f5f5; }
+            .noticia-meta { display: flex; align-items: center; gap: 15px; font-size: 0.8em; color: #888; font-weight: 600; }
+            .source-circle { width: 24px; height: 24px; background: #333; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; }
 
-            .summary-box { background: #f4f7fb; padding: 2em; border-radius: 20px; margin: 2.5em 0; border-left: 5px solid #5c6bc0; }
-            .summary-box.ar { background: #fff8f1; border-left-color: #ffb74d; }
-            .summary-box h5 { font-size: 0.7em; font-weight: 900; text-transform: uppercase; color: inherit; margin-bottom: 10px; }
-            .summary-box p { margin: 0; font-style: italic; font-size: 1.1em; color: #444; line-height: 1.6; }
+            .noticia-hero-img { width: 100%; height: 500px; object-fit: cover; border-radius: 30px; margin: 2em 0; background: #f5f5f5; }
 
-            .full-content { font-size: 1.15em; line-height: 1.8; color: #333; margin-bottom: 2em; padding-bottom: 2em; }
-            .full-content p { margin-bottom: 1.5em; }
+            /* BANNER DE RESUMO ESTRUTURADO */
+            .resumo-banner { background: #f4f7fb; padding: 2.5em; border-radius: 25px; border-left: 5px solid #5c6bc0; margin: 3em 0; }
+            .resumo-text { font-style: italic; color: #333; font-size: 1.2em; line-height: 1.7; margin: 0; }
 
-            .source-footer { font-size: 0.85em; color: #999; margin-top: 1em; margin-bottom: 4em; border-top: 1px solid #eee; padding-top: 2em; }
-
-            .related-section { margin-top: 2em; padding-top: 3em; border-top: 1px solid #f2f2f2; }
-            .related-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 2em; }
-            .related-item { text-decoration: none; color: inherit; padding: 1.5em; background: #fdfdfd; border: 1px solid #f2f2f2; border-radius: 15px; transition: transform 0.3s; }
-            .related-item:hover { transform: translateY(-5px); border-color: #ddd; }
-            .related-item h4 { font-size: 1em; margin: 10px 0; line-height: 1.3; }
-
-            .back-link { display: inline-block; margin-bottom: 2em; font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; text-decoration: none; transition: color 0.3s; }
-            .back-link:hover { color: #1a1a1a; }
-
-            .page-footer { margin-top: auto; padding: 4em 0 2em 0; border-top: 1px solid #f2f2f2; }
+            .noticia-corpo { font-size: 1.15em; line-height: 1.8; color: #444; max-width: 800px; }
+            .noticia-corpo p { margin-bottom: 1.5em; }
 
             @media screen and (max-width: 1280px) {
                 #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
                 #wrapper { padding-left: 0 !important; }
-                .article-container { padding: 2em 1.5em; }
-                .main-news-image { height: 250px; }
-                .related-grid { grid-template-columns: 1fr; }
+                .noticia-titulo { font-size: 2.5em; }
+                .noticia-hero-img { height: 300px; }
             }
 		</style>
 	</head>
@@ -52,45 +44,40 @@
 		<div id="wrapper">
 			<div id="main">
                 <div class="inner">
-                    <section>
-                        <div class="article-container">
-                            <a id="back-btn" href="#" class="back-link">← Voltar</a>
-                            
-                            <span id="news-category" class="category-label">...</span>
-                            <h1 id="news-title" style="font-size: 3.2em; font-weight: 300; color: #1a1a1a; letter-spacing: -1.5px; line-height: 1.1; margin-bottom: 0.8em;">Carregando...</h1>
+                    <section id="noticia-content">
+                        <a href="javascript:history.back()" class="btn-voltar">← Voltar</a>
+                        
+                        <div id="loading" style="color: #bbb; font-style: italic;">A carregar notícia...</div>
 
-                            <!-- Imagem da Notícia -->
-                            <img id="news-image" src="" alt="" class="main-news-image" style="display: none;">
-
-                            <div id="summary-container" class="summary-box">
-                                <h5>Resumo bioCultura</h5>
-                                <p id="news-summary"></p>
-                            </div>
-
-                            <div id="news-body" class="full-content"></div>
-
-                            <div class="source-footer">
-                                <div id="news-meta">Fonte: ... | Data: ...</div>
-                            </div>
-
-                            <!-- Relacionados -->
-                            <div class="related-section">
-                                <span class="category-label">Mais Notícias e Relacionados</span>
-                                <div id="related-grid" class="related-grid"></div>
-                            </div>
-
-                            <!-- Rodapé -->
-                            <footer class="page-footer">
-                                <div style="display: flex; align-items: center; justify-content: flex-end; gap: 10px; opacity: 0.3;">
-                                    <div style="text-align: right; line-height: 1;">
-                                        <span style="display: block; font-size: 0.85em; font-weight: 900; color: #333;">bioCultura</span>
-                                        <span style="display: block; font-size: 0.5em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Global Regeneration</span>
-                                    </div>
-                                    <svg width="22" height="22" viewBox="0 0 100 100"><path d="M50 5 L89 27.5 L89 72.5 L50 95 L11 72.5 L11 27.5 Z" fill="#333" /><path d="M50 20 C50 20 75 45 75 70 C75 85 65 85 50 85 C35 85 25 85 25 70 C25 45 50 20 50 20Z" fill="#fff" /></svg>
+                        <div id="noticia-render" style="display:none;">
+                            <div class="noticia-header">
+                                <span class="noticia-cat" id="cat">--</span>
+                                <h1 class="noticia-titulo" id="titulo">--</h1>
+                                <div class="noticia-meta">
+                                    <div class="source-circle" id="source-letter">B</div>
+                                    <span id="fonte">--</span>
+                                    <span style="opacity: 0.3;">|</span>
+                                    <span id="data">--</span>
                                 </div>
-                            </footer>
+                            </div>
+
+                            <img src="" class="noticia-hero-img" id="imagem">
+
+                            <!-- Banner de Resumo (Chave 'resumo' do JSON) -->
+                            <div class="resumo-banner" id="resumo-box">
+                                <p class="resumo-text" id="resumo-txt"></p>
+                            </div>
+
+                            <div class="noticia-corpo" id="corpo">
+                                <!-- Conteúdo integral injetado aqui -->
+                            </div>
                         </div>
                     </section>
+
+                    <footer style="padding: 4em 0; border-top: 1px solid #f2f2f2; opacity: 0.3; text-align: right;">
+                        <span style="display: block; font-size: 0.85em; font-weight: 900; color: #333;">bioCultura</span>
+                        <span style="display: block; font-size: 0.5em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Global Regeneration</span>
+                    </footer>
                 </div>
             </div>
 			<div id="sidebar"></div>
@@ -99,63 +86,48 @@
 		<script src="/assets/js/jquery.min.js"></script>
         <script>
             async function carregarNoticia() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const noticiaId = urlParams.get('id');
+
+                if (!noticiaId) {
+                    window.location.href = '/index.html';
+                    return;
+                }
+
                 try {
-                    const r = await fetch('/data/noticias.json');
-                    if (!r.ok) throw new Error("Erro ao carregar JSON");
-                    const noticias = await r.json();
-                    
-                    const urlParams = new URLSearchParams(window.location.search);
-                    const id = urlParams.get('id');
-                    
-                    const artigo = noticias.find(n => n.id === id) || noticias[0];
-                    
-                    // Título e Meta
-                    document.title = "bioCultura - " + artigo.titulo;
-                    document.getElementById('news-title').innerText = artigo.titulo;
-                    document.getElementById('news-category').innerText = artigo.categoria;
-                    document.getElementById('news-meta').innerHTML = `Fonte: <strong>${artigo.fonte}</strong> | Data: <strong>${artigo.data}</strong>`;
-                    
-                    // Imagem
-                    const imgElem = document.getElementById('news-image');
-                    if(artigo.imagem) {
-                        imgElem.src = artigo.imagem;
-                        imgElem.alt = artigo.titulo;
-                        imgElem.style.display = 'block';
-                    }
+                    const response = await fetch('/data/noticias.json');
+                    const noticias = await response.json();
+                    const n = noticias.find(item => item.id === noticiaId);
 
-                    // Resumo e Corpo
-                    document.getElementById('news-summary').innerText = artigo.resumo_biocultura;
-                    document.getElementById('news-body').innerHTML = artigo.corpo;
-                    
-                    // Estilo e Link de Volta
-                    if(artigo.categoria.toLowerCase().includes('ar')) {
-                        document.getElementById('summary-container').classList.add('ar');
-                        document.getElementById('back-btn').href = "/recursos/ar.html";
+                    if (n) {
+                        document.getElementById('loading').style.display = 'none';
+                        document.getElementById('noticia-render').style.display = 'block';
+                        
+                        document.title = n.titulo + " - bioCultura";
+                        document.getElementById('cat').innerText = n.categoria;
+                        document.getElementById('titulo').innerText = n.titulo;
+                        document.getElementById('fonte').innerText = n.fonte;
+                        document.getElementById('source-letter').innerText = n.fonte.charAt(0);
+                        document.getElementById('data').innerText = n.data;
+                        document.getElementById('imagem').src = n.imagem;
+                        
+                        // Injeção do Resumo
+                        if (n.resumo) {
+                            document.getElementById('resumo-txt').innerText = `"${n.resumo}"`;
+                        } else {
+                            document.getElementById('resumo-box').style.display = 'none';
+                        }
+
+                        document.getElementById('corpo').innerHTML = n.corpo;
                     } else {
-                        document.getElementById('back-btn').href = "/recursos/agua.html";
+                        document.getElementById('loading').innerText = "Notícia não encontrada.";
                     }
-
-                    // Relacionados
-                    const grid = document.getElementById('related-grid');
-                    grid.innerHTML = '';
-                    noticias.filter(n => n.id !== artigo.id).slice(0, 2).forEach(rel => {
-                        const item = document.createElement('a');
-                        item.href = `noticia-detalhe.html?id=${rel.id}`;
-                        item.className = 'related-item';
-                        item.innerHTML = `
-                            <span class="category-label" style="text-align:left">${rel.categoria}</span>
-                            <h4>${rel.titulo}</h4>
-                            <span class="news-meta" style="font-size:0.6em; color:#bbb">${rel.data}</span>
-                        `;
-                        grid.appendChild(item);
-                    });
-
-                } catch(e) { 
-                    console.error(e); 
-                    document.getElementById('news-title').innerText = "Erro ao carregar notícia.";
+                } catch (e) {
+                    console.error("Erro ao carregar detalhe:", e);
                 }
             }
 
+            // Carregamento da Sidebar e Inicialização
             fetch('/sidebar-content.html').then(r => r.text()).then(html => {
                 document.getElementById('sidebar').innerHTML = html;
                 var s = document.createElement('script'); s.src = '/assets/js/main.js'; document.body.appendChild(s);
