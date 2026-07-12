@@ -3,7 +3,7 @@
 	<head>
 		<title>bioCultura - Detalhe da Notícia</title>
 		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale, user-scalable=no" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
 		<style>
             body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
@@ -13,8 +13,8 @@
             #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
             #wrapper { padding-left: 18em !important; }
 
-            .btn-voltar { text-decoration: none; font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; display: inline-flex; align-items: center; gap: 10px; margin-bottom: 2em; transition: color 0.3s; }
-            .btn-voltar:hover { color: #1a1a1a; }
+            .btn-voltar { text-decoration: none; font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; display: inline-flex; align-items: center; gap: 10px; transition: color 0.3s; cursor: pointer; border: none !important; background: none !important; padding: 0 !important; }
+            .btn-voltar:hover { color: #1a1a1a; text-decoration: underline; }
 
             .noticia-header { margin-bottom: 3em; }
             .noticia-cat { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; color: #bbb; margin-bottom: 10px; display: block; }
@@ -25,12 +25,15 @@
 
             .noticia-hero-img { width: 100%; height: 500px; object-fit: cover; border-radius: 30px; margin: 2em 0; background: #f5f5f5; }
 
-            /* BANNER DE RESUMO ESTRUTURADO */
+            /* BANNER DE RESUMO */
             .resumo-banner { background: #f4f7fb; padding: 2.5em; border-radius: 25px; border-left: 5px solid #5c6bc0; margin: 3em 0; }
             .resumo-text { font-style: italic; color: #333; font-size: 1.2em; line-height: 1.7; margin: 0; }
 
-            .noticia-corpo { font-size: 1.15em; line-height: 1.8; color: #444; max-width: 800px; }
-            .noticia-corpo p { margin-bottom: 1.5em; }
+            .noticia-corpo { font-size: 1.15em; line-height: 1.8; color: #444; max-width: 800px; margin-bottom: 4em; }
+            .noticia-corpo p { margin-bottom: 1.5em; text-align: justify; }
+            .noticia-corpo h3 { font-size: 1.4em; font-weight: 700; color: #1a1a1a; margin: 2em 0 1em 0; }
+
+            .bottom-actions { padding: 2em 0; border-top: 1px solid #f2f2f2; margin-top: 4em; }
 
             @media screen and (max-width: 1280px) {
                 #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
@@ -45,7 +48,10 @@
 			<div id="main">
                 <div class="inner">
                     <section id="noticia-content">
-                        <a href="javascript:history.back()" class="btn-voltar">← Voltar</a>
+                        <!-- Botão Voltar Topo -->
+                        <div style="margin-bottom: 2em;">
+                            <a href="javascript:history.back()" class="btn-voltar">← Voltar para o Observatório</a>
+                        </div>
                         
                         <div id="loading" style="color: #bbb; font-style: italic;">A carregar notícia...</div>
 
@@ -63,13 +69,17 @@
 
                             <img src="" class="noticia-hero-img" id="imagem">
 
-                            <!-- Banner de Resumo (Chave 'resumo' do JSON) -->
                             <div class="resumo-banner" id="resumo-box">
                                 <p class="resumo-text" id="resumo-txt"></p>
                             </div>
 
                             <div class="noticia-corpo" id="corpo">
-                                <!-- Conteúdo integral injetado aqui -->
+                                <!-- Conteúdo integral -->
+                            </div>
+
+                            <!-- Botão Voltar Fundo -->
+                            <div class="bottom-actions">
+                                <a href="javascript:history.back()" class="btn-voltar">← Voltar para o Observatório</a>
                             </div>
                         </div>
                     </section>
@@ -111,7 +121,6 @@
                         document.getElementById('data').innerText = n.data;
                         document.getElementById('imagem').src = n.imagem;
                         
-                        // Injeção do Resumo
                         if (n.resumo) {
                             document.getElementById('resumo-txt').innerText = `"${n.resumo}"`;
                         } else {
@@ -123,11 +132,10 @@
                         document.getElementById('loading').innerText = "Notícia não encontrada.";
                     }
                 } catch (e) {
-                    console.error("Erro ao carregar detalhe:", e);
+                    console.error("Erro no carregamento:", e);
                 }
             }
 
-            // Carregamento da Sidebar e Inicialização
             fetch('/sidebar-content.html').then(r => r.text()).then(html => {
                 document.getElementById('sidebar').innerHTML = html;
                 var s = document.createElement('script'); s.src = '/assets/js/main.js'; document.body.appendChild(s);
