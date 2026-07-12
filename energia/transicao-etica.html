@@ -1,18 +1,17 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<title>bioCultura - Energia & Impacto Territorial</title>
+		<title>bioCultura - Transição Ética & Impacto Vital</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
 		<style>
-            /* --- ESTILOS GLOBAIS --- */
             body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
 			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
             section { padding-top: 4em !important; min-height: 100vh; display: flex; flex-direction: column; }
 
             #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
-            #sidebar > .inner { height: 100% !important; display: flex; flex-direction: column; }
+            #sidebar > .inner { height: 100% !important; overflow: hidden !important; display: flex; flex-direction: column; }
             #wrapper { padding-left: 18em !important; }
 
             .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; color: #bbb; margin-bottom: 10px; display: block; text-align: center; }
@@ -24,22 +23,28 @@
             .alert-zaer { background: #fff3e0; border-left: 4px solid #ff9800; }
             .alert-critical { background: #ffebee; border-left: 4px solid #ef5350; }
             .alert-box i { font-size: 1.5em; }
-            .alert-content h5 { margin: 0; font-size: 0.85em; font-weight: 900; text-transform: uppercase; }
-            .alert-content p { margin: 5px 0 0 0; font-size: 0.9em; color: #666; }
 
-            /* TABELAS TÉCNICAS */
-            .plants-table { width: 100%; border-collapse: collapse; }
-            .plants-table th { text-align: left; color: #bbb; text-transform: uppercase; font-size: 0.6em; letter-spacing: 1px; padding: 10px; border-bottom: 1px solid #eee; }
-            .plants-table td { padding: 12px 10px; font-size: 0.85em; border-bottom: 1px solid #f9f9f9; }
+            /* TABELAS DE IMPACTO */
+            .impact-table { width: 100%; border-collapse: collapse; }
+            .impact-table th { text-align: left; color: #bbb; text-transform: uppercase; font-size: 0.6em; letter-spacing: 1px; padding: 10px; }
+            .impact-table td { padding: 15px 10px; font-size: 0.85em; border-bottom: 1px solid #f9f9f9; vertical-align: top; }
             .dist-tag { font-family: monospace; font-weight: 700; color: #00acc1; }
+            .impact-desc { font-size: 0.8em; color: #ef5350; font-weight: 600; display: block; margin-top: 4px; }
+
+            /* VITAL RESOURCE SUMMARY */
+            .vital-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 3em; }
+            .vital-card { background: #f9f9f9; padding: 1.5em; border-radius: 15px; text-align: center; }
+            .vital-card span { font-size: 0.55em; font-weight: 900; text-transform: uppercase; color: #bbb; display: block; }
+            .vital-card b { font-size: 1.1em; color: #1a1a1a; display: block; margin-top: 5px; }
 
             .section-break { margin: 4em 0 2em 0; padding: 3em 0; border-top: 2px solid #f2f2f2; text-align: center; }
             .section-break h2 { font-size: 2em; font-weight: 300; color: #ef5350; letter-spacing: -1px; margin: 0; }
 
             @media screen and (max-width: 1280px) {
-                #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
+                #sidebar { position: relative !important; width: 100% !important; }
                 #wrapper { padding-left: 0 !important; }
                 .data-row { grid-template-columns: 1fr; }
+                .vital-summary { grid-template-columns: 1fr; }
             }
 		</style>
 	</head>
@@ -49,45 +54,49 @@
                 <div class="inner">
                     <section>
                         <div style="text-align: center; margin-bottom: 3em;">
-                            <span class="category-label">Observatório de Impacto Energético</span>
-                            <h1 style="font-size: 3.5em; font-weight: 300; color: #1a1a1a; letter-spacing: -2px; margin: 0;">O Peso da Transição</h1>
-                            <p style="font-size: 0.9em; font-style: italic; color: #bbb; margin-top: 5px;">Análise de ZAER e Conflitos Territoriais em <strong id="reg-name">...</strong></p>
+                            <span class="category-label">Transição Ética</span>
+                            <h1 style="font-size: 3.5em; font-weight: 300; color: #1a1a1a; letter-spacing: -2px; margin: 0;">O Peso do Megaprojeto</h1>
+                            <p style="font-size: 0.9em; font-style: italic; color: #bbb; margin-top: 5px;">Análise de pressão sobre recursos vitais em <strong id="reg-name">...</strong></p>
                         </div>
 
-                        <!-- STATUS TERRITORIAL -->
+                        <!-- BALANÇO DE RECURSOS VITAIS -->
+                        <div class="vital-summary">
+                            <div class="vital-card"><span>Saúde do Solo</span><b id="status-solo">--</b></div>
+                            <div class="vital-card"><span>Qualidade do Ar</span><b id="status-ar">--</b></div>
+                            <div class="vital-card"><span>Pressão Hídrica</span><b id="status-agua">Moderada</b></div>
+                        </div>
+
+                        <!-- STATUS TERRITORIAL (ZAER/MINAS) -->
                         <div class="data-row">
                             <h4>Estatuto Territorial</h4>
                             <div class="tech-content" id="status-container">
-                                <p style="color:#bbb;">A analisar sobreposição com Zonas de Aceleração (ZAER)...</p>
+                                <p style="color:#bbb;">A analisar conflitos com ZAER e Mineração...</p>
                             </div>
                         </div>
 
-                        <!-- PROXIMIDADE DE INFRAESTRUTURA -->
+                        <!-- INFRAESTRUTURA E IMPACTO NA BIODIVERSIDADE -->
                         <div class="section-break">
-                            <span class="sub-label">Infraestrutura Local</span>
-                            <h2>Centrais num raio de proximidade</h2>
+                            <span class="sub-label">Impacto na Biodiversidade</span>
+                            <h2>Infraestruturas e Vetores de Pressão</h2>
                         </div>
 
                         <div class="data-row" style="border-bottom: none;">
                             <h4>Produção Local</h4>
                             <div class="tech-content">
-                                <table class="plants-table">
+                                <table class="impact-table">
                                     <thead>
                                         <tr>
                                             <th>Central / Parque</th>
-                                            <th>Tecnologia</th>
-                                            <th>Potência</th>
-                                            <th>Distância</th>
+                                            <th>Potência / Distância</th>
+                                            <th>Impacto nos Recursos Vitais</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="lista-proximidade">
+                                    <tbody id="lista-impacto">
                                         <!-- Dinâmico -->
                                     </tbody>
                                 </table>
                             </div>
                         </div>
-
-                        <div id="no-gps-warning" style="text-align: center; padding: 4em; color: #bbb;"><p>Selecione uma bioregião na barra lateral.</p></div>
 
                         <footer class="page-footer">
                             <div style="display: flex; align-items: center; justify-content: flex-end; gap: 10px; opacity: 0.3;">
@@ -106,9 +115,7 @@
 
 		<script src="/assets/js/jquery.min.js"></script>
         <script>
-            let locationsDB = [];
-            let allPlants = [];
-            let zaerData = [];
+            let locationsDB = [], allPlants = [], zaerData = [], airData = [], soilData = [];
 
             function calcularDistancia(lat1, lon1, lat2, lon2) {
                 const R = 6371;
@@ -118,74 +125,77 @@
                 return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
             }
 
-            async function inicializarEnergia() {
+            // Mapeamento Ético de Impacto
+            const impactMap = {
+                "Eólica": "Fragmentação de habitat e risco para avifauna migratória.",
+                "Solar": "Ocupação de solo fértil e alteração do albedo local.",
+                "Hídrica": "Barreira ecológica e alteração profunda do ciclo fluvial.",
+                "Biomassa": "Emissões atmosféricas e pressão sobre resíduos florestais.",
+                "Gás Natural": "Elevada emissão de CO2 e stress hídrico por arrefecimento."
+            };
+
+            async function inicializar() {
                 try {
-                    const [rLoc, rPlants, rZaer] = await Promise.all([
-                        fetch('/data/bioregioes.json'),
-                        fetch('/data/centrais_full.json'),
-                        fetch('/data/zaer_critico.json')
-                    ]);
+                    const files = ['/data/bioregioes.json', '/data/centrais_full.json', '/data/zaer_critico.json', '/data/qualidade_ar.json', '/data/solo_stats.json'];
+                    const [rLoc, rPlants, rZaer, rAir, rSoil] = await Promise.all(files.map(f => fetch(f).then(r => r.json())));
                     
-                    locationsDB = await rLoc.json();
-                    allPlants = await rPlants.json();
-                    zaerData = await rZaer.json();
+                    locationsDB = rLoc; allPlants = rPlants; zaerData = rZaer; airData = rAir; soilData = rSoil;
 
                     const savedId = localStorage.getItem('biocultura_region') || "proenca-a-nova";
-                    const info = locationsDB.find(i => i.id === savedId);
-                    if(info) renderDashboard(info);
-
-                } catch(e) { console.error("Erro no carregamento de dados:", e); }
+                    renderDashboard(locationsDB.find(i => i.id === savedId));
+                } catch(e) { console.error("Erro no carregamento:", e); }
             }
 
             function renderDashboard(info) {
                 if(!info) return;
-                document.getElementById('no-gps-warning').style.display = 'none';
                 document.getElementById('reg-name').innerText = info.titulo;
 
-                // 1. Lógica de Proximidade Centrais (Top 6)
-                const proximas = allPlants.map(p => ({
-                    ...p,
-                    dist: calcularDistancia(info.lat, info.lon, p.lat, p.lon)
-                })).sort((a, b) => a.dist - b.dist).slice(0, 6);
+                // 1. Balanço Vital (Ar e Solo)
+                const sLocal = soilData.reduce((prev, curr) => (calcularDistancia(info.lat, info.lon, curr.lat, curr.lon) < calcularDistancia(info.lat, info.lon, prev.lat, prev.lon) ? curr : prev));
+                const aLocal = airData.reduce((prev, curr) => (calcularDistancia(info.lat, info.lon, curr.lat, curr.lon) < calcularDistancia(info.lat, info.lon, prev.lat, prev.lon) ? curr : prev));
+                
+                document.getElementById('status-solo').innerText = sLocal.materia_organica + "% MO (" + sLocal.erosao + ")";
+                document.getElementById('status-ar').innerText = aLocal.indice + " (Estação: " + aLocal.estacao.split(' ')[0] + ")";
 
-                document.getElementById('lista-proximidade').innerHTML = proximas.map(p => `
+                // 2. Centrais Próximas (Filtro de Duplicados)
+                const proximasUnique = [];
+                const namesSeen = new Set();
+
+                // Ordena e filtra nomes repetidos (ex: Cabeço Rainha I, II, III -> Cabeço Rainha)
+                allPlants.map(p => ({ ...p, dist: calcularDistancia(info.lat, info.lon, p.lat, p.lon) }))
+                         .sort((a, b) => a.dist - b.dist)
+                         .forEach(p => {
+                             const baseName = p.nome.split(' ').slice(0,4).join(' '); // Pega as primeiras 4 palavras para evitar IDs romanos
+                             if(!namesSeen.has(baseName) && proximasUnique.length < 6) {
+                                 namesSeen.add(baseName);
+                                 proximasUnique.push(p);
+                             }
+                         });
+
+                document.getElementById('lista-impacto').innerHTML = proximasUnique.map(p => `
                     <tr>
-                        <td style="font-weight: 700;">${p.nome}</td>
-                        <td style="color: #888;">${p.tipo}</td>
-                        <td style="font-family: monospace;">${p.potencia}</td>
-                        <td class="dist-tag">${p.dist.toFixed(1)} KM</td>
+                        <td><b>${p.nome}</b><br><small style="color:#bbb">${p.tipo}</small></td>
+                        <td><span class="dist-tag">${p.dist.toFixed(1)} KM</span><br><small>${p.potencia}</small></td>
+                        <td><span class="impact-desc">${impactMap[p.tipo] || "Impacto territorial em avaliação."}</span></td>
                     </tr>
                 `).join('');
 
-                // 2. Lógica ZAER / Zonas Críticas
-                const statusContainer = document.getElementById('status-container');
-                const conflitosLocais = zaerData.filter(z => calcularDistancia(info.lat, info.lon, z.lat, z.lon) < 30);
-
-                if(conflitosLocais.length === 0) {
-                    statusContainer.innerHTML = '<p style="color:#81c784; font-weight:700;"><i class="fas fa-check-circle"></i> Sem sobreposição direta com ZAER ou Projetos de Mineração Críticos.</p>';
-                } else {
-                    statusContainer.innerHTML = conflitosLocais.map(z => `
-                        <div class="alert-box ${z.tipo === 'Mineração' ? 'alert-critical' : 'alert-zaer'}">
-                            <i class="fas ${z.tipo === 'Mineração' ? 'fa-mound' : 'fa-bolt'}"></i>
-                            <div class="alert-content">
-                                <h5>${z.tipo}: ${z.titulo}</h5>
-                                <p>${z.impacto} (Distância: ${calcularDistancia(info.lat, info.lon, z.lat, z.lon).toFixed(1)} km)</p>
-                            </div>
+                // 3. ZAER / Mineração
+                const conflitos = zaerData.filter(z => calcularDistancia(info.lat, info.lon, z.lat, z.lon) < 40);
+                document.getElementById('status-container').innerHTML = conflitos.length ? conflitos.map(z => `
+                    <div class="alert-box ${z.tipo === 'Mineração' ? 'alert-critical' : 'alert-zaer'}">
+                        <i class="fas ${z.tipo === 'Mineração' ? 'fa-mound' : 'fa-bolt'}"></i>
+                        <div class="alert-content">
+                            <h5>${z.tipo}: ${z.titulo}</h5>
+                            <p>${z.impacto}</p>
                         </div>
-                    `).join('');
-                }
+                    </div>
+                `).join('') : '<p style="color:#81c784; font-weight:700;">Sem conflitos críticos de mineração ou ZAER detetados num raio de 40km.</p>';
             }
-
-            // Sync com Sidebar
-            $(document).on('click', '.bio-res-item', function() {
-                const id = localStorage.getItem('biocultura_region');
-                const info = locationsDB.find(i => i.id === id);
-                renderDashboard(info);
-            });
 
             fetch('/sidebar-content.html').then(r => r.text()).then(html => {
                 document.getElementById('sidebar').innerHTML = html;
-                inicializarEnergia();
+                inicializar();
                 const s = document.createElement('script'); s.src = '/assets/js/main.js'; document.body.appendChild(s);
             });
         </script>
