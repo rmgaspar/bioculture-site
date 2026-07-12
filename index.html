@@ -13,25 +13,27 @@
             #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
             #wrapper { padding-left: 18em !important; }
 
-            /* HERO SPLIT */
-            .hero-split { padding: 10em 0 6em 0; max-width: 1100px; margin: 0 auto; display: flex; align-items: center; gap: 5em; }
-            .hero-text { flex: 1.4; }
+            /* HERO SPLIT - CORREÇÃO DE ALINHAMENTO */
+            .hero-split { padding: 8em 0 4em 0; max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 5em; }
+            .hero-text { flex: 1.4; text-align: left; }
             .hero-text h1 { font-size: 3.8em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; line-height: 0.95; margin-bottom: 25px; }
             .hero-text p { font-size: 1.2em; color: #777; line-height: 1.6; border-left: 5px solid #c62828; padding-left: 25px; font-style: italic; }
-            .hero-visual { flex: 1; display: flex; justify-content: center; }
-            .hero-globe { width: 400px; height: 400px; border-radius: 50%; overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,0.15); border: 1px solid rgba(0,0,0,0.05); }
+            .hero-visual { flex: 1; display: flex; justify-content: flex-end; }
+            .hero-globe { width: 400px; height: 400px; border-radius: 50%; overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,0.15); }
             .hero-globe img { width: 100%; height: 100%; object-fit: cover; }
 
+            /* TEXTO DE RESUMO CRÍTICO */
+            .critical-summary { margin: 2em 0 4em 0; padding-bottom: 2em; border-bottom: 1px solid #f2f2f2; }
+            .critical-summary p { font-size: 1.1em !important; line-height: 1.8 !important; color: #555 !important; max-width: 850px; }
+
             /* GRELHA DE NOTÍCIAS */
-            .observatorio-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 40px; margin-top: 3em; margin-bottom: 3em; }
-            
+            .observatorio-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 40px; margin-top: 2em; }
             .news-card { text-decoration: none; color: inherit; display: flex; flex-direction: column; transition: all 0.3s ease; border: none !important; }
             .news-card:hover { transform: translateY(-8px); opacity: 0.85; }
-
             .card-image-wrap { position: relative; width: 100%; height: 200px; overflow: hidden; border-radius: 16px; background: #f5f5f5; margin-bottom: 15px; }
             .card-image-wrap img { width: 100%; height: 100%; object-fit: cover; }
 
-            /* Badges de Categoria */
+            /* Badges */
             .badge-cat { position: absolute; bottom: 12px; left: 12px; background: #81c784; color: white; padding: 4px 12px; border-radius: 50px; font-size: 0.6em; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; }
             .badge-cat.ar { background: #ffb74d; }
             .badge-cat.agua { background: #4fc3f7; }
@@ -39,39 +41,32 @@
             .badge-cat.mineracao { background: #ef5350; }
             .badge-cat.solo { background: #8d6e63; }
 
-            /* Meta Info (Fonte) */
             .card-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; font-size: 0.65em; font-weight: 800; color: #bbb; text-transform: uppercase; letter-spacing: 1px; }
             .source-circle { width: 20px; height: 20px; background: #333; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; }
 
-            .news-card h3 { font-size: 1.2em; line-height: 1.25; margin: 0 0 10px 0; font-weight: 700; color: #1a1a1a; }
-            .news-card p { font-size: 0.9em; line-height: 1.5; color: #777; margin: 0; }
-
-            /* Botão Ver Mais */
-            .ver-mais-container { text-align: center; margin: 4em 0; }
-            .btn-ver-mais { 
-                background: transparent !important; 
-                box-shadow: none !important; 
-                border: 1px solid #eee !important; 
-                color: #bbb !important; 
-                border-radius: 50px; 
-                padding: 15px 45px; 
-                font-size: 0.7em; 
+            /* BOTÕES TIPO LINK (SEM BORDAS, ALINHADOS À ESQUERDA) */
+            .pagination-container { display: flex; gap: 25px; margin: 3em 0; justify-content: flex-start; }
+            .btn-pagination { 
+                background: none !important; 
+                border: none !important; 
+                padding: 0 !important; 
+                color: #5c6bc0 !important; 
+                font-size: 0.75em; 
                 font-weight: 900; 
-                letter-spacing: 2px;
-                transition: all 0.3s;
-                cursor: pointer;
-                text-transform: uppercase;
+                text-transform: uppercase; 
+                letter-spacing: 2px; 
+                cursor: pointer; 
+                transition: opacity 0.3s;
+                text-decoration: none;
             }
-            .btn-ver-mais:hover { border-color: #333 !important; color: #333 !important; background: #f9f9f9 !important; }
+            .btn-pagination:hover { opacity: 0.7; text-decoration: underline; }
             .hidden-card { display: none; }
 
-            .page-footer { padding: 4em 0 2em 0; border-top: 1px solid #f2f2f2; }
-
             @media screen and (max-width: 1280px) {
-                #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
+                #sidebar { position: relative !important; width: 100% !important; }
                 #wrapper { padding-left: 0 !important; }
-                .hero-split { flex-direction: column; padding-top: 6em; text-align: center; gap: 3em; }
-                .hero-globe { width: 300px; height: 300px; }
+                .hero-split { flex-direction: column-reverse; padding-top: 4em; text-align: center; }
+                .hero-visual { justify-content: center; margin-bottom: 2em; }
             }
 		</style>
 	</head>
@@ -95,29 +90,27 @@
                         </div>
                     </section>
 
-                    <header class="major">
-                        <h2 id="observatorio-de-impacto">Observatório de Impacto</h2>
-                    </header>
-
-                    <!-- Contentor Dinâmico de Notícias -->
-                    <div id="observatorio-dinamico" class="observatorio-grid"></div>
-
-                    <!-- Botão Ver Mais -->
-                    <div class="ver-mais-container">
-                        <button id="btn-load-more" class="btn-ver-mais">Ver Mais Notícias</button>
+                    <!-- OBSERVATÓRIO DE IMPACTO -->
+                    <h2 id="observatorio-de-impacto" style="border:none !important; margin-bottom: 0.5em;">Observatório de Impacto</h2>
+                    
+                    <div class="critical-summary">
+                        <p>
+                            Portugal enfrenta hoje um desafio ético sem precedentes na gestão do território. O <strong>PSZAER</strong> (Plano Setorial das Zonas de Aceleração de Energias Renováveis) ameaça converter até 30% de concelhos críticos em zonas de sacrifício industrial, ignorando a biodiversidade e a resiliência dos solos. Somando-se a isto, a pressão da <strong>mineração de lítio</strong> a céu aberto e o crescimento exponencial de <strong>Data Centers de IA</strong> — famintos por água e energia — colocam em risco os nossos recursos vitais. Este observatório monitoriza estes vetores de pressão, defendendo que a transição energética deve ser regenerativa, e não apenas extrativa.
+                        </p>
                     </div>
 
-                    <footer class="page-footer">
-                        <div style="display: flex; align-items: center; justify-content: flex-end; gap: 10px; opacity: 0.3;">
-                            <div style="text-align: right; line-height: 1;">
-                                <span style="display: block; font-size: 0.85em; font-weight: 900; color: #333;">bioCultura</span>
-                                <span style="display: block; font-size: 0.5em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Global Regeneration</span>
-                            </div>
-                            <svg width="22" height="22" viewBox="0 0 100 100">
-                                <path d="M50 5 L89 27.5 L89 72.5 L50 95 L11 72.5 L11 27.5 Z" fill="#333" />
-                                <path d="M50 20 C50 20 75 45 75 70 C75 85 65 85 50 85 C35 85 25 85 25 70 C25 45 50 20 50 20Z" fill="#fff" />
-                            </svg>
-                        </div>
+                    <!-- Grelha Dinâmica -->
+                    <div id="observatorio-dinamico" class="observatorio-grid"></div>
+
+                    <!-- Paginação -->
+                    <div class="pagination-container">
+                        <button id="btn-load-more" class="btn-pagination">Ver Mais Notícias</button>
+                        <button id="btn-show-less" class="btn-pagination" style="display:none;">Ver Menos</button>
+                    </div>
+
+                    <footer style="padding: 4em 0 2em 0; border-top: 1px solid #f2f2f2; opacity: 0.3; text-align: right;">
+                        <span style="display: block; font-size: 0.85em; font-weight: 900; color: #333;">bioCultura</span>
+                        <span style="display: block; font-size: 0.5em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Global Regeneration</span>
                     </footer>
 				</div>
             </div>
@@ -133,14 +126,9 @@
                 try {
                     const r = await fetch('/data/noticias.json');
                     todasNoticias = await r.json();
-
-                    // 1. ORDENAR POR RELEVÂNCIA (10 no topo)
                     todasNoticias.sort((a, b) => (b.relevancia || 0) - (a.relevancia || 0));
-
                     renderizarCards();
-                } catch(e) { 
-                    console.error("Erro ao carregar notícias dinâmicas:", e); 
-                }
+                } catch(e) { console.error(e); }
             }
 
             function renderizarCards() {
@@ -153,7 +141,6 @@
                     card.href = `/observatorio/noticia-detalhe.html?id=${n.id}`;
                     card.className = `news-card ${index >= visiveis ? 'hidden-card' : ''}`;
                     
-                    // Normalização da categoria para CSS
                     const catClass = n.categoria.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(" ", "-");
                     const resumoLimpo = n.resumo ? n.resumo.substring(0, 120) : "";
 
@@ -172,27 +159,25 @@
                     container.appendChild(card);
                 });
 
-                const btn = document.getElementById('btn-load-more');
-                if (visiveis >= todasNoticias.length) {
-                    btn.style.display = 'none';
-                } else {
-                    btn.style.display = 'inline-block';
-                }
+                // Lógica de visibilidade dos botões
+                document.getElementById('btn-load-more').style.display = visiveis < todasNoticias.length ? 'inline-block' : 'none';
+                document.getElementById('btn-show-less').style.display = visiveis > 6 ? 'inline-block' : 'none';
             }
 
-            // Ação do Botão Ver Mais
             document.getElementById('btn-load-more').onclick = function() {
                 visiveis += 6;
                 renderizarCards();
             };
 
-            // Carregamento da Sidebar e Inicialização
+            document.getElementById('btn-show-less').onclick = function() {
+                visiveis = 6;
+                renderizarCards();
+                document.getElementById('observatorio-de-impacto').scrollIntoView({ behavior: 'smooth' });
+            };
+
             fetch('/sidebar-content.html').then(r => r.text()).then(html => {
                 document.getElementById('sidebar').innerHTML = html;
-                // Carregar scripts dependentes e dados
-                var s = document.createElement('script'); 
-                s.src = '/assets/js/main.js'; 
-                document.body.appendChild(s);
+                var s = document.createElement('script'); s.src = '/assets/js/main.js'; document.body.appendChild(s);
                 carregarObservatorio();
             });
         </script>
