@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<title>bioCultura - Observatório da Energia</title>
+		<title>bioCultura - Energia & Impacto Territorial</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
@@ -9,7 +9,7 @@
             /* --- ESTILOS GLOBAIS --- */
             body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
 			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
-            section { padding-top: 2em !important; min-height: 100vh; display: flex; flex-direction: column; }
+            section { padding-top: 4em !important; min-height: 100vh; display: flex; flex-direction: column; }
 
             #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
             #sidebar > .inner { height: 100% !important; display: flex; flex-direction: column; }
@@ -19,34 +19,22 @@
             .data-row { display: grid; grid-template-columns: 180px 1fr; gap: 40px; padding: 2.5em 0; border-bottom: 1px solid #f2f2f2; }
             .data-row h4 { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin: 0; padding-top: 5px; }
 
-            /* GAUGES ENERGIA */
-            .gauge-container { margin-bottom: 25px; width: 100%; max-width: 500px; }
-            .gauge-label { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px; }
-            .current-val { font-size: 1.4em; font-weight: 700; color: #1a1a1a; }
-            .unit { font-size: 0.65em; font-weight: 800; color: #bbb; text-transform: uppercase; }
-            .gauge-bar { height: 8px; width: 100%; border-radius: 10px; position: relative; background: #eee; }
-            .bar-solar { background: linear-gradient(to right, #fff9c4, #fbc02d); }
-            .bar-wind { background: linear-gradient(to right, #e1f5fe, #0288d1); }
-            .gauge-marker { position: absolute; top: -6px; left: 0%; width: 3px; height: 20px; background: #1a1a1a; border-radius: 2px; transition: left 1.5s cubic-bezier(0.4, 0, 0.2, 1); }
+            /* ALERTAS ZAER & MINERAÇÃO */
+            .alert-box { padding: 1.5em; border-radius: 12px; margin-bottom: 1em; display: flex; gap: 20px; align-items: center; }
+            .alert-zaer { background: #fff3e0; border-left: 4px solid #ff9800; }
+            .alert-critical { background: #ffebee; border-left: 4px solid #ef5350; }
+            .alert-box i { font-size: 1.5em; }
+            .alert-content h5 { margin: 0; font-size: 0.85em; font-weight: 900; text-transform: uppercase; }
+            .alert-content p { margin: 5px 0 0 0; font-size: 0.9em; color: #666; }
 
-            .tech-detail { font-size: 0.95em; color: #777; line-height: 1.6; margin: 0; }
-            
+            /* TABELAS TÉCNICAS */
+            .plants-table { width: 100%; border-collapse: collapse; }
+            .plants-table th { text-align: left; color: #bbb; text-transform: uppercase; font-size: 0.6em; letter-spacing: 1px; padding: 10px; border-bottom: 1px solid #eee; }
+            .plants-table td { padding: 12px 10px; font-size: 0.85em; border-bottom: 1px solid #f9f9f9; }
+            .dist-tag { font-family: monospace; font-weight: 700; color: #00acc1; }
+
             .section-break { margin: 4em 0 2em 0; padding: 3em 0; border-top: 2px solid #f2f2f2; text-align: center; }
-            .section-break h2 { font-size: 2em; font-weight: 300; color: #5c6bc0; letter-spacing: -1px; margin: 0; }
-            .section-break .sub-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; }
-
-            /* GRELHA DE NOTÍCIAS */
-            .observatorio-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 40px; margin-top: 2em; }
-            .news-card { text-decoration: none; color: inherit; display: flex; flex-direction: column; transition: all 0.3s ease; }
-            .news-card:hover { transform: translateY(-8px); opacity: 0.85; }
-            .card-image-wrap { position: relative; width: 100%; height: 180px; overflow: hidden; border-radius: 12px; background: #f5f5f5; margin-bottom: 15px; }
-            .card-image-wrap img { width: 100%; height: 100%; object-fit: cover; }
-            .badge-cat { position: absolute; bottom: 10px; left: 10px; background: #5c6bc0; color: white; padding: 4px 12px; border-radius: 50px; font-size: 0.55em; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; }
-            .source-circle { width: 18px; height: 18px; background: #333; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 8px; margin-right: 8px; }
-
-            .ver-mais-container { text-align: center; margin: 3em 0; }
-            .btn-ver-mais { background: transparent !important; border: 1px solid #eee !important; color: #bbb !important; border-radius: 50px; padding: 0 40px; font-size: 0.7em; font-weight: 900; letter-spacing: 2px; cursor: pointer; }
-            .hidden-card { display: none; }
+            .section-break h2 { font-size: 2em; font-weight: 300; color: #ef5350; letter-spacing: -1px; margin: 0; }
 
             @media screen and (max-width: 1280px) {
                 #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
@@ -59,136 +47,59 @@
 		<div id="wrapper">
 			<div id="main">
                 <div class="inner">
-					<header id="header" style="height: 0; margin: 0; padding: 0; overflow: hidden;"></header>
                     <section>
                         <div style="text-align: center; margin-bottom: 3em;">
-                            <span class="category-label">Engenharia & Soluções</span>
-                            <h1 style="font-size: 3.5em; font-weight: 300; color: #1a1a1a; letter-spacing: -2px; margin: 0;">Energia: Potencial Local</h1>
-                            <p style="font-size: 0.9em; font-style: italic; color: #bbb; margin-top: 5px;">Radar de impacto territorial: <strong id="reg-name" style="color:#888">...</strong></p>
+                            <span class="category-label">Observatório de Impacto Energético</span>
+                            <h1 style="font-size: 3.5em; font-weight: 300; color: #1a1a1a; letter-spacing: -2px; margin: 0;">O Peso da Transição</h1>
+                            <p style="font-size: 0.9em; font-style: italic; color: #bbb; margin-top: 5px;">Análise de ZAER e Conflitos Territoriais em <strong id="reg-name">...</strong></p>
                         </div>
 
-                        <!-- DASHBOARD DINÂMICO -->
-                        <div id="energy-dashboard" style="display:none;">
-                            <div class="data-row">
-                                <h4>Recursos Naturais</h4>
-                                <div class="tech-content">
-                                    <div class="gauge-container">
-                                        <div class="gauge-label"><span class="current-val" id="val-solar">-- W/m²</span><span class="unit">Radiação Solar (Live)</span></div>
-                                        <div class="gauge-bar bar-solar"><div id="marker-solar" class="gauge-marker"></div></div>
-                                    </div>
-                                    <div class="gauge-container">
-                                        <div class="gauge-label"><span class="current-val" id="val-wind">-- km/h</span><span class="unit">Vento a 100m (Live)</span></div>
-                                        <div class="gauge-bar bar-wind"><div id="marker-wind" class="gauge-marker"></div></div>
-                                    </div>
-                                    <p class="tech-detail" id="energy-summary">A analisar recursos para regeneração energética...</p>
-                                </div>
+                        <!-- STATUS TERRITORIAL -->
+                        <div class="data-row">
+                            <h4>Estatuto Territorial</h4>
+                            <div class="tech-content" id="status-container">
+                                <p style="color:#bbb;">A analisar sobreposição com Zonas de Aceleração (ZAER)...</p>
                             </div>
                         </div>
 
-                        <div id="no-gps-warning" style="text-align: center; padding: 4em; color: #bbb;">
-                            <p>A carregar observatório...</p>
-                        </div>
-
-                        <section>
+                        <!-- PROXIMIDADE DE INFRAESTRUTURA -->
                         <div class="section-break">
-                            <span class="sub-label">Base de Dados Completa</span>
-                            <h2>Inventário de Centrais Elétricas</h2>
-                            <div style="margin-top: 20px;">
-                                <input type="text" id="plant-search" placeholder="Pesquisar por nome ou distrito..." 
-                                    style="width: 100%; max-width: 400px; border-radius: 50px; padding: 10px 25px; border: 1px solid #eee;">
-                            </div>
+                            <span class="sub-label">Infraestrutura Local</span>
+                            <h2>Centrais num raio de proximidade</h2>
                         </div>
 
                         <div class="data-row" style="border-bottom: none;">
-                            <h4>Listagem Total</h4>
+                            <h4>Produção Local</h4>
                             <div class="tech-content">
                                 <table class="plants-table">
                                     <thead>
                                         <tr>
-                                            <th>Central</th>
-                                            <th>Tipo / Distrito</th>
+                                            <th>Central / Parque</th>
+                                            <th>Tecnologia</th>
                                             <th>Potência</th>
-                                            <th>Estado</th>
+                                            <th>Distância</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="lista-centrais-full">
-                                        <!-- Injetado via JS -->
+                                    <tbody id="lista-proximidade">
+                                        <!-- Dinâmico -->
                                     </tbody>
                                 </table>
-                                <div style="text-align: center; margin-top: 30px;">
-                                    <button id="btn-load-more-plants" class="btn-ver-mais" style="display:none;">Carregar mais centrais</button>
-                                    <p id="counter-info" style="font-size: 0.7em; color: #bbb; margin-top: 10px;"></p>
-                                </div>
                             </div>
                         </div>
+
+                        <div id="no-gps-warning" style="text-align: center; padding: 4em; color: #bbb;"><p>Selecione uma bioregião na barra lateral.</p></div>
+
+                        <footer class="page-footer">
+                            <div style="display: flex; align-items: center; justify-content: flex-end; gap: 10px; opacity: 0.3;">
+                                <div style="text-align: right; line-height: 1;">
+                                    <span style="display: block; font-size: 0.85em; font-weight: 900; color: #333;">bioCultura</span>
+                                    <span style="display: block; font-size: 0.5em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Global Regeneration</span>
+                                </div>
+                                <svg width="22" height="22" viewBox="0 0 100 100"><path d="M50 5 L89 27.5 L89 72.5 L50 95 L11 72.5 L11 27.5 Z" fill="#333" /><path d="M50 20 C50 20 75 45 75 70 C75 85 65 85 50 85 C35 85 25 85 25 70 C25 45 50 20 50 20Z" fill="#fff" /></svg>
+                            </div>
+                        </footer>
                     </section>
-
-                    <script>
-                    let allPlants = [];
-                    let filteredPlants = [];
-                    let plantsVisible = 20;
-
-                    async function carregarInventario() {
-                        try {
-                            const response = await fetch('/data/centrais_full.json');
-                            allPlants = await response.json();
-                            filteredPlants = [...allPlants];
-                            renderPlantsTable();
-                        } catch (e) { console.error("Erro ao carregar inventário:", e); }
-                    }
-
-                    function renderPlantsTable() {
-                        const tbody = document.getElementById('lista-centrais-full');
-                        const btn = document.getElementById('btn-load-more-plants');
-                        const counter = document.getElementById('counter-info');
-                        
-                        const slice = filteredPlants.slice(0, plantsVisible);
-                        
-                        tbody.innerHTML = slice.map(p => `
-                            <tr>
-                                <td style="font-weight: 700;">${p.nome}</td>
-                                <td><span style="color: #888;">${p.tipo}</span><br><small style="color: #ccc; text-transform: uppercase;">${p.distrito}</small></td>
-                                <td style="font-family: monospace; font-weight: 700;">${p.potencia}</td>
-                                <td><span class="status-badge">${p.status}</span></td>
-                            </tr>
-                        `).join('');
-
-                        btn.style.display = plantsVisible < filteredPlants.length ? 'inline-block' : 'none';
-                        counter.innerText = `A mostrar ${Math.min(plantsVisible, filteredPlants.length)} de ${filteredPlants.length} centrais`;
-                    }
-
-                    // Lógica de Pesquisa
-                    document.getElementById('plant-search').addEventListener('input', function(e) {
-                        const term = e.target.value.toLowerCase();
-                        filteredPlants = allPlants.filter(p => 
-                            p.nome.toLowerCase().includes(term) || 
-                            p.distrito.toLowerCase().includes(term) ||
-                            p.tipo.toLowerCase().includes(term)
-                        );
-                        plantsVisible = 20;
-                        renderPlantsTable();
-                    });
-
-                    // Botão Load More
-                    document.getElementById('btn-load-more-plants').onclick = () => {
-                        plantsVisible += 50;
-                        renderPlantsTable();
-                    };
-
-                    document.addEventListener('DOMContentLoaded', carregarInventario);
-                    </script>
-
-                        <div class="data-row" style="border-bottom: none;">
-                            <h4>Notícias e Relatórios</h4>
-                            <div class="tech-content">
-                                <div id="noticias-energy-dinamico" class="observatorio-grid"></div>
-                                <div class="ver-mais-container">
-                                    <button id="btn-load-more-energy" class="btn-ver-mais" style="display:none;">Ver Mais Notícias</button>
-                                </div>
-                            </div>
-                        </div>
-					</section>
-				</div>
+                </div>
             </div>
 			<div id="sidebar"></div>
 		</div>
@@ -196,8 +107,8 @@
 		<script src="/assets/js/jquery.min.js"></script>
         <script>
             let locationsDB = [];
-            let noticiasEnergy = [];
-            let visiveisEnergy = 4;
+            let allPlants = [];
+            let zaerData = [];
 
             function calcularDistancia(lat1, lon1, lat2, lon2) {
                 const R = 6371;
@@ -207,127 +118,76 @@
                 return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
             }
 
-            async function inicializarPagina() {
+            async function inicializarEnergia() {
                 try {
-                    const rLoc = await fetch('/data/bioregioes.json');
+                    const [rLoc, rPlants, rZaer] = await Promise.all([
+                        fetch('/data/bioregioes.json'),
+                        fetch('/data/centrais_full.json'),
+                        fetch('/data/zaer_critico.json')
+                    ]);
+                    
                     locationsDB = await rLoc.json();
-                    
-                    const savedId = localStorage.getItem('biocultura_region');
-                    const urlParams = new URLSearchParams(window.location.search);
-                    const regionParam = urlParams.get('region');
+                    allPlants = await rPlants.json();
+                    zaerData = await rZaer.json();
 
-                    let info = locationsDB.find(i => i.id === regionParam) || 
-                               locationsDB.find(i => i.id === savedId) || 
-                               locationsDB.find(i => i.id === "proenca-a-nova") ||
-                               locationsDB[0];
-                    
-                    renderDashboard(info);
-                    await carregarNoticiasEnergy();
-                } catch(e) { console.error(e); }
+                    const savedId = localStorage.getItem('biocultura_region') || "proenca-a-nova";
+                    const info = locationsDB.find(i => i.id === savedId);
+                    if(info) renderDashboard(info);
+
+                } catch(e) { console.error("Erro no carregamento de dados:", e); }
             }
 
-            async function renderDashboard(info) {
+            function renderDashboard(info) {
                 if(!info) return;
                 document.getElementById('no-gps-warning').style.display = 'none';
-                document.getElementById('energy-dashboard').style.display = 'block';
                 document.getElementById('reg-name').innerText = info.titulo;
 
-                // Sincroniza o input da sidebar se ele já existir
-                const input = document.getElementById('loc-search-input');
-                if(input) input.value = info.titulo;
+                // 1. Lógica de Proximidade Centrais (Top 6)
+                const proximas = allPlants.map(p => ({
+                    ...p,
+                    dist: calcularDistancia(info.lat, info.lon, p.lat, p.lon)
+                })).sort((a, b) => a.dist - b.dist).slice(0, 6);
 
-                try {
-                    const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${info.lat}&longitude=${info.lon}&current=shortwave_radiation,wind_speed_100m`);
-                    const weather = await res.json();
-                    const wind = weather.current.wind_speed_100m;
-                    const sun = weather.current.shortwave_radiation;
+                document.getElementById('lista-proximidade').innerHTML = proximas.map(p => `
+                    <tr>
+                        <td style="font-weight: 700;">${p.nome}</td>
+                        <td style="color: #888;">${p.tipo}</td>
+                        <td style="font-family: monospace;">${p.potencia}</td>
+                        <td class="dist-tag">${p.dist.toFixed(1)} KM</td>
+                    </tr>
+                `).join('');
 
-                    document.getElementById('val-solar').innerText = sun + " W/m²";
-                    document.getElementById('val-wind').innerText = wind + " km/h";
+                // 2. Lógica ZAER / Zonas Críticas
+                const statusContainer = document.getElementById('status-container');
+                const conflitosLocais = zaerData.filter(z => calcularDistancia(info.lat, info.lon, z.lat, z.lon) < 30);
 
-                    setTimeout(() => {
-                        document.getElementById('marker-solar').style.left = Math.min(sun / 10, 100) + "%";
-                        document.getElementById('marker-wind').style.left = Math.min(wind * 1.5, 100) + "%";
-                    }, 300);
-
-                    document.getElementById('energy-summary').innerText = (sun > 500 || wind > 20) ? "Potencial Renovável Elevado detetado." : "Condições de produção moderadas no momento.";
-                } catch (err) { console.error(err); }
-            }
-
-            // LÓGICA DE SIDEBAR COM DELEGAÇÃO (Resolve o problema de não funcionar)
-            $(document).on('input', '#loc-search-input', function() {
-                const val = $(this).val().toLowerCase();
-                const dropdown = $('#loc-dropdown');
-                dropdown.empty();
-                if(val.length < 2) { dropdown.hide(); return; }
-                const matches = locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0, 6);
-                if(matches.length > 0) {
-                    dropdown.show();
-                    matches.forEach(m => {
-                        $('<div class="bio-res-item"></div>').text(m.titulo).on('click', function() {
-                            localStorage.setItem('biocultura_region', m.id);
-                            renderDashboard(m);
-                            dropdown.hide();
-                        }).appendTo(dropdown);
-                    });
-                } else dropdown.hide();
-            });
-
-            $(document).on('click', '#btn-gps-trigger', function() {
-                const input = $('#loc-search-input');
-                input.val("A localizar...");
-                navigator.geolocation.getCurrentPosition(pos => {
-                    let closest = locationsDB[0]; let minD = Infinity;
-                    locationsDB.forEach(c => {
-                        if(c.lat && c.lon) {
-                            let d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon);
-                            if(d < minD) { minD = d; closest = c; }
-                        }
-                    });
-                    localStorage.setItem('biocultura_region', closest.id);
-                    renderDashboard(closest);
-                }, () => { input.val("Erro GPS"); });
-            });
-
-            async function carregarNoticiasEnergy() {
-                try {
-                    const r = await fetch('/data/noticias.json');
-                    const todas = await r.json();
-                    noticiasEnergy = todas.filter(n => n.categoria.toLowerCase().includes('energia'));
-                    renderizarCardsEnergy();
-                } catch(e) { console.error(e); }
-            }
-
-            function renderizarCardsEnergy() {
-                const container = document.getElementById('noticias-energy-dinamico');
-                if(!container) return;
-                container.innerHTML = '';
-                noticiasEnergy.forEach((n, index) => {
-                    const card = document.createElement('a');
-                    card.href = `/observatorio/noticia-detalhe.html?id=${n.id}`;
-                    card.className = `news-card ${index >= visiveisEnergy ? 'hidden-card' : ''}`;
-                    card.innerHTML = `
-                        <div class="card-image-wrap"><img src="${n.imagem}"></div>
-                        <div style="display:flex; align-items:center; margin-bottom:5px">
-                            <div class="source-circle">${n.fonte.charAt(0)}</div>
-                            <span style="font-size:0.65em; color:#bbb; font-weight:800; text-transform:uppercase">${n.fonte}</span>
+                if(conflitosLocais.length === 0) {
+                    statusContainer.innerHTML = '<p style="color:#81c784; font-weight:700;"><i class="fas fa-check-circle"></i> Sem sobreposição direta com ZAER ou Projetos de Mineração Críticos.</p>';
+                } else {
+                    statusContainer.innerHTML = conflitosLocais.map(z => `
+                        <div class="alert-box ${z.tipo === 'Mineração' ? 'alert-critical' : 'alert-zaer'}">
+                            <i class="fas ${z.tipo === 'Mineração' ? 'fa-mound' : 'fa-bolt'}"></i>
+                            <div class="alert-content">
+                                <h5>${z.tipo}: ${z.titulo}</h5>
+                                <p>${z.impacto} (Distância: ${calcularDistancia(info.lat, info.lon, z.lat, z.lon).toFixed(1)} km)</p>
+                            </div>
                         </div>
-                        <h3>${n.titulo}</h3>
-                    `;
-                    container.appendChild(card);
-                });
-                const btn = document.getElementById('btn-load-more-energy');
-                if(btn) btn.style.display = noticiasEnergy.length > visiveisEnergy ? 'inline-block' : 'none';
+                    `).join('');
+                }
             }
 
-            // CARREGAMENTO DA SIDEBAR
+            // Sync com Sidebar
+            $(document).on('click', '.bio-res-item', function() {
+                const id = localStorage.getItem('biocultura_region');
+                const info = locationsDB.find(i => i.id === id);
+                renderDashboard(info);
+            });
+
             fetch('/sidebar-content.html').then(r => r.text()).then(html => {
                 document.getElementById('sidebar').innerHTML = html;
-                inicializarPagina();
-                var s = document.createElement('script'); s.src = '/assets/js/main.js'; document.body.appendChild(s);
+                inicializarEnergia();
+                const s = document.createElement('script'); s.src = '/assets/js/main.js'; document.body.appendChild(s);
             });
-
-            document.getElementById('btn-load-more-energy').onclick = () => { visiveisEnergy += 4; renderizarCardsEnergy(); };
         </script>
 	</body>
 </html>
