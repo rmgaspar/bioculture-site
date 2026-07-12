@@ -8,28 +8,38 @@
 		<style>
             body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
 			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
-            section { padding-top: 4em !important; display: flex; flex-direction: column; }
+            section { padding-top: 4em !important; min-height: 100vh; display: flex; flex-direction: column; }
 
             #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
+            #sidebar > .inner { height: 100% !important; overflow: hidden !important; display: flex; flex-direction: column; }
             #wrapper { padding-left: 18em !important; }
 
-            /* ÍNDICE DE FRAGILIDADE REGIONAL */
-            .fragility-dashboard { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 3em; }
-            .fragility-card { background: #f9f9f9; padding: 1.5em; border-radius: 20px; border: 1px solid #eee; }
-            .fragility-card span { font-size: 0.6em; font-weight: 900; text-transform: uppercase; color: #bbb; display: block; }
-            .fragility-card b { font-size: 1.2em; color: #1a1a1a; display: block; margin-top: 5px; }
+            .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; color: #bbb; margin-bottom: 10px; display: block; text-align: center; }
+            .data-row { display: grid; grid-template-columns: 180px 1fr; gap: 40px; padding: 2.5em 0; border-bottom: 1px solid #f2f2f2; }
+            .data-row h4 { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin: 0; padding-top: 5px; }
 
-            /* TABELA DE AUDITORIA ÉTICA */
+            /* DASHBOARD DE FRAGILIDADE */
+            .fragility-dashboard { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 3em; }
+            .fragility-card { background: #fcfdfc; padding: 1.5em; border-radius: 20px; border: 1px solid #f0f0f0; }
+            .fragility-card span { font-size: 0.6em; font-weight: 900; text-transform: uppercase; color: #bbb; display: block; }
+            .fragility-card b { font-size: 1.1em; color: #1a1a1a; display: block; margin-top: 5px; }
+
+            /* TABELA DE AUDITORIA */
             .audit-table { width: 100%; border-collapse: collapse; margin-top: 1em; }
             .audit-table th { text-align: left; color: #bbb; text-transform: uppercase; font-size: 0.6em; letter-spacing: 1px; padding: 15px 10px; }
             .audit-table td { padding: 20px 10px; font-size: 0.85em; border-bottom: 1px solid #f9f9f9; vertical-align: top; }
             
-            .status-badge { font-size: 0.6em; padding: 3px 8px; border-radius: 4px; font-weight: 900; text-transform: uppercase; }
-            .status-monitoring { background: #e3f2fd; color: #1565c0; } /* Azul: Em Monitorização */
-            .status-critical { background: #ffebee; color: #c62828; }    /* Vermelho: Impacto Crítico */
+            .status-badge { font-size: 0.6em; padding: 3px 8px; border-radius: 4px; font-weight: 900; text-transform: uppercase; display: inline-block; margin-bottom: 8px; }
+            .status-monitoring { background: #e3f2fd; color: #1565c0; } 
+            .status-critical { background: #ffebee; color: #c62828; }    
             
             .impact-vector { color: #ef5350; font-weight: 600; display: block; margin-top: 4px; font-size: 0.9em; }
             .mitigation-measure { color: #4caf50; font-size: 0.8em; font-style: italic; display: block; margin-top: 4px; }
+
+            /* ÍCONES ÉTICOS */
+            .tech-icon { margin-right: 10px; font-size: 1.2em; width: 20px; text-align: center; }
+            .tech-fossil { color: #ef5350 !important; }
+            .tech-clean { color: #4caf50 !important; }
 
             .section-break { margin: 3em 0 1em 0; padding: 2em 0; border-top: 2px solid #f2f2f2; text-align: center; }
             .section-break h2 { font-size: 2em; font-weight: 300; color: #1a1a1a; letter-spacing: -1px; margin: 0; }
@@ -38,6 +48,7 @@
                 #sidebar { position: relative !important; width: 100% !important; }
                 #wrapper { padding-left: 0 !important; }
                 .fragility-dashboard { grid-template-columns: 1fr; }
+                .data-row { grid-template-columns: 1fr; }
             }
 		</style>
 	</head>
@@ -67,7 +78,7 @@
                         <table class="audit-table">
                             <thead>
                                 <tr>
-                                    <th>Infraestrutura</th>
+                                    <th>Infraestrutura Industrial</th>
                                     <th>Estatuto / Distância</th>
                                     <th>Análise de Impacto Ético</th>
                                 </tr>
@@ -86,11 +97,13 @@
         <script>
             let locationsDB = [], allPlants = [], airData = [], soilData = [];
 
-            const auditMapping = {
-                "Eólica": { vector: "Fragmentação de habitat e impacto em avifauna.", measure: "Medida: Sistemas de deteção e paragem automática.", status: "status-monitoring", statusText: "Monitorizado" },
-                "Solar": { vector: "Impermeabilização de solos e perda de biodiversidade terrestre.", measure: "Medida: Implementação de corredores biológicos entre painéis.", status: "status-monitoring", statusText: "Em Auditoria" },
-                "Hídrica": { vector: "Barreira física fluvial e alteração de sedimentos.", measure: "Medida: Caudais ecológicos e escadas de peixe.", status: "status-monitoring", statusText: "Regulado" },
-                "Gás Natural": { vector: "Emissões térmicas e consumo intensivo de água.", measure: "Medida: Plano de desativação progressiva 2030.", status: "status-critical", statusText: "Crítico" }
+            // Mapeamento Ético e de Ícones
+            const techMetadata = {
+                "Eólica": { icon: "fa-wind", class: "tech-clean", vector: "Fragmentação de habitat e impacto em avifauna.", measure: "Medida: Radar de paragem e reflorestação.", status: "status-monitoring", statusText: "Monitorizado" },
+                "Solar": { icon: "fa-sun", class: "tech-clean", vector: "Impermeabilização e alteração térmica do solo.", measure: "Medida: Implementação de corredores biológicos.", status: "status-monitoring", statusText: "Em Auditoria" },
+                "Hídrica": { icon: "fa-water", class: "tech-clean", vector: "Barreira física fluvial e retenção de sedimentos.", measure: "Medida: Caudais ecológicos reais.", status: "status-monitoring", statusText: "Regulado" },
+                "Biomassa": { icon: "fa-leaf", class: "tech-clean", vector: "Emissões e pressão sobre resíduos florestais.", measure: "Medida: Filtros de partículas de alta eficiência.", status: "status-monitoring", statusText: "Auditado" },
+                "Gás Natural": { icon: "fa-industry", class: "tech-fossil", vector: "Emissões de CO2 e consumo intensivo de água.", measure: "Medida: Plano de desativação 2030.", status: "status-critical", statusText: "Crítico" }
             };
 
             function calcularDistancia(lat1, lon1, lat2, lon2) {
@@ -119,35 +132,42 @@
                 if(!info) return;
                 document.getElementById('reg-name').innerText = info.titulo;
 
-                // 1. Cruzamento de Dados (Solo e Ar)
+                // 1. Cruzamento Solo/Ar
                 const sLocal = soilData.reduce((prev, curr) => (calcularDistancia(info.lat, info.lon, curr.lat, curr.lon) < calcularDistancia(info.lat, info.lon, prev.lat, prev.lon) ? curr : prev));
                 const aLocal = airData.reduce((prev, curr) => (calcularDistancia(info.lat, info.lon, curr.lat, curr.lon) < calcularDistancia(info.lat, info.lon, prev.lat, prev.lon) ? curr : prev));
                 
                 document.getElementById('audit-soil').innerText = sLocal.erosao + " (MO " + sLocal.materia_organica + "%)";
                 document.getElementById('audit-air').innerText = aLocal.indice + " (QualAr)";
 
-                // 2. Auditoria de Centrais (Agrupamento e Foco Ético)
+                // 2. Agrupamento de Centrais (Remoção de duplicados romanos)
                 const clusters = {};
                 allPlants.forEach(p => {
                     const d = calcularDistancia(info.lat, info.lon, p.lat, p.lon);
-                    if(d < 30) {
+                    if(d < 35) {
                         const base = p.nome.replace(/\s(I|II|III|IV|V|VI|VII|VIII|IX|X)$/, "").trim();
                         if(!clusters[base] || d < clusters[base].dist) clusters[base] = { ...p, dist: d };
                     }
                 });
 
-                const sorted = Object.values(clusters).sort((a,b) => a.dist - b.dist).slice(0, 5);
+                const sorted = Object.values(clusters).sort((a,b) => a.dist - b.dist).slice(0, 6);
                 document.getElementById('audit-pressure').innerText = sorted.length + " Infraestruturas";
 
                 document.getElementById('lista-auditoria').innerHTML = sorted.map(p => {
-                    const audit = auditMapping[p.tipo] || { vector: "Impacto sob análise.", measure: "A aguardar parecer técnico.", status: "status-monitoring", statusText: "Pendente" };
+                    const meta = techMetadata[p.tipo] || { icon: "fa-bolt", class: "", vector: "Impacto em análise.", measure: "Pendente.", status: "status-monitoring", statusText: "Pendente" };
                     return `
                         <tr>
-                            <td><b>${p.nome}</b><br><small style="color:#bbb">${p.tipo}</small></td>
-                            <td><span class="status-badge ${audit.status}">${audit.statusText}</span><br><b>${p.dist.toFixed(1)} KM</b></td>
                             <td>
-                                <span class="impact-vector">${audit.vector}</span>
-                                <span class="mitigation-measure">${audit.measure}</span>
+                                <i class="fas ${meta.icon} tech-icon ${meta.class}"></i>
+                                <b>${p.nome}</b><br>
+                                <small style="color:#bbb">${p.tipo}</small>
+                            </td>
+                            <td>
+                                <span class="status-badge ${meta.status}">${meta.statusText}</span><br>
+                                <b>${p.dist.toFixed(1)} KM</b>
+                            </td>
+                            <td>
+                                <span class="impact-vector">${meta.vector}</span>
+                                <span class="mitigation-measure">${meta.measure}</span>
                             </td>
                         </tr>
                     `;
