@@ -13,6 +13,12 @@
             #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
             #wrapper { padding-left: 18em !important; }
 
+            /* Contentor de Alinhamento Global */
+            .noticia-container { max-width: 1000px; margin: 0 auto; }
+
+            /* Alinhamento Indentado (Header, Corpo e Botões) */
+            .noticia-indent { padding-left: 2.5em; padding-right: 2.5em; }
+
             .noticia-header { margin-bottom: 3em; }
             .noticia-cat { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; color: #bbb; margin-bottom: 10px; display: block; }
             .noticia-titulo { font-size: 3.5em; font-weight: 900; color: #1a1a1a; letter-spacing: -2px; line-height: 1.1; margin: 0 0 20px 0; }
@@ -22,14 +28,14 @@
 
             .noticia-hero-img { width: 100%; height: 500px; object-fit: cover; border-radius: 30px; margin: 2em 0; background: #f5f5f5; }
 
+            /* Banner de Resumo - O padding aqui define a indentação dos outros elementos */
             .resumo-banner { background: #f4f7fb; padding: 2.5em; border-radius: 25px; border-left: 5px solid #5c6bc0; margin: 3em 0; }
             .resumo-text { font-style: italic; color: #333; font-size: 1.2em; line-height: 1.7; margin: 0; }
 
-            .noticia-corpo { font-size: 1.15em; line-height: 1.8; color: #444; max-width: 800px; }
+            .noticia-corpo { font-size: 1.15em; line-height: 1.8; color: #444; }
             .noticia-corpo p { margin-bottom: 1.5em; text-align: justify; }
             .noticia-corpo h3 { font-size: 1.4em; font-weight: 700; color: #1a1a1a; margin: 2em 0 1em 0; }
 
-            /* AÇÕES NO FUNDO - BOTÃO ÚNICO */
             .bottom-actions { padding: 4em 0; border-top: 1px solid #f2f2f2; margin-top: 4em; }
             .btn-voltar { text-decoration: none; font-size: 0.75em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; display: inline-flex; align-items: center; gap: 10px; transition: color 0.3s; cursor: pointer; border: none !important; background: none !important; padding: 0 !important; }
             .btn-voltar:hover { color: #1a1a1a; text-decoration: underline; }
@@ -39,6 +45,8 @@
                 #wrapper { padding-left: 0 !important; }
                 .noticia-titulo { font-size: 2.5em; }
                 .noticia-hero-img { height: 300px; }
+                .noticia-indent { padding-left: 1.5em; padding-right: 1.5em; }
+                .resumo-banner { padding: 1.5em; }
             }
 		</style>
 	</head>
@@ -47,11 +55,11 @@
 			<div id="main">
                 <div class="inner">
                     <section id="noticia-content">
-                        
-                        <div id="loading" style="color: #bbb; font-style: italic;">A carregar notícia...</div>
+                        <div id="loading" style="color: #bbb; font-style: italic; padding-left: 2.5em;">A carregar notícia...</div>
 
-                        <div id="noticia-render" style="display:none;">
-                            <div class="noticia-header">
+                        <div id="noticia-render" class="noticia-container" style="display:none;">
+                            <!-- Header Indentado -->
+                            <div class="noticia-header noticia-indent">
                                 <span class="noticia-cat" id="cat">--</span>
                                 <h1 class="noticia-titulo" id="titulo">--</h1>
                                 <div class="noticia-meta">
@@ -62,18 +70,21 @@
                                 </div>
                             </div>
 
+                            <!-- Imagem Full Width no container -->
                             <img src="" class="noticia-hero-img" id="imagem">
 
+                            <!-- Banner de Resumo (O texto aqui já é indentado pelo padding do banner) -->
                             <div class="resumo-banner" id="resumo-box">
                                 <p class="resumo-text" id="resumo-txt"></p>
                             </div>
 
-                            <div class="noticia-corpo" id="corpo">
-                                <!-- Conteúdo integral via JSON -->
+                            <!-- Corpo Indentado -->
+                            <div class="noticia-corpo noticia-indent" id="corpo">
+                                <!-- Conteúdo integral -->
                             </div>
 
-                            <!-- BOTÃO VOLTAR APENAS NO FUNDO -->
-                            <div class="bottom-actions">
+                            <!-- Ações Indentadas -->
+                            <div class="bottom-actions noticia-indent">
                                 <a href="javascript:history.back()" class="btn-voltar">← Voltar para o Observatório</a>
                             </div>
                         </div>
