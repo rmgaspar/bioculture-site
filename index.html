@@ -192,6 +192,14 @@
                 const gpsBtn = document.getElementById('btn-gps-trigger');
                 const dropdown = document.getElementById('loc-dropdown');
 
+                // NOVA FUNCIONALIDADE: Limpa o campo ao clicar/entrar com o cursor
+                $(document).on('focus', '#loc-search-input', function() {
+                    $(this).val('');
+                    // Opcional: esconder o dropdown ao focar se estiver visível de uma pesquisa anterior
+                    dropdown.style.display = 'none'; 
+                });
+
+                // Lógica de pesquisa (Input)
                 $(document).on('input', '#loc-search-input', function() {
                     const val = $(this).val().toLowerCase();
                     dropdown.innerHTML = '';
@@ -213,6 +221,25 @@
                     } else dropdown.style.display = 'none';
                 });
 
+                // Lógica de GPS
+                $(document).on('click', '#btn-gps-trigger', function() {
+                    input.value = "A localizar...";
+                    navigator.geolocation.getCurrentPosition(pos => {
+                        let closest = locationsDB[0]; let minD = Infinity;
+                        locationsDB.forEach(c => {
+                            if(c.lat && c.lon) {
+                                let d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon);
+                                if(d < minD) { minD = d; closest = c; }
+                            }
+                        });
+                        localStorage.setItem('biocultura_region', closest.id);
+                        renderDashboard(closest);
+                    }, () => {
+                        input.value = "Erro no GPS";
+                    });
+                });
+            }
+
                 $(document).on('click', '#btn-gps-trigger', function() {
                     input.value = "A localizar...";
                     navigator.geolocation.getCurrentPosition(pos => {
@@ -227,7 +254,6 @@
                         renderDashboard(closest);
                     });
                 });
-            }
 
             function renderizarLista() {
                 const container = document.getElementById('observatorio-dinamico');
