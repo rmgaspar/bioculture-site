@@ -15,9 +15,6 @@
 
             /* Contentor de Alinhamento Global */
             .noticia-container { max-width: 1000px; margin: 0 auto; width: 100%; }
-
-            /* Alinhamento Indentado (Header, Corpo e Botões) */
-            /* O padding-left de 2.5em alinha o texto com o conteúdo interno do banner azul */
             .noticia-indent { padding-left: 2.5em; padding-right: 2.5em; }
 
             .noticia-header { margin-bottom: 3em; }
@@ -25,7 +22,9 @@
             .noticia-titulo { font-size: 3.5em; font-weight: 900; color: #1a1a1a; letter-spacing: -2px; line-height: 1.1; margin: 0 0 20px 0; }
             
             .noticia-meta { display: flex; align-items: center; gap: 15px; font-size: 0.8em; color: #888; font-weight: 600; }
-            .source-circle { width: 24px; height: 24px; background: #333; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; }
+            
+            /* Estilo para o Logo da Fonte */
+            .source-logo-detail { width: 20px; height: 20px; object-fit: contain; filter: grayscale(100%); opacity: 0.7; }
 
             .noticia-hero-img { width: 100%; height: 500px; object-fit: cover; border-radius: 30px; margin: 2em 0; background: #f5f5f5; }
 
@@ -33,13 +32,28 @@
             .resumo-banner { background: #f4f7fb; padding: 2.5em; border-radius: 25px; border-left: 5px solid #5c6bc0; margin: 3em 0; }
             .resumo-text { font-style: italic; color: #333; font-size: 1.2em; line-height: 1.7; margin: 0; }
 
-            /* Corpo da Notícia - Removido max-width fixo para alinhar à direita */
+            /* Corpo da Notícia */
             .noticia-corpo { font-size: 1.15em; line-height: 1.8; color: #444; width: 100%; }
             .noticia-corpo p { margin-bottom: 1.5em; text-align: justify; }
             .noticia-corpo h3 { font-size: 1.4em; font-weight: 700; color: #1a1a1a; margin: 2em 0 1em 0; }
 
+            /* Ações no Fundo */
             .bottom-actions { padding: 4em 0; border-top: 1px solid #f2f2f2; margin-top: 4em; }
-            .btn-voltar { text-decoration: none; font-size: 0.75em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; display: inline-flex; align-items: center; gap: 10px; transition: color 0.3s; cursor: pointer; border: none !important; background: none !important; padding: 0 !important; }
+            .btn-voltar { 
+                text-decoration: none; 
+                font-size: 0.75em; 
+                font-weight: 400; 
+                text-transform: lowercase; 
+                letter-spacing: 3px; 
+                color: #bbb; 
+                display: inline-flex; 
+                align-items: center; 
+                gap: 10px; 
+                transition: color 0.3s; 
+                cursor: pointer; 
+                border: none !important; 
+                background: none !important;
+            }
             .btn-voltar:hover { color: #1a1a1a; text-decoration: underline; }
 
             @media screen and (max-width: 1280px) {
@@ -60,39 +74,37 @@
                         <div id="loading" style="color: #bbb; font-style: italic; padding-left: 2.5em;">A carregar notícia...</div>
 
                         <div id="noticia-render" class="noticia-container" style="display:none;">
-                            <!-- Header Indentado -->
+                            <!-- Header -->
                             <div class="noticia-header noticia-indent">
                                 <span class="noticia-cat" id="cat">--</span>
                                 <h1 class="noticia-titulo" id="titulo">--</h1>
                                 <div class="noticia-meta">
-                                    <div class="source-circle" id="source-letter">B</div>
-                                    <span id="fonte">--</span>
-                                    <span style="opacity: 0.3;">|</span>
+                                    <img src="" class="source-logo-detail" id="source-logo" alt="">
                                     <span id="data">--</span>
                                 </div>
                             </div>
 
-                            <!-- Imagem Hero -->
+                            <!-- Imagem -->
                             <img src="" class="noticia-hero-img" id="imagem">
 
-                            <!-- Banner de Resumo -->
+                            <!-- Resumo -->
                             <div class="resumo-banner" id="resumo-box">
                                 <p class="resumo-text" id="resumo-txt"></p>
                             </div>
 
-                            <!-- Corpo Indentado -->
+                            <!-- Corpo -->
                             <div class="noticia-corpo noticia-indent" id="corpo">
                                 <!-- Conteúdo integral -->
                             </div>
 
-                            <!-- Botão Voltar Fundo -->
+                            <!-- Botão Voltar (Apenas no Fundo) -->
                             <div class="bottom-actions noticia-indent">
-                                <a href="javascript:history.back()" class="btn-voltar">← Voltar para o Observatório</a>
+                                <a href="javascript:history.back()" class="btn-voltar">← voltar para o observatório</a>
                             </div>
                         </div>
                     </section>
 
-                    <footer style="padding: 4em 0; border-top: 1px solid #f2f2f2; opacity: 0.3; text-align: right;">
+                    <footer style="padding: 4em 0 2em 0; border-top: 1px solid #f2f2f2; opacity: 0.3; text-align: right;">
                         <span style="display: block; font-size: 0.85em; font-weight: 900; color: #333;">bioCultura</span>
                         <span style="display: block; font-size: 0.5em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Global Regeneration</span>
                     </footer>
@@ -124,8 +136,16 @@
                         document.title = n.titulo + " - bioCultura";
                         document.getElementById('cat').innerText = n.categoria;
                         document.getElementById('titulo').innerText = n.titulo;
-                        document.getElementById('fonte').innerText = n.fonte;
-                        document.getElementById('source-letter').innerText = n.fonte.charAt(0);
+                        
+                        // Logo da Fonte vindo do JSON
+                        const logoImg = document.getElementById('source-logo');
+                        if (n.logo) {
+                            logoImg.src = n.logo;
+                            logoImg.style.display = 'inline-block';
+                        } else {
+                            logoImg.style.display = 'none';
+                        }
+                        
                         document.getElementById('data').innerText = n.data;
                         document.getElementById('imagem').src = n.imagem;
                         
