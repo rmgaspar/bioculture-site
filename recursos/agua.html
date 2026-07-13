@@ -12,14 +12,15 @@
             section { padding-top: 4em !important; min-height: 100vh; display: flex; flex-direction: column; }
 
             #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
-            #sidebar > .inner { height: 100% !important; display: flex; flex-direction: column; }
             #wrapper { padding-left: 18em !important; }
+
+            .inner { padding: 0 4em !important; max-width: 1600px; margin: 0 auto; width: 100%; }
 
             .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; color: #bbb; margin-bottom: 10px; display: block; text-align: center; }
             .data-row { display: grid; grid-template-columns: 180px 1fr; gap: 40px; padding: 2.5em 0; border-bottom: 1px solid #f2f2f2; }
             .data-row h4 { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin: 0; padding-top: 5px; }
 
-            /* GAUGES TÉCNICOS */
+            /* GAUGES */
             .gauge-container { margin-bottom: 20px; width: 100%; max-width: 500px; }
             .gauge-label { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px; }
             .current-val { font-size: 1.2em; font-weight: 700; color: #1a1a1a; }
@@ -29,35 +30,30 @@
             .bar-dureza { background: linear-gradient(to right, #4fc3f7 0%, #ffb74d 50%, #ef5350 100%); }
             .gauge-marker { position: absolute; top: -5px; left: 0%; width: 3px; height: 16px; background: #1a1a1a; border-radius: 2px; transition: left 1.5s cubic-bezier(0.4, 0, 0.2, 1); }
 
-            .tech-content { display: flex; flex-direction: column; gap: 10px; }
-            .tech-main { font-size: 1.1em; font-weight: 700; color: #1a1a1a; line-height: 1.3; }
-            .tech-detail { font-size: 0.9em; color: #777; line-height: 1.5; margin: 0; }
-
-            .section-break { margin: 4em 0 2em 0; padding: 3em 0; border-top: 2px solid #f2f2f2; text-align: center; }
-            .section-break h2 { font-size: 2em; font-weight: 300; color: #ef5350; letter-spacing: -1px; margin: 0; }
-            .section-break .sub-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; }
+            /* --- NOVO: CICLO DE CONSUMO --- */
+            .water-impact-box { background: #f4f9ff; padding: 3em; border-radius: 20px; margin: 2em 0; position: relative; overflow: hidden; border-left: 4px solid #4fc3f7; }
+            .fixed-water-icon { position: absolute; left: 30px; top: 50%; transform: translateY(-50%); width: 50px; height: 50px; color: #4fc3f7; opacity: 0.4; }
+            .fact-cycler-water { padding-left: 70px; min-height: 80px; position: relative; }
+            .water-fact-item { position: absolute; top: 0; opacity: 0; transition: opacity 1s ease; width: 100%; }
+            .water-fact-item.active { opacity: 1; position: relative; }
+            .water-fact-item b { display: block; font-size: 1.4em; color: #1a237e; margin-bottom: 5px; }
+            .water-fact-item span { font-size: 1.1em; color: #5c6bc0; line-height: 1.4; }
 
             /* GRELHA DE NOTÍCIAS */
             .observatorio-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 40px; margin-top: 2em; }
             .news-card { text-decoration: none; color: inherit; display: flex; flex-direction: column; transition: all 0.3s ease; }
-            .news-card:hover { transform: translateY(-8px); opacity: 0.85; }
+            .news-card:hover { transform: translateY(-8px); }
             .card-image-wrap { position: relative; width: 100%; height: 180px; overflow: hidden; border-radius: 12px; background: #f5f5f5; margin-bottom: 15px; }
             .card-image-wrap img { width: 100%; height: 100%; object-fit: cover; }
-            .badge-cat { position: absolute; bottom: 10px; left: 10px; background: #4fc3f7; color: white; padding: 4px 12px; border-radius: 50px; font-size: 0.55em; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; }
-            
-            .card-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 0.65em; font-weight: 800; color: #bbb; text-transform: uppercase; }
-            .source-circle { width: 18px; height: 18px; background: #333; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 8px; }
-
-            .temp-badge { background: #f4f7fb; color: #5c6bc0; padding: 5px 12px; border-radius: 50px; font-size: 0.7em; font-weight: 800; display: inline-block; }
-            .ver-mais-container { text-align: center; margin: 3em 0; }
-            .btn-ver-mais { background: transparent !important; border: 1px solid #eee !important; color: #bbb !important; border-radius: 50px; padding: 0 40px; font-size: 0.7em; font-weight: 900; letter-spacing: 2px; cursor: pointer; }
-            .hidden-card { display: none; }
-            .page-footer { margin-top: auto; padding: 4em 0 2em 0; border-top: 1px solid #f2f2f2; }
+            .badge-cat { position: absolute; bottom: 10px; left: 10px; background: #4fc3f7; color: white; padding: 4px 12px; border-radius: 50px; font-size: 0.55em; font-weight: 900; text-transform: uppercase; }
 
             @media screen and (max-width: 1280px) {
                 #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
                 #wrapper { padding-left: 0 !important; }
                 .data-row { grid-template-columns: 1fr; }
+                .water-impact-box { padding: 2em; }
+                .fixed-water-icon { position: relative; left: 0; transform: none; margin-bottom: 15px; }
+                .fact-cycler-water { padding-left: 0; }
             }
 		</style>
 	</head>
@@ -65,12 +61,11 @@
 		<div id="wrapper">
 			<div id="main">
                 <div class="inner">
-					<header id="header" style="height: 0; margin: 0; padding: 0; overflow: hidden;"></header>
                     <section>
                         <div style="text-align: center; margin-bottom: 3em;">
                             <span class="category-label">Recursos Vitais</span>
                             <h1 style="font-size: 3.5em; font-weight: 300; color: #1a1a1a; letter-spacing: -2px; margin: 0;">Água: O Sangue da Terra</h1>
-                            <p style="font-size: 0.9em; font-style: italic; color: #bbb; margin-top: 5px;">Análise regional: <strong id="reg-name" style="color:#888">...</strong></p>
+                            <p style="font-size: 0.9em; font-style: italic; color: #bbb;">Análise regional: <strong id="reg-name">...</strong></p>
                         </div>
 
                         <!-- DASHBOARD LOCAL -->
@@ -84,45 +79,34 @@
                                             <div class="gauge-bar bar-ph"><div id="marker-ph" class="gauge-marker"></div></div>
                                         </div>
                                         <div class="gauge-container">
-                                            <div class="gauge-label"><span class="current-val" id="label-dureza">-- ºf</span><span class="unit">Dureza Francesa</span></div>
+                                            <div class="gauge-label"><span class="current-val" id="label-dureza">-- ºf</span><span class="unit">Dureza</span></div>
                                             <div class="gauge-bar bar-dureza"><div id="marker-dureza" class="gauge-marker"></div></div>
                                         </div>
                                     </div>
-                                    <p class="tech-detail" id="water-advantages" style="margin-top: -10px;">A analisar composição mineral...</p>
-                                </div>
-                            </div>
-
-                            <div class="data-row">
-                                <h4>Disponibilidade</h4>
-                                <div class="tech-content">
-                                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
-                                        <div>
-                                            <span class="tech-main" id="reg-aquifer">--</span><br>
-                                            <p class="tech-detail" id="reg-dams">--</p>
-                                        </div>
-                                        <div id="temp-container"></div>
-                                    </div>
+                                    <p class="tech-detail" id="water-advantages">A analisar composição mineral...</p>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- PANORAMA GLOBAL -->
-                        <div class="section-break">
-                            <span class="sub-label">Panorama Nacional e Global</span>
-                            <h2>Alerta de Escassez de Água</h2>
+                        <!-- NOVO: IMPACTO DO CONSUMO (WORLDOMETERS + IA) -->
+                        <div class="water-impact-box">
+                            <div class="fixed-water-icon">
+                                <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12,20A6,6 0 0,1 6,14C6,10 12,3.25 12,3.25C12,3.25 18,10 18,14A6,6 0 0,1 12,20Z" /></svg>
+                            </div>
+                            <div class="fact-cycler-water" id="water-facts-container">
+                                <!-- Injetado via JS -->
+                            </div>
                         </div>
 
                         <div class="data-row" style="border-bottom: none;">
-                            <h4>Crise Hídrica</h4>
+                            <h4>Alerta Hídrico</h4>
                             <div class="tech-content">
                                 <div id="noticias-agua-dinamico" class="observatorio-grid"></div>
-                                <div class="ver-mais-container">
+                                <div style="text-align: center; margin-top: 3em;">
                                     <button id="btn-load-more-agua" class="btn-ver-mais" style="display:none;">Ver Mais Relatórios</button>
                                 </div>
                             </div>
                         </div>
-
-                        <div id="no-gps-warning" style="text-align: center; padding: 4em; color: #bbb;"><p>Selecione uma localidade na barra lateral.</p></div>
 
                         <footer class="page-footer">
                             <div style="display: flex; align-items: center; justify-content: flex-end; gap: 10px; opacity: 0.3;">
@@ -141,39 +125,38 @@
 
 		<script src="/assets/js/jquery.min.js"></script>
         <script>
-            let locationsDB = [];
-            let noticiasAgua = [];
-            let visiveisAgua = 4;
+            let locationsDB = [], noticiasAgua = [], visiveisAgua = 4;
 
-            function calcularDistancia(lat1, lon1, lat2, lon2) {
-                const R = 6371;
-                const dLat = (lat2 - lat1) * Math.PI / 180;
-                const dLon = (lon2 - lon1) * Math.PI / 180;
-                const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
-                return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
-            }
+            // Novos dados dinâmicos (Worldometers + IA)
+            const waterFacts = [
+                { titulo: "Consumo Invisível da IA", desc: "Uma simples conversa de 20 perguntas com uma IA consome 500ml de água doce para refrigeração dos servidores." },
+                { titulo: "Escassez Global", desc: "Mais de 800 milhões de pessoas no mundo não têm acesso a água potável segura hoje." },
+                { titulo: "Pressão Agrícola", desc: "70% de toda a água doce retirada no planeta é utilizada exclusivamente para a agricultura industrial." },
+                { titulo: "Desperdício Urbano", desc: "Em média, 30% da água tratada nas cidades perde-se em fugas antes de chegar à torneira do consumidor." }
+            ];
 
             async function inicializarPagina() {
                 try {
-                    const rLoc = await fetch('/data/bioregioes.json');
-                    locationsDB = await rLoc.json();
+                    const [rLoc, rNews] = await Promise.all([
+                        fetch('/data/bioregioes.json').then(r => r.json()),
+                        fetch('/data/noticias.json').then(r => r.json())
+                    ]);
+                    locationsDB = rLoc;
+                    noticiasAgua = rNews.filter(n => (n.categoria || "").toLowerCase().includes('agua'));
                     
-                    const savedId = localStorage.getItem('biocultura_region');
-                    let info = locationsDB.find(i => i.id === savedId) || locationsDB.find(i => i.id === "proenca-a-nova");
-                    
+                    const info = locationsDB.find(i => i.id === (localStorage.getItem('biocultura_region') || "proenca-a-nova"));
                     renderDashboard(info);
-                    await carregarNoticiasAgua();
-                } catch(e) { console.error("Erro na inicialização:", e); }
+                    renderizarCardsAgua();
+                    iniciarCiclosAgua();
+                } catch(e) { console.error(e); }
             }
 
             function renderDashboard(info) {
                 if(!info) return;
-                document.getElementById('no-gps-warning').style.display = 'none';
                 document.getElementById('water-dashboard').style.display = 'block';
                 document.getElementById('reg-name').innerText = info.titulo;
-
                 if (info.recursos_hidricos) {
-                    const ph = parseFloat(info.recursos_hidricos.ph_agua) || 7.0;
+                    const ph = parseFloat(info.recursos_hidricos.ph_agua) || 7;
                     const dur = parseFloat(info.recursos_hidricos.dureza_fr) || 10;
                     document.getElementById('label-ph').innerText = "pH " + ph;
                     document.getElementById('label-dureza').innerText = dur + " ºf";
@@ -181,112 +164,42 @@
                         document.getElementById('marker-ph').style.left = (ph / 14 * 100) + "%";
                         document.getElementById('marker-dureza').style.left = (Math.min(dur / 50 * 100, 100)) + "%";
                     }, 300);
-                    document.getElementById('water-advantages').innerText = ph < 7 ? "Água ligeiramente ácida: Ideal para mirtilos." : "Água equilibrada: Excelente para neutralizar solos ácidos.";
-                    const mes = new Date().getMonth();
-                    const temp = (info.recursos_hidricos.temp_media_agua && info.recursos_hidricos.temp_media_agua[mes]) ? info.recursos_hidricos.temp_media_agua[mes] : '--';
-                    document.getElementById('temp-container').innerHTML = `<div class="temp-badge">Água hoje: ${temp}ºC</div>`;
                 }
-                if (info.agua) {
-                    document.getElementById('reg-aquifer').innerText = "Aquífero: " + (info.agua.aquiferos || "Em levantamento.");
-                    document.getElementById('reg-dams').innerText = "Barragens: " + ((info.agua.barragens_proximas && Array.isArray(info.agua.barragens_proximas)) ? info.agua.barragens_proximas.join(', ') : "Nenhuma detetada.");
-                }
-            }
-
-            // --- LÓGICA DE EVENTOS (ONCLICK E INPUT) ---
-            $(document).on('input', '#loc-search-input', function() {
-                const val = $(this).val().toLowerCase();
-                const dropdown = $('#loc-dropdown');
-                dropdown.empty();
-                if(val.length < 2) { dropdown.hide(); return; }
-                const matches = locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0, 6);
-                if(matches.length > 0) {
-                    dropdown.show();
-                    matches.forEach(m => {
-                        $('<div class="bio-res-item"></div>').text(m.titulo).on('click', function() {
-                            localStorage.setItem('biocultura_region', m.id);
-                            renderDashboard(m);
-                            dropdown.hide();
-                            $('#loc-search-input').val(m.titulo);
-                        }).appendTo(dropdown);
-                    });
-                } else dropdown.hide();
-            });
-
-            $(document).on('click', '#btn-gps-trigger', function() {
-                const input = $('#loc-search-input');
-                input.val("A localizar...");
-                navigator.geolocation.getCurrentPosition(pos => {
-                    let closest = locationsDB[0]; let minD = Infinity;
-                    locationsDB.forEach(c => {
-                        if(c.lat && c.lon) {
-                            let d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon);
-                            if(d < minD) { minD = d; closest = c; }
-                        }
-                    });
-                    localStorage.setItem('biocultura_region', closest.id);
-                    renderDashboard(closest);
-                    input.val(closest.titulo);
-                }, () => { input.val("Erro GPS"); });
-            });
-
-            // ONCLICK DO BOTÃO VER MAIS (DELEGADO)
-            $(document).on('click', '#btn-load-more-agua', function() {
-                visiveisAgua += 4;
-                renderizarCardsAgua();
-            });
-
-            // --- CARREGAMENTO DE NOTÍCIAS ---
-            async function carregarNoticiasAgua() {
-                try {
-                    const r = await fetch('/data/noticias.json');
-                    if (!r.ok) throw new Error('Erro ao carregar noticias.json');
-                    const todas = await r.json();
-                    
-                    // Filtro robusto para a categoria "agua"
-                    noticiasAgua = todas.filter(n => {
-                        const cat = (n.categoria || n.tag || "").toLowerCase()
-                                     .normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-                        return cat.includes('agua');
-                    });
-
-                    renderizarCardsAgua();
-                } catch(e) { console.error("Erro no filtro de notícias:", e); }
             }
 
             function renderizarCardsAgua() {
                 const container = document.getElementById('noticias-agua-dinamico');
-                if(!container) return;
-                container.innerHTML = '';
-
-                if(noticiasAgua.length === 0) {
-                    container.innerHTML = '<p style="color:#bbb; grid-column: 1/-1; text-align:center; padding: 2em;">Nenhum alerta hídrico disponível para esta categoria.</p>';
-                }
-
-                noticiasAgua.forEach((n, index) => {
-                    const card = document.createElement('a');
-                    card.href = `/observatorio/noticia-detalhe.html?id=${n.id}`;
-                    card.className = `news-card ${index >= visiveisAgua ? 'hidden-card' : ''}`;
-                    
-                    const img = n.imagem || 'https://images.unsplash.com/photo-1541544741938-0af808871cc0?q=80&w=800';
-                    const resumo = n.resumo_biocultura ? n.resumo_biocultura.substring(0, 100) : "Sem resumo disponível.";
-
-                    card.innerHTML = `
-                        <div class="card-image-wrap"><img src="${img}"><span class="badge-cat agua">${n.categoria || 'Água'}</span></div>
-                        <div class="card-meta"><div class="source-circle">${(n.fonte || 'B').charAt(0)}</div><span>${n.fonte || 'bioCultura'}</span></div>
+                container.innerHTML = noticiasAgua.map((n, i) => `
+                    <a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-card ${i >= visiveisAgua ? 'hidden-card' : ''}">
+                        <div class="card-image-wrap"><img src="${n.imagem}"><span class="badge-cat">Água</span></div>
                         <h3>${n.titulo}</h3>
-                        <p>${resumo}...</p>
-                    `;
-                    container.appendChild(card);
-                });
-                const btn = document.getElementById('btn-load-more-agua');
-                if(btn) btn.style.display = noticiasAgua.length > visiveisAgua ? 'inline-block' : 'none';
+                        <p>${n.resumo.substring(0, 100)}...</p>
+                    </a>`).join('');
+                document.getElementById('btn-load-more-agua').style.display = noticiasAgua.length > visiveisAgua ? 'inline-block' : 'none';
             }
 
-            // --- LOAD SIDEBAR E INICIO ---
+            function iniciarCiclosAgua() {
+                const container = document.getElementById('water-facts-container');
+                container.innerHTML = waterFacts.map((f, i) => `
+                    <div class="water-fact-item ${i === 0 ? 'active' : ''}">
+                        <b>${f.titulo}</b>
+                        <span>${f.desc}</span>
+                    </div>`).join('');
+
+                let factP = 0;
+                setInterval(() => {
+                    const items = document.querySelectorAll('.water-fact-item');
+                    items.forEach(el => el.classList.remove('active'));
+                    factP = (factP + 1) % items.length;
+                    items[factP].classList.add('active');
+                }, 8000);
+            }
+
+            $(document).on('click', '#btn-load-more-agua', () => { visiveisAgua += 4; renderizarCardsAgua(); });
+
             fetch('/sidebar-content.html').then(r => r.text()).then(html => {
                 document.getElementById('sidebar').innerHTML = html;
                 inicializarPagina();
-                var s = document.createElement('script'); s.src = '/assets/js/main.js'; document.body.appendChild(s);
             });
         </script>
 	</body>
