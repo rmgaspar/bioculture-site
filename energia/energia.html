@@ -3,7 +3,7 @@
 	<head>
 		<title>bioCultura - Observatório da Energia</title>
 		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<meta name="viewport" content="width=device-width, initial-scale, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
 		<style>
             /* --- ESTRUTURA GLOBAL --- */
@@ -18,52 +18,60 @@
 
             .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; color: #bbb; margin-bottom: 8px; display: block; text-align: center; }
             
-            /* Layout Vertical (Sem buraco à esquerda) */
             .data-row { display: block; padding: 2.5em 0; border-bottom: 1px solid #f2f2f2; }
             .data-row h4 { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin: 0 0 25px 0; display: block; }
 
-            /* MIX ENERGÉTICO (GAUGES) */
+            /* MIX ENERGÉTICO */
             .energy-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-bottom: 20px; }
             .energy-item { margin-bottom: 15px; }
             .energy-info { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 6px; }
             .energy-info b { font-size: 1.1em; color: #1a1a1a; }
-            .energy-info span { font-size: 0.7em; font-weight: 800; color: #bbb; text-transform: uppercase; }
-            .energy-bar-bg { height: 6px; width: 100%; background: #eee; border-radius: 10px; position: relative; overflow: hidden; }
-            .energy-bar-fill { height: 100%; position: absolute; left: 0; top: 0; border-radius: 10px; transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1); }
             
             /* Cores por Fonte */
+            .c-solar { color: #f1c40f !important; }
+            .c-wind { color: #3498db !important; }
+            .c-hydro { color: #2980b9 !important; }
+            .c-gas { color: #95a5a6 !important; }
+            .c-biomass { color: #27ae60 !important; }
+
+            .energy-bar-bg { height: 6px; width: 100%; background: #eee; border-radius: 10px; position: relative; overflow: hidden; }
+            .energy-bar-fill { height: 100%; position: absolute; left: 0; top: 0; border-radius: 10px; transition: width 1.5s ease-in-out; }
             .fill-solar { background: #f1c40f; }
             .fill-wind { background: #3498db; }
             .fill-hydro { background: #2980b9; }
             .fill-gas { background: #95a5a6; }
             .fill-biomass { background: #27ae60; }
 
-            /* INFRAESTRUTURA (LISTA COM TOGGLE) */
-            .plants-list { list-style: none; padding: 0; margin: 0; }
+            /* INFRAESTRUTURA */
             .plant-item { padding: 12px 0; border-bottom: 1px solid #f9f9f9; display: flex; justify-content: space-between; align-items: center; }
-            .plant-item:last-child { border: none; }
+            .plant-main { display: flex; flex-direction: column; }
             .plant-name { font-weight: 700; color: #333; font-size: 0.95em; }
-            .plant-type { font-size: 0.7em; font-weight: 800; color: #bbb; text-transform: uppercase; margin-left: 10px; }
-            .toggle-controls { margin-top: 15px; display: flex; gap: 20px; }
+            .plant-power { font-size: 0.75em; color: #777; font-weight: 600; margin-top: 2px; }
+            .plant-type { font-size: 0.65em; font-weight: 800; color: #bbb; text-transform: uppercase; letter-spacing: 1px; }
             .btn-toggle { cursor: pointer; color: #bbb; font-size: 1.5em; font-weight: 300; transition: color 0.2s; user-select: none; }
-            .btn-toggle:hover { color: #1a1a1a; }
 
             /* RELATÓRIOS */
-            .report-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; margin-top: 10px; }
+            .report-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; }
             .report-item { border-top: 1px solid #f9f9f9; padding-top: 20px; }
-            .report-item h5 { font-size: 0.75em; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; color: #ef6c00; margin-bottom: 12px; }
+            .report-item h5 { font-size: 0.75em; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
             .report-item p { font-size: 0.95em; line-height: 1.7; color: #666; margin-bottom: 15px; text-align: justify; }
             .report-source { font-size: 0.65em; font-weight: 400; color: #bbb; text-transform: uppercase; letter-spacing: 1px; display: block; border-top: 1px solid #eee; padding-top: 8px; }
 
-            /* NOTÍCIAS (SEM BORDAS) */
+            /* NOTÍCIAS (ESTILO INDEX) */
             .news-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; margin-bottom: 4em; }
-            .news-item { text-decoration: none; color: inherit; display: block; transition: all 0.3s; }
-            .news-item:hover { opacity: 0.7; transform: translateY(-5px); }
-            .news-item h3 { font-size: 1.15em; font-weight: 700; color: #1a1a1a; margin: 15px 0 10px 0; }
-            .news-meta { display: flex; align-items: center; gap: 10px; border-top: 1px solid #f2f2f2; padding-top: 12px; }
+            .news-item { 
+                text-decoration: none; color: inherit; display: block; 
+                padding: 25px; background: #fdfdfd; border: 1px solid #f2f2f2; 
+                border-radius: 12px; transition: all 0.3s; 
+            }
+            .news-item:hover { transform: translateY(-5px); border-color: #ddd; }
+            .news-item h3 { font-size: 1.15em; font-weight: 700; color: #1a1a1a; margin-bottom: 12px; line-height: 1.3; min-height: 2.6em; }
+            .news-item p { font-size: 0.9em; color: #777; line-height: 1.5; margin-bottom: 15px; }
+            .news-meta { display: flex; align-items: center; gap: 10px; border-top: 1px solid #f9f9f9; padding-top: 12px; }
             .source-logo { width: 16px; height: 16px; object-fit: contain; filter: grayscale(100%); opacity: 0.6; }
+            .news-meta span { font-size: 0.65em; font-weight: 800; color: #bbb; text-transform: uppercase; letter-spacing: 1px; }
 
-            .bio-res-item { padding: 12px 18px; font-size: 0.9em; color: #666; cursor: pointer; border-bottom: 1px solid #f9f9f9 !important; }
+            .btn-pagination { background: none !important; border: none !important; color: #bbb !important; font-size: 0.75em; font-weight: 900; letter-spacing: 3px; cursor: pointer; text-transform: lowercase; }
 
             @media screen and (max-width: 1280px) {
                 #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
@@ -80,52 +88,45 @@
                         <div style="text-align: center; margin-bottom: 3em;">
                             <span class="category-label">Recursos Energéticos</span>
                             <h1 style="font-size: 3.5em; font-weight: 300; color: #1a1a1a; letter-spacing: -2px; margin: 0;">Energia: O Motor da Regeneração</h1>
-                            <p style="font-size: 0.9em; font-style: italic; color: #bbb;">Análise regional: <strong id="reg-name">...</strong></p>
+                            <p style="font-size: 0.9em; font-style: italic; color: #bbb;">Análise regional: <strong id="reg-name" style="color:#888">...</strong></p>
                         </div>
 
-                        <!-- 1. DASHBOARD: MIX ENERGÉTICO -->
+                        <!-- 1. MIX ENERGÉTICO -->
                         <div id="energy-dashboard" class="data-row" style="display:none;">
                             <h4>Recursos e Mix Energético</h4>
                             <div class="tech-content">
-                                <div id="mix-container" class="energy-grid">
-                                    <!-- Injetado via JS -->
-                                </div>
-                                <p class="tech-detail" id="energy-status-text" style="color:#bbb; font-style:italic"></p>
+                                <div id="mix-container" class="energy-grid"></div>
                             </div>
                         </div>
 
-                        <!-- 2. INFRAESTRUTURA: CENTRAIS -->
+                        <!-- 2. CENTRAIS -->
                         <div class="data-row">
                             <h4>Centrais em Proximidade</h4>
                             <div class="tech-content">
-                                <div id="plants-container">
-                                    <ul class="plants-list" id="plants-list-main"></ul>
-                                    <div class="toggle-controls">
-                                        <span id="btn-expand-plants" class="btn-toggle" title="Ver mais">+</span>
-                                        <span id="btn-collapse-plants" class="btn-toggle" style="display:none;" title="Recolher">-</span>
-                                    </div>
+                                <div id="plants-list-main"></div>
+                                <div style="display: flex; gap: 20px; margin-top: 15px;">
+                                    <span id="btn-expand-plants" class="btn-toggle">+</span>
+                                    <span id="btn-collapse-plants" class="btn-toggle" style="display:none;">-</span>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- 3. RELATÓRIO TÉCNICO 2025 -->
+                        <!-- 3. RELATÓRIOS -->
                         <div class="data-row">
                             <h4>Relatório Global de Energia</h4>
                             <div class="tech-content">
                                 <h3 style="margin: 0 0 10px 0; font-weight: 300; font-size: 2em;">Balanço Energético e Metas 2025/2026</h3>
-                                <div id="report-grid-energy" class="report-grid">
-                                    <!-- Injetado via JS -->
-                                </div>
+                                <div id="report-grid-energy" class="report-grid"></div>
                             </div>
                         </div>
 
-                        <!-- 4. NOTÍCIAS -->
+                        <!-- 4. NOTÍCIAS (ESTILO INDEX) -->
                         <div class="data-row" style="border-bottom: none;">
                             <h4>Notícias</h4>
                             <div class="tech-content">
                                 <div id="noticias-energy-dinamico" class="news-list"></div>
-                                <div style="text-align: center;">
-                                    <button id="btn-load-more-energy" class="btn-pagination" style="background:none; border:1px solid #eee; padding:10px 40px; border-radius:50px; color:#bbb; font-size:0.7em; font-weight:900; text-transform:uppercase; cursor:pointer;">ver mais</button>
+                                <div style="text-align: center; margin-top: 3em;">
+                                    <button id="btn-load-more-energy" class="btn-pagination">ver mais</button>
                                 </div>
                             </div>
                         </div>
@@ -145,26 +146,10 @@
             let locationsDB = [], noticiasEnergy = [], allPlants = [], visiveisEnergy = 4;
 
             const relatoriosEnergy = [
-                { 
-                    titulo: "Produção Renovável Nacional", 
-                    texto: "Em 2025, Portugal consolidou a sua posição como líder europeu, com as fontes renováveis a suprir mais de 75% do consumo elétrico nacional. A energia eólica e a hídrica mantêm-se como pilares, mas o solar fotovoltaico registou o maior crescimento homólogo, impulsionado pelo autoconsumo e comunidades de energia.", 
-                    fonte: "REN Datahub / DGEG 2025", cor: "#f1c40f" 
-                },
-                { 
-                    titulo: "Estratégia Solar e Armazenamento", 
-                    texto: "A expansão de centrais solares flutuantes em albufeiras e o reforço da capacidade de bombagem hídrica são as prioridades para 2026. O armazenamento em baterias de larga escala está a ser integrado na rede para garantir a estabilidade e aproveitar os excedentes de produção meridiana.", 
-                    fonte: "Portal Energia / APA REA", cor: "#3498db" 
-                },
-                { 
-                    titulo: "Independência e Gás Natural", 
-                    texto: "A dependência de combustíveis fósseis para produção elétrica desceu para mínimos históricos. O gás natural funciona agora apenas como reserva estratégica e backup térmico, com Portugal a acelerar a transição para o hidrogénio verde como vetor de descarbonização industrial.", 
-                    fonte: "DGEG - Energia em Números", cor: "#95a5a6" 
-                },
-                { 
-                    titulo: "Investimento e Inovação", 
-                    texto: "O setor das renováveis atrai hoje o maior volume de investimento direto estrangeiro em Portugal. O foco na eólica offshore e na eficiência energética dos edifícios (através do PRR) são os motores da economia verde para a próxima década.", 
-                    fonte: "Portugal Global / Pordata", cor: "#27ae60" 
-                }
+                { titulo: "Produção Renovável Nacional", texto: "Em 2025, Portugal consolidou a sua posição como líder europeu, com as fontes renováveis a suprir mais de 75% do consumo elétrico nacional.", fonte: "REN Datahub / DGEG 2025", cor: "#f1c40f" },
+                { titulo: "Estratégia Solar", texto: "A expansão de centrais solares flutuantes e o armazenamento em baterias de larga escala são as prioridades para garantir a estabilidade da rede em 2026.", fonte: "Portal Energia / APA REA", cor: "#3498db" },
+                { titulo: "Independência Fóssil", texto: "A dependência de gás natural desceu para mínimos históricos, funcionando agora apenas como reserva estratégica para a transição do hidrogénio verde.", fonte: "DGEG - Energia em Números", cor: "#95a5a6" },
+                { titulo: "Investimento Verde", texto: "O setor das renováveis atrai o maior volume de investimento direto estrangeiro, com foco na eólica offshore e eficiência energética.", fonte: "Portugal Global / Pordata", cor: "#27ae60" }
             ];
 
             async function inicializarPagina() {
@@ -175,10 +160,7 @@
                     ]);
                     locationsDB = rLoc;
                     noticiasEnergy = rNews.filter(n => (n.categoria || "").toLowerCase().includes('energia'));
-                    
-                    const savedId = localStorage.getItem('biocultura_region') || "proenca-a-nova";
-                    const info = locationsDB.find(i => i.id === savedId);
-                    
+                    const info = locationsDB.find(i => i.id === (localStorage.getItem('biocultura_region') || "proenca-a-nova"));
                     renderDashboard(info);
                     renderRelatorios();
                     renderizarCardsEnergy();
@@ -191,10 +173,7 @@
                     const val = $(this).val().toLowerCase(), dropdown = $('#loc-dropdown').empty();
                     if(val.length < 2) return dropdown.hide();
                     locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0,5).forEach(m => {
-                        $('<div class="bio-res-item"></div>').text(m.titulo).on('click', () => {
-                            localStorage.setItem('biocultura_region', m.id);
-                            location.reload();
-                        }).appendTo(dropdown);
+                        $('<div class="bio-res-item"></div>').text(m.titulo).on('click', () => { localStorage.setItem('biocultura_region', m.id); location.reload(); }).appendTo(dropdown);
                     });
                     dropdown.show();
                 });
@@ -205,45 +184,39 @@
                 document.getElementById('energy-dashboard').style.display = 'block';
                 document.getElementById('reg-name').innerText = info.titulo;
 
-                // 1. Mix Energético (Dados simulados baseados na região para demonstração)
                 const mix = info.energia?.mix || [
-                    { label: "Solar", val: 25, class: "fill-solar" },
-                    { label: "Eólica", val: 35, class: "fill-wind" },
-                    { label: "Hídrica", val: 15, class: "fill-hydro" },
-                    { label: "Biomassa", val: 10, class: "fill-biomass" },
-                    { label: "Gás Natural", val: 15, class: "fill-gas" }
+                    { label: "Solar", val: 25, class: "fill-solar", textClass: "c-solar" },
+                    { label: "Eólica", val: 35, class: "fill-wind", textClass: "c-wind" },
+                    { label: "Hídrica", val: 15, class: "fill-hydro", textClass: "c-hydro" },
+                    { label: "Biomassa", val: 10, class: "fill-biomass", textClass: "c-biomass" },
+                    { label: "Outros", val: 15, class: "fill-gas", textClass: "c-gas" }
                 ];
 
-                const mixHtml = mix.map(m => `
+                document.getElementById('mix-container').innerHTML = mix.map(m => `
                     <div class="energy-item">
-                        <div class="energy-info"><b>${m.label}</b> <span>${m.val}%</span></div>
+                        <div class="energy-info"><b>${m.label}</b> <span class="${m.textClass}">${m.val}%</span></div>
                         <div class="energy-bar-bg"><div class="energy-bar-fill ${m.class}" style="width: ${m.val}%"></div></div>
-                    </div>
-                `).join('');
-                document.getElementById('mix-container').innerHTML = mixHtml;
-                document.getElementById('energy-status-text').innerText = `O mix energético reflete a capacidade instalada e produção estimada para a região de ${info.titulo}.`;
+                    </div>`).join('');
 
-                // 2. Centrais (Toggle)
                 allPlants = info.energia?.centrais || [
-                    { nome: "Parque Eólico local", tipo: "Eólica" },
-                    { nome: "Central Fotovoltaica Regional", tipo: "Solar" },
-                    { nome: "Barragem de Proximidade", tipo: "Hídrica" },
-                    { nome: "Unidade de Biomassa Florestal", tipo: "Biomassa" },
-                    { nome: "Subestação de Alta Tensão", tipo: "Rede" }
+                    { nome: "Parque Eólico local", tipo: "Eólica", potencia: "12.5 MW" },
+                    { nome: "Central Fotovoltaica Regional", tipo: "Solar", potencia: "5.2 MW" },
+                    { nome: "Barragem de Proximidade", tipo: "Hídrica", potencia: "45 MW" },
+                    { nome: "Unidade de Biomassa Florestal", tipo: "Biomassa", potencia: "2.1 MW" }
                 ];
                 renderPlants(false);
             }
 
             function renderPlants(expand) {
-                const list = document.getElementById('plants-list-main');
                 const show = expand ? allPlants : allPlants.slice(0, 3);
-                list.innerHTML = show.map(p => `
-                    <li class="plant-item">
-                        <span class="plant-name">${p.nome}</span>
+                document.getElementById('plants-list-main').innerHTML = show.map(p => `
+                    <div class="plant-item">
+                        <div class="plant-main">
+                            <span class="plant-name">${p.nome}</span>
+                            <span class="plant-power">${p.potencia}</span>
+                        </div>
                         <span class="plant-type">${p.tipo}</span>
-                    </li>
-                `).join('');
-                
+                    </div>`).join('');
                 document.getElementById('btn-expand-plants').style.display = (!expand && allPlants.length > 3) ? 'block' : 'none';
                 document.getElementById('btn-collapse-plants').style.display = expand ? 'block' : 'none';
             }
@@ -258,16 +231,18 @@
             }
 
             function renderizarCardsEnergy() {
-                const container = document.getElementById('noticias-energy-dinamico');
-                container.innerHTML = noticiasEnergy.map((n, i) => `
+                document.getElementById('noticias-energy-dinamico').innerHTML = noticiasEnergy.map((n, i) => `
                     <a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-item ${i >= visiveisEnergy ? 'hidden-card' : ''}" style="${i >= visiveisEnergy ? 'display:none' : ''}">
                         <h3>${n.titulo}</h3>
-                        <div class="news-meta"><img src="${n.logo}" class="source-logo"><span>${n.data}</span></div>
+                        <p>${(n.resumo_biocultura || n.resumo || "").substring(0, 110)}...</p>
+                        <div class="news-meta">
+                            <img src="${n.logo}" class="source-logo">
+                            <span>${n.data}</span>
+                        </div>
                     </a>`).join('');
                 document.getElementById('btn-load-more-energy').style.display = noticiasEnergy.length > visiveisEnergy ? 'inline-block' : 'none';
             }
 
-            // Eventos
             document.getElementById('btn-expand-plants').onclick = () => renderPlants(true);
             document.getElementById('btn-collapse-plants').onclick = () => renderPlants(false);
             document.getElementById('btn-load-more-energy').onclick = () => { visiveisEnergy += 4; renderizarCardsEnergy(); };
