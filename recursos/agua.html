@@ -18,8 +18,8 @@
 
             .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; color: #bbb; margin-bottom: 8px; display: block; text-align: center; }
             
-            /* Redução de espaços entre linhas de dados */
-            .data-row { display: grid; grid-template-columns: 180px 1fr; gap: 40px; padding: 1.5em 0; border-bottom: 1px solid #f2f2f2; }
+            /* Alinhamento de Linhas (Grid 180px para labels) */
+            .data-row { display: grid; grid-template-columns: 180px 1fr; gap: 40px; padding: 2em 0; border-bottom: 1px solid #f2f2f2; }
             .data-row h4 { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin: 0; padding-top: 5px; }
 
             /* GAUGES */
@@ -32,34 +32,36 @@
             .bar-dureza { background: linear-gradient(to right, #4fc3f7 0%, #ffb74d 50%, #ef5350 100%); }
             .gauge-marker { position: absolute; top: -5px; left: 0%; width: 3px; height: 16px; background: #1a1a1a; border-radius: 2px; transition: left 1.5s cubic-bezier(0.4, 0, 0.2, 1); }
 
-            /* IMPACTO & RELATÓRIO */
+            /* IMPACTO & ALINHAMENTO CAIXA AZUL */
             .water-impact-box { background: #f4f9ff; padding: 2.5em 3em; border-radius: 20px; margin: 1.5em 0; position: relative; overflow: hidden; border-left: 4px solid #4fc3f7; }
-            .fact-cycler-water { padding-left: 70px; min-height: 70px; position: relative; }
-            .water-fact-item { position: absolute; top: 0; opacity: 0; transition: opacity 1s ease; width: 100%; }
+            .fact-cycler-water { min-height: 50px; position: relative; }
+            .water-fact-item { position: absolute; top: 0; opacity: 0; transition: opacity 1s ease; width: 100%; font-size: 1.1em; line-height: 1.5; color: #5c6bc0; }
             .water-fact-item.active { opacity: 1; position: relative; }
+            .water-fact-item b { color: #1a237e; margin-right: 10px; }
             
-            .global-report { background: #fff; border: 1px solid #f2f2f2; border-radius: 20px; padding: 2.5em 3em; margin-top: 2em; }
-            .report-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; margin-top: 1.5em; }
-            .report-item h5 { font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; color: #4fc3f7; margin-bottom: 10px; }
-            .report-item p { font-size: 0.95em; line-height: 1.6; color: #666; margin: 0; }
+            /* RELATÓRIOS DINÂMICOS */
+            .report-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; margin-top: 2em; }
+            .report-item { border-top: 1px solid #f9f9f9; padding-top: 20px; }
+            .report-item h5 { font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; color: #4fc3f7; margin-bottom: 12px; }
+            .report-item p { font-size: 0.95em; line-height: 1.7; color: #666; margin-bottom: 15px; text-align: justify; }
+            .report-source { font-size: 0.65em; font-weight: 800; color: #bbb; text-transform: uppercase; letter-spacing: 1px; display: block; border-top: 1px solid #eee; padding-top: 8px; }
 
             /* NEWS GRID */
-            .observatorio-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px; margin-top: 1.5em; }
+            .observatorio-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px; margin-top: 2em; }
             .news-card { text-decoration: none; color: inherit; display: flex; flex-direction: column; transition: all 0.3s ease; }
             .news-card:hover { transform: translateY(-5px); }
             .card-image-wrap { position: relative; width: 100%; height: 180px; overflow: hidden; border-radius: 12px; background: #f5f5f5; margin-bottom: 15px; }
             .card-image-wrap img { width: 100%; height: 100%; object-fit: cover; }
             .badge-cat { position: absolute; bottom: 10px; left: 10px; background: #4fc3f7; color: white; padding: 4px 12px; border-radius: 50px; font-size: 0.55em; font-weight: 900; text-transform: uppercase; }
 
+            .transition-text { font-size: 1.1em; line-height: 1.6; color: #777; margin-bottom: 1em; max-width: 1000px; }
             .bio-res-item { padding: 12px 18px; font-size: 0.9em; color: #666; cursor: pointer; border-bottom: 1px solid #f9f9f9 !important; }
-            .bio-res-item:hover { background: #f4f9ff; color: #4fc3f7; }
-
-            .transition-text { font-size: 1.1em; line-height: 1.6; color: #777; margin: 1em 0; max-width: 900px; }
 
             @media screen and (max-width: 1280px) {
                 #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
                 #wrapper { padding-left: 0 !important; }
                 .report-grid { grid-template-columns: 1fr; }
+                .data-row { grid-template-columns: 1fr; gap: 10px; }
             }
 		</style>
 	</head>
@@ -68,7 +70,7 @@
 			<div id="main">
                 <div class="inner">
                     <section>
-                        <div style="text-align: center; margin-bottom: 2em;">
+                        <div style="text-align: center; margin-bottom: 3em;">
                             <span class="category-label">Recursos Vitais</span>
                             <h1 style="font-size: 3.5em; font-weight: 300; color: #1a1a1a; letter-spacing: -2px; margin: 0;">Água: O Sangue da Terra</h1>
                             <p style="font-size: 0.9em; font-style: italic; color: #bbb;">Análise regional: <strong id="reg-name">...</strong></p>
@@ -94,21 +96,18 @@
                             </div>
                         </div>
 
-                        <!-- ALERTA HÍDRICO (MOVIDO PARA CIMA) -->
-                        <div class="data-row" style="border-bottom: none; padding-top: 2em;">
+                        <!-- ALERTA HÍDRICO -->
+                        <div class="data-row">
                             <h4>Alerta Hídrico</h4>
                             <div class="tech-content">
-                                <!-- Texto de Transição -->
                                 <p class="transition-text">
                                     A escassez de água é um desafio multidimensional que afeta ecossistemas e sociedades. A monitorização constante dos níveis hídricos e a compreensão dos novos padrões de consumo são fundamentais para uma gestão regenerativa e resiliente.
                                 </p>
                                 
-                                <!-- Impacto Rápido (IA e Factos) -->
                                 <div class="water-impact-box">
                                     <div class="fact-cycler-water" id="water-facts-container"></div>
                                 </div>
 
-                                <!-- Grelha de Notícias -->
                                 <div id="noticias-agua-dinamico" class="observatorio-grid"></div>
                                 <div style="text-align: center; margin-top: 2em;">
                                     <button id="btn-load-more-agua" class="btn-ver-mais" style="display:none;">Ver Mais Relatórios</button>
@@ -116,31 +115,18 @@
                             </div>
                         </div>
 
-                        <!-- RELATÓRIO TÉCNICO GLOBAL -->
-                        <div class="global-report">
-                            <span class="category-label" style="text-align:left;">Relatório de Escassez Global</span>
-                            <h3 style="margin-top:10px;">Análise Crítica de Stress Hídrico</h3>
-                            <div class="report-grid">
-                                <div class="report-item">
-                                    <h5>Pontos Críticos em Portugal</h5>
-                                    <p>Portugal apresenta um stress hídrico elevado (Worldometers), com o Alentejo e Algarve em níveis críticos. A disponibilidade per capita tem caído drasticamente devido à redução da precipitação média anual.</p>
-                                </div>
-                                <div class="report-item">
-                                    <h5>Principais Causas de Consumo</h5>
-                                    <p>Segundo a FAO (AQUASTAT), a agricultura intensiva absorve 70% da água doce global. Em Portugal, a expansão de culturas de regadio permanente e o consumo energético de Datacenters são os novos vetores de pressão.</p>
-                                </div>
-                                <div class="report-item">
-                                    <h5>Problemas Estruturais (UN-Water)</h5>
-                                    <p>A má gestão de aquíferos e a poluição por nitratos comprometem as reservas subterrâneas. A ONU alerta que a água não é apenas um recurso, mas um direito humano sob ameaça climática e geopolítica.</p>
-                                </div>
-                                <div class="report-item">
-                                    <h5>Como Podemos Ajudar</h5>
-                                    <p>Implementação de agricultura regenerativa para aumentar a retenção de água no solo, reutilização de águas cinzentas e monitorização em tempo real das perdas nas redes públicas (World Water).</p>
+                        <!-- RELATÓRIO TÉCNICO GLOBAL DINÂMICO -->
+                        <div class="data-row" style="border-bottom: none;">
+                            <h4>Relatório Global</h4>
+                            <div class="tech-content">
+                                <h3 style="margin: 0 0 10px 0; font-weight: 300; font-size: 2em;">Análise Crítica de Stress Hídrico</h3>
+                                <div id="report-grid-dynamic" class="report-grid">
+                                    <!-- Injetado via JS -->
                                 </div>
                             </div>
                         </div>
 
-                        <footer class="page-footer" style="margin-top:3em; padding-top:2em; border-top:1px solid #f2f2f2; opacity:0.3; text-align:right;">
+                        <footer class="page-footer" style="margin-top:4em; padding-top:2em; border-top:1px solid #f2f2f2; opacity:0.3; text-align:right;">
                             <span style="display: block; font-size: 0.85em; font-weight: 900; color: #333;">bioCultura</span>
                             <span style="display: block; font-size: 0.5em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Global Regeneration</span>
                         </footer>
@@ -155,9 +141,32 @@
             let locationsDB = [], noticiasAgua = [], visiveisAgua = 4;
 
             const waterFacts = [
+                { titulo: "Agricultura Global", desc: "70% da água doce do planeta é consumida pela agricultura industrial (FAO)." },
                 { titulo: "Consumo Invisível da IA", desc: "Uma conversa de 20 perguntas com uma IA consome 500ml de água para refrigeração." },
-                { titulo: "Stress Hídrico Portugal", desc: "Portugal é um dos países europeus com maior risco de desertificação a sul do Tejo." },
-                { titulo: "Agricultura Global", desc: "70% da água doce do planeta é consumida pela agricultura industrial (FAO)." }
+                { titulo: "Stress Hídrico Portugal", desc: "Portugal é um dos países europeus com maior risco de desertificação a sul do Tejo." }
+            ];
+
+            const relatoriosAgua = [
+                {
+                    titulo: "Pontos Críticos em Portugal",
+                    texto: "Portugal enfrenta um stress hídrico severo, com o Alentejo e o Algarve em níveis de alerta máximo. A redução da precipitação média anual, aliada ao aumento das temperaturas, tem levado a uma descida crítica dos níveis das barragens e à sobre-exploração de aquíferos estratégicos, comprometendo a resiliência agrícola a sul do Tejo.",
+                    fonte: "Worldometers - Portugal Water Statistics"
+                },
+                {
+                    titulo: "Principais Causas de Consumo",
+                    texto: "O setor agrícola continua a ser o maior consumidor, absorvendo cerca de 70% das retiradas globais de água doce. Contudo, novos vetores de pressão emergem com a digitalização: o treino de modelos de Inteligência Artificial e o arrefecimento de Datacenters exigem volumes massivos de água, competindo diretamente com o abastecimento humano e agrícola.",
+                    fonte: "FAO - AQUASTAT Global Database"
+                },
+                {
+                    titulo: "Problemas Estruturais Globais",
+                    texto: "A crise hídrica global é agravada pela degradação da qualidade da água e pela falta de saneamento básico. A poluição por nitratos e microplásticos infiltra-se nos lençóis freáticos, enquanto as alterações climáticas desregulam o ciclo hidrológico, alternando entre secas prolongadas e inundações catastróficas que o solo degradado não consegue absorver.",
+                    fonte: "UN-Water - United Nations Water Report"
+                },
+                {
+                    titulo: "Estratégias de Regeneração",
+                    texto: "A solução passa pela transição para a agricultura regenerativa, que aumenta a matéria orgânica no solo e a sua capacidade de retenção de água. A implementação de sistemas de reutilização de águas cinzentas, dessalinização sustentável e a monitorização digital de perdas nas redes de distribuição são passos urgentes para a segurança hídrica.",
+                    fonte: "World Water Council - Global Water Security"
+                }
             ];
 
             function calcularDistancia(lat1, lon1, lat2, lon2) {
@@ -182,6 +191,7 @@
                     
                     renderDashboard(info);
                     renderizarCardsAgua();
+                    renderRelatorios();
                     iniciarCiclosAgua();
                     setupLocationLogic();
                 } catch(e) { console.error(e); }
@@ -229,6 +239,17 @@
                 }
             }
 
+            function renderRelatorios() {
+                const container = document.getElementById('report-grid-dynamic');
+                container.innerHTML = relatoriosAgua.map(r => `
+                    <div class="report-item">
+                        <h5>${r.titulo}</h5>
+                        <p>${r.texto}</p>
+                        <span class="report-source">${r.fonte}</span>
+                    </div>
+                `).join('');
+            }
+
             function renderizarCardsAgua() {
                 const container = document.getElementById('noticias-agua-dinamico');
                 container.innerHTML = noticiasAgua.map((n, i) => `
@@ -244,8 +265,7 @@
                 const container = document.getElementById('water-facts-container');
                 container.innerHTML = waterFacts.map((f, i) => `
                     <div class="water-fact-item ${i === 0 ? 'active' : ''}">
-                        <b>${f.titulo}</b>
-                        <span>${f.desc}</span>
+                        <b>${f.titulo}</b> ${f.desc}
                     </div>`).join('');
                 let factP = 0;
                 setInterval(() => {
