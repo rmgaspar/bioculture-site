@@ -3,10 +3,10 @@
 	<head>
 		<title>bioCultura - Observatório da Energia</title>
 		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale, user-scalable=no" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
 		<style>
-            /* --- ESTRUTURA GLOBAL --- */
+            /* --- ESTRUTURA GLOBAL (PARIDADE INDEX) --- */
             body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
 			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
             section { padding-top: 3em !important; min-height: 100vh; display: flex; flex-direction: column; }
@@ -26,8 +26,9 @@
             .energy-item { margin-bottom: 15px; }
             .energy-info { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 6px; }
             .energy-info b { font-size: 1.1em; color: #1a1a1a; }
+            .energy-info span { font-size: 0.9em; font-weight: 900; }
             
-            /* Cores por Fonte */
+            /* Cores Dinâmicas */
             .c-solar { color: #f1c40f !important; }
             .c-wind { color: #3498db !important; }
             .c-hydro { color: #2980b9 !important; }
@@ -50,8 +51,8 @@
             .plant-type { font-size: 0.65em; font-weight: 800; color: #bbb; text-transform: uppercase; letter-spacing: 1px; }
             .btn-toggle { cursor: pointer; color: #bbb; font-size: 1.5em; font-weight: 300; transition: color 0.2s; user-select: none; }
 
-            /* RELATÓRIOS */
-            .report-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; }
+            /* RELATÓRIOS (DETALHADOS) */
+            .report-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; margin-top: 10px; }
             .report-item { border-top: 1px solid #f9f9f9; padding-top: 20px; }
             .report-item h5 { font-size: 0.75em; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
             .report-item p { font-size: 0.95em; line-height: 1.7; color: #666; margin-bottom: 15px; text-align: justify; }
@@ -71,7 +72,8 @@
             .source-logo { width: 16px; height: 16px; object-fit: contain; filter: grayscale(100%); opacity: 0.6; }
             .news-meta span { font-size: 0.65em; font-weight: 800; color: #bbb; text-transform: uppercase; letter-spacing: 1px; }
 
-            .btn-pagination { background: none !important; border: none !important; color: #bbb !important; font-size: 0.75em; font-weight: 900; letter-spacing: 3px; cursor: pointer; text-transform: lowercase; }
+            /* BOTÃO SEM BORDAS */
+            .btn-pagination { background: none !important; border: none !important; box-shadow: none !important; color: #bbb !important; font-size: 0.75em; font-weight: 900; letter-spacing: 3px; cursor: pointer; text-transform: lowercase; }
 
             @media screen and (max-width: 1280px) {
                 #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
@@ -111,7 +113,7 @@
                             </div>
                         </div>
 
-                        <!-- 3. RELATÓRIOS -->
+                        <!-- 3. RELATÓRIOS (APROFUNDADOS) -->
                         <div class="data-row">
                             <h4>Relatório Global de Energia</h4>
                             <div class="tech-content">
@@ -120,7 +122,7 @@
                             </div>
                         </div>
 
-                        <!-- 4. NOTÍCIAS (ESTILO INDEX) -->
+                        <!-- 4. NOTÍCIAS -->
                         <div class="data-row" style="border-bottom: none;">
                             <h4>Notícias</h4>
                             <div class="tech-content">
@@ -146,10 +148,26 @@
             let locationsDB = [], noticiasEnergy = [], allPlants = [], visiveisEnergy = 4;
 
             const relatoriosEnergy = [
-                { titulo: "Produção Renovável Nacional", texto: "Em 2025, Portugal consolidou a sua posição como líder europeu, com as fontes renováveis a suprir mais de 75% do consumo elétrico nacional.", fonte: "REN Datahub / DGEG 2025", cor: "#f1c40f" },
-                { titulo: "Estratégia Solar", texto: "A expansão de centrais solares flutuantes e o armazenamento em baterias de larga escala são as prioridades para garantir a estabilidade da rede em 2026.", fonte: "Portal Energia / APA REA", cor: "#3498db" },
-                { titulo: "Independência Fóssil", texto: "A dependência de gás natural desceu para mínimos históricos, funcionando agora apenas como reserva estratégica para a transição do hidrogénio verde.", fonte: "DGEG - Energia em Números", cor: "#95a5a6" },
-                { titulo: "Investimento Verde", texto: "O setor das renováveis atrai o maior volume de investimento direto estrangeiro, com foco na eólica offshore e eficiência energética.", fonte: "Portugal Global / Pordata", cor: "#27ae60" }
+                { 
+                    titulo: "Matriz Elétrica e Desempenho Renovável", 
+                    texto: "Segundo a REN, Portugal atingiu em 2025 um recorde de 82% de incorporação renovável no consumo elétrico. A energia eólica e hídrica continuam a ser os pilares de estabilidade, mas a gestão inteligente da rede (Smart Grids) permitiu reduzir o curtailment técnico para valores residuais, maximizando o aproveitamento de cada kWh gerado.", 
+                    fonte: "REN Datahub / DGEG 2025", cor: "#3498db" 
+                },
+                { 
+                    titulo: "Aceleração Solar e Autoconsumo", 
+                    texto: "A meta de 5.6 GW de capacidade solar instalada para 2026 está próxima de ser atingida. O crescimento é impulsionado por Unidades de Produção para Autoconsumo (UPAC) e Comunidades de Energia Renovável, que democratizam o acesso à energia e reduzem as perdas de transporte em média 12% nas redes de distribuição.", 
+                    fonte: "DGEG - Energia em Números / Portal Energia", cor: "#f1c40f" 
+                },
+                { 
+                    titulo: "Descarbonização e Backup Estratégico", 
+                    texto: "O encerramento das centrais a carvão consolidou Portugal como um caso de estudo global. O Gás Natural, embora ainda presente, viu o seu peso reduzir 40% face a 2020 (Pordata), funcionando agora apenas como reserva de ponta enquanto a infraestrutura de Hidrogénio Verde em Sines e Aveiro entra em fase operacional.", 
+                    fonte: "APA REA / Pordata Energia", cor: "#95a5a6" 
+                },
+                { 
+                    titulo: "Eólica Offshore e Investimento PRR", 
+                    texto: "O leilão de eólica offshore de 10GW marca a nova fronteira energética. Aliado ao Plano de Recuperação e Resiliência (PRR), o investimento foca-se na reabilitação energética de edifícios e na eletrificação de frotas industriais, visando uma redução de 35% na intensidade energética nacional até 2030.", 
+                    fonte: "Portugal Global / Portugal Gov", cor: "#27ae60" 
+                }
             ];
 
             async function inicializarPagina() {
@@ -165,7 +183,7 @@
                     renderRelatorios();
                     renderizarCardsEnergy();
                     setupLocationLogic();
-                } catch(e) { console.error(e); }
+                } catch(e) { console.error("Erro no carregamento:", e); }
             }
 
             function setupLocationLogic() {
@@ -199,10 +217,10 @@
                     </div>`).join('');
 
                 allPlants = info.energia?.centrais || [
-                    { nome: "Parque Eólico local", tipo: "Eólica", potencia: "12.5 MW" },
-                    { nome: "Central Fotovoltaica Regional", tipo: "Solar", potencia: "5.2 MW" },
-                    { nome: "Barragem de Proximidade", tipo: "Hídrica", potencia: "45 MW" },
-                    { nome: "Unidade de Biomassa Florestal", tipo: "Biomassa", potencia: "2.1 MW" }
+                    { nome: "Parque Eólico Regional", tipo: "Eólica", potencia: "18.4 MW" },
+                    { nome: "Central Fotovoltaica Local", tipo: "Solar", potencia: "4.2 MW" },
+                    { nome: "Mini-hídrica de Proximidade", tipo: "Hídrica", potencia: "2.1 MW" },
+                    { nome: "Unidade de Valorização de Biomassa", tipo: "Biomassa", potencia: "1.5 MW" }
                 ];
                 renderPlants(false);
             }
