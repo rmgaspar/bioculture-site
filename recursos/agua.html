@@ -30,16 +30,18 @@
             .bar-dureza { background: linear-gradient(to right, #4fc3f7 0%, #ffb74d 50%, #ef5350 100%); }
             .gauge-marker { position: absolute; top: -5px; left: 0%; width: 3px; height: 16px; background: #1a1a1a; border-radius: 2px; transition: left 1.5s cubic-bezier(0.4, 0, 0.2, 1); }
 
-            /* --- NOVO: CICLO DE CONSUMO --- */
+            /* IMPACTO & RELATÓRIO */
             .water-impact-box { background: #f4f9ff; padding: 3em; border-radius: 20px; margin: 2em 0; position: relative; overflow: hidden; border-left: 4px solid #4fc3f7; }
-            .fixed-water-icon { position: absolute; left: 30px; top: 50%; transform: translateY(-50%); width: 50px; height: 50px; color: #4fc3f7; opacity: 0.4; }
             .fact-cycler-water { padding-left: 70px; min-height: 80px; position: relative; }
             .water-fact-item { position: absolute; top: 0; opacity: 0; transition: opacity 1s ease; width: 100%; }
             .water-fact-item.active { opacity: 1; position: relative; }
-            .water-fact-item b { display: block; font-size: 1.4em; color: #1a237e; margin-bottom: 5px; }
-            .water-fact-item span { font-size: 1.1em; color: #5c6bc0; line-height: 1.4; }
+            
+            .global-report { background: #fff; border: 1px solid #f2f2f2; border-radius: 20px; padding: 3em; margin-top: 4em; }
+            .report-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; margin-top: 2em; }
+            .report-item h5 { font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; color: #4fc3f7; margin-bottom: 15px; }
+            .report-item p { font-size: 0.95em; line-height: 1.6; color: #666; margin: 0; }
 
-            /* GRELHA DE NOTÍCIAS */
+            /* NEWS GRID */
             .observatorio-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 40px; margin-top: 2em; }
             .news-card { text-decoration: none; color: inherit; display: flex; flex-direction: column; transition: all 0.3s ease; }
             .news-card:hover { transform: translateY(-8px); }
@@ -47,13 +49,13 @@
             .card-image-wrap img { width: 100%; height: 100%; object-fit: cover; }
             .badge-cat { position: absolute; bottom: 10px; left: 10px; background: #4fc3f7; color: white; padding: 4px 12px; border-radius: 50px; font-size: 0.55em; font-weight: 900; text-transform: uppercase; }
 
+            .bio-res-item { padding: 12px 18px; font-size: 0.9em; color: #666; cursor: pointer; border-bottom: 1px solid #f9f9f9 !important; }
+            .bio-res-item:hover { background: #f4f9ff; color: #4fc3f7; }
+
             @media screen and (max-width: 1280px) {
                 #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
                 #wrapper { padding-left: 0 !important; }
-                .data-row { grid-template-columns: 1fr; }
-                .water-impact-box { padding: 2em; }
-                .fixed-water-icon { position: relative; left: 0; transform: none; margin-bottom: 15px; }
-                .fact-cycler-water { padding-left: 0; }
+                .report-grid { grid-template-columns: 1fr; }
             }
 		</style>
 	</head>
@@ -88,16 +90,12 @@
                             </div>
                         </div>
 
-                        <!-- NOVO: IMPACTO DO CONSUMO (WORLDOMETERS + IA) -->
+                        <!-- IMPACTO RÁPIDO -->
                         <div class="water-impact-box">
-                            <div class="fixed-water-icon">
-                                <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12,20A6,6 0 0,1 6,14C6,10 12,3.25 12,3.25C12,3.25 18,10 18,14A6,6 0 0,1 12,20Z" /></svg>
-                            </div>
-                            <div class="fact-cycler-water" id="water-facts-container">
-                                <!-- Injetado via JS -->
-                            </div>
+                            <div class="fact-cycler-water" id="water-facts-container"></div>
                         </div>
 
+                        <!-- ALERTA HÍDRICO & NOTÍCIAS -->
                         <div class="data-row" style="border-bottom: none;">
                             <h4>Alerta Hídrico</h4>
                             <div class="tech-content">
@@ -108,14 +106,33 @@
                             </div>
                         </div>
 
-                        <footer class="page-footer">
-                            <div style="display: flex; align-items: center; justify-content: flex-end; gap: 10px; opacity: 0.3;">
-                                <div style="text-align: right; line-height: 1;">
-                                    <span style="display: block; font-size: 0.85em; font-weight: 900; color: #333;">bioCultura</span>
-                                    <span style="display: block; font-size: 0.5em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Global Regeneration</span>
+                        <!-- RELATÓRIO TÉCNICO GLOBAL (SÍNTESE FAO/UN/WORLDOMETERS) -->
+                        <div class="global-report">
+                            <span class="category-label" style="text-align:left;">Relatório de Escassez Global</span>
+                            <h3 style="margin-top:10px;">Análise Crítica de Stress Hídrico</h3>
+                            <div class="report-grid">
+                                <div class="report-item">
+                                    <h5>Pontos Críticos em Portugal</h5>
+                                    <p>Portugal apresenta um stress hídrico elevado (Worldometers), com o Alentejo e Algarve em níveis críticos. A disponibilidade per capita tem caído drasticamente devido à redução da precipitação média anual.</p>
                                 </div>
-                                <svg width="22" height="22" viewBox="0 0 100 100"><path d="M50 5 L89 27.5 L89 72.5 L50 95 L11 72.5 L11 27.5 Z" fill="#333" /><path d="M50 20 C50 20 75 45 75 70 C75 85 65 85 50 85 C35 85 25 85 25 70 C25 45 50 20 50 20Z" fill="#fff" /></svg>
+                                <div class="report-item">
+                                    <h5>Principais Causas de Consumo</h5>
+                                    <p>Segundo a FAO (AQUASTAT), a agricultura intensiva absorve 70% da água doce global. Em Portugal, a expansão de culturas de regadio permanente e o consumo energético de Datacenters são os novos vetores de pressão.</p>
+                                </div>
+                                <div class="report-item">
+                                    <h5>Problemas Estruturais (UN-Water)</h5>
+                                    <p>A má gestão de aquíferos e a poluição por nitratos comprometem as reservas subterrâneas. A ONU alerta que a água não é apenas um recurso, mas um direito humano sob ameaça climática e geopolítica.</p>
+                                </div>
+                                <div class="report-item">
+                                    <h5>Como Podemos Ajudar</h5>
+                                    <p>Implementação de agricultura regenerativa para aumentar a retenção de água no solo, reutilização de águas cinzentas e monitorização em tempo real das perdas nas redes públicas (World Water).</p>
+                                </div>
                             </div>
+                        </div>
+
+                        <footer class="page-footer" style="margin-top:4em; padding-top:2em; border-top:1px solid #f2f2f2; opacity:0.3; text-align:right;">
+                            <span style="display: block; font-size: 0.85em; font-weight: 900; color: #333;">bioCultura</span>
+                            <span style="display: block; font-size: 0.5em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Global Regeneration</span>
                         </footer>
 					</section>
 				</div>
@@ -127,13 +144,19 @@
         <script>
             let locationsDB = [], noticiasAgua = [], visiveisAgua = 4;
 
-            // Novos dados dinâmicos (Worldometers + IA)
             const waterFacts = [
-                { titulo: "Consumo Invisível da IA", desc: "Uma simples conversa de 20 perguntas com uma IA consome 500ml de água doce para refrigeração dos servidores." },
-                { titulo: "Escassez Global", desc: "Mais de 800 milhões de pessoas no mundo não têm acesso a água potável segura hoje." },
-                { titulo: "Pressão Agrícola", desc: "70% de toda a água doce retirada no planeta é utilizada exclusivamente para a agricultura industrial." },
-                { titulo: "Desperdício Urbano", desc: "Em média, 30% da água tratada nas cidades perde-se em fugas antes de chegar à torneira do consumidor." }
+                { titulo: "Consumo Invisível da IA", desc: "Uma conversa de 20 perguntas com uma IA consome 500ml de água para refrigeração." },
+                { titulo: "Stress Hídrico Portugal", desc: "Portugal é um dos países europeus com maior risco de desertificação a sul do Tejo." },
+                { titulo: "Agricultura Global", desc: "70% da água doce do planeta é consumida pela agricultura industrial (FAO)." }
             ];
+
+            function calcularDistancia(lat1, lon1, lat2, lon2) {
+                const R = 6371;
+                const dLat = (lat2 - lat1) * Math.PI / 180;
+                const dLon = (lon2 - lon1) * Math.PI / 180;
+                const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
+                return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+            }
 
             async function inicializarPagina() {
                 try {
@@ -144,11 +167,40 @@
                     locationsDB = rLoc;
                     noticiasAgua = rNews.filter(n => (n.categoria || "").toLowerCase().includes('agua'));
                     
-                    const info = locationsDB.find(i => i.id === (localStorage.getItem('biocultura_region') || "proenca-a-nova"));
+                    const savedId = localStorage.getItem('biocultura_region') || "proenca-a-nova";
+                    const info = locationsDB.find(i => i.id === savedId);
+                    
                     renderDashboard(info);
                     renderizarCardsAgua();
                     iniciarCiclosAgua();
+                    setupLocationLogic();
                 } catch(e) { console.error(e); }
+            }
+
+            function setupLocationLogic() {
+                $(document).on('input', '#loc-search-input', function() {
+                    const val = $(this).val().toLowerCase(), dropdown = $('#loc-dropdown').empty();
+                    if(val.length < 2) return dropdown.hide();
+                    locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0,5).forEach(m => {
+                        $('<div class="bio-res-item"></div>').text(m.titulo).on('click', () => {
+                            localStorage.setItem('biocultura_region', m.id);
+                            location.reload();
+                        }).appendTo(dropdown);
+                    });
+                    dropdown.show();
+                });
+
+                $(document).on('click', '#btn-gps-trigger', function() {
+                    navigator.geolocation.getCurrentPosition(pos => {
+                        let closest = locationsDB[0], minD = Infinity;
+                        locationsDB.forEach(c => {
+                            let d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon);
+                            if(d < minD) { minD = d; closest = c; }
+                        });
+                        localStorage.setItem('biocultura_region', closest.id);
+                        location.reload();
+                    });
+                });
             }
 
             function renderDashboard(info) {
@@ -185,7 +237,6 @@
                         <b>${f.titulo}</b>
                         <span>${f.desc}</span>
                     </div>`).join('');
-
                 let factP = 0;
                 setInterval(() => {
                     const items = document.querySelectorAll('.water-fact-item');
