@@ -20,10 +20,10 @@
                 margin: 0 auto;
             }
 
-            /* HERO SPLIT & TRANSIÇÃO ORGÂNICA */
+            /* HERO SPLIT & TRANSIÇÃO DAS IMAGENS */
             .hero-split { display: flex; align-items: flex-start; justify-content: space-between; gap: 4em; margin-bottom: 3em; }
             .hero-text { flex: 1.5; text-align: left; padding-top: 5px; } 
-            .hero-text h1 { font-size: 4em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; line-height: 0.95; margin-bottom: 25px; }
+            .hero-text h1 { font-size: 3.8em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; line-height: 0.95; margin-bottom: 30px; }
             
             .hero-visual { flex: 1; display: flex; justify-content: flex-end; }
             .hero-globe { 
@@ -43,24 +43,20 @@
             }
             .hero-globe img.active { opacity: 1; transform: scale(1); }
 
-            /* PAINEL DE IMPACTO */
-            .risk-panel { 
-                display: grid; 
-                grid-template-columns: repeat(3, 1fr); 
-                gap: 2px; 
-                background: #f2f2f2; 
-                border-radius: 12px; 
-                overflow: hidden; 
-                margin-top: 2em;
-                border: 1px solid #eee;
+            /* CICLO DE CONSUMO IA (TEXTO DINÂMICO) */
+            .ia-impact-subtitle { font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #c62828; margin-bottom: 15px; display: block; }
+            .fact-cycler { position: relative; height: 100px; margin-top: 10px; }
+            .fact-item { 
+                position: absolute; top: 0; left: 0; 
+                opacity: 0; transition: opacity 1.5s ease-in-out; 
+                border-left: 4px solid #eee; padding-left: 25px;
             }
-            .risk-item { background: #fff; padding: 1.5em; display: flex; flex-direction: column; gap: 5px; }
-            .risk-label { font-size: 0.55em; font-weight: 900; text-transform: uppercase; color: #bbb; letter-spacing: 2px; }
-            .risk-value { font-size: 1.2em; font-weight: 700; color: #c62828; } 
-            .risk-sub { font-size: 0.75em; color: #888; margin-top: 2px; }
+            .fact-item.active { opacity: 1; }
+            .fact-item b { font-size: 1.6em; color: #1a1a1a; display: block; line-height: 1.1; margin-bottom: 5px; }
+            .fact-item span { font-size: 1.1em; color: #666; line-height: 1.4; display: block; max-width: 650px; }
 
             /* MANIFESTO E CORES */
-            .critical-summary { margin: 3em 0 4em 0; max-width: 1100px; padding-bottom: 3em; border-bottom: 1px solid #f2f2f2; }
+            .critical-summary { margin: 4em 0 3em 0; max-width: 1100px; padding-bottom: 3em; border-bottom: 1px solid #f2f2f2; }
             .critical-summary p { font-size: 1.2em !important; line-height: 1.8 !important; color: #555 !important; margin-bottom: 1.5em; text-align: justify; }
             
             .lnk-bio { font-weight: 700; text-decoration: none; border-bottom: 1px solid transparent; transition: all 0.3s; }
@@ -75,7 +71,7 @@
             .c-etica { color: #7b1fa2 !important; }
             .c-cal { color: #558b2f !important; }
 
-            /* GRELHA DE NOTÍCIAS (PEQUENOS QUADRADOS) */
+            /* GRELHA DE NOTÍCIAS (QUADRADOS) */
             .news-header { font-size: 0.8em; font-weight: 400; text-transform: lowercase; letter-spacing: 3px; color: #bbb; margin-bottom: 2.5em; display: block; }
             .news-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 30px; margin-bottom: 4em; }
             .news-item { 
@@ -83,14 +79,9 @@
                 padding: 20px; background: #fdfdfd; border: 1px solid #f2f2f2; 
                 border-radius: 12px; transition: all 0.3s; 
             }
-            .news-item:hover { transform: translateY(-5px); border-color: #ddd; box-shadow: 0 10px 20px rgba(0,0,0,0.02); }
-            .news-item h3 { font-size: 1.1em; font-weight: 700; color: #1a1a1a; margin-bottom: 12px; line-height: 1.3; min-height: 2.6em; }
-            
-            /* Forçar ~5-6 palavras por linha */
-            .news-item p { 
-                font-size: 0.9em; color: #777; line-height: 1.5; margin-bottom: 15px; 
-                max-width: 190px; /* Estreita o bloco de texto */
-            }
+            .news-item:hover { transform: translateY(-5px); border-color: #ddd; }
+            .news-item h3 { font-size: 1.15em; font-weight: 700; color: #1a1a1a; margin-bottom: 12px; line-height: 1.3; min-height: 2.6em; }
+            .news-item p { font-size: 0.9em; color: #777; line-height: 1.5; margin-bottom: 15px; max-width: 190px; }
 
             .news-meta { display: flex; align-items: center; gap: 10px; border-top: 1px solid #f9f9f9; padding-top: 12px; }
             .source-logo { width: 16px; height: 16px; object-fit: contain; filter: grayscale(100%); opacity: 0.6; }
@@ -112,11 +103,12 @@
             @media screen and (max-width: 1280px) {
                 #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
                 #wrapper { padding-left: 0 !important; }
-                .inner { padding: 2.2em 1.5em !important; }
+                .inner { padding: 2.2em 2em !important; }
                 .hero-split { flex-direction: column-reverse; text-align: center; }
                 .hero-visual { justify-content: center; }
-                .hero-globe { width: 320px; height: 320px; }
-                .risk-panel { grid-template-columns: 1fr; }
+                .hero-globe { width: 350px; height: 350px; }
+                .fact-item { border-left: none; border-top: 2px solid #eee; padding: 15px 0 0 0; }
+                .news-list { grid-template-columns: 1fr; }
             }
 		</style>
 	</head>
@@ -133,21 +125,24 @@
                                 <span style="font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; display: block; margin-bottom: 15px;">Observatório bioCultura</span>
                                 <h1>O progresso não pode ser o fim do seu horizonte.</h1>
                                 
-                                <div class="risk-panel">
-                                    <div class="risk-item">
-                                        <span class="risk-label">Consumo de Água (IA)</span>
-                                        <span class="risk-value" id="stat-water">1.2M Litros/dia</span>
-                                        <span class="risk-sub">Pressão sobre aquíferos locais</span>
+                                <!-- CICLO DE CONSUMO IA -->
+                                <span class="ia-impact-subtitle">Consumos de um datacenter de Inteligência Artificial:</span>
+                                <div class="fact-cycler" id="fact-cycler">
+                                    <div class="fact-item active" style="border-left-color: #1a237e">
+                                        <b>9.3 Biliões de Litros de Água</b>
+                                        <span>Consumo anual estimado para 2030, o suficiente para suprir as necessidades de toda a Suíça.</span>
                                     </div>
-                                    <div class="risk-item">
-                                        <span class="risk-label">Perda de Solo Útil</span>
-                                        <span class="risk-value" id="stat-soil">--</span>
-                                        <span class="risk-sub">Risco de desertificação ativa</span>
+                                    <div class="fact-item" style="border-left-color: #ef6c00">
+                                        <b>1.110 TWh de Eletricidade</b>
+                                        <span>Uma carga energética que tornaria a IA o 11º país mais consumidor do mundo.</span>
                                     </div>
-                                    <div class="risk-item">
-                                        <span class="risk-label">Carga Elétrica</span>
-                                        <span class="risk-value" id="stat-energy">Alta Pressão</span>
-                                        <span class="risk-sub">Zonas de Aceleração (ZAER)</span>
+                                    <div class="fact-item" style="border-left-color: #c62828">
+                                        <b>+16°C de Aquecimento no Solo</b>
+                                        <span>As 'ilhas de calor' geradas pelos servidores aceleram a desertificação das zonas vizinhas.</span>
+                                    </div>
+                                    <div class="fact-item" style="border-left-color: #795548">
+                                        <b>215 Campos de Futebol</b>
+                                        <span>É a área de solo ocupada apenas para treinar um único modelo de IA de grande escala.</span>
                                     </div>
                                 </div>
                             </div>
@@ -189,7 +184,7 @@
                         </div>
                     </div>
 
-                    <footer style="padding: 4em 0 2em 0; border-top: 1px solid #f2f2f2; opacity: 0.3; text-align: right;">
+                    <footer style="padding: 4em 0 2em 0; border-top: 1px solid #f2f2f2; opacity: 0.3; text-align: right;" class="index-container index-indent">
                         <span style="display: block; font-size: 0.85em; font-weight: 900; color: #333;">bioCultura</span>
                         <span style="display: block; font-size: 0.5em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Global Regeneration</span>
                     </footer>
@@ -202,17 +197,7 @@
         <script>
             let locationsDB = [], todasNoticias = [], visiveis = 6;
 
-            // Mapeamento de Domínios para Logos
-            const sourceDomains = {
-                "Pplware": "pplware.sapo.pt",
-                "Jornal de Negócios": "jornaldenegocios.pt",
-                "Observador": "observador.pt",
-                "Público": "publico.pt",
-                "Expresso": "expresso.pt",
-                "JN": "jn.pt",
-                "ONU News": "un.org",
-                "Rádio Renascença": "rr.sapo.pt"
-            };
+            const sourceDomains = { "Pplware": "pplware.sapo.pt", "Jornal de Negócios": "jornaldenegocios.pt", "Observador": "observador.pt", "Público": "publico.pt", "Expresso": "expresso.pt", "JN": "jn.pt", "ONU News": "un.org", "Rádio Renascença": "rr.sapo.pt" };
 
             function calcularDistancia(lat1, lon1, lat2, lon2) {
                 const R = 6371;
@@ -224,10 +209,9 @@
 
             async function inicializarPagina() {
                 try {
-                    const [rLoc, rNews, rSoil] = await Promise.all([
+                    const [rLoc, rNews] = await Promise.all([
                         fetch('/data/bioregioes.json').then(r => r.json()),
-                        fetch('/data/noticias.json').then(r => r.json()),
-                        fetch('/data/solo_stats.json').then(r => r.json())
+                        fetch('/data/noticias.json').then(r => r.json())
                     ]);
                     locationsDB = rLoc; todasNoticias = rNews;
                     todasNoticias.sort((a, b) => (b.relevancia || 0) - (a.relevancia || 0));
@@ -235,22 +219,18 @@
                     const savedId = localStorage.getItem('biocultura_region') || "proenca-a-nova";
                     const info = locationsDB.find(i => i.id === savedId);
                     
-                    renderDashboard(info, rSoil);
+                    renderDashboard(info);
                     renderizarLista();
                     setupSidebarLogic();
+                    iniciarCiclos();
                 } catch(e) { console.error(e); }
             }
 
-            function renderDashboard(info, soilStats) {
+            function renderDashboard(info) {
                 if(!info) return;
                 document.getElementById('reg-name').innerText = info.titulo;
-                const sLocal = soilStats.reduce((prev, curr) => (calcularDistancia(info.lat, info.lon, curr.lat, curr.lon) < calcularDistancia(info.lat, info.lon, prev.lat, prev.lon) ? curr : prev));
-                document.getElementById('stat-soil').innerText = (sLocal.desertificacao * 100).toFixed(0) + "%";
-                setTimeout(() => {
-                    document.getElementById('bar-water').style.width = "45%";
-                    document.getElementById('bar-soil').style.width = (sLocal.desertificacao * 100) + "%";
-                    document.getElementById('bar-energy').style.width = "85%";
-                }, 500);
+                const input = document.getElementById('loc-search-input');
+                if(input) input.value = info.titulo;
             }
 
             function setupSidebarLogic() {
@@ -306,15 +286,25 @@
                 document.getElementById('btn-show-less').style.display = visiveis > 6 ? 'inline-block' : 'none';
             }
 
-            function iniciarCicloVisual() {
+            function iniciarCiclos() {
+                // Ciclo de Imagens
                 const imgs = document.querySelectorAll('#hero-cycler img');
-                const seq = [0, 1, 0, 2, 0, 3];
-                let p = 0;
+                const imgSeq = [0, 1, 0, 2, 0, 3];
+                let imgP = 0;
                 setInterval(() => {
                     imgs.forEach(i => i.classList.remove('active'));
-                    p = (p + 1) % seq.length;
-                    imgs[seq[p]].classList.add('active');
+                    imgP = (imgP + 1) % imgSeq.length;
+                    imgs[imgSeq[imgP]].classList.add('active');
                 }, 5000);
+
+                // Ciclo de Factos (Texto)
+                const facts = document.querySelectorAll('#fact-cycler .fact-item');
+                let factP = 0;
+                setInterval(() => {
+                    facts.forEach(f => f.classList.remove('active'));
+                    factP = (factP + 1) % facts.length;
+                    facts[factP].classList.add('active');
+                }, 6000); // Texto roda um pouco mais lento que as fotos para dar tempo de leitura
             }
 
             document.getElementById('btn-load-more').onclick = () => { visiveis += 6; renderizarLista(); };
@@ -324,7 +314,6 @@
                 document.getElementById('sidebar').innerHTML = html;
                 var s = document.createElement('script'); s.src = '/assets/js/main.js'; document.body.appendChild(s);
                 inicializarPagina();
-                iniciarCicloVisual();
             });
         </script>
 	</body>
