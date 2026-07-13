@@ -3,47 +3,54 @@
 	<head>
 		<title>bioCultura - Observatório da Biodiversidade</title>
 		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<meta name="viewport" content="width=device-width, initial-scale, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
 		<style>
-            /* --- ESTRUTURA GLOBAL (PARIDADE COM INDEX) --- */
+            /* --- ESTRUTURA GLOBAL (PARIDADE TOTAL COM INDEX) --- */
             body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
 			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
             
             #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
             #wrapper { padding-left: 18em !important; }
 
-            .inner { padding: 2.2em 4em 0 4em !important; max-width: 1600px !important; margin: 0 auto; }
+            .inner { 
+                padding: 2.2em 4em 0 4em !important; 
+                max-width: 1600px !important; 
+                margin: 0 auto;
+            }
 
-            /* HERO SPLIT */
+            /* HERO SPLIT (REPLICADO DO INDEX) */
             .hero-split { display: flex; align-items: flex-start; justify-content: space-between; gap: 4em; margin-bottom: 2em; }
             .hero-text { flex: 1.5; text-align: left; padding-top: 5px; } 
             .hero-text h1 { font-size: 4em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; line-height: 0.95; margin-bottom: 20px; }
             
             .hero-visual { flex: 1; display: flex; justify-content: flex-end; }
             .hero-globe { 
-                position: relative; width: 480px; height: 480px; 
+                position: relative; 
+                width: 480px; height: 480px; 
                 border-radius: 50%; overflow: hidden; 
-                box-shadow: 0 40px 100px rgba(0,0,0,0.12); background: #1a1a1a;
+                box-shadow: 0 40px 100px rgba(0,0,0,0.12); 
+                background: #1a1a1a;
             }
             .hero-globe img { 
-                position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-                object-fit: cover; transition: opacity 3s ease-in-out, transform 8s ease-in-out; 
-                opacity: 0; transform: scale(1.1);
+                position: absolute; top: 0; left: 0; 
+                width: 100%; height: 100%; 
+                object-fit: cover; 
+                transition: opacity 3s ease-in-out, transform 8s ease-in-out; 
+                opacity: 0; 
+                transform: scale(1.1);
             }
             .hero-globe img.active { opacity: 1; transform: scale(1); }
 
-            /* --- SECÇÕES VERTICAIS (SEM ESPAÇO À ESQUERDA) --- */
+            /* --- SECÇÕES DE DADOS --- */
             .data-row { display: block; padding: 2.5em 0; border-bottom: 1px solid #f2f2f2; }
-            .data-row h4 { 
-                font-size: 0.65em; font-weight: 900; text-transform: uppercase; 
-                letter-spacing: 2px; color: #bbb; margin: 0 0 25px 0; display: block;
-            }
+            .data-row h4 { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin: 0 0 25px 0; display: block; }
 
-            /* DASHBOARD */
+            /* DASHBOARD BIODIVERSIDADE */
             .species-group { margin-bottom: 30px; }
             .label-mini { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
             .label-mini svg { width: 14px; height: 14px; fill: currentColor; }
+            
             .c-mamiferos { color: #4a90e2; }
             .c-comum { color: #777; }
             .c-invasoras { color: #ed8936; }
@@ -55,30 +62,31 @@
             .species-badge.protected { background: #f0fff4; color: #2e7d32; border-color: #9ae6b4; }
             .species-badge.invasive { background: #fffaf0; color: #dd6b20; border-color: #fbd38d; }
 
-            /* RELATÓRIOS (2 POR LINHA) */
-            .report-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; }
+            /* TEXTO PANORAMA */
+            .transition-text { font-size: 1.15em; line-height: 1.7; color: #555; margin-bottom: 1.5em; text-align: justify; }
+            .label-nacional { color: #2f855a; font-weight: 900; }
+            .label-global { color: #4299e1; font-weight: 900; }
+
+            /* RELATÓRIOS */
+            .report-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; margin-top: 10px; }
             .report-item { border-top: 1px solid #f9f9f9; padding-top: 20px; }
             .report-item h5 { font-size: 0.75em; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
             .report-item p { font-size: 0.95em; line-height: 1.7; color: #666; margin-bottom: 15px; text-align: justify; }
-            .report-source { font-size: 0.65em; font-weight: 400; color: #bbb; text-transform: uppercase; letter-spacing: 1px; display: block; border-top: 1px solid #eee; padding-top: 8px; }
+            .report-source { font-size: 0.65em; font-weight: 800; color: #bbb; text-transform: uppercase; letter-spacing: 1px; display: block; border-top: 1px solid #eee; padding-top: 8px; }
 
-            /* ALERTAS (ESTILO IA) */
-            .bio-impact-box { margin-top: 10px; padding-left: 60px; position: relative; }
-            .bio-impact-subtitle { font-size: 0.75em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #c62828; display: block; margin-bottom: 25px; }
-            .fact-cycler { position: relative; height: 120px; }
-            .fact-item { position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 1.5s ease-in-out; border-left: 4px solid #eee; padding-left: 25px; width: 100%; }
-            .fact-item.active { opacity: 1; }
-            .fact-item b { font-size: 1.6em; color: #1a1a1a; display: block; line-height: 1.1; margin-bottom: 8px; }
-            .fact-item span { font-size: 1.15em; color: #666; line-height: 1.4; display: block; }
+            /* BANNER ALERTAS */
+            .bio-impact-box { background: #f6fff8; padding: 2.5em 3em; border-radius: 20px; margin: 1em 0; position: relative; overflow: hidden; border-left: 4px solid #2e7d32; }
+            .fact-cycler-bio { min-height: 50px; position: relative; }
+            .bio-fact-item { position: absolute; top: 0; opacity: 0; transition: opacity 1s ease; width: 100%; font-size: 1.1em; line-height: 1.5; color: #4a7a56; }
+            .bio-fact-item.active { opacity: 1; position: relative; }
+            .bio-fact-item b { color: #1b4332; margin-right: 10px; }
 
-            /* NOTÍCIAS (SEM BORDAS) */
-            .news-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; }
-            .news-item { text-decoration: none; color: inherit; display: block; padding: 0; background: transparent; border: none !important; transition: all 0.3s; }
-            .news-item:hover { transform: translateY(-5px); opacity: 0.7; }
-            .news-item h3 { font-size: 1.15em; font-weight: 700; color: #1a1a1a; margin: 15px 0 10px 0; line-height: 1.3; }
-            .news-meta { display: flex; align-items: center; gap: 10px; border-top: 1px solid #f2f2f2; padding-top: 12px; }
+            /* NOTÍCIAS */
+            .news-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; margin-bottom: 4em; }
+            .news-item { text-decoration: none; color: inherit; display: block; padding: 25px; background: #fdfdfd; border: 1px solid #f2f2f2; border-radius: 12px; transition: all 0.3s; }
+            .news-item:hover { transform: translateY(-5px); border-color: #ddd; }
+            .news-item h3 { font-size: 1.15em; font-weight: 700; color: #1a1a1a; margin-bottom: 12px; line-height: 1.3; }
             .source-logo { width: 16px; height: 16px; object-fit: contain; filter: grayscale(100%); opacity: 0.6; }
-            .news-meta span { font-size: 0.65em; font-weight: 800; color: #bbb; text-transform: uppercase; letter-spacing: 1px; }
 
             .btn-ver-mais { background: transparent !important; border: 1px solid #eee !important; color: #bbb !important; border-radius: 50px; padding: 0 40px; font-size: 0.7em; font-weight: 900; letter-spacing: 2px; cursor: pointer; }
             .bio-res-item { padding: 12px 18px; font-size: 0.9em; color: #666; cursor: pointer; border-bottom: 1px solid #f9f9f9 !important; }
@@ -87,6 +95,7 @@
                 #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
                 #wrapper { padding-left: 0 !important; }
                 .hero-split { flex-direction: column-reverse; }
+                .hero-visual { justify-content: center; width: 100%; }
                 .hero-globe { width: 350px; height: 350px; }
                 .report-grid { grid-template-columns: 1fr; }
             }
@@ -97,15 +106,18 @@
 			<div id="main">
                 <div class="inner">
                     <section>
-                        <!-- 1. HERO -->
+                        <!-- 1. HERO & INVENTÁRIO -->
                         <div class="hero-split">
                             <div class="hero-text">
                                 <span style="font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; display: block; margin-bottom: 15px;">Ecossistemas</span>
                                 <h1>Biodiversidade: A Teia da Vida</h1>
+                                
                                 <div id="bio-dashboard" style="display:none; margin-top: 40px;">
                                     <div id="group-fauna"></div>
                                     <div id="group-flora"></div>
-                                    <p style="font-size: 0.65em; color: #bbb; text-transform: uppercase; margin-top: 20px; border-top: 1px solid #f9f9f9; padding-top: 10px;">Fonte: ICNF / Livros Vermelhos</p>
+                                    <p style="font-size: 0.65em; color: #bbb; text-transform: uppercase; margin-top: 20px; border-top: 1px solid #f9f9f9; padding-top: 10px;">
+                                        Análise regional: <strong id="reg-name" style="color:#888">...</strong>
+                                    </p>
                                 </div>
                             </div>
                             <div class="hero-visual">
@@ -118,32 +130,32 @@
                             </div>
                         </div>
 
-                        <!-- 2. PANORAMA -->
+                        <!-- 2. ESPÉCIES AMEAÇADAS -->
                         <div class="data-row">
-                            <h4>Panorama da Biodiversidade</h4>
+                            <h4>Espécies Ameaçadas</h4>
                             <div class="tech-content">
-                                <p style="font-size: 1.15em; line-height: 1.7; color: #555; text-align: justify;">
-                                    <span style="color: #2f855a; font-weight: 900; text-transform: uppercase; font-size: 0.8em;">Panorama Nacional:</span> Portugal enfrenta um declínio severo em espécies estepárias e polinizadores. O ICNF alerta que a fragmentação de habitats por monoculturas está a empurrar a flora endémica para o colapso funcional.<br><br>
-                                    <span style="color: #4299e1; font-weight: 900; text-transform: uppercase; font-size: 0.8em;">Contexto Global:</span> A Lista Vermelha da IUCN (2026) monitoriza agora mais de 160.000 espécies, das quais 28% estão sob ameaça direta de extinção.
+                                <p class="transition-text">
+                                    <span class="label-nacional">Panorama Nacional:</span> Portugal enfrenta um declínio severo em espécies estepárias e polinizadores. O ICNF alerta que a fragmentação de habitats por monoculturas e a expansão urbana costeira estão a empurrar a flora endémica para o colapso funcional.<br><br>
+                                    <span class="label-global">Contexto Global:</span> A Lista Vermelha da IUCN (2026) monitoriza agora mais de 160.000 espécies, das quais 28% estão sob ameaça direta. A perda de biodiversidade marinha é um dos indicadores mais alarmantes da atual crise climática.
                                 </p>
                             </div>
                         </div>
 
                         <!-- 3. RELATÓRIOS -->
                         <div class="data-row">
-                            <h4>Análise Crítica 2026</h4>
+                            <h4>Relatório de Conservação</h4>
                             <div class="tech-content">
+                                <h3 style="margin: 0 0 10px 0; font-weight: 300; font-size: 2em;">Análise Crítica de Biodiversidade 2026</h3>
                                 <div id="report-grid-bio" class="report-grid"></div>
                             </div>
                         </div>
 
-                        <!-- 4. ESTADO DE EMERGÊNCIA -->
+                        <!-- 4. ALERTAS -->
                         <div class="data-row">
-                            <h4>Estado de Emergência Biológica</h4>
+                            <h4>Alertas</h4>
                             <div class="tech-content">
                                 <div class="bio-impact-box">
-                                    <span class="bio-impact-subtitle">Alertas de Impacto Crítico:</span>
-                                    <div class="fact-cycler" id="bio-facts-container"></div>
+                                    <div class="fact-cycler-bio" id="bio-facts-container"></div>
                                 </div>
                             </div>
                         </div>
@@ -153,7 +165,7 @@
                             <h4>Notícias</h4>
                             <div class="tech-content">
                                 <div id="noticias-bio-dinamico" class="news-list"></div>
-                                <div style="text-align: center; margin-top: 3em;">
+                                <div style="text-align: center;">
                                     <button id="btn-load-more-bio" class="btn-ver-mais">ver mais</button>
                                 </div>
                             </div>
@@ -174,16 +186,16 @@
             let locationsDB = [], noticiasBio = [], visiveisBio = 4;
 
             const bioFacts = [
-                { titulo: "Extinção em Massa", desc: "A IUCN confirma que 44.000 espécies enfrentam extinção imediata devido à atividade humana direta." },
-                { titulo: "Polinizadores", desc: "Em Portugal, 30% das abelhas silvestres desapareceram nos últimos 15 anos, ameaçando a segurança alimentar." },
-                { titulo: "Invasão Silenciosa", desc: "Espécies como a Vespa Velutina custam à economia europeia mais de 12 mil milhões de euros anualmente." }
+                { titulo: "Extinção em Massa", desc: "Mais de 44.000 espécies estão em risco iminente de extinção global (IUCN Red List 2026)." },
+                { titulo: "Aves em Risco", desc: "O Sisão e a Águia-imperial-ibérica precisam de intervenção urgente devido à perda de habitat." },
+                { titulo: "Flora Vascular", desc: "10% da flora de Portugal Continental está ameaçada; a conservação ex-situ é agora vital." }
             ];
 
             const relatoriosBio = [
-                { titulo: "Flora Vascular", texto: "O levantamento do ICNF indica que 10% da flora de Portugal Continental está ameaçada. Espécies endémicas como a Arméria-do-Sado enfrentam pressões extremas da urbanização costeira.", fonte: "ICNF 2026", cor: "#2e7d32" },
-                { titulo: "Vida Marinha", texto: "O Oceanário sublinha que as pradarias marinhas são vitais para o sequestro de carbono. A poluição por microplásticos está a alterar a genética das populações marinhas.", fonte: "Oceanário / WWF", cor: "#0288d1" },
-                { titulo: "Invertebrados", texto: "Os invertebrados sofrem um declínio silencioso. Polinizadores silvestres são os grupos mais afetados pela poluição química dos solos, comprometendo a regeneração das florestas.", fonte: "Livro Vermelho", cor: "#8d6e63" },
-                { titulo: "Aves Estepárias", texto: "A Lista Vermelha das Aves revela uma quebra de 50% nas aves agrícolas. A prioridade máxima é o restabelecimento de corredores ecológicos para dispersão genética.", fonte: "Wilder Mag", cor: "#f57c00" }
+                { titulo: "Flora Vascular", texto: "O levantamento nacional identifica que a flora endémica enfrenta pressões extremas de urbanização.", fonte: "ICNF", cor: "#2e7d32" },
+                { titulo: "Vida Marinha", texto: "O Oceanário de Lisboa sublinha que as pradarias marinhas são vitais para o sequestro de carbono.", fonte: "Oceanário / WWF", cor: "#0288d1" },
+                { titulo: "Invertebrados", texto: "Bivalves de água doce e polinizadores silvestres são os grupos mais afetados pela poluição química.", fonte: "ICNF - Livro Vermelho", cor: "#8d6e63" },
+                { titulo: "Aves e Corredores", texto: "Em 2026, a prioridade máxima é o restabelecimento de corredores ecológicos para espécies nativas.", fonte: "Wilder Mag", cor: "#f57c00" }
             ];
 
             const icons = {
@@ -201,12 +213,33 @@
                     locationsDB = rLoc;
                     noticiasBio = rNews.filter(n => (n.categoria || "").toLowerCase().includes('biodiversidade'));
                     const info = locationsDB.find(i => i.id === (localStorage.getItem('biocultura_region') || "proenca-a-nova"));
-                    
                     renderDashboard(info);
-                    renderRelatorios();
                     renderizarCardsBio();
+                    renderRelatorios();
                     iniciarCiclosBio();
-                } catch(e) { console.error("Erro no carregamento:", e); }
+                    setupLocationLogic();
+                } catch(e) { console.error(e); }
+            }
+
+            function setupLocationLogic() {
+                $(document).on('input', '#loc-search-input', function() {
+                    const val = $(this).val().toLowerCase(), dropdown = $('#loc-dropdown').empty();
+                    if(val.length < 2) return dropdown.hide();
+                    locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0,5).forEach(m => {
+                        $('<div class="bio-res-item"></div>').text(m.titulo).on('click', () => { localStorage.setItem('biocultura_region', m.id); location.reload(); }).appendTo(dropdown);
+                    });
+                    dropdown.show();
+                });
+                $(document).on('click', '#btn-gps-trigger', function() {
+                    navigator.geolocation.getCurrentPosition(pos => {
+                        let closest = locationsDB[0], minD = Infinity;
+                        locationsDB.forEach(c => {
+                            let d = Math.sqrt(Math.pow(pos.coords.latitude - c.lat, 2) + Math.pow(pos.coords.longitude - c.lon, 2));
+                            if(d < minD) { minD = d; closest = c; }
+                        });
+                        localStorage.setItem('biocultura_region', closest.id); location.reload();
+                    });
+                });
             }
 
             function renderDashboard(info) {
@@ -235,13 +268,14 @@
                 document.getElementById('noticias-bio-dinamico').innerHTML = noticiasBio.map((n, i) => `
                     <a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-item ${i >= visiveisBio ? 'hidden-card' : ''}">
                         <h3>${n.titulo}</h3>
+                        <p>${(n.resumo_biocultura || n.resumo || "").substring(0, 100)}...</p>
                         <div class="news-meta"><img src="${n.logo}" class="source-logo"><span>${n.data}</span></div>
                     </a>`).join('');
                 document.getElementById('btn-load-more-bio').style.display = noticiasBio.length > visiveisBio ? 'inline-block' : 'none';
             }
 
             function iniciarCiclosBio() {
-                // Fotos Globo
+                // Ciclo Fotos Globo (480px)
                 const imgs = document.querySelectorAll('#bio-globe-cycler img');
                 let imgP = 0;
                 setInterval(() => {
@@ -250,28 +284,24 @@
                     imgs[imgP].classList.add('active');
                 }, 5000);
 
-                // Factos Alertas
+                // Ciclo Factos Alertas
                 const container = document.getElementById('bio-facts-container');
                 container.innerHTML = bioFacts.map((f, i) => `
-                    <div class="fact-item ${i === 0 ? 'active' : ''}">
-                        <b style="border-left: 4px solid #2e7d32; padding-left: 25px; margin-left: -29px;">${f.titulo}</b>
-                        <span>${f.desc}</span>
+                    <div class="bio-fact-item ${i === 0 ? 'active' : ''}">
+                        <b>${f.titulo}</b> ${f.desc}
                     </div>`).join('');
                 let factP = 0;
                 setInterval(() => {
-                    const items = document.querySelectorAll('.fact-item');
+                    const items = document.querySelectorAll('.bio-fact-item');
                     if(items.length === 0) return;
                     items.forEach(el => el.classList.remove('active'));
                     factP = (factP + 1) % items.length;
                     items[factP].classList.add('active');
-                }, 10000);
+                }, 8000);
             }
 
             $(document).on('click', '#btn-load-more-bio', () => { visiveisBio += 4; renderizarCardsBio(); });
-            fetch('/sidebar-content.html').then(r => r.text()).then(html => { 
-                document.getElementById('sidebar').innerHTML = html; 
-                inicializarPagina(); 
-            });
+            fetch('/sidebar-content.html').then(r => r.text()).then(html => { document.getElementById('sidebar').innerHTML = html; inicializarPagina(); });
         </script>
 	</body>
 </html>
