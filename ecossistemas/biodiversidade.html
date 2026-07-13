@@ -3,7 +3,7 @@
 	<head>
 		<title>bioCultura - Observatório da Biodiversidade</title>
 		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale, user-scalable=no" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
 		<style>
             /* --- ESTILOS GLOBAIS --- */
@@ -19,22 +19,28 @@
             .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; color: #bbb; margin-bottom: 8px; display: block; text-align: center; }
             
             .data-row { display: block; padding: 2.5em 0; border-bottom: 1px solid #f2f2f2; }
-            .data-row h4 { 
-                font-size: 0.65em; 
-                font-weight: 900; 
-                text-transform: uppercase; 
-                letter-spacing: 2px; 
-                color: #bbb; 
-                margin: 0 0 25px 0; 
-                display: block;
-            }
+            .data-row h4 { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin: 0 0 25px 0; display: block; }
 
-            /* DASHBOARD BIODIVERSIDADE */
+            /* DASHBOARD SPLIT (INVENTÁRIO + GLOBO) */
+            .bio-split { display: flex; align-items: flex-start; justify-content: space-between; gap: 4em; }
+            .bio-inventory-text { flex: 1.5; }
+            
+            .bio-visual { flex: 1; display: flex; justify-content: flex-end; padding-top: 20px; }
+            .bio-globe { 
+                position: relative; width: 320px; height: 320px; 
+                border-radius: 50%; overflow: hidden; 
+                box-shadow: 0 20px 60px rgba(0,0,0,0.1); background: #f5f5f5;
+            }
+            .bio-globe img { 
+                position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+                object-fit: cover; opacity: 0; transition: opacity 2s ease-in-out; 
+            }
+            .bio-globe img.active { opacity: 1; }
+
             .species-group { margin-bottom: 30px; }
             .label-mini { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
             .label-mini svg { width: 14px; height: 14px; fill: currentColor; }
             
-            /* Cores dos Subtítulos do Dashboard */
             .c-mamiferos { color: #4a90e2; }
             .c-comum { color: #777; }
             .c-invasoras { color: #ed8936; }
@@ -46,17 +52,12 @@
             .species-badge.protected { background: #f0fff4; color: #2e7d32; border-color: #9ae6b4; }
             .species-badge.invasive { background: #fffaf0; color: #dd6b20; border-color: #fbd38d; }
 
-            /* TEXTO PANORAMA */
-            .transition-text { font-size: 1.15em; line-height: 1.7; color: #555; margin-bottom: 1.5em; text-align: justify; }
-            .label-nacional { color: #2f855a; font-weight: 900; }
-            .label-global { color: #4299e1; font-weight: 900; }
-
-            /* RELATÓRIOS (2 POR LINHA) */
+            /* RELATÓRIOS */
             .report-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; margin-top: 10px; }
             .report-item { border-top: 1px solid #f9f9f9; padding-top: 20px; }
             .report-item h5 { font-size: 0.75em; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
             .report-item p { font-size: 0.95em; line-height: 1.7; color: #666; margin-bottom: 15px; text-align: justify; }
-            .report-source { font-size: 0.65em; font-weight: 800; color: #bbb; text-transform: uppercase; letter-spacing: 1px; display: block; border-top: 1px solid #eee; padding-top: 8px; }
+            .report-source { font-size: 0.65em; font-weight: 400; color: #bbb; text-transform: uppercase; letter-spacing: 1px; display: block; border-top: 1px solid #eee; padding-top: 8px; }
 
             /* BANNER ALERTAS */
             .bio-impact-box { background: #f6fff8; padding: 2.5em 3em; border-radius: 20px; margin: 1em 0; position: relative; overflow: hidden; border-left: 4px solid #2e7d32; }
@@ -81,6 +82,8 @@
             @media screen and (max-width: 1280px) {
                 #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
                 #wrapper { padding-left: 0 !important; }
+                .bio-split { flex-direction: column; }
+                .bio-visual { justify-content: center; width: 100%; }
                 .report-grid { grid-template-columns: 1fr; }
             }
 		</style>
@@ -96,27 +99,41 @@
                             <p style="font-size: 0.9em; font-style: italic; color: #bbb;">Análise regional: <strong id="reg-name">...</strong></p>
                         </div>
 
-                        <!-- 1. DASHBOARD LOCAL -->
+                        <!-- 1. DASHBOARD LOCAL (SPLIT COM GLOBO) -->
                         <div id="bio-dashboard" class="data-row" style="display:none;">
                             <h4>Inventário Biológico</h4>
-                            <div class="tech-content">
-                                <div id="group-fauna" class="species-group"></div>
-                                <div id="group-flora" class="species-group"></div>
+                            <div class="bio-split">
+                                <div class="bio-inventory-text">
+                                    <div id="group-fauna"></div>
+                                    <div id="group-flora"></div>
+                                    <p style="font-size: 0.65em; color: #bbb; text-transform: uppercase; margin-top: 20px; border-top: 1px solid #f9f9f9; padding-top: 10px;">
+                                        Fonte: Levantamento ICNF / Livros Vermelhos de Portugal Continental
+                                    </p>
+                                </div>
+                                <div class="bio-visual">
+                                    <div class="bio-globe" id="bio-globe-cycler">
+                                        <!-- Imagens representativas -->
+                                        <img src="https://images.unsplash.com/photo-1551028150-64b9f398f678?q=80&w=800" class="active" title="Espécie Nativa">
+                                        <img src="https://images.unsplash.com/photo-1516281730419-ce0147997220?q=80&w=800" title="Aves Protegidas">
+                                        <img src="https://images.unsplash.com/photo-1470240731273-7821a6eeb6bd?q=80&w=800" title="Flora Endémica">
+                                        <img src="https://images.unsplash.com/photo-1535338455335-74c3afae3530?q=80&w=800" title="Espécie Ameaçada">
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- 2. ESPÉCIES AMEAÇADAS (PANORAMA) -->
+                        <!-- 2. ESPÉCIES AMEAÇADAS -->
                         <div class="data-row">
                             <h4>Espécies Ameaçadas</h4>
                             <div class="tech-content">
-                                <p class="transition-text">
-                                    <span class="label-nacional">Panorama Nacional:</span> Portugal enfrenta um declínio severo em espécies estepárias e polinizadores. O ICNF alerta que a fragmentação de habitats por monoculturas e a expansão urbana costeira estão a empurrar a flora endémica para o colapso funcional. Espécies como o Lince-ibérico mostram recuperação, mas dependem da conectividade total dos ecossistemas.<br><br>
-                                    <span class="label-global">Contexto Global:</span> A Lista Vermelha da IUCN (2026) monitoriza agora mais de 160.000 espécies, das quais 28% estão sob ameaça direta. A perda de biodiversidade marinha é um dos indicadores mais alarmantes da atual crise climática.
+                                <p style="font-size: 1.15em; line-height: 1.7; color: #555; margin-bottom: 1.5em; text-align: justify;">
+                                    <span style="color: #2f855a; font-weight: 900;">Panorama Nacional:</span> Portugal enfrenta um declínio severo em espécies estepárias e polinizadores. O ICNF alerta que a fragmentação de habitats por monoculturas e a expansão urbana costeira estão a empurrar a flora endémica para o colapso funcional. Espécies emblemáticas como o Lince-ibérico mostram recuperação, mas a sua sustentabilidade depende da conectividade total dos ecossistemas e da abundância de presas naturais.<br><br>
+                                    <span style="color: #4299e1; font-weight: 900;">Contexto Global:</span> A Lista Vermelha da IUCN (2026) monitoriza agora mais de 160.000 espécies, das quais 28% estão sob ameaça direta de extinção. A perda de biodiversidade marinha, o branqueamento de corais e a desregulação dos ciclos migratórios são os indicadores mais alarmantes da atual crise climática e da sexta extinção em massa impulsionada pela atividade humana.
                                 </p>
                             </div>
                         </div>
 
-                        <!-- 3. ANÁLISE CRÍTICA (2 POR LINHA) -->
+                        <!-- 3. ANÁLISE CRÍTICA 2026 -->
                         <div class="data-row">
                             <h4>Relatório de Conservação</h4>
                             <div class="tech-content">
@@ -139,7 +156,7 @@
 
                         <!-- 5. NOTÍCIAS -->
                         <div class="data-row" style="border-bottom: none;">
-                            <h4>Notícias</h4>
+                            <h4>Notícias e Atualizações</h4>
                             <div class="tech-content">
                                 <div id="noticias-bio-dinamico" class="news-list"></div>
                                 <div style="text-align: center;">
@@ -163,16 +180,32 @@
             let locationsDB = [], noticiasBio = [], visiveisBio = 4;
 
             const bioFacts = [
-                { titulo: "Extinção em Massa", desc: "Mais de 44.000 espécies estão em risco iminente de extinção global (IUCN Red List)." },
-                { titulo: "Aves em Risco", desc: "O Sisão e a Águia-imperial-ibérica precisam de intervenção urgente em 2026 devido à perda de habitat." },
-                { titulo: "Flora Vascular", desc: "10% da flora de Portugal Continental está ameaçada, com várias espécies em perigo crítico (ICNF)." }
+                { titulo: "Extinção em Massa", desc: "Mais de 44.000 espécies estão em risco iminente de extinção global segundo a atualização 2026 da IUCN Red List." },
+                { titulo: "Aves em Risco", desc: "O Sisão e a Águia-imperial-ibérica precisam de intervenção urgente em 2026 devido à perda crítica de habitat estepário." },
+                { titulo: "Flora Vascular", desc: "Cerca de 10% da flora de Portugal Continental está ameaçada; a conservação em bancos de sementes é agora vital." }
             ];
 
             const relatoriosBio = [
-                { titulo: "Flora Vascular", texto: "O levantamento nacional identifica que a flora endémica enfrenta pressões extremas de urbanização.", fonte: "ICNF", cor: "#2e7d32" },
-                { titulo: "Vida Marinha", texto: "O Oceanário de Lisboa sublinha que as pradarias marinhas são vitais para o sequestro de carbono.", fonte: "Oceanário / WWF", cor: "#0288d1" },
-                { titulo: "Invertebrados", texto: "Bivalves de água doce e polinizadores silvestres são os grupos mais afetados pela poluição química.", fonte: "ICNF - Livro Vermelho", cor: "#8d6e63" },
-                { titulo: "Aves e Corredores", texto: "Em 2026, a prioridade máxima é o restabelecimento de corredores ecológicos para espécies nativas.", fonte: "Wilder Mag", cor: "#f57c00" }
+                { 
+                    titulo: "Flora Vascular e Endemismo", 
+                    texto: "O levantamento do ICNF identifica que a flora endémica de Portugal enfrenta pressões extremas da urbanização e das alterações climáticas. Espécies como a Arméria-do-Sado e o Trevo-de-quatro-folhas-peludo estão em declínio crítico, exigindo a proteção imediata de biótopos dunares e zonas húmidas.", 
+                    fonte: "ICNF - Lista Vermelha da Flora Vascular", cor: "#2e7d32" 
+                },
+                { 
+                    titulo: "Vida Marinha e Carbono Azul", 
+                    texto: "O Oceanário de Lisboa e a WWF sublinham que as pradarias marinhas e as florestas de kelp são vitais para a biodiversidade oceânica e para o sequestro de carbono. A poluição por microplásticos e a sobrepesca estão a alterar a genética das populações, exigindo Áreas Marinhas Protegidas interligadas.", 
+                    fonte: "Oceanário de Lisboa / WWF Portugal", cor: "#0288d1" 
+                },
+                { 
+                    titulo: "Invertebrados e Saúde do Solo", 
+                    texto: "Os invertebrados, base invisível da cadeia alimentar, sofrem um declínio silencioso. Bivalves de água doce e polinizadores silvestres são os grupos mais afetados pela poluição química e alteração de cursos de água, comprometendo a regeneração natural das nossas florestas nativas.", 
+                    fonte: "ICNF - Livro Vermelho dos Invertebrados", cor: "#8d6e63" 
+                },
+                { 
+                    titulo: "Aves e Corredores Ecológicos", 
+                    texto: "A Lista Vermelha das Aves de Portugal (2026) revela que as aves agrícolas sofreram uma quebra de 50% nas últimas décadas. A prioridade máxima agora é o restabelecimento de corredores ecológicos que permitam a dispersão genética e a resiliência face a eventos térmicos extremos.", 
+                    fonte: "Lista Vermelha das Aves / Wilder Mag", cor: "#f57c00" 
+                }
             ];
 
             const icons = {
@@ -252,6 +285,16 @@
             }
 
             function iniciarCiclosBio() {
+                // Ciclo Fotos Globo
+                const imgs = document.querySelectorAll('#bio-globe-cycler img');
+                let imgP = 0;
+                setInterval(() => {
+                    imgs.forEach(i => i.classList.remove('active'));
+                    imgP = (imgP + 1) % imgs.length;
+                    imgs[imgP].classList.add('active');
+                }, 5000);
+
+                // Ciclo Factos
                 const container = document.getElementById('bio-facts-container');
                 container.innerHTML = bioFacts.map((f, i) => `<div class="bio-fact-item ${i === 0 ? 'active' : ''}"><b>${f.titulo}</b> ${f.desc}</div>`).join('');
                 let factP = 0;
@@ -261,7 +304,7 @@
                     items.forEach(el => el.classList.remove('active'));
                     factP = (factP + 1) % items.length;
                     items[factP].classList.add('active');
-                }, 8000);
+                }, 10000);
             }
 
             $(document).on('click', '#btn-load-more-bio', () => { visiveisBio += 4; renderizarCardsBio(); });
