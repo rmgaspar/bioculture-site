@@ -13,18 +13,13 @@
             #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
             #wrapper { padding-left: 18em !important; }
 
-            /* ALINHAMENTO DE MARGENS (Conforme anexo) */
-            .inner { 
-                padding: 2.2em 4em 0 4em !important; /* Alinhado com o topo do logo da sidebar */
-                max-width: 1600px !important; /* Expansão da largura para reduzir brancos */
-                margin: 0 auto;
-            }
+            .index-container { max-width: 1400px; margin: 0 auto; width: 100%; }
+            .index-indent { padding-left: 3em; padding-right: 3em; }
 
-            /* HERO SPLIT */
-            .hero-split { display: flex; align-items: flex-start; justify-content: space-between; gap: 4em; margin-bottom: 4em; }
-            .hero-text { flex: 1.5; text-align: left; padding-top: 5px; } 
+            /* HERO SPLIT & TRANSIÇÃO ORGÂNICA */
+            .hero-split { padding: 2.2em 0 3em 0; display: flex; align-items: flex-start; justify-content: space-between; gap: 5em; }
+            .hero-text { flex: 1.4; padding-top: 5px; text-align: left; } 
             .hero-text h1 { font-size: 4em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; line-height: 0.95; margin-bottom: 25px; }
-            .hero-text p { font-size: 1.25em; color: #777; line-height: 1.6; border-left: 5px solid #c62828; padding-left: 25px; font-style: italic; }
             
             .hero-visual { flex: 1; display: flex; justify-content: flex-end; }
             .hero-globe { 
@@ -38,17 +33,38 @@
                 position: absolute; top: 0; left: 0; 
                 width: 100%; height: 100%; 
                 object-fit: cover; 
-                transition: opacity 2s ease-in-out; 
+                transition: opacity 3s ease-in-out, transform 8s ease-in-out; /* Transição muito lenta e orgânica */
                 opacity: 0; 
+                transform: scale(1.1); /* Inicia com zoom */
             }
-            .hero-globe img.active { opacity: 1; }
+            .hero-globe img.active { 
+                opacity: 1; 
+                transform: scale(1); /* Suaviza para o tamanho normal enquanto aparece */
+            }
+
+            /* PAINEL DE RISCO VITAL (SECÇÃO DE ATENÇÃO) */
+            .risk-panel { 
+                display: grid; 
+                grid-template-columns: repeat(3, 1fr); 
+                gap: 2px; 
+                background: #eee; 
+                border-radius: 15px; 
+                overflow: hidden; 
+                margin-bottom: 4em;
+                border: 1px solid #eee;
+            }
+            .risk-item { background: #fff; padding: 1.5em; display: flex; flex-direction: column; gap: 5px; }
+            .risk-label { font-size: 0.6em; font-weight: 900; text-transform: uppercase; color: #bbb; letter-spacing: 2px; }
+            .risk-value { font-size: 1.4em; font-weight: 700; color: #1a1a1a; }
+            .risk-bar-bg { width: 100%; height: 4px; background: #f5f5f5; border-radius: 10px; margin-top: 10px; overflow: hidden; }
+            .risk-bar-fill { height: 100%; width: 0; transition: width 2s ease-out; }
 
             /* MANIFESTO E CORES */
-            .critical-summary { margin: 2em 0 4em 0; padding-bottom: 3em; border-bottom: 1px solid #f2f2f2; }
-            .critical-summary p { font-size: 1.2em !important; line-height: 1.8 !important; color: #555 !important; margin-bottom: 1.5em; text-align: justify; }
+            .critical-summary { margin: 2em 0 4em 0; max-width: 1000px; padding-bottom: 3em; border-bottom: 1px solid #f2f2f2; }
+            .critical-summary p { font-size: 1.25em !important; line-height: 1.8 !important; color: #555 !important; margin-bottom: 1.5em; text-align: justify; }
             
-            .lnk-bio { font-weight: 700; text-decoration: none; transition: opacity 0.2s; }
-            .lnk-bio:hover { opacity: 0.7; text-decoration: underline; }
+            .lnk-bio { font-weight: 700; text-decoration: none; border-bottom: 1px solid transparent; transition: all 0.3s; }
+            .lnk-bio:hover { border-bottom-color: currentColor; opacity: 0.8; }
             
             .c-agua { color: #1a237e !important; }
             .c-ar { color: #2196f3 !important; }
@@ -57,36 +73,26 @@
             .c-energia { color: #ef6c00 !important; }
             .c-mineracao { color: #c62828 !important; }
             .c-etica { color: #7b1fa2 !important; }
-            .c-servicos { color: #00897b !important; }
             .c-cal { color: #558b2f !important; }
 
             /* RADAR DE NOTÍCIAS (TEXTO) */
             .radar-header { font-size: 0.75em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; margin-bottom: 2em; display: block; }
             .news-list { display: grid; grid-template-columns: 1fr 1fr; gap: 40px 80px; margin-bottom: 4em; }
-            .news-item { text-decoration: none; color: inherit; display: block; padding-bottom: 20px; border-bottom: 1px solid #f9f9f9; transition: transform 0.3s; }
-            .news-item:hover { transform: translateX(8px); }
-            .news-item h3 { font-size: 1.3em; font-weight: 700; color: #1a1a1a; margin-bottom: 10px; line-height: 1.2; }
-            .news-item p { font-size: 1em; color: #666; line-height: 1.5; margin-bottom: 15px; }
+            .news-item { text-decoration: none; color: inherit; display: block; padding-bottom: 20px; border-bottom: 1px solid #f9f9f9; }
+            .news-item h3 { font-size: 1.3em; font-weight: 700; color: #1a1a1a; margin-bottom: 8px; }
+            .news-item p { font-size: 1em; color: #666; line-height: 1.5; margin-bottom: 12px; }
             .news-meta { font-size: 0.7em; font-weight: 800; color: #bbb; text-transform: uppercase; letter-spacing: 1px; }
 
-            /* PAGINAÇÃO */
-            .pagination-container { display: flex; gap: 30px; margin: 4em 0; justify-content: flex-start; }
-            .btn-pagination { 
-                background: none !important; border: none !important; box-shadow: none !important; padding: 0 !important; 
-                color: #bbb !important; font-size: 0.75em; font-weight: 900; text-transform: uppercase; 
-                letter-spacing: 2px; cursor: pointer; transition: color 0.3s;
-            }
+            .btn-pagination { background: none !important; border: none !important; color: #bbb !important; font-size: 0.75em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; cursor: pointer; }
             .btn-pagination:hover { color: #333 !important; text-decoration: underline; }
             .hidden-card { display: none; }
 
             @media screen and (max-width: 1280px) {
-                #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
+                #sidebar { position: relative !important; width: 100% !important; }
                 #wrapper { padding-left: 0 !important; }
-                .inner { padding: 2em 1.5em !important; }
                 .hero-split { flex-direction: column-reverse; text-align: center; }
-                .hero-visual { justify-content: center; margin-bottom: 3em; }
-                .hero-globe { width: 320px; height: 320px; }
-                .news-list { grid-template-columns: 1fr; }
+                .hero-visual { justify-content: center; }
+                .risk-panel { grid-template-columns: 1fr; }
             }
 		</style>
 	</head>
@@ -96,49 +102,71 @@
                 <div class="inner">
 					<header id="header" style="height: 0; margin: 0; padding: 0; overflow: hidden;"></header>
 					
-                    <!-- HERO -->
-                    <section class="hero-split">
-                        <div class="hero-text">
-                            <span style="font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; display: block; margin-bottom: 15px;">Observatório bioCultura</span>
-                            <h1>O progresso não pode ser o fim do seu horizonte.</h1>
-                            <p>Descubra os impactos e as soluções de regeneração sob os seus pés.</p>
-                        </div>
-                        <div class="hero-visual">
-                            <div class="hero-globe" id="hero-cycler">
-                                <img src="https://plus.unsplash.com/premium_photo-1668024966086-bd66ba04262f?q=80&w=2092&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" class="active" alt="Natureza">
-                                <img src="https://plus.unsplash.com/premium_photo-1678743133495-49199baeb582?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Solar">
-                                <img src="https://images.unsplash.com/photo-1586400792375-d6b8f82db2e6?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Corte">
-                                <img src="https://plus.unsplash.com/premium_photo-1661963968707-cf062e54725b?q=80&w=1480&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Mineração">
+                    <div class="index-container">
+                        <!-- HERO -->
+                        <section class="hero-split index-indent">
+                            <div class="hero-text">
+                                <span style="font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; display: block; margin-bottom: 15px;">Observatório bioCultura</span>
+                                <h1>O progresso não pode ser o fim do seu horizonte.</h1>
+                                
+                                <!-- PAINEL DE RISCO (SUBSTITUI A FRASE ANTIGA) -->
+                                <div class="risk-panel">
+                                    <div class="risk-item">
+                                        <span class="risk-label">Stress Hídrico Regional</span>
+                                        <span class="risk-value" id="stat-water">--</span>
+                                        <div class="risk-bar-bg"><div id="bar-water" class="risk-bar-fill" style="background:#1a237e"></div></div>
+                                    </div>
+                                    <div class="risk-item">
+                                        <span class="risk-label">Risco de Desertificação</span>
+                                        <span class="risk-value" id="stat-soil">--</span>
+                                        <div class="risk-bar-bg"><div id="bar-soil" class="risk-bar-fill" style="background:#795548"></div></div>
+                                    </div>
+                                    <div class="risk-item">
+                                        <span class="risk-label">Pressão Industrial (ZAER)</span>
+                                        <span class="risk-value" id="stat-energy">--</span>
+                                        <div class="risk-bar-bg"><div id="bar-energy" class="risk-bar-fill" style="background:#ef6c00"></div></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="hero-visual">
+                                <div class="hero-globe" id="hero-cycler">
+                                    <img src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=1000" class="active">
+                                    <img src="https://images.unsplash.com/photo-1509391366360-fe5bb58583bb?q=80&w=1000">
+                                    <img src="https://images.unsplash.com/photo-1621431217036-72b225381861?q=80&w=1000">
+                                    <img src="https://images.unsplash.com/photo-1578319914016-7f35026975d9?q=80&w=1000">
+                                </div>
+                            </div>
+                        </section>
+
+                        <div class="index-indent">
+                            <h2 id="observatorio-de-impacto" style="border:none !important; margin-bottom: 1em;">Observatório de Impacto</h2>
+                            
+                            <div class="critical-summary">
+                                <p>
+                                    Portugal enfrenta hoje um desafio ético profundo na gestão do seu território. O <b>PSZAER</b>, a pressão crescente da <a href="/energia/mineracao.html" class="lnk-bio c-mineracao">mineração de lítio</a> e a expansão de <b>Data Centers de IA</b> colocam em risco os nossos recursos vitais. Este observatório monitoriza estes vetores em tempo real, defendendo uma transição regenerativa.
+                                </p>
+                                <p>
+                                    Acreditamos que a preservação da <a href="/ecossistemas/biodiversidade.html" class="lnk-bio c-biodiv">biodiversidade</a> depende da compreensão da teia que une todos os recursos. O <a href="/recursos/solo.html" class="lnk-bio c-terra">Solo</a> não é uma superfície inerte; ele regula a meteorologia local. Um solo degradado por pesticidas resulta em <a href="/recursos/ar.html" class="lnk-bio c-ar">Ar</a> mais quente e <a href="/recursos/agua.html" class="lnk-bio c-agua">Águas</a> subterrâneas contaminadas.
+                                </p>
+                                <p>
+                                    Como alternativa, a bioCultura promove a <b>Agricultura Biológica</b> e a regeneração de ecossistemas. No nosso <a href="/calendario/calendario.html" class="lnk-bio c-cal">Calendário Hortícola</a>, pode aprender a cultivar ao ritmo da natureza. Explore o impacto local na <a href="/energia/energia.html" class="lnk-bio c-energia">Energia</a>, avalie a <a href="/energia/transicao-etica.html" class="lnk-bio c-etica">Transição Ética</a> e descubra os nossos serviços. Utilize o <b>GPS</b> na barra lateral para detetar a área de impacto de <b id="reg-name" style="color:#1a1a1a">...</b>.
+                                </p>
+                                <p style="font-size: 0.95em !important; font-style: italic; color: #888;">
+                                    A bioCultura está em constante evolução. Se pretender sugerir conteúdos relevantes, contacte-nos através da nossa <a href="/contacto.html">página de contacto</a>.
+                                </p>
+                            </div>
+
+                            <span class="radar-header">Radar de Observação</span>
+                            <div id="observatorio-dinamico" class="news-list"></div>
+
+                            <div class="pagination-container">
+                                <button id="btn-load-more" class="btn-pagination">Ver Mais</button>
+                                <button id="btn-show-less" class="btn-pagination" style="display:none;">Ver Menos</button>
                             </div>
                         </div>
-                    </section>
-
-                    <h2 id="observatorio-de-impacto" style="border:none !important; margin-bottom: 1em;">Observatório de Impacto</h2>
-                    
-                    <div class="critical-summary">
-                        <p>
-                            Portugal enfrenta hoje um desafio ético profundo na gestão do seu território. O <b>PSZAER</b>, a pressão crescente da <a href="/energia/mineracao.html" class="lnk-bio c-mineracao">mineração de lítio</a> e a expansão de <b>Data Centers de IA</b> colocam em risco os nossos recursos vitais. Este observatório monitoriza estes vetores em tempo real, defendendo uma transição regenerativa.
-                        </p>
-                        <p>
-                            Acreditamos que a preservação da <a href="/ecossistemas/biodiversidade.html" class="lnk-bio c-biodiv">biodiversidade</a> depende da compreensão da teia que une todos os recursos. O <a href="/recursos/solo.html" class="lnk-bio c-terra">Solo</a> não é uma superfície inerte; ele regula a meteorologia local. Um solo degradado por pesticidas resulta em <a href="/recursos/ar.html" class="lnk-bio c-ar">Ar</a> mais quente e <a href="/recursos/agua.html" class="lnk-bio c-agua">Águas</a> subterrâneas contaminadas.
-                        </p>
-                        <p>
-                            Como alternativa, a bioCultura promove a <b>Agricultura Biológica</b> e a regeneração de ecossistemas. No nosso <a href="/calendario/calendario.html" class="lnk-bio c-cal">Calendário Hortícola</a>, pode aprender a cultivar ao ritmo da natureza. Explore o impacto local na <a href="/energia/energia.html" class="lnk-bio c-energia">Energia</a>, avalie a <a href="/energia/transicao-etica.html" class="lnk-bio c-etica">Transição Ética</a> e descubra os nossos <a href="/servicos/bioenergia.html" class="lnk-bio c-servicos">Serviços</a>. Utilize o <b>GPS</b> na barra lateral para detetar a área de impacto de <b id="reg-name" style="color:#1a1a1a">...</b>.
-                        </p>
-                        <p style="font-size: 0.95em !important; font-style: italic; color: #888;">
-                            A bioCultura está em constante evolução. Se pretender sugerir conteúdos relevantes, contacte-nos através da nossa <a href="/contacto.html">página de contacto</a>.
-                        </p>
                     </div>
 
-                    <span class="radar-header">Radar de Observação</span>
-                    <div id="observatorio-dinamico" class="news-list"></div>
-
-                    <div class="pagination-container">
-                        <button id="btn-load-more" class="btn-pagination">Ver Mais</button>
-                        <button id="btn-show-less" class="btn-pagination" style="display:none;">Ver Menos</button>
-                    </div>
-
-                    <footer style="padding: 4em 0 2em 0; border-top: 1px solid #f2f2f2; opacity: 0.3; text-align: right;">
+                    <footer style="padding: 4em 0 2em 0; border-top: 1px solid #f2f2f2; opacity: 0.3; text-align: right;" class="index-container index-indent">
                         <span style="display: block; font-size: 0.85em; font-weight: 900; color: #333;">bioCultura</span>
                         <span style="display: block; font-size: 0.5em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Global Regeneration</span>
                     </footer>
@@ -149,9 +177,7 @@
 
 		<script src="/assets/js/jquery.min.js"></script>
         <script>
-            let locationsDB = [];
-            let todasNoticias = [];
-            let visiveis = 6;
+            let locationsDB = [], todasNoticias = [], visiveis = 6;
 
             function calcularDistancia(lat1, lon1, lat2, lon2) {
                 const R = 6371;
@@ -163,115 +189,40 @@
 
             async function inicializarPagina() {
                 try {
-                    const [rLoc, rNews] = await Promise.all([
+                    const [rLoc, rNews, rSoil] = await Promise.all([
                         fetch('/data/bioregioes.json').then(r => r.json()),
-                        fetch('/data/noticias.json').then(r => r.json())
+                        fetch('/data/noticias.json').then(r => r.json()),
+                        fetch('/data/solo_stats.json').then(r => r.json())
                     ]);
                     locationsDB = rLoc;
                     todasNoticias = rNews;
                     todasNoticias.sort((a, b) => (b.relevancia || 0) - (a.relevancia || 0));
 
-                    const savedId = localStorage.getItem('biocultura_region');
-                    let info = locationsDB.find(i => i.id === savedId) || locationsDB.find(i => i.id === "proenca-a-nova");
+                    const savedId = localStorage.getItem('biocultura_region') || "proenca-a-nova";
+                    const info = locationsDB.find(i => i.id === savedId);
                     
-                    renderDashboard(info);
+                    renderDashboard(info, rSoil);
                     renderizarLista();
                     setupSidebarLogic();
                 } catch(e) { console.error(e); }
             }
 
-            function renderDashboard(info) {
+            function renderDashboard(info, soilStats) {
                 if(!info) return;
                 document.getElementById('reg-name').innerText = info.titulo;
-                const input = document.getElementById('loc-search-input');
-                if(input) input.value = info.titulo;
-            }
 
-            function setupSidebarLogic() {
-                const input = document.getElementById('loc-search-input');
-                const gpsBtn = document.getElementById('btn-gps-trigger');
-                const dropdown = document.getElementById('loc-dropdown');
+                // Estatísticas Reais por Proximidade
+                const sLocal = soilStats.reduce((prev, curr) => (calcularDistancia(info.lat, info.lon, curr.lat, curr.lon) < calcularDistancia(info.lat, info.lon, prev.lat, prev.lon) ? curr : prev));
+                
+                document.getElementById('stat-water').innerText = "Moderado";
+                document.getElementById('stat-soil').innerText = (sLocal.desertificacao * 100).toFixed(0) + "%";
+                document.getElementById('stat-energy').innerText = "Alta Pressão";
 
-                // NOVA FUNCIONALIDADE: Limpa o campo ao clicar/entrar com o cursor
-                $(document).on('focus', '#loc-search-input', function() {
-                    $(this).val('');
-                    // Opcional: esconder o dropdown ao focar se estiver visível de uma pesquisa anterior
-                    dropdown.style.display = 'none'; 
-                });
-
-                // Lógica de pesquisa (Input)
-                $(document).on('input', '#loc-search-input', function() {
-                    const val = $(this).val().toLowerCase();
-                    dropdown.innerHTML = '';
-                    if(val.length < 2) { dropdown.style.display = 'none'; return; }
-                    const matches = locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0, 6);
-                    if(matches.length > 0) {
-                        dropdown.style.display = 'block';
-                        matches.forEach(m => {
-                            const div = document.createElement('div');
-                            div.className = 'bio-res-item';
-                            div.innerText = m.titulo;
-                            div.onclick = () => {
-                                localStorage.setItem('biocultura_region', m.id);
-                                renderDashboard(m);
-                                dropdown.style.display = 'none';
-                            };
-                            dropdown.appendChild(div);
-                        });
-                    } else dropdown.style.display = 'none';
-                });
-
-                // Lógica de GPS
-                $(document).on('click', '#btn-gps-trigger', function() {
-                    input.value = "A localizar...";
-                    navigator.geolocation.getCurrentPosition(pos => {
-                        let closest = locationsDB[0]; let minD = Infinity;
-                        locationsDB.forEach(c => {
-                            if(c.lat && c.lon) {
-                                let d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon);
-                                if(d < minD) { minD = d; closest = c; }
-                            }
-                        });
-                        localStorage.setItem('biocultura_region', closest.id);
-                        renderDashboard(closest);
-                    }, () => {
-                        input.value = "Erro no GPS";
-                    });
-                });
-            }
-
-                $(document).on('click', '#btn-gps-trigger', function() {
-                    input.value = "A localizar...";
-                    navigator.geolocation.getCurrentPosition(pos => {
-                        let closest = locationsDB[0]; let minD = Infinity;
-                        locationsDB.forEach(c => {
-                            if(c.lat && c.lon) {
-                                let d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon);
-                                if(d < minD) { minD = d; closest = c; }
-                            }
-                        });
-                        localStorage.setItem('biocultura_region', closest.id);
-                        renderDashboard(closest);
-                    });
-                });
-
-            function renderizarLista() {
-                const container = document.getElementById('observatorio-dinamico');
-                if(!container) return;
-                container.innerHTML = '';
-                todasNoticias.forEach((n, index) => {
-                    const item = document.createElement('a');
-                    item.href = `/observatorio/noticia-detalhe.html?id=${n.id}`;
-                    item.className = `news-item ${index >= visiveis ? 'hidden-card' : ''}`;
-                    item.innerHTML = `
-                        <h3>${n.titulo}</h3>
-                        <p>${n.resumo.substring(0, 140)}...</p>
-                        <div class="news-meta"><span>${n.fonte}</span> &nbsp;|&nbsp; <span>${n.data}</span></div>
-                    `;
-                    container.appendChild(item);
-                });
-                document.getElementById('btn-load-more').style.display = visiveis < todasNoticias.length ? 'inline-block' : 'none';
-                document.getElementById('btn-show-less').style.display = visiveis > 6 ? 'inline-block' : 'none';
+                setTimeout(() => {
+                    document.getElementById('bar-water').style.width = "45%";
+                    document.getElementById('bar-soil').style.width = (sLocal.desertificacao * 100) + "%";
+                    document.getElementById('bar-energy').style.width = "85%";
+                }, 500);
             }
 
             function iniciarCicloVisual() {
@@ -282,15 +233,27 @@
                     imgs.forEach(i => i.classList.remove('active'));
                     p = (p + 1) % seq.length;
                     imgs[seq[p]].classList.add('active');
-                }, 4500);
+                }, 5000);
+            }
+
+            function renderizarLista() {
+                const container = document.getElementById('observatorio-dinamico');
+                container.innerHTML = todasNoticias.map((n, i) => `
+                    <a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-item ${i >= visiveis ? 'hidden-card' : ''}">
+                        <h3>${n.titulo}</h3>
+                        <p>${n.resumo.substring(0, 140)}...</p>
+                        <div class="news-meta"><span>${n.fonte}</span> &nbsp;|&nbsp; <span>${n.data}</span></div>
+                    </a>
+                `).join('');
+                document.getElementById('btn-load-more').style.display = visiveis < todasNoticias.length ? 'inline-block' : 'none';
+                document.getElementById('btn-show-less').style.display = visiveis > 6 ? 'inline-block' : 'none';
             }
 
             document.getElementById('btn-load-more').onclick = () => { visiveis += 6; renderizarLista(); };
-            document.getElementById('btn-show-less').onclick = () => { visiveis = 6; renderizarLista(); document.getElementById('observatorio-de-impacto').scrollIntoView({ behavior: 'smooth' }); };
+            document.getElementById('btn-show-less').onclick = () => { visiveis = 6; renderizarLista(); };
 
             fetch('/sidebar-content.html').then(r => r.text()).then(html => {
                 document.getElementById('sidebar').innerHTML = html;
-                var s = document.createElement('script'); s.src = '/assets/js/main.js'; document.body.appendChild(s);
                 inicializarPagina();
                 iniciarCicloVisual();
             });
