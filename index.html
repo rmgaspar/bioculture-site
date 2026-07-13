@@ -13,14 +13,13 @@
             #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
             #wrapper { padding-left: 18em !important; }
 
-            /* MARGENS E LARGURA ÚTIL (1600px conforme pedido) */
             .inner { 
-                padding: 2.2em 4em 0 4em !important; /* Alinhado ao topo do logo da sidebar */
+                padding: 2.2em 4em 0 4em !important; 
                 max-width: 1600px !important; 
                 margin: 0 auto;
             }
 
-            /* HERO SPLIT & TRANSIÇÃO ORGÂNICA */
+            /* HERO SPLIT */
             .hero-split { display: flex; align-items: flex-start; justify-content: space-between; gap: 4em; margin-bottom: 2em; }
             .hero-text { flex: 1.5; text-align: left; padding-top: 5px; } 
             .hero-text h1 { font-size: 4em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; line-height: 0.95; margin-bottom: 20px; }
@@ -43,19 +42,37 @@
             }
             .hero-globe img.active { opacity: 1; transform: scale(1); }
 
-            /* CICLO DE CONSUMO IA (POSICIONAMENTO CENTRADO) */
+            /* --- SECÇÃO IMPACTO IA (ALTERADA) --- */
+            .ia-impact-box {
+                margin-top: 80px;
+                padding-left: 60px; /* Espaço para o ícone alinhar à esquerda */
+                position: relative;
+            }
             .ia-impact-subtitle { 
-                font-size: 0.75em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #c62828; 
-                margin-top: 80px; /* Afasta do título principal */
+                font-size: 0.85em; /* Aumentado ligeiramente */
+                font-weight: 900; 
+                text-transform: uppercase; 
+                letter-spacing: 1px; /* Mais compacto */
+                color: #c62828; 
+                margin-bottom: 25px; /* Espaço para a mensagem abaixo */
                 display: block; 
             }
-            .fact-cycler { position: relative; height: 120px; margin-bottom: 100px; } /* Afasta do título de impacto abaixo */
+            .fact-cycler { position: relative; height: 120px; margin-bottom: 100px; }
             .fact-item { 
                 position: absolute; top: 0; left: 0; 
                 opacity: 0; transition: opacity 1.5s ease-in-out; 
-                border-left: 4px solid #eee; padding-left: 25px;
+                display: flex; align-items: flex-start; gap: 20px;
             }
             .fact-item.active { opacity: 1; }
+            
+            .fact-icon { 
+                width: 40px; height: 40px; flex-shrink: 0; margin-top: 5px;
+                position: absolute; left: -60px; /* Coloca o ícone na margem esquerda */
+                display: flex; align-items: center; justify-content: center;
+            }
+            .fact-icon svg { width: 100%; height: 100%; fill: currentColor; }
+
+            .fact-content { flex: 1; }
             .fact-item b { font-size: 1.6em; color: #1a1a1a; display: block; line-height: 1.1; margin-bottom: 8px; }
             .fact-item span { font-size: 1.15em; color: #666; line-height: 1.4; display: block; max-width: 750px; }
 
@@ -75,7 +92,7 @@
             .c-etica { color: #7b1fa2 !important; }
             .c-cal { color: #558b2f !important; }
 
-            /* GRELHA DE NOTÍCIAS (PEQUENOS QUADRADOS) */
+            /* GRELHA DE NOTÍCIAS */
             .news-header { font-size: 0.8em; font-weight: 400; text-transform: lowercase; letter-spacing: 3px; color: #bbb; margin-bottom: 2.5em; display: block; }
             .news-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 30px; margin-bottom: 4em; }
             .news-item { 
@@ -91,7 +108,6 @@
             .source-logo { width: 16px; height: 16px; object-fit: contain; filter: grayscale(100%); opacity: 0.6; }
             .news-meta span { font-size: 0.65em; font-weight: 800; color: #bbb; text-transform: uppercase; letter-spacing: 1px; }
 
-            /* PAGINAÇÃO LIMPA */
             .pagination-container { display: flex; gap: 30px; margin: 4em 0; justify-content: flex-start; }
             .btn-pagination { 
                 background: none !important; border: none !important; box-shadow: none !important; padding: 0 !important; 
@@ -108,10 +124,9 @@
                 #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
                 #wrapper { padding-left: 0 !important; }
                 .inner { padding: 2.2em 2em !important; }
-                .hero-split { flex-direction: column-reverse; text-align: center; }
-                .hero-visual { justify-content: center; }
-                .hero-globe { width: 350px; height: 350px; }
-                .news-list { grid-template-columns: 1fr; }
+                .ia-impact-box { padding-left: 0; }
+                .fact-icon { position: relative; left: 0; margin-bottom: 10px; }
+                .fact-item { flex-direction: column; }
             }
 		</style>
 	</head>
@@ -128,32 +143,58 @@
                                 <span style="font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; display: block; margin-bottom: 15px;">Observatório bioCultura</span>
                                 <h1>O progresso não pode ser o fim do seu horizonte.</h1>
                                 
-                                <span class="ia-impact-subtitle">Consumos de um datacenter de Inteligência Artificial:</span>
-                                <div class="fact-cycler" id="fact-cycler">
-                                    <div class="fact-item active" style="border-left-color: #1a237e">
-                                        <b>9.3 Biliões de Litros de Água</b>
-                                        <span>Consumo anual estimado para 2030, o suficiente para suprir as necessidades de toda a Suíça.</span>
-                                    </div>
-                                    <div class="fact-item" style="border-left-color: #ef6c00">
-                                        <b>1.110 TWh de Eletricidade</b>
-                                        <span>Uma carga energética que tornaria a IA o 11º país mais consumidor do mundo.</span>
-                                    </div>
-                                    <div class="fact-item" style="border-left-color: #c62828">
-                                        <b>+16°C de Aquecimento no Solo</b>
-                                        <span>As 'ilhas de calor' geradas pelos servidores aceleram a desertificação das zonas vizinhas.</span>
-                                    </div>
-                                    <div class="fact-item" style="border-left-color: #795548">
-                                        <b>215 Campos de Futebol</b>
-                                        <span>É a área de solo ocupada apenas para treinar um único modelo de IA de grande escala.</span>
+                                <div class="ia-impact-box">
+                                    <span class="ia-impact-subtitle">Consumos de um datacenter de Inteligência Artificial:</span>
+                                    <div class="fact-cycler" id="fact-cycler">
+                                        <!-- ÁGUA -->
+                                        <div class="fact-item active" style="color: #1a237e">
+                                            <div class="fact-icon">
+                                                <svg viewBox="0 0 24 24"><path d="M12,2L4.5,20.29L5.21,21L12,18L18.79,21L19.5,20.29L12,2Z"/></svg>
+                                            </div>
+                                            <div class="fact-content">
+                                                <b>9.3 Biliões de Litros de Água</b>
+                                                <span>Consumo anual estimado para 2030, o suficiente para suprir as necessidades de toda a Suíça.</span>
+                                            </div>
+                                        </div>
+                                        <!-- ENERGIA -->
+                                        <div class="fact-item" style="color: #ef6c00">
+                                            <div class="fact-icon">
+                                                <svg viewBox="0 0 24 24"><path d="M7,2V13H10V22L17,10H13L17,2H7Z"/></svg>
+                                            </div>
+                                            <div class="fact-content">
+                                                <b>1.110 TWh de Eletricidade</b>
+                                                <span>Uma carga energética que tornaria a IA o 11º país mais consumidor do mundo.</span>
+                                            </div>
+                                        </div>
+                                        <!-- SOLO / CALOR -->
+                                        <div class="fact-item" style="color: #c62828">
+                                            <div class="fact-icon">
+                                                <svg viewBox="0 0 24 24"><path d="M15,13V5A3,3 0 0,0 12,2A3,3 0 0,0 9,5V13A5,5 0 0,0 7,17A5,5 0 0,0 12,22A5,5 0 0,0 17,17A5,5 0 0,0 15,13Z"/></svg>
+                                            </div>
+                                            <div class="fact-content">
+                                                <b>+16°C de Aquecimento no Solo</b>
+                                                <span>As 'ilhas de calor' geradas pelos servidores aceleram a desertificação das zonas vizinhas.</span>
+                                            </div>
+                                        </div>
+                                        <!-- ÁREA -->
+                                        <div class="fact-item" style="color: #795548">
+                                            <div class="fact-icon">
+                                                <svg viewBox="0 0 24 24"><path d="M15,2H9V4H15V2M11,14.5L13,12.5V7H11V14.5M19.03,7.39L20.45,5.97C20,5.46 19.55,5 19.04,4.56L17.62,5.97C15.95,4.74 14.05,4 12,4C7.03,4 3,8.03 3,13C3,17.97 7.03,22 12,22C16.97,22 21,17.97 21,13C21,10.94 20.3,9.04 19.03,7.39Z"/></svg>
+                                            </div>
+                                            <div class="fact-content">
+                                                <b>215 Campos de Futebol</b>
+                                                <span>É a área de solo ocupada apenas para treinar um único modelo de IA de grande escala.</span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="hero-visual">
                                 <div class="hero-globe" id="hero-cycler">
-                                    <img src="https://images.unsplash.com/photo-1470240731273-7821a6eeb6bd?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" class="active">
-                                    <img src="https://images.unsplash.com/photo-1641959166364-6c9b9898e804?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D">
-                                    <img src="https://images.unsplash.com/photo-1586400792375-d6b8f82db2e6?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D">
-                                    <img src="https://plus.unsplash.com/premium_photo-1661902468900-8528a81ed688?q=80&w=2013&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D">
+                                    <img src="https://images.unsplash.com/photo-1470240731273-7821a6eeb6bd?q=80&w=2070&auto=format&fit=crop" class="active">
+                                    <img src="https://images.unsplash.com/photo-1641959166364-6c9b9898e804?q=80&w=2071&auto=format&fit=crop">
+                                    <img src="https://images.unsplash.com/photo-1586400792375-d6b8f82db2e6?q=80&w=2071&auto=format&fit=crop">
+                                    <img src="https://plus.unsplash.com/premium_photo-1661902468900-8528a81ed688?q=80&w=2013&auto=format&fit=crop">
                                 </div>
                             </div>
                         </section>
@@ -281,7 +322,6 @@
             }
 
             function iniciarCiclos() {
-                // Fotos
                 const imgs = document.querySelectorAll('#hero-cycler img');
                 const imgSeq = [0, 1, 0, 2, 0, 3];
                 let imgP = 0;
@@ -291,7 +331,6 @@
                     imgs[imgSeq[imgP]].classList.add('active');
                 }, 5000);
 
-                // Factos IA - 10 Segundos
                 const facts = document.querySelectorAll('#fact-cycler .fact-item');
                 let factP = 0;
                 setInterval(() => {
