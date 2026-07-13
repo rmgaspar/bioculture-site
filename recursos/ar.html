@@ -19,7 +19,7 @@
             .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; color: #bbb; margin-bottom: 8px; display: block; text-align: center; }
             
             /* Alinhamento Rigoroso (Grid 180px para labels) */
-            .data-row { display: grid; grid-template-columns: 180px 1fr; gap: 40px; padding: 2em 0; border-bottom: 1px solid #f2f2f2; }
+            .data-row { display: grid; grid-template-columns: 180px 1fr; gap: 40px; padding: 2.5em 0; border-bottom: 1px solid #f2f2f2; }
             .data-row h4 { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin: 0; padding-top: 5px; }
 
             /* INDICADOR AQI & TENDÊNCIAS */
@@ -67,8 +67,8 @@
             .card-image-wrap img { width: 100%; height: 100%; object-fit: cover; }
             .badge-cat { position: absolute; bottom: 10px; left: 10px; background: #ffb74d; color: white; padding: 4px 12px; border-radius: 50px; font-size: 0.55em; font-weight: 900; text-transform: uppercase; }
 
+            .transition-text { font-size: 1.1em; line-height: 1.6; color: #777; margin: 0 0 1.5em 0; max-width: 1000px; text-align: justify; }
             .bio-res-item { padding: 12px 18px; font-size: 0.9em; color: #666; cursor: pointer; border-bottom: 1px solid #f9f9f9 !important; }
-            .bio-res-item:hover { background: #fffaf4; color: #ffb74d; }
 
             @media screen and (max-width: 1280px) {
                 #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
@@ -119,7 +119,6 @@
                                             <span class="anomaly-tag" id="temp-anomaly">Anomalia: --ºC</span>
                                         </div>
                                     </div>
-
                                     <p class="tech-detail" id="air-description" style="margin-top:15px;"></p>
                                 </div>
                             </div>
@@ -129,8 +128,9 @@
                         <div class="data-row">
                             <h4>Alerta de Poluição</h4>
                             <div class="tech-content">
-                                <p style="font-size: 1.1em; line-height: 1.6; color: #777; margin-bottom: 1em; max-width: 1000px;">
-                                    A qualidade do ar que respiramos é o indicador mais direto da saúde de um ecossistema. Partículas em suspensão e gases de efeito estufa não conhecem fronteiras, exigindo uma vigilância rigorosa sobre emissões industriais e queima de biomassa.
+                                <p class="transition-text">
+                                    <strong>Panorama Nacional:</strong> Portugal mantém uma qualidade do ar globalmente "Boa", mas enfrenta picos críticos de Dióxido de Azoto (NO2) nas áreas metropolitanas de Lisboa e Porto e de Ozono (O3) no interior durante o verão. A rede QualAr revela que a queima de biomassa doméstica e os incêndios florestais são agora os principais emissores de partículas finas (PM2.5), superando a indústria pesada em várias regiões.<br><br>
+                                    <strong>Contexto Global:</strong> Segundo a OMS, 99% da população mundial respira ar que excede os limites de segurança. A poluição transfronteiriça, como as poeiras do Saara e as plumas de fumo continentais, demonstra que a atmosfera é um sistema partilhado onde a degradação local acelera o aquecimento global e a perda de biodiversidade em larga escala.
                                 </p>
                                 
                                 <div class="air-impact-box">
@@ -144,7 +144,7 @@
                             </div>
                         </div>
 
-                        <!-- RELATÓRIO TÉCNICO -->
+                        <!-- RELATÓRIO TÉCNICO (PROFUNDO) -->
                         <div class="data-row" style="border-bottom: none;">
                             <h4>Relatório de Qualidade</h4>
                             <div class="tech-content">
@@ -177,24 +177,24 @@
 
             const relatoriosAr = [
                 {
-                    titulo: "Rede de Monitorização QualAr",
-                    texto: "A Agência Portuguesa do Ambiente (APA) gere a rede nacional que mede poluentes em tempo real. Os dados indicam que o Ozono (O3) troposférico continua a ser um desafio crítico durante as ondas de calor de verão.",
-                    fonte: "APA - Agência Portuguesa do Ambiente"
+                    titulo: "Monitorização QualAr e Diretivas",
+                    texto: "A Agência Portuguesa do Ambiente (APA) coordena a estratégia nacional 'Ar Melhor', focada no cumprimento da Diretiva Teto de Emissões. Embora Portugal tenha reduzido drasticamente as emissões de SO2, o grande desafio atual reside na redução de precursores de Ozono e na monitorização de compostos orgânicos voláteis (COV) provenientes de novos polos industriais e logísticos.",
+                    fonte: "APA - Agência Portuguesa do Ambiente / Rede QualAr"
                 },
                 {
-                    titulo: "Estado do Ambiente (REA)",
-                    texto: "O Relatório do Estado do Ambiente aponta para uma estabilização das emissões de gases de efeito estufa em Portugal, mas alerta para o impacto crescente das partículas finas (PM2.5) de fontes industriais.",
-                    fonte: "REA - Relatório do Estado do Ambiente"
+                    titulo: "Relatório do Estado do Ambiente (REA)",
+                    texto: "A edição mais recente do REA sublinha o sucesso na descarbonização do setor eletroprodutor, mas alerta para a estagnação das emissões no setor dos transportes e agricultura. O relatório destaca a necessidade urgente de mitigar a amónia (NH3) e as partículas ultrafinas, que têm um impacto direto na saúde pública e na acidificação dos ecossistemas aquáticos e terrestres.",
+                    fonte: "REA - Relatório do Estado do Ambiente / iAmbiente"
                 },
                 {
-                    titulo: "Purificação e Sequestração",
-                    texto: "O ICNF sublinha a importância das manchas florestais na purificação do ar. A regeneração nativa é a forma mais eficaz de criar sumidouros de carbono e reduzir o efeito de 'ilha de calor' urbana.",
-                    fonte: "ICNF - Conservação da Natureza e Florestas"
+                    titulo: "Estratégia de Sequestração e Filtros Vivos",
+                    texto: "O ICNF promove a regeneração de florestas autóctones como 'filtros vivos'. Espécies como o carvalho e o sobreiro possuem uma capacidade superior de retenção de aerossóis e poeiras atmosféricas. A gestão florestal sustentável é apresentada como a barreira principal contra a desertificação e o aumento das concentrações de CO2 nas regiões mais vulneráveis do interior.",
+                    fonte: "ICNF - Instituto da Conservação da Natureza e das Florestas"
                 },
                 {
-                    titulo: "Tendências de 20 Anos (AQICN)",
-                    texto: "Dados históricos revelam melhoria na qualidade do ar desde 2004 devido à renovação da frota automóvel. Contudo, a densidade de PM2.5 mantém-se estagnada, exigindo novas políticas de mobilidade.",
-                    fonte: "AQICN - World Air Quality Index Project"
+                    titulo: "Tendências Históricas e Ciência Cidadã",
+                    texto: "A análise de dados do AQICN nos últimos 20 anos revela que, apesar da melhoria na tecnologia automóvel, a concentração de PM2.5 em Almada e Lisboa mantém-se em patamares que exigem cautela. A emergência de redes de monitorização de baixo custo (ciência cidadã) está a permitir detetar 'hotspots' de poluição micro-local que as estações oficiais por vezes não captam.",
+                    fonte: "AQICN - World Air Quality Index Project / World Water Org"
                 }
             ];
 
@@ -281,8 +281,8 @@
                 document.getElementById('status-aqi').innerText = "Estação: " + closest.estacao;
                 
                 // Anomalia Térmica (Dados simulados baseados na bioregião)
-                const tempAtual = 24.5;
-                const anomalia = +1.2;
+                const tempAtual = (info.clima && info.clima.temp_atual) || 24.5;
+                const anomalia = (info.clima && info.clima.anomalia) || +1.2;
                 document.getElementById('air-temp').innerText = tempAtual + "ºC";
                 document.getElementById('temp-anomaly').innerText = `Anomalia: ${anomalia > 0 ? '+' : ''}${anomalia}ºC vs média histórica`;
 
@@ -310,7 +310,7 @@
                     <a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-card ${i >= visiveisAr ? 'hidden-card' : ''}">
                         <div class="card-image-wrap"><img src="${n.imagem}"><span class="badge-cat">Ar</span></div>
                         <h3>${n.titulo}</h3>
-                        <p>${n.resumo_biocultura.substring(0, 100)}...</p>
+                        <p>${n.resumo.substring(0, 100)}...</p>
                     </a>`).join('');
                 document.getElementById('btn-load-more-ar').style.display = noticiasAr.length > visiveisAr ? 'inline-block' : 'none';
             }
