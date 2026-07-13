@@ -20,9 +20,10 @@
             .noticia-cat { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 10px; display: block; color: #bbb; }
             .noticia-titulo { font-size: 3.5em; font-weight: 900; color: #1a1a1a; letter-spacing: -2px; line-height: 1.1; margin: 0 0 20px 0; }
             
-            .noticia-meta { display: flex; align-items: center; gap: 12px; font-size: 0.8em; color: #888; font-weight: 600; }
-            
-            /* Logo da Fonte (Cores Ativas) */
+            /* Meta Topo e Fundo */
+            .noticia-meta { display: flex; align-items: center; gap: 12px; font-size: 0.85em; color: #888; }
+            .source-name { color: #000; font-weight: 700; }
+            .source-date { font-weight: 400; }
             .source-logo-detail { width: 22px; height: 22px; object-fit: contain; }
 
             .noticia-hero-img { width: 100%; height: 500px; object-fit: cover; border-radius: 30px; margin: 2em 0; background: #f5f5f5; }
@@ -33,12 +34,12 @@
             .noticia-corpo { font-size: 1.15em; line-height: 1.8; color: #444; width: 100%; }
             .noticia-corpo p { margin-bottom: 1.5em; text-align: justify; }
 
-            /* Meta no Fundo com Link */
             .noticia-meta-footer { margin-top: 3em; padding-top: 2em; border-top: 1px solid #f2f2f2; }
-            .noticia-meta-footer a { text-decoration: none; color: inherit; display: flex; align-items: center; gap: 12px; font-size: 0.9em; font-weight: 600; transition: opacity 0.2s; }
+            .noticia-meta-footer a { text-decoration: none; color: inherit; display: flex; align-items: center; gap: 12px; transition: opacity 0.2s; }
             .noticia-meta-footer a:hover { opacity: 0.7; }
 
-            .bottom-actions { padding: 4em 0; display: flex; justify-content: space-between; align-items: center; }
+            /* Ações */
+            .bottom-actions { padding: 4em 0; display: flex; align-items: center; gap: 15px; }
             .btn-voltar { 
                 text-decoration: none; 
                 font-size: 0.75em; 
@@ -48,13 +49,13 @@
                 color: #bbb; 
                 display: inline-flex; 
                 align-items: center; 
-                gap: 10px; 
                 transition: color 0.3s; 
                 cursor: pointer; 
                 border: none !important; 
                 background: none !important;
             }
             .btn-voltar:hover { color: #1a1a1a; text-decoration: underline; }
+            .action-sep { color: #eee; font-size: 0.8em; }
 
             @media screen and (max-width: 1280px) {
                 #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
@@ -77,12 +78,10 @@
                             <div class="noticia-header noticia-indent">
                                 <span class="noticia-cat" id="cat">--</span>
                                 <h1 class="noticia-titulo" id="titulo">--</h1>
-                                <!-- Meta Topo (Sem Link) -->
                                 <div class="noticia-meta">
                                     <img src="" class="source-logo-detail" id="source-logo" alt="">
-                                    <span id="source-name-top">--</span>
-                                    <span style="opacity: 0.5;">|</span>
-                                    <span id="data">--</span>
+                                    <span class="source-name" id="source-name-top">--</span>
+                                    <span class="source-date" id="data">--</span>
                                 </div>
                             </div>
 
@@ -98,15 +97,15 @@
                             <div class="noticia-meta-footer noticia-indent">
                                 <a id="footer-source-link" href="#" target="_blank">
                                     <img src="" class="source-logo-detail" id="footer-source-logo">
-                                    <span id="footer-source-name">--</span>
-                                    <span style="opacity: 0.5;">|</span>
-                                    <span id="footer-source-date">--</span>
+                                    <span class="source-name" id="footer-source-name">--</span>
+                                    <span class="source-date" id="footer-source-date">--</span>
                                 </a>
                             </div>
 
                             <!-- Ações -->
                             <div class="bottom-actions noticia-indent">
                                 <a href="javascript:history.back()" class="btn-voltar">← voltar</a>
+                                <span class="action-sep">|</span>
                                 <a href="#" id="link-relacionado" class="btn-voltar">relacionado</a>
                             </div>
                         </div>
@@ -123,7 +122,6 @@
 
 		<script src="/assets/js/jquery.min.js"></script>
         <script>
-            // Mapeamento de cores conforme o Index
             const catColors = {
                 'Energia': '#f1c40f',
                 'Biodiversidade': '#2ecc71',
@@ -152,7 +150,6 @@
                         
                         document.title = n.titulo + " - bioCultura";
                         
-                        // Categoria e Cor
                         const catEl = document.getElementById('cat');
                         catEl.innerText = n.categoria;
                         if(catColors[n.categoria]) catEl.style.color = catColors[n.categoria];
@@ -161,20 +158,18 @@
                         
                         // Meta Topo
                         document.getElementById('source-logo').src = n.logo || '';
-                        document.getElementById('source-name-top').innerText = n.fonte || 'Fonte';
+                        document.getElementById('source-name-top').innerText = n.fonte || '';
                         document.getElementById('data').innerText = n.data;
                         
-                        // Imagem e Corpo
                         document.getElementById('imagem').src = n.imagem;
                         document.getElementById('corpo').innerHTML = n.corpo;
                         
-                        // Meta Fundo (Com Link)
+                        // Meta Fundo
                         document.getElementById('footer-source-logo').src = n.logo || '';
-                        document.getElementById('footer-source-name').innerText = n.fonte || 'Fonte';
+                        document.getElementById('footer-source-name').innerText = n.fonte || '';
                         document.getElementById('footer-source-date').innerText = n.data;
                         document.getElementById('footer-source-link').href = n.url || '#';
 
-                        // Link Relacionado (Exemplo: filtrando por categoria no index)
                         document.getElementById('link-relacionado').href = `/index.html?filter=${n.categoria}`;
 
                         if (n.resumo) {
