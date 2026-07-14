@@ -6,7 +6,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
 		<style>
-            /* --- ESTRUTURA GLOBAL --- */
+            /* --- ESTRUTURA GLOBAL (PARIDADE TOTAL) --- */
             body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
 			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
             section { padding-top: 3em !important; min-height: 100vh; display: flex; flex-direction: column; }
@@ -18,10 +18,10 @@
             .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; color: #bbb; margin-bottom: 8px; display: block; text-align: center; }
             
             .data-row { display: block; padding: 2.5em 0; border-bottom: 1px solid #f2f2f2; }
-            .data-row h4 { font-size: 0.75em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #6d1b32; margin: 0 0 30px 0; display: block; }
+            .data-row h4 { font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #6d1b32; margin: 0 0 30px 0; display: block; }
 
             /* TEXTO REGIONAL */
-            .region-intro { font-size: 1.15em; line-height: 1.7; color: #555; margin-bottom: 2em; text-align: justify; max-width: 1000px; border-left: 3px solid #6d1b32; padding-left: 25px; }
+            .region-intro { font-size: 1.15em; line-height: 1.7; color: #555; margin-bottom: 2.5em; text-align: justify; max-width: 1000px; border-left: 3px solid #6d1b32; padding-left: 25px; }
 
             /* GRID DE CASTAS */
             .castas-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
@@ -50,14 +50,15 @@
             .btn-clean { background: none !important; border: none !important; padding: 0 !important; color: #bbb !important; font-size: 0.7em; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: color 0.2s; }
             .btn-clean:hover { color: #6d1b32 !important; text-decoration: underline; }
 
-            /* MODAL TÉCNICO */
-            .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(26,26,26,0.95); z-index: 20000; display: none; align-items: center; justify-content: center; padding: 2em; }
-            .modal-content { background: #fff; width: 100%; max-width: 900px; max-height: 90vh; border-radius: 40px; overflow-y: auto; padding: 4em; position: relative; }
-            .close-modal { position: absolute; top: 30px; right: 40px; font-size: 2em; cursor: pointer; color: #ddd; transition: color 0.2s; }
+            /* VISTA DE DETALHE */
+            #casta-detail-view { display: none; padding: 2em 0; }
+            .btn-back { color: #bbb; font-size: 0.75em; font-weight: 800; text-transform: uppercase; cursor: pointer; display: inline-block; margin-bottom: 2em; }
+            .btn-back:hover { color: #1a1a1a; }
             
             .tech-sheet { display: grid; grid-template-columns: 1fr 1fr; gap: 4em; }
+            .attribute-row { margin-bottom: 15px; }
             .attribute-label { display: flex; justify-content: space-between; font-size: 0.7em; font-weight: 900; color: #bbb; text-transform: uppercase; margin-bottom: 5px; }
-            .bar-bg { height: 4px; background: #eee; border-radius: 10px; margin-bottom: 20px; }
+            .bar-bg { height: 4px; background: #eee; border-radius: 10px; }
             .bar-fill { height: 100%; background: #6d1b32; border-radius: 10px; }
 
             .bio-res-item { padding: 12px 18px; font-size: 0.9em; color: #666; cursor: pointer; border-bottom: 1px solid #f9f9f9 !important; }
@@ -80,44 +81,54 @@
                             <p style="font-size: 0.9em; font-style: italic; color: #bbb;">Contexto regional: <strong id="reg-name" style="color:#6d1b32">...</strong></p>
                         </div>
 
-                        <!-- 1. CONTEXTO REGIONAL (SEMPRE VISÍVEL COM FALLBACK) -->
-                        <div class="data-row" id="regional-section">
-                            <h4>Terroir e Castas da Região</h4>
-                            <div class="tech-content">
-                                <p id="region-description" class="region-intro"></p>
-                                <div id="regional-grid" class="castas-grid"></div>
+                        <!-- VISTA PRINCIPAL -->
+                        <div id="enologia-list-view">
+                            
+                            <!-- 1. CONTEXTO REGIONAL (DINÂMICO) -->
+                            <div class="data-row" id="regional-section">
+                                <h4>Terroir e Castas Autóctones</h4>
+                                <div class="tech-content">
+                                    <p id="region-description" class="region-intro"></p>
+                                    <div id="regional-grid" class="castas-grid"></div>
+                                </div>
                             </div>
-                        </div>
 
-                        <!-- 2. CLASSIFICAÇÃO BIO -->
-                        <div class="data-row">
-                            <h4>Classificação e Intervenção Mínima</h4>
-                            <div class="tech-content">
-                                <div class="vinhos-grid">
-                                    <div class="vinho-box bio-active">
-                                        <h5>Vinhos Tintos (Bio)</h5>
-                                        <p>Fermentação com leveduras indígenas e maceração prolongada. Foco na extração natural de taninos sem aditivos sintéticos.</p>
-                                    </div>
-                                    <div class="vinho-box bio-active">
-                                        <h5>Vinhos Brancos (Minerais)</h5>
-                                        <p>Preservação da acidez natural e estágio sobre borras finas para complexidade e proteção antioxidante natural.</p>
-                                    </div>
-                                    <div class="vinho-box bio-active">
-                                        <h5>Vinhos "Orange"</h5>
-                                        <p>Brancos vinificados com contacto prolongado com as cascas, conferindo estrutura e estabilidade biológica superior.</p>
-                                    </div>
-                                    <div class="vinho-box bio-active">
-                                        <h5>Espumantes Ancestrais</h5>
-                                        <p>Método 'Pét-Nat'. A fermentação termina na garrafa sem adição de açúcares, resultando num vinho vivo e autêntico.</p>
+                            <!-- 2. CLASSIFICAÇÃO BIO -->
+                            <div class="data-row">
+                                <h4>Classificação e Intervenção Mínima</h4>
+                                <div class="tech-content">
+                                    <div class="vinhos-grid">
+                                        <div class="vinho-box bio-active">
+                                            <h5>Vinhos Tintos (Bio)</h5>
+                                            <p>Fermentação com leveduras indígenas e maceração prolongada. Foco na extração natural de taninos sem aditivos sintéticos.</p>
+                                        </div>
+                                        <div class="vinho-box bio-active">
+                                            <h5>Vinhos Brancos (Minerais)</h5>
+                                            <p>Preservação da acidez natural e estágio sobre borras finas para complexidade e proteção antioxidante natural.</p>
+                                        </div>
+                                        <div class="vinho-box bio-active">
+                                            <h5>Vinhos "Orange"</h5>
+                                            <p>Brancos vinificados com contacto prolongado com as cascas, conferindo estrutura e estabilidade biológica superior.</p>
+                                        </div>
+                                        <div class="vinho-box bio-active">
+                                            <h5>Espumantes Ancestrais</h5>
+                                            <p>Método 'Pét-Nat'. A fermentação termina na garrafa sem adição de açúcares, resultando num vinho vivo e autêntico.</p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+
+                            <!-- 3. ATLAS GLOBAL -->
+                            <div class="data-row" style="border-bottom: none;">
+                                <h4>Atlas das Castas de Portugal</h4>
+                                <div id="global-atlas"></div>
+                            </div>
                         </div>
 
-                        <!-- 3. ATLAS GLOBAL -->
-                        <div class="data-row" style="border-bottom: none;">
-                            <h4>Atlas das Castas de Portugal</h4>
-                            <div id="global-atlas"></div>
+                        <!-- VISTA DE DETALHE -->
+                        <div id="casta-detail-view">
+                            <span class="btn-back" onclick="hideDetail()">← voltar</span>
+                            <div id="detail-content"></div>
                         </div>
 
                         <footer class="page-footer" style="margin-top:4em; padding-top:2em; border-top:1px solid #f2f2f2; opacity:0.3; text-align:right;">
@@ -130,24 +141,17 @@
 			<div id="sidebar"></div>
 		</div>
 
-        <!-- MODAL DE DETALHE -->
-        <div class="modal-overlay" id="casta-modal">
-            <div class="modal-content">
-                <span class="close-modal" onclick="closeModal()">&times;</span>
-                <div id="modal-body"></div>
-            </div>
-        </div>
-
 		<script src="/assets/js/jquery.min.js"></script>
         <script>
             let locationsDB = [], castasDB = [];
             let expandedRegions = {};
 
             const regionIntros = {
-                "Lisboa": "A região de Lisboa é marcada pela forte influência atlântica, resultando em vinhos de frescura vibrante e salinidade única. As castas autóctones como o Arinto e o Vital adaptaram-se aos solos argilo-calcários e aos ventos marítimos persistentes.",
-                "Douro": "O Douro, Património Mundial, é o berço de vinhos estruturados e complexos. O solo xistoso e o clima mediterrânico extremo forçam as raízes das castas autóctones (Touriga Nacional, Touriga Franca) a profundidades incríveis.",
-                "Alentejo": "No Alentejo, o sol e as planícies graníticas moldam vinhos generosos. A viticultura regenerativa foca-se na preservação da água e no uso de castas como Antão Vaz e Alicante Bouschet, resistentes ao calor.",
-                "Dão": "O Dão produz vinhos de elegância ímpar. Rodeada por montanhas, as suas castas autóctones (Encruzado, Touriga Nacional) em solos graníticos revelam uma mineralidade profunda e grande potencial de guarda."
+                "Lisboa": "A região de Lisboa é marcada pela forte influência atlântica, resultando em vinhos de frescura vibrante e salinidade única. As castas autóctones adaptaram-se aos solos argilo-calcários e aos ventos marítimos persistentes.",
+                "Douro": "O Douro, Património Mundial, é o berço de vinhos estruturados e complexos. O solo xistoso e o clima mediterrânico extremo forçam as raízes das castas autóctones a profundidades incríveis.",
+                "Alentejo": "No Alentejo, o sol e as planícies graníticas moldam vinhos generosos e macios. A viticultura regenerativa foca-se na preservação da água e no uso de castas que mantêm a acidez sob calor intenso.",
+                "Dão": "O Dão é a região do equilíbrio. Rodeada por montanhas, as suas castas autóctones em solos graníticos produzem vinhos de elegância ímpar e mineralidade profunda.",
+                "Beira Interior": "Uma região de altitude com solos predominantemente graníticos. O clima rigoroso permite a produção de vinhos com uma frescura e acidez natural notáveis, onde a casta Siria e a Fonte Cal brilham."
             };
 
             async function inicializarPagina() {
@@ -159,14 +163,13 @@
                     locationsDB = rLoc;
                     castasDB = rCastas;
 
-                    // Fallback para Lisboa se não houver nada no storage
                     const savedId = localStorage.getItem('biocultura_region') || "lisboa";
                     const info = locationsDB.find(i => i.id === savedId) || locationsDB[0];
                     
                     renderRegional(info);
                     renderGlobalAtlas();
                     setupLocationLogic();
-                } catch(e) { console.error("Erro no carregamento:", e); }
+                } catch(e) { console.error(e); }
             }
 
             function renderRegional(info) {
@@ -175,14 +178,14 @@
                 const container = document.getElementById('regional-grid');
                 const desc = document.getElementById('region-description');
                 
-                // Mapeamento: Proença -> Beira Interior, Lisboa -> Lisboa, etc.
-                const regionName = info.regiao_vinho || "Lisboa"; 
+                // Pega a região vinícola do JSON ou assume Lisboa como fallback
+                const regionName = info.regiao_vinho || "Lisboa";
                 const autoctones = castasDB.filter(c => c.regioes.includes(regionName) && c.autoctone);
 
                 desc.innerText = regionIntros[regionName] || `A região de ${regionName} possui um património vitícola riquíssimo, onde a interação entre o solo e o clima local permite a expressão máxima destas castas autóctones.`;
                 container.innerHTML = autoctones.length > 0 
                     ? autoctones.map(c => castaCardTemplate(c)).join('')
-                    : `<p style="color:#bbb; font-style:italic">Nenhuma casta autóctone mapeada especificamente para ${regionName}.</p>`;
+                    : `<p style="color:#bbb; font-style:italic">Nenhuma casta autóctone mapeada para ${regionName}.</p>`;
             }
 
             function renderGlobalAtlas() {
@@ -225,7 +228,7 @@
 
             function showDetail(id) {
                 const c = castasDB.find(item => item.id === id);
-                document.getElementById('modal-body').innerHTML = `
+                document.getElementById('detail-content').innerHTML = `
                     <div class="tech-sheet">
                         <div>
                             <span class="category-label" style="text-align:left">${c.tipo_vinho}</span>
@@ -239,15 +242,15 @@
                         </div>
                         <div>
                             <h4 style="margin-bottom:20px">Diretrizes Bio</h4>
-                            <p><b>Solo:</b> ${c.tecnico.solo}</p>
+                            <p><b>Solo Ideal:</b> ${c.tecnico.solo}</p>
                             <p><b>Clima:</b> ${c.tecnico.clima}</p>
                             <p><b>Distância:</b> ${c.tecnico.distancia}</p>
                             <p><b>Irrigação:</b> ${c.tecnico.irrigacao}</p>
-                            <button onclick="closeModal()" class="btn-clean" style="margin-top:40px; color:#1a1a1a !important; font-weight:900; border-bottom: 1px solid #1a1a1a !important;">← Voltar ao Atlas</button>
                         </div>
                     </div>
                 `;
-                document.getElementById('casta-modal').style.display = 'flex';
+                document.getElementById('enologia-list-view').style.display = 'none';
+                document.getElementById('casta-detail-view').style.display = 'block';
                 window.scrollTo(0, 0);
             }
 
@@ -255,7 +258,10 @@
                 return `<div class="attribute-row"><div class="attribute-label"><span>${label}</span><span>${val}/10</span></div><div class="bar-bg"><div class="bar-fill" style="width:${val*10}%"></div></div></div>`;
             }
 
-            function closeModal() { document.getElementById('casta-modal').style.display = 'none'; }
+            function hideDetail() {
+                document.getElementById('enologia-list-view').style.display = 'block';
+                document.getElementById('casta-detail-view').style.display = 'none';
+            }
 
             function setupLocationLogic() {
                 $(document).off('input', '#loc-search-input').on('input', '#loc-search-input', function() {
@@ -268,17 +274,6 @@
                         }).appendTo(dropdown);
                     });
                     dropdown.show();
-                });
-                $(document).off('click', '#btn-gps-trigger').on('click', '#btn-gps-trigger', function() {
-                    navigator.geolocation.getCurrentPosition(pos => {
-                        let closest = locationsDB[0], minD = Infinity;
-                        locationsDB.forEach(c => {
-                            let d = Math.sqrt(Math.pow(pos.coords.latitude - c.lat, 2) + Math.pow(pos.coords.longitude - c.lon, 2));
-                            if(d < minD) { minD = d; closest = c; }
-                        });
-                        localStorage.setItem('biocultura_region', closest.id);
-                        location.reload();
-                    });
                 });
             }
 
