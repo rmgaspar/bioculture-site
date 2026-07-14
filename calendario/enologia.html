@@ -14,7 +14,9 @@
             #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
             #wrapper { padding-left: 18em !important; }
 
-            .inner { padding: 2.2em 4em 0 4em !important; max-width: 1600px !important; margin: 0 auto; width: 100%; }
+            /* RETIFICAÇÃO DO ESPAÇAMENTO DO TOPO */
+            .inner { padding: 2.2em 4em 0 4em !important; max-width: 1400px; margin: 0 auto; width: 100%; }
+
             .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; color: #bbb; margin-bottom: 8px; display: block; text-align: center; }
             
             .data-row { display: block; padding: 2.5em 0; border-bottom: 1px solid #f2f2f2; }
@@ -177,14 +179,8 @@
                 document.getElementById('reg-name').innerText = info.titulo;
                 const container = document.getElementById('regional-grid');
                 const desc = document.getElementById('region-description');
-                
-                // Mapeamento forçado para garantir que o texto muda
                 const regionName = info.regiao_vinho || "Lisboa";
-                
-                // Filtro insensível a maiúsculas
-                const autoctones = castasDB.filter(c => 
-                    c.regioes.some(r => r.toLowerCase() === regionName.toLowerCase()) && c.autoctone
-                );
+                const autoctones = castasDB.filter(c => c.regioes.some(r => r.toLowerCase() === regionName.toLowerCase()) && c.autoctone);
 
                 desc.innerText = regionIntros[regionName] || `A região de ${regionName} possui um património vitícola riquíssimo, onde a interação entre o solo e o clima local permite a expressão máxima destas castas autóctones.`;
                 
@@ -246,6 +242,10 @@
                             ${renderBar("Corpo", c.perfil.corpo)}
                             ${renderBar("Taninos", c.perfil.taninos)}
                             ${renderBar("Álcool", c.perfil.alcool)}
+                            <div style="margin-top:30px; background:#f9f9f9; padding:20px; border-radius:15px">
+                                <span class="attribute-label">Aromas Principais</span>
+                                <p style="color:#6d1b32; font-weight:700; margin:5px 0 0 0">${c.aromas.join(' • ')}</p>
+                            </div>
                         </div>
                         <div>
                             <h4 style="margin-bottom:20px">Diretrizes Bio</h4>
@@ -253,7 +253,6 @@
                             <p><b>Clima:</b> ${c.tecnico.clima}</p>
                             <p><b>Distância:</b> ${c.tecnico.distancia}</p>
                             <p><b>Irrigação:</b> ${c.tecnico.irrigacao}</p>
-                            <button onclick="closeModal()" class="btn-clean" style="margin-top:40px; color:#1a1a1a !important; font-weight:900; border-bottom: 1px solid #1a1a1a !important;">← Voltar ao Atlas</button>
                         </div>
                     </div>
                 `;
