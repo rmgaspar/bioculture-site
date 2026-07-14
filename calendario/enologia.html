@@ -1,12 +1,12 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<title>bioCultura - Enologia Biológica e Regenerativa</title>
+		<title>bioCultura - Atlas de Enologia Regenerativa</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
 		<style>
-            /* --- ESTRUTURA GLOBAL (PARIDADE TOTAL) --- */
+            /* --- ESTÉTICA ENOLÓGICA --- */
             body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
 			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
             section { padding-top: 3em !important; min-height: 100vh; display: flex; flex-direction: column; }
@@ -18,42 +18,49 @@
             .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; color: #bbb; margin-bottom: 8px; display: block; text-align: center; }
             
             .data-row { display: block; padding: 2.5em 0; border-bottom: 1px solid #f2f2f2; }
-            .data-row h4 { font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #5d4037; margin: 0 0 30px 0; display: block; }
+            .data-row h4 { font-size: 0.75em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #6d1b32; margin: 0 0 30px 0; display: block; }
 
             /* GRID DE CASTAS */
-            .castas-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
-            .casta-card { background: #fff; border: 1px solid #f2f2f2; border-radius: 20px; padding: 25px; transition: transform 0.3s; }
-            .casta-card:hover { transform: translateY(-5px); border-color: #e0e0e0; }
-            .casta-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-            .casta-name { font-size: 1.2em; font-weight: 900; color: #1a1a1a; }
-            .casta-type { font-size: 0.6em; font-weight: 900; text-transform: uppercase; padding: 4px 10px; border-radius: 4px; }
-            .type-tinto { background: #ffebee; color: #c62828; }
-            .type-branco { background: #fffde7; color: #f9a825; }
+            .castas-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
+            .casta-card { 
+                background: #fdfdfd; border: 1px solid #f2f2f2; border-radius: 15px; padding: 20px; 
+                cursor: pointer; transition: all 0.3s; position: relative; overflow: hidden;
+            }
+            .casta-card:hover { transform: translateY(-5px); border-color: #6d1b32; box-shadow: 0 10px 30px rgba(109,27,50,0.05); }
+            .casta-card b { display: block; font-size: 1.1em; color: #1a1a1a; margin-bottom: 5px; }
+            .casta-card span { font-size: 0.65em; font-weight: 900; text-transform: uppercase; color: #bbb; }
+            .tag-cor { position: absolute; top: 15px; right: 15px; width: 10px; height: 10px; border-radius: 50%; }
+            .bg-tinto { background: #6d1b32; }
+            .bg-branco { background: #f1c40f; }
+            .bg-rose { background: #ff8a80; }
+
+            /* SECÇÕES DE REGIÕES */
+            .region-group { margin-bottom: 40px; }
+            .region-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 20px; }
+            .region-header h5 { font-size: 1.1em; font-weight: 900; color: #333; margin: 0; }
+            .btn-view-all { font-size: 0.7em; font-weight: 900; text-transform: uppercase; color: #6d1b32; cursor: pointer; }
+
+            /* MODAL TÉCNICO (A BÍBLIA) */
+            .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(26,26,26,0.95); z-index: 20000; display: none; align-items: center; justify-content: center; padding: 2em; }
+            .modal-content { background: #fff; width: 100%; max-width: 900px; max-height: 90vh; border-radius: 40px; overflow-y: auto; padding: 4em; position: relative; }
+            .close-modal { position: absolute; top: 30px; right: 40px; font-size: 2em; cursor: pointer; color: #ddd; }
             
-            .casta-detail { font-size: 0.85em; line-height: 1.6; color: #666; margin-bottom: 10px; }
-            .casta-detail b { color: #333; }
-            .terroir-tag { font-size: 0.7em; font-weight: 800; color: #8d6e63; text-transform: uppercase; display: block; margin-top: 10px; }
+            .tech-sheet { display: grid; grid-template-columns: 1fr 1fr; gap: 4em; }
+            .sheet-left h2 { font-size: 3em; font-weight: 900; color: #1a1a1a; margin-bottom: 10px; }
+            .perfil-bar { height: 4px; background: #eee; border-radius: 10px; margin: 10px 0 20px 0; position: relative; }
+            .perfil-fill { height: 100%; background: #6d1b32; border-radius: 10px; }
+            .attribute-label { display: flex; justify-content: space-between; font-size: 0.7em; font-weight: 900; text-transform: uppercase; color: #bbb; }
 
-            /* TIPOS DE VINHO BIO */
-            .vinhos-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 20px; }
-            .vinho-box { border-left: 3px solid #eee; padding-left: 20px; margin-bottom: 20px; }
-            .vinho-box h5 { font-size: 0.9em; font-weight: 900; text-transform: uppercase; margin-bottom: 8px; color: #1a1a1a; }
-            .vinho-box p { font-size: 0.85em; color: #777; margin: 0; }
-            .vinho-box.bio-active { border-left-color: #2e7d32; }
-
-            /* RELATÓRIOS */
-            .report-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; }
-            .report-item { border-top: 1px solid #f9f9f9; padding-top: 20px; }
-            .report-item h5 { font-size: 0.75em; font-weight: 900; text-transform: uppercase; color: #5d4037; margin-bottom: 12px; }
-            .report-item p { font-size: 0.95em; line-height: 1.7; color: #555; text-align: justify; }
-
-            .bio-res-item { padding: 12px 18px; font-size: 0.9em; color: #666; cursor: pointer; border-bottom: 1px solid #f9f9f9 !important; }
-            .bio-res-item:hover { background: #fdfaf9; color: #5d4037; }
+            /* FONTES */
+            .sources-footer { margin-top: 4em; padding-top: 2em; border-top: 1px solid #f2f2f2; display: flex; flex-wrap: wrap; gap: 20px; opacity: 0.5; }
+            .source-link { font-size: 0.6em; font-weight: 800; text-transform: uppercase; color: #444; text-decoration: none; border-bottom: 1px solid transparent; }
+            .source-link:hover { border-bottom-color: #444; }
 
             @media screen and (max-width: 1280px) {
                 #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
                 #wrapper { padding-left: 0 !important; }
-                .report-grid { grid-template-columns: 1fr; }
+                .tech-sheet { grid-template-columns: 1fr; gap: 2em; }
+                .modal-content { padding: 2em; }
             }
 		</style>
 	</head>
@@ -62,56 +69,33 @@
 			<div id="main">
                 <div class="inner">
                     <section>
-                        <div style="text-align: center; margin-bottom: 3em;">
-                            <span class="category-label">Cultura da Vinha</span>
-                            <h1 style="font-size: 3.5em; font-weight: 300; color: #1a1a1a; letter-spacing: -2px; margin: 0;">Enologia: A Alma do Terroir</h1>
-                            <p style="font-size: 0.9em; font-style: italic; color: #bbb;">Contexto regional: <strong id="reg-name" style="color:#5d4037">...</strong></p>
+                        <div style="text-align: center; margin-bottom: 4em;">
+                            <span class="category-label">Enologia Biológica</span>
+                            <h1 style="font-size: 4em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; margin: 0;">A Bíblia das Castas</h1>
+                            <p style="font-size: 1.1em; color: #777; margin-top: 10px;">O inventário genético da vinha portuguesa e as diretrizes para uma viticultura regenerativa.</p>
                         </div>
 
-                        <!-- 1. CATÁLOGO DE CASTAS -->
-                        <div class="data-row">
-                            <h4>Castas e Aptidão Geológica</h4>
-                            <div class="tech-content">
-                                <div id="castas-container" class="castas-grid">
-                                    <!-- Injetado via JS -->
-                                </div>
-                            </div>
+                        <!-- 1. CONTEXTO REGIONAL (AUTÓCTONES) -->
+                        <div class="data-row" id="regional-section" style="display:none;">
+                            <h4>Castas Autóctones: <span id="reg-name" style="color: #1a1a1a;">...</span></h4>
+                            <div id="regional-castas" class="castas-container"></div>
                         </div>
 
-                        <!-- 2. TIPOLOGIAS DE VINHO BIOLÓGICO -->
-                        <div class="data-row">
-                            <h4>Classificação e Intervenção Mínima</h4>
-                            <div class="tech-content">
-                                <div class="vinhos-grid">
-                                    <div class="vinho-box bio-active">
-                                        <h5>Vinhos Tintos (Bio)</h5>
-                                        <p>Fermentação com leveduras indígenas e maceração prolongada. Foco na extração natural de taninos e antocianinas sem aditivos sintéticos.</p>
-                                    </div>
-                                    <div class="vinho-box bio-active">
-                                        <h5>Vinhos Brancos (Minerais)</h5>
-                                        <p>Preservação da acidez natural através da colheita no ponto ótimo. Estágio sobre borras finas para complexidade e proteção antioxidante natural.</p>
-                                    </div>
-                                    <div class="vinho-box bio-active">
-                                        <h5>Vinhos "Orange" / Curtimenta</h5>
-                                        <p>Brancos vinificados como tintos (contacto com as cascas). Técnica ancestral que confere estrutura e estabilidade biológica superior.</p>
-                                    </div>
-                                    <div class="vinho-box bio-active">
-                                        <h5>Espumantes (Método Ancestral)</h5>
-                                        <p>Conhecidos como 'Pét-Nat'. Fermentação termina na garrafa sem adição de açúcares ou sulfitos, resultando num vinho vivo e turvo.</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- 3. RELATÓRIOS TÉCNICOS -->
+                        <!-- 2. PANORAMA GLOBAL (ORGANIZADO POR REGIÃO) -->
                         <div class="data-row" style="border-bottom: none;">
-                            <h4>Relatório de Viticultura Regenerativa</h4>
-                            <div class="tech-content">
-                                <h3 style="margin: 0 0 10px 0; font-weight: 300; font-size: 2em;">O Futuro do Vinho em Portugal 2026</h3>
-                                <div id="report-grid-enologia" class="report-grid">
-                                    <!-- Injetado via JS -->
-                                </div>
+                            <h4>Atlas das Regiões Vitivinícolas</h4>
+                            <div id="global-atlas">
+                                <!-- Injetado via JS -->
                             </div>
+                        </div>
+
+                        <!-- FONTES -->
+                        <div class="sources-footer">
+                            <a href="https://winesofportugal.com" target="_blank" class="source-link">Wines of Portugal</a>
+                            <a href="https://www.ivdp.pt" target="_blank" class="source-link">IVDP</a>
+                            <a href="https://www.ivv.gov.pt" target="_blank" class="source-link">IVV</a>
+                            <a href="https://www.infovini.com" target="_blank" class="source-link">InfoVini</a>
+                            <a href="https://www.cvrdao.pt" target="_blank" class="source-link">CVR Dão</a>
                         </div>
 
                         <footer class="page-footer" style="margin-top:4em; padding-top:2em; border-top:1px solid #f2f2f2; opacity:0.3; text-align:right;">
@@ -124,62 +108,145 @@
 			<div id="sidebar"></div>
 		</div>
 
+        <!-- MODAL DE DETALHE (A BÍBLIA) -->
+        <div class="modal-overlay" id="casta-modal">
+            <div class="modal-content">
+                <span class="close-modal" onclick="closeModal()">&times;</span>
+                <div id="modal-body">
+                    <!-- Conteúdo dinâmico -->
+                </div>
+            </div>
+        </div>
+
 		<script src="/assets/js/jquery.min.js"></script>
         <script>
-            let locationsDB = [];
+            let locationsDB = [], castasDB = [];
+            let expandedRegions = {};
 
-            const castasData = [
-                { nome: "Touriga Nacional", tipo: "Tinto", origem: "Dão / Douro", solo: "Granítico / Xistoso", clima: "Temperado", desc: "A rainha das castas portuguesas. Prefere solos pobres e bem drenados. Produz vinhos estruturados com notas de violeta e bergamota." },
-                { nome: "Alvarinho", tipo: "Branco", origem: "Monção e Melgaço", solo: "Granítico", clima: "Atlântico", desc: "Casta de elevada acidez e potencial de guarda. Revela notas minerais intensas e fruta de caroço quando cultivada em modo biológico." },
-                { nome: "Baga", tipo: "Tinto", origem: "Bairrada", solo: "Argilo-calcário", clima: "Atlântico", desc: "Exigente e tardia. Necessita de solos calcários para domar a sua adstringência. Em viticultura regenerativa, produz vinhos de elegância ímpar." },
-                { nome: "Antão Vaz", tipo: "Branco", origem: "Alentejo (Vidigueira)", solo: "Granítico / Misto", clima: "Mediterrânico", desc: "Resistente ao calor e à seca. Mantém a frescura mesmo em climas extremos, sendo a base dos grandes brancos do sul." }
-            ];
+            async function inicializar() {
+                try {
+                    const [rLoc, rCastas] = await Promise.all([
+                        fetch('/data/bioregioes.json').then(r => r.json()),
+                        fetch('/data/castas.json').then(r => r.json())
+                    ]);
+                    locationsDB = rLoc;
+                    castasDB = rCastas;
 
-            const relatoriosEnologia = [
-                { 
-                    titulo: "Adaptação às Alterações Climáticas", 
-                    texto: "O setor vitivinícola nacional está a migrar para cotas mais elevadas e a recuperar castas ancestrais mais resistentes ao stress térmico. A IVV sublinha que a manutenção da cobertura vegetal permanente nas entrelinhas reduziu a temperatura do solo em 5ºC nas vinhas do Douro e Alentejo.", 
-                    fonte: "IVV - Instituto da Vinha e do Vinho 2026" 
-                },
-                { 
-                    titulo: "Certificação Bio e Biodinâmica", 
-                    texto: "Portugal registou um aumento de 22% na área de vinha certificada em modo de produção biológico. A aplicação de preparados biodinâmicos (ex: chifre-sílica) tem demonstrado melhorias na fotossíntese e na resistência natural à podridão cinzenta (Botrytis).", 
-                    fonte: "ViniPortugal / Certiplanet" 
-                },
-                { 
-                    titulo: "Geologia e Mineralidade", 
-                    texto: "Estudos do LNEG confirmam a correlação direta entre a saúde fúngica do solo (micorrizas) e a complexidade mineral dos vinhos. Solos não mobilizados mecanicamente preservam porosidade, permitindo que as raízes alcancem camadas geológicas profundas.", 
-                    fonte: "LNEG - Geologia Aplicada" 
-                },
-                { 
-                    titulo: "Mercado Global de Vinhos Naturais", 
-                    texto: "A procura por vinhos 'Low Intervention' disparou nos mercados do Norte da Europa. A transparência no rótulo (listagem de ingredientes) tornou-se o novo padrão ético, favorecendo produtores que rejeitam a correção química em adega.", 
-                    fonte: "Observatório Agroportal / Pordata" 
+                    const savedId = localStorage.getItem('biocultura_region') || "proenca-a-nova";
+                    const info = locationsDB.find(i => i.id === savedId);
+                    
+                    renderRegional(info);
+                    renderGlobalAtlas();
+                    setupLocationLogic();
+                } catch(e) { console.error("Erro:", e); }
+            }
+
+            function renderRegional(info) {
+                if(!info) return;
+                const section = document.getElementById('regional-section');
+                const container = document.getElementById('regional-castas');
+                document.getElementById('reg-name').innerText = info.titulo;
+
+                // Filtra castas que pertencem à região e são autóctones
+                const regionName = info.regiao_vinho || "Beira Interior";
+                const autoctones = castasDB.filter(c => c.regioes.includes(regionName) && c.autoctone);
+
+                if(autoctones.length > 0) {
+                    section.style.display = 'block';
+                    container.innerHTML = autoctones.map(c => castaCardTemplate(c)).join('');
                 }
-            ];
+            }
 
-            function renderCastas() {
-                document.getElementById('castas-container').innerHTML = castasData.map(c => `
-                    <div class="casta-card">
-                        <div class="casta-header">
-                            <span class="casta-name">${c.nome}</span>
-                            <span class="casta-type ${c.tipo === 'Tinto' ? 'type-tinto' : 'type-branco'}">${c.tipo}</span>
+            function renderGlobalAtlas() {
+                const container = document.getElementById('global-atlas');
+                const regioes = [...new Set(castasDB.flatMap(c => c.regioes))].sort();
+
+                container.innerHTML = regioes.map(reg => {
+                    const castasRegiao = castasDB.filter(c => c.regioes.includes(reg));
+                    const isExpanded = expandedRegions[reg] || false;
+                    const visibleCastas = isExpanded ? castasRegiao : castasRegiao.slice(0, 5);
+
+                    return `
+                        <div class="region-group">
+                            <div class="region-header">
+                                <h5>${reg}</h5>
+                                <span class="btn-view-all" onclick="toggleRegion('${reg}')">
+                                    ${isExpanded ? '- recolher' : '+ ver tudo (' + castasRegiao.length + ')'}
+                                </span>
+                            </div>
+                            <div class="castas-container">
+                                ${visibleCastas.map(c => castaCardTemplate(c)).join('')}
+                            </div>
                         </div>
-                        <p class="casta-detail"><b>Origem:</b> ${c.origem}</p>
-                        <p class="casta-detail"><b>Solo Ideal:</b> ${c.solo}</p>
-                        <p class="casta-detail">${c.desc}</p>
-                        <span class="terroir-tag">Clima: ${c.clima}</span>
-                    </div>`).join('');
+                    `;
+                }).join('');
             }
 
-            function renderRelatorios() {
-                document.getElementById('report-grid-enologia').innerHTML = relatoriosEnologia.map(r => `
-                    <div class="report-item">
-                        <h5>${r.titulo}</h5>
-                        <p>${r.texto}</p>
-                        <span style="font-size:0.65em; color:#bbb; text-transform:uppercase">Fonte: ${r.fonte}</span>
-                    </div>`).join('');
+            function castaCardTemplate(c) {
+                const corClass = c.cor === 'Tinto' ? 'bg-tinto' : (c.cor === 'Branco' ? 'bg-branco' : 'bg-rose');
+                return `
+                    <div class="casta-card" onclick="showCastaDetail('${c.id}')">
+                        <div class="tag-cor ${corClass}"></div>
+                        <b>${c.nome}</b>
+                        <span>${c.cor} | ${c.tipo_vinho}</span>
+                    </div>
+                `;
             }
+
+            function toggleRegion(reg) {
+                expandedRegions[reg] = !expandedRegions[reg];
+                renderGlobalAtlas();
+            }
+
+            function showCastaDetail(id) {
+                const c = castasDB.find(item => item.id === id);
+                const modal = document.getElementById('casta-modal');
+                const body = document.getElementById('modal-body');
+
+                body.innerHTML = `
+                    <div class="tech-sheet">
+                        <div class="sheet-left">
+                            <span class="category-label" style="text-align:left">${c.tipo_vinho}</span>
+                            <h2>${c.nome}</h2>
+                            <p style="font-size:1.1em; color:#777; line-height:1.6">${c.historia}</p>
+                            
+                            <div style="margin-top:30px">
+                                ${renderAttribute("Acidez", c.perfil.acidez)}
+                                ${renderAttribute("Corpo", c.perfil.corpo)}
+                                ${renderAttribute("Taninos", c.perfil.taninos)}
+                                ${renderAttribute("Álcool", c.perfil.alcool)}
+                            </div>
+                            
+                            <div style="margin-top:30px; background:#f9f9f9; padding:20px; border-radius:15px;">
+                                <span class="attribute-label">Aromas Primários</span>
+                                <p style="color:#6d1b32; font-weight:700; margin-top:5px">${c.aromas.join(' • ')}</p>
+                            </div>
+                        </div>
+                        <div class="sheet-right">
+                            <h4 style="color:#1a1a1a; text-transform:uppercase; font-size:0.7em; letter-spacing:2px; margin-bottom:20px">Guia de Plantação Bio</h4>
+                            <div style="display:flex; flex-direction:column; gap:20px">
+                                <div><b>Terroir Ideal:</b><p style="color:#777; font-size:0.9em">${c.tecnico.solo}</p></div>
+                                <div><b>Clima:</b><p style="color:#777; font-size:0.9em">${c.tecnico.clima}</p></div>
+                                <div><b>Compasso (Distância):</b><p style="color:#777; font-size:0.9em">${c.tecnico.distancia}</p></div>
+                                <div><b>Irrigação:</b><p style="color:#777; font-size:0.9em">${c.tecnico.irrigacao}</p></div>
+                            </div>
+                            <div style="margin-top:40px; padding-top:20px; border-top:1px solid #eee">
+                                <button onclick="closeModal()" class="btn-app" style="background:#1a1a1a; color:#fff; width:100%; border:none; padding:15px; border-radius:10px; cursor:pointer">Voltar ao Atlas</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                modal.style.display = 'flex';
+            }
+
+            function renderAttribute(label, val) {
+                return `
+                    <div class="attribute-label"><span>${label}</span><span>${val}/10</span></div>
+                    <div class="perfil-bar"><div class="perfil-fill" style="width:${val*10}%"></div></div>
+                `;
+            }
+
+            function closeModal() { document.getElementById('casta-modal').style.display = 'none'; }
 
             function setupLocationLogic() {
                 $(document).on('input', '#loc-search-input', function() {
@@ -193,37 +260,11 @@
                     });
                     dropdown.show();
                 });
-
-                $(document).on('click', '#btn-gps-trigger', function() {
-                    navigator.geolocation.getCurrentPosition(pos => {
-                        let closest = locationsDB[0], minD = Infinity;
-                        locationsDB.forEach(c => {
-                            let d = Math.sqrt(Math.pow(pos.coords.latitude - c.lat, 2) + Math.pow(pos.coords.longitude - c.lon, 2));
-                            if(d < minD) { minD = d; closest = c; }
-                        });
-                        localStorage.setItem('biocultura_region', closest.id);
-                        location.reload();
-                    });
-                });
-            }
-
-            async function inicializarPagina() {
-                try {
-                    const rLoc = await fetch('/data/bioregioes.json');
-                    locationsDB = await rLoc.json();
-                    const savedId = localStorage.getItem('biocultura_region') || "proenca-a-nova";
-                    const info = locationsDB.find(i => i.id === savedId);
-                    if(info) document.getElementById('reg-name').innerText = info.titulo;
-                    
-                    renderCastas();
-                    renderRelatorios();
-                    setupLocationLogic();
-                } catch(e) { console.error(e); }
             }
 
             fetch('/sidebar-content.html').then(r => r.text()).then(html => {
                 document.getElementById('sidebar').innerHTML = html;
-                inicializarPagina();
+                inicializar();
             });
         </script>
 	</body>
