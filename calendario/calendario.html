@@ -1,88 +1,60 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<title>bioCultura - Calendário Hortícola & Observatório Climático</title>
+		<title>bioCultura - Ecossistema Agrícola Regenerativo</title>
 		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<meta name="viewport" content="width=device-width, initial-scale, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
 		<style>
             /* --- ESTRUTURA & TIPOGRAFIA --- */
             body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
 			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
-            section { padding-top: 4em !important; min-height: 100vh; display: flex; flex-direction: column; }
+            section { padding-top: 3em !important; min-height: 100vh; display: flex; flex-direction: column; }
 
             #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
-            #sidebar > .inner { height: 100% !important; display: flex; flex-direction: column; }
             #wrapper { padding-left: 18em !important; }
 
-            /* CORES DOS ÍCONES */
-            .fa-sun, .fa-cloud-sun { color: #fbc02d !important; }
-            .fa-seedling { color: #4caf50 !important; }
+            .inner { padding: 0 4em !important; max-width: 1400px; margin: 0 auto; width: 100%; }
+            .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; color: #bbb; margin-bottom: 8px; display: block; text-align: center; }
+
+            /* HERO & CALENDÁRIO */
+            .calendar-hero { display: flex; justify-content: space-between; align-items: flex-start; gap: 4em; margin-bottom: 3em; }
+            .hero-text h1 { font-size: 4em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; line-height: 0.95; margin-bottom: 20px; }
             
-            /* TEXTO DAS NOTAS A PRETO */
-            .val, .task-detail, .lunar-advice, #climate-alert, .task-main { color: #1a1a1a !important; }
-
-            .calendar-hero { display: flex; justify-content: space-between; align-items: center; gap: 4em; margin-bottom: 4em; }
-            .hero-left { flex: 1; text-align: left; }
-            .hero-right { flex: 1.2; }
-
-            .mini-calendar { 
-                background: #fdfdfd; 
-                border-radius: 25px; 
-                padding: 1.5em; 
-                mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
-                -webkit-mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
-            }
+            .mini-calendar { background: #fdfdfd; border-radius: 25px; padding: 1.5em; border: 1px solid #f2f2f2; width: 350px; }
             .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; text-align: center; }
-            .cal-day-label { font-size: 0.55em; font-weight: 900; text-transform: uppercase; color: #ccc; margin-bottom: 10px; }
-            
-            /* DESTAQUE FIM DE SEMANA */
-            .cal-day-label.weekend { color: #ef5350 !important; }
-            .cal-date.weekend-date { color: #ef5350; opacity: 0.8; }
+            .cal-day-label { font-size: 0.55em; font-weight: 900; text-transform: uppercase; color: #ccc; }
+            .cal-date { font-size: 0.85em; font-weight: 600; padding: 10px 0; color: #bbb; }
+            .cal-date.today { background: #f1f8e9; color: #1b5e20; border-radius: 12px; }
 
-            .cal-date { font-size: 0.85em; font-weight: 600; padding: 10px 0; border-radius: 12px; color: #bbb; min-height: 45px; display: flex; align-items: center; justify-content: center; }
-            .cal-date.today { background: #f1f8e9; color: #1b5e20; border: 1px solid #dcedc8; }
-            .cal-date i { font-size: 1.1em; }
+            /* MÓDULOS DE CONHECIMENTO (CARDS) */
+            .knowledge-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-bottom: 4em; }
+            .k-card { background: #fff; border: 1px solid #f2f2f2; padding: 30px; border-radius: 20px; transition: transform 0.3s; }
+            .k-card:hover { transform: translateY(-5px); }
+            .k-card h3 { font-size: 1.2em; font-weight: 900; color: #1a1a1a; margin-bottom: 15px; border-bottom: 2px solid #f1f8e9; padding-bottom: 10px; }
+            .k-card p { font-size: 0.9em; line-height: 1.6; color: #666; margin-bottom: 15px; }
+            .k-tag { font-size: 0.6em; font-weight: 900; text-transform: uppercase; background: #f1f8e9; color: #2e7d32; padding: 4px 10px; border-radius: 4px; }
 
-            /* WEATHER UNIFICADO */
-            .weather-unified { 
-                background: #fcfdfc; 
-                padding: 2.5em; 
-                border-radius: 35px; 
-                border: 1px solid #f0f0f0; 
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                gap: 4em;
-                margin-bottom: 4em;
-            }
-            .weather-section { flex: 1; display: flex; align-items: center; gap: 25px; }
-            .weather-divider { background: #eee; height: 60px; width: 1px; }
-            .alert-section { flex: 1.5; padding-left: 10px; }
+            /* GLOSSÁRIO & FITOSSANIDADE */
+            .glossary-section { background: #fcfdfc; padding: 4em 0; border-top: 1px solid #f2f2f2; }
+            .search-box { width: 100%; padding: 15px 25px; border-radius: 50px; border: 1px solid #eee; margin-bottom: 40px; font-size: 1em; outline: none; }
+            .disease-item { border-bottom: 1px solid #f2f2f2; padding: 20px 0; }
+            .disease-item b { color: #c62828; font-size: 1.1em; }
+            .disease-item .plants { color: #8d6e63; font-size: 0.8em; font-weight: 700; text-transform: uppercase; }
+            .disease-item .cure { background: #e8f5e9; color: #2e7d32; padding: 15px; border-radius: 12px; margin-top: 10px; font-size: 0.9em; border-left: 4px solid #2e7d32; }
 
-            .info-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 3em; }
-            .info-card { padding: 1em 0; display: flex; align-items: center; gap: 20px; border-bottom: 1px solid #f2f2f2; }
-            .info-card .label { font-size: 0.6em; text-transform: uppercase; font-weight: 800; color: #bbb; display: block; }
-            .lunar-advice { font-size: 0.75em; font-style: italic; display: block; margin-top: 4px; line-height: 1.4; }
-
-            /* TAREFAS AGRÍCOLAS */
-            .tasks-grid { display: grid; grid-template-columns: 1fr; gap: 30px; margin-bottom: 4em; }
-            .task-row { display: grid; grid-template-columns: 150px 1fr; gap: 30px; padding: 1.5em 0; border-left: 3px solid #eee; padding-left: 2em; }
-            .task-row h4 { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin: 0; padding-top: 5px; }
-            
-            .row-pomar { border-left-color: #ff9800; }
-            .row-vinha { border-left-color: #9c27b0; }
-            .row-jardim { border-left-color: #e91e63; }
-            .row-adega { border-left-color: #795548; }
-            .row-sementeiras { border-left-color: #4caf50; }
+            /* PLANEAMENTO DE TERRENO */
+            .terrain-box { background: #1a1a1a; color: #fff; padding: 4em; border-radius: 40px; margin-bottom: 4em; }
+            .terrain-box h2 { color: #fff; font-size: 2.5em; margin-bottom: 20px; }
+            .app-links { display: flex; gap: 20px; margin-top: 30px; }
+            .btn-app { border: 1px solid #444; padding: 10px 20px; border-radius: 8px; font-size: 0.8em; color: #aaa; text-decoration: none; transition: 0.3s; }
+            .btn-app:hover { border-color: #fff; color: #fff; }
 
             @media screen and (max-width: 1280px) {
                 #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
                 #wrapper { padding-left: 0 !important; }
-                .weather-unified { flex-direction: column; gap: 2em; text-align: center; }
-                .weather-section { justify-content: center; }
-                .weather-divider { display: none; }
-                .task-row { grid-template-columns: 1fr; gap: 10px; }
+                .calendar-hero { flex-direction: column; text-align: center; }
+                .mini-calendar { width: 100%; }
             }
 		</style>
 	</head>
@@ -92,47 +64,76 @@
                 <div class="inner">
                     <section>
                         <div class="calendar-hero">
-                            <div class="hero-left">
-                                <span style="font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb;" id="display-month">Julho</span>
-                                <h1 style="font-size: 3.5em; font-weight: 300; color: #1a1a1a; letter-spacing: -2px; margin: 0;">O Ritmo da Terra</h1>
-                                <p style="font-size: 0.9em; font-style: italic; color: #bbb; margin-top: 5px;">Orientação regional: <strong id="reg-name" style="color:#888">...</strong></p>
+                            <div class="hero-text">
+                                <span class="category-label">Agricultura Regenerativa</span>
+                                <h1>O Ciclo da Abundância</h1>
+                                <p style="font-size: 1.1em; color: #777; max-width: 600px;">Integre o conhecimento ancestral com a tecnologia de precisão para transformar o seu solo num ecossistema vivo.</p>
+                                <p style="font-size: 0.9em; font-style: italic; color: #bbb;">Localização: <strong id="reg-name" style="color:#2e7d32">...</strong></p>
                             </div>
-                            <div class="hero-right"><div class="mini-calendar"><div class="cal-grid" id="calendar-week-grid"></div></div></div>
+                            <div class="mini-calendar" id="calendar-module">
+                                <div class="cal-grid" id="calendar-week-grid"></div>
+                            </div>
                         </div>
 
-                        <div class="info-row">
-                            <div class="info-card" id="soil-card">
-                                <i class="fas fa-seedling"></i>
-                                <div><span class="label">Solo local</span><span id="soil-type" class="val">...</span></div>
+                        <!-- MÓDULOS DE CONHECIMENTO -->
+                        <div class="knowledge-grid">
+                            <div class="k-card">
+                                <span class="k-tag">Solo</span>
+                                <h3>Observação da Terra</h3>
+                                <p>Identifique o seu solo pelo "Teste da Chouriça": humedeça a terra e tente moldar. Se quebrar, é arenoso; se moldar perfeitamente, é argiloso. Solos ideais são francos (médios).</p>
+                                <p><b>Regeneração:</b> Adicione matéria orgânica (composto) para corrigir a estrutura, independentemente do tipo.</p>
                             </div>
-                            <div class="info-card">
-                                <i class="fas fa-moon" id="main-lunar-icon"></i>
-                                <div>
-                                    <span class="label" id="lunar-phase-name">Fase da Lua</span>
-                                    <span id="lunar-tip" class="val">...</span>
-                                    <span id="lunar-advice" class="lunar-advice"></span>
+                            <div class="k-card">
+                                <span class="k-tag">Nutrição</span>
+                                <h3>Humus e Minhocários</h3>
+                                <p>O minhocário (Vermicompostagem) é ideal para apartamentos. Utilize a <i>Eisenia fetida</i>. Transforme restos de cozinha em "ouro negro" e fertilizante líquido (chorume).</p>
+                                <p><b>Dica:</b> Proporção 3 partes de Castanhos (secos) para 1 de Verdes (húmidos).</p>
+                            </div>
+                            <div class="k-card">
+                                <span class="k-tag">Biodiversidade</span>
+                                <h3>Talhões e Polinizadores</h3>
+                                <p>Não plante apenas hortícolas. Intercale com Calêndulas, Manjericão e Alfazema para atrair abelhas e confundir pragas pelo odor.</p>
+                                <p><b>Design:</b> Siga as curvas de nível do Google Earth para evitar a erosão hídrica.</p>
+                            </div>
+                        </div>
+
+                        <!-- PLANEAMENTO TÉCNICO -->
+                        <div class="terrain-box">
+                            <h2>Planeamento de Precisão</h2>
+                            <p>Sincronize o seu terreno com ferramentas globais para monitorizar o vigor vegetativo e o stress hídrico em tempo real.</p>
+                            <div class="app-links">
+                                <a href="https://onesoil.ai" target="_blank" class="btn-app">OneSoil (Mapas de Saúde)</a>
+                                <a href="https://earth.google.com" target="_blank" class="btn-app">Google Earth (Topografia)</a>
+                                <a href="https://buppi.pt" target="_blank" class="btn-app">Buppi (Gestão Local)</a>
+                            </div>
+                        </div>
+
+                        <!-- GLOSSÁRIO & FITOSSANIDADE BIO -->
+                        <div class="data-row">
+                            <h4>Glossário e Fitossanidade Biológica</h4>
+                            <div class="tech-content">
+                                <input type="text" class="search-box" id="glossary-search" placeholder="Pesquise pragas, doenças ou termos (ex: Míldio, Afídios, Mulching)...">
+                                <div id="glossary-container">
+                                    <!-- Injetado via JS -->
                                 </div>
                             </div>
                         </div>
 
-                        <div class="weather-unified">
-                            <div class="weather-section">
-                                <i class="fas fa-cloud-sun" style="font-size: 2.5em;"></i>
-                                <div>
-                                    <span style="font-size: 0.6em; font-weight: 800; text-transform: uppercase; color: #bbb; letter-spacing: 1px;">Previsão Local</span>
-                                    <h2 style="margin:0; font-weight: 300; font-size: 1.8em; color: #1a1a1a;">28°C / 16°C</h2>
-                                    <p style="margin:0; font-size: 0.8em; color: #bbb;">Céu limpo, vento moderado NW</p>
+                        <!-- RELATÓRIOS E SÍNTESE -->
+                        <div class="data-row" style="border-bottom: none;">
+                            <h4>Relatório de Inteligência Agrícola</h4>
+                            <div class="tech-content">
+                                <h3 style="margin: 0 0 10px 0; font-weight: 300; font-size: 2em;">Síntese das Autoridades e Observatórios 2026</h3>
+                                <div id="report-grid-agri" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; margin-top: 20px;">
+                                    <!-- Injetado via JS -->
                                 </div>
-                            </div>
-                            <div class="weather-divider"></div>
-                            <div class="alert-section">
-                                <span style="font-size: 0.6em; font-weight: 900; text-transform: uppercase; color: #bbb; letter-spacing: 1px;">Observação Climática</span>
-                                <p id="climate-alert" style="font-size: 0.95em; margin-top: 8px; line-height: 1.5;">A carregar alertas...</p>
                             </div>
                         </div>
 
-                        <div class="tasks-grid" id="tasks-container"></div>
-
+                        <footer style="padding: 4em 0 2em 0; border-top: 1px solid #f2f2f2; opacity: 0.3; text-align: right;">
+                            <span style="display: block; font-size: 0.85em; font-weight: 900; color: #333;">bioCultura</span>
+                            <span style="display: block; font-size: 0.5em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Global Regeneration</span>
+                        </footer>
 					</section>
 				</div>
             </div>
@@ -143,96 +144,50 @@
         <script>
             let locationsDB = [];
             
-            const agroIntelligence = {
-                "jul": { 
-                    "alerta": "SOL EXTREMO: Evite regas nas horas de maior calor para não queimar as folhas.",
-                    "pomar": ["Colheita de Pêssego e Ameixa", "Instale armadilhas biológicas para a mosca da fruta."],
-                    "vinha": ["Poda em verde", "Remova rebentos ladrões para concentrar energia na maturação."],
-                    "jardim": ["Controlo de Stress hídrico", "Use mulching para manter a frescura e regue apenas ao amanhecer."],
-                    "adega": ["Higiene de cubas", "Lave o vasilhame e prepare os equipamentos para a vindima."],
-                    "sementeiras": ["Couves de inverno", "Semear brócolos e couve-flor em local sombreado."]
-                }
-            };
+            const agriGlossary = [
+                { term: "Míldio (Plasmopara viticola)", plants: "Vinha, Tomateiro, Batata", desc: "Fungo que cria manchas oleosas. Surge com humidade alta.", cure: "Cura Bio: Calda Bordalesa (Sulfato de cobre + Cal) ou infusão de Cavalinha (Equisetum arvense)." },
+                { term: "Afídios / Piolho", plants: "Quase todas as hortícolas", desc: "Pequenos insetos que sugam a seiva e deformam folhas.", cure: "Cura Bio: Spray de sabão de potássio ou infusão de urtiga macerada (24h)." },
+                { term: "Oídio", plants: "Cucurbitáceas (Pepino, Melão), Roseiras", desc: "Pó branco que cobre as folhas, impedindo a fotossíntese.", cure: "Cura Bio: Mistura de leite (10%) e água (90%) aplicada ao sol." },
+                { term: "Mulching (Cobertura)", plants: "Solo", desc: "Técnica de cobrir o solo com palha, caruma ou restos de poda.", cure: "Benefício: Mantém humidade, evita ervas daninhas e alimenta a microvida do solo." },
+                { term: "Consociação", plants: "Sistema", desc: "Plantação conjunta de espécies que se ajudam (ex: Milho + Feijão + Abóbora).", cure: "A bioCultura recomenda a consociação Tomate + Manjericão para repelir a mosca branca." }
+            ];
 
-            // LÓGICA LUNAR CALIBRADA PARA JULHO 2026
-            function getLunarData(date = new Date()) {
-                const day = date.getDate();
-                const month = date.getMonth(); // 6 = Julho
+            const agriReports = [
+                { titulo: "Portal da Agricultura (Gov)", texto: "O foco nacional em 2026 é a digitalização do pequeno agricultor e o apoio à conversão para o modo biológico. Novos subsídios para gestão de água.", fonte: "agricultura.gov.pt" },
+                { titulo: "Sanidade Vegetal (INIAV)", texto: "Laboratórios reforçam a vigilância sobre a Xylella fastidiosa. A recomendação é a diversificação de cultivares nativas resistentes.", fonte: "iniav.pt" },
+                { titulo: "IA e Diagnóstico (Agrio/Plantix)", texto: "O uso de visão computacional permite identificar carências nutricionais apenas por foto. A precisão no tratamento bio subiu 40%.", fonte: "agrio.app / plantix.net" },
+                { titulo: "Hortas Biológicas PT", texto: "A maior rede de partilha de tratamentos bio em Portugal sublinha a importância da fertilização via compostagem caseira.", fonte: "hortasbiologicas.pt" }
+            ];
 
-                if (month === 6) {
-                    if (day === 14) return { name: "Lua Nova", icon: "fa-circle", color: "#757575", tip: "Recolhimento e limpeza.", advice: "Aconselhável: Colher raízes, retirar ervas daninhas e reduzir regas." };
-                    if (day === 21) return { name: "Lua Crescente", icon: "fa-moon", color: "#fb8c00", tip: "Vigor e crescimento.", advice: "Aconselhável: Semear plantas acima do solo e aplicar adubos." };
-                    if (day === 29) return { name: "Lua Cheia", icon: "fa-circle", color: "#fbc02d", tip: "Máxima energia hídrica.", advice: "Aconselhável: Colher frutos/folhas, aumentar regas e transplantes." };
-                    if (day === 7) return { name: "Lua Minguante", icon: "fa-moon", color: "#7b1fa2", tip: "Enraizamento e poda.", advice: "Aconselhável: Semear raízes, podar e controlar pragas." };
-                }
-                return null;
-            }
-
-            function buildMiniCalendar() {
-                const grid = document.getElementById('calendar-week-grid');
-                if(!grid) return;
-                grid.innerHTML = '';
-                const daysLabels = ['S','T','Q','Q','S','S','D'];
-                const today = new Date();
-                
-                // Header com S e D a vermelho
-                daysLabels.forEach((d, i) => {
-                    const isWeekend = (i >= 5);
-                    grid.innerHTML += `<div class="cal-day-label ${isWeekend ? 'weekend' : ''}">${d}</div>`;
-                });
-                
-                let start = new Date();
-                let dayOffset = today.getDay() === 0 ? 6 : today.getDay() - 1;
-                start.setDate(today.getDate() - dayOffset - 7);
-
-                for(let i=0; i<21; i++) {
-                    let current = new Date(start);
-                    current.setDate(start.getDate() + i);
-                    const isToday = current.toDateString() === today.toDateString() ? 'today' : '';
-                    const isWeekend = (current.getDay() === 0 || current.getDay() === 6);
-                    const moon = getLunarData(current);
-                    
-                    const content = moon ? `<i class="fas ${moon.icon}" style="color: ${moon.color}"></i>` : current.getDate();
-                    grid.innerHTML += `<div class="cal-date ${isToday} ${isWeekend ? 'weekend-date' : ''}">${content}</div>`;
-                }
-            }
-
-            function renderTasks() {
-                const container = document.getElementById('tasks-container');
-                const intel = agroIntelligence["jul"];
-                const types = [
-                    { id: 'pomar', label: 'Pomar', class: 'row-pomar' },
-                    { id: 'vinha', label: 'Vinha', class: 'row-vinha' },
-                    { id: 'jardim', label: 'Jardim', class: 'row-jardim' },
-                    { id: 'adega', label: 'Adega', class: 'row-adega' },
-                    { id: 'sementeiras', label: 'Sementeiras', class: 'row-sementeiras' }
-                ];
-
-                container.innerHTML = types.map(t => `
-                    <div class="task-row ${t.class}">
-                        <h4>${t.label}</h4>
-                        <div class="task-content">
-                            <span class="task-main">${intel[t.id][0]}</span>
-                            <p class="task-detail">${intel[t.id][1]}</p>
-                        </div>
+            function renderGlossary(filter = "") {
+                const container = document.getElementById('glossary-container');
+                const filtered = agriGlossary.filter(i => i.term.toLowerCase().includes(filter.toLowerCase()) || i.plants.toLowerCase().includes(filter.toLowerCase()));
+                container.innerHTML = filtered.map(i => `
+                    <div class="disease-item">
+                        <b>${i.term}</b> <span class="plants">| afeta: ${i.plants}</span>
+                        <p style="margin: 5px 0;">${i.desc}</p>
+                        <div class="cure">${i.cure}</div>
                     </div>
                 `).join('');
             }
 
-            function renderDashboard(info) {
-                if(!info) return;
-                document.getElementById('reg-name').innerText = info.titulo;
-                document.getElementById('soil-type').innerText = info.biomas?.solo || "Misto";
-                
-                const moon = getLunarData() || { name: "Fase de Transição", tip: "Equilíbrio hídrico.", advice: "Aconselhável: Manutenção geral do solo.", color: "#ddd", icon: "fa-moon" };
-                document.getElementById('lunar-phase-name').innerText = moon.name;
-                document.getElementById('lunar-tip').innerText = moon.tip;
-                document.getElementById('lunar-advice').innerText = moon.advice;
-                document.getElementById('main-lunar-icon').style.color = moon.color;
-                document.getElementById('main-lunar-icon').className = `fas ${moon.icon}`;
+            function buildMiniCalendar() {
+                const grid = document.getElementById('calendar-week-grid');
+                const days = ['S','T','Q','Q','S','S','D'];
+                grid.innerHTML = days.map(d => `<div class="cal-day-label">${d}</div>`).join('');
+                const today = new Date().getDate();
+                for(let i=1; i<=31; i++) {
+                    grid.innerHTML += `<div class="cal-date ${i === today ? 'today' : ''}">${i}</div>`;
+                }
+            }
 
-                document.getElementById('climate-alert').innerText = agroIntelligence["jul"].alerta;
-                renderTasks();
+            function renderAgriReports() {
+                document.getElementById('report-grid-agri').innerHTML = agriReports.map(r => `
+                    <div style="border-top:1px solid #f9f9f9; padding-top:20px;">
+                        <h5 style="font-size:0.7em; font-weight:900; text-transform:uppercase; color:#2e7d32; margin-bottom:10px;">${r.titulo}</h5>
+                        <p style="font-size:0.95em; color:#666; line-height:1.6; margin-bottom:10px;">${r.texto}</p>
+                        <span style="font-size:0.6em; color:#bbb; text-transform:uppercase; font-weight:800;">Fonte: ${r.fonte}</span>
+                    </div>`).join('');
             }
 
             async function inicializar() {
@@ -240,13 +195,19 @@
                     const r = await fetch('/data/bioregioes.json');
                     locationsDB = await r.json();
                     const savedId = localStorage.getItem('biocultura_region') || "portugal-nacional";
-                    renderDashboard(locationsDB.find(i => i.id === savedId));
+                    const info = locationsDB.find(i => i.id === savedId);
+                    if(info) document.getElementById('reg-name').innerText = info.titulo;
+                    
+                    buildMiniCalendar();
+                    renderGlossary();
+                    renderAgriReports();
                 } catch(e) { console.error(e); }
             }
 
+            document.getElementById('glossary-search').oninput = function() { renderGlossary(this.value); };
+
             fetch('/sidebar-content.html').then(r => r.text()).then(html => {
                 document.getElementById('sidebar').innerHTML = html;
-                buildMiniCalendar();
                 inicializar();
             });
         </script>
