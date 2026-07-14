@@ -149,7 +149,7 @@
             const regionIntros = {
                 "Lisboa": "A região de Lisboa é marcada pela forte influência atlântica, resultando em vinhos de frescura vibrante e salinidade única. As castas autóctones adaptaram-se aos solos argilo-calcários e aos ventos marítimos persistentes.",
                 "Douro": "O Douro, Património Mundial, é o berço de vinhos estruturados e complexos. O solo xistoso e o clima mediterrânico extremo forçam as raízes das castas autóctones a profundidades incríveis.",
-                "Alentejo": "No Alentejo, o sol e as planícies graníticas moldam vinhos generosos e macios. A viticultura regenerativa foca-se aqui na preservação da água e no uso de castas que mantêm a acidez sob calor intenso.",
+                "Alentejo": "No Alentejo, o sol e as planícies graníticas moldam vinhos generosos e macios. A viticultura regenerativa foca-se aqui na preservação da água e no uso de castas resistentes ao calor.",
                 "Dão": "O Dão é a região do equilíbrio. Rodeada por montanhas, as suas castas autóctones em solos graníticos produzem vinhos de elegância ímpar e mineralidade profunda.",
                 "Beira Interior": "Região de altitude com solos graníticos e xistosos. O clima rigoroso permite vinhos com frescura e acidez natural notáveis, onde a casta Siria e a Fonte Cal se destacam."
             };
@@ -178,9 +178,13 @@
                 const container = document.getElementById('regional-grid');
                 const desc = document.getElementById('region-description');
                 
-                // Forçamos a correspondência: se for Proença, usa Beira Interior. Se não houver mapeamento, usa Lisboa.
-                const regionName = info.regiao_vinho || (info.titulo.includes("Lisboa") ? "Lisboa" : "Lisboa");
-                const autoctones = castasDB.filter(c => c.regioes.includes(regionName) && c.autoctone);
+                // Mapeamento forçado para garantir que o texto muda
+                const regionName = info.regiao_vinho || "Lisboa";
+                
+                // Filtro insensível a maiúsculas
+                const autoctones = castasDB.filter(c => 
+                    c.regioes.some(r => r.toLowerCase() === regionName.toLowerCase()) && c.autoctone
+                );
 
                 desc.innerText = regionIntros[regionName] || `A região de ${regionName} possui um património vitícola riquíssimo, onde a interação entre o solo e o clima local permite a expressão máxima destas castas autóctones.`;
                 
@@ -262,7 +266,10 @@
                 return `<div class="attribute-row"><div class="attribute-label"><span>${label}</span><span>${val}/10</span></div><div class="bar-bg"><div class="bar-fill" style="width:${val*10}%"></div></div></div>`;
             }
 
-            function closeModal() { document.getElementById('casta-modal').style.display = 'none'; }
+            function hideDetail() {
+                document.getElementById('enologia-list-view').style.display = 'block';
+                document.getElementById('casta-detail-view').style.display = 'none';
+            }
 
             function setupLocationLogic() {
                 $(document).off('input', '#loc-search-input').on('input', '#loc-search-input', function() {
