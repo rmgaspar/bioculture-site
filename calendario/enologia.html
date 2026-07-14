@@ -1,12 +1,12 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<title>bioCultura - Atlas de Enologia Regenerativa</title>
+		<title>bioCultura - Enologia Biológica e Regenerativa</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
 		<style>
-            /* --- ESTÉTICA ENOLÓGICA --- */
+            /* --- ESTRUTURA GLOBAL --- */
             body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
 			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
             section { padding-top: 3em !important; min-height: 100vh; display: flex; flex-direction: column; }
@@ -21,46 +21,49 @@
             .data-row h4 { font-size: 0.75em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #6d1b32; margin: 0 0 30px 0; display: block; }
 
             /* GRID DE CASTAS */
-            .castas-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
+            .castas-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 25px; }
             .casta-card { 
-                background: #fdfdfd; border: 1px solid #f2f2f2; border-radius: 15px; padding: 20px; 
-                cursor: pointer; transition: all 0.3s; position: relative; overflow: hidden;
+                background: #fdfdfd; border: 1px solid #f2f2f2; border-radius: 15px; padding: 25px; 
+                cursor: pointer; transition: all 0.3s; position: relative;
             }
-            .casta-card:hover { transform: translateY(-5px); border-color: #6d1b32; box-shadow: 0 10px 30px rgba(109,27,50,0.05); }
+            .casta-card:hover { transform: translateY(-5px); border-color: #6d1b32; }
             .casta-card b { display: block; font-size: 1.1em; color: #1a1a1a; margin-bottom: 5px; }
             .casta-card span { font-size: 0.65em; font-weight: 900; text-transform: uppercase; color: #bbb; }
-            .tag-cor { position: absolute; top: 15px; right: 15px; width: 10px; height: 10px; border-radius: 50%; }
-            .bg-tinto { background: #6d1b32; }
-            .bg-branco { background: #f1c40f; }
-            .bg-rose { background: #ff8a80; }
-
-            /* SECÇÕES DE REGIÕES */
-            .region-group { margin-bottom: 40px; }
-            .region-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 20px; }
-            .region-header h5 { font-size: 1.1em; font-weight: 900; color: #333; margin: 0; }
-            .btn-view-all { font-size: 0.7em; font-weight: 900; text-transform: uppercase; color: #6d1b32; cursor: pointer; }
-
-            /* MODAL TÉCNICO (A BÍBLIA) */
-            .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(26,26,26,0.95); z-index: 20000; display: none; align-items: center; justify-content: center; padding: 2em; }
-            .modal-content { background: #fff; width: 100%; max-width: 900px; max-height: 90vh; border-radius: 40px; overflow-y: auto; padding: 4em; position: relative; }
-            .close-modal { position: absolute; top: 30px; right: 40px; font-size: 2em; cursor: pointer; color: #ddd; }
             
-            .tech-sheet { display: grid; grid-template-columns: 1fr 1fr; gap: 4em; }
-            .sheet-left h2 { font-size: 3em; font-weight: 900; color: #1a1a1a; margin-bottom: 10px; }
-            .perfil-bar { height: 4px; background: #eee; border-radius: 10px; margin: 10px 0 20px 0; position: relative; }
-            .perfil-fill { height: 100%; background: #6d1b32; border-radius: 10px; }
-            .attribute-label { display: flex; justify-content: space-between; font-size: 0.7em; font-weight: 900; text-transform: uppercase; color: #bbb; }
+            /* Indicadores de Cor */
+            .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 8px; }
+            .dot-tinto { background: #6d1b32; }
+            .dot-branco { background: #f1c40f; }
 
-            /* FONTES */
-            .sources-footer { margin-top: 4em; padding-top: 2em; border-top: 1px solid #f2f2f2; display: flex; flex-wrap: wrap; gap: 20px; opacity: 0.5; }
-            .source-link { font-size: 0.6em; font-weight: 800; text-transform: uppercase; color: #444; text-decoration: none; border-bottom: 1px solid transparent; }
-            .source-link:hover { border-bottom-color: #444; }
+            /* REGIÕES E BOTÕES SUBTIS */
+            .region-block { margin-bottom: 50px; }
+            .region-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #f9f9f9; padding-bottom: 10px; }
+            .region-header h5 { font-size: 1.2em; font-weight: 900; color: #333; margin: 0; }
+            
+            .btn-subtle { 
+                background: none !important; border: none !important; padding: 0 !important;
+                color: #bbb !important; font-size: 0.7em; font-weight: 800; 
+                text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: color 0.2s;
+            }
+            .btn-subtle:hover { color: #6d1b32 !important; text-decoration: underline; }
+
+            /* FICHA TÉCNICA (DETALHE) */
+            #casta-detail-view { display: none; padding: 2em 0; }
+            .tech-sheet { display: grid; grid-template-columns: 1fr 1fr; gap: 4em; }
+            .attribute-row { margin-bottom: 15px; }
+            .attribute-label { display: flex; justify-content: space-between; font-size: 0.7em; font-weight: 900; color: #bbb; text-transform: uppercase; margin-bottom: 5px; }
+            .bar-bg { height: 4px; background: #eee; border-radius: 10px; }
+            .bar-fill { height: 100%; background: #6d1b32; border-radius: 10px; }
+
+            .btn-back { color: #bbb; font-size: 0.75em; font-weight: 800; text-transform: uppercase; cursor: pointer; display: inline-block; margin-bottom: 2em; }
+            .btn-back:hover { color: #1a1a1a; }
+
+            .bio-res-item { padding: 12px 18px; font-size: 0.9em; color: #666; cursor: pointer; border-bottom: 1px solid #f9f9f9 !important; }
 
             @media screen and (max-width: 1280px) {
                 #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
                 #wrapper { padding-left: 0 !important; }
                 .tech-sheet { grid-template-columns: 1fr; gap: 2em; }
-                .modal-content { padding: 2em; }
             }
 		</style>
 	</head>
@@ -68,34 +71,34 @@
 		<div id="wrapper">
 			<div id="main">
                 <div class="inner">
-                    <section>
+                    <section id="main-content">
                         <div style="text-align: center; margin-bottom: 4em;">
-                            <span class="category-label">Enologia Biológica</span>
-                            <h1 style="font-size: 4em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; margin: 0;">A Bíblia das Castas</h1>
-                            <p style="font-size: 1.1em; color: #777; margin-top: 10px;">O inventário genético da vinha portuguesa e as diretrizes para uma viticultura regenerativa.</p>
+                            <span class="category-label">Cultura da Vinha</span>
+                            <h1 style="font-size: 3.5em; font-weight: 300; color: #1a1a1a; letter-spacing: -2px; margin: 0;">Enologia: A Alma do Terroir</h1>
+                            <p style="font-size: 0.9em; font-style: italic; color: #bbb;">Contexto regional: <strong id="reg-name" style="color:#6d1b32">...</strong></p>
                         </div>
 
-                        <!-- 1. CONTEXTO REGIONAL (AUTÓCTONES) -->
-                        <div class="data-row" id="regional-section" style="display:none;">
-                            <h4>Castas Autóctones: <span id="reg-name" style="color: #1a1a1a;">...</span></h4>
-                            <div id="regional-castas" class="castas-container"></div>
-                        </div>
+                        <!-- VISTA DE LISTA -->
+                        <div id="enologia-list-view">
+                            <!-- 1. CONTEXTO REGIONAL (AUTÓCTONES) -->
+                            <div class="data-row" id="regional-row" style="display:none;">
+                                <h4>Castas Autóctones da Região</h4>
+                                <div id="regional-grid" class="castas-grid"></div>
+                            </div>
 
-                        <!-- 2. PANORAMA GLOBAL (ORGANIZADO POR REGIÃO) -->
-                        <div class="data-row" style="border-bottom: none;">
-                            <h4>Atlas das Regiões Vitivinícolas</h4>
-                            <div id="global-atlas">
-                                <!-- Injetado via JS -->
+                            <!-- 2. PANORAMA GLOBAL (POR REGIÃO) -->
+                            <div class="data-row" style="border-bottom: none;">
+                                <h4>Atlas das Castas de Portugal</h4>
+                                <div id="global-atlas">
+                                    <!-- Injetado via JS -->
+                                </div>
                             </div>
                         </div>
 
-                        <!-- FONTES -->
-                        <div class="sources-footer">
-                            <a href="https://winesofportugal.com" target="_blank" class="source-link">Wines of Portugal</a>
-                            <a href="https://www.ivdp.pt" target="_blank" class="source-link">IVDP</a>
-                            <a href="https://www.ivv.gov.pt" target="_blank" class="source-link">IVV</a>
-                            <a href="https://www.infovini.com" target="_blank" class="source-link">InfoVini</a>
-                            <a href="https://www.cvrdao.pt" target="_blank" class="source-link">CVR Dão</a>
+                        <!-- VISTA DE DETALHE (A BÍBLIA) -->
+                        <div id="casta-detail-view">
+                            <span class="btn-back" onclick="hideDetail()">← voltar</span>
+                            <div id="detail-content"></div>
                         </div>
 
                         <footer class="page-footer" style="margin-top:4em; padding-top:2em; border-top:1px solid #f2f2f2; opacity:0.3; text-align:right;">
@@ -108,22 +111,12 @@
 			<div id="sidebar"></div>
 		</div>
 
-        <!-- MODAL DE DETALHE (A BÍBLIA) -->
-        <div class="modal-overlay" id="casta-modal">
-            <div class="modal-content">
-                <span class="close-modal" onclick="closeModal()">&times;</span>
-                <div id="modal-body">
-                    <!-- Conteúdo dinâmico -->
-                </div>
-            </div>
-        </div>
-
 		<script src="/assets/js/jquery.min.js"></script>
         <script>
             let locationsDB = [], castasDB = [];
             let expandedRegions = {};
 
-            async function inicializar() {
+            async function inicializarPagina() {
                 try {
                     const [rLoc, rCastas] = await Promise.all([
                         fetch('/data/bioregioes.json').then(r => r.json()),
@@ -138,22 +131,24 @@
                     renderRegional(info);
                     renderGlobalAtlas();
                     setupLocationLogic();
-                } catch(e) { console.error("Erro:", e); }
+                } catch(e) { console.error(e); }
             }
 
             function renderRegional(info) {
                 if(!info) return;
-                const section = document.getElementById('regional-section');
-                const container = document.getElementById('regional-castas');
                 document.getElementById('reg-name').innerText = info.titulo;
-
-                // Filtra castas que pertencem à região e são autóctones
+                const container = document.getElementById('regional-grid');
+                const row = document.getElementById('regional-row');
+                
+                // Filtra castas autóctones que pertencem à região vinícola da biorregião
                 const regionName = info.regiao_vinho || "Beira Interior";
                 const autoctones = castasDB.filter(c => c.regioes.includes(regionName) && c.autoctone);
 
                 if(autoctones.length > 0) {
-                    section.style.display = 'block';
+                    row.style.display = 'block';
                     container.innerHTML = autoctones.map(c => castaCardTemplate(c)).join('');
+                } else {
+                    row.style.display = 'none';
                 }
             }
 
@@ -162,31 +157,29 @@
                 const regioes = [...new Set(castasDB.flatMap(c => c.regioes))].sort();
 
                 container.innerHTML = regioes.map(reg => {
-                    const castasRegiao = castasDB.filter(c => c.regioes.includes(reg));
+                    const castas = castasDB.filter(c => c.regioes.includes(reg));
                     const isExpanded = expandedRegions[reg] || false;
-                    const visibleCastas = isExpanded ? castasRegiao : castasRegiao.slice(0, 5);
+                    const visible = isExpanded ? castas : castas.slice(0, 4);
 
                     return `
-                        <div class="region-group">
+                        <div class="region-block">
                             <div class="region-header">
                                 <h5>${reg}</h5>
-                                <span class="btn-view-all" onclick="toggleRegion('${reg}')">
-                                    ${isExpanded ? '- recolher' : '+ ver tudo (' + castasRegiao.length + ')'}
-                                </span>
+                                ${castas.length > 4 ? `<span class="btn-subtle" onclick="toggleRegion('${reg}')">${isExpanded ? '- recolher' : '+ ver todas ('+castas.length+')'}</span>` : ''}
                             </div>
-                            <div class="castas-container">
-                                ${visibleCastas.map(c => castaCardTemplate(c)).join('')}
+                            <div class="castas-grid">
+                                ${visible.map(c => castaCardTemplate(c)).join('')}
                             </div>
+                            ${isExpanded ? `<div style="margin-top:20px"><span class="btn-subtle" onclick="toggleRegion('${reg}')">- recolher lista</span></div>` : ''}
                         </div>
                     `;
                 }).join('');
             }
 
             function castaCardTemplate(c) {
-                const corClass = c.cor === 'Tinto' ? 'bg-tinto' : (c.cor === 'Branco' ? 'bg-branco' : 'bg-rose');
                 return `
-                    <div class="casta-card" onclick="showCastaDetail('${c.id}')">
-                        <div class="tag-cor ${corClass}"></div>
+                    <div class="casta-card" onclick="showDetail('${c.id}')">
+                        <span class="dot ${c.cor === 'Tinto' ? 'dot-tinto' : 'dot-branco'}"></span>
                         <b>${c.nome}</b>
                         <span>${c.cor} | ${c.tipo_vinho}</span>
                     </div>
@@ -198,55 +191,62 @@
                 renderGlobalAtlas();
             }
 
-            function showCastaDetail(id) {
+            function showDetail(id) {
                 const c = castasDB.find(item => item.id === id);
-                const modal = document.getElementById('casta-modal');
-                const body = document.getElementById('modal-body');
+                const list = document.getElementById('enologia-list-view');
+                const detail = document.getElementById('casta-detail-view');
+                const content = document.getElementById('detail-content');
 
-                body.innerHTML = `
+                content.innerHTML = `
                     <div class="tech-sheet">
-                        <div class="sheet-left">
+                        <div>
                             <span class="category-label" style="text-align:left">${c.tipo_vinho}</span>
-                            <h2>${c.nome}</h2>
-                            <p style="font-size:1.1em; color:#777; line-height:1.6">${c.historia}</p>
+                            <h2 style="font-size:3em; font-weight:900; margin:10px 0">${c.nome}</h2>
+                            <p style="font-size:1.1em; color:#666; line-height:1.7; margin-bottom:30px">${c.historia}</p>
                             
-                            <div style="margin-top:30px">
-                                ${renderAttribute("Acidez", c.perfil.acidez)}
-                                ${renderAttribute("Corpo", c.perfil.corpo)}
-                                ${renderAttribute("Taninos", c.perfil.taninos)}
-                                ${renderAttribute("Álcool", c.perfil.alcool)}
-                            </div>
+                            <h4>Perfil Sensorial</h4>
+                            ${renderBar("Acidez", c.perfil.acidez)}
+                            ${renderBar("Corpo", c.perfil.corpo)}
+                            ${renderBar("Taninos", c.perfil.taninos)}
+                            ${renderBar("Álcool", c.perfil.alcool)}
                             
-                            <div style="margin-top:30px; background:#f9f9f9; padding:20px; border-radius:15px;">
-                                <span class="attribute-label">Aromas Primários</span>
-                                <p style="color:#6d1b32; font-weight:700; margin-top:5px">${c.aromas.join(' • ')}</p>
+                            <div style="margin-top:30px; background:#f9f9f9; padding:20px; border-radius:15px">
+                                <span class="attribute-label">Aromas Principais</span>
+                                <p style="color:#6d1b32; font-weight:700; margin:5px 0 0 0">${c.aromas.join(' • ')}</p>
                             </div>
                         </div>
-                        <div class="sheet-right">
-                            <h4 style="color:#1a1a1a; text-transform:uppercase; font-size:0.7em; letter-spacing:2px; margin-bottom:20px">Guia de Plantação Bio</h4>
-                            <div style="display:flex; flex-direction:column; gap:20px">
-                                <div><b>Terroir Ideal:</b><p style="color:#777; font-size:0.9em">${c.tecnico.solo}</p></div>
-                                <div><b>Clima:</b><p style="color:#777; font-size:0.9em">${c.tecnico.clima}</p></div>
-                                <div><b>Compasso (Distância):</b><p style="color:#777; font-size:0.9em">${c.tecnico.distancia}</p></div>
-                                <div><b>Irrigação:</b><p style="color:#777; font-size:0.9em">${c.tecnico.irrigacao}</p></div>
-                            </div>
-                            <div style="margin-top:40px; padding-top:20px; border-top:1px solid #eee">
-                                <button onclick="closeModal()" class="btn-app" style="background:#1a1a1a; color:#fff; width:100%; border:none; padding:15px; border-radius:10px; cursor:pointer">Voltar ao Atlas</button>
+                        <div>
+                            <h4 style="margin-bottom:20px">Diretrizes de Plantação Bio</h4>
+                            <p><b>Solo Ideal:</b> ${c.tecnico.solo}</p>
+                            <p><b>Clima:</b> ${c.tecnico.clima}</p>
+                            <p><b>Distância (Compasso):</b> ${c.tecnico.distancia}</p>
+                            <p><b>Irrigação:</b> ${c.tecnico.irrigacao}</p>
+                            
+                            <div style="margin-top:40px; padding:25px; border:1px solid #eee; border-radius:20px">
+                                <h5 style="font-size:0.7em; text-transform:uppercase; color:#bbb">Nota do Enólogo</h5>
+                                <p style="font-size:0.9em; color:#777; margin:0">Esta casta em regime de agricultura regenerativa expressa uma mineralidade única, preservando a identidade geológica do terreno.</p>
                             </div>
                         </div>
                     </div>
                 `;
-                modal.style.display = 'flex';
+
+                list.style.display = 'none';
+                detail.style.display = 'block';
+                window.scrollTo(0, 0);
             }
 
-            function renderAttribute(label, val) {
+            function renderBar(label, val) {
                 return `
-                    <div class="attribute-label"><span>${label}</span><span>${val}/10</span></div>
-                    <div class="perfil-bar"><div class="perfil-fill" style="width:${val*10}%"></div></div>
-                `;
+                    <div class="attribute-row">
+                        <div class="attribute-label"><span>${label}</span><span>${val}/10</span></div>
+                        <div class="bar-bg"><div class="bar-fill" style="width:${val*10}%"></div></div>
+                    </div>`;
             }
 
-            function closeModal() { document.getElementById('casta-modal').style.display = 'none'; }
+            function hideDetail() {
+                document.getElementById('enologia-list-view').style.display = 'block';
+                document.getElementById('casta-detail-view').style.display = 'none';
+            }
 
             function setupLocationLogic() {
                 $(document).on('input', '#loc-search-input', function() {
@@ -260,11 +260,22 @@
                     });
                     dropdown.show();
                 });
+                $(document).on('click', '#btn-gps-trigger', function() {
+                    navigator.geolocation.getCurrentPosition(pos => {
+                        let closest = locationsDB[0], minD = Infinity;
+                        locationsDB.forEach(c => {
+                            let d = Math.sqrt(Math.pow(pos.coords.latitude - c.lat, 2) + Math.pow(pos.coords.longitude - c.lon, 2));
+                            if(d < minD) { minD = d; closest = c; }
+                        });
+                        localStorage.setItem('biocultura_region', closest.id);
+                        location.reload();
+                    });
+                });
             }
 
             fetch('/sidebar-content.html').then(r => r.text()).then(html => {
                 document.getElementById('sidebar').innerHTML = html;
-                inicializar();
+                inicializarPagina();
             });
         </script>
 	</body>
