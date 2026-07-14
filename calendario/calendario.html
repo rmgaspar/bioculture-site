@@ -17,44 +17,55 @@
             .inner { padding: 0 4em !important; max-width: 1400px; margin: 0 auto; width: 100%; }
             .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; color: #bbb; margin-bottom: 8px; display: block; text-align: center; }
 
-            /* HERO & CALENDÁRIO */
-            .calendar-hero { display: flex; justify-content: space-between; align-items: flex-start; gap: 4em; margin-bottom: 3em; }
-            .hero-text h1 { font-size: 4em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; line-height: 0.95; margin-bottom: 20px; }
+            /* CALENDÁRIO SEMANAL & NAVEGAÇÃO */
+            .calendar-nav-box { background: #fdfdfd; border: 1px solid #f2f2f2; border-radius: 30px; padding: 2.5em; margin-bottom: 3em; display: flex; align-items: center; gap: 4em; }
+            .cal-controls { display: flex; flex-direction: column; align-items: center; gap: 15px; min-width: 120px; }
+            .btn-nav { cursor: pointer; font-size: 1.5em; color: #bbb; transition: 0.3s; user-select: none; }
+            .btn-nav:hover { color: #2e7d32; }
             
-            .mini-calendar { background: #fdfdfd; border-radius: 25px; padding: 1.5em; border: 1px solid #f2f2f2; width: 350px; }
-            .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; text-align: center; }
-            .cal-day-label { font-size: 0.55em; font-weight: 900; text-transform: uppercase; color: #ccc; }
-            .cal-date { font-size: 0.85em; font-weight: 600; padding: 10px 0; color: #bbb; }
-            .cal-date.today { background: #f1f8e9; color: #1b5e20; border-radius: 12px; }
+            .cal-week-display { flex: 1.5; display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; text-align: center; }
+            .cal-day-col { display: flex; flex-direction: column; gap: 8px; }
+            .cal-label { font-size: 0.6em; font-weight: 900; text-transform: uppercase; color: #ccc; }
+            .cal-label.weekend { color: #ef5350; }
+            .cal-cell { height: 50px; display: flex; align-items: center; justify-content: center; background: #fff; border-radius: 12px; font-weight: 700; color: #bbb; border: 1px solid #f9f9f9; }
+            .cal-cell.today { background: #f1f8e9; color: #2e7d32; border-color: #dcedc8; }
+            
+            /* ÍCONES LUNARES */
+            .moon-icon { font-size: 1.4em; }
+            .moon-full { color: #f9a825; } /* Amarelo Escuro */
+            .moon-new { color: #9e9e9e; } /* Cinza Moderado */
+            .moon-cres { color: #616161; } /* Cinza Escuro (Direita) */
+            .moon-ming { color: #bdbdbd; } /* Cinza Claro (Esquerda) */
 
-            /* MÓDULOS DE CONHECIMENTO (CARDS) */
-            .knowledge-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-bottom: 4em; }
-            .k-card { background: #fff; border: 1px solid #f2f2f2; padding: 30px; border-radius: 20px; transition: transform 0.3s; }
-            .k-card:hover { transform: translateY(-5px); }
-            .k-card h3 { font-size: 1.2em; font-weight: 900; color: #1a1a1a; margin-bottom: 15px; border-bottom: 2px solid #f1f8e9; padding-bottom: 10px; }
-            .k-card p { font-size: 0.9em; line-height: 1.6; color: #666; margin-bottom: 15px; }
-            .k-tag { font-size: 0.6em; font-weight: 900; text-transform: uppercase; background: #f1f8e9; color: #2e7d32; padding: 4px 10px; border-radius: 4px; }
+            /* CONSELHO SEMANAL */
+            .weekly-advice-box { flex: 2; padding-left: 2em; border-left: 1px solid #eee; }
+            .weekly-advice-box h3 { font-size: 1.2em; color: #1a1a1a; margin-bottom: 10px; }
+            .weekly-advice-box p { font-size: 0.95em; line-height: 1.6; color: #666; margin: 0; }
+            .term-link { color: #2e7d32; text-decoration: underline; cursor: pointer; font-weight: 600; }
 
-            /* GLOSSÁRIO & FITOSSANIDADE */
-            .glossary-section { background: #fcfdfc; padding: 4em 0; border-top: 1px solid #f2f2f2; }
-            .search-box { width: 100%; padding: 15px 25px; border-radius: 50px; border: 1px solid #eee; margin-bottom: 40px; font-size: 1em; outline: none; }
-            .disease-item { border-bottom: 1px solid #f2f2f2; padding: 20px 0; }
-            .disease-item b { color: #c62828; font-size: 1.1em; }
-            .disease-item .plants { color: #8d6e63; font-size: 0.8em; font-weight: 700; text-transform: uppercase; }
-            .disease-item .cure { background: #e8f5e9; color: #2e7d32; padding: 15px; border-radius: 12px; margin-top: 10px; font-size: 0.9em; border-left: 4px solid #2e7d32; }
+            /* GUIAS DE REGENERAÇÃO */
+            .guides-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px; margin-bottom: 4em; }
+            .guide-card { background: #fff; border: 1px solid #f2f2f2; border-radius: 25px; overflow: hidden; transition: transform 0.3s; }
+            .guide-card:hover { transform: translateY(-5px); }
+            .guide-img { width: 100%; height: 200px; background: #f5f5f5; object-fit: cover; }
+            .guide-content { padding: 25px; }
+            .guide-content h3 { font-size: 1.1em; font-weight: 900; margin-bottom: 10px; color: #1a1a1a; }
+            .guide-content p { font-size: 0.85em; line-height: 1.6; color: #777; }
 
-            /* PLANEAMENTO DE TERRENO */
-            .terrain-box { background: #1a1a1a; color: #fff; padding: 4em; border-radius: 40px; margin-bottom: 4em; }
-            .terrain-box h2 { color: #fff; font-size: 2.5em; margin-bottom: 20px; }
-            .app-links { display: flex; gap: 20px; margin-top: 30px; }
-            .btn-app { border: 1px solid #444; padding: 10px 20px; border-radius: 8px; font-size: 0.8em; color: #aaa; text-decoration: none; transition: 0.3s; }
-            .btn-app:hover { border-color: #fff; color: #fff; }
+            /* GLOSSÁRIO INTERATIVO */
+            .glossary-item { border-bottom: 1px solid #f2f2f2; padding: 20px 0; }
+            .glossary-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+            .glossary-header b { font-size: 1.1em; color: #1a1a1a; }
+            .glossary-content { display: none; margin-top: 15px; padding: 20px; background: #fcfdfc; border-radius: 15px; border-left: 4px solid #2e7d32; }
+            .solution-box { background: #e8f5e9; padding: 12px; border-radius: 8px; margin-top: 10px; font-size: 0.9em; }
+
+            .bio-res-item { padding: 12px 18px; font-size: 0.9em; color: #666; cursor: pointer; border-bottom: 1px solid #f9f9f9 !important; }
 
             @media screen and (max-width: 1280px) {
                 #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
                 #wrapper { padding-left: 0 !important; }
-                .calendar-hero { flex-direction: column; text-align: center; }
-                .mini-calendar { width: 100%; }
+                .calendar-nav-box { flex-direction: column; gap: 2em; }
+                .weekly-advice-box { padding: 0; border: none; border-top: 1px solid #eee; padding-top: 2em; }
             }
 		</style>
 	</head>
@@ -63,68 +74,62 @@
 			<div id="main">
                 <div class="inner">
                     <section>
-                        <div class="calendar-hero">
-                            <div class="hero-text">
-                                <span class="category-label">Agricultura Regenerativa</span>
-                                <h1>O Ciclo da Abundância</h1>
-                                <p style="font-size: 1.1em; color: #777; max-width: 600px;">Integre o conhecimento ancestral com a tecnologia de precisão para transformar o seu solo num ecossistema vivo.</p>
-                                <p style="font-size: 0.9em; font-style: italic; color: #bbb;">Localização: <strong id="reg-name" style="color:#2e7d32">...</strong></p>
+                        <div style="text-align: center; margin-bottom: 3em;">
+                            <span class="category-label">Agricultura bioCultura</span>
+                            <h1 style="font-size: 3.5em; font-weight: 300; color: #1a1a1a; letter-spacing: -2px; margin: 0;">Calendário de Regeneração</h1>
+                            <p style="font-size: 0.9em; font-style: italic; color: #bbb;">Orientação para: <strong id="reg-name" style="color:#2e7d32">...</strong></p>
+                        </div>
+
+                        <!-- CALENDÁRIO DINÂMICO E CONSELHO -->
+                        <div class="calendar-nav-box">
+                            <div class="cal-controls">
+                                <span class="btn-nav" onclick="changeWeek(-1)">←</span>
+                                <span style="font-size: 0.7em; font-weight: 900; text-transform: uppercase;" id="display-month">Julho 2026</span>
+                                <span class="btn-nav" onclick="changeWeek(1)">→</span>
                             </div>
-                            <div class="mini-calendar" id="calendar-module">
-                                <div class="cal-grid" id="calendar-week-grid"></div>
+                            
+                            <div class="cal-week-display" id="week-grid">
+                                <!-- Injetado via JS -->
+                            </div>
+
+                            <div class="weekly-advice-box" id="advice-box">
+                                <h3 id="advice-title">Tarefas da Semana</h3>
+                                <p id="advice-text">Selecione uma semana para ver as orientações biodinâmicas.</p>
                             </div>
                         </div>
 
-                        <!-- MÓDULOS DE CONHECIMENTO -->
-                        <div class="knowledge-grid">
-                            <div class="k-card">
-                                <span class="k-tag">Solo</span>
-                                <h3>Observação da Terra</h3>
-                                <p>Identifique o seu solo pelo "Teste da Chouriça": humedeça a terra e tente moldar. Se quebrar, é arenoso; se moldar perfeitamente, é argiloso. Solos ideais são francos (médios).</p>
-                                <p><b>Regeneração:</b> Adicione matéria orgânica (composto) para corrigir a estrutura, independentemente do tipo.</p>
+                        <!-- GUIAS PRÁTICOS -->
+                        <div class="category-label" style="text-align:left; margin-bottom: 20px;">Manuais de Autossuficiência</div>
+                        <div class="guides-grid">
+                            <div class="guide-card">
+                                <img src="https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?q=80&w=800" class="guide-img">
+                                <div class="guide-content">
+                                    <h3>Minhocário (Vermicompostagem)</h3>
+                                    <p>Utilize uma caixa opaca com furos. Camada de cartão picado no fundo, adicione minhocas <i>Eisenia fetida</i> e restos vegetais crus. Cubra sempre com matéria seca para evitar odores e moscas.</p>
+                                    <a href="#glossary" class="term-link">Ver como fazer chorume bio</a>
+                                </div>
                             </div>
-                            <div class="k-card">
-                                <span class="k-tag">Nutrição</span>
-                                <h3>Humus e Minhocários</h3>
-                                <p>O minhocário (Vermicompostagem) é ideal para apartamentos. Utilize a <i>Eisenia fetida</i>. Transforme restos de cozinha em "ouro negro" e fertilizante líquido (chorume).</p>
-                                <p><b>Dica:</b> Proporção 3 partes de Castanhos (secos) para 1 de Verdes (húmidos).</p>
+                            <div class="guide-card">
+                                <img src="https://images.unsplash.com/photo-1615811361523-6bd03d7748e7?q=80&w=800" class="guide-img">
+                                <div class="guide-content">
+                                    <h3>Talhões Polinizadores</h3>
+                                    <p>Reserve 10% do seu terreno para flores nativas. Misture Calêndulas com Tomates e Borragem com Morangos. Isto cria um "escudo biológico" que atrai predadores naturais de pragas.</p>
+                                </div>
                             </div>
-                            <div class="k-card">
-                                <span class="k-tag">Biodiversidade</span>
-                                <h3>Talhões e Polinizadores</h3>
-                                <p>Não plante apenas hortícolas. Intercale com Calêndulas, Manjericão e Alfazema para atrair abelhas e confundir pragas pelo odor.</p>
-                                <p><b>Design:</b> Siga as curvas de nível do Google Earth para evitar a erosão hídrica.</p>
-                            </div>
-                        </div>
-
-                        <!-- PLANEAMENTO TÉCNICO -->
-                        <div class="terrain-box">
-                            <h2>Planeamento de Precisão</h2>
-                            <p>Sincronize o seu terreno com ferramentas globais para monitorizar o vigor vegetativo e o stress hídrico em tempo real.</p>
-                            <div class="app-links">
-                                <a href="https://onesoil.ai" target="_blank" class="btn-app">OneSoil (Mapas de Saúde)</a>
-                                <a href="https://earth.google.com" target="_blank" class="btn-app">Google Earth (Topografia)</a>
-                                <a href="https://buppi.pt" target="_blank" class="btn-app">Buppi (Gestão Local)</a>
-                            </div>
-                        </div>
-
-                        <!-- GLOSSÁRIO & FITOSSANIDADE BIO -->
-                        <div class="data-row">
-                            <h4>Glossário e Fitossanidade Biológica</h4>
-                            <div class="tech-content">
-                                <input type="text" class="search-box" id="glossary-search" placeholder="Pesquise pragas, doenças ou termos (ex: Míldio, Afídios, Mulching)...">
-                                <div id="glossary-container">
-                                    <!-- Injetado via JS -->
+                            <div class="guide-card">
+                                <img src="https://images.unsplash.com/photo-1464226184884-fa280b87c399?q=80&w=800" class="guide-img">
+                                <div class="guide-content">
+                                    <h3>Compostagem Comunitária</h3>
+                                    <p>Não tem terra? Utilize os compostores municipais ou crie um pequeno balde de pré-compostagem (Bokashi). Restos cozinhados e laticínios nunca devem ir para a compostagem simples.</p>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- RELATÓRIOS E SÍNTESE -->
-                        <div class="data-row" style="border-bottom: none;">
-                            <h4>Relatório de Inteligência Agrícola</h4>
+                        <!-- GLOSSÁRIO INTERATIVO -->
+                        <div class="data-row" id="glossary">
+                            <h4>Glossário e Sanidade Vegetal</h4>
                             <div class="tech-content">
-                                <h3 style="margin: 0 0 10px 0; font-weight: 300; font-size: 2em;">Síntese das Autoridades e Observatórios 2026</h3>
-                                <div id="report-grid-agri" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; margin-top: 20px;">
+                                <div id="glossary-container">
                                     <!-- Injetado via JS -->
                                 </div>
                             </div>
@@ -142,69 +147,106 @@
 
 		<script src="/assets/js/jquery.min.js"></script>
         <script>
+            let currentWeekOffset = 0;
             let locationsDB = [];
-            
-            const agriGlossary = [
-                { term: "Míldio (Plasmopara viticola)", plants: "Vinha, Tomateiro, Batata", desc: "Fungo que cria manchas oleosas. Surge com humidade alta.", cure: "Cura Bio: Calda Bordalesa (Sulfato de cobre + Cal) ou infusão de Cavalinha (Equisetum arvense)." },
-                { term: "Afídios / Piolho", plants: "Quase todas as hortícolas", desc: "Pequenos insetos que sugam a seiva e deformam folhas.", cure: "Cura Bio: Spray de sabão de potássio ou infusão de urtiga macerada (24h)." },
-                { term: "Oídio", plants: "Cucurbitáceas (Pepino, Melão), Roseiras", desc: "Pó branco que cobre as folhas, impedindo a fotossíntese.", cure: "Cura Bio: Mistura de leite (10%) e água (90%) aplicada ao sol." },
-                { term: "Mulching (Cobertura)", plants: "Solo", desc: "Técnica de cobrir o solo com palha, caruma ou restos de poda.", cure: "Benefício: Mantém humidade, evita ervas daninhas e alimenta a microvida do solo." },
-                { term: "Consociação", plants: "Sistema", desc: "Plantação conjunta de espécies que se ajudam (ex: Milho + Feijão + Abóbora).", cure: "A bioCultura recomenda a consociação Tomate + Manjericão para repelir a mosca branca." }
+
+            // FASES DA LUA JULHO 2026
+            const lunarPhases = {
+                7: { type: 'ming', icon: '◐', class: 'moon-ming', label: 'Quarto Minguante', task: 'Ideal para podar, controlar pragas e semear raízes (cenoura, nabo).' },
+                14: { type: 'new', icon: '●', class: 'moon-new', label: 'Lua Nova', task: 'Fase de repouso. Limpeza de talhões, preparação de solo e monda de ervas.' },
+                21: { type: 'cres', icon: '◑', class: 'moon-cres', label: 'Quarto Crescente', task: 'Vigor vegetativo. Semear e transplantar tudo o que cresce acima do solo.' },
+                29: { type: 'full', icon: '●', class: 'moon-full', label: 'Lua Cheia', task: 'Energia máxima. Colheita de frutos e plantas medicinais. Evite podas drásticas.' }
+            };
+
+            const glossaryData = [
+                { id: "mildio", term: "Míldio", desc: "Fungo que surge com calor e humidade. Cria manchas 'oleosas' nas folhas de tomates e vinhas.", cure: "Cura: Calda Bordalesa. <a href='#'>Ver como preparar</a>" },
+                { id: "afidios", term: "Afídios / Piolho", desc: "Pequenos insetos que sugam a seiva. Causam deformação nas folhas novas.", cure: "Cura: Spray de Sabão de Potássio ou infusão de Urtiga macerada." },
+                { id: "mulching", term: "Mulching", desc: "Cobertura morta do solo (palha, aparas de madeira). Protege a microvida do sol direto.", cure: "Essencial para solos arenosos e climas secos." }
             ];
 
-            const agriReports = [
-                { titulo: "Portal da Agricultura (Gov)", texto: "O foco nacional em 2026 é a digitalização do pequeno agricultor e o apoio à conversão para o modo biológico. Novos subsídios para gestão de água.", fonte: "agricultura.gov.pt" },
-                { titulo: "Sanidade Vegetal (INIAV)", texto: "Laboratórios reforçam a vigilância sobre a Xylella fastidiosa. A recomendação é a diversificação de cultivares nativas resistentes.", fonte: "iniav.pt" },
-                { titulo: "IA e Diagnóstico (Agrio/Plantix)", texto: "O uso de visão computacional permite identificar carências nutricionais apenas por foto. A precisão no tratamento bio subiu 40%.", fonte: "agrio.app / plantix.net" },
-                { titulo: "Hortas Biológicas PT", texto: "A maior rede de partilha de tratamentos bio em Portugal sublinha a importância da fertilização via compostagem caseira.", fonte: "hortasbiologicas.pt" }
-            ];
+            function renderCalendar() {
+                const grid = document.getElementById('week-grid');
+                grid.innerHTML = '';
+                const labels = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab', 'Dom'];
+                
+                let date = new Date();
+                date.setDate(date.getDate() + (currentWeekOffset * 7));
+                let dayOfWeek = date.getDay();
+                let diff = date.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1);
+                let monday = new Date(date.setDate(diff));
 
-            function renderGlossary(filter = "") {
-                const container = document.getElementById('glossary-container');
-                const filtered = agriGlossary.filter(i => i.term.toLowerCase().includes(filter.toLowerCase()) || i.plants.toLowerCase().includes(filter.toLowerCase()));
-                container.innerHTML = filtered.map(i => `
-                    <div class="disease-item">
-                        <b>${i.term}</b> <span class="plants">| afeta: ${i.plants}</span>
-                        <p style="margin: 5px 0;">${i.desc}</p>
-                        <div class="cure">${i.cure}</div>
-                    </div>
-                `).join('');
+                labels.forEach((l, i) => {
+                    let currentDay = new Date(monday);
+                    currentDay.setDate(monday.getDate() + i);
+                    let dayNum = currentDay.getDate();
+                    let isWeekend = (i >= 5);
+                    let moon = lunarPhases[dayNum] && currentDay.getMonth() === 6 ? lunarPhases[dayNum] : null;
+
+                    let content = moon ? `<span class="moon-icon ${moon.class}">${moon.icon}</span>` : dayNum;
+                    let isToday = new Date().toDateString() === currentDay.toDateString() ? 'today' : '';
+
+                    grid.innerHTML += `
+                        <div class="cal-day-col">
+                            <span class="cal-label ${isWeekend ? 'weekend' : ''}">${l}</span>
+                            <div class="cal-cell ${isToday}">${content}</div>
+                        </div>`;
+                    
+                    if (i === 0 || moon) updateAdvice(moon);
+                });
             }
 
-            function buildMiniCalendar() {
-                const grid = document.getElementById('calendar-week-grid');
-                const days = ['S','T','Q','Q','S','S','D'];
-                grid.innerHTML = days.map(d => `<div class="cal-day-label">${d}</div>`).join('');
-                const today = new Date().getDate();
-                for(let i=1; i<=31; i++) {
-                    grid.innerHTML += `<div class="cal-date ${i === today ? 'today' : ''}">${i}</div>`;
+            function updateAdvice(moon) {
+                const title = document.getElementById('advice-title');
+                const text = document.getElementById('advice-text');
+                if (moon) {
+                    title.innerText = `Influência: ${moon.label}`;
+                    text.innerHTML = `${moon.task} <br><br><b>Dica Local:</b> Verifique o nível de humidade no seu <a href="#mildio" class="term-link">solo</a>.`;
                 }
             }
 
-            function renderAgriReports() {
-                document.getElementById('report-grid-agri').innerHTML = agriReports.map(r => `
-                    <div style="border-top:1px solid #f9f9f9; padding-top:20px;">
-                        <h5 style="font-size:0.7em; font-weight:900; text-transform:uppercase; color:#2e7d32; margin-bottom:10px;">${r.titulo}</h5>
-                        <p style="font-size:0.95em; color:#666; line-height:1.6; margin-bottom:10px;">${r.texto}</p>
-                        <span style="font-size:0.6em; color:#bbb; text-transform:uppercase; font-weight:800;">Fonte: ${r.fonte}</span>
+            function renderGlossary() {
+                const container = document.getElementById('glossary-container');
+                container.innerHTML = glossaryData.map(item => `
+                    <div class="glossary-item" id="${item.id}">
+                        <div class="glossary-header" onclick="toggleGlossary('${item.id}')">
+                            <b>${item.term}</b>
+                            <span id="icon-${item.id}">+</span>
+                        </div>
+                        <div class="glossary-content" id="content-${item.id}">
+                            <p>${item.desc}</p>
+                            <div class="solution-box">${item.cure}</div>
+                            <div style="text-align:right; margin-top:10px;">
+                                <span class="btn-nav" style="font-size:1em" onclick="toggleGlossary('${item.id}')">-</span>
+                            </div>
+                        </div>
                     </div>`).join('');
+            }
+
+            function toggleGlossary(id) {
+                const content = document.getElementById(`content-${id}`);
+                const icon = document.getElementById(`icon-${id}`);
+                const isOpen = content.style.display === 'block';
+                content.style.display = isOpen ? 'none' : 'block';
+                icon.innerText = isOpen ? '+' : '';
+            }
+
+            function changeWeek(dir) {
+                currentWeekOffset += dir;
+                renderCalendar();
             }
 
             async function inicializar() {
                 try {
                     const r = await fetch('/data/bioregioes.json');
                     locationsDB = await r.json();
-                    const savedId = localStorage.getItem('biocultura_region') || "portugal-nacional";
+                    const savedId = localStorage.getItem('biocultura_region') || "proenca-a-nova";
                     const info = locationsDB.find(i => i.id === savedId);
                     if(info) document.getElementById('reg-name').innerText = info.titulo;
                     
-                    buildMiniCalendar();
+                    renderCalendar();
                     renderGlossary();
-                    renderAgriReports();
                 } catch(e) { console.error(e); }
             }
-
-            document.getElementById('glossary-search').oninput = function() { renderGlossary(this.value); };
 
             fetch('/sidebar-content.html').then(r => r.text()).then(html => {
                 document.getElementById('sidebar').innerHTML = html;
