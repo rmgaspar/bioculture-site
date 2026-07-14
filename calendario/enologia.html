@@ -52,7 +52,7 @@
 
             /* VISTA DE DETALHE */
             #casta-detail-view { display: none; padding: 2em 0; }
-            .btn-back { color: #bbb; font-size: 0.75em; font-weight: 800; text-transform: uppercase; cursor: pointer; display: inline-block; margin-bottom: 2em; }
+            .btn-back { color: #bbb; font-size: 0.75em; font-weight: 800; text-transform: uppercase; cursor: pointer; display: inline-block; margin-bottom: 2em; transition: color 0.2s; }
             .btn-back:hover { color: #1a1a1a; }
             
             .tech-sheet { display: grid; grid-template-columns: 1fr 1fr; gap: 4em; }
@@ -149,9 +149,9 @@
             const regionIntros = {
                 "Lisboa": "A região de Lisboa é marcada pela forte influência atlântica, resultando em vinhos de frescura vibrante e salinidade única. As castas autóctones adaptaram-se aos solos argilo-calcários e aos ventos marítimos persistentes.",
                 "Douro": "O Douro, Património Mundial, é o berço de vinhos estruturados e complexos. O solo xistoso e o clima mediterrânico extremo forçam as raízes das castas autóctones a profundidades incríveis.",
-                "Alentejo": "No Alentejo, o sol e as planícies graníticas moldam vinhos generosos e macios. A viticultura regenerativa foca-se na preservação da água e no uso de castas que mantêm a acidez sob calor intenso.",
+                "Alentejo": "No Alentejo, o sol e as planícies graníticas moldam vinhos generosos e macios. A viticultura regenerativa foca-se aqui na preservação da água e no uso de castas que mantêm a acidez sob calor intenso.",
                 "Dão": "O Dão é a região do equilíbrio. Rodeada por montanhas, as suas castas autóctones em solos graníticos produzem vinhos de elegância ímpar e mineralidade profunda.",
-                "Beira Interior": "Uma região de altitude com solos predominantemente graníticos. O clima rigoroso permite a produção de vinhos com uma frescura e acidez natural notáveis, onde a casta Siria e a Fonte Cal brilham."
+                "Beira Interior": "Região de altitude com solos graníticos e xistosos. O clima rigoroso permite vinhos com frescura e acidez natural notáveis, onde a casta Siria e a Fonte Cal se destacam."
             };
 
             async function inicializarPagina() {
@@ -169,7 +169,7 @@
                     renderRegional(info);
                     renderGlobalAtlas();
                     setupLocationLogic();
-                } catch(e) { console.error(e); }
+                } catch(e) { console.error("Erro no carregamento:", e); }
             }
 
             function renderRegional(info) {
@@ -178,14 +178,17 @@
                 const container = document.getElementById('regional-grid');
                 const desc = document.getElementById('region-description');
                 
-                // Pega a região vinícola do JSON ou assume Lisboa como fallback
-                const regionName = info.regiao_vinho || "Lisboa";
+                // Forçamos a correspondência: se for Proença, usa Beira Interior. Se não houver mapeamento, usa Lisboa.
+                const regionName = info.regiao_vinho || (info.titulo.includes("Lisboa") ? "Lisboa" : "Lisboa");
                 const autoctones = castasDB.filter(c => c.regioes.includes(regionName) && c.autoctone);
 
                 desc.innerText = regionIntros[regionName] || `A região de ${regionName} possui um património vitícola riquíssimo, onde a interação entre o solo e o clima local permite a expressão máxima destas castas autóctones.`;
-                container.innerHTML = autoctones.length > 0 
-                    ? autoctones.map(c => castaCardTemplate(c)).join('')
-                    : `<p style="color:#bbb; font-style:italic">Nenhuma casta autóctone mapeada para ${regionName}.</p>`;
+                
+                if(autoctones.length > 0) {
+                    container.innerHTML = autoctones.map(c => castaCardTemplate(c)).join('');
+                } else {
+                    container.innerHTML = `<p style="color:#bbb; font-style:italic">Nenhuma casta autóctone mapeada para a região de ${regionName}.</p>`;
+                }
             }
 
             function renderGlobalAtlas() {
@@ -246,6 +249,7 @@
                             <p><b>Clima:</b> ${c.tecnico.clima}</p>
                             <p><b>Distância:</b> ${c.tecnico.distancia}</p>
                             <p><b>Irrigação:</b> ${c.tecnico.irrigacao}</p>
+                            <button onclick="closeModal()" class="btn-clean" style="margin-top:40px; color:#1a1a1a !important; font-weight:900; border-bottom: 1px solid #1a1a1a !important;">← Voltar ao Atlas</button>
                         </div>
                     </div>
                 `;
@@ -258,10 +262,7 @@
                 return `<div class="attribute-row"><div class="attribute-label"><span>${label}</span><span>${val}/10</span></div><div class="bar-bg"><div class="bar-fill" style="width:${val*10}%"></div></div></div>`;
             }
 
-            function hideDetail() {
-                document.getElementById('enologia-list-view').style.display = 'block';
-                document.getElementById('casta-detail-view').style.display = 'none';
-            }
+            function closeModal() { document.getElementById('casta-modal').style.display = 'none'; }
 
             function setupLocationLogic() {
                 $(document).off('input', '#loc-search-input').on('input', '#loc-search-input', function() {
@@ -274,6 +275,17 @@
                         }).appendTo(dropdown);
                     });
                     dropdown.show();
+                });
+                $(document).off('click', '#btn-gps-trigger').on('click', '#btn-gps-trigger', function() {
+                    navigator.geolocation.getCurrentPosition(pos => {
+                        let closest = locationsDB[0], minD = Infinity;
+                        locationsDB.forEach(c => {
+                            let d = Math.sqrt(Math.pow(pos.coords.latitude - c.lat, 2) + Math.pow(pos.coords.longitude - c.lon, 2));
+                            if(d < minD) { minD = d; closest = c; }
+                        });
+                        localStorage.setItem('biocultura_region', closest.id);
+                        location.reload();
+                    });
                 });
             }
 
