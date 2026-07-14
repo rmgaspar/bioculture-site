@@ -6,7 +6,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
 		<style>
-            /* --- ESTRUTURA GLOBAL (PARIDADE TOTAL) --- */
+            /* --- ESTRUTURA GLOBAL --- */
             body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
 			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
             section { padding-top: 3em !important; min-height: 100vh; display: flex; flex-direction: column; }
@@ -18,10 +18,10 @@
             .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; color: #bbb; margin-bottom: 8px; display: block; text-align: center; }
             
             .data-row { display: block; padding: 2.5em 0; border-bottom: 1px solid #f2f2f2; }
-            .data-row h4 { font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #6d1b32; margin: 0 0 30px 0; display: block; }
+            .data-row h4 { font-size: 0.75em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #6d1b32; margin: 0 0 30px 0; display: block; }
 
             /* TEXTO REGIONAL */
-            .region-intro { font-size: 1.15em; line-height: 1.7; color: #555; margin-bottom: 2em; text-align: justify; max-width: 1000px; }
+            .region-intro { font-size: 1.15em; line-height: 1.7; color: #555; margin-bottom: 2em; text-align: justify; max-width: 1000px; border-left: 3px solid #6d1b32; padding-left: 25px; }
 
             /* GRID DE CASTAS */
             .castas-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
@@ -36,14 +36,14 @@
             .dot-tinto { background: #6d1b32; }
             .dot-branco { background: #f1c40f; }
 
-            /* CLASSIFICAÇÃO BIO (RECUPERADO) */
+            /* CLASSIFICAÇÃO BIO */
             .vinhos-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 10px; }
             .vinho-box { border-left: 3px solid #eee; padding-left: 20px; }
             .vinho-box h5 { font-size: 0.9em; font-weight: 900; text-transform: uppercase; margin-bottom: 8px; color: #1a1a1a; }
             .vinho-box p { font-size: 0.85em; color: #777; margin: 0; line-height: 1.5; }
             .vinho-box.bio-active { border-left-color: #2e7d32; }
 
-            /* ATLAS GLOBAL E BOTÕES LIMPÕES */
+            /* ATLAS GLOBAL */
             .region-block { margin-bottom: 4em; }
             .region-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 20px; border-bottom: 1px solid #f9f9f9; padding-bottom: 10px; }
             .region-header h5 { font-size: 1.3em; font-weight: 900; color: #333; margin: 0; }
@@ -54,12 +54,10 @@
             .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(26,26,26,0.95); z-index: 20000; display: none; align-items: center; justify-content: center; padding: 2em; }
             .modal-content { background: #fff; width: 100%; max-width: 900px; max-height: 90vh; border-radius: 40px; overflow-y: auto; padding: 4em; position: relative; }
             .close-modal { position: absolute; top: 30px; right: 40px; font-size: 2em; cursor: pointer; color: #ddd; transition: color 0.2s; }
-            .close-modal:hover { color: #1a1a1a; }
             
             .tech-sheet { display: grid; grid-template-columns: 1fr 1fr; gap: 4em; }
-            .attribute-row { margin-bottom: 15px; }
             .attribute-label { display: flex; justify-content: space-between; font-size: 0.7em; font-weight: 900; color: #bbb; text-transform: uppercase; margin-bottom: 5px; }
-            .bar-bg { height: 4px; background: #eee; border-radius: 10px; }
+            .bar-bg { height: 4px; background: #eee; border-radius: 10px; margin-bottom: 20px; }
             .bar-fill { height: 100%; background: #6d1b32; border-radius: 10px; }
 
             .bio-res-item { padding: 12px 18px; font-size: 0.9em; color: #666; cursor: pointer; border-bottom: 1px solid #f9f9f9 !important; }
@@ -82,16 +80,16 @@
                             <p style="font-size: 0.9em; font-style: italic; color: #bbb;">Contexto regional: <strong id="reg-name" style="color:#6d1b32">...</strong></p>
                         </div>
 
-                        <!-- 1. CONTEXTO REGIONAL (PRIORITÁRIO) -->
-                        <div class="data-row" id="regional-section" style="display:none;">
-                            <h4>Castas Autóctones da Região</h4>
+                        <!-- 1. CONTEXTO REGIONAL (SEMPRE VISÍVEL COM FALLBACK) -->
+                        <div class="data-row" id="regional-section">
+                            <h4>Terroir e Castas da Região</h4>
                             <div class="tech-content">
                                 <p id="region-description" class="region-intro"></p>
                                 <div id="regional-grid" class="castas-grid"></div>
                             </div>
                         </div>
 
-                        <!-- 2. CLASSIFICAÇÃO BIO (RECUPERADO) -->
+                        <!-- 2. CLASSIFICAÇÃO BIO -->
                         <div class="data-row">
                             <h4>Classificação e Intervenção Mínima</h4>
                             <div class="tech-content">
@@ -116,12 +114,10 @@
                             </div>
                         </div>
 
-                        <!-- 3. ATLAS GLOBAL (POR REGIÃO) -->
+                        <!-- 3. ATLAS GLOBAL -->
                         <div class="data-row" style="border-bottom: none;">
                             <h4>Atlas das Castas de Portugal</h4>
-                            <div id="global-atlas">
-                                <!-- Injetado via JS -->
-                            </div>
+                            <div id="global-atlas"></div>
                         </div>
 
                         <footer class="page-footer" style="margin-top:4em; padding-top:2em; border-top:1px solid #f2f2f2; opacity:0.3; text-align:right;">
@@ -148,10 +144,10 @@
             let expandedRegions = {};
 
             const regionIntros = {
-                "Lisboa": "A região de Lisboa é marcada pela forte influência atlântica, resultando em vinhos de frescura vibrante e salinidade única. As castas autóctones adaptaram-se aos solos argilo-calcários e aos ventos marítimos persistentes.",
-                "Douro": "O Douro, Património Mundial, é o berço de vinhos estruturados e complexos. O solo xistoso e o clima extremo forçam as raízes das castas autóctones a profundidades incríveis.",
-                "Alentejo": "No Alentejo, o sol e as planícies graníticas moldam vinhos generosos. A viticultura regenerativa foca-se aqui na preservação da água e no uso de castas resistentes ao calor.",
-                "Dão": "O Dão produz vinhos de elegância ímpar. Rodeada por montanhas, as suas castas autóctones em solos graníticos revelam uma mineralidade profunda e grande potencial de guarda."
+                "Lisboa": "A região de Lisboa é marcada pela forte influência atlântica, resultando em vinhos de frescura vibrante e salinidade única. As castas autóctones como o Arinto e o Vital adaptaram-se aos solos argilo-calcários e aos ventos marítimos persistentes.",
+                "Douro": "O Douro, Património Mundial, é o berço de vinhos estruturados e complexos. O solo xistoso e o clima mediterrânico extremo forçam as raízes das castas autóctones (Touriga Nacional, Touriga Franca) a profundidades incríveis.",
+                "Alentejo": "No Alentejo, o sol e as planícies graníticas moldam vinhos generosos. A viticultura regenerativa foca-se na preservação da água e no uso de castas como Antão Vaz e Alicante Bouschet, resistentes ao calor.",
+                "Dão": "O Dão produz vinhos de elegância ímpar. Rodeada por montanhas, as suas castas autóctones (Encruzado, Touriga Nacional) em solos graníticos revelam uma mineralidade profunda e grande potencial de guarda."
             };
 
             async function inicializarPagina() {
@@ -163,13 +159,14 @@
                     locationsDB = rLoc;
                     castasDB = rCastas;
 
-                    const savedId = localStorage.getItem('biocultura_region') || "proenca-a-nova";
-                    const info = locationsDB.find(i => i.id === savedId);
+                    // Fallback para Lisboa se não houver nada no storage
+                    const savedId = localStorage.getItem('biocultura_region') || "lisboa";
+                    const info = locationsDB.find(i => i.id === savedId) || locationsDB[0];
                     
                     renderRegional(info);
                     renderGlobalAtlas();
                     setupLocationLogic();
-                } catch(e) { console.error(e); }
+                } catch(e) { console.error("Erro no carregamento:", e); }
             }
 
             function renderRegional(info) {
@@ -177,18 +174,15 @@
                 document.getElementById('reg-name').innerText = info.titulo;
                 const container = document.getElementById('regional-grid');
                 const desc = document.getElementById('region-description');
-                const section = document.getElementById('regional-section');
                 
-                const regionName = info.regiao_vinho || "Beira Interior";
+                // Mapeamento: Proença -> Beira Interior, Lisboa -> Lisboa, etc.
+                const regionName = info.regiao_vinho || "Lisboa"; 
                 const autoctones = castasDB.filter(c => c.regioes.includes(regionName) && c.autoctone);
 
-                if(autoctones.length > 0) {
-                    section.style.display = 'block';
-                    desc.innerText = regionIntros[regionName] || `A região de ${regionName} possui um património genético vitícola riquíssimo, onde a interação entre o solo e o clima local permite a expressão máxima destas castas autóctones.`;
-                    container.innerHTML = autoctones.map(c => castaCardTemplate(c)).join('');
-                } else {
-                    section.style.display = 'none';
-                }
+                desc.innerText = regionIntros[regionName] || `A região de ${regionName} possui um património vitícola riquíssimo, onde a interação entre o solo e o clima local permite a expressão máxima destas castas autóctones.`;
+                container.innerHTML = autoctones.length > 0 
+                    ? autoctones.map(c => castaCardTemplate(c)).join('')
+                    : `<p style="color:#bbb; font-style:italic">Nenhuma casta autóctone mapeada especificamente para ${regionName}.</p>`;
             }
 
             function renderGlobalAtlas() {
@@ -198,13 +192,13 @@
                 container.innerHTML = regioes.map(reg => {
                     const castas = castasDB.filter(c => c.regioes.includes(reg));
                     const isExpanded = expandedRegions[reg] || false;
-                    const visible = isExpanded ? castas : castas.slice(0, 4);
+                    const visible = isExpanded ? castas : castas.slice(0, 3);
 
                     return `
                         <div class="region-block">
                             <div class="region-header">
                                 <h5>${reg}</h5>
-                                ${castas.length > 4 ? `<span class="btn-clean" onclick="toggleRegion('${reg}')">${isExpanded ? '- recolher' : '+ veja todas ('+castas.length+')'}</span>` : ''}
+                                ${castas.length > 3 ? `<span class="btn-clean" onclick="toggleRegion('${reg}')">${isExpanded ? '- recolher' : '+ veja todas ('+castas.length+')'}</span>` : ''}
                             </div>
                             <div class="castas-grid">
                                 ${visible.map(c => castaCardTemplate(c)).join('')}
@@ -245,15 +239,16 @@
                         </div>
                         <div>
                             <h4 style="margin-bottom:20px">Diretrizes Bio</h4>
-                            <p><b>Terroir Ideal:</b> ${c.tecnico.solo}</p>
+                            <p><b>Solo:</b> ${c.tecnico.solo}</p>
                             <p><b>Clima:</b> ${c.tecnico.clima}</p>
                             <p><b>Distância:</b> ${c.tecnico.distancia}</p>
                             <p><b>Irrigação:</b> ${c.tecnico.irrigacao}</p>
-                            <button onclick="closeModal()" class="btn-clean" style="margin-top:40px; color:#1a1a1a !important; font-weight:900">← Voltar ao Atlas</button>
+                            <button onclick="closeModal()" class="btn-clean" style="margin-top:40px; color:#1a1a1a !important; font-weight:900; border-bottom: 1px solid #1a1a1a !important;">← Voltar ao Atlas</button>
                         </div>
                     </div>
                 `;
                 document.getElementById('casta-modal').style.display = 'flex';
+                window.scrollTo(0, 0);
             }
 
             function renderBar(label, val) {
@@ -263,7 +258,7 @@
             function closeModal() { document.getElementById('casta-modal').style.display = 'none'; }
 
             function setupLocationLogic() {
-                $(document).on('input', '#loc-search-input', function() {
+                $(document).off('input', '#loc-search-input').on('input', '#loc-search-input', function() {
                     const val = $(this).val().toLowerCase(), dropdown = $('#loc-dropdown').empty();
                     if(val.length < 2) return dropdown.hide();
                     locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0,5).forEach(m => {
@@ -274,7 +269,7 @@
                     });
                     dropdown.show();
                 });
-                $(document).on('click', '#btn-gps-trigger', function() {
+                $(document).off('click', '#btn-gps-trigger').on('click', '#btn-gps-trigger', function() {
                     navigator.geolocation.getCurrentPosition(pos => {
                         let closest = locationsDB[0], minD = Infinity;
                         locationsDB.forEach(c => {
