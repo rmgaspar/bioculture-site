@@ -165,7 +165,8 @@
                     locationsDB = rLoc;
                     castasDB = rCastas;
 
-                    const savedId = localStorage.getItem('biocultura_region') || "lisboa";
+                    // 1. Tenta obter a região guardada. Se não houver, usa a primeira da base de dados (em vez de forçar Lisboa)
+                    const savedId = localStorage.getItem('biocultura_region');
                     const info = locationsDB.find(i => i.id === savedId) || locationsDB[0];
                     
                     renderRegional(info);
@@ -176,21 +177,35 @@
 
             function renderRegional(info) {
                 if(!info) return;
+                
+                // Atualiza o nome na interface
                 document.getElementById('reg-name').innerText = info.titulo;
+                
                 const container = document.getElementById('regional-grid');
                 const desc = document.getElementById('region-description');
-                const regionName = info.regiao_vinho || "Lisboa";
-                const autoctones = castasDB.filter(c => c.regioes.some(r => r.toLowerCase() === regionName.toLowerCase()) && c.autoctone);
-
-                desc.innerText = regionIntros[regionName] || `A região de ${regionName} possui um património vitícola riquíssimo, onde a interação entre o solo e o clima local permite a expressão máxima destas castas autóctones.`;
+                const section = document.getElementById('regional-section');
                 
+                // 2. IMPORTANTE: Se a bioregião não tiver "regiao_vinho" definida, tentamos usar o título
+                // Se ainda assim falhar, não mostramos Lisboa por erro, mostramos uma mensagem neutra.
+                const regionName = info.regiao_vinho || "Desconhecida";
+                
+                // Filtro insensível a maiúsculas/minúsculas
+                const autoctones = castasDB.filter(c => 
+                    c.regioes.some(r => r.toLowerCase() === regionName.toLowerCase()) && c.autoctone
+                );
+
                 if(autoctones.length > 0) {
+                    section.style.display = 'block';
+                    desc.innerText = regionIntros[regionName] || `A região de ${regionName} possui um património vitícola riquíssimo, onde a interação entre o solo e o clima local permite a expressão máxima destas castas autóctones.`;
                     container.innerHTML = autoctones.map(c => castaCardTemplate(c)).join('');
                 } else {
-                    container.innerHTML = `<p style="color:#bbb; font-style:italic">Nenhuma casta autóctone mapeada para a região de ${regionName}.</p>`;
+                    // Em vez de forçar Lisboa, esconde a secção ou mostra aviso
+                    section.style.display = 'block';
+                    desc.innerText = `Informação de terroir para ${info.titulo} (Região: ${regionName}) em processamento.`;
+                    container.innerHTML = `<p style="color:#bbb; font-style:italic">Nenhuma casta autóctone mapeada para a região ${regionName}.</p>`;
                 }
             }
-
+            
             function renderGlobalAtlas() {
                 const container = document.getElementById('global-atlas');
                 const regioes = [...new Set(castasDB.flatMap(c => c.regioes))].sort();
