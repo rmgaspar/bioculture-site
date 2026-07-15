@@ -37,14 +37,13 @@
             .week-stack { 
                 width: 100%; display: flex; flex-direction: column; gap: 15px; margin-top: 20px; 
                 mask-image: linear-gradient(to right, transparent, black 20%, black 80%, transparent);
-                -webkit-mask-image: linear-gradient(to right, transparent, black 20%, black 80%, transparent);
             }
             .week-row { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; width: 100%; }
-            .day-node { font-size: 0.85em; font-weight: 600; color: #ddd; display: flex; align-items: center; justify-content: center; height: 35px; }
+            .day-node { font-size: 0.85em; font-weight: 600; color: #ddd; display: flex; align-items: center; justify-content: center; height: 30px; }
             .day-node.current-week { color: #1a1a1a; }
             .day-node.active { color: #2e7d32; font-weight: 900; transform: scale(1.2); }
             .day-node.weekend-red { color: #ef5350 !important; }
-            .day-node svg { width: 24px; height: 24px; display: block; } /* Luas Ajustadas */
+            .day-node svg { width: 22px; height: 22px; display: block; }
 
             .globe-south { width: 60%; padding-top: 25px; display: flex; align-items: center; justify-content: center; gap: 40px; }
             .meteo-icon-big { font-size: 2.8em; color: #fbc02d; }
@@ -71,25 +70,29 @@
             .info-card-compact span { display: block; font-size: 0.85em; color: #1a1a1a; font-weight: 700; margin-bottom: 8px; }
             .info-card-compact p { font-size: 0.8em; color: #777; line-height: 1.4; margin: 0; height: 2.8em; overflow: hidden; }
 
-            /* VISTA DE DETALHE */
-            #sanity-detail-view { display: none; padding-bottom: 4em; border-bottom: 1px solid #f2f2f2; }
+            /* VISTA DE DETALHE (BIO-BÍBLIA) */
+            #sanity-detail-view { display: none; padding-bottom: 4em; }
             .tech-sheet { display: grid; grid-template-columns: 1.2fr 1fr; gap: 4em; }
             .btn-back { color: #bbb; font-size: 0.75em; font-weight: 800; text-transform: uppercase; cursor: pointer; display: inline-block; margin-bottom: 20px; }
             .btn-back:hover { color: #2e7d32; }
+            .bio-box { background: #f1f8e9; color: #2e7d32; padding: 20px; border-radius: 15px; border-left: 4px solid #2e7d32; margin-top: 15px; }
 
             /* BOTÕES CLEAN */
             .btn-clean { background: none !important; border: none !important; box-shadow: none !important; color: #bbb !important; cursor: pointer; font-size: 0.7em; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; padding: 15px 0; outline: none; }
             .btn-clean:hover { color: #2e7d32 !important; text-decoration: underline; }
             .hidden-item { display: none; }
 
-            .bio-sol { background: #f1f8e9; color: #2e7d32; padding: 12px; border-radius: 10px; font-size: 0.85em; font-weight: 600; border-left: 3px solid #2e7d32; margin-top: 15px; }
+            .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; margin-top: 20px; }
+            .report-item { border-top: 1px solid #f9f9f9; padding-top: 20px; }
+            .report-item h5 { font-size: 0.75em; font-weight: 900; text-transform: uppercase; color: #2e7d32; margin-bottom: 12px; }
+            .report-item p { font-size: 1em; line-height: 1.7; color: #555; margin-bottom: 10px; text-align: justify; }
 
             .page-footer { margin-top: auto; padding: 2em 0 2.5em 0; border-top: 1px solid #f2f2f2; opacity: 0.3; text-align: right; }
 
             @media screen and (max-width: 1280px) {
                 #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
                 #wrapper { padding-left: 0 !important; }
-                .hero-split, .tech-sheet, .info-grid { grid-template-columns: 1fr; }
+                .hero-split, .tech-sheet, .report-grid, .info-grid { grid-template-columns: 1fr; }
                 .hero-globe { width: 350px; height: 350px; margin: 0 auto; }
             }
 		</style>
@@ -99,6 +102,7 @@
 			<div id="main">
                 <div class="inner">
                     <section id="main-section">
+                        
                         <!-- VISTA DE DETALHE -->
                         <div id="sanity-detail-view">
                             <span class="btn-back" onclick="hideDetail()">← voltar ao calendário</span>
@@ -140,10 +144,9 @@
                                 <button class="btn-clean" id="btn-invasoras" onclick="toggleGrid('flora')">+ ver todas as invasoras</button>
                             </div>
 
-                            <!-- SÍNTESE AUTORIDADES -->
                             <div class="data-row" style="border-bottom: none;">
                                 <h4>Síntese das Autoridades 2026</h4>
-                                <div id="report-grid-agri" style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 20px;"></div>
+                                <div id="report-grid-agri" class="report-grid"></div>
                             </div>
                         </div>
 
@@ -177,7 +180,7 @@
 
             const agriReports = [
                 { t: "Diretrizes PEPAC 2026", p: "O Plano Estratégico prioriza o apoio à biodiversidade no talhão e sistemas de rega solar inteligente para mitigar o stress hídrico severo no interior.", s: "agricultura.gov.pt" },
-                { t: "Vigilância Fitossanitária", p: "O INIAV alerta para focos de Xylella fastidiosa. A recomendação técnica exige a diversificação de cultivares nativas e o uso de sebes vivas.", s: "iniav.pt" },
+                { t: "Vigilância Fitossanitária", p: "O INIAV alerta para focos de Xylella fastidiosa. A recomendação técnica exige a diversificação de cultivares nativas e o uso de sebes vivas como barreira biológica.", s: "iniav.pt" },
                 { t: "Mercados Agroportal", p: "O consumo de produtos biológicos cresceu 18%. A agricultura de sequeiro regenerativo com mulching denso apresenta-se como a única via viável.", s: "agroportal.pt" },
                 { t: "Hortas Bio PT", p: "Monitorização comunitária revela que consociações estratégicas (ex: Tomate + Manjericão) reduziram pragas em 35% sem uso de pesticidas sintéticos.", s: "hortasbiologicas.pt" }
             ];
@@ -194,9 +197,8 @@
                         let cur = new Date(monday); cur.setDate(monday.getDate() + (w*7) + j);
                         let isToday = today.toDateString() === cur.toDateString();
                         let moon = (cur.getMonth() === 6 && lunarPhases[cur.getDate()]) ? lunarPhases[cur.getDate()] : null;
-                        let content = moon ? moon.svg : cur.getDate();
                         row.innerHTML += `<div class="day-node ${w===0?'current-week':''} ${isToday?'active':''} ${j>=5?'weekend-red':''}">
-                            ${content}
+                            ${moon ? moon.svg : cur.getDate()}
                         </div>`;
                         if (isToday) updateState(moon);
                     }
@@ -211,22 +213,21 @@
                 const solo = infoGlobal?.biomas?.solo || "misto";
                 
                 iconBox.innerHTML = moon ? `<div class="moon-svg-big">${moon.svg}</div>` : moonSVGs.ming;
-                
                 advice.innerHTML = `
                     <p><b>Estratégia Regenerativa:</b> ${moon ? `Sob a influência da <b>${moon.label}</b>, ${moon.task}` : "Fase de transição lunar: manutenção geral e observação recomendada."}</p>
-                    <p>Com solo regional predominantemente <b>${solo}</b>, a prioridade absoluta desta semana em <b>${region}</b> é a gestão da evapotranspiração. Aplique mulching denso para proteger a microvida do solo. A estabilidade térmica favorece a aplicação de tratamentos biológicos preventivos ao crepúsculo.</p>
+                    <p>Com solo regional predominantemente <b>${solo}</b>, a prioridade absoluta desta semana em <b>${region}</b> é a gestão da evapotranspiração. Aplique mulching denso para proteger a microvida do solo da radiação solar intensa.</p>
                 `;
             }
 
             function renderGrid(data, containerId, limit = 4) {
                 const container = document.getElementById(containerId);
                 container.innerHTML = data.map((item, index) => `
-                    <div class="info-card-compact ${index >= limit ? 'hidden-item' : ''}" onclick="showDetail('${item.id}', '${containerId.includes('pragas') ? 'praga' : 'flora'}')">
-                        <img src="${item.imagem || item.img}" class="compact-img" onerror="this.src='/assets/img/placeholder.jpg'">
+                    <div class="info-card-compact ${index >= limit ? 'hidden-item' : ''}" onclick="showDetail('${item.nome_cientifico}', '${containerId.includes('pragas') ? 'praga' : 'flora'}')">
+                        <img src="${item.imagem || item.img || '/assets/img/placeholder.jpg'}" class="compact-img">
                         <div class="info-body">
-                            <b>${item.nome_cientifico || item.nome_latim}</b>
+                            <b>${item.nome_cientifico}</b>
                             <span>${item.nome_comum}</span>
-                            <p>${(item.sintomas || item.impacto || item.desc || "").substring(0, 60)}...</p>
+                            <p>${(item.sintomas || item.impacto || "").substring(0, 60)}...</p>
                         </div>
                     </div>`).join('');
             }
@@ -246,28 +247,53 @@
                 }
             }
 
-            function showDetail(id, type) {
+            function showDetail(name, type) {
                 const db = type === 'praga' ? pragasDB : floraDB;
-                const item = db.find(i => i.id === id);
+                const item = db.find(i => i.nome_cientifico === name);
+                const detailView = document.getElementById('sanity-detail-view');
+                const mainView = document.getElementById('calendar-main-view');
+
+                let bioHtml = '';
+                if(type === 'praga') {
+                    bioHtml = `
+                        <div><h4 style="font-size:0.7em; color:#bbb">Solução Biológica</h4>
+                        <div class="bio-box">${item.solucao_biologica.metodo}</div></div>
+                        <div><h4 style="font-size:0.7em; color:#bbb; margin-top:20px">Prevenção</h4>
+                        <p><b>Estratégia:</b> ${item.prevencao_biologica.estrategia}</p>
+                        <p><b>Quando:</b> ${item.prevencao_biologica.quando_aplicar}</p></div>`;
+                } else {
+                    bioHtml = `
+                        <div><h4 style="font-size:0.7em; color:#bbb">Controlo Biológico</h4>
+                        <div class="bio-box">${item.solucao_biologica.metodo}</div></div>
+                        <div><h4 style="font-size:0.7em; color:#bbb; margin-top:20px">Implementação</h4>
+                        <p><b>Como:</b> ${item.solucao_biologica.como}</p>
+                        <p><b>Impacto:</b> ${item.observatorio_impacto}</p></div>`;
+                }
+
                 document.getElementById('detail-content').innerHTML = `
                     <div class="hero-split">
                         <div class="hero-text">
                             <span class="category-label">${type === 'praga' ? 'Fitossanidade' : 'Flora Invasora'}</span>
-                            <h1 style="font-style:italic">${item.nome_cientifico || item.nome_latim}</h1>
+                            <h1 style="font-style:italic">${item.nome_cientifico}</h1>
                             <h2 style="margin-top:-15px; color:#666">${item.nome_comum}</h2>
                             <div class="tech-sheet" style="margin-top:30px">
-                                <div><h4 style="font-size:0.7em; color:#bbb">Diagnóstico</h4><p>${item.sintomas || item.impacto || ""}</p></div>
-                                <div><h4 style="font-size:0.7em; color:#bbb">Combate Bio</h4><div class="bio-sol">${item.cura_bio || item.controlo_bio || item.solucao_biologica?.metodo || ""}</div></div>
+                                <div><h4 style="font-size:0.7em; color:#bbb">Diagnóstico / Impacto</h4>
+                                <p>${item.sintomas || item.impacto}</p></div>
+                                ${bioHtml}
                             </div>
                         </div>
-                        <div class="hero-visual"><div class="hero-globe"><img src="${item.imagem || item.img}" style="width:100%; height:100%; object-fit:cover"></div></div>
+                        <div class="hero-visual"><div class="hero-globe"><img src="${item.imagem || item.img || '/assets/img/placeholder.jpg'}" style="width:100%; height:100%; object-fit:cover"></div></div>
                     </div>`;
-                document.getElementById('calendar-main-view').style.display = 'none';
-                document.getElementById('sanity-detail-view').style.display = 'block';
+                
+                mainView.style.display = 'none';
+                detailView.style.display = 'block';
                 window.scrollTo(0, 0);
             }
 
-            function hideDetail() { document.getElementById('calendar-main-view').style.display = 'block'; document.getElementById('sanity-detail-view').style.display = 'none'; }
+            function hideDetail() { 
+                document.getElementById('calendar-main-view').style.display = 'block'; 
+                document.getElementById('sanity-detail-view').style.display = 'none'; 
+            }
 
             async function renderAgriData() {
                 try {
@@ -289,7 +315,7 @@
                     if(infoGlobal) document.getElementById('reg-name').innerText = infoGlobal.titulo;
                     renderGlobe();
                     await renderAgriData();
-                    document.getElementById('report-grid-agri').innerHTML = agriReports.map(r => `<div class="report-item"><h5>${r.t}</h5><p>${r.p}</p></div>`).join('');
+                    document.getElementById('report-grid-agri').innerHTML = agriReports.map(r => `<div class="report-item"><h5>${r.t}</h5><p>${r.p}</p><span class="report-source">Fonte: ${r.s}</span></div>`).join('');
                     setupLocationLogic();
                 } catch(e) { console.error(e); }
             }
@@ -303,7 +329,7 @@
                     });
                     dropdown.show();
                 });
-                $(document).on('click', '#btn-gps-trigger', function() {
+                $(document).off('click', '#btn-gps-trigger').on('click', '#btn-gps-trigger', function() {
                     navigator.geolocation.getCurrentPosition(pos => {
                         let closest = locationsDB[0], minD = Infinity;
                         locationsDB.forEach(c => {
