@@ -6,7 +6,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
 		<style>
-            /* --- ESTRUTURA GLOBAL --- */
+            /* --- ESTRUTURA GLOBAL (PARIDADE INDEX) --- */
             body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
 			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
             section { min-height: 100vh; display: flex; flex-direction: column; }
@@ -43,7 +43,7 @@
                 display: flex; 
                 flex-direction: column; 
                 gap: 15px;
-                mask-image: linear-gradient(to right, transparent, black 20%, black 80%, transparent);
+                margin-top: 20px;
             }
             .week-row { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; width: 100%; }
             .day-node { font-size: 0.85em; font-weight: 600; color: #ddd; }
@@ -60,10 +60,11 @@
             .moon-icon-big { font-size: 2.8em; color: #444; }
             .v-sep { width: 1px; height: 40px; background: #eee; }
 
-            /* ORIENTAÇÃO REGIONAL */
+            /* ORIENTAÇÃO REGIONAL DETALHADA */
             .advice-block { margin-top: 20px; padding: 35px; background: #fdfdfd; border-radius: 25px; border: 1px solid #f2f2f2; border-left: 5px solid #2e7d32; }
             .advice-block h5 { font-size: 0.8em; font-weight: 900; text-transform: uppercase; color: #2e7d32; margin-bottom: 15px; }
             .advice-content { font-size: 1.15em; line-height: 1.8; color: #555; text-align: justify; }
+            .advice-content p { margin-bottom: 1em; }
 
             /* FITOSSANIDADE 2x2 */
             .disease-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 20px; }
@@ -83,7 +84,7 @@
             .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 20px; }
             .report-item { border-top: 1px solid #f9f9f9; padding-top: 20px; }
             .report-item h5 { font-size: 0.75em; font-weight: 900; text-transform: uppercase; color: #2e7d32; margin-bottom: 12px; }
-            .report-item p { font-size: 1em; line-height: 1.7; color: #555; text-align: justify; }
+            .report-item p { font-size: 1em; line-height: 1.7; color: #555; margin-bottom: 10px; text-align: justify; }
 
             .page-footer { margin-top: auto; padding: 2em 0 2.5em 0; border-top: 1px solid #f2f2f2; opacity: 0.3; text-align: right; }
 
@@ -109,7 +110,9 @@
                                 
                                 <div class="advice-block">
                                     <h5>Orientação Semanal: <span id="reg-name">...</span></h5>
-                                    <div id="advice-content" class="advice-content"></div>
+                                    <div id="advice-content" class="advice-content">
+                                        <!-- Preenchido via JS -->
+                                    </div>
                                 </div>
                             </div>
 
@@ -126,7 +129,7 @@
                             </div>
                         </div>
 
-                        <!-- 2. FITOSSANIDADE -->
+                        <!-- 2. FITOSSANIDADE 2x2 -->
                         <div class="data-row">
                             <h4>Sanidade Vegetal: Diagnóstico Bio</h4>
                             <div class="tech-content">
@@ -234,10 +237,10 @@
             };
 
             const agriReports = [
-                { titulo: "Avisos DRAP 2026", texto: "As Direções Regionais alertam para a pressão do Oídio na vinha devido às noites quentes. Recomenda-se o enrelvamento das entrelinhas para baixar a temperatura do solo e aumentar a biodiversidade de auxiliares. A vigilância sobre a Flavescência Dourada deve ser intensificada.", fonte: "DRAP Norte/Algarve" },
-                { titulo: "Inovação BASF/Plantix", texto: "Novas ferramentas de diagnóstico por imagem permitem identificar precocemente carências de Magnésio que mimetizam doenças virais. O uso de feromonas de confusão sexual está a reduzir em 60% a necessidade de tratamentos para a traça da uva.", fonte: "Plantix Library" },
-                { titulo: "Sanidade Vegetal INIAV", texto: "O Laboratório de Fitobacteriologia reforça a contenção da Xylella fastidiosa. A bioCultura recomenda o uso de sebes vivas nativas como barreira biológica e a diversificação de cultivares certificadas.", fonte: "iniav.pt" },
-                { titulo: "Resiliência Hídrica e Solo", texto: "O Agroportal sublinha que a gestão da água em 2026 passa pela retenção no solo. O uso de biochar e mulching denso é obrigatório para manter a viabilidade das culturas de sequeiro. O mercado de biofertilizantes estabilizou como alternativa principal.", fonte: "Agroportal" }
+                { titulo: "Avisos DRAP 2026", texto: "As Direções Regionais alertam para a pressão do Oídio na vinha devido às noites quentes. Recomenda-se o enrelvamento das entrelinhas para baixar a temperatura do solo.", fonte: "DRAP Norte/Algarve" },
+                { titulo: "Inovação BASF/Plantix", texto: "Novas ferramentas de diagnóstico por imagem permitem identificar precocemente carências de Magnésio que mimetizam doenças virais.", fonte: "Plantix Library" },
+                { titulo: "Sanidade Vegetal INIAV", texto: "O Laboratório de Fitobacteriologia reforça a contenção da Xylella fastidiosa. A bioCultura recomenda o uso de sebes vivas nativas.", fonte: "iniav.pt" },
+                { titulo: "Resiliência Hídrica", texto: "A gestão da água em 2026 passa pela retenção no solo. O uso de biochar e mulching denso é obrigatório para manter a viabilidade.", fonte: "Agroportal" }
             ];
 
             function renderGlobeCalendar() {
@@ -247,6 +250,7 @@
                 let mondayOfCurrent = new Date(today);
                 mondayOfCurrent.setDate(today.getDate() - today.getDay() + (today.getDay() === 0 ? -6 : 1));
 
+                // Ordem: Próxima (topo), Atual (centro), Anterior (fundo)
                 [1, 0, -1].forEach(weekIdx => {
                     let weekRow = document.createElement('div');
                     weekRow.className = 'week-row';
@@ -278,12 +282,12 @@
                     iconBox.innerHTML = moon.icon; iconBox.style.color = moon.color;
                     document.getElementById('lunar-name').innerText = moon.label;
                     advice.innerHTML = `<p><b>Influência Lunar:</b> Sob a <b>${moon.label}</b>, ${moon.task}</p>
-                                        <p><b>Ação em ${region}:</b> O solo exige atenção à evapotranspiração. Aplique mulching denso. A estabilidade térmica favorece tratamentos bio ao fim do dia.</p>`;
+                                        <p><b>Ação em ${region}:</b> O solo exige atenção à evapotranspiração. Aplique mulching denso e prepare os talhões para a próxima fase de transplante. A estabilidade térmica favorece tratamentos bio ao fim do dia.</p>`;
                 } else {
                     iconBox.innerHTML = '☾'; iconBox.style.color = '#444';
                     document.getElementById('lunar-name').innerText = 'Transição';
-                    advice.innerHTML = `<p><b>Manutenção Geral em ${region}:</b> Fase de transição hídrica. Foco na rega gota-a-gota e monda manual para preservar nutrientes.</p>
-                                        <p><b>Tendência Meteorológica:</b> Céu limpo e radiação intensa. Proteja as culturas mais sensíveis com sombreamento parcial.</p>`;
+                    advice.innerHTML = `<p><b>Manutenção Geral em ${region}:</b> Fase de transição hídrica. Foco na rega gota-a-gota e monda manual de ervas competidoras para preservar nutrientes.</p>
+                                        <p><b>Tendência Meteorológica:</b> O céu limpo e a radiação solar intensa exigem proteção das culturas mais sensíveis (sombreamento parcial).</p>`;
                 }
             }
 
@@ -294,9 +298,14 @@
                     const savedId = localStorage.getItem('biocultura_region') || "proenca-a-nova";
                     infoGlobal = locationsDB.find(i => i.id === savedId);
                     if(infoGlobal) document.getElementById('reg-name').innerText = infoGlobal.titulo;
+                    
                     renderGlobeCalendar();
                     document.getElementById('report-grid-agri').innerHTML = agriReports.map(r => `
-                        <div class="report-item"><h5>${r.titulo}</h5><p>${r.texto}</p><span class="report-source">Fonte: ${r.fonte}</span></div>`).join('');
+                        <div class="report-item">
+                            <h5>${r.titulo}</h5>
+                            <p>${r.texto}</p>
+                            <span class="report-source">Fonte: ${r.fonte}</span>
+                        </div>`).join('');
                 } catch(e) { console.error(e); }
             }
 
@@ -305,14 +314,16 @@
                 if(val.length < 2) return dropdown.hide();
                 locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0,5).forEach(m => {
                     $('<div class="bio-res-item"></div>').text(m.titulo).on('click', () => {
-                        localStorage.setItem('biocultura_region', m.id); location.reload();
+                        localStorage.setItem('biocultura_region', m.id);
+                        location.reload();
                     }).appendTo(dropdown);
                 });
                 dropdown.show();
             });
 
             fetch('/sidebar-content.html').then(r => r.text()).then(html => {
-                document.getElementById('sidebar').innerHTML = html; inicializar();
+                document.getElementById('sidebar').innerHTML = html;
+                inicializar();
             });
         </script>
 	</body>
