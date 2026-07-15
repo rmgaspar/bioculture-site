@@ -31,22 +31,11 @@
                 box-shadow: 0 40px 100px rgba(0,0,0,0.12); 
                 background: #1a1a1a;
             }
-            .hero-globe img { 
-                width: 100%; height: 100%; 
-                object-fit: cover; 
-            }
+            .hero-globe img { width: 100%; height: 100%; object-fit: cover; }
 
             /* ALINHAMENTO VERTICAL */
             .data-row { display: block; padding: 2.5em 0; border-bottom: 1px solid #f2f2f2; }
-            .data-row h4 { 
-                font-size: 0.7em; 
-                font-weight: 900; 
-                text-transform: uppercase; 
-                letter-spacing: 2px; 
-                color: #bbb; 
-                margin: 0 0 25px 0; 
-                display: block;
-            }
+            .data-row h4 { font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin: 0 0 25px 0; display: block; }
 
             /* GAUGES */
             .gauge-container { margin-bottom: 15px; width: 100%; max-width: 500px; }
@@ -71,23 +60,34 @@
             .report-item p { font-size: 0.95em; line-height: 1.7; color: #666; margin-bottom: 15px; text-align: justify; }
             .report-source { font-size: 0.65em; font-weight: 800; color: #bbb; text-transform: uppercase; letter-spacing: 1px; display: block; border-top: 1px solid #eee; padding-top: 8px; }
 
-            /* NEWS GRID */
-            .observatorio-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px; margin-top: 1.5em; }
-            .news-card { text-decoration: none; color: inherit; display: flex; flex-direction: column; transition: all 0.3s ease; }
-            .news-card:hover { transform: translateY(-5px); }
-            .card-image-wrap { position: relative; width: 100%; height: 180px; overflow: hidden; border-radius: 12px; background: #f5f5f5; margin-bottom: 15px; }
-            .card-image-wrap img { width: 100%; height: 100%; object-fit: cover; }
-            .badge-cat { position: absolute; bottom: 10px; left: 10px; background: #4fc3f7; color: white; padding: 4px 12px; border-radius: 50px; font-size: 0.55em; font-weight: 900; text-transform: uppercase; }
+            /* NOTÍCIAS (ESTILO INDEX) */
+            .news-header { font-size: 0.8em; font-weight: 400; text-transform: lowercase; letter-spacing: 3px; color: #bbb; margin-bottom: 2.5em; display: block; margin-top: 4em; }
+            .news-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 30px; margin-bottom: 4em; }
+            .news-item { 
+                text-decoration: none; color: inherit; display: block; 
+                padding: 25px; background: #fdfdfd; border: 1px solid #f2f2f2; 
+                border-radius: 12px; transition: all 0.3s; 
+            }
+            .news-item:hover { transform: translateY(-5px); border-color: #ddd; }
+            .news-item h3 { font-size: 1.15em; font-weight: 700; color: #1a1a1a; margin-bottom: 12px; line-height: 1.3; min-height: 2.6em; }
+            .news-item p { font-size: 0.9em; color: #777; line-height: 1.5; margin-bottom: 15px; }
+            .news-meta { display: flex; align-items: center; gap: 10px; border-top: 1px solid #f9f9f9; padding-top: 12px; }
+            .source-logo { width: 16px; height: 16px; object-fit: contain; filter: grayscale(100%); opacity: 0.6; }
+            .news-meta span { font-size: 0.65em; font-weight: 800; color: #bbb; text-transform: uppercase; letter-spacing: 1px; }
 
-            .transition-text { font-size: 1.1em; line-height: 1.6; color: #777; margin-bottom: 1em; max-width: 1000px; text-align: justify; }
+            .btn-pagination { background: none !important; border: none !important; color: #bbb !important; font-size: 0.8em; letter-spacing: 3px; cursor: pointer; text-transform: lowercase; }
+            .hidden-card { display: none; }
             .bio-res-item { padding: 12px 18px; font-size: 0.9em; color: #666; cursor: pointer; border-bottom: 1px solid #f9f9f9 !important; }
+
+            /* RODAPÉ ALINHADO À SIDEBAR */
+            .page-footer { margin-top: auto; padding: 2em 0 2.5em 0; border-top: 1px solid #f2f2f2; opacity: 0.3; text-align: right; }
 
             @media screen and (max-width: 1280px) {
                 #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
                 #wrapper { padding-left: 0 !important; }
                 .hero-split { flex-direction: column-reverse; }
-                .hero-visual { justify-content: center; width: 100%; }
                 .hero-globe { width: 350px; height: 350px; }
+                .report-grid { grid-template-columns: 1fr; }
             }
 		</style>
 	</head>
@@ -131,23 +131,18 @@
                         <div class="data-row">
                             <h4>Alerta Hídrico</h4>
                             <div class="tech-content">
-                                <p class="transition-text">
+                                <p style="font-size: 1.1em; line-height: 1.6; color: #777; margin-bottom: 1em; max-width: 1000px;">
                                     A escassez de água é um desafio multidimensional que afeta ecossistemas e sociedades. A monitorização constante dos níveis hídricos e a compreensão dos novos padrões de consumo são fundamentais para uma gestão regenerativa e resiliente.
                                 </p>
                                 
                                 <div class="water-impact-box">
                                     <div class="fact-cycler-water" id="water-facts-container"></div>
                                 </div>
-
-                                <div id="noticias-agua-dinamico" class="observatorio-grid"></div>
-                                <div style="text-align: center; margin-top: 2em;">
-                                    <button id="btn-load-more-agua" class="btn-ver-mais" style="display:none; border:none !important;">ver mais</button>
-                                </div>
                             </div>
                         </div>
 
                         <!-- 3. RELATÓRIO GLOBAL -->
-                        <div class="data-row" style="border-bottom: none;">
+                        <div class="data-row">
                             <h4>Relatório Global</h4>
                             <div class="tech-content">
                                 <h3 style="margin: 0 0 10px 0; font-weight: 300; font-size: 2em;">Análise Crítica de Stress Hídrico</h3>
@@ -155,7 +150,14 @@
                             </div>
                         </div>
 
-                        <footer class="page-footer" style="margin-top:4em; padding-top:2em; border-top:1px solid #f2f2f2; opacity:0.3; text-align:right;">
+                        <!-- 4. NOTÍCIAS (ESTILO INDEX) -->
+                        <span class="news-header">noticias</span>
+                        <div id="noticias-agua-dinamico" class="news-list"></div>
+                        <div style="text-align: center; margin-bottom: 4em;">
+                            <button id="btn-load-more-agua" class="btn-pagination" style="display:none;">ver mais</button>
+                        </div>
+
+                        <footer class="page-footer">
                             <span style="display: block; font-size: 0.85em; font-weight: 900; color: #333;">bioCultura</span>
                             <span style="display: block; font-size: 0.5em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Global Regeneration</span>
                         </footer>
@@ -242,8 +244,6 @@
                     const dur = parseFloat(info.recursos_hidricos.dureza_fr) || 10;
                     document.getElementById('label-ph').innerText = "pH " + ph;
                     document.getElementById('label-dureza').innerText = dur + " ºf";
-                    
-                    // ATUALIZAÇÃO DO TEXTO DE ANÁLISE MINERAL
                     document.getElementById('water-advantages').innerText = ph < 7 
                         ? "Água ligeiramente ácida: Ideal para mirtilos e culturas acidófilas." 
                         : "Água equilibrada: Excelente para neutralizar solos ácidos e rega geral.";
@@ -267,10 +267,13 @@
             function renderizarCardsAgua() {
                 const container = document.getElementById('noticias-agua-dinamico');
                 container.innerHTML = noticiasAgua.map((n, i) => `
-                    <a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-card ${i >= visiveisAgua ? 'hidden-card' : ''}">
-                        <div class="card-image-wrap"><img src="${n.imagem}"><span class="badge-cat">Água</span></div>
+                    <a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-item ${i >= visiveisAgua ? 'hidden-card' : ''}">
                         <h3>${n.titulo}</h3>
-                        <p>${(n.resumo_biocultura || n.resumo || "").substring(0, 100)}...</p>
+                        <p>${(n.resumo_biocultura || n.resumo || "").substring(0, 110)}...</p>
+                        <div class="news-meta">
+                            <img src="${n.logo}" class="source-logo">
+                            <span>${n.data}</span>
+                        </div>
                     </a>`).join('');
                 document.getElementById('btn-load-more-agua').style.display = noticiasAgua.length > visiveisAgua ? 'inline-block' : 'none';
             }
