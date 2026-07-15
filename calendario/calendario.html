@@ -15,7 +15,7 @@
             .inner { padding: 2.2em 4em 0 4em !important; max-width: 1600px !important; margin: 0 auto; width: 100%; }
             .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; margin-bottom: 15px; display: block; }
 
-            /* HERO & GLOBO (PRESERVADO) */
+            /* HERO & GLOBO (CALENDÁRIO HORIZONTAL) */
             .hero-split { display: flex; align-items: flex-start; justify-content: space-between; gap: 4em; margin-bottom: 2em; }
             .hero-text { flex: 1.5; text-align: left; } 
             .hero-text h1 { font-size: 4em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; line-height: 0.95; margin: 0 0 20px 0; }
@@ -24,14 +24,18 @@
                 box-shadow: 0 40px 100px rgba(0,0,0,0.05); background: #fdfdfd; border: 1px solid #f2f2f2;
                 display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 60px 0;
             }
+            .week-stack { width: 100%; display: flex; flex-direction: column; gap: 12px; margin-top: 10px; }
             .week-row { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; width: 100%; }
             .day-node { font-size: 0.85em; font-weight: 600; color: #ddd; display: flex; align-items: center; justify-content: center; height: 35px; }
+            .day-node.current-week { color: #888; }
             .day-node.active { color: #2e7d32; font-weight: 900; transform: scale(1.2); }
             .day-node svg { width: 18px; height: 18px; display: block; }
+            
             .globe-south { width: 60%; padding-top: 25px; border-top: 1px solid #f2f2f2; display: flex; align-items: center; justify-content: center; gap: 40px; }
             .meteo-icon-big { font-size: 2.8em; color: #fbc02d; }
+            .moon-svg-big { width: 40px; height: 40px; }
 
-            /* ORIENTAÇÃO REGIONAL (PRESERVADO) */
+            /* ORIENTAÇÃO REGIONAL */
             .advice-block { margin-top: 20px; padding: 35px; background: #fdfdfd; border-radius: 25px; border: 1px solid #f2f2f2; border-left: 5px solid #2e7d32; min-height: 180px; }
             .advice-block h5 { font-size: 0.8em; font-weight: 900; text-transform: uppercase; color: #2e7d32; margin-bottom: 15px; }
             .advice-content { font-size: 1.15em; line-height: 1.8; color: #555; text-align: justify; }
@@ -46,9 +50,9 @@
             .disease-body b { color: #c62828; font-style: italic; font-size: 0.95em; display: block; margin-bottom: 5px; line-height: 1.3; }
             .disease-body p { font-size: 0.85em; color: #777; line-height: 1.4; margin: 0; height: 2.8em; overflow: hidden; }
 
-            /* BOTÕES TOGGLE (LIMPOS) */
+            /* BOTÕES TOGGLE LIMPOS */
             .toggle-container { text-align: left; margin: 0 0 40px 0; }
-            .btn-toggle { background: none !important; border: none !important; color: #bbb !important; cursor: pointer; font-size: 2.5em; font-weight: 300; line-height: 1; outline: none; }
+            .btn-toggle { background: none !important; border: none !important; color: #bbb !important; padding: 0 !important; cursor: pointer; font-size: 2.5em; font-weight: 300; line-height: 1; outline: none; }
             .btn-toggle:hover { color: #2e7d32 !important; }
             .hidden-item { display: none; }
 
@@ -63,7 +67,7 @@
 			<div id="main">
                 <div class="inner">
                     <section>
-                        <!-- HERO -->
+                        <!-- 1. HERO & CALENDÁRIO -->
                         <div class="hero-split">
                             <div class="hero-text">
                                 <span class="category-label">Agricultura bioCultura</span>
@@ -86,7 +90,7 @@
                             </div>
                         </div>
 
-                        <!-- SANIDADE VEGETAL -->
+                        <!-- 2. SANIDADE VEGETAL (22 ITENS) -->
                         <div class="sanidade-section">
                             <h4>Sanidade Vegetal: Diagnóstico Bio</h4>
                             <h5>Combater as pragas da sua horta</h5>
@@ -98,7 +102,7 @@
                             <div class="toggle-container"><button class="btn-toggle" id="btn-invasoras" onclick="toggleGrid('invasoras')">+</button></div>
                         </div>
 
-                        <!-- SÍNTESE -->
+                        <!-- 3. SÍNTESE -->
                         <div class="data-row" style="margin-top: 4em;">
                             <span class="category-label">Síntese e Avisos Agrícolas 2026</span>
                             <h2 style="font-weight: 300; font-size: 2.5em; margin-bottom: 30px;">Inteligência Fitossanitária Nacional</h2>
@@ -114,7 +118,7 @@
         <script>
             let infoGlobal = { titulo: "Funchal" };
 
-            // DADOS COMPLETOS (8 PRAGAS/DOENÇAS)
+            // DADOS COMPLETOS
             const pragasData = [
                 { id: "PRG-001", nome: "Cydia pomonella", comum: "Bichado", img: "https://fitosistema.com/wp-content/uploads/2022/09/ctt_8x8.png", desc: "Aplicação de bioinseticidas virais ou nemátodos no tronco." },
                 { id: "PRG-002", nome: "Thaumetopoea pityocampa", comum: "Processionária", img: "https://florestas.pt/wp-content/uploads/2020/05/processionaria.jpg", desc: "Uso de Bacillus thuringiensis e armadilhas de cinta." },
@@ -126,7 +130,6 @@
                 { id: "DNC-002", nome: "Bursaphelenchus xylophilus", comum: "Nematodo", img: "https://florestas.pt/wp-content/uploads/2020/05/nematodo.jpg", desc: "Interrupção do ciclo do inseto vetor Monochamus." }
             ];
 
-            // DADOS COMPLETOS (14 INVASORAS)
             const invasorasData = [
                 { id: "INV-001", nome: "Acacia dealbata", comum: "Mimosa", img: "https://invasoras.pt/sites/default/files/styles/especie_detalhe/public/acacia_dealbata_0.jpg", desc: "Inseto galhador Eurytoma acaciae." },
                 { id: "INV-002", nome: "Acacia longifolia", comum: "Acácia-de-espigas", img: "https://invasoras.pt/sites/default/files/styles/especie_detalhe/public/acacia_longifolia_1.jpg", desc: "Vespa Trichilogaster acaciaelongifoliae." },
@@ -161,7 +164,7 @@
                 else { $(gridId).find('a').slice(4).addClass('hidden-item'); $(btnId).text('+'); }
             }
 
-            // CALENDÁRIO (PRESERVADO)
+            // CALENDÁRIO (RESTAURADO)
             const moonSVGs = {
                 ming: '<svg viewBox="0 0 24 24"><path fill="#bdbdbd" d="M12,2A10,10 0 0,0 12,22A10,10 0 0,0 12,2M12,4A8,8 0 0,1 12,20V4Z"/></svg>',
                 new: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="#9e9e9e" stroke-width="2" fill="none"/></svg>',
