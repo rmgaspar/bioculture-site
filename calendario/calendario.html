@@ -3,79 +3,74 @@
 	<head>
 		<title>bioCultura - Calendário de Regeneração</title>
 		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<meta name="viewport" content="width=device-width, initial-scale, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
 		<style>
-            /* --- ESTRUTURA GLOBAL (PARIDADE INDEX) --- */
+            /* --- ESTRUTURA GLOBAL --- */
             body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
 			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
             section { min-height: 100vh; display: flex; flex-direction: column; }
-
             #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
             #wrapper { padding-left: 18em !important; }
-
             .inner { padding: 2.2em 4em 0 4em !important; max-width: 1600px !important; margin: 0 auto; width: 100%; }
             .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; margin-bottom: 15px; display: block; }
 
-            /* HERO SPLIT */
+            /* HERO & GLOBO */
             .hero-split { display: flex; align-items: flex-start; justify-content: space-between; gap: 4em; margin-bottom: 2em; }
-            .hero-text { flex: 1.5; text-align: left; padding-top: 5px; } 
+            .hero-text { flex: 1.5; text-align: left; } 
             .hero-text h1 { font-size: 4em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; line-height: 0.95; margin: 0 0 20px 0; }
-            
-            /* GLOBO DE TEMPO */
-            .hero-visual { flex: 1; display: flex; justify-content: flex-end; }
             .hero-globe { 
-                position: relative; width: 480px; height: 480px; 
-                border-radius: 50%; overflow: hidden; 
-                box-shadow: 0 40px 100px rgba(0,0,0,0.05); 
-                background: #fdfdfd; display: flex; flex-direction: column; align-items: center; justify-content: space-between;
-                padding: 60px 0; border: 1px solid #f2f2f2;
+                position: relative; width: 480px; height: 480px; border-radius: 50%; overflow: hidden; 
+                box-shadow: 0 40px 100px rgba(0,0,0,0.05); background: #fdfdfd; border: 1px solid #f2f2f2;
+                display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 60px 0;
             }
-
-            .month-year-label { font-size: 0.8em; font-weight: 900; text-transform: uppercase; color: #bbb; letter-spacing: 3px; }
-
-            .week-stack { width: 100%; display: flex; flex-direction: column; gap: 15px; margin-top: 20px; }
+            .week-stack { width: 100%; display: flex; flex-direction: column; gap: 12px; margin-top: 10px; }
             .week-row { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; width: 100%; }
-            .day-node { font-size: 0.85em; font-weight: 600; color: #ddd; }
-            .day-node.current-week { color: #1a1a1a; }
+            .day-node { font-size: 0.85em; font-weight: 600; color: #ddd; display: flex; align-items: center; justify-content: center; height: 35px; }
             .day-node.active { color: #2e7d32; font-weight: 900; transform: scale(1.2); }
-            .day-node.weekend-red { color: #ef5350 !important; }
-
-            .globe-south { width: 60%; display: flex; align-items: center; justify-content: center; gap: 40px; }
+            .day-node svg { width: 18px; height: 18px; display: block; }
+            
+            .globe-south { width: 60%; padding-top: 25px; border-top: 1px solid #f2f2f2; display: flex; align-items: center; justify-content: center; gap: 40px; }
             .meteo-icon-big { font-size: 2.8em; color: #fbc02d; }
-            .moon-icon-big { font-size: 2.8em; color: #444; }
+            .moon-svg-big { width: 40px; height: 40px; }
+            .moon-svg-big svg { width: 100%; height: 100%; display: block; }
+            .v-sep { width: 1px; height: 40px; background: #eee; }
 
             /* ORIENTAÇÃO REGIONAL */
-            .advice-block { margin-top: 20px; padding: 35px; background: #fdfdfd; border-radius: 25px; border: 1px solid #f2f2f2; border-left: 5px solid #2e7d32; }
+            .advice-block { margin-top: 20px; padding: 35px; background: #fdfdfd; border-radius: 25px; border: 1px solid #f2f2f2; border-left: 5px solid #2e7d32; min-height: 180px; }
             .advice-block h5 { font-size: 0.8em; font-weight: 900; text-transform: uppercase; color: #2e7d32; margin-bottom: 15px; }
             .advice-content { font-size: 1.15em; line-height: 1.8; color: #555; text-align: justify; }
 
-            /* DATA ROW & ESPAÇAMENTO */
-            .data-row { display: block; padding: 4em 0; border-bottom: 1px solid #f2f2f2; }
-            .data-row h4 { font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin: 0 0 35px 0; }
+            /* SANIDADE VEGETAL */
+            .sanidade-section { margin-top: 40px; }
+            .disease-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 25px; margin-bottom: 10px; }
+            .disease-card { background: #fff; border: 1px solid #f2f2f2; border-radius: 15px; overflow: hidden; transition: all 0.3s ease; text-decoration: none !important; display: block; }
+            .disease-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.05); border-color: #2e7d32; }
+            .disease-img { width: 100%; height: 180px; object-fit: cover; }
+            .disease-body { padding: 20px; }
+            .disease-body b { color: #c62828; font-style: italic; font-size: 0.95em; display: block; margin-bottom: 5px; line-height: 1.3; }
+            .disease-body p { font-size: 0.85em; color: #777; line-height: 1.4; margin: 0; height: 2.8em; overflow: hidden; }
 
-            /* GRID DE PRAGAS E FLORA */
-            .info-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px; }
-            .info-card { background: #fff; border: 1px solid #f2f2f2; border-radius: 20px; overflow: hidden; }
-            .info-img { width: 100%; height: 180px; object-fit: cover; }
-            .info-body { padding: 25px; }
-            .info-body b { color: #c62828; font-style: italic; font-size: 1.1em; display: block; margin-bottom: 5px; }
-            .bio-sol { background: #f1f8e9; color: #2e7d32; padding: 12px; border-radius: 10px; font-size: 0.85em; font-weight: 600; border-left: 3px solid #2e7d32; margin-top: 15px; }
+            /* BOTÕES TOGGLE LIMPOS */
+            .toggle-container { text-align: left; margin: 0 0 40px 0; }
+            .btn-toggle { background: none !important; border: none !important; box-shadow: none !important; color: #bbb !important; padding: 0 !important; cursor: pointer; font-size: 2.5em; font-weight: 300; line-height: 1; outline: none; }
+            .btn-toggle:hover { color: #2e7d32 !important; }
+            .hidden-item { display: none; }
 
-            /* RELATÓRIOS */
-            .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 20px; }
-            .report-item { border-top: 1px solid #f9f9f9; padding-top: 20px; }
-            .report-item h5 { font-size: 0.75em; font-weight: 900; text-transform: uppercase; color: #2e7d32; margin-bottom: 12px; }
-            .report-item p { font-size: 1em; line-height: 1.7; color: #555; margin-bottom: 10px; text-align: justify; }
+            /* SÍNTESE */
+            .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; margin-top: 20px; }
+            .report-item h5 { font-size: 0.7em; font-weight: 900; text-transform: uppercase; color: #2e7d32; margin-bottom: 10px; }
+            .report-source { font-size: 0.65em; font-weight: 700; color: #bbb; text-transform: uppercase; }
 
-            .page-footer { margin-top: auto; padding: 2em 0 2.5em 0; border-top: 1px solid #f2f2f2; opacity: 0.3; text-align: right; }
-
-            @media screen and (max-width: 1280px) {
-                #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
-                #wrapper { padding-left: 0 !important; }
-                .hero-split, .report-grid, .info-grid { grid-template-columns: 1fr; }
-                .hero-globe { width: 350px; height: 350px; margin: 0 auto; }
+            /* Adicionar no bloco <style> */
+            .page-footer { 
+                margin-top: 4em; 
+                padding: 2em 0 2.5em 0; 
+                border-top: 1px solid #f2f2f2; 
+                opacity: 0.3; 
+                text-align: right; 
             }
+
 		</style>
 	</head>
 	<body class="is-preload">
@@ -83,20 +78,16 @@
 			<div id="main">
                 <div class="inner">
                     <section>
-                        <!-- 1. HERO & TIME GLOBE -->
+                        <!-- 1. HERO & CALENDÁRIO -->
                         <div class="hero-split">
                             <div class="hero-text">
                                 <span class="category-label">Agricultura bioCultura</span>
                                 <h1>Calendário de Regeneração</h1>
-                                
                                 <div class="advice-block">
-                                    <h5>Orientação Semanal: <span id="reg-name">...</span></h5>
-                                    <div id="advice-content" class="advice-content">
-                                        <!-- Injetado via JS -->
-                                    </div>
+                                    <h5>Orientação Semanal: <span id="reg-name">Funchal</span></h5>
+                                    <div id="advice-content" class="advice-content"></div>
                                 </div>
                             </div>
-
                             <div class="hero-visual">
                                 <div class="hero-globe">
                                     <div class="month-year-label">Julho 2026</div>
@@ -104,37 +95,38 @@
                                     <div class="globe-south">
                                         <div class="south-part"><i class="fas fa-sun meteo-icon-big"></i></div>
                                         <div class="v-sep"></div>
-                                        <div class="south-part" id="lunar-icon-container"></div>
+                                        <div class="south-part" id="lunar-icon-container">
+                                            <!-- Ícone Lunar Injetado via JS -->
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- 2. SANIDADE VEGETAL (PRAGAS.JSON) -->
-                        <div class="data-row">
+                        <!-- 2. SANIDADE VEGETAL (22 ITENS) -->
+                        <div class="sanidade-section">
                             <h4>Sanidade Vegetal: Diagnóstico Bio</h4>
-                            <div id="pragas-container" class="info-grid"></div>
+                            <h5>Combater as pragas da sua horta</h5>
+                            <div class="disease-grid" id="grid-pragas"></div>
+                            <div class="toggle-container"><button class="btn-toggle" id="btn-pragas" onclick="toggleGrid('pragas')">+</button></div>
+
+                            <h5>Combater as plantas invasoras</h5>
+                            <div class="disease-grid" id="grid-invasoras"></div>
+                            <div class="toggle-container"><button class="btn-toggle" id="btn-invasoras" onclick="toggleGrid('invasoras')">+</button></div>
                         </div>
 
-                        <!-- 3. FLORA INVASORA (FLORA_INVASORA.JSON) -->
-                        <div class="data-row">
-                            <h4>Combater as Invasoras da sua Região</h4>
-                            <div id="flora-container" class="info-grid"></div>
-                        </div>
+                        <!-- 3. SÍNTESE -->
+                        <div class="data-row" style="margin-top: 4em;">
+                            <span class="category-label">Síntese e Avisos Agrícolas 2026</span>
+                            <h2 style="font-weight: 300; font-size: 2.5em; margin-bottom: 30px;">Inteligência Fitossanitária Nacional</h2>
+                            <div id="report-grid-agri" class="report-grid"></div>
+                            <!-- Adicionar no final da <section>, logo após o fecho da div .data-row da Síntese -->
+                            <footer class="page-footer">
+                                <span style="display: block; font-size: 0.85em; font-weight: 900; color: #333;">bioCultura</span>
+                                <span style="display: block; font-size: 0.5em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Global Regeneration</span>
+                            </footer>
 
-                        <!-- 4. SÍNTESE AUTORIDADES (APROFUNDADA) -->
-                        <div class="data-row" style="border-bottom: none;">
-                            <h4>Síntese das Autoridades 2026</h4>
-                            <div class="tech-content">
-                                <h3 style="margin: 0 0 10px 0; font-weight: 300; font-size: 2em;">Inteligência Fitossanitária Nacional</h3>
-                                <div id="report-grid-agri" class="report-grid"></div>
-                            </div>
                         </div>
-
-                        <footer class="page-footer">
-                            <span style="display: block; font-size: 0.85em; font-weight: 900; color: #333;">bioCultura</span>
-                            <span style="display: block; font-size: 0.5em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Global Regeneration</span>
-                        </footer>
 					</section>
 				</div>
             </div>
@@ -143,162 +135,107 @@
 
 		<script src="/assets/js/jquery.min.js"></script>
         <script>
-            let locationsDB = [], infoGlobal = null;
+            let infoGlobal = { titulo: "Funchal" };
 
-            const moonSVGs = {
-                ming: '<svg viewBox="0 0 24 24" style="width:40px;height:40px"><path fill="#bdbdbd" d="M12,2A10,10 0 0,0 12,22A10,10 0 0,0 12,2M12,4A8,8 0 0,1 12,20V4Z"/></svg>',
-                new: '<svg viewBox="0 0 24 24" style="width:40px;height:40px"><circle cx="12" cy="12" r="10" stroke="#9e9e9e" stroke-width="2" fill="none"/></svg>',
-                cres: '<svg viewBox="0 0 24 24" style="width:40px;height:40px"><path fill="#616161" d="M12,2V20A8,8 0 0,0 12,4M12,22A10,10 0 0,1 12,2A10,10 0 0,1 12,22Z"/></svg>',
-                full: '<svg viewBox="0 0 24 24" style="width:40px;height:40px"><circle cx="12" cy="12" r="10" fill="#f9a825"/></svg>'
-            };
-
-            const lunarPhases = {
-                7: { svg: moonSVGs.ming, label: 'Quarto Minguante', task: 'Energia nas raízes. Ideal para podas de limpeza.' },
-                14: { svg: moonSVGs.new, label: 'Lua Nova', task: 'Fase de repouso. Prepare o solo com composto orgânico.' },
-                21: { svg: moonSVGs.cres, label: 'Quarto Crescente', task: 'Vigor ascendente. Semear hortícolas de folha e fruto.' },
-                29: { svg: moonSVGs.full, label: 'Lua Cheia', task: 'Máxima vitalidade hídrica. Ideal para colheita de medicinais.' }
-            };
-
-            const agriReports = [
-                { 
-                    titulo: "Diretrizes PEPAC 2026", 
-                    texto: "O Plano Estratégico nacional foca-se na autonomia do pequeno agricultor. Estão disponíveis novos apoios para a instalação de charcas de biodiversidade e sistemas de rega solar inteligente, visando mitigar o stress hídrico severo previsto para o interior.", 
-                    fonte: "agricultura.gov.pt" 
-                },
-                { 
-                    titulo: "Vigilância Fitossanitária INIAV", 
-                    texto: "O Laboratório de Fitobacteriologia reforça a contenção da Xylella fastidiosa. A recomendação técnica exige a diversificação de cultivares nativas e o uso de barreiras biológicas vivas para impedir a dispersão de vetores.", 
-                    fonte: "iniav.pt" 
-                },
-                { 
-                    titulo: "Mercados e Sustentabilidade", 
-                    texto: "O Agroportal indica uma estabilização no mercado de biofertilizantes. A agricultura de sequeiro regenerativo, baseada em mulching denso e biochar, apresenta-se como a única via viável para a manutenção da produtividade em 2026.", 
-                    fonte: "agroportal.pt" 
-                },
-                { 
-                    titulo: "Rede de Hortas Biológicas PT", 
-                    texto: "A monitorização comunitária revela que consociações estratégicas (ex: Tomate + Manjericão) reduziram a incidência de pragas em 35%. O foco da época é a produção de sementes próprias para garantir a soberania genética local.", 
-                    fonte: "hortasbiologicas.pt" 
-                }
+            // DADOS COMPLETOS
+            const pragasData = [
+                { id: "PRG-001", nome: "Cydia pomonella", comum: "Bichado", img: "https://fitosistema.com/wp-content/uploads/2022/09/ctt_8x8.png", desc: "Aplicação de bioinseticidas virais ou nemátodos no tronco." },
+                { id: "PRG-002", nome: "Thaumetopoea pityocampa", comum: "Processionária", img: "https://florestas.pt/wp-content/uploads/2020/05/processionaria.jpg", desc: "Uso de Bacillus thuringiensis e armadilhas de cinta." },
+                { id: "PRG-003", nome: "Panonychus ulmi", comum: "Aranhiço Vermelho", img: "https://www.koppert.pt/content/_processed_/csm_aranhico_vermelho_teaser.png", desc: "Largada inundativa de ácaros predadores (Spidex)." },
+                { id: "PRG-004", nome: "Trialeurodes vaporariorum", comum: "Mosca Branca", img: "https://www.pulverocha.pt/pt/pragas-comuns", desc: "Parasitismo por Encarsia formosa e placas amarelas." },
+                { id: "DNC-001", nome: "Venturia inaequalis", comum: "Pedrado", img: "https://www.syngenta.pt/sites/g/files/zhg216/f/styles/syngenta_large/public/media/image/2021/04/pedrado.jpg", desc: "Bicarbonato de Potássio e Bacillus subtilis." },
+                { id: "PRG-005", nome: "Cacopsylla pyri", comum: "Psila da Pereira", img: "https://www.koppert.pt/content/_processed_/csm_psila_teaser.png", desc: "Uso de percevejos predadores Anthocoris nemoralis." },
+                { id: "PRG-006", nome: "Tomicus piniperda", comum: "Escolitídeo", img: "https://florestas.pt/wp-content/uploads/2020/05/escolitideo.jpg", desc: "Armadilhas de cairomonas e remoção de madeira." },
+                { id: "DNC-002", nome: "Bursaphelenchus xylophilus", comum: "Nematodo", img: "https://florestas.pt/wp-content/uploads/2020/05/nematodo.jpg", desc: "Interrupção do ciclo do inseto vetor Monochamus." }
             ];
 
-            function renderGlobeCalendar() {
+            const invasorasData = [
+                { id: "INV-001", nome: "Acacia dealbata", comum: "Mimosa", img: "https://invasoras.pt/sites/default/files/styles/especie_detalhe/public/acacia_dealbata_0.jpg", desc: "Inseto galhador Eurytoma acaciae." },
+                { id: "INV-002", nome: "Acacia longifolia", comum: "Acácia-de-espigas", img: "https://invasoras.pt/sites/default/files/styles/especie_detalhe/public/acacia_longifolia_1.jpg", desc: "Vespa Trichilogaster acaciaelongifoliae." },
+                { id: "INV-003", nome: "Acacia saligna", comum: "Acácia-folha-estreita", img: "https://invasoras.pt/sites/default/files/styles/especie_detalhe/public/acacia_saligna_0.jpg", desc: "Fungo Uromycladium tepperianum." },
+                { id: "INV-004", nome: "Eichhornia crassipes", comum: "Jacinto-de-água", img: "https://invasoras.pt/sites/default/files/styles/especie_detalhe/public/eichhornia_crassipes_2.jpg", desc: "Herbivoria por Megamelus scutellaris." },
+                { id: "INV-005", nome: "Azolla filiculoides", comum: "Pinheirinha", img: "https://invasoras.pt/sites/default/files/styles/especie_detalhe/public/azolla_filiculoides_0.jpg", desc: "Escaravelho Stenopelmus rufinasus." },
+                { id: "INV-006", nome: "Ailanthus altissima", comum: "Ailanto", img: "https://invasoras.pt/sites/default/files/styles/especie_detalhe/public/ailanthus_altissima_0.jpg", desc: "Fungo Verticillium nonalfalfae." },
+                { id: "INV-007", nome: "Hakea sericea", comum: "Haquea-picante", img: "https://invasoras.pt/sites/default/files/styles/especie_detalhe/public/hakea_sericea_0.jpg", desc: "Traça Carposina autologa." },
+                { id: "INV-008", nome: "Baccharis halimifolia", comum: "Baccharis", img: "https://invasoras.pt/sites/default/files/styles/especie_detalhe/public/baccharis_halimifolia_0.jpg", desc: "Besouro Trirhabda bacharidis." },
+                { id: "INV-009", nome: "Cortaderia selloana", comum: "Erva-das-pampas", img: "https://invasoras.pt/sites/default/files/styles/especie_detalhe/public/cortaderia_selloana_0.jpg", desc: "Ensombramento por nativas clímax." },
+                { id: "INV-010", nome: "Oxalis pes-caprae", comum: "Azedas", img: "https://invasoras.pt/sites/default/files/styles/especie_detalhe/public/oxalis_pes_caprae_0.jpg", desc: "Pastoreio intensivo com ovinos." },
+                { id: "INV-011", nome: "Carpobrotus edulis", comum: "Chora-das-praias", img: "https://invasoras.pt/sites/default/files/styles/especie_detalhe/public/carpobrotus_edulis_0.jpg", desc: "Cochonilha Pulvinariella mesembryanthemi." },
+                { id: "INV-012", nome: "Robinia pseudoacacia", comum: "Acácia-bastarda", img: "https://invasoras.pt/sites/default/files/styles/especie_detalhe/public/robinia_pseudoacacia_0.jpg", desc: "Mosca Obolodiplosis robiniae." },
+                { id: "INV-013", nome: "Phytolacca americana", comum: "Tintureira", img: "https://invasoras.pt/sites/default/files/styles/especie_detalhe/public/phytolacca_americana_0.jpg", desc: "Arranque manual e mulching denso." },
+                { id: "INV-014", nome: "Elodea canadensis", comum: "Elódea", img: "https://invasoras.pt/sites/default/files/styles/especie_detalhe/public/elodea_canadensis_0.jpg", desc: "Carpa capim em sistemas fechados." }
+            ];
+
+            function renderSanidade(data, containerId, limit = 4) {
+                const container = document.getElementById(containerId);
+                container.innerHTML = data.map((item, index) => `
+                    <a href="sanidade-detalhe.html?id=${item.id}" class="disease-card ${index >= limit ? 'hidden-item' : ''}">
+                        <img src="${item.img}" class="disease-img" onerror="this.src='/assets/img/placeholder.jpg'">
+                        <div class="disease-body"><b>${item.nome} (${item.comum})</b><p>${item.desc}</p></div>
+                    </a>`).join('');
+            }
+
+            function toggleGrid(type) {
+                const gridId = type === 'pragas' ? '#grid-pragas' : '#grid-invasoras';
+                const btnId = type === 'pragas' ? '#btn-pragas' : '#btn-invasoras';
+                const hiddenItems = $(gridId).find('.hidden-item');
+                if (hiddenItems.length > 0) { hiddenItems.removeClass('hidden-item'); $(btnId).text('-'); }
+                else { $(gridId).find('a').slice(4).addClass('hidden-item'); $(btnId).text('+'); }
+            }
+
+            // CALENDÁRIO
+            const moonSVGs = {
+                ming: '<svg viewBox="0 0 24 24"><path fill="#bdbdbd" d="M12,2A10,10 0 0,0 12,22A10,10 0 0,0 12,2M12,4A8,8 0 0,1 12,20V4Z"/></svg>',
+                new: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="#9e9e9e" stroke-width="2" fill="none"/></svg>',
+                cres: '<svg viewBox="0 0 24 24"><path fill="#616161" d="M12,2V20A8,8 0 0,0 12,4M12,22A10,10 0 0,1 12,2A10,10 0 0,1 12,22Z"/></svg>',
+                full: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#f9a825"/></svg>'
+            };
+            const lunarPhases = { 7: moonSVGs.ming, 14: moonSVGs.new, 21: moonSVGs.cres, 29: moonSVGs.full };
+
+            function renderGlobe() {
                 const stack = document.getElementById('week-stack');
                 stack.innerHTML = '';
                 let today = new Date();
-                let mondayOfCurrent = new Date(today);
-                mondayOfCurrent.setDate(today.getDate() - today.getDay() + (today.getDay() === 0 ? -6 : 1));
-
-                [-1, 0, 1].forEach(weekIdx => {
-                    let weekRow = document.createElement('div');
-                    weekRow.className = 'week-row';
-                    let startOfWeek = new Date(mondayOfCurrent);
-                    startOfWeek.setDate(mondayOfCurrent.getDate() + (weekIdx * 7));
-
+                let monday = new Date(today); monday.setDate(today.getDate() - today.getDay() + (today.getDay() === 0 ? -6 : 1));
+                [-1, 0, 1].forEach(w => {
+                    let row = document.createElement('div'); row.className = 'week-row';
                     for(let j=0; j<7; j++) {
-                        let currentDay = new Date(startOfWeek);
-                        currentDay.setDate(startOfWeek.getDate() + j);
-                        let dayNum = currentDay.getDate();
-                        let isToday = today.toDateString() === currentDay.toDateString();
-                        let isWeekend = (j >= 5);
-                        let weekType = (weekIdx === 0) ? 'current-week' : '';
-                        let moon = (currentDay.getMonth() === 6 && lunarPhases[dayNum]) ? lunarPhases[dayNum] : null;
-                        
-                        weekRow.innerHTML += `<div class="day-node ${weekType} ${isToday ? 'active' : ''} ${isWeekend ? 'weekend-red' : ''}">${moon ? moon.svg : dayNum}</div>`;
-                        if (isToday) updateState(moon, infoGlobal);
+                        let cur = new Date(monday); cur.setDate(monday.getDate() + (w*7) + j);
+                        let isToday = today.toDateString() === cur.toDateString();
+                        let moon = (cur.getMonth() === 6 && lunarPhases[cur.getDate()]) ? lunarPhases[cur.getDate()] : cur.getDate();
+                        row.innerHTML += `<div class="day-node ${w===0?'current-week':''} ${isToday?'active':''}">${moon}</div>`;
+                        if (isToday) updateState(cur.getDate());
                     }
-                    stack.appendChild(weekRow);
+                    stack.appendChild(row);
                 });
             }
 
-            function updateState(moon, info) {
+            function updateState(dayNum) {
                 const iconBox = document.getElementById('lunar-icon-container');
                 const advice = document.getElementById('advice-content');
-                const region = info?.titulo || "sua região";
+                const region = infoGlobal?.titulo || "Funchal";
                 
-                if (moon) {
-                    iconBox.innerHTML = moon.svg;
-                    advice.innerHTML = `<p><b>Influência Lunar:</b> Sob a <b>${moon.label}</b>, o foco deve ser a ${moon.task}</p>
-                                        <p><b>Ação em ${region}:</b> O solo exige atenção à evapotranspiração elevada. Recomenda-se a aplicação de mulching denso e a monitorização rigorosa do stress hídrico nas culturas de folha. A estabilidade térmica favorece tratamentos biológicos preventivos ao crepúsculo.</p>`;
-                } else {
-                    iconBox.innerHTML = moonSVGs.ming;
-                    advice.innerHTML = `<p><b>Manutenção Geral em ${region}:</b> Fase de transição hídrica. Foco absoluto na rega gota-a-gota e na monda manual de ervas competidoras para preservar os nutrientes do solo.</p>
-                                        <p><b>Tendência Meteorológica:</b> Céu limpo e radiação solar intensa. Proteja as sementeiras mais jovens com sombreamento parcial.</p>`;
-                }
-            }
-
-            async function inicializarPagina() {
-                try {
-                    const [rLoc, rPragas, rFlora] = await Promise.all([
-                        fetch('/data/bioregioes.json').then(r => r.json()),
-                        fetch('/data/pragas.json').then(r => r.json()),
-                        fetch('/data/flora_invasora.json').then(r => r.json())
-                    ]);
-                    locationsDB = rLoc;
-                    const info = locationsDB.find(i => i.id === (localStorage.getItem('biocultura_region') || "proenca-a-nova"));
-                    infoGlobal = info;
-                    
-                    renderGlobeCalendar();
-                    renderPragasFlora(rPragas, rFlora);
-                    document.getElementById('report-grid-agri').innerHTML = agriReports.map(r => `<div class="report-item"><h5>${r.titulo}</h5><p>${r.texto}</p><span class="report-source">Fonte: ${r.fonte}</span></div>`).join('');
-                    setupLocationLogic();
-                } catch(e) { console.error(e); }
-            }
-
-            function renderPragasFlora(pragas, flora) {
-                const pCont = document.getElementById('pragas-container');
-                const fCont = document.getElementById('flora-container');
+                // Injetar fase da lua ao lado da meteorologia
+                const phase = lunarPhases[dayNum] || moonSVGs.ming;
+                iconBox.innerHTML = `<div class="moon-svg-big">${phase}</div>`;
                 
-                pCont.innerHTML = pragas.slice(0,4).map(p => `
-                    <div class="info-card">
-                        <img src="${p.imagem}" class="info-img">
-                        <div class="info-body">
-                            <b>${p.nome_latim} <span>(${p.nome_comum})</span></b>
-                            <p>${p.sintomas}</p>
-                            <div class="bio-sol">${p.cura_bio}</div>
-                        </div>
-                    </div>`).join('');
-
-                fCont.innerHTML = flora.slice(0,4).map(f => `
-                    <div class="info-card">
-                        <img src="${f.imagem}" class="info-img">
-                        <div class="info-body">
-                            <b>${f.nome_latim} <span>(${f.nome_comum})</span></b>
-                            <p>${f.impacto}</p>
-                            <div class="bio-sol">Controlo: ${f.controlo_bio}</div>
-                        </div>
-                    </div>`).join('');
+                advice.innerHTML = `<p><b>Manutenção em ${region}:</b> Foco na rega gota-a-gota e monda manual.</p><p><b>Tendência:</b> Céu limpo exige proteção solar das culturas.</p>`;
             }
 
-            function setupLocationLogic() {
-                $(document).off('input', '#loc-search-input').on('input', '#loc-search-input', function() {
-                    const val = $(this).val().toLowerCase(), dropdown = $('#loc-dropdown').empty();
-                    if(val.length < 2) return dropdown.hide();
-                    locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0,5).forEach(m => {
-                        $('<div class="bio-res-item"></div>').text(m.titulo).on('click', () => {
-                            localStorage.setItem('biocultura_region', m.id);
-                            location.reload();
-                        }).appendTo(dropdown);
-                    });
-                    dropdown.show();
-                });
-                $(document).off('click', '#btn-gps-trigger').on('click', '#btn-gps-trigger', function() {
-                    navigator.geolocation.getCurrentPosition(pos => {
-                        let closest = locationsDB[0], minD = Infinity;
-                        locationsDB.forEach(c => {
-                            let d = Math.sqrt(Math.pow(pos.coords.latitude - c.lat, 2) + Math.pow(pos.coords.longitude - c.lon, 2));
-                            if(d < minD) { minD = d; closest = c; }
-                        });
-                        localStorage.setItem('biocultura_region', closest.id);
-                        location.reload();
-                    });
-                });
+            async function inicializar() {
+                renderGlobe();
+                renderSanidade(pragasData, 'grid-pragas', 4);
+                renderSanidade(invasorasData, 'grid-invasoras', 4);
+                const reports = [
+                    { t: "AVISOS DRAP 2026", s: "FONTE: DRAP NORTE/ALGARVE", p: "Alertas para pressão do Oídio na vinha devido às noites quentes." },
+                    { t: "INOVAÇÃO BIOLÓGICA", s: "FONTE: BASF / PLANTIX", p: "Diagnóstico por imagem identifica carências de Magnésio precocemente." },
+                    { t: "SANIDADE VEGETAL", s: "FONTE: INIAV.PT", p: "Contenção da Trioza erytreae. Barreira biológica com sebes nativas." },
+                    { t: "RESILIÊNCIA HÍDRICA", s: "FONTE: AGROPORTAL.PT", p: "Gestão da água via retenção no solo com biochar e mulching." }
+                ];
+                document.getElementById('report-grid-agri').innerHTML = reports.map(r => `<div class="report-item"><h5>${r.t}</h5><p>${r.p}</p><span class="report-source">${r.s}</span></div>`).join('');
+                fetch('/sidebar-content.html').then(r => r.text()).then(html => { document.getElementById('sidebar').innerHTML = html; });
             }
-
-            fetch('/sidebar-content.html').then(r => r.text()).then(html => {
-                document.getElementById('sidebar').innerHTML = html;
-                inicializarPagina();
-            });
+            inicializar();
         </script>
 	</body>
 </html>
