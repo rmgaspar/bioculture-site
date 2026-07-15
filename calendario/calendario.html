@@ -22,7 +22,7 @@
             .hero-text { flex: 1.5; text-align: left; padding-top: 5px; } 
             .hero-text h1 { font-size: 4em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; line-height: 0.95; margin: 0 0 20px 0; }
             
-            /* GLOBO DE TEMPO (HORIZONTAL) */
+            /* GLOBO DE TEMPO */
             .hero-visual { flex: 1; display: flex; justify-content: flex-end; }
             .hero-globe { 
                 position: relative; width: 480px; height: 480px; 
@@ -40,11 +40,11 @@
                 -webkit-mask-image: linear-gradient(to right, transparent, black 20%, black 80%, transparent);
             }
             .week-row { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; width: 100%; }
-            .day-node { font-size: 0.85em; font-weight: 600; color: #ddd; display: flex; align-items: center; justify-content: center; height: 30px; }
+            .day-node { font-size: 0.85em; font-weight: 600; color: #ddd; display: flex; align-items: center; justify-content: center; height: 35px; }
             .day-node.current-week { color: #1a1a1a; }
             .day-node.active { color: #2e7d32; font-weight: 900; transform: scale(1.2); }
             .day-node.weekend-red { color: #ef5350 !important; }
-            .day-node svg { width: 16px; height: 16px; display: block; }
+            .day-node svg { width: 24px; height: 24px; display: block; } /* Luas Ajustadas */
 
             .globe-south { width: 60%; padding-top: 25px; display: flex; align-items: center; justify-content: center; gap: 40px; }
             .meteo-icon-big { font-size: 2.8em; color: #fbc02d; }
@@ -66,7 +66,7 @@
                 cursor: pointer; transition: all 0.3s; display: block; text-decoration: none !important;
             }
             .info-card-compact:hover { transform: translateY(-5px); border-color: #2e7d32; }
-            .compact-img { width: 100%; height: 120px; object-fit: cover; border-radius: 8px; margin-bottom: 12px; }
+            .compact-img { width: 100%; height: 120px; object-fit: cover; border-radius: 8px; margin-bottom: 12px; background: #f9f9f9; }
             .info-card-compact b { display: block; font-size: 0.95em; color: #c62828; font-style: italic; margin-bottom: 2px; }
             .info-card-compact span { display: block; font-size: 0.85em; color: #1a1a1a; font-weight: 700; margin-bottom: 8px; }
             .info-card-compact p { font-size: 0.8em; color: #777; line-height: 1.4; margin: 0; height: 2.8em; overflow: hidden; }
@@ -77,40 +77,19 @@
             .btn-back { color: #bbb; font-size: 0.75em; font-weight: 800; text-transform: uppercase; cursor: pointer; display: inline-block; margin-bottom: 20px; }
             .btn-back:hover { color: #2e7d32; }
 
-            /* BOTÕES CLEAN - REMOÇÃO DE FRAMES */
-            .btn-clean { 
-                background: none !important; 
-                border: none !important; 
-                box-shadow: none !important; 
-                color: #bbb !important; 
-                cursor: pointer; 
-                font-size: 0.7em; 
-                font-weight: 800; 
-                text-transform: uppercase; 
-                letter-spacing: 1px; 
-                padding: 15px 0; 
-                outline: none !important;
-            }
+            /* BOTÕES CLEAN */
+            .btn-clean { background: none !important; border: none !important; box-shadow: none !important; color: #bbb !important; cursor: pointer; font-size: 0.7em; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; padding: 15px 0; outline: none; }
             .btn-clean:hover { color: #2e7d32 !important; text-decoration: underline; }
             .hidden-item { display: none; }
 
-            /* MANUAIS & RELATÓRIOS */
-            .recipe-section { background: #1b4332; color: #fff; padding: 4em; border-radius: 40px; margin: 4em 0; }
-            .recipe-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; margin-top: 30px; }
-            .recipe-item h4 { color: #fff; font-size: 1.3em; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
-            .recipe-item ul { font-size: 0.9em; padding-left: 20px; color: rgba(255,255,255,0.7); line-height: 1.8; list-style-type: square; }
-
-            .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; margin-top: 20px; }
-            .report-item { border-top: 1px solid #f9f9f9; padding-top: 20px; }
-            .report-item h5 { font-size: 0.75em; font-weight: 900; text-transform: uppercase; color: #2e7d32; margin-bottom: 12px; }
-            .report-item p { font-size: 1em; line-height: 1.7; color: #555; margin-bottom: 10px; text-align: justify; }
+            .bio-sol { background: #f1f8e9; color: #2e7d32; padding: 12px; border-radius: 10px; font-size: 0.85em; font-weight: 600; border-left: 3px solid #2e7d32; margin-top: 15px; }
 
             .page-footer { margin-top: auto; padding: 2em 0 2.5em 0; border-top: 1px solid #f2f2f2; opacity: 0.3; text-align: right; }
 
             @media screen and (max-width: 1280px) {
                 #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
                 #wrapper { padding-left: 0 !important; }
-                .hero-split, .tech-sheet, .report-grid, .info-grid { grid-template-columns: 1fr; }
+                .hero-split, .tech-sheet, .info-grid { grid-template-columns: 1fr; }
                 .hero-globe { width: 350px; height: 350px; margin: 0 auto; }
             }
 		</style>
@@ -161,41 +140,10 @@
                                 <button class="btn-clean" id="btn-invasoras" onclick="toggleGrid('flora')">+ ver todas as invasoras</button>
                             </div>
 
-                            <div class="recipe-section">
-                                <span class="category-label" style="color: rgba(255,255,255,0.5); text-align: left;">Manuais de Preparo</span>
-                                <h2 style="color: #fff; font-size: 2.5em; margin-bottom: 10px;">Soluções Biológicas de Precisão</h2>
-                                <div class="recipe-grid">
-                                    <div class="recipe-item">
-                                        <h4>Calda Bordalesa bioCultura</h4>
-                                        <p>Fungicida preventivo para Míldio e Antracnose.</p>
-                                        <ul>
-                                            <li>100g de Sulfato de Cobre em 5L de água.</li>
-                                            <li>100g de Cal Hidratada em 5L de água.</li>
-                                            <li>Verta o cobre sobre a cal, nunca o contrário.</li>
-                                        </ul>
-                                    </div>
-                                    <div class="recipe-item">
-                                        <h4>Extrato de Própolis (Lenho)</h4>
-                                        <p>Antibiótico natural para tratar feridas de poda e evitar doenças do lenho como a Esca.</p>
-                                        <ul>
-                                            <li>Diluir 10ml de tintura de própolis em 1L de água.</li>
-                                            <li>Pincelar cortes superiores a 2cm.</li>
-                                        </ul>
-                                    </div>
-                                    <div class="recipe-item">
-                                        <h4>Infusão de Alho (Repelente)</h4>
-                                        <p>Poderoso repelente contra afídios e ácaros, com ação fungicida ligeira.</p>
-                                        <ul>
-                                            <li>100g de alhos macerados em 24h.</li>
-                                            <li>Ferver 15 min e aplicar após arrefecer.</li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-
+                            <!-- SÍNTESE AUTORIDADES -->
                             <div class="data-row" style="border-bottom: none;">
-                                <h4>SíNTESE DAS AUTORIDADES 2026</h4>
-                                <div id="report-grid-agri" class="report-grid"></div>
+                                <h4>Síntese das Autoridades 2026</h4>
+                                <div id="report-grid-agri" style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 20px;"></div>
                             </div>
                         </div>
 
@@ -214,24 +162,24 @@
             let locationsDB = [], pragasDB = [], floraDB = [], infoGlobal = null;
 
             const moonSVGs = {
-                ming: '<svg viewBox="0 0 24 24" class="moon-svg-big"><path fill="#bdbdbd" d="M12,2A10,10 0 0,0 12,22A10,10 0 0,0 12,2M12,4A8,8 0 0,1 12,20V4Z"/></svg>',
-                new: '<svg viewBox="0 0 24 24" class="moon-svg-big"><circle cx="12" cy="12" r="10" stroke="#9e9e9e" stroke-width="2" fill="none"/></svg>',
-                cres: '<svg viewBox="0 0 24 24" class="moon-svg-big"><path fill="#616161" d="M12,2V20A8,8 0 0,0 12,4M12,22A10,10 0 0,1 12,2A10,10 0 0,1 12,22Z"/></svg>',
-                full: '<svg viewBox="0 0 24 24" class="moon-svg-big"><circle cx="12" cy="12" r="10" fill="#f9a825"/></svg>'
+                ming: '<svg viewBox="0 0 24 24"><path fill="#bdbdbd" d="M12,2A10,10 0 0,0 12,22A10,10 0 0,0 12,2M12,4A8,8 0 0,1 12,20V4Z"/></svg>',
+                new: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="#9e9e9e" stroke-width="2" fill="none"/></svg>',
+                cres: '<svg viewBox="0 0 24 24"><path fill="#616161" d="M12,2V20A8,8 0 0,0 12,4M12,22A10,10 0 0,1 12,2A10,10 0 0,1 12,22Z"/></svg>',
+                full: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#f9a825"/></svg>'
             };
 
             const lunarPhases = {
-                7: { svg: moonSVGs.ming, label: 'Quarto Minguante', task: 'fase de energia radicular (ideal para podas de limpeza e controlo de pragas).' },
+                7: { svg: moonSVGs.ming, label: 'Quarto Minguante', task: 'fase de energia radicular (ideal para controlo de pragas do solo).' },
                 14: { svg: moonSVGs.new, label: 'Lua Nova', task: 'fase de repouso (foco em preparação de solo e mulching).' },
-                21: { svg: moonSVGs.cres, label: 'Quarto Crescente', task: 'fase de vigor ascendente (ideal para sementeiras de folha e fruto).' },
+                21: { svg: moonSVGs.cres, label: 'Quarto Crescente', task: 'fase de vigor ascendente (ideal para sementeiras de folha).' },
                 29: { svg: moonSVGs.full, label: 'Lua Cheia', task: 'fase de vitalidade máxima (ideal para colheita de medicinais).' }
             };
 
             const agriReports = [
                 { t: "Diretrizes PEPAC 2026", p: "O Plano Estratégico prioriza o apoio à biodiversidade no talhão e sistemas de rega solar inteligente para mitigar o stress hídrico severo no interior.", s: "agricultura.gov.pt" },
-                { t: "Vigilância Fitossanitária", p: "O INIAV alerta para focos de Xylella fastidiosa. A recomendação técnica exige a diversificação de cultivares nativas e o uso de sebes vivas como barreira biológica.", s: "iniav.pt" },
+                { t: "Vigilância Fitossanitária", p: "O INIAV alerta para focos de Xylella fastidiosa. A recomendação técnica exige a diversificação de cultivares nativas e o uso de sebes vivas.", s: "iniav.pt" },
                 { t: "Mercados Agroportal", p: "O consumo de produtos biológicos cresceu 18%. A agricultura de sequeiro regenerativo com mulching denso apresenta-se como a única via viável.", s: "agroportal.pt" },
-                { t: "Hortas Bio PT", p: "Monitorização comunitária revela que consociações estratégicas (ex: Tomate + Manjericão) reduziram a incidência de pragas em 35%.", s: "hortasbiologicas.pt" }
+                { t: "Hortas Bio PT", p: "Monitorização comunitária revela que consociações estratégicas (ex: Tomate + Manjericão) reduziram pragas em 35% sem uso de pesticidas sintéticos.", s: "hortasbiologicas.pt" }
             ];
 
             function renderGlobe() {
@@ -265,7 +213,7 @@
                 iconBox.innerHTML = moon ? `<div class="moon-svg-big">${moon.svg}</div>` : moonSVGs.ming;
                 
                 advice.innerHTML = `
-                    <p><b>Estratégia Regenerativa:</b> ${moon ? `Sob a influência da <b>${moon.label}</b>, o foco deve ser a ${moon.task}` : "Fase de transição lunar: manutenção geral e observação recomendada."}</p>
+                    <p><b>Estratégia Regenerativa:</b> ${moon ? `Sob a influência da <b>${moon.label}</b>, ${moon.task}` : "Fase de transição lunar: manutenção geral e observação recomendada."}</p>
                     <p>Com solo regional predominantemente <b>${solo}</b>, a prioridade absoluta desta semana em <b>${region}</b> é a gestão da evapotranspiração. Aplique mulching denso para proteger a microvida do solo. A estabilidade térmica favorece a aplicação de tratamentos biológicos preventivos ao crepúsculo.</p>
                 `;
             }
@@ -276,9 +224,9 @@
                     <div class="info-card-compact ${index >= limit ? 'hidden-item' : ''}" onclick="showDetail('${item.id}', '${containerId.includes('pragas') ? 'praga' : 'flora'}')">
                         <img src="${item.imagem || item.img}" class="compact-img" onerror="this.src='/assets/img/placeholder.jpg'">
                         <div class="info-body">
-                            <b>${item.nome_latim || item.nome}</b>
-                            <span>${item.nome_comum || item.comum}</span>
-                            <p>${(item.sintomas || item.impacto || item.desc).substring(0, 60)}...</p>
+                            <b>${item.nome_cientifico || item.nome_latim}</b>
+                            <span>${item.nome_comum}</span>
+                            <p>${(item.sintomas || item.impacto || item.desc || "").substring(0, 60)}...</p>
                         </div>
                     </div>`).join('');
             }
@@ -305,11 +253,11 @@
                     <div class="hero-split">
                         <div class="hero-text">
                             <span class="category-label">${type === 'praga' ? 'Fitossanidade' : 'Flora Invasora'}</span>
-                            <h1 style="font-style:italic">${item.nome_latim || item.nome}</h1>
-                            <h2 style="margin-top:-15px; color:#666">${item.nome_comum || item.comum}</h2>
+                            <h1 style="font-style:italic">${item.nome_cientifico || item.nome_latim}</h1>
+                            <h2 style="margin-top:-15px; color:#666">${item.nome_comum}</h2>
                             <div class="tech-sheet" style="margin-top:30px">
-                                <div><h4 style="font-size:0.7em; color:#bbb">Diagnóstico</h4><p>${item.sintomas || item.impacto || item.desc}</p></div>
-                                <div><h4 style="font-size:0.7em; color:#bbb">Combate Bio</h4><div class="bio-sol">${item.cura_bio || item.controlo_bio || item.desc}</div></div>
+                                <div><h4 style="font-size:0.7em; color:#bbb">Diagnóstico</h4><p>${item.sintomas || item.impacto || ""}</p></div>
+                                <div><h4 style="font-size:0.7em; color:#bbb">Combate Bio</h4><div class="bio-sol">${item.cura_bio || item.controlo_bio || item.solucao_biologica?.metodo || ""}</div></div>
                             </div>
                         </div>
                         <div class="hero-visual"><div class="hero-globe"><img src="${item.imagem || item.img}" style="width:100%; height:100%; object-fit:cover"></div></div>
@@ -341,8 +289,7 @@
                     if(infoGlobal) document.getElementById('reg-name').innerText = infoGlobal.titulo;
                     renderGlobe();
                     await renderAgriData();
-                    document.getElementById('report-grid-agri').innerHTML = agriReports.map(r => `
-                        <div class="report-item"><h5>${r.t}</h5><p>${r.p}</p><span class="report-source">Fonte: ${r.s}</span></div>`).join('');
+                    document.getElementById('report-grid-agri').innerHTML = agriReports.map(r => `<div class="report-item"><h5>${r.t}</h5><p>${r.p}</p></div>`).join('');
                     setupLocationLogic();
                 } catch(e) { console.error(e); }
             }
