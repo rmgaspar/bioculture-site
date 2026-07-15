@@ -33,6 +33,7 @@
             .globe-south { width: 60%; padding-top: 25px; border-top: 1px solid #f2f2f2; display: flex; align-items: center; justify-content: center; gap: 40px; }
             .meteo-icon-big { font-size: 2.8em; color: #fbc02d; }
             .moon-svg-big { width: 40px; height: 40px; }
+            .moon-svg-big svg { width: 100%; height: 100%; display: block; }
             .v-sep { width: 1px; height: 40px; background: #eee; }
 
             /* ORIENTAÇÃO REGIONAL */
@@ -67,6 +68,7 @@
 			<div id="main">
                 <div class="inner">
                     <section>
+                        <!-- 1. HERO & CALENDÁRIO -->
                         <div class="hero-split">
                             <div class="hero-text">
                                 <span class="category-label">Agricultura bioCultura</span>
@@ -83,12 +85,15 @@
                                     <div class="globe-south">
                                         <div class="south-part"><i class="fas fa-sun meteo-icon-big"></i></div>
                                         <div class="v-sep"></div>
-                                        <div class="south-part" id="lunar-icon-container"></div>
+                                        <div class="south-part" id="lunar-icon-container">
+                                            <!-- Ícone Lunar Injetado via JS -->
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
+                        <!-- 2. SANIDADE VEGETAL (22 ITENS) -->
                         <div class="sanidade-section">
                             <h4>Sanidade Vegetal: Diagnóstico Bio</h4>
                             <h5>Combater as pragas da sua horta</h5>
@@ -100,6 +105,7 @@
                             <div class="toggle-container"><button class="btn-toggle" id="btn-invasoras" onclick="toggleGrid('invasoras')">+</button></div>
                         </div>
 
+                        <!-- 3. SÍNTESE -->
                         <div class="data-row" style="margin-top: 4em;">
                             <span class="category-label">Síntese e Avisos Agrícolas 2026</span>
                             <h2 style="font-weight: 300; font-size: 2.5em; margin-bottom: 30px;">Inteligência Fitossanitária Nacional</h2>
@@ -115,7 +121,7 @@
         <script>
             let infoGlobal = { titulo: "Funchal" };
 
-            // DADOS COMPLETOS (22 ITENS)
+            // DADOS COMPLETOS
             const pragasData = [
                 { id: "PRG-001", nome: "Cydia pomonella", comum: "Bichado", img: "https://fitosistema.com/wp-content/uploads/2022/09/ctt_8x8.png", desc: "Aplicação de bioinseticidas virais ou nemátodos no tronco." },
                 { id: "PRG-002", nome: "Thaumetopoea pityocampa", comum: "Processionária", img: "https://florestas.pt/wp-content/uploads/2020/05/processionaria.jpg", desc: "Uso de Bacillus thuringiensis e armadilhas de cinta." },
@@ -148,7 +154,7 @@
                 const container = document.getElementById(containerId);
                 container.innerHTML = data.map((item, index) => `
                     <a href="sanidade-detalhe.html?id=${item.id}" class="disease-card ${index >= limit ? 'hidden-item' : ''}">
-                        <img src="${item.img}" class="disease-img">
+                        <img src="${item.img}" class="disease-img" onerror="this.src='/assets/img/placeholder.jpg'">
                         <div class="disease-body"><b>${item.nome} (${item.comum})</b><p>${item.desc}</p></div>
                     </a>`).join('');
             }
@@ -161,6 +167,7 @@
                 else { $(gridId).find('a').slice(4).addClass('hidden-item'); $(btnId).text('+'); }
             }
 
+            // CALENDÁRIO
             const moonSVGs = {
                 ming: '<svg viewBox="0 0 24 24"><path fill="#bdbdbd" d="M12,2A10,10 0 0,0 12,22A10,10 0 0,0 12,2M12,4A8,8 0 0,1 12,20V4Z"/></svg>',
                 new: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="#9e9e9e" stroke-width="2" fill="none"/></svg>',
@@ -180,22 +187,23 @@
                         let cur = new Date(monday); cur.setDate(monday.getDate() + (w*7) + j);
                         let isToday = today.toDateString() === cur.toDateString();
                         let moon = (cur.getMonth() === 6 && lunarPhases[cur.getDate()]) ? lunarPhases[cur.getDate()] : cur.getDate();
-                        row.innerHTML += `<div class="day-node ${w===0?'current-week':''} ${today.toDateString()===cur.toDateString()?'active':''}">${moon}</div>`;
-                        if (isToday) updateState(moon);
+                        row.innerHTML += `<div class="day-node ${w===0?'current-week':''} ${isToday?'active':''}">${moon}</div>`;
+                        if (isToday) updateState(cur.getDate());
                     }
                     stack.appendChild(row);
                 });
             }
 
-            function updateState(moon) {
+            function updateState(dayNum) {
                 const iconBox = document.getElementById('lunar-icon-container');
                 const advice = document.getElementById('advice-content');
                 const region = infoGlobal?.titulo || "Funchal";
-                iconBox.innerHTML = `<div class="moon-svg-big">${moon ? (typeof moon === 'string' ? moon : moonSVGs.ming) : moonSVGs.ming}</div>`;
-                // Injetar ícone lunar ao lado do sol
-                const moonIcon = moon && typeof moon === 'string' ? moon : moonSVGs.ming;
-                iconBox.innerHTML = moonIcon;
-                advice.innerHTML = `<p><b>Manutenção em ${region}:</b> Foco na rega gota-a-gota e monda manual.</p><p><b>Tendência:</b> Céu limpo exige proteção solar.</p>`;
+                
+                // Injetar fase da lua ao lado da meteorologia
+                const phase = lunarPhases[dayNum] || moonSVGs.ming;
+                iconBox.innerHTML = `<div class="moon-svg-big">${phase}</div>`;
+                
+                advice.innerHTML = `<p><b>Manutenção em ${region}:</b> Foco na rega gota-a-gota e monda manual.</p><p><b>Tendência:</b> Céu limpo exige proteção solar das culturas.</p>`;
             }
 
             async function inicializar() {
