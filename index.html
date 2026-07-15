@@ -42,10 +42,10 @@
             }
             .hero-globe img.active { opacity: 1; transform: scale(1); }
 
-            /* --- SECÇÃO IMPACTO IA --- */
+            /* --- SECÇÃO IMPACTO IA (RETIFICADA) --- */
             .ia-impact-box {
                 margin-top: 80px;
-                padding-left: 60px;
+                padding-left: 0; /* Alinhado perfeitamente com o título acima */
                 position: relative;
             }
             .ia-impact-subtitle { 
@@ -61,18 +61,11 @@
             .fact-item { 
                 position: absolute; top: 0; left: 0; 
                 opacity: 0; transition: opacity 1.5s ease-in-out; 
-                display: flex; align-items: flex-start; gap: 20px;
+                display: flex; align-items: flex-start;
                 width: 100%;
             }
             .fact-item.active { opacity: 1; }
             
-            .fact-icon { 
-                width: 40px; height: 40px; flex-shrink: 0; margin-top: 5px;
-                position: absolute; left: -60px;
-                display: flex; align-items: center; justify-content: center;
-            }
-            .fact-icon svg { width: 100%; height: 100%; fill: currentColor; }
-
             .fact-content { flex: 1; }
             .fact-item b { font-size: 1.6em; color: #1a1a1a; display: block; line-height: 1.1; margin-bottom: 8px; }
             .fact-item span { font-size: 1.15em; color: #666; line-height: 1.4; display: block; max-width: 750px; }
@@ -126,7 +119,6 @@
                 #wrapper { padding-left: 0 !important; }
                 .inner { padding: 2.2em 2em !important; }
                 .ia-impact-box { padding-left: 0; }
-                .fact-icon { position: relative; left: 0; margin-bottom: 10px; }
                 .fact-item { flex-direction: column; }
             }
 		</style>
@@ -173,6 +165,9 @@
                             <p>
                                 Como alternativa, a bioCultura promove a <b>Agricultura Biológica</b> e a regeneração de ecossistemas. No nosso <a href="/calendario/calendario.html" class="lnk-bio c-cal">Calendário Hortícola</a>, pode aprender a cultivar ao ritmo da natureza. Explore o impacto local na <a href="/energia/energia.html" class="lnk-bio c-energia">Energia</a>, avalie a <a href="/energia/transicao-etica.html" class="lnk-bio c-etica">Transição Ética</a> e descubra os nossos serviços. Utilize o <b>GPS</b> na barra lateral para detetar a área de impacto de <b id="reg-name" style="color:#1a1a1a">...</b>.
                             </p>
+                            <p style="font-size: 0.95em !important; font-style: italic; color: #888;">
+                                A bioCultura está em constante evolução. Se pretender sugerir conteúdos relevantes, contacte-nos através da nossa <a href="/contacto.html">página de contacto</a>.
+                            </p>
                         </div>
 
                         <span class="news-header">noticias</span>
@@ -196,34 +191,6 @@
 		<script src="/assets/js/jquery.min.js"></script>
         <script>
             let locationsDB = [], todasNoticias = [], visiveis = 6;
-
-            // Dados dinâmicos para o Ciclo de Impacto IA
-            const iaFacts = [
-                {
-                    cor: '#1a237e',
-                    icon: 'M12,7V2H14V4H20V7H18V14H19V16H15V14H16V7H14V10H12V12H11V14H12V16H8V14H9V12H8V10H6V7H4V4H10V2H12V7Z',
-                    titulo: '500ml de Água por Conversa',
-                    desc: 'Uma interação de 20 a 50 perguntas com um LLM "bebe" o equivalente a uma garrafa de água para refrigeração.'
-                },
-                {
-                    cor: '#ef6c00',
-                    icon: 'M7,2V13H10V22L17,10H13L17,2H7Z',
-                    titulo: '2.9 Wh por Consulta',
-                    desc: 'Uma pesquisa com IA consome 10x mais eletricidade do que uma pesquisa tradicional no Google (0.3 Wh).'
-                },
-                {
-                    cor: '#c62828',
-                    icon: 'M15,13V5A3,3 0 0,0 12,2A3,3 0 0,0 9,5V13A5,5 0 0,0 7,17A5,5 0 0,0 12,22A5,5 0 0,0 17,17A5,5 0 0,0 15,13Z',
-                    titulo: '502 Toneladas de CO2',
-                    desc: 'O treino de um único modelo de grande escala emite o equivalente a 5 carros conduzidos durante toda a sua vida útil.'
-                },
-                {
-                    cor: '#795548',
-                    icon: 'M14,6L10.25,11L13.1,14.8L11.5,16C9.81,13.75 7,10 7,10L1,22H23L14,6Z',
-                    titulo: 'Densidade Energética Extrema',
-                    desc: 'Um rack de servidores de IA moderno consome até 100kW, exigindo infraestruturas de refrigeração líquida de alto impacto.'
-                }
-            ];
 
             function calcularDistancia(lat1, lon1, lat2, lon2) {
                 const R = 6371;
@@ -282,7 +249,7 @@
                 container.innerHTML = todasNoticias.map((n, i) => `
                     <a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-item ${i >= visiveis ? 'hidden-card' : ''}">
                         <h3>${n.titulo}</h3>
-                        <p>${n.resumo.substring(0, 110)}...</p>
+                        <p>${(n.resumo_biocultura || n.resumo).substring(0, 110)}...</p>
                         <div class="news-meta">
                             <img src="${n.logo}" class="source-logo" alt="${n.fonte}">
                             <span>${n.data}</span>
@@ -293,13 +260,17 @@
                 document.getElementById('btn-show-less').style.display = visiveis > 6 ? 'inline-block' : 'none';
             }
 
+            const iaFacts = [
+                { cor: '#1a237e', titulo: '500ml de Água por Conversa', desc: 'Uma interação de 20 a 50 perguntas com um LLM "bebe" o equivalente a uma garrafa de água para refrigeração.' },
+                { cor: '#ef6c00', titulo: '2.9 Wh por Consulta', desc: 'Uma pesquisa com IA consome 10x mais eletricidade do que uma pesquisa tradicional no Google (0.3 Wh).' },
+                { cor: '#c62828', titulo: '502 Toneladas de CO2', desc: 'O treino de um único modelo de grande escala emite o equivalente a 5 carros conduzidos durante toda a sua vida útil.' },
+                { cor: '#795548', titulo: 'Densidade Energética Extrema', desc: 'Um rack de servidores de IA moderno consome até 100kW, exigindo infraestruturas de refrigeração líquida de alto impacto.' }
+            ];
+
             function renderIAFacts() {
                 const container = document.getElementById('fact-cycler');
                 container.innerHTML = iaFacts.map((f, i) => `
                     <div class="fact-item ${i === 0 ? 'active' : ''}" style="color: ${f.cor}">
-                        <div class="fact-icon">
-                            <svg viewBox="0 0 24 24"><path d="${f.icon}" /></svg>
-                        </div>
                         <div class="fact-content">
                             <b>${f.titulo}</b>
                             <span>${f.desc}</span>
@@ -309,7 +280,6 @@
             }
 
             function iniciarCiclos() {
-                // Ciclo de Imagens do Globo
                 const imgs = document.querySelectorAll('#hero-cycler img');
                 const imgSeq = [0, 1, 0, 2, 0, 3];
                 let imgP = 0;
@@ -319,7 +289,6 @@
                     imgs[imgSeq[imgP]].classList.add('active');
                 }, 5000);
 
-                // Ciclo de Factos IA
                 renderIAFacts();
                 let factP = 0;
                 setInterval(() => {
