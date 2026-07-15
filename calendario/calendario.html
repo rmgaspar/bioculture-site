@@ -56,7 +56,7 @@
             .advice-block h5 { font-size: 0.8em; font-weight: 900; text-transform: uppercase; color: #2e7d32; margin-bottom: 15px; }
             .advice-content { font-size: 1.15em; line-height: 1.8; color: #555; text-align: justify; }
 
-            /* SANIDADE VEGETAL - GRID QUADRADO */
+            /* SANIDADE VEGETAL */
             .sanidade-section { margin-top: 40px; }
             .sanidade-section h4 { margin-bottom: 5px; }
             .sanidade-section h5 { font-size: 1.2em; color: #888; margin-bottom: 20px; font-weight: 300; }
@@ -65,7 +65,7 @@
                 display: grid; 
                 grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); 
                 gap: 25px; 
-                margin-bottom: 20px;
+                margin-bottom: 10px;
             }
             .disease-card { 
                 background: #fff; border: 1px solid #f2f2f2; border-radius: 15px; 
@@ -77,22 +77,28 @@
             .disease-body b { color: #c62828; font-style: italic; font-size: 0.95em; display: block; margin-bottom: 5px; line-height: 1.3; }
             .disease-body p { font-size: 0.85em; color: #777; line-height: 1.4; margin: 0; height: 2.8em; overflow: hidden; }
 
-            /* BOTÕES EXPANDIR/COMPRIMIR */
-            .toggle-container { text-align: center; margin: 20px 0 40px 0; }
+            /* BOTÕES EXPANDIR (ALINHADOS À ESQUERDA) */
+            .toggle-container { text-align: left; margin: 0 0 40px 0; }
             .btn-toggle { 
-                background: #f9f9f9; border: 1px solid #eee; color: #888; 
-                width: 40px; height: 40px; border-radius: 50%; cursor: pointer;
-                font-size: 1.2em; transition: all 0.2s; display: inline-flex; align-items: center; justify-content: center;
+                background: transparent; border: none; color: #2e7d32; 
+                padding: 0; cursor: pointer; font-size: 2em; font-weight: 300;
+                transition: color 0.2s; display: inline-flex; align-items: center; justify-content: flex-start;
             }
-            .btn-toggle:hover { background: #2e7d32; color: #fff; border-color: #2e7d32; }
+            .btn-toggle:hover { color: #1b4332; }
             .hidden-item { display: none; }
 
-            /* MANUAIS & RELATÓRIOS */
+            /* MANUAIS */
             .recipe-section { background: #1b4332; color: #fff; padding: 4em; border-radius: 40px; margin: 4em 0; }
             .recipe-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; margin-top: 30px; }
             .recipe-item h4 { color: #fff; font-size: 1.3em; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
-            .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 20px; }
-            .report-item { border-top: 1px solid #f9f9f9; padding-top: 20px; }
+
+            /* SÍNTESE DAS AUTORIDADES (IMAGE-BASED) */
+            .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; margin-top: 20px; }
+            .report-item { padding-bottom: 20px; }
+            .report-item h5 { font-size: 0.7em; font-weight: 900; text-transform: uppercase; color: #2e7d32; margin-bottom: 15px; letter-spacing: 1px; }
+            .report-item p { font-size: 1em; line-height: 1.7; color: #555; margin-bottom: 15px; text-align: justify; }
+            .report-source { font-size: 0.65em; font-weight: 700; color: #bbb; text-transform: uppercase; letter-spacing: 1px; }
+
             .page-footer { margin-top: auto; padding: 2em 0 2.5em 0; border-top: 1px solid #f2f2f2; opacity: 0.3; text-align: right; }
 
             @media screen and (max-width: 1280px) {
@@ -100,6 +106,7 @@
                 #wrapper { padding-left: 0 !important; }
                 .hero-split { flex-direction: column-reverse; }
                 .hero-globe { width: 350px; height: 350px; margin: 0 auto; }
+                .report-grid { grid-template-columns: 1fr; }
             }
 		</style>
 	</head>
@@ -137,18 +144,14 @@
                             
                             <!-- PRAGAS -->
                             <h5>Combater as pragas da sua horta</h5>
-                            <div class="disease-grid" id="grid-pragas">
-                                <!-- JS Injeta Aqui -->
-                            </div>
+                            <div class="disease-grid" id="grid-pragas"></div>
                             <div class="toggle-container">
                                 <button class="btn-toggle" id="btn-pragas-more" onclick="toggleGrid('pragas')">+</button>
                             </div>
 
                             <!-- INVASORAS -->
                             <h5>Combater as plantas invasoras</h5>
-                            <div class="disease-grid" id="grid-invasoras">
-                                <!-- JS Injeta Aqui -->
-                            </div>
+                            <div class="disease-grid" id="grid-invasoras"></div>
                             <div class="toggle-container">
                                 <button class="btn-toggle" id="btn-invasoras-more" onclick="toggleGrid('invasoras')">+</button>
                             </div>
@@ -174,13 +177,11 @@
                             </div>
                         </div>
 
-                        <!-- 4. SÍNTESE -->
+                        <!-- 4. SÍNTESE (ATUALIZADA) -->
                         <div class="data-row" style="border-bottom: none;">
-                            <h4>Síntese das Autoridades 2026</h4>
-                            <div class="tech-content">
-                                <h3 style="margin: 0 0 10px 0; font-weight: 300; font-size: 2em;">Inteligência Fitossanitária Nacional</h3>
-                                <div id="report-grid-agri" class="report-grid"></div>
-                            </div>
+                            <span class="category-label">Síntese e Avisos Agrícolas 2026</span>
+                            <h2 style="font-weight: 300; font-size: 2.5em; margin: 0 0 30px 0;">Inteligência Fitossanitária Nacional</h2>
+                            <div id="report-grid-agri" class="report-grid"></div>
                         </div>
 
                         <footer class="page-footer">
@@ -195,7 +196,7 @@
 
 		<script src="/assets/js/jquery.min.js"></script>
         <script>
-            // Dados Mock (Gaspar: Podes mover isto para um sanidade.json se preferires)
+            // Dados de Sanidade
             const pragasData = [
                 { id: "PRG-001", nome: "Cydia pomonella", comum: "Bichado da Fruta", img: "https://fitosistema.com/wp-content/uploads/2022/09/ctt_8x8.png", desc: "Lepidóptero que ataca pomóideas, causando queda prematura de frutos." },
                 { id: "PRG-002", nome: "Panonychus ulmi", comum: "Aranhiço Vermelho", img: "https://www.koppert.pt/content/_processed_/csm_aranhico_vermelho_teaser.png", desc: "Ácaro que causa descoloração foliar e perda de vigor." },
@@ -210,6 +211,30 @@
                 { id: "INV-003", nome: "Eichhornia crassipes", comum: "Jacinto-de-água", img: "https://invasoras.pt/sites/default/files/styles/especie_detalhe/public/eichhornia_crassipes_2.jpg", desc: "Planta aquática que asfixia ecossistemas ribeirinhos." },
                 { id: "INV-004", nome: "Cortaderia selloana", comum: "Erva-das-pampas", img: "https://invasoras.pt/sites/default/files/styles/especie_detalhe/public/cortaderia_selloana_0.jpg", desc: "Planta ornamental que se dispersa facilmente pelo vento." },
                 { id: "INV-005", nome: "Ailanthus altissima", comum: "Ailanto", img: "https://invasoras.pt/sites/default/files/styles/especie_detalhe/public/ailanthus_altissima_0.jpg", desc: "Árvore de crescimento rápido e difícil erradicação." }
+            ];
+
+            // Dados da Síntese (Conforme Imagem)
+            const agriReports = [
+                { 
+                    titulo: "AVISOS DRAP 2026", 
+                    fonte: "FONTE: DRAP NORTE/ALGARVE - ESTAÇÃO DE AVISOS", 
+                    texto: "As Direções Regionais alertam para a pressão do Oídio na vinha devido às noites quentes. Recomenda-se o enrelvamento das entrelinhas para baixar a temperatura do solo e aumentar a biodiversidade de auxiliares. A vigilância sobre a Flavescência Dourada deve ser intensificada com o controlo do vetor Scaphoideus titanus." 
+                },
+                { 
+                    titulo: "INOVAÇÃO BIOLÓGICA BASF/PLANTIX", 
+                    fonte: "FONTE: BASF AGRICULTURE / PLANTIX LIBRARY", 
+                    texto: "Novas ferramentas de diagnóstico por imagem permitem identificar precocemente carências de Magnésio que mimetizam doenças virais. O uso de feromonas de confusão sexual está a reduzir em 60% a necessidade de tratamentos para a traça da uva em explorações biológicas certificadas." 
+                },
+                { 
+                    titulo: "SANIDADE VEGETAL E QUARENTENA", 
+                    fonte: "FONTE: INIAV.PT / GOV.PT - SANIDADE", 
+                    texto: "O Laboratório de Fitobacteriologia do INIAV reforça a proibição de circulação de material vegetal não certificado. O foco está na contenção da Trioza erytreae, vetor do Greening dos citrinos. A bioCultura recomenda a plantação de sebes vivas nativas para servir de barreira física e biológica." 
+                },
+                { 
+                    titulo: "RESILIÊNCIA HÍDRICA E SOLO", 
+                    fonte: "FONTE: AGROPORTAL.PT / BIOPROTECTION PORTAL", 
+                    texto: "O Agroportal sublinha que a gestão da água em 2026 passa pela retenção no solo. O uso de biochar e mulching denso é obrigatório para manter a viabilidade das culturas de sequeiro. O mercado de fertilizantes orgânicos líquidos (biofertilizantes) estabilizou como a alternativa principal aos sintéticos." 
+                }
             ];
 
             function renderSanidade(data, containerId, limit = 4) {
@@ -239,15 +264,14 @@
                 }
             }
 
-            // Lógica do Calendário (Mantida)
+            // Calendário
             const moonSVGs = {
                 ming: '<svg class="moon-svg-big" viewBox="0 0 24 24"><path fill="#bdbdbd" d="M12,2A10,10 0 0,0 12,22A10,10 0 0,0 12,2M12,4A8,8 0 0,1 12,20V4Z"/></svg>',
                 new: '<svg class="moon-svg-big" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="#9e9e9e" stroke-width="2" fill="none"/></svg>',
                 cres: '<svg class="moon-svg-big" viewBox="0 0 24 24"><path fill="#616161" d="M12,2V20A8,8 0 0,0 12,4M12,22A10,10 0 0,1 12,2A10,10 0 0,1 12,22Z"/></svg>',
                 full: '<svg class="moon-svg-big" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#f9a825"/></svg>'
             };
-
-            const lunarPhases = { 7: { svg: moonSVGs.ming, label: 'Minguante' }, 14: { svg: moonSVGs.new, label: 'Nova' }, 21: { svg: moonSVGs.cres, label: 'Crescente' }, 29: { svg: moonSVGs.full, label: 'Cheia' } };
+            const lunarPhases = { 7: moonSVGs.ming, 14: moonSVGs.new, 21: moonSVGs.cres, 29: moonSVGs.full };
 
             function renderGlobeCalendar() {
                 const stack = document.getElementById('week-stack');
@@ -260,7 +284,7 @@
                     for(let j=0; j<7; j++) {
                         let cur = new Date(monday); cur.setDate(monday.getDate() + (weekIdx*7) + j);
                         let isToday = today.toDateString() === cur.toDateString();
-                        let moon = (cur.getMonth() === 6 && lunarPhases[cur.getDate()]) ? lunarPhases[cur.getDate()].svg : cur.getDate();
+                        let moon = (cur.getMonth() === 6 && lunarPhases[cur.getDate()]) ? lunarPhases[cur.getDate()] : cur.getDate();
                         row.append(`<div class="day-node ${weekIdx===0?'current-week':''} ${isToday?'active':''}">${moon}</div>`);
                     }
                     $(stack).append(row);
@@ -272,7 +296,14 @@
                 renderSanidade(pragasData, 'grid-pragas', 4);
                 renderSanidade(invasorasData, 'grid-invasoras', 4);
                 
-                // Sidebar e outros
+                document.getElementById('report-grid-agri').innerHTML = agriReports.map(r => `
+                    <div class="report-item">
+                        <h5>${r.titulo}</h5>
+                        <p>${r.texto}</p>
+                        <span class="report-source">${r.fonte}</span>
+                    </div>
+                `).join('');
+
                 fetch('/sidebar-content.html').then(r => r.text()).then(html => {
                     document.getElementById('sidebar').innerHTML = html;
                 });
