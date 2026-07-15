@@ -3,7 +3,7 @@
 	<head>
 		<title>bioCultura - Observatório da Água</title>
 		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale, user-scalable=no" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
 		<style>
             /* --- ESTRUTURA GLOBAL (PARIDADE TOTAL COM INDEX/BIODIVERSIDADE) --- */
@@ -14,12 +14,11 @@
             #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
             #wrapper { padding-left: 18em !important; }
 
-            /* RETIFICAÇÃO DO ESPAÇAMENTO DO TOPO */
-            .inner { padding: 2.2em 4em 0 4em !important; max-width: 1600px !important; margin: 0 auto; width: 100%; }
+            .inner { padding: 2.2em 4em 0 4em !important; max-width: 1600px; margin: 0 auto; width: 100%; }
 
             .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; margin-bottom: 15px; display: block; }
 
-            /* HERO SPLIT (REPLICADO DO INDEX) */
+            /* HERO SPLIT */
             .hero-split { display: flex; align-items: flex-start; justify-content: space-between; gap: 4em; margin-bottom: 2em; }
             .hero-text { flex: 1.5; text-align: left; padding-top: 5px; } 
             .hero-text h1 { font-size: 4em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; line-height: 0.95; margin: 0 0 20px 0; }
@@ -37,7 +36,7 @@
                 object-fit: cover; 
             }
 
-            /* REFORMULAÇÃO DO ALINHAMENTO (VERTICAL) */
+            /* ALINHAMENTO VERTICAL */
             .data-row { display: block; padding: 2.5em 0; border-bottom: 1px solid #f2f2f2; }
             .data-row h4 { 
                 font-size: 0.7em; 
@@ -89,7 +88,6 @@
                 .hero-split { flex-direction: column-reverse; }
                 .hero-visual { justify-content: center; width: 100%; }
                 .hero-globe { width: 350px; height: 350px; }
-                .report-grid { grid-template-columns: 1fr; }
             }
 		</style>
 	</head>
@@ -98,7 +96,7 @@
 			<div id="main">
                 <div class="inner">
                     <section>
-                        <!-- 1. HERO & PERFIL QUÍMICO (DASHBOARD) -->
+                        <!-- 1. HERO & DASHBOARD -->
                         <div class="hero-split">
                             <div class="hero-text">
                                 <span class="category-label">Recursos Vitais</span>
@@ -124,7 +122,6 @@
                             </div>
                             <div class="hero-visual">
                                 <div class="hero-globe">
-                                    <!-- Imagem Estática (Ao milímetro como no index) -->
                                     <img src="https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?q=80&w=2074&auto=format&fit=crop" alt="Recursos Hídricos">
                                 </div>
                             </div>
@@ -154,9 +151,7 @@
                             <h4>Relatório Global</h4>
                             <div class="tech-content">
                                 <h3 style="margin: 0 0 10px 0; font-weight: 300; font-size: 2em;">Análise Crítica de Stress Hídrico</h3>
-                                <div id="report-grid-dynamic" class="report-grid">
-                                    <!-- Injetado via JS -->
-                                </div>
+                                <div id="report-grid-dynamic" class="report-grid"></div>
                             </div>
                         </div>
 
@@ -181,26 +176,10 @@
             ];
 
             const relatoriosAgua = [
-                {
-                    titulo: "Pontos Críticos em Portugal",
-                    texto: "Portugal enfrenta um stress hídrico severo, com o Alentejo e o Algarve em níveis de alerta máximo. A redução da precipitação média anual, aliada ao aumento das temperaturas, tem levado a uma descida crítica dos níveis das barragens.",
-                    fonte: "Worldometers - Portugal Water Statistics"
-                },
-                {
-                    titulo: "Principais Causas de Consumo",
-                    texto: "O setor agrícola continua a ser o maior consumidor, absorvendo cerca de 70% das retiradas globais de água doce. Contudo, o treino de modelos de IA e o arrefecimento de Datacenters exigem volumes massivos de água.",
-                    fonte: "FAO - AQUASTAT Global Database"
-                },
-                {
-                    titulo: "Problemas Estruturais Globais",
-                    texto: "A crise hídrica é agravada pela degradação da qualidade da água. A poluição por nitratos e microplásticos infiltra-se nos lençóis freáticos, enquanto as alterações climáticas desregulam o ciclo hidrológico.",
-                    fonte: "UN-Water - United Nations Water Report"
-                },
-                {
-                    titulo: "Estratégias de Regeneração",
-                    texto: "A solução passa pela transição para a agricultura regenerativa, que aumenta a matéria orgânica no solo e a sua capacidade de retenção de água. A implementação de sistemas de reutilização de águas cinzentas é urgente.",
-                    fonte: "World Water Council - Global Water Security"
-                }
+                { titulo: "Pontos Críticos em Portugal", texto: "Portugal enfrenta um stress hídrico severo, com o Alentejo e o Algarve em níveis de alerta máximo.", fonte: "Worldometers" },
+                { titulo: "Principais Causas de Consumo", texto: "O setor agrícola continua a ser o maior consumidor, absorvendo cerca de 70% das retiradas globais.", fonte: "FAO" },
+                { titulo: "Problemas Estruturais Globais", texto: "A crise hídrica é agravada pela poluição por nitratos e microplásticos que se infiltram nos lençóis freáticos.", fonte: "UN-Water" },
+                { titulo: "Estratégias de Regeneração", texto: "A solução passa pela transição para a agricultura regenerativa e sistemas de reutilização de águas cinzentas.", fonte: "World Water Council" }
             ];
 
             function calcularDistancia(lat1, lon1, lat2, lon2) {
@@ -263,6 +242,12 @@
                     const dur = parseFloat(info.recursos_hidricos.dureza_fr) || 10;
                     document.getElementById('label-ph').innerText = "pH " + ph;
                     document.getElementById('label-dureza').innerText = dur + " ºf";
+                    
+                    // ATUALIZAÇÃO DO TEXTO DE ANÁLISE MINERAL
+                    document.getElementById('water-advantages').innerText = ph < 7 
+                        ? "Água ligeiramente ácida: Ideal para mirtilos e culturas acidófilas." 
+                        : "Água equilibrada: Excelente para neutralizar solos ácidos e rega geral.";
+
                     setTimeout(() => {
                         document.getElementById('marker-ph').style.left = (ph / 14 * 100) + "%";
                         document.getElementById('marker-dureza').style.left = (Math.min(dur / 50 * 100, 100)) + "%";
