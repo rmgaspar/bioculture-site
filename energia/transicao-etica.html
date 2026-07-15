@@ -287,14 +287,14 @@
 
             function renderDashboard(info) {
                 if(!info) return;
-                document.getElementById('ethics-dashboard').style.display = 'block';
                 document.getElementById('reg-name').innerText = info.titulo;
 
+                // Se info.etica.indicadores não existir no JSON, assume 0 para não induzir em erro
                 const impacts = info.etica?.indicadores || [
-                    { label: "Ocupação de Solo RAN", val: 42, class: "fill-soil", textClass: "c-soil" },
-                    { label: "Fragmentação de Habitat", val: 28, class: "fill-habitat", textClass: "c-habitat" },
-                    { label: "Stress Hídrico (IA)", val: 65, class: "fill-water", textClass: "c-water-ia" },
-                    { label: "Oposição Social Local", val: 85, class: "fill-social", textClass: "c-social" }
+                    { label: "Ocupação de Solo RAN", val: 0, class: "fill-soil", textClass: "c-soil" },
+                    { label: "Fragmentação de Habitat", val: 0, class: "fill-habitat", textClass: "c-habitat" },
+                    { label: "Stress Hídrico (IA)", val: 0, class: "fill-water", textClass: "c-water-ia" },
+                    { label: "Oposição Social Local", val: 0, class: "fill-social", textClass: "c-social" }
                 ];
 
                 document.getElementById('impact-container').innerHTML = impacts.map(m => `
@@ -303,11 +303,9 @@
                         <div class="impact-bar-bg"><div class="impact-bar-fill ${m.class}" style="width: ${m.val}%"></div></div>
                     </div>`).join('');
 
+                // Projetos Críticos (também vindo do JSON ou fallback)
                 allProjects = info.etica?.projetos_criticos || [
-                    { nome: "Mega-Central Fotovoltaica", local: "Vale do Tejo", coords: "LAT 39.46 | LONG -8.19", status: "Em Licenciamento" },
-                    { nome: "Zona de Aceleração PFZAER", local: "Castelo Branco", coords: "LAT 39.82 | LONG -7.49", status: "Planeado" },
-                    { nome: "Prospecção Mineira de Lítio", local: "Boticas", coords: "LAT 41.69 | LONG -7.66", status: "Contestado" },
-                    { nome: "Data Center de IA Hub", local: "Sines", coords: "LAT 37.95 | LONG -8.86", status: "Em Estudo" }
+                    { nome: "Sem projetos críticos registados", local: info.titulo, coords: "---", status: "N/A" }
                 ];
                 renderProjects(false);
             }
