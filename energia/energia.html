@@ -6,15 +6,17 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
 		<style>
-            /* --- ESTRUTURA GLOBAL (PARIDADE INDEX) --- */
+            /* --- ESTRUTURA GLOBAL (PARIDADE TOTAL COM INDEX) --- */
             body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
 			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
-            section { padding-top: 3em !important; min-height: 100vh; display: flex; flex-direction: column; }
+            section { min-height: 100vh; display: flex; flex-direction: column; }
 
             #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
             #wrapper { padding-left: 18em !important; }
 
+            /* RETIFICAÇÃO DO ESPAÇAMENTO DO TOPO */
             .inner { padding: 2.2em 4em 0 4em !important; max-width: 1600px !important; margin: 0 auto; width: 100%; }
+
             .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; margin-bottom: 15px; display: block; }
 
             /* HERO SPLIT */
@@ -34,7 +36,15 @@
 
             /* REFORMULAÇÃO DO ALINHAMENTO (VERTICAL) */
             .data-row { display: block; padding: 2.5em 0; border-bottom: 1px solid #f2f2f2; }
-            .data-row h4 { font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin: 0 0 25px 0; display: block; }
+            .data-row h4 { 
+                font-size: 0.7em; 
+                font-weight: 900; 
+                text-transform: uppercase; 
+                letter-spacing: 2px; 
+                color: #bbb; 
+                margin: 0 0 25px 0; 
+                display: block;
+            }
 
             /* MIX ENERGÉTICO */
             .energy-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-bottom: 20px; }
@@ -83,19 +93,17 @@
             }
             .news-item:hover { transform: translateY(-5px); border-color: #ddd; }
             .news-item h3 { font-size: 1.15em; font-weight: 700; color: #1a1a1a; margin-bottom: 12px; line-height: 1.3; min-height: 2.6em; }
-            .news-item p { font-size: 0.9em; color: #777; line-height: 1.5; margin-bottom: 15px; }
             .news-meta { display: flex; align-items: center; gap: 10px; border-top: 1px solid #f9f9f9; padding-top: 12px; }
             .source-logo { width: 16px; height: 16px; object-fit: contain; filter: grayscale(100%); opacity: 0.6; }
             .news-meta span { font-size: 0.65em; font-weight: 800; color: #bbb; text-transform: uppercase; letter-spacing: 1px; }
 
-            /* BOTÃO VER MAIS (RETIFICADO) */
+            /* BOTÃO VER MAIS (LIMPO) */
             .btn-pagination { 
                 background: none !important; border: none !important; box-shadow: none !important; 
                 color: #bbb !important; font-size: 0.8em; font-weight: 400 !important; 
                 letter-spacing: 3px; cursor: pointer; text-transform: lowercase; 
                 display: block; text-align: left; padding: 0 !important; margin-top: 2em;
             }
-
             .bio-res-item { padding: 12px 18px; font-size: 0.9em; color: #666; cursor: pointer; border-bottom: 1px solid #f9f9f9 !important; }
 
             /* RODAPÉ ALINHADO */
@@ -105,6 +113,7 @@
                 #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
                 #wrapper { padding-left: 0 !important; }
                 .hero-split { flex-direction: column-reverse; }
+                .hero-visual { justify-content: center; width: 100%; }
                 .hero-globe { width: 350px; height: 350px; }
                 .report-grid { grid-template-columns: 1fr; }
             }
@@ -115,7 +124,7 @@
 			<div id="main">
                 <div class="inner">
                     <section>
-                        <!-- 1. HERO & MIX ENERGÉTICO -->
+                        <!-- 1. HERO & DASHBOARD (ALINHADO AO INDEX) -->
                         <div class="hero-split">
                             <div class="hero-text">
                                 <span class="category-label">Recursos Energéticos</span>
@@ -149,7 +158,7 @@
                             </div>
                         </div>
 
-                        <!-- 3. RELATÓRIOS (APROFUNDADOS) -->
+                        <!-- 3. RELATÓRIO GLOBAL -->
                         <div class="data-row">
                             <h4>Relatório Global de Energia</h4>
                             <div class="tech-content">
@@ -158,7 +167,7 @@
                             </div>
                         </div>
 
-                        <!-- 4. NOTÍCIAS -->
+                        <!-- 4. NOTÍCIAS (ESTILO INDEX) -->
                         <span class="news-header">noticias</span>
                         <div id="noticias-energy-dinamico" class="news-list"></div>
                         <div style="text-align: left;">
@@ -182,22 +191,22 @@
             const relatoriosEnergy = [
                 { 
                     titulo: "Matriz Elétrica Nacional", 
-                    texto: "Em 2025, Portugal atingiu um recorde histórico de 82% de incorporação renovável no consumo elétrico. A estabilidade da rede nacional (Smart Grids) é assegurada pelo equilíbrio estratégico entre a energia hídrica e eólica, permitindo ao país exportar excedentes limpos para a rede europeia.", 
+                    texto: "Em 2025, Portugal atingiu um recorde histórico de 82% de incorporação renovável no consumo elétrico. A estabilidade da rede nacional é assegurada pelo equilíbrio entre a energia hídrica e eólica.", 
                     fonte: "REN Datahub / DGEG 2025", cor: "#3498db" 
                 },
                 { 
                     titulo: "Aceleração Solar e Autoconsumo", 
-                    texto: "A meta de 5.6 GW de capacidade solar instalada para 2026 está em fase avançada de execução. O crescimento é impulsionado por Unidades de Produção para Autoconsumo (UPAC) e Comunidades de Energia Renovável, que democratizam a produção e reduzem a pegada de carbono urbana.", 
+                    texto: "A meta de 5.6 GW de capacidade solar instalada para 2026 está em fase avançada. O crescimento é impulsionado por Unidades de Produção para Autoconsumo (UPAC) e Comunidades de Energia.", 
                     fonte: "DGEG - Energia em Números / Portal Energia", cor: "#f1c40f" 
                 },
                 { 
                     titulo: "Descarbonização e Backup Estratégico", 
-                    texto: "Após o encerramento das centrais a carvão, o Gás Natural funciona apenas como reserva estratégica de ponta. Portugal acelera agora a infraestrutura de Hidrogénio Verde em Sines e Aveiro, visando substituir o gás fóssil em processos industriais de alta temperatura até 2030.", 
+                    texto: "Após o encerramento das centrais a carvão, o Gás Natural funciona apenas como reserva estratégica de ponta enquanto a infraestrutura de Hidrogénio Verde em Sines entra em fase operacional.", 
                     fonte: "APA REA / Pordata Energia", cor: "#95a5a6" 
                 },
                 { 
                     titulo: "Eólica Offshore e Investimento PRR", 
-                    texto: "O leilão de eólica offshore de 10GW marca a nova fronteira energética atlântica. Com o apoio do PRR, o investimento foca-se na reabilitação energética de edifícios e na eletrificação massiva de frotas industriais, visando uma redução de 35% na intensidade energética nacional.", 
+                    texto: "O leilão de eólica offshore de 10GW marca a nova fronteira energética. O investimento foca-se na reabilitação energética de edifícios e na eletrificação industrial via PRR.", 
                     fonte: "Portugal Global / Pordata", cor: "#27ae60" 
                 }
             ];
@@ -224,7 +233,7 @@
                     renderizarCardsEnergy();
                     renderRelatorios();
                     setupLocationLogic();
-                } catch(e) { console.error("Erro no carregamento:", e); }
+                } catch(e) { console.error(e); }
             }
 
             function setupLocationLogic() {
@@ -306,11 +315,11 @@
             }
 
             function renderizarCardsEnergy() {
-                const container = document.getElementById('noticias-energy-dinamico');
+                const container = document.getElementById('noticias-enologia-dinamico') || document.getElementById('noticias-energy-dinamico');
+                if(!container) return;
                 container.innerHTML = noticiasEnergy.map((n, i) => `
                     <a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-item ${i >= visiveisEnergy ? 'hidden-card' : ''}" style="${i >= visiveisEnergy ? 'display:none' : ''}">
                         <h3>${n.titulo}</h3>
-                        <p>${(n.resumo_biocultura || n.resumo || "").substring(0, 110)}...</p>
                         <div class="news-meta">
                             <img src="${n.logo}" class="source-logo">
                             <span>${n.data}</span>
