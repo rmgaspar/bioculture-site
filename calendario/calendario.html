@@ -31,35 +31,33 @@
                 box-shadow: 0 40px 100px rgba(0,0,0,0.05); 
                 background: #fdfdfd; 
                 display: flex; flex-direction: column; align-items: center; justify-content: space-between;
-                padding: 50px 0;
+                padding: 60px 0;
                 border: 1px solid #f2f2f2;
             }
 
-            /* Topo: Mês e Ano */
             .month-year-label { font-size: 0.8em; font-weight: 900; text-transform: uppercase; color: #bbb; letter-spacing: 3px; }
 
-            /* Centro: 3 Semanas com Fade Lateral */
+            /* Centro: 3 Semanas Horizontais */
             .week-stack { 
                 width: 100%; 
                 display: flex; 
                 flex-direction: column; 
                 gap: 15px;
                 mask-image: linear-gradient(to right, transparent, black 20%, black 80%, transparent);
-                -webkit-mask-image: linear-gradient(to right, transparent, black 20%, black 80%, transparent);
             }
             .week-row { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; width: 100%; }
             .day-node { font-size: 0.85em; font-weight: 600; color: #ddd; }
             .day-node.current-week { color: #888; }
             .day-node.active { color: #2e7d32; font-weight: 900; transform: scale(1.2); }
 
-            /* Fundo: Ícones Meteo | Lua */
+            /* Fundo: Ícones apenas */
             .globe-south { 
                 width: 60%; 
-                padding-top: 20px; border-top: 1px solid #f2f2f2;
+                padding-top: 25px; border-top: 1px solid #f2f2f2;
                 display: flex; align-items: center; justify-content: center; gap: 40px;
             }
-            .meteo-icon-big { font-size: 2.5em; color: #fbc02d; }
-            .moon-icon-big { font-size: 2.5em; color: #444; }
+            .meteo-icon-big { font-size: 2.8em; color: #fbc02d; }
+            .moon-icon-big { font-size: 2.8em; color: #444; }
             .v-sep { width: 1px; height: 40px; background: #eee; }
 
             /* ORIENTAÇÃO REGIONAL */
@@ -75,22 +73,17 @@
             .disease-body b { color: #c62828; font-style: italic; font-size: 1.1em; display: block; margin-bottom: 5px; }
             .bio-sol { background: #f1f8e9; color: #2e7d32; padding: 12px; border-radius: 10px; font-size: 0.85em; font-weight: 600; border-left: 3px solid #2e7d32; }
 
-            /* MANUAIS (VERDE BIOCULTURA) */
+            /* MANUAIS RESTAURADOS */
             .recipe-section { background: #1b4332; color: #fff; padding: 4em; border-radius: 40px; margin: 4em 0; }
             .recipe-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; margin-top: 30px; }
             .recipe-item h4 { color: #fff; font-size: 1.3em; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
-            .recipe-item p { font-size: 1em; color: rgba(255,255,255,0.8); line-height: 1.6; margin-bottom: 15px; }
             .recipe-item ul { font-size: 0.9em; padding-left: 20px; color: rgba(255,255,255,0.7); line-height: 1.8; list-style-type: square; }
 
-            /* RELATÓRIOS 2x2 */
+            /* RELATÓRIOS RESTAURADOS */
             .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 20px; }
             .report-item { border-top: 1px solid #f9f9f9; padding-top: 20px; }
             .report-item h5 { font-size: 0.75em; font-weight: 900; text-transform: uppercase; color: #2e7d32; margin-bottom: 12px; }
-            .report-item p { font-size: 1em; line-height: 1.7; color: #555; margin-bottom: 10px; text-align: justify; }
-            .report-source { font-size: 0.65em; color: #bbb; text-transform: uppercase; font-weight: 400; }
-
-            .data-row { display: block; padding: 3em 0; border-bottom: 1px solid #f2f2f2; }
-            .data-row h4 { font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin: 0 0 25px 0; }
+            .report-item p { font-size: 1em; line-height: 1.7; color: #555; text-align: justify; }
 
             .page-footer { margin-top: auto; padding: 2em 0 2.5em 0; border-top: 1px solid #f2f2f2; opacity: 0.3; text-align: right; }
 
@@ -116,34 +109,24 @@
                                 
                                 <div class="advice-block">
                                     <h5>Orientação Semanal: <span id="reg-name">...</span></h5>
-                                    <div id="advice-content" class="advice-content">
-                                        <!-- Injetado via JS -->
-                                    </div>
+                                    <div id="advice-content" class="advice-content"></div>
                                 </div>
                             </div>
 
                             <div class="hero-visual">
                                 <div class="hero-globe">
                                     <div class="month-year-label">Julho 2026</div>
-                                    
-                                    <div class="week-stack" id="week-stack">
-                                        <!-- 3 Semanas Horizontais Injetadas via JS -->
-                                    </div>
-
+                                    <div class="week-stack" id="week-stack"></div>
                                     <div class="globe-south">
-                                        <div class="south-part">
-                                            <i class="fas fa-sun meteo-icon-big" id="meteo-icon"></i>
-                                        </div>
+                                        <div class="south-part"><i class="fas fa-sun meteo-icon-big"></i></div>
                                         <div class="v-sep"></div>
-                                        <div class="south-part">
-                                            <span id="lunar-icon" class="moon-icon-big"></span>
-                                        </div>
+                                        <div class="south-part"><span id="lunar-icon" class="moon-icon-big"></span></div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- 2. FITOSSANIDADE 2x2 -->
+                        <!-- 2. FITOSSANIDADE -->
                         <div class="data-row">
                             <h4>Sanidade Vegetal: Diagnóstico Bio</h4>
                             <div class="tech-content">
@@ -184,9 +167,9 @@
                             </div>
                         </div>
 
-                        <!-- 3. MANUAIS DE PREPARO -->
+                        <!-- 3. MANUAIS -->
                         <div class="recipe-section">
-                            <span class="category-label" style="color: rgba(255,255,255,0.5); text-align: left;">Farmácia da Horta</span>
+                            <span class="category-label" style="color: rgba(255,255,255,0.5); text-align: left;">Manuais de Preparo</span>
                             <h2 style="color: #fff; font-size: 2.5em; margin-bottom: 10px;">Soluções Biológicas de Precisão</h2>
                             <div class="recipe-grid">
                                 <div class="recipe-item">
@@ -219,14 +202,12 @@
                             </div>
                         </div>
 
-                        <!-- 4. SÍNTESE DAS AUTORIDADES 2026 -->
+                        <!-- 4. SÍNTESE -->
                         <div class="data-row" style="border-bottom: none;">
                             <h4>Síntese das Autoridades 2026</h4>
                             <div class="tech-content">
                                 <h3 style="margin: 0 0 10px 0; font-weight: 300; font-size: 2em;">Inteligência Fitossanitária Nacional</h3>
-                                <div id="report-grid-agri" class="report-grid">
-                                    <!-- Injetado via JS -->
-                                </div>
+                                <div id="report-grid-agri" class="report-grid"></div>
                             </div>
                         </div>
 
@@ -242,7 +223,6 @@
 
 		<script src="/assets/js/jquery.min.js"></script>
         <script>
-            let currentWeekOffset = 0;
             let locationsDB = [];
             let infoGlobal = null;
 
@@ -260,19 +240,16 @@
                 { titulo: "Resiliência Hídrica e Solo", texto: "O Agroportal sublinha que a gestão da água em 2026 passa pela retenção no solo. O uso de biochar e mulching denso é obrigatório para manter a viabilidade das culturas de sequeiro. O mercado de biofertilizantes estabilizou como alternativa principal.", fonte: "Agroportal" }
             ];
 
-            function renderHorizontalCalendar() {
+            function renderGlobeCalendar() {
                 const stack = document.getElementById('week-stack');
                 stack.innerHTML = '';
-                
                 let today = new Date();
                 let mondayOfCurrent = new Date(today);
                 mondayOfCurrent.setDate(today.getDate() - today.getDay() + (today.getDay() === 0 ? -6 : 1));
 
-                // Gerar semanas: Próxima (topo), Atual (centro), Anterior (fundo)
                 [1, 0, -1].forEach(weekIdx => {
                     let weekRow = document.createElement('div');
                     weekRow.className = 'week-row';
-                    
                     let startOfWeek = new Date(mondayOfCurrent);
                     startOfWeek.setDate(mondayOfCurrent.getDate() + (weekIdx * 7));
 
@@ -281,16 +258,11 @@
                         currentDay.setDate(startOfWeek.getDate() + j);
                         let dayNum = currentDay.getDate();
                         let isToday = today.toDateString() === currentDay.toDateString();
-                        
                         let weekType = (weekIdx === 0) ? 'current-week' : '';
                         let moon = (currentDay.getMonth() === 6 && lunarPhases[dayNum]) ? lunarPhases[dayNum] : null;
                         let content = moon ? `<i style="color:${moon.color}">${moon.icon}</i>` : dayNum;
 
-                        weekRow.innerHTML += `
-                            <div class="day-node ${weekType} ${isToday ? 'active' : ''}">
-                                ${content}
-                            </div>`;
-                        
+                        weekRow.innerHTML += `<div class="day-node ${weekType} ${isToday ? 'active' : ''}">${content}</div>`;
                         if (isToday) updateState(moon, infoGlobal);
                     }
                     stack.appendChild(weekRow);
@@ -299,22 +271,19 @@
 
             function updateState(moon, info) {
                 const iconBox = document.getElementById('lunar-icon');
-                const nameBox = document.getElementById('lunar-name');
                 const advice = document.getElementById('advice-content');
                 const region = info?.titulo || "sua região";
                 
                 if (moon) {
-                    iconBox.innerHTML = moon.icon;
-                    iconBox.style.color = moon.color;
-                    nameBox.innerText = moon.label;
+                    iconBox.innerHTML = moon.icon; iconBox.style.color = moon.color;
+                    document.getElementById('lunar-name').innerText = moon.label;
                     advice.innerHTML = `<p><b>Influência Lunar:</b> Sob a <b>${moon.label}</b>, ${moon.task}</p>
-                                        <p><b>Ação em ${region}:</b> O solo local exige atenção à evapotranspiração. Aplique mulching denso e prepare os talhões para a próxima fase de transplante. A estabilidade térmica favorece tratamentos bio ao fim do dia.</p>`;
+                                        <p><b>Ação em ${region}:</b> O solo exige atenção à evapotranspiração. Aplique mulching denso. A estabilidade térmica favorece tratamentos bio ao fim do dia.</p>`;
                 } else {
-                    iconBox.innerHTML = '☾';
-                    iconBox.style.color = '#444';
-                    nameBox.innerText = 'Transição';
-                    advice.innerHTML = `<p><b>Manutenção Geral em ${region}:</b> Fase de transição hídrica. Foco na rega gota-a-gota e monda manual de ervas competidoras para preservar nutrientes.</p>
-                                        <p><b>Tendência Meteorológica:</b> O céu limpo e a radiação solar intensa exigem proteção das culturas mais sensíveis (sombreamento parcial).</p>`;
+                    iconBox.innerHTML = '☾'; iconBox.style.color = '#444';
+                    document.getElementById('lunar-name').innerText = 'Transição';
+                    advice.innerHTML = `<p><b>Manutenção Geral em ${region}:</b> Fase de transição hídrica. Foco na rega gota-a-gota e monda manual para preservar nutrientes.</p>
+                                        <p><b>Tendência Meteorológica:</b> Céu limpo e radiação intensa. Proteja as culturas mais sensíveis com sombreamento parcial.</p>`;
                 }
             }
 
@@ -325,35 +294,25 @@
                     const savedId = localStorage.getItem('biocultura_region') || "proenca-a-nova";
                     infoGlobal = locationsDB.find(i => i.id === savedId);
                     if(infoGlobal) document.getElementById('reg-name').innerText = infoGlobal.titulo;
-                    
-                    renderHorizontalCalendar();
+                    renderGlobeCalendar();
                     document.getElementById('report-grid-agri').innerHTML = agriReports.map(r => `
-                        <div class="report-item">
-                            <h5>${r.titulo}</h5>
-                            <p>${r.texto}</p>
-                            <span class="report-source">Fonte: ${r.fonte}</span>
-                        </div>`).join('');
-                    setupLocationLogic();
+                        <div class="report-item"><h5>${r.titulo}</h5><p>${r.texto}</p><span class="report-source">Fonte: ${r.fonte}</span></div>`).join('');
                 } catch(e) { console.error(e); }
             }
 
-            function setupLocationLogic() {
-                $(document).on('input', '#loc-search-input', function() {
-                    const val = $(this).val().toLowerCase(), dropdown = $('#loc-dropdown').empty();
-                    if(val.length < 2) return dropdown.hide();
-                    locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0,5).forEach(m => {
-                        $('<div class="bio-res-item"></div>').text(m.titulo).on('click', () => {
-                            localStorage.setItem('biocultura_region', m.id);
-                            location.reload();
-                        }).appendTo(dropdown);
-                    });
-                    dropdown.show();
+            $(document).on('input', '#loc-search-input', function() {
+                const val = $(this).val().toLowerCase(), dropdown = $('#loc-dropdown').empty();
+                if(val.length < 2) return dropdown.hide();
+                locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0,5).forEach(m => {
+                    $('<div class="bio-res-item"></div>').text(m.titulo).on('click', () => {
+                        localStorage.setItem('biocultura_region', m.id); location.reload();
+                    }).appendTo(dropdown);
                 });
-            }
+                dropdown.show();
+            });
 
             fetch('/sidebar-content.html').then(r => r.text()).then(html => {
-                document.getElementById('sidebar').innerHTML = html;
-                inicializar();
+                document.getElementById('sidebar').innerHTML = html; inicializar();
             });
         </script>
 	</body>
