@@ -6,7 +6,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
 		<style>
-            /* --- ESTRUTURA GLOBAL (PARIDADE INDEX) --- */
+            /* --- ESTRUTURA GLOBAL (PARIDADE TOTAL INDEX) --- */
             body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
 			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
             section { min-height: 100vh; display: flex; flex-direction: column; }
@@ -44,7 +44,7 @@
             .day-node.current-week { color: #1a1a1a; }
             .day-node.active { color: #2e7d32; font-weight: 900; transform: scale(1.2); }
             .day-node.weekend-red { color: #ef5350 !important; }
-            .day-node svg { width: 18px; height: 18px; display: block; }
+            .day-node svg { width: 16px; height: 16px; display: block; }
 
             .globe-south { width: 60%; padding-top: 25px; display: flex; align-items: center; justify-content: center; gap: 40px; }
             .meteo-icon-big { font-size: 2.8em; color: #fbc02d; }
@@ -77,8 +77,20 @@
             .btn-back { color: #bbb; font-size: 0.75em; font-weight: 800; text-transform: uppercase; cursor: pointer; display: inline-block; margin-bottom: 20px; }
             .btn-back:hover { color: #2e7d32; }
 
-            /* BOTÕES CLEAN */
-            .btn-clean { background: none !important; border: none !important; color: #bbb !important; cursor: pointer; font-size: 0.7em; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; padding: 15px 0; outline: none; }
+            /* BOTÕES CLEAN - REMOÇÃO DE FRAMES */
+            .btn-clean { 
+                background: none !important; 
+                border: none !important; 
+                box-shadow: none !important; 
+                color: #bbb !important; 
+                cursor: pointer; 
+                font-size: 0.7em; 
+                font-weight: 800; 
+                text-transform: uppercase; 
+                letter-spacing: 1px; 
+                padding: 15px 0; 
+                outline: none !important;
+            }
             .btn-clean:hover { color: #2e7d32 !important; text-decoration: underline; }
             .hidden-item { display: none; }
 
@@ -182,7 +194,7 @@
                             </div>
 
                             <div class="data-row" style="border-bottom: none;">
-                                <h4>Síntese das Autoridades 2026</h4>
+                                <h4>SíNTESE DAS AUTORIDADES 2026</h4>
                                 <div id="report-grid-agri" class="report-grid"></div>
                             </div>
                         </div>
@@ -209,17 +221,17 @@
             };
 
             const lunarPhases = {
-                7: { svg: moonSVGs.ming, label: 'Quarto Minguante', task: 'fase de energia radicular (ideal para controlo de pragas do solo).' },
+                7: { svg: moonSVGs.ming, label: 'Quarto Minguante', task: 'fase de energia radicular (ideal para podas de limpeza e controlo de pragas).' },
                 14: { svg: moonSVGs.new, label: 'Lua Nova', task: 'fase de repouso (foco em preparação de solo e mulching).' },
-                21: { svg: moonSVGs.cres, label: 'Quarto Crescente', task: 'fase de vigor ascendente (ideal para sementeiras de folha).' },
+                21: { svg: moonSVGs.cres, label: 'Quarto Crescente', task: 'fase de vigor ascendente (ideal para sementeiras de folha e fruto).' },
                 29: { svg: moonSVGs.full, label: 'Lua Cheia', task: 'fase de vitalidade máxima (ideal para colheita de medicinais).' }
             };
 
             const agriReports = [
-                { t: "Diretrizes PEPAC 2026", p: "O Plano Estratégico prioriza o apoio à biodiversidade no talhão e sistemas de rega inteligente.", s: "agricultura.gov.pt" },
-                { t: "Vigilância Fitossanitária", p: "O INIAV alerta para focos de Xylella. Recomenda-se o uso de variedades nativas e sebes vivas.", s: "iniav.pt" },
-                { t: "Mercados Agroportal", p: "O consumo de produtos biológicos cresceu 18%. Foco na agricultura de sequeiro regenerativo.", s: "agroportal.pt" },
-                { t: "Hortas Bio PT", p: "Consociações (ex: Tomate + Manjericão) reduziram pragas em 35% sem uso de pesticidas sintéticos.", s: "hortasbiologicas.pt" }
+                { t: "Diretrizes PEPAC 2026", p: "O Plano Estratégico prioriza o apoio à biodiversidade no talhão e sistemas de rega solar inteligente para mitigar o stress hídrico severo no interior.", s: "agricultura.gov.pt" },
+                { t: "Vigilância Fitossanitária", p: "O INIAV alerta para focos de Xylella fastidiosa. A recomendação técnica exige a diversificação de cultivares nativas e o uso de sebes vivas como barreira biológica.", s: "iniav.pt" },
+                { t: "Mercados Agroportal", p: "O consumo de produtos biológicos cresceu 18%. A agricultura de sequeiro regenerativo com mulching denso apresenta-se como a única via viável.", s: "agroportal.pt" },
+                { t: "Hortas Bio PT", p: "Monitorização comunitária revela que consociações estratégicas (ex: Tomate + Manjericão) reduziram a incidência de pragas em 35%.", s: "hortasbiologicas.pt" }
             ];
 
             function renderGlobe() {
@@ -232,7 +244,7 @@
                     let row = document.createElement('div'); row.className = 'week-row';
                     for(let j=0; j<7; j++) {
                         let cur = new Date(monday); cur.setDate(monday.getDate() + (w*7) + j);
-                        let isToday = today.toDateString() === currentDayString(cur);
+                        let isToday = today.toDateString() === cur.toDateString();
                         let moon = (cur.getMonth() === 6 && lunarPhases[cur.getDate()]) ? lunarPhases[cur.getDate()] : null;
                         let content = moon ? moon.svg : cur.getDate();
                         row.innerHTML += `<div class="day-node ${w===0?'current-week':''} ${isToday?'active':''} ${j>=5?'weekend-red':''}">
@@ -244,20 +256,17 @@
                 });
             }
 
-            function currentDayString(d) { return d.toDateString(); }
-
             function updateState(moon) {
                 const iconBox = document.getElementById('lunar-icon-container');
                 const advice = document.getElementById('advice-content');
                 const region = infoGlobal?.titulo || "sua região";
                 const solo = infoGlobal?.biomas?.solo || "misto";
                 
-                iconBox.innerHTML = moon ? moon.svg : moonSVGs.ming;
-                document.getElementById('lunar-name')?.innerText || (moon ? moon.label : "Transição");
-
+                iconBox.innerHTML = moon ? `<div class="moon-svg-big">${moon.svg}</div>` : moonSVGs.ming;
+                
                 advice.innerHTML = `
-                    <p><b>Influência Lunar:</b> ${moon ? `Sob a <b>${moon.label}</b>, ${moon.task}` : "Fase de transição lunar: manutenção geral recomendada."}</p>
-                    <p><b>Contexto em ${region}:</b> Com solo <b>${solo}</b>, a estratégia deve focar-se na retenção hídrica. A estabilidade térmica favorece tratamentos biológicos preventivos ao crepúsculo. Aplique mulching denso.</p>
+                    <p><b>Estratégia Regenerativa:</b> ${moon ? `Sob a influência da <b>${moon.label}</b>, o foco deve ser a ${moon.task}` : "Fase de transição lunar: manutenção geral e observação recomendada."}</p>
+                    <p>Com solo regional predominantemente <b>${solo}</b>, a prioridade absoluta desta semana em <b>${region}</b> é a gestão da evapotranspiração. Aplique mulching denso para proteger a microvida do solo. A estabilidade térmica favorece a aplicação de tratamentos biológicos preventivos ao crepúsculo.</p>
                 `;
             }
 
@@ -332,7 +341,8 @@
                     if(infoGlobal) document.getElementById('reg-name').innerText = infoGlobal.titulo;
                     renderGlobe();
                     await renderAgriData();
-                    document.getElementById('report-grid-agri').innerHTML = agriReports.map(r => `<div class="report-item"><h5>${r.t}</h5><p>${r.p}</p><span class="report-source">Fonte: ${r.s}</span></div>`).join('');
+                    document.getElementById('report-grid-agri').innerHTML = agriReports.map(r => `
+                        <div class="report-item"><h5>${r.t}</h5><p>${r.p}</p><span class="report-source">Fonte: ${r.s}</span></div>`).join('');
                     setupLocationLogic();
                 } catch(e) { console.error(e); }
             }
@@ -346,7 +356,7 @@
                     });
                     dropdown.show();
                 });
-                $(document).off('click', '#btn-gps-trigger').on('click', '#btn-gps-trigger', function() {
+                $(document).on('click', '#btn-gps-trigger', function() {
                     navigator.geolocation.getCurrentPosition(pos => {
                         let closest = locationsDB[0], minD = Infinity;
                         locationsDB.forEach(c => {
