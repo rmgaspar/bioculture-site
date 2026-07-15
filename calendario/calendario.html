@@ -44,7 +44,7 @@
 
             /* BOTÕES TOGGLE (LIMPOS) */
             .toggle-container { text-align: left; margin: 0 0 40px 0; }
-            .btn-toggle { background: none !important; border: none !important; box-shadow: none !important; color: #bbb !important; padding: 0 !important; cursor: pointer; font-size: 2.5em; font-weight: 300; line-height: 1; transition: color 0.2s; outline: none; }
+            .btn-toggle { background: none !important; border: none !important; color: #bbb !important; padding: 0 !important; cursor: pointer; font-size: 2.5em; font-weight: 300; line-height: 1; transition: color 0.2s; outline: none; }
             .btn-toggle:hover { color: #2e7d32 !important; }
             .hidden-item { display: none; }
 
@@ -107,22 +107,34 @@
         <script>
             let infoGlobal = null;
 
+            // DADOS COMPLETOS - SANIDADE (8 ITENS)
             const pragasData = [
-                { id: "PRG-001", nome: "Cydia pomonella", comum: "Bichado", img: "https://fitosistema.com/wp-content/uploads/2022/09/ctt_8x8.png", desc: "Ataca pomóideas, causando queda prematura de frutos." },
-                { id: "PRG-002", nome: "Panonychus ulmi", comum: "Aranhiço Vermelho", img: "https://www.koppert.pt/content/_processed_/csm_aranhico_vermelho_teaser.png", desc: "Ácaro que causa descoloração foliar e perda de vigor." },
-                { id: "PRG-003", nome: "Dysaphis plantaginea", comum: "Piolho Cinzento", img: "https://www.syngenta.pt/sites/g/files/zhg216/f/styles/syngenta_large/public/media/image/2021/04/afideo.jpg", desc: "Deforma rebentos e folhas em macieiras." },
-                { id: "PRG-004", nome: "Cacopsylla pyri", comum: "Psila da Pereira", img: "https://www.koppert.pt/content/_processed_/csm_psila_teaser.png", desc: "Produz melada e favorece o aparecimento de fumagina." },
-                { id: "PRG-005", nome: "Ceratitis capitata", comum: "Mosca do Mediterrâneo", img: "https://www.koppert.pt/content/_processed_/csm_ceratitis_capitata_teaser.png", desc: "Ataca citrinos e pomóideas na maturação." },
-                { id: "PRG-006", nome: "Comstockaspis perniciosas", comum: "Cochonilha S. José", img: "https://www.koppert.pt/content/_processed_/7/1/csm_cochonilha_teaser.png", desc: "Cria pontuações avermelhadas nos frutos e ramos." },
-                { id: "PRG-007", nome: "Zeuzera pyrina", comum: "Zêuzera", img: "https://www.syngenta.pt/sites/g/files/zhg216/f/styles/syngenta_large/public/media/image/2021/04/zeuzera.jpg", desc: "Lagarta que escava galerias no lenho das árvores." }
+                { id: "PRG-001", nome: "Cydia pomonella", comum: "Bichado da Fruta", img: "https://fitosistema.com/wp-content/uploads/2022/09/ctt_8x8.png", desc: "Aplicação de bioinseticidas virais ou nemátodos no tronco." },
+                { id: "PRG-002", nome: "Thaumetopoea pityocampa", comum: "Processionária", img: "https://florestas.pt/wp-content/uploads/2020/05/processionaria.jpg", desc: "Uso de Bacillus thuringiensis e armadilhas de cinta." },
+                { id: "PRG-003", nome: "Panonychus ulmi", comum: "Aranhiço Vermelho", img: "https://www.koppert.pt/content/_processed_/csm_aranhico_vermelho_teaser.png", desc: "Largada inundativa de ácaros predadores (Spidex)." },
+                { id: "DNC-001", nome: "Bursaphelenchus xylophilus", comum: "Nematodo do Pinheiro", img: "https://florestas.pt/wp-content/uploads/2020/05/nematodo.jpg", desc: "Controlo do inseto vetor Monochamus galloprovincialis." },
+                { id: "PRG-004", nome: "Trialeurodes vaporariorum", comum: "Mosca Branca", img: "https://www.koppert.pt/content/_processed_/csm_mosca_branca_teaser.png", desc: "Parasitismo por Encarsia formosa e placas amarelas." },
+                { id: "DNC-002", nome: "Venturia inaequalis", comum: "Pedrado da Macieira", img: "https://www.syngenta.pt/sites/g/files/zhg216/f/styles/syngenta_large/public/media/image/2021/04/pedrado.jpg", desc: "Bicarbonato de Potássio e Bacillus subtilis." },
+                { id: "PRG-005", nome: "Cacopsylla pyri", comum: "Psila da Pereira", img: "https://www.koppert.pt/content/_processed_/csm_psila_teaser.png", desc: "Uso de percevejos predadores Anthocoris nemoralis." },
+                { id: "PRG-006", nome: "Tomicus piniperda", comum: "Escolitídeo", img: "https://florestas.pt/wp-content/uploads/2020/05/escolitideo.jpg", desc: "Armadilhas de cairomonas e remoção de madeira morta." }
             ];
 
+            // DADOS COMPLETOS - INVASORAS (14 ITENS)
             const invasorasData = [
-                { id: "INV-001", nome: "Acacia dealbata", comum: "Mimosa", img: "https://invasoras.pt/sites/default/files/styles/especie_detalhe/public/acacia_dealbata_0.jpg", desc: "Invasora agressiva que altera a química do solo." },
-                { id: "INV-002", nome: "Acacia longifolia", comum: "Acácia-de-espigas", img: "https://invasoras.pt/sites/default/files/styles/especie_detalhe/public/acacia_longifolia_1.jpg", desc: "Coloniza dunas e áreas florestais." },
-                { id: "INV-003", nome: "Eichhornia crassipes", comum: "Jacinto-de-água", img: "https://invasoras.pt/sites/default/files/styles/especie_detalhe/public/eichhornia_crassipes_2.jpg", desc: "Asfixia ecossistemas ribeirinhos." },
-                { id: "INV-004", nome: "Cortaderia selloana", comum: "Erva-das-pampas", img: "https://invasoras.pt/sites/default/files/styles/especie_detalhe/public/cortaderia_selloana_0.jpg", desc: "Dispersa-se facilmente pelo vento." },
-                { id: "INV-005", nome: "Ailanthus altissima", comum: "Ailanto", img: "https://invasoras.pt/sites/default/files/styles/especie_detalhe/public/ailanthus_altissima_0.jpg", desc: "Árvore de crescimento rápido e difícil erradicação." }
+                { id: "INV-001", nome: "Acacia dealbata", comum: "Mimosa", img: "https://invasoras.pt/sites/default/files/styles/especie_detalhe/public/acacia_dealbata_0.jpg", desc: "Controlo biológico com inseto galhador Eurytoma acaciae." },
+                { id: "INV-002", nome: "Acacia longifolia", comum: "Acácia-de-espigas", img: "https://invasoras.pt/sites/default/files/styles/especie_detalhe/public/acacia_longifolia_1.jpg", desc: "Vespa de galhas Trichilogaster acaciaelongifoliae." },
+                { id: "INV-003", nome: "Acacia saligna", comum: "Acácia-de-folhas-estreitas", img: "https://invasoras.pt/sites/default/files/styles/especie_detalhe/public/acacia_saligna_0.jpg", desc: "Uso do fungo Uromycladium tepperianum para causar morte." },
+                { id: "INV-004", nome: "Eichhornia crassipes", comum: "Jacinto-de-água", img: "https://invasoras.pt/sites/default/files/styles/especie_detalhe/public/eichhornia_crassipes_2.jpg", desc: "Herbivoria específica por Megamelus scutellaris." },
+                { id: "INV-005", nome: "Azolla filiculoides", comum: "Pinheirinha-de-água", img: "https://invasoras.pt/sites/default/files/styles/especie_detalhe/public/azolla_filiculoides_0.jpg", desc: "Controlo total pelo curculionídeo Stenopelmus rufinasus." },
+                { id: "INV-006", nome: "Ailanthus altissima", comum: "Ailanto", img: "https://invasoras.pt/sites/default/files/styles/especie_detalhe/public/ailanthus_altissima_0.jpg", desc: "Inoculação do fungo vascular Verticillium nonalfalfae." },
+                { id: "INV-007", nome: "Hakea sericea", comum: "Haquea-picante", img: "https://invasoras.pt/sites/default/files/styles/especie_detalhe/public/hakea_sericea_0.jpg", desc: "Traça Carposina autologa destrói as sementes." },
+                { id: "INV-008", nome: "Baccharis halimifolia", comum: "Baccharis", img: "https://invasoras.pt/sites/default/files/styles/especie_detalhe/public/baccharis_halimifolia_0.jpg", desc: "Besouro desfolhador Trirhabda bacharidis." },
+                { id: "INV-009", nome: "Cortaderia selloana", comum: "Erva-das-pampas", img: "https://invasoras.pt/sites/default/files/styles/especie_detalhe/public/cortaderia_selloana_0.jpg", desc: "Plantação densa de espécies nativas para ensombramento." },
+                { id: "INV-010", nome: "Oxalis pes-caprae", comum: "Azedas", img: "https://invasoras.pt/sites/default/files/styles/especie_detalhe/public/oxalis_pes_caprae_0.jpg", desc: "Pastoreio intensivo com ovinos no outono." },
+                { id: "INV-011", nome: "Carpobrotus edulis", comum: "Chora-das-praias", img: "https://invasoras.pt/sites/default/files/styles/especie_detalhe/public/carpobrotus_edulis_0.jpg", desc: "Cochonilha Pulvinariella mesembryanthemi suga a seiva." },
+                { id: "INV-012", nome: "Robinia pseudoacacia", comum: "Acácia-bastarda", img: "https://invasoras.pt/sites/default/files/styles/especie_detalhe/public/robinia_pseudoacacia_0.jpg", desc: "Mosca de galhas Obolodiplosis robiniae reduz o vigor." },
+                { id: "INV-013", nome: "Phytolacca americana", comum: "Tintureira", img: "https://invasoras.pt/sites/default/files/styles/especie_detalhe/public/phytolacca_americana_0.jpg", desc: "Arranque manual seguido de mulching denso." },
+                { id: "INV-014", nome: "Elodea canadensis", comum: "Elódea", img: "https://invasoras.pt/sites/default/files/styles/especie_detalhe/public/elodea_canadensis_0.jpg", desc: "Uso de carpa capim triplóide em sistemas fechados." }
             ];
 
             function renderSanidade(data, containerId, limit = 4) {
