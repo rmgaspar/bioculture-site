@@ -3,10 +3,10 @@
 	<head>
 		<title>bioCultura - Observatório do Ar</title>
 		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<meta name="viewport" content="width=device-width, initial-scale, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
 		<style>
-            /* --- ESTILOS GLOBAIS --- */
+            /* --- ESTRUTURA GLOBAL (PARIDADE TOTAL) --- */
             body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
 			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
             section { padding-top: 3em !important; min-height: 100vh; display: flex; flex-direction: column; }
@@ -14,15 +14,39 @@
             #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
             #wrapper { padding-left: 18em !important; }
 
+            /* RETIFICAÇÃO DO ESPAÇAMENTO DO TOPO */
             .inner { padding: 2.2em 4em 0 4em !important; max-width: 1600px !important; margin: 0 auto; width: 100%; }
 
-            .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; color: #bbb; margin-bottom: 8px; display: block; text-align: center; }
-            
-            /* Alinhamento Rigoroso (Grid 180px para labels) */
-            .data-row { display: grid; grid-template-columns: 180px 1fr; gap: 40px; padding: 2.5em 0; border-bottom: 1px solid #f2f2f2; }
-            .data-row h4 { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin: 0; padding-top: 5px; }
+            .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; margin-bottom: 15px; display: block; }
 
-            /* INDICADOR AQI & TENDÊNCIAS */
+            /* HERO SPLIT */
+            .hero-split { display: flex; align-items: flex-start; justify-content: space-between; gap: 4em; margin-bottom: 2em; }
+            .hero-text { flex: 1.5; text-align: left; padding-top: 5px; } 
+            .hero-text h1 { font-size: 4em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; line-height: 0.95; margin: 0 0 20px 0; }
+            
+            .hero-visual { flex: 1; display: flex; justify-content: flex-end; }
+            .hero-globe { 
+                position: relative; 
+                width: 480px; height: 480px; 
+                border-radius: 50%; overflow: hidden; 
+                box-shadow: 0 40px 100px rgba(0,0,0,0.12); 
+                background: #1a1a1a;
+            }
+            .hero-globe img { width: 100%; height: 100%; object-fit: cover; }
+
+            /* REFORMULAÇÃO DO ALINHAMENTO (VERTICAL) */
+            .data-row { display: block; padding: 2.5em 0; border-bottom: 1px solid #f2f2f2; }
+            .data-row h4 { 
+                font-size: 0.7em; 
+                font-weight: 900; 
+                text-transform: uppercase; 
+                letter-spacing: 2px; 
+                color: #bbb; 
+                margin: 0 0 25px 0; 
+                display: block;
+            }
+
+            /* INDICADOR AQI */
             .aqi-container { margin-bottom: 20px; width: 100%; max-width: 500px; }
             .aqi-label { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px; }
             .aqi-val { font-size: 1.4em; font-weight: 700; color: #1a1a1a; }
@@ -34,47 +58,57 @@
             .trend-up { background: #ffebee; color: #c62828; }
             .trend-down { background: #e8f5e9; color: #2e7d32; }
 
+            /* POLUENTES */
+            .pollutant-mini-grid { display: flex; gap: 15px; margin-top: 15px; }
+            .pollutant-tag { background: #f9f9f9; padding: 5px 12px; border-radius: 4px; border: 1px solid #eee; font-size: 0.7em; font-weight: 700; color: #666; }
+            .pollutant-tag span { color: #bbb; font-weight: 400; margin-right: 5px; }
+
             /* ANOMALIA TÉRMICA */
             .temp-anomaly-box { display: flex; align-items: center; gap: 15px; margin-top: 20px; padding: 15px; background: #fdfdfd; border: 1px solid #f2f2f2; border-radius: 8px; width: fit-content; }
             .temp-val { font-size: 1.5em; font-weight: 900; color: #1a1a1a; }
             .temp-label { font-size: 0.65em; font-weight: 800; color: #bbb; text-transform: uppercase; line-height: 1.2; }
             .anomaly-tag { font-size: 0.7em; font-weight: 900; color: #ef6c00; }
 
-            /* POLUENTES */
-            .pollutant-mini-grid { display: flex; gap: 15px; margin-top: 15px; }
-            .pollutant-tag { background: #f9f9f9; padding: 5px 12px; border-radius: 4px; border: 1px solid #eee; font-size: 0.7em; font-weight: 700; color: #666; }
-            .pollutant-tag span { color: #bbb; font-weight: 400; margin-right: 5px; }
-
-            /* IMPACTO & CICLO (CAIXA LARANJA) */
+            /* IMPACTO & RELATÓRIOS */
             .air-impact-box { background: #fffaf4; padding: 2.5em 3em; border-radius: 20px; margin: 1.5em 0; position: relative; overflow: hidden; border-left: 4px solid #ffb74d; }
             .fact-cycler-air { min-height: 50px; position: relative; }
             .air-fact-item { position: absolute; top: 0; opacity: 0; transition: opacity 1s ease; width: 100%; font-size: 1.1em; line-height: 1.5; color: #a67c52; }
             .air-fact-item.active { opacity: 1; position: relative; }
             .air-fact-item b { color: #5d4037; margin-right: 10px; }
 
-            /* RELATÓRIOS TÉCNICOS */
-            .report-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; margin-top: 2em; }
+            .report-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; margin-top: 10px; }
             .report-item { border-top: 1px solid #f9f9f9; padding-top: 20px; }
             .report-item h5 { font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; color: #ffb74d; margin-bottom: 12px; }
             .report-item p { font-size: 0.95em; line-height: 1.7; color: #666; margin-bottom: 15px; text-align: justify; }
             .report-source { font-size: 0.65em; font-weight: 800; color: #bbb; text-transform: uppercase; letter-spacing: 1px; display: block; border-top: 1px solid #eee; padding-top: 8px; }
 
-            /* GRELHA DE NOTÍCIAS */
-            .observatorio-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px; margin-top: 2em; }
-            .news-card { text-decoration: none; color: inherit; display: flex; flex-direction: column; transition: all 0.3s ease; }
-            .news-card:hover { transform: translateY(-5px); }
-            .card-image-wrap { position: relative; width: 100%; height: 180px; overflow: hidden; border-radius: 12px; background: #f5f5f5; margin-bottom: 15px; }
-            .card-image-wrap img { width: 100%; height: 100%; object-fit: cover; }
-            .badge-cat { position: absolute; bottom: 10px; left: 10px; background: #ffb74d; color: white; padding: 4px 12px; border-radius: 50px; font-size: 0.55em; font-weight: 900; text-transform: uppercase; }
+            /* NOTÍCIAS (ESTILO INDEX) */
+            .news-header { font-size: 0.8em; font-weight: 400; text-transform: lowercase; letter-spacing: 3px; color: #bbb; margin-bottom: 2.5em; display: block; margin-top: 4em; }
+            .news-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 30px; margin-bottom: 4em; }
+            .news-item { 
+                text-decoration: none; color: inherit; display: block; 
+                padding: 25px; background: #fdfdfd; border: 1px solid #f2f2f2; 
+                border-radius: 12px; transition: all 0.3s; 
+            }
+            .news-item:hover { transform: translateY(-5px); border-color: #ddd; }
+            .news-item h3 { font-size: 1.15em; font-weight: 700; color: #1a1a1a; margin-bottom: 12px; line-height: 1.3; min-height: 2.6em; }
+            .news-meta { display: flex; align-items: center; gap: 10px; border-top: 1px solid #f9f9f9; padding-top: 12px; }
+            .source-logo { width: 16px; height: 16px; object-fit: contain; filter: grayscale(100%); opacity: 0.6; }
+            .news-meta span { font-size: 0.65em; font-weight: 800; color: #bbb; text-transform: uppercase; letter-spacing: 1px; }
 
-            .transition-text { font-size: 1.1em; line-height: 1.6; color: #777; margin: 0 0 1.5em 0; max-width: 1000px; text-align: justify; }
+            .btn-pagination { background: none !important; border: none !important; color: #bbb !important; font-size: 0.8em; letter-spacing: 3px; cursor: pointer; text-transform: lowercase; }
             .bio-res-item { padding: 12px 18px; font-size: 0.9em; color: #666; cursor: pointer; border-bottom: 1px solid #f9f9f9 !important; }
+
+            /* RODAPÉ ALINHADO */
+            .page-footer { margin-top: auto; padding: 2em 0 2.5em 0; border-top: 1px solid #f2f2f2; opacity: 0.3; text-align: right; }
 
             @media screen and (max-width: 1280px) {
                 #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
                 #wrapper { padding-left: 0 !important; }
+                .hero-split { flex-direction: column-reverse; }
+                .hero-visual { justify-content: center; width: 100%; }
+                .hero-globe { width: 350px; height: 350px; }
                 .report-grid { grid-template-columns: 1fr; }
-                .data-row { grid-template-columns: 1fr; gap: 10px; }
             }
 		</style>
 	</head>
@@ -83,79 +117,83 @@
 			<div id="main">
                 <div class="inner">
                     <section>
-                        <div style="text-align: center; margin-bottom: 3em;">
-                            <span class="category-label">Recursos Vitais</span>
-                            <h1 style="font-size: 3.5em; font-weight: 300; color: #1a1a1a; letter-spacing: -2px; margin: 0;">Ar: O Sopro da Vida</h1>
-                            <p style="font-size: 0.9em; font-style: italic; color: #bbb;">Análise regional: <strong id="reg-name">...</strong></p>
-                        </div>
+                        <!-- 1. HERO & DASHBOARD -->
+                        <div class="hero-split">
+                            <div class="hero-text">
+                                <span class="category-label">Recursos Vitais</span>
+                                <h1>Ar: O Sopro da Vida</h1>
+                                <p style="font-size: 0.9em; font-style: italic; color: #bbb; margin-bottom: 30px;">Análise regional: <strong id="reg-name" style="color:#888">...</strong></p>
 
-                        <!-- DASHBOARD LOCAL -->
-                        <div id="air-dashboard" style="display:none;">
-                            <div class="data-row">
-                                <h4>Monitorização Atmosférica</h4>
-                                <div class="tech-content">
-                                    <div class="aqi-container">
-                                        <div class="aqi-label">
-                                            <div style="display: flex; align-items: center;">
-                                                <span class="aqi-val" id="label-aqi">AQI --</span>
-                                                <span id="trend-aqi"></span>
+                                <div id="air-dashboard" style="display:none;">
+                                    <h4 style="font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin-bottom: 20px;">Monitorização Atmosférica</h4>
+                                    <div class="tech-content">
+                                        <div class="aqi-container">
+                                            <div class="aqi-label">
+                                                <div style="display: flex; align-items: center;">
+                                                    <span class="aqi-val" id="label-aqi">AQI --</span>
+                                                    <span id="trend-aqi"></span>
+                                                </div>
+                                                <span class="aqi-status" id="status-aqi">A analisar...</span>
                                             </div>
-                                            <span class="aqi-status" id="status-aqi">A analisar...</span>
+                                            <div class="aqi-bar"><div id="marker-aqi" class="aqi-marker"></div></div>
                                         </div>
-                                        <div class="aqi-bar"><div id="marker-aqi" class="aqi-marker"></div></div>
-                                    </div>
-                                    
-                                    <div class="pollutant-mini-grid">
-                                        <div class="pollutant-tag"><span>PM2.5</span> <b id="val-pm25">--</b></div>
-                                        <div class="pollutant-tag"><span>PM10</span> <b id="val-pm10">--</b></div>
-                                        <div class="pollutant-tag"><span>NO2</span> <b id="val-no2">--</b></div>
-                                        <div class="pollutant-tag"><span>O3</span> <b id="val-o3">--</b></div>
-                                    </div>
+                                        
+                                        <div class="pollutant-mini-grid">
+                                            <div class="pollutant-tag"><span>PM2.5</span> <b id="val-pm25">--</b></div>
+                                            <div class="pollutant-tag"><span>PM10</span> <b id="val-pm10">--</b></div>
+                                            <div class="pollutant-tag"><span>NO2</span> <b id="val-no2">--</b></div>
+                                            <div class="pollutant-tag"><span>O3</span> <b id="val-o3">--</b></div>
+                                        </div>
 
-                                    <div class="temp-anomaly-box">
-                                        <div class="temp-val" id="air-temp">--ºC</div>
-                                        <div class="temp-label">
-                                            Temperatura do Ar<br>
-                                            <span class="anomaly-tag" id="temp-anomaly">Anomalia: --ºC</span>
+                                        <div class="temp-anomaly-box">
+                                            <div class="temp-val" id="air-temp">--ºC</div>
+                                            <div class="temp-label">
+                                                Temperatura do Ar<br>
+                                                <span class="anomaly-tag" id="temp-anomaly">Anomalia: --ºC</span>
+                                            </div>
                                         </div>
                                     </div>
-                                    <p class="tech-detail" id="air-description" style="margin-top:15px;"></p>
+                                </div>
+                            </div>
+                            <div class="hero-visual">
+                                <div class="hero-globe">
+                                    <img src="https://images.unsplash.com/photo-1440404653325-ab127d49abc1?q=80&w=2070&auto=format&fit=crop" alt="Qualidade do Ar">
                                 </div>
                             </div>
                         </div>
 
-                        <!-- ALERTA DE POLUIÇÃO -->
+                        <!-- 2. ALERTA DE POLUIÇÃO -->
                         <div class="data-row">
                             <h4>Alerta de Poluição</h4>
                             <div class="tech-content">
-                                <p class="transition-text">
-                                    <strong>Panorama Nacional:</strong> Portugal mantém uma qualidade do ar globalmente "Boa", mas enfrenta picos críticos de Dióxido de Azoto (NO2) nas áreas metropolitanas de Lisboa e Porto e de Ozono (O3) no interior durante o verão. A rede QualAr revela que a queima de biomassa doméstica e os incêndios florestais são agora os principais emissores de partículas finas (PM2.5), superando a indústria pesada em várias regiões.<br><br>
-                                    <strong>Contexto Global:</strong> Segundo a OMS, 99% da população mundial respira ar que excede os limites de segurança. A poluição transfronteiriça, como as poeiras do Saara e as plumas de fumo continentais, demonstra que a atmosfera é um sistema partilhado onde a degradação local acelera o aquecimento global e a perda de biodiversidade em larga escala.
+                                <p style="font-size: 1.15em; line-height: 1.7; color: #555; text-align: justify; margin-bottom: 1.5em; max-width: 1000px;">
+                                    <strong>Panorama Nacional:</strong> Portugal mantém uma qualidade do ar globalmente "Boa", mas enfrenta picos críticos de Dióxido de Azoto (NO2) nas áreas metropolitanas e de Ozono (O3) no interior durante o verão. A rede QualAr revela que a queima de biomassa e os incêndios são agora os principais emissores de partículas finas.<br><br>
+                                    <strong>Contexto Global:</strong> Segundo a OMS, 99% da população mundial respira ar que excede os limites de segurança. A poluição transfronteiriça demonstra que a atmosfera é um sistema partilhado onde a degradação local acelera o aquecimento global.
                                 </p>
                                 
                                 <div class="air-impact-box">
                                     <div class="fact-cycler-air" id="air-facts-container"></div>
                                 </div>
-
-                                <div id="noticias-ar-dinamico" class="observatorio-grid"></div>
-                                <div style="text-align: center; margin-top: 2em;">
-                                    <button id="btn-load-more-ar" class="btn-ver-mais" style="display:none;">Ver Mais Relatórios</button>
-                                </div>
                             </div>
                         </div>
 
-                        <!-- RELATÓRIO TÉCNICO (PROFUNDO) -->
-                        <div class="data-row" style="border-bottom: none;">
+                        <!-- 3. RELATÓRIO TÉCNICO -->
+                        <div class="data-row">
                             <h4>Relatório de Qualidade</h4>
                             <div class="tech-content">
                                 <h3 style="margin: 0 0 10px 0; font-weight: 300; font-size: 2em;">Análise de Emissões e Aquecimento</h3>
-                                <div id="report-grid-air" class="report-grid">
-                                    <!-- Injetado via JS -->
-                                </div>
+                                <div id="report-grid-air" class="report-grid"></div>
                             </div>
                         </div>
 
-                        <footer class="page-footer" style="margin-top:4em; padding-top:2em; border-top:1px solid #f2f2f2; opacity:0.3; text-align:right;">
+                        <!-- 4. NOTÍCIAS -->
+                        <span class="news-header">noticias</span>
+                        <div id="noticias-ar-dinamico" class="news-list"></div>
+                        <div style="text-align: center; margin-bottom: 4em;">
+                            <button id="btn-load-more-ar" class="btn-pagination">ver mais</button>
+                        </div>
+
+                        <footer class="page-footer">
                             <span style="display: block; font-size: 0.85em; font-weight: 900; color: #333;">bioCultura</span>
                             <span style="display: block; font-size: 0.5em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Global Regeneration</span>
                         </footer>
@@ -176,26 +214,10 @@
             ];
 
             const relatoriosAr = [
-                {
-                    titulo: "Monitorização QualAr e Diretivas",
-                    texto: "A Agência Portuguesa do Ambiente (APA) coordena a estratégia nacional 'Ar Melhor', focada no cumprimento da Diretiva Teto de Emissões. Embora Portugal tenha reduzido drasticamente as emissões de SO2, o grande desafio atual reside na redução de precursores de Ozono e na monitorização de compostos orgânicos voláteis (COV) provenientes de novos polos industriais e logísticos.",
-                    fonte: "APA - Agência Portuguesa do Ambiente / Rede QualAr"
-                },
-                {
-                    titulo: "Relatório do Estado do Ambiente (REA)",
-                    texto: "A edição mais recente do REA sublinha o sucesso na descarbonização do setor eletroprodutor, mas alerta para a estagnação das emissões no setor dos transportes e agricultura. O relatório destaca a necessidade urgente de mitigar a amónia (NH3) e as partículas ultrafinas, que têm um impacto direto na saúde pública e na acidificação dos ecossistemas aquáticos e terrestres.",
-                    fonte: "REA - Relatório do Estado do Ambiente / iAmbiente"
-                },
-                {
-                    titulo: "Estratégia de Sequestração e Filtros Vivos",
-                    texto: "O ICNF promove a regeneração de florestas autóctones como 'filtros vivos'. Espécies como o carvalho e o sobreiro possuem uma capacidade superior de retenção de aerossóis e poeiras atmosféricas. A gestão florestal sustentável é apresentada como a barreira principal contra a desertificação e o aumento das concentrações de CO2 nas regiões mais vulneráveis do interior.",
-                    fonte: "ICNF - Instituto da Conservação da Natureza e das Florestas"
-                },
-                {
-                    titulo: "Tendências Históricas e Ciência Cidadã",
-                    texto: "A análise de dados do AQICN nos últimos 20 anos revela que, apesar da melhoria na tecnologia automóvel, a concentração de PM2.5 em Almada e Lisboa mantém-se em patamares que exigem cautela. A emergência de redes de monitorização de baixo custo (ciência cidadã) está a permitir detetar 'hotspots' de poluição micro-local que as estações oficiais por vezes não captam.",
-                    fonte: "AQICN - World Air Quality Index Project / World Water Org"
-                }
+                { titulo: "Rede QualAr", texto: "A APA gere a rede nacional que mede poluentes em tempo real. O Ozono troposférico continua a ser um desafio crítico no verão.", fonte: "APA - Agência Portuguesa do Ambiente" },
+                { titulo: "Estado do Ambiente", texto: "O REA aponta para a estagnação das emissões no setor dos transportes e agricultura, exigindo novas políticas de mobilidade.", fonte: "REA - Relatório do Estado do Ambiente" },
+                { titulo: "Filtros Vivos", texto: "O ICNF promove a regeneração nativa como forma mais eficaz de criar sumidouros de carbono e reduzir ilhas de calor.", fonte: "ICNF - Conservação da Natureza" },
+                { titulo: "Tendências 20 Anos", texto: "Dados do AQICN revelam melhoria na qualidade do ar desde 2004, mas a densidade de PM2.5 mantém-se estagnada.", fonte: "AQICN - World Air Quality" }
             ];
 
             function calcularDistancia(lat1, lon1, lat2, lon2) {
@@ -213,12 +235,9 @@
                         fetch('/data/qualidade_ar.json').then(r => r.json()),
                         fetch('/data/noticias.json').then(r => r.json())
                     ]);
-                    locationsDB = rLoc;
-                    airStations = rAir;
+                    locationsDB = rLoc; airStations = rAir;
                     noticiasAr = rNews.filter(n => (n.categoria || "").toLowerCase().includes('ar'));
-                    
-                    const savedId = localStorage.getItem('biocultura_region') || "proenca-a-nova";
-                    const info = locationsDB.find(i => i.id === savedId);
+                    const info = locationsDB.find(i => i.id === (localStorage.getItem('biocultura_region') || "proenca-a-nova"));
                     
                     renderDashboard(info);
                     renderizarCardsAr();
@@ -240,7 +259,6 @@
                     });
                     dropdown.show();
                 });
-
                 $(document).on('click', '#btn-gps-trigger', function() {
                     navigator.geolocation.getCurrentPosition(pos => {
                         let closest = locationsDB[0], minD = Infinity;
@@ -259,8 +277,7 @@
                 document.getElementById('air-dashboard').style.display = 'block';
                 document.getElementById('reg-name').innerText = info.titulo;
 
-                let closest = airStations[0];
-                let minD = Infinity;
+                let closest = airStations[0]; let minD = Infinity;
                 airStations.forEach(s => {
                     let d = calcularDistancia(info.lat, info.lon, s.lat, s.lon);
                     if(d < minD) { minD = d; closest = s; }
@@ -271,8 +288,7 @@
                 document.getElementById('val-no2').innerText = closest.no2 + " µg/m³";
                 document.getElementById('val-o3').innerText = closest.o3 + " µg/m³";
 
-                let aqiVal = 20; 
-                let trendHtml = '<span class="trend-indicator trend-down">↓ 4.2%</span>';
+                let aqiVal = 20; let trendHtml = '<span class="trend-indicator trend-down">↓ 4.2%</span>';
                 if(closest.indice === "Médio") { aqiVal = 45; trendHtml = '<span class="trend-indicator trend-up">↑ 2.1%</span>'; }
                 if(closest.indice === "Mau") { aqiVal = 75; trendHtml = '<span class="trend-indicator trend-up">↑ 8.5%</span>'; }
 
@@ -280,14 +296,10 @@
                 document.getElementById('trend-aqi').innerHTML = trendHtml;
                 document.getElementById('status-aqi').innerText = "Estação: " + closest.estacao;
                 
-                // Anomalia Térmica (Dados simulados baseados na bioregião)
-                const tempAtual = (info.clima && info.clima.temp_atual) || 24.5;
-                const anomalia = (info.clima && info.clima.anomalia) || +1.2;
+                const tempAtual = 24.5; const anomalia = +1.2;
                 document.getElementById('air-temp').innerText = tempAtual + "ºC";
                 document.getElementById('temp-anomaly').innerText = `Anomalia: ${anomalia > 0 ? '+' : ''}${anomalia}ºC vs média histórica`;
 
-                document.getElementById('air-description').innerText = `Dados captados pela estação ${closest.estacao} (${minD.toFixed(1)}km). Variação percentual reflete as últimas 24h de monitorização.`;
-                
                 setTimeout(() => {
                     const marker = document.getElementById('marker-aqi');
                     if(marker) marker.style.left = aqiVal + "%";
@@ -295,22 +307,23 @@
             }
 
             function renderRelatorios() {
-                const container = document.getElementById('report-grid-air');
-                container.innerHTML = relatoriosAr.map(r => `
+                document.getElementById('report-grid-air').innerHTML = relatoriosAr.map(r => `
                     <div class="report-item">
                         <h5>${r.titulo}</h5>
                         <p>${r.texto}</p>
-                        <span class="report-source">${r.fonte}</span>
+                        <span class="report-source">Fonte: ${r.fonte}</span>
                     </div>`).join('');
             }
 
             function renderizarCardsAr() {
                 const container = document.getElementById('noticias-ar-dinamico');
                 container.innerHTML = noticiasAr.map((n, i) => `
-                    <a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-card ${i >= visiveisAr ? 'hidden-card' : ''}">
-                        <div class="card-image-wrap"><img src="${n.imagem}"><span class="badge-cat">Ar</span></div>
+                    <a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-item ${i >= visiveisAr ? 'hidden-card' : ''}">
                         <h3>${n.titulo}</h3>
-                        <p>${n.resumo.substring(0, 100)}...</p>
+                        <div class="news-meta">
+                            <img src="${n.logo}" class="source-logo">
+                            <span>${n.data}</span>
+                        </div>
                     </a>`).join('');
                 document.getElementById('btn-load-more-ar').style.display = noticiasAr.length > visiveisAr ? 'inline-block' : 'none';
             }
