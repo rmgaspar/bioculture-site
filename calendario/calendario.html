@@ -6,7 +6,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
 		<style>
-            /* --- ESTRUTURA GLOBAL --- */
+            /* --- ESTRUTURA GLOBAL (PARIDADE TOTAL INDEX) --- */
             body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
 			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
             section { min-height: 100vh; display: flex; flex-direction: column; }
@@ -22,7 +22,7 @@
             .hero-text { flex: 1.5; text-align: left; padding-top: 5px; } 
             .hero-text h1 { font-size: 4em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; line-height: 0.95; margin: 0 0 20px 0; }
             
-            /* GLOBO DE TEMPO */
+            /* GLOBO DE TEMPO (HORIZONTAL) */
             .hero-visual { flex: 1; display: flex; justify-content: flex-end; }
             .hero-globe { 
                 position: relative; width: 480px; height: 480px; 
@@ -36,11 +36,12 @@
 
             .week-stack { 
                 width: 100%; display: flex; flex-direction: column; gap: 15px; margin-top: 20px; 
+                mask-image: linear-gradient(to right, transparent, black 20%, black 80%, transparent);
             }
             .week-row { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; width: 100%; }
             .day-node { font-size: 0.85em; font-weight: 600; color: #ddd; display: flex; align-items: center; justify-content: center; height: 30px; }
-            .day-node.current-week { color: #1a1a1a; } /* Números da semana atual a preto */
-            .day-node.active { color: #2e7d32; font-weight: 900; transform: scale(1.3); }
+            .day-node.current-week { color: #1a1a1a; }
+            .day-node.active { color: #2e7d32; font-weight: 900; transform: scale(1.2); }
             .day-node.weekend-red { color: #ef5350 !important; }
             .day-node svg { width: 18px; height: 18px; display: block; }
 
@@ -54,27 +55,50 @@
             .advice-block h5 { font-size: 0.8em; font-weight: 900; text-transform: uppercase; color: #2e7d32; margin-bottom: 15px; }
             .advice-content { font-size: 1.15em; line-height: 1.8; color: #555; text-align: justify; }
 
-            /* GRIDS E CARDS */
+            /* DATA ROW & GRIDS */
             .data-row { display: block; padding: 5em 0; border-bottom: 1px solid #f2f2f2; }
             .data-row h4 { font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin: 0 0 35px 0; }
-            .info-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; }
-            .info-card-compact { background: #fdfdfd; border: 1px solid #f2f2f2; border-radius: 12px; padding: 15px; cursor: pointer; transition: all 0.3s; display: block; text-decoration: none !important; }
+
+            .info-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+            .info-card-compact { 
+                background: #fdfdfd; border: 1px solid #f2f2f2; border-radius: 12px; padding: 15px; 
+                cursor: pointer; transition: all 0.3s; display: block; text-decoration: none !important;
+            }
             .info-card-compact:hover { transform: translateY(-5px); border-color: #2e7d32; }
             .compact-img { width: 100%; height: 120px; object-fit: cover; border-radius: 8px; margin-bottom: 12px; background: #f9f9f9; }
             .info-card-compact b { display: block; font-size: 0.95em; color: #c62828; font-style: italic; margin-bottom: 2px; }
             .info-card-compact span { display: block; font-size: 0.85em; color: #1a1a1a; font-weight: 700; margin-bottom: 8px; }
             .info-card-compact p { font-size: 0.8em; color: #777; line-height: 1.4; margin: 0; height: 2.8em; overflow: hidden; }
 
+            /* VISTA DE DETALHE */
             #sanity-detail-view { display: none; padding-bottom: 4em; border-bottom: 1px solid #f2f2f2; }
             .tech-sheet { display: grid; grid-template-columns: 1.2fr 1fr; gap: 4em; }
             .btn-back { color: #bbb; font-size: 0.75em; font-weight: 800; text-transform: uppercase; cursor: pointer; display: inline-block; margin-bottom: 20px; }
-            .btn-clean { background: none !important; border: none !important; color: #bbb !important; cursor: pointer; font-size: 0.7em; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; padding: 15px 0; outline: none; }
-            .bio-sol { background: #f1f8e9; color: #2e7d32; padding: 12px; border-radius: 10px; font-size: 0.85em; font-weight: 600; border-left: 3px solid #2e7d32; margin-top: 15px; }
+            .btn-back:hover { color: #2e7d32; }
+
+            /* BOTÕES CLEAN - REMOÇÃO DE FRAMES */
+            .btn-clean { 
+                background: none !important; border: none !important; box-shadow: none !important; 
+                color: #bbb !important; cursor: pointer; font-size: 0.7em; font-weight: 800; 
+                text-transform: uppercase; letter-spacing: 1px; padding: 15px 0; outline: none !important;
+            }
+            .btn-clean:hover { color: #2e7d32 !important; text-decoration: underline; }
             .hidden-item { display: none; }
 
+            /* MANUAIS (VERDE BIOCULTURA) */
+            .recipe-section { background: #1b4332; color: #fff; padding: 4em; border-radius: 40px; margin: 4em 0; }
+            .recipe-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; margin-top: 30px; }
+            .recipe-item h4 { color: #fff; font-size: 1.3em; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
+            .recipe-item p { font-size: 1em; color: rgba(255,255,255,0.8); line-height: 1.6; margin-bottom: 15px; }
+            .recipe-item ul { font-size: 0.9em; padding-left: 20px; color: rgba(255,255,255,0.7); line-height: 1.8; list-style-type: square; }
+
+            /* RELATÓRIOS */
             .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; margin-top: 20px; }
             .report-item { border-top: 1px solid #f9f9f9; padding-top: 20px; }
             .report-item h5 { font-size: 0.75em; font-weight: 900; text-transform: uppercase; color: #2e7d32; margin-bottom: 12px; }
+            .report-item p { font-size: 1em; line-height: 1.7; color: #555; margin-bottom: 10px; text-align: justify; }
+            .report-source { font-size: 0.65em; color: #bbb; text-transform: uppercase; font-weight: 400; }
+
             .page-footer { margin-top: auto; padding: 2em 0 2.5em 0; border-top: 1px solid #f2f2f2; opacity: 0.3; text-align: right; }
 
             @media screen and (max-width: 1280px) {
@@ -90,11 +114,13 @@
 			<div id="main">
                 <div class="inner">
                     <section id="main-section">
+                        <!-- VISTA DE DETALHE -->
                         <div id="sanity-detail-view">
                             <span class="btn-back" onclick="hideDetail()">← voltar ao calendário</span>
                             <div id="detail-content"></div>
                         </div>
 
+                        <!-- VISTA PRINCIPAL -->
                         <div id="calendar-main-view">
                             <div class="hero-split">
                                 <div class="hero-text">
@@ -129,23 +155,35 @@
                                 <button class="btn-clean" id="btn-invasoras" onclick="toggleGrid('flora')">+ ver todas as invasoras</button>
                             </div>
 
+                            <!-- MANUAIS RESTAURADOS -->
                             <div class="recipe-section">
+                                <span class="category-label" style="color: rgba(255,255,255,0.5); text-align: left;">Manuais de Preparo</span>
                                 <h2 style="color: #fff; font-size: 2.5em; margin-bottom: 10px;">Soluções Biológicas de Precisão</h2>
                                 <div class="recipe-grid">
                                     <div class="recipe-item">
                                         <h4>Calda Bordalesa bioCultura</h4>
                                         <p>Fungicida preventivo para Míldio e Antracnose.</p>
-                                        <ul><li>100g Sulfato Cobre + 100g Cal em 10L água.</li></ul>
+                                        <ul>
+                                            <li>100g de Sulfato de Cobre (em 5L de água).</li>
+                                            <li>100g de Cal Hidratada (em 5L de água).</li>
+                                            <li>Verta o cobre sobre a cal, nunca o contrário.</li>
+                                        </ul>
                                     </div>
                                     <div class="recipe-item">
-                                        <h4>Extrato de Própolis</h4>
-                                        <p>Antibiótico natural para feridas de poda.</p>
-                                        <ul><li>Diluir 10ml em 1L de água. Pincelar cortes.</li></ul>
+                                        <h4>Extrato de Própolis (Lenho)</h4>
+                                        <p>Antibiótico natural para tratar feridas de poda e evitar doenças do lenho como a Esca.</p>
+                                        <ul>
+                                            <li>Diluir 10ml de tintura de própolis em 1L de água.</li>
+                                            <li>Pincelar cortes de poda superiores a 2cm.</li>
+                                        </ul>
                                     </div>
                                     <div class="recipe-item">
-                                        <h4>Infusão de Alho</h4>
-                                        <p>Repelente contra afídios e ácaros.</p>
-                                        <ul><li>100g alhos macerados em 1L água por 24h.</li></ul>
+                                        <h4>Infusão de Alho (Repelente)</h4>
+                                        <p>Poderoso repelente contra afídios e ácaros, com ação fungicida ligeira.</p>
+                                        <ul>
+                                            <li>100g de alhos macerados em 1L de água por 24h.</li>
+                                            <li>Ferver 15 min e aplicar após arrefecer.</li>
+                                        </ul>
                                     </div>
                                 </div>
                             </div>
@@ -171,10 +209,10 @@
             let locationsDB = [], pragasDB = [], floraDB = [], infoGlobal = null;
 
             const moonSVGs = {
-                ming: '<svg viewBox="0 0 24 24"><path fill="#bdbdbd" d="M12,2A10,10 0 0,0 12,22A10,10 0 0,0 12,2M12,4A8,8 0 0,1 12,20V4Z"/></svg>',
-                new: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="#9e9e9e" stroke-width="2" fill="none"/></svg>',
-                cres: '<svg viewBox="0 0 24 24"><path fill="#616161" d="M12,2V20A8,8 0 0,0 12,4M12,22A10,10 0 0,1 12,2A10,10 0 0,1 12,22Z"/></svg>',
-                full: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#f9a825"/></svg>'
+                ming: '<svg viewBox="0 0 24 24" class="moon-svg-big"><path fill="#bdbdbd" d="M12,2A10,10 0 0,0 12,22A10,10 0 0,0 12,2M12,4A8,8 0 0,1 12,20V4Z"/></svg>',
+                new: '<svg viewBox="0 0 24 24" class="moon-svg-big"><circle cx="12" cy="12" r="10" stroke="#9e9e9e" stroke-width="2" fill="none"/></svg>',
+                cres: '<svg viewBox="0 0 24 24" class="moon-svg-big"><path fill="#616161" d="M12,2V20A8,8 0 0,0 12,4M12,22A10,10 0 0,1 12,2A10,10 0 0,1 12,22Z"/></svg>',
+                full: '<svg viewBox="0 0 24 24" class="moon-svg-big"><circle cx="12" cy="12" r="10" fill="#f9a825"/></svg>'
             };
 
             const lunarPhases = {
@@ -185,10 +223,26 @@
             };
 
             const agriReports = [
-                { t: "Diretrizes PEPAC 2026", p: "O Plano Estratégico prioriza o apoio à biodiversidade no talhão e sistemas de rega inteligente.", s: "agricultura.gov.pt" },
-                { t: "Vigilância Fitossanitária", p: "O INIAV alerta para focos de Xylella. Recomenda-se o uso de variedades nativas e sebes vivas.", s: "iniav.pt" },
-                { t: "Mercados Agroportal", p: "O consumo de produtos biológicos cresceu 18%. Foco na agricultura de sequeiro regenerativo.", s: "agroportal.pt" },
-                { t: "Hortas Bio PT", p: "Consociações (ex: Tomate + Manjericão) reduziram pragas em 35% sem uso de pesticidas sintéticos.", s: "hortasbiologicas.pt" }
+                { 
+                    t: "Diretrizes PEPAC 2026", 
+                    p: "O Plano Estratégico da PAC para 2026 prioriza o apoio financeiro a explorações que demonstrem aumento da biodiversidade no talhão. Estão abertas candidaturas para a instalação de charcas de biodiversidade e sistemas de rega solar inteligente, visando a resiliência hídrica do interior português.", 
+                    s: "agricultura.gov.pt" 
+                },
+                { 
+                    t: "Vigilância Fitossanitária INIAV", 
+                    p: "O Laboratório de Fitobacteriologia alerta para novos focos de Xylella fastidiosa. A recomendação técnica foca-se na eliminação de plantas hospedeiras e no uso de variedades nativas certificadas. A bioCultura sublinha que o equilíbrio do microbioma do solo é a primeira barreira contra infeções.", 
+                    s: "iniav.pt" 
+                },
+                { 
+                    t: "Mercados Agroportal 2026", 
+                    p: "O consumo de produtos biológicos em Portugal cresceu 18% no último ano. A escassez de água no sul está a forçar uma reestruturação das culturas para sistemas de sequeiro regenerativo, utilizando mulching denso para reduzir a evapotranspiração em 40%.", 
+                    s: "agroportal.pt" 
+                },
+                { 
+                    t: "Rede de Hortas Biológicas PT", 
+                    p: "Monitorização comunitária revela que consociações estratégicas (ex: Tomate + Manjericão) reduziram a incidência de pragas em 35% sem uso de pesticidas sintéticos. O foco para este verão é a produção de sementes próprias para garantir a soberania genética local.", 
+                    s: "hortasbiologicas.pt" 
+                }
             ];
 
             function renderGlobe() {
@@ -196,17 +250,13 @@
                 stack.innerHTML = '';
                 let today = new Date();
                 let monday = new Date(today); monday.setDate(today.getDate() - today.getDay() + (today.getDay() === 0 ? -6 : 1));
-
                 [-1, 0, 1].forEach(w => {
                     let row = document.createElement('div'); row.className = 'week-row';
                     for(let j=0; j<7; j++) {
                         let cur = new Date(monday); cur.setDate(monday.getDate() + (w*7) + j);
                         let isToday = today.toDateString() === cur.toDateString();
-                        let isWeekend = (j >= 5);
-                        let weekType = (w === 0) ? 'current-week' : '';
                         let moon = (cur.getMonth() === 6 && lunarPhases[cur.getDate()]) ? lunarPhases[cur.getDate()] : null;
-                        
-                        row.innerHTML += `<div class="day-node ${weekType} ${isToday?'active':''} ${isWeekend?'weekend-red':''}">
+                        row.innerHTML += `<div class="day-node ${w===0?'current-week':''} ${isToday?'active':''} ${j>=5?'weekend-red':''}">
                             ${moon ? moon.svg : cur.getDate()}
                         </div>`;
                         if (isToday) updateState(moon);
@@ -220,8 +270,7 @@
                 const advice = document.getElementById('advice-content');
                 const region = infoGlobal?.titulo || "sua região";
                 const solo = infoGlobal?.biomas?.solo || "misto";
-                
-                iconBox.innerHTML = moon ? `<div class="moon-svg-big">${moon.svg}</div>` : moonSVGs.ming;
+                iconBox.innerHTML = moon ? moon.svg : moonSVGs.ming;
                 advice.innerHTML = `
                     <p><b>Estratégia Regenerativa:</b> ${moon ? `Sob a influência da <b>${moon.label}</b>, ${moon.task}` : "Fase de transição lunar: manutenção geral e observação recomendada."}</p>
                     <p>Com solo regional predominantemente <b>${solo}</b>, a prioridade absoluta desta semana em <b>${region}</b> é a gestão da evapotranspiração. Aplique mulching denso e tratamentos biológicos ao crepúsculo.</p>
@@ -258,6 +307,10 @@
             function showDetail(name, type) {
                 const db = type === 'praga' ? pragasDB : floraDB;
                 const item = db.find(i => i.nome_cientifico === name);
+                let bioHtml = type === 'praga' 
+                    ? `<div><h4 style="font-size:0.7em; color:#bbb">Cura Bio</h4><div class="bio-sol">${item.solucao_biologica.metodo}</div></div>`
+                    : `<div><h4 style="font-size:0.7em; color:#bbb">Controlo Bio</h4><div class="bio-sol">${item.solucao_biologica.metodo}</div></div>`;
+                
                 document.getElementById('detail-content').innerHTML = `
                     <div class="hero-split">
                         <div class="hero-text">
@@ -266,7 +319,7 @@
                             <h2 style="margin-top:-15px; color:#666">${item.nome_comum}</h2>
                             <div class="tech-sheet" style="margin-top:30px">
                                 <div><h4 style="font-size:0.7em; color:#bbb">Diagnóstico</h4><p>${item.sintomas || item.impacto}</p></div>
-                                <div><h4 style="font-size:0.7em; color:#bbb">Combate Bio</h4><div class="bio-sol">${item.cura_bio || item.controlo_bio || item.solucao_biologica?.metodo}</div></div>
+                                ${bioHtml}
                             </div>
                         </div>
                         <div class="hero-visual"><div class="hero-globe"><img src="${item.imagem || item.img}" style="width:100%; height:100%; object-fit:cover"></div></div>
@@ -298,13 +351,13 @@
                     if(infoGlobal) document.getElementById('reg-name').innerText = infoGlobal.titulo;
                     renderGlobe();
                     await renderAgriData();
-                    document.getElementById('report-grid-agri').innerHTML = agriReports.map(r => `<div class="report-item"><h5>${r.t}</h5><p>${r.p}</p></div>`).join('');
+                    document.getElementById('report-grid-agri').innerHTML = agriReports.map(r => `<div class="report-item"><h5>${r.t}</h5><p>${r.p}</p><span class="report-source">Fonte: ${r.s}</span></div>`).join('');
                     setupLocationLogic();
                 } catch(e) { console.error(e); }
             }
 
             function setupLocationLogic() {
-                $(document).on('input', '#loc-search-input', function() {
+                $(document).off('input', '#loc-search-input').on('input', '#loc-search-input', function() {
                     const val = $(this).val().toLowerCase(), dropdown = $('#loc-dropdown').empty();
                     if(val.length < 2) return dropdown.hide();
                     locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0,5).forEach(m => {
@@ -312,7 +365,7 @@
                     });
                     dropdown.show();
                 });
-                $(document).on('click', '#btn-gps-trigger', function() {
+                $(document).off('click', '#btn-gps-trigger').on('click', '#btn-gps-trigger', function() {
                     navigator.geolocation.getCurrentPosition(pos => {
                         let closest = locationsDB[0], minD = Infinity;
                         locationsDB.forEach(c => {
