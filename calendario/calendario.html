@@ -1,80 +1,75 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<title>bioCultura - Ecossistema Agrícola Regenerativo</title>
+		<title>bioCultura - Calendário de Regeneração</title>
 		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale, user-scalable=no" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
 		<style>
-            /* --- ESTRUTURA & TIPOGRAFIA --- */
+            /* --- ESTRUTURA GLOBAL (PARIDADE TOTAL) --- */
             body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
 			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
-            section { padding-top: 3em !important; min-height: 100vh; display: flex; flex-direction: column; }
+            section { min-height: 100vh; display: flex; flex-direction: column; }
 
             #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
             #wrapper { padding-left: 18em !important; }
 
             .inner { padding: 2.2em 4em 0 4em !important; max-width: 1600px !important; margin: 0 auto; width: 100%; }
-            .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; color: #bbb; margin-bottom: 8px; display: block; text-align: center; }
+            .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; margin-bottom: 15px; display: block; }
 
-            /* CALENDÁRIO SEMANAL (NAVEGAÇÃO SUBTIL) */
-            .calendar-nav-box { background: #fdfdfd; border: 1px solid #f2f2f2; border-radius: 30px; padding: 2.5em; margin-bottom: 3em; display: flex; align-items: center; gap: 4em; }
-            .cal-controls { display: flex; flex-direction: column; align-items: center; gap: 10px; min-width: 120px; }
-            .btn-nav { cursor: pointer; font-size: 0.8em; color: #ccc; transition: 0.3s; user-select: none; text-transform: lowercase; letter-spacing: 1px; }
-            .btn-nav:hover { color: #2e7d32; }
+            /* HERO SPLIT */
+            .hero-split { display: flex; align-items: flex-start; justify-content: space-between; gap: 4em; margin-bottom: 2em; }
+            .hero-text { flex: 1.5; text-align: left; padding-top: 5px; } 
+            .hero-text h1 { font-size: 4em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; line-height: 0.95; margin: 0 0 20px 0; }
             
-            .cal-week-display { flex: 1.5; display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; text-align: center; }
-            .cal-day-col { display: flex; flex-direction: column; gap: 8px; }
-            .cal-label { font-size: 0.6em; font-weight: 900; text-transform: uppercase; color: #ccc; }
-            .cal-label.weekend { color: #ef5350; } /* S e D a Vermelho */
-            .cal-cell { height: 50px; display: flex; align-items: center; justify-content: center; background: #fff; border-radius: 12px; font-weight: 700; color: #bbb; border: 1px solid #f9f9f9; font-size: 0.9em; }
-            .cal-cell.today { background: #f1f8e9; color: #2e7d32; border-color: #dcedc8; }
-            
-            .moon-icon { font-size: 1.6em; }
-            .moon-full { color: #f9a825; }
-            .moon-new { color: #9e9e9e; }
-            .moon-cres { color: #616161; }
-            .moon-ming { color: #bdbdbd; }
+            /* GLOBO CALENDÁRIO (HEMISFÉRIOS) */
+            .hero-visual { flex: 1; display: flex; justify-content: flex-end; }
+            .hero-globe { 
+                position: relative; 
+                width: 480px; height: 480px; 
+                border-radius: 50%; overflow: hidden; 
+                box-shadow: 0 40px 100px rgba(0,0,0,0.12); 
+                background: #1a1a1a;
+                display: flex; flex-direction: column; align-items: center; justify-content: center;
+                color: #fff;
+            }
 
-            .weekly-advice-box { flex: 2; padding-left: 2em; border-left: 1px solid #eee; }
-            .weekly-advice-box h3 { font-size: 1.2em; color: #1a1a1a; margin-bottom: 10px; }
-            .weekly-advice-box p { font-size: 0.95em; line-height: 1.6; color: #666; margin: 0; }
+            /* Efeito de Curvatura do Calendário */
+            .calendar-globe-wrap { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 20px; }
+            .cal-day-node { transition: all 0.5s ease; text-align: center; opacity: 0.4; transform: scale(0.6); }
+            .cal-day-node.active { opacity: 1; transform: scale(1.4); font-weight: 900; color: #2e7d32; }
+            .cal-day-node.side { opacity: 0.7; transform: scale(0.9); }
+            .cal-day-node span { display: block; font-size: 0.5em; text-transform: uppercase; letter-spacing: 1px; color: #888; }
 
-            /* DIAGNÓSTICO DE DOENÇAS */
-            .disease-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 20px; }
-            .disease-card { background: #fff; border: 1px solid #f2f2f2; border-radius: 20px; overflow: hidden; display: flex; flex-direction: column; }
-            .disease-img { width: 100%; height: 160px; object-fit: cover; background: #f5f5f5; }
-            .disease-body { padding: 20px; flex-grow: 1; }
-            .disease-card b { color: #c62828; font-size: 1.05em; display: block; margin-bottom: 5px; font-style: italic; }
-            .disease-card b span { font-style: normal; color: #1a1a1a; font-size: 0.9em; }
-            .disease-card .target { font-size: 0.7em; font-weight: 900; color: #bbb; text-transform: uppercase; margin-bottom: 10px; display: block; }
-            .disease-card p { font-size: 0.85em; line-height: 1.5; color: #777; margin-bottom: 15px; }
-            .bio-solution { background: #f1f8e9; color: #2e7d32; padding: 12px; border-radius: 10px; font-size: 0.8em; font-weight: 600; border-left: 3px solid #2e7d32; }
+            .lunar-hemisphere { 
+                margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); 
+                width: 60%; text-align: center; 
+            }
+            .moon-icon-big { font-size: 2.5em; display: block; margin-bottom: 10px; }
 
-            /* RECEITAS BIO */
-            .recipe-section { background: #1b4332; color: #fff; padding: 4em; border-radius: 40px; margin: 4em 0; }
-            .recipe-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; margin-top: 30px; }
-            .recipe-item h4 { color: #fff; font-size: 1.2em; margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
-            .recipe-item p { font-size: 0.9em; color: rgba(255,255,255,0.8); line-height: 1.6; }
-            .recipe-item ul { font-size: 0.85em; padding-left: 20px; color: rgba(255,255,255,0.7); }
+            /* ORIENTAÇÃO REGIONAL & METEO */
+            .advice-block { margin-top: 30px; padding: 25px; background: #fdfdfd; border-radius: 20px; border: 1px solid #f2f2f2; }
+            .advice-block h5 { font-size: 0.7em; font-weight: 900; text-transform: uppercase; color: #2e7d32; margin-bottom: 10px; }
+            .meteo-note { font-size: 0.9em; color: #888; margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee; display: flex; align-items: center; gap: 10px; }
 
-            /* RELATÓRIOS */
-            .report-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; }
-            .report-item { border-top: 1px solid #f9f9f9; padding-top: 20px; }
-            .report-item h5 { font-size: 0.75em; font-weight: 900; text-transform: uppercase; color: #2e7d32; margin-bottom: 12px; }
-            .report-item p { font-size: 0.95em; line-height: 1.7; color: #555; margin-bottom: 10px; text-align: justify; }
-            .report-source { font-size: 0.65em; color: #bbb; text-transform: uppercase; font-weight: 400; }
+            /* FITOSSANIDADE 2x2 */
+            .disease-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 20px; }
+            .disease-card { background: #fff; border: 1px solid #f2f2f2; border-radius: 20px; overflow: hidden; }
+            .disease-img { width: 100%; height: 180px; object-fit: cover; }
+            .disease-body { padding: 25px; }
+            .disease-body b { color: #c62828; font-style: italic; }
 
-            /* SIDEBAR FIX */
-            .bio-res-item { padding: 12px 18px; font-size: 0.9em; color: #666; cursor: pointer; border-bottom: 1px solid #f9f9f9 !important; }
-            .bio-res-item:hover { background: #f1f8e9; color: #2e7d32; }
+            .btn-nav-subtle { cursor: pointer; color: #ccc; font-size: 0.7em; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; }
+            .btn-nav-subtle:hover { color: #2e7d32; }
+
+            .page-footer { margin-top: auto; padding: 2em 0 2.5em 0; border-top: 1px solid #f2f2f2; opacity: 0.3; text-align: right; }
 
             @media screen and (max-width: 1280px) {
                 #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
                 #wrapper { padding-left: 0 !important; }
-                .report-grid { grid-template-columns: 1fr; }
-                .calendar-nav-box { flex-direction: column; text-align: center; }
-                .weekly-advice-box { padding: 0; border: none; border-top: 1px solid #eee; padding-top: 2em; }
+                .hero-split { flex-direction: column-reverse; }
+                .hero-globe { width: 350px; height: 350px; margin: 0 auto; }
+                .disease-grid { grid-template-columns: 1fr; }
             }
 		</style>
 	</head>
@@ -83,120 +78,88 @@
 			<div id="main">
                 <div class="inner">
                     <section>
-                        <div style="text-align: center; margin-bottom: 3em;">
-                            <span class="category-label">Agricultura Regenerativa</span>
-                            <h1 style="font-size: 3.5em; font-weight: 300; color: #1a1a1a; letter-spacing: -2px; margin: 0;">Calendário de Regeneração</h1>
-                            <p style="font-size: 0.9em; font-style: italic; color: #bbb;">Orientação para: <strong id="reg-name" style="color:#2e7d32">...</strong></p>
+                        <!-- 1. HERO & ORIENTAÇÃO -->
+                        <div class="hero-split">
+                            <div class="hero-text">
+                                <span class="category-label">Agricultura bioCultura</span>
+                                <h1>Calendário de Regeneração</h1>
+                                
+                                <div class="advice-block">
+                                    <h5>Orientação Semanal: <span id="reg-name">...</span></h5>
+                                    <p id="advice-text" style="font-size: 1.1em; line-height: 1.6; color: #555;"></p>
+                                    
+                                    <div class="meteo-note" id="meteo-block">
+                                        <i class="fas fa-cloud-sun"></i>
+                                        <span id="meteo-text">A carregar tendências meteorológicas regionais...</span>
+                                    </div>
+                                    
+                                    <div style="margin-top: 20px; display: flex; gap: 20px;">
+                                        <span class="btn-nav-subtle" onclick="changeWeek(-1)">‹ anterior</span>
+                                        <span class="btn-nav-subtle" onclick="changeWeek(1)">próxima ›</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="hero-visual">
+                                <div class="hero-globe">
+                                    <!-- Hemisfério Norte: Dias da Semana Submergidos -->
+                                    <div class="calendar-globe-wrap" id="globe-days"></div>
+                                    
+                                    <!-- Hemisfério Sul: Influência Lunar -->
+                                    <div class="lunar-hemisphere">
+                                        <span id="lunar-icon" class="moon-icon-big"></span>
+                                        <span style="font-size: 0.6em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #888;" id="lunar-name"></span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
-                        <!-- 1. CALENDÁRIO DINÂMICO -->
-                        <div class="calendar-nav-box">
-                            <div class="cal-controls">
-                                <span class="btn-nav" onclick="changeWeek(-1)">‹ anterior</span>
-                                <span style="font-size: 0.75em; font-weight: 900; text-transform: uppercase;" id="display-month">Julho 2026</span>
-                                <span class="btn-nav" onclick="changeWeek(1)">próxima ›</span>
-                            </div>
-                            <div class="cal-week-display" id="week-grid"></div>
-                            <div class="weekly-advice-box" id="advice-box">
-                                <h3 id="advice-title">Fase Lunar e Solo</h3>
-                                <p id="advice-text">Selecione uma semana para orientações biodinâmicas.</p>
-                            </div>
-                        </div>
-
-                        <!-- 2. FITOSSANIDADE EXPANDIDA -->
+                        <!-- 2. FITOSSANIDADE 2x2 -->
                         <div class="data-row">
-                            <h4>Fitossanidade: Identificação e Cura Bio</h4>
+                            <h4>Sanidade Vegetal: Diagnóstico Bio</h4>
                             <div class="tech-content">
                                 <div class="disease-grid">
-                                    <!-- Míldio -->
                                     <div class="disease-card">
-                                        <img src="https://www.syngenta.pt/sites/g/files/kgtney1551/files/styles/main_media_large/public/media/image/2016/11/09/img_59966_low_2.jpg?itok=zk7oHrDh" class="disease-img">
+                                        <img src="https://images.unsplash.com/photo-1592419044706-39796d40f98c?q=80&w=800" class="disease-img">
                                         <div class="disease-body">
                                             <b>Plasmopara viticola <span>(Míldio)</span></b>
-                                            <span class="target">Vinha, Tomate, Batata</span>
-                                            <p>Fungo que ataca tecidos verdes. Provoca manchas translúcidas (óleo) e necrose. Vital monitorizar após chuvas de verão.</p>
-                                            <div class="bio-solution">Solução: Calda Bordalesa ou extrato de Cavalinha.</div>
+                                            <p>Fungo de humidade alta. Cria manchas de óleo. Solução: Calda Bordalesa.</p>
                                         </div>
                                     </div>
-                                    <!-- Esca -->
                                     <div class="disease-card">
-                                        <img src="https://www.espaco-visual.pt/wp-content/uploads/2022/06/Esca_Blog.jpg" class="disease-img">
+                                        <img src="https://images.unsplash.com/photo-1628350565513-23e045310036?q=80&w=800" class="disease-img">
                                         <div class="disease-body">
-                                            <b>Phaeomoniella chlamydospora <span>(Esca)</span></b>
-                                            <span class="target">Vinha (Doença do Lenho)</span>
-                                            <p>Causa riscas de "tigre" nas folhas e morte súbita dos braços da videira. Comum em vinhas velhas sob stress hídrico.</p>
-                                            <div class="bio-solution">Solução: Desinfeção de tesouras e pasta de poda com Própolis.</div>
+                                            <b>Afídios <span>(Piolho)</span></b>
+                                            <p>Sugadores de seiva. Deformam rebentos. Solução: Sabão de Potássio.</p>
                                         </div>
                                     </div>
-                                    <!-- Podridão Cinzenta -->
                                     <div class="disease-card">
-                                        <img src="https://eos.com/wp-content/uploads/2024/05/botrytis-cinerea-on-tomato.png" class="disease-img">
+                                        <img src="https://images.unsplash.com/photo-1589923188900-85dae523342b?q=80&w=800" class="disease-img">
                                         <div class="disease-body">
-                                            <b>Botrytis cinerea <span>(Podridão Cinzenta)</span></b>
-                                            <span class="target">Bagas, Morangos, Tomate</span>
-                                            <p>Aparece como um bolor cinzento denso nos frutos. Alastra-se rapidamente em condições de falta de ventilação.</p>
-                                            <div class="bio-solution">Solução: Desfolha para arejamento e pó de rocha (silício).</div>
+                                            <b>Botrytis cinerea <span>(Podridão)</span></b>
+                                            <p>Bolor cinzento em frutos. Solução: Arejamento e Pó de Rocha.</p>
                                         </div>
                                     </div>
-                                    <!-- Antracnose -->
                                     <div class="disease-card">
-                                        <img src="https://www.agrolink.com.br/upload/problemas/Elsinoe%20ampelina4.jpg" class="disease-img">
+                                        <img src="https://images.unsplash.com/photo-1615485243330-416560881bf4?q=80&w=800" class="disease-img">
                                         <div class="disease-body">
                                             <b>Elsinoë ampelina <span>(Antracnose)</span></b>
-                                            <span class="target">Vinha, Citrinos</span>
-                                            <p>Manchas circulares encovadas com centro cinzento e bordos negros ("olho de pássaro"). Ataca bagos e gavinhas.</p>
-                                            <div class="bio-solution">Solução: Aplicação de Enxofre molhável e remoção de ramos afetados.</div>
+                                            <p>Manchas circulares em videiras. Solução: Enxofre molhável.</p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- 3. RECEITAS BIO -->
-                        <div class="recipe-section">
-                            <span class="category-label" style="color: rgba(255,255,255,0.5); text-align: left;">Manuais de Preparo</span>
-                            <h2 style="color: #fff; font-size: 2.5em; margin-bottom: 10px;">Soluções Biológicas de Precisão</h2>
-                            <div class="recipe-grid">
-                                <div class="recipe-item">
-                                    <h4>Calda Bordalesa bioCultura</h4>
-                                    <p>O fungicida preventivo mais eficaz para Míldio e Antracnose.</p>
-                                    <ul>
-                                        <li>100g de Sulfato de Cobre (em 5L de água).</li>
-                                        <li>100g de Cal Hidratada (em 5L de água).</li>
-                                        <li>Verta o cobre sobre a cal, nunca o contrário.</li>
-                                    </ul>
-                                </div>
-                                <div class="recipe-item">
-                                    <h4>Extrato de Própolis (Lenho)</h4>
-                                    <p>Antibiótico natural para tratar feridas de poda e evitar doenças do lenho como a Esca.</p>
-                                    <ul>
-                                        <li>Diluir 10ml de tintura de própolis em 1L de água.</li>
-                                        <li>Pincelar cortes de poda superiores a 2cm.</li>
-                                        <li>Cria uma barreira física e biológica contra fungos.</li>
-                                    </ul>
-                                </div>
-                                <div class="recipe-item">
-                                    <h4>Infusão de Alho (Repelente)</h4>
-                                    <p>Poderoso repelente contra afídios e ácaros, com ação fungicida ligeira.</p>
-                                    <ul>
-                                        <li>100g de alhos picados macerados em 24h.</li>
-                                        <li>Ferver 15 min e deixar arrefecer.</li>
-                                        <li>Pulverizar sem diluir em toda a planta.</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- 4. RELATÓRIOS DETALHADOS -->
+                        <!-- 3. RELATÓRIOS -->
                         <div class="data-row" style="border-bottom: none;">
-                            <h4>Síntese e Avisos Agrícolas 2026</h4>
+                            <h4>Síntese das Autoridades 2026</h4>
                             <div class="tech-content">
-                                <h3 style="margin: 0 0 10px 0; font-weight: 300; font-size: 2em;">Inteligência Fitossanitária Nacional</h3>
-                                <div id="report-grid-agri" class="report-grid"></div>
+                                <div id="report-grid-agri" style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 10px;"></div>
                             </div>
                         </div>
 
-                        <footer class="page-footer" style="margin-top:4em; padding-top:2em; border-top:1px solid #f2f2f2; opacity:0.3; text-align:right;">
+                        <footer class="page-footer">
                             <span style="display: block; font-size: 0.85em; font-weight: 900; color: #333;">bioCultura</span>
                             <span style="display: block; font-size: 0.5em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Global Regeneration</span>
                         </footer>
@@ -212,74 +175,85 @@
             let locationsDB = [];
 
             const lunarPhases = {
-                7: { icon: '◐', class: 'moon-ming', label: 'Quarto Minguante', task: 'Energia nas raízes. Ideal para controlo de pragas do solo, podas de limpeza e sementeira de cenoura e rabanete.' },
-                14: { icon: '●', class: 'moon-new', label: 'Lua Nova', task: 'Fase de repouso. Dedique-se à preparação de novos talhões com composto orgânico e à afiação de ferramentas.' },
-                21: { icon: '◑', class: 'moon-cres', label: 'Quarto Crescente', task: 'Vigor ascendente da seiva. Semear e transplantar tudo o que produz acima do solo: alfaces, tomates e pimentos.' },
-                29: { icon: '●', class: 'moon-full', label: 'Lua Cheia', task: 'Máxima vitalidade hídrica. Ideal para a colheita de frutos e ervas medicinais. Evite podas drásticas.' }
+                7: { icon: '◐', class: 'moon-ming', label: 'Quarto Minguante', color: '#bdbdbd' },
+                14: { icon: '●', class: 'moon-new', label: 'Lua Nova', color: '#9e9e9e' },
+                21: { icon: '◑', class: 'moon-cres', label: 'Quarto Crescente', color: '#616161' },
+                29: { icon: '●', class: 'moon-full', label: 'Lua Cheia', color: '#f9a825' }
             };
 
-            const agriReports = [
-                { 
-                    titulo: "Avisos DRAP 2026", 
-                    texto: "As Direções Regionais alertam para a pressão do Oídio na vinha devido às noites quentes. Recomenda-se o enrelvamento das entrelinhas para baixar a temperatura do solo e aumentar a biodiversidade de auxiliares. A vigilância sobre a Flavescência Dourada deve ser intensificada com o controlo do vetor Scaphoideus titanus.", 
-                    fonte: "DRAP Norte/Algarve - Estação de Avisos" 
-                },
-                { 
-                    titulo: "Inovação Biológica BASF/Plantix", 
-                    texto: "Novas ferramentas de diagnóstico por imagem permitem identificar precocemente carências de Magnésio que mimetizam doenças virais. O uso de feromonas de confusão sexual está a reduzir em 60% a necessidade de tratamentos para a traça da uva em explorações biológicas certificadas.", 
-                    fonte: "BASF Agriculture / Plantix Library" 
-                },
-                { 
-                    titulo: "Sanidade Vegetal e Quarentena", 
-                    texto: "O Laboratório de Fitobacteriologia do INIAV reforça a proibição de circulação de material vegetal não certificado. O foco está na contenção da Trioza erytreae, vetor do Greening dos citrinos. A bioCultura recomenda a plantação de sebes vivas nativas para servir de barreira física e biológica.", 
-                    fonte: "iniav.pt / gov.pt - Sanidade" 
-                },
-                { 
-                    titulo: "Resiliência Hídrica e Solo", 
-                    texto: "O Agroportal sublinha que a gestão da água em 2026 passa pela retenção no solo. O uso de biochar e mulching denso é obrigatório para manter a viabilidade das culturas de sequeiro. O mercado de fertilizantes orgânicos líquidos (biofertilizantes) estabilizou como a alternativa principal aos sintéticos.", 
-                    fonte: "agroportal.pt / BioProtection Portal" 
-                }
-            ];
-
-            function renderCalendar() {
-                const grid = document.getElementById('week-grid');
-                if(!grid) return;
-                grid.innerHTML = '';
-                const labels = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab', 'Dom'];
+            function renderGlobeCalendar() {
+                const container = document.getElementById('globe-days');
+                container.innerHTML = '';
+                const labels = ['S','T','Q','Q','S','S','D'];
+                
                 let date = new Date();
                 date.setDate(date.getDate() + (currentWeekOffset * 7));
                 let dayOfWeek = date.getDay();
                 let diff = date.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1);
                 let monday = new Date(date.setDate(diff));
 
-                labels.forEach((l, i) => {
-                    let currentDay = new Date(monday);
-                    currentDay.setDate(monday.getDate() + i);
-                    let dayNum = currentDay.getDate();
-                    let isWeekend = (i >= 5);
-                    let moon = (currentDay.getMonth() === 6 && lunarPhases[dayNum]) ? lunarPhases[dayNum] : null;
-                    let content = moon ? `<span class="moon-icon ${moon.class}">${moon.icon}</span>` : dayNum;
-                    let isToday = new Date().toDateString() === currentDay.toDateString() ? 'today' : '';
+                for(let i=0; i<7; i++) {
+                    let current = new Date(monday);
+                    current.setDate(monday.getDate() + i);
+                    let dayNum = current.getDate();
+                    let isToday = new Date().toDateString() === current.toDateString();
+                    
+                    // Lógica de "Submergir" (Escala baseada na distância do dia central da semana ou hoje)
+                    let dist = Math.abs(i - 3); // Distância do meio da semana
+                    let scale = isToday ? 'active' : (dist < 2 ? 'side' : '');
+                    
+                    let moon = (current.getMonth() === 6 && lunarPhases[dayNum]) ? lunarPhases[dayNum] : null;
+                    let content = moon ? `<i style="color:${moon.color}">${moon.icon}</i>` : dayNum;
 
-                    grid.innerHTML += `<div class="cal-day-col"><span class="cal-label ${isWeekend ? 'weekend' : ''}">${l}</span><div class="cal-cell ${isToday}">${content}</div></div>`;
-                    if (moon || i === 0) updateAdvice(moon);
-                });
-            }
-
-            function updateAdvice(moon) {
-                const title = document.getElementById('advice-title');
-                const text = document.getElementById('advice-text');
-                if(!title || !text) return;
-                if (moon) {
-                    title.innerText = `Influência: ${moon.label}`;
-                    text.innerHTML = `${moon.task} <br><br><b>Dica bioCultura:</b> Observe o comportamento das aves no seu terreno.`;
-                } else {
-                    title.innerText = "Manutenção do Solo";
-                    text.innerHTML = "Fase de transição. Foco na rega gota-a-gota e monda manual de ervas competidoras.";
+                    container.innerHTML += `
+                        <div class="cal-day-node ${scale}">
+                            <span>${labels[i]}</span>
+                            ${content}
+                        </div>`;
+                    
+                    if (isToday || (i === 3 && !isToday)) updateLunarHemisphere(moon, current);
                 }
             }
 
-            function changeWeek(dir) { currentWeekOffset += dir; renderCalendar(); }
+            function updateLunarHemisphere(moon, date) {
+                const iconBox = document.getElementById('lunar-icon');
+                const nameBox = document.getElementById('lunar-name');
+                const advice = document.getElementById('advice-text');
+                const meteo = document.getElementById('meteo-text');
+
+                if (moon) {
+                    iconBox.innerHTML = moon.icon;
+                    iconBox.style.color = moon.color;
+                    nameBox.innerText = moon.label;
+                    advice.innerHTML = `Sob influência de <b>${moon.label}</b>, o foco deve ser a regeneração radicular. Ideal para sementeiras de cenoura e nabo. Evite podas drásticas nesta fase de transição energética.`;
+                } else {
+                    iconBox.innerHTML = '☾';
+                    iconBox.style.color = '#444';
+                    nameBox.innerText = 'Fase Intermédia';
+                    advice.innerHTML = "Semana de manutenção geral. Verifique a cobertura de solo (mulching) e proceda à monda manual de ervas competidoras para preservar nutrientes.";
+                }
+                meteo.innerText = "Previsão: Estabilidade térmica com vento NW. Ideal para tratamentos bio ao crepúsculo.";
+            }
+
+            function changeWeek(dir) {
+                currentWeekOffset += dir;
+                renderGlobeCalendar();
+            }
+
+            async function inicializar() {
+                try {
+                    const [rLoc, rNews] = await Promise.all([
+                        fetch('/data/bioregioes.json').then(r => r.json()),
+                        fetch('/data/noticias.json').then(r => r.json())
+                    ]);
+                    locationsDB = rLoc;
+                    const info = locationsDB.find(i => i.id === (localStorage.getItem('biocultura_region') || "proenca-a-nova"));
+                    if(info) document.getElementById('reg-name').innerText = info.titulo;
+                    
+                    renderGlobeCalendar();
+                    setupLocationLogic();
+                } catch(e) { console.error(e); }
+            }
 
             function setupLocationLogic() {
                 $(document).on('input', '#loc-search-input', function() {
@@ -293,36 +267,6 @@
                     });
                     dropdown.show();
                 });
-                $(document).on('click', '#btn-gps-trigger', function() {
-                    navigator.geolocation.getCurrentPosition(pos => {
-                        let closest = locationsDB[0], minD = Infinity;
-                        locationsDB.forEach(c => {
-                            let d = Math.sqrt(Math.pow(pos.coords.latitude - c.lat, 2) + Math.pow(pos.coords.longitude - c.lon, 2));
-                            if(d < minD) { minD = d; closest = c; }
-                        });
-                        localStorage.setItem('biocultura_region', closest.id);
-                        location.reload();
-                    });
-                });
-            }
-
-            async function inicializar() {
-                try {
-                    const r = await fetch('/data/bioregioes.json');
-                    locationsDB = await r.json();
-                    const savedId = localStorage.getItem('biocultura_region') || "proenca-a-nova";
-                    const info = locationsDB.find(i => i.id === savedId);
-                    if(info) document.getElementById('reg-name').innerText = info.titulo;
-                    
-                    renderCalendar();
-                    document.getElementById('report-grid-agri').innerHTML = agriReports.map(r => `
-                        <div class="report-item">
-                            <h5>${r.titulo}</h5>
-                            <p>${r.texto}</p>
-                            <span class="report-source">Fonte: ${r.fonte}</span>
-                        </div>`).join('');
-                    setupLocationLogic();
-                } catch(e) { console.error(e); }
             }
 
             fetch('/sidebar-content.html').then(r => r.text()).then(html => {
