@@ -6,7 +6,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
 		<style>
-            /* --- ESTRUTURA GLOBAL (PARIDADE INDEX) --- */
+            /* --- ESTRUTURA GLOBAL (PARIDADE TOTAL INDEX) --- */
             body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
 			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
             section { min-height: 100vh; display: flex; flex-direction: column; }
@@ -42,29 +42,30 @@
                 width: 100%; 
                 display: flex; 
                 flex-direction: column; 
-                gap: 15px;
-                margin-top: 20px;
+                gap: 12px;
+                margin-top: 10px;
             }
             .week-row { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; width: 100%; }
-            .day-node { font-size: 0.85em; font-weight: 600; color: #ddd; }
+            .day-node { font-size: 0.85em; font-weight: 600; color: #ddd; display: flex; align-items: center; justify-content: center; height: 30px; }
             .day-node.current-week { color: #888; }
-            .day-node.active { color: #2e7d32; font-weight: 900; transform: scale(1.2); }
+            .day-node.active { color: #2e7d32; font-weight: 900; transform: scale(1.3); }
+            
+            .day-node svg { width: 14px; height: 14px; }
 
-            /* Fundo: Ícones apenas */
+            /* Fundo: Ícones Meteo | Lua */
             .globe-south { 
                 width: 60%; 
                 padding-top: 25px; border-top: 1px solid #f2f2f2;
                 display: flex; align-items: center; justify-content: center; gap: 40px;
             }
             .meteo-icon-big { font-size: 2.8em; color: #fbc02d; }
-            .moon-icon-big { font-size: 2.8em; color: #444; }
+            .moon-svg-big { width: 40px; height: 40px; }
             .v-sep { width: 1px; height: 40px; background: #eee; }
 
-            /* ORIENTAÇÃO REGIONAL DETALHADA */
+            /* ORIENTAÇÃO REGIONAL */
             .advice-block { margin-top: 20px; padding: 35px; background: #fdfdfd; border-radius: 25px; border: 1px solid #f2f2f2; border-left: 5px solid #2e7d32; }
             .advice-block h5 { font-size: 0.8em; font-weight: 900; text-transform: uppercase; color: #2e7d32; margin-bottom: 15px; }
             .advice-content { font-size: 1.15em; line-height: 1.8; color: #555; text-align: justify; }
-            .advice-content p { margin-bottom: 1em; }
 
             /* FITOSSANIDADE 2x2 */
             .disease-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 20px; }
@@ -74,13 +75,14 @@
             .disease-body b { color: #c62828; font-style: italic; font-size: 1.1em; display: block; margin-bottom: 5px; }
             .bio-sol { background: #f1f8e9; color: #2e7d32; padding: 12px; border-radius: 10px; font-size: 0.85em; font-weight: 600; border-left: 3px solid #2e7d32; }
 
-            /* MANUAIS RESTAURADOS */
+            /* MANUAIS */
             .recipe-section { background: #1b4332; color: #fff; padding: 4em; border-radius: 40px; margin: 4em 0; }
             .recipe-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; margin-top: 30px; }
             .recipe-item h4 { color: #fff; font-size: 1.3em; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
+            .recipe-item p { font-size: 1em; color: rgba(255,255,255,0.8); line-height: 1.6; margin-bottom: 15px; }
             .recipe-item ul { font-size: 0.9em; padding-left: 20px; color: rgba(255,255,255,0.7); line-height: 1.8; list-style-type: square; }
 
-            /* RELATÓRIOS RESTAURADOS */
+            /* RELATÓRIOS 2x2 */
             .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 20px; }
             .report-item { border-top: 1px solid #f9f9f9; padding-top: 20px; }
             .report-item h5 { font-size: 0.75em; font-weight: 900; text-transform: uppercase; color: #2e7d32; margin-bottom: 12px; }
@@ -123,13 +125,15 @@
                                     <div class="globe-south">
                                         <div class="south-part"><i class="fas fa-sun meteo-icon-big"></i></div>
                                         <div class="v-sep"></div>
-                                        <div class="south-part"><span id="lunar-icon" class="moon-icon-big"></span></div>
+                                        <div class="south-part" id="lunar-icon-container">
+                                            <!-- Ícone Lunar Injetado -->
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- 2. FITOSSANIDADE 2x2 -->
+                        <!-- 2. FITOSSANIDADE -->
                         <div class="data-row">
                             <h4>Sanidade Vegetal: Diagnóstico Bio</h4>
                             <div class="tech-content">
@@ -229,18 +233,26 @@
             let locationsDB = [];
             let infoGlobal = null;
 
+            // SVGs Lunares Customizados
+            const moonSVGs = {
+                ming: '<svg class="moon-svg-big" viewBox="0 0 24 24"><path fill="#bdbdbd" d="M12,2A10,10 0 0,0 12,22A10,10 0 0,0 12,2M12,4A8,8 0 0,1 12,20V4Z"/></svg>',
+                new: '<svg class="moon-svg-big" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="#9e9e9e" stroke-width="2" fill="none"/></svg>',
+                cres: '<svg class="moon-svg-big" viewBox="0 0 24 24"><path fill="#616161" d="M12,2V20A8,8 0 0,0 12,4M12,22A10,10 0 0,1 12,2A10,10 0 0,1 12,22Z"/></svg>',
+                full: '<svg class="moon-svg-big" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#f9a825"/></svg>'
+            };
+
             const lunarPhases = {
-                7: { icon: '◐', label: 'Quarto Minguante', color: '#bdbdbd', task: 'Energia nas raízes. Ideal para podas de limpeza e controlo de pragas.' },
-                14: { icon: '●', label: 'Lua Nova', color: '#9e9e9e', task: 'Fase de repouso. Prepare o solo com composto orgânico e mulching.' },
-                21: { icon: '◑', label: 'Quarto Crescente', color: '#616161', task: 'Vigor ascendente. Semear e transplantar hortícolas de folha e fruto.' },
-                29: { icon: '●', label: 'Lua Cheia', color: '#f9a825', task: 'Máxima vitalidade hídrica. Ideal para colheita de frutos e medicinais.' }
+                7: { svg: moonSVGs.ming, label: 'Quarto Minguante', task: 'Energia nas raízes. Ideal para podas de limpeza e controlo de pragas.' },
+                14: { svg: moonSVGs.new, label: 'Lua Nova', task: 'Fase de repouso. Prepare o solo com composto orgânico e mulching.' },
+                21: { svg: moonSVGs.cres, label: 'Quarto Crescente', task: 'Vigor ascendente. Semear e transplantar hortícolas de folha e fruto.' },
+                29: { svg: moonSVGs.full, label: 'Lua Cheia', task: 'Máxima vitalidade hídrica. Ideal para colheita de frutos e medicinais.' }
             };
 
             const agriReports = [
-                { titulo: "Avisos DRAP 2026", texto: "As Direções Regionais alertam para a pressão do Oídio na vinha devido às noites quentes. Recomenda-se o enrelvamento das entrelinhas para baixar a temperatura do solo.", fonte: "DRAP Norte/Algarve" },
-                { titulo: "Inovação BASF/Plantix", texto: "Novas ferramentas de diagnóstico por imagem permitem identificar precocemente carências de Magnésio que mimetizam doenças virais.", fonte: "Plantix Library" },
-                { titulo: "Sanidade Vegetal INIAV", texto: "O Laboratório de Fitobacteriologia reforça a contenção da Xylella fastidiosa. A bioCultura recomenda o uso de sebes vivas nativas.", fonte: "iniav.pt" },
-                { titulo: "Resiliência Hídrica", texto: "A gestão da água em 2026 passa pela retenção no solo. O uso de biochar e mulching denso é obrigatório para manter a viabilidade.", fonte: "Agroportal" }
+                { titulo: "Avisos DRAP 2026", texto: "As Direções Regionais alertam para a pressão do Oídio na vinha devido às noites quentes. Recomenda-se o enrelvamento das entrelinhas para baixar a temperatura do solo e aumentar a biodiversidade de auxiliares." },
+                { titulo: "Inovação BASF/Plantix", texto: "Novas ferramentas de diagnóstico por imagem permitem identificar precocemente carências de Magnésio que mimetizam doenças virais. O uso de feromonas reduziu em 60% os tratamentos invasivos." },
+                { titulo: "Sanidade Vegetal INIAV", texto: "O Laboratório de Fitobacteriologia reforça a contenção da Xylella fastidiosa. A bioCultura recomenda o uso de sebes vivas nativas como barreira biológica e a diversificação de cultivares certificadas." },
+                { titulo: "Resiliência Hídrica e Solo", texto: "O Agroportal sublinha que a gestão da água em 2026 passa pela retenção no solo. O uso de biochar e mulching denso é obrigatório para manter a viabilidade das culturas de sequeiro." }
             ];
 
             function renderGlobeCalendar() {
@@ -250,8 +262,8 @@
                 let mondayOfCurrent = new Date(today);
                 mondayOfCurrent.setDate(today.getDate() - today.getDay() + (today.getDay() === 0 ? -6 : 1));
 
-                // Ordem: Próxima (topo), Atual (centro), Anterior (fundo)
-                [1, 0, -1].forEach(weekIdx => {
+                // Ordem: Atual (centro), Anterior (topo) - para manter as 3 semanas visíveis
+                [-1, 0, 1].forEach(weekIdx => {
                     let weekRow = document.createElement('div');
                     weekRow.className = 'week-row';
                     let startOfWeek = new Date(mondayOfCurrent);
@@ -263,8 +275,9 @@
                         let dayNum = currentDay.getDate();
                         let isToday = today.toDateString() === currentDay.toDateString();
                         let weekType = (weekIdx === 0) ? 'current-week' : '';
+                        
                         let moon = (currentDay.getMonth() === 6 && lunarPhases[dayNum]) ? lunarPhases[dayNum] : null;
-                        let content = moon ? `<i style="color:${moon.color}">${moon.icon}</i>` : dayNum;
+                        let content = moon ? moon.svg : dayNum;
 
                         weekRow.innerHTML += `<div class="day-node ${weekType} ${isToday ? 'active' : ''}">${content}</div>`;
                         if (isToday) updateState(moon, infoGlobal);
@@ -274,18 +287,16 @@
             }
 
             function updateState(moon, info) {
-                const iconBox = document.getElementById('lunar-icon');
+                const iconBox = document.getElementById('lunar-icon-container');
                 const advice = document.getElementById('advice-content');
                 const region = info?.titulo || "sua região";
                 
                 if (moon) {
-                    iconBox.innerHTML = moon.icon; iconBox.style.color = moon.color;
-                    document.getElementById('lunar-name').innerText = moon.label;
+                    iconBox.innerHTML = moon.svg;
                     advice.innerHTML = `<p><b>Influência Lunar:</b> Sob a <b>${moon.label}</b>, ${moon.task}</p>
                                         <p><b>Ação em ${region}:</b> O solo exige atenção à evapotranspiração. Aplique mulching denso e prepare os talhões para a próxima fase de transplante. A estabilidade térmica favorece tratamentos bio ao fim do dia.</p>`;
                 } else {
-                    iconBox.innerHTML = '☾'; iconBox.style.color = '#444';
-                    document.getElementById('lunar-name').innerText = 'Transição';
+                    iconBox.innerHTML = moonSVGs.ming; // Default
                     advice.innerHTML = `<p><b>Manutenção Geral em ${region}:</b> Fase de transição hídrica. Foco na rega gota-a-gota e monda manual de ervas competidoras para preservar nutrientes.</p>
                                         <p><b>Tendência Meteorológica:</b> O céu limpo e a radiação solar intensa exigem proteção das culturas mais sensíveis (sombreamento parcial).</p>`;
                 }
@@ -301,25 +312,23 @@
                     
                     renderGlobeCalendar();
                     document.getElementById('report-grid-agri').innerHTML = agriReports.map(r => `
-                        <div class="report-item">
-                            <h5>${r.titulo}</h5>
-                            <p>${r.texto}</p>
-                            <span class="report-source">Fonte: ${r.fonte}</span>
-                        </div>`).join('');
+                        <div class="report-item"><h5>${r.titulo}</h5><p>${r.texto}</p></div>`).join('');
+                    setupLocationLogic();
                 } catch(e) { console.error(e); }
             }
 
-            $(document).on('input', '#loc-search-input', function() {
-                const val = $(this).val().toLowerCase(), dropdown = $('#loc-dropdown').empty();
-                if(val.length < 2) return dropdown.hide();
-                locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0,5).forEach(m => {
-                    $('<div class="bio-res-item"></div>').text(m.titulo).on('click', () => {
-                        localStorage.setItem('biocultura_region', m.id);
-                        location.reload();
-                    }).appendTo(dropdown);
+            function setupLocationLogic() {
+                $(document).on('input', '#loc-search-input', function() {
+                    const val = $(this).val().toLowerCase(), dropdown = $('#loc-dropdown').empty();
+                    if(val.length < 2) return dropdown.hide();
+                    locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0,5).forEach(m => {
+                        $('<div class="bio-res-item"></div>').text(m.titulo).on('click', () => {
+                            localStorage.setItem('biocultura_region', m.id); location.reload();
+                        }).appendTo(dropdown);
+                    });
+                    dropdown.show();
                 });
-                dropdown.show();
-            });
+            }
 
             fetch('/sidebar-content.html').then(r => r.text()).then(html => {
                 document.getElementById('sidebar').innerHTML = html;
