@@ -6,7 +6,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
 		<style>
-            /* --- ESTRUTURA GLOBAL (PARIDADE TOTAL INDEX) --- */
+            /* --- ESTRUTURA GLOBAL --- */
             body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
 			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
             section { min-height: 100vh; display: flex; flex-direction: column; }
@@ -32,35 +32,35 @@
                 background: #fdfdfd; 
                 display: flex; flex-direction: column; align-items: center; justify-content: space-between;
                 padding: 60px 0;
-                border: 1px solid #f2f2f2;
             }
 
-            .month-year-label { font-size: 0.8em; font-weight: 900; text-transform: uppercase; color: #bbb; letter-spacing: 3px; }
+            /* Topo: Mês e Ano a Preto */
+            .month-year-label { font-size: 0.8em; font-weight: 900; text-transform: uppercase; color: #1a1a1a; letter-spacing: 3px; }
 
-            /* Centro: 3 Semanas Horizontais */
+            /* Centro: 3 Semanas */
             .week-stack { 
                 width: 100%; 
                 display: flex; 
                 flex-direction: column; 
-                gap: 12px;
-                margin-top: 10px;
+                gap: 15px;
+                mask-image: linear-gradient(to right, transparent, black 20%, black 80%, transparent);
             }
             .week-row { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; width: 100%; }
-            .day-node { font-size: 0.85em; font-weight: 600; color: #ddd; display: flex; align-items: center; justify-content: center; height: 30px; }
-            .day-node.current-week { color: #888; }
-            .day-node.active { color: #2e7d32; font-weight: 900; transform: scale(1.3); }
             
-            .day-node svg { width: 14px; height: 14px; }
+            .day-node { font-size: 0.85em; font-weight: 600; color: #ddd; }
+            .day-node.current-week { color: #1a1a1a; } /* Semana Atual a Preto */
+            .day-node.active { color: #2e7d32; font-weight: 900; transform: scale(1.2); }
+            .day-node.weekend-red { color: #ef5350 !important; } /* Sábado e Domingo a Vermelho */
 
-            /* Fundo: Ícones Meteo | Lua */
+            /* Fundo: Sem Linhas */
             .globe-south { 
                 width: 60%; 
-                padding-top: 25px; border-top: 1px solid #f2f2f2;
                 display: flex; align-items: center; justify-content: center; gap: 40px;
+                border-top: none !important; /* Remoção da linha horizontal */
             }
             .meteo-icon-big { font-size: 2.8em; color: #fbc02d; }
-            .moon-svg-big { width: 40px; height: 40px; }
-            .v-sep { width: 1px; height: 40px; background: #eee; }
+            .moon-icon-big { font-size: 2.8em; color: #444; }
+            .v-sep { display: none !important; } /* Remoção da linha vertical */
 
             /* ORIENTAÇÃO REGIONAL */
             .advice-block { margin-top: 20px; padding: 35px; background: #fdfdfd; border-radius: 25px; border: 1px solid #f2f2f2; border-left: 5px solid #2e7d32; }
@@ -79,10 +79,9 @@
             .recipe-section { background: #1b4332; color: #fff; padding: 4em; border-radius: 40px; margin: 4em 0; }
             .recipe-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; margin-top: 30px; }
             .recipe-item h4 { color: #fff; font-size: 1.3em; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
-            .recipe-item p { font-size: 1em; color: rgba(255,255,255,0.8); line-height: 1.6; margin-bottom: 15px; }
             .recipe-item ul { font-size: 0.9em; padding-left: 20px; color: rgba(255,255,255,0.7); line-height: 1.8; list-style-type: square; }
 
-            /* RELATÓRIOS 2x2 */
+            /* RELATÓRIOS */
             .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 20px; }
             .report-item { border-top: 1px solid #f9f9f9; padding-top: 20px; }
             .report-item h5 { font-size: 0.75em; font-weight: 900; text-transform: uppercase; color: #2e7d32; margin-bottom: 12px; }
@@ -112,9 +111,7 @@
                                 
                                 <div class="advice-block">
                                     <h5>Orientação Semanal: <span id="reg-name">...</span></h5>
-                                    <div id="advice-content" class="advice-content">
-                                        <!-- Preenchido via JS -->
-                                    </div>
+                                    <div id="advice-content" class="advice-content"></div>
                                 </div>
                             </div>
 
@@ -125,9 +122,7 @@
                                     <div class="globe-south">
                                         <div class="south-part"><i class="fas fa-sun meteo-icon-big"></i></div>
                                         <div class="v-sep"></div>
-                                        <div class="south-part" id="lunar-icon-container">
-                                            <!-- Ícone Lunar Injetado -->
-                                        </div>
+                                        <div class="south-part" id="lunar-icon-container"></div>
                                     </div>
                                 </div>
                             </div>
@@ -233,12 +228,11 @@
             let locationsDB = [];
             let infoGlobal = null;
 
-            // SVGs Lunares Customizados
             const moonSVGs = {
-                ming: '<svg class="moon-svg-big" viewBox="0 0 24 24"><path fill="#bdbdbd" d="M12,2A10,10 0 0,0 12,22A10,10 0 0,0 12,2M12,4A8,8 0 0,1 12,20V4Z"/></svg>',
-                new: '<svg class="moon-svg-big" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="#9e9e9e" stroke-width="2" fill="none"/></svg>',
-                cres: '<svg class="moon-svg-big" viewBox="0 0 24 24"><path fill="#616161" d="M12,2V20A8,8 0 0,0 12,4M12,22A10,10 0 0,1 12,2A10,10 0 0,1 12,22Z"/></svg>',
-                full: '<svg class="moon-svg-big" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#f9a825"/></svg>'
+                ming: '<svg class="moon-svg-big" viewBox="0 0 24 24" style="width:40px;height:40px"><path fill="#bdbdbd" d="M12,2A10,10 0 0,0 12,22A10,10 0 0,0 12,2M12,4A8,8 0 0,1 12,20V4Z"/></svg>',
+                new: '<svg class="moon-svg-big" viewBox="0 0 24 24" style="width:40px;height:40px"><circle cx="12" cy="12" r="10" stroke="#9e9e9e" stroke-width="2" fill="none"/></svg>',
+                cres: '<svg class="moon-svg-big" viewBox="0 0 24 24" style="width:40px;height:40px"><path fill="#616161" d="M12,2V20A8,8 0 0,0 12,4M12,22A10,10 0 0,1 12,2A10,10 0 0,1 12,22Z"/></svg>',
+                full: '<svg class="moon-svg-big" viewBox="0 0 24 24" style="width:40px;height:40px"><circle cx="12" cy="12" r="10" fill="#f9a825"/></svg>'
             };
 
             const lunarPhases = {
@@ -262,7 +256,6 @@
                 let mondayOfCurrent = new Date(today);
                 mondayOfCurrent.setDate(today.getDate() - today.getDay() + (today.getDay() === 0 ? -6 : 1));
 
-                // Ordem: Atual (centro), Anterior (topo) - para manter as 3 semanas visíveis
                 [-1, 0, 1].forEach(weekIdx => {
                     let weekRow = document.createElement('div');
                     weekRow.className = 'week-row';
@@ -274,12 +267,16 @@
                         currentDay.setDate(startOfWeek.getDate() + j);
                         let dayNum = currentDay.getDate();
                         let isToday = today.toDateString() === currentDay.toDateString();
+                        let isWeekend = (j >= 5);
                         let weekType = (weekIdx === 0) ? 'current-week' : '';
                         
                         let moon = (currentDay.getMonth() === 6 && lunarPhases[dayNum]) ? lunarPhases[dayNum] : null;
                         let content = moon ? moon.svg : dayNum;
 
-                        weekRow.innerHTML += `<div class="day-node ${weekType} ${isToday ? 'active' : ''}">${content}</div>`;
+                        // Aplicar classe de fim de semana (vermelho)
+                        let weekendClass = isWeekend ? 'weekend-red' : '';
+
+                        weekRow.innerHTML += `<div class="day-node ${weekType} ${isToday ? 'active' : ''} ${weekendClass}">${content}</div>`;
                         if (isToday) updateState(moon, infoGlobal);
                     }
                     stack.appendChild(weekRow);
@@ -296,7 +293,7 @@
                     advice.innerHTML = `<p><b>Influência Lunar:</b> Sob a <b>${moon.label}</b>, ${moon.task}</p>
                                         <p><b>Ação em ${region}:</b> O solo exige atenção à evapotranspiração. Aplique mulching denso e prepare os talhões para a próxima fase de transplante. A estabilidade térmica favorece tratamentos bio ao fim do dia.</p>`;
                 } else {
-                    iconBox.innerHTML = moonSVGs.ming; // Default
+                    iconBox.innerHTML = moonSVGs.ming;
                     advice.innerHTML = `<p><b>Manutenção Geral em ${region}:</b> Fase de transição hídrica. Foco na rega gota-a-gota e monda manual de ervas competidoras para preservar nutrientes.</p>
                                         <p><b>Tendência Meteorológica:</b> O céu limpo e a radiação solar intensa exigem proteção das culturas mais sensíveis (sombreamento parcial).</p>`;
                 }
