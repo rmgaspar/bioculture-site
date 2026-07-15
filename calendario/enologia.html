@@ -3,10 +3,10 @@
 	<head>
 		<title>bioCultura - Enologia Biológica e Regenerativa</title>
 		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale, user-scalable=no" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
 		<style>
-            /* --- ESTRUTURA GLOBAL (PARIDADE TOTAL) --- */
+            /* --- ESTRUTURA GLOBAL --- */
             body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
 			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
             section { padding-top: 3em !important; min-height: 100vh; display: flex; flex-direction: column; }
@@ -17,10 +17,10 @@
             .inner { padding: 2.2em 4em 0 4em !important; max-width: 1600px !important; margin: 0 auto; width: 100%; }
             .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; margin-bottom: 15px; display: block; }
 
-            /* HERO SPLIT - OTIMIZADO PARA SUBIR O CONTEÚDO */
-            .hero-split { display: flex; align-items: flex-start; justify-content: space-between; gap: 4em; margin-bottom: 2em; }
+            /* HERO SPLIT */
+            .hero-split { display: flex; align-items: flex-start; justify-content: space-between; gap: 4em; margin-bottom: 0; }
             .hero-text { flex: 1.5; text-align: left; padding-top: 5px; } 
-            .hero-text h1 { font-size: 4em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; line-height: 0.95; margin: 0 0 10px 0; }
+            .hero-text h1 { font-size: 4em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; line-height: 0.95; margin: 0 0 20px 0; }
             
             .hero-visual { flex: 1; display: flex; justify-content: flex-end; }
             .hero-globe { 
@@ -32,16 +32,13 @@
             }
             .hero-globe img { width: 100%; height: 100%; object-fit: cover; }
 
-            /* TEXTO E GRID REGIONAL (DENTRO DO HERO) */
-            .region-intro { font-size: 1.1em; line-height: 1.6; color: #555; margin-bottom: 1.5em; text-align: justify; border-left: 3px solid #6d1b32; padding-left: 20px; }
-            .regional-castas-compact { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-top: 20px; }
+            /* SUBTÍTULOS ESTILO ATLAS */
+            .sub-atlas { font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #6d1b32; margin: 2em 0 20px 0; display: block; }
 
-            /* DATA ROW PADRÃO */
-            .data-row { display: block; padding: 2.5em 0; border-bottom: 1px solid #f2f2f2; }
-            .data-row h4 { font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #6d1b32; margin: 0 0 25px 0; display: block; }
-
-            /* GRID DE CASTAS ATLAS */
+            /* GRID DE CASTAS */
             .castas-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+            .castas-grid-compact { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 15px; }
+            
             .casta-card { 
                 background: #fdfdfd; border: 1px solid #f2f2f2; border-radius: 12px; padding: 20px; 
                 cursor: pointer; transition: all 0.3s; position: relative;
@@ -53,28 +50,32 @@
             .dot-tinto { background: #6d1b32; }
             .dot-branco { background: #f1c40f; }
 
+            .btn-clean { background: none !important; border: none !important; padding: 0 !important; color: #bbb !important; font-size: 0.7em; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: color 0.2s; }
+            .btn-clean:hover { color: #6d1b32 !important; text-decoration: underline; }
+
             /* CLASSIFICAÇÃO BIO */
+            .data-row { display: block; padding: 2.5em 0; border-bottom: 1px solid #f2f2f2; }
             .vinhos-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 10px; }
             .vinho-box { border-left: 3px solid #eee; padding: 15px 20px; background: #fcfcfc; border-radius: 0 12px 12px 0; }
             .vinho-box h5 { font-size: 0.9em; font-weight: 900; text-transform: uppercase; margin-bottom: 8px; color: #1a1a1a; }
             .vinho-box p { font-size: 0.85em; color: #777; margin: 0; line-height: 1.5; }
             .vinho-box.bio-active { border-left-color: #2e7d32; }
 
-            /* ATLAS GLOBAL */
-            .region-block { margin-bottom: 4em; }
-            .region-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 20px; border-bottom: 1px solid #f9f9f9; padding-bottom: 10px; }
-            .region-header h5 { font-size: 1.3em; font-weight: 900; color: #333; margin: 0; }
-            .btn-clean { background: none !important; border: none !important; padding: 0 !important; color: #bbb !important; font-size: 0.7em; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: color 0.2s; }
-            .btn-clean:hover { color: #6d1b32 !important; text-decoration: underline; }
-
-            /* VISTA DE DETALHE OTIMIZADA */
+            /* VISTA DETALHE */
             #casta-detail-view { display: none; }
             .btn-back { color: #bbb; font-size: 0.75em; font-weight: 800; text-transform: uppercase; cursor: pointer; display: inline-block; margin-bottom: 20px; }
             .tech-sheet { display: grid; grid-template-columns: 1.2fr 1fr; gap: 4em; }
-            .attribute-row { margin-bottom: 12px; }
             .attribute-label { display: flex; justify-content: space-between; font-size: 0.7em; font-weight: 900; color: #bbb; text-transform: uppercase; margin-bottom: 5px; }
-            .bar-bg { height: 4px; background: #eee; border-radius: 10px; }
+            .bar-bg { height: 4px; background: #eee; border-radius: 10px; margin-bottom: 15px; }
             .bar-fill { height: 100%; background: #6d1b32; border-radius: 10px; }
+
+            /* NOTÍCIAS */
+            .news-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; }
+            .news-item { text-decoration: none; color: inherit; display: block; padding: 25px; background: #fdfdfd; border: none !important; border-radius: 12px; transition: all 0.3s; }
+            .news-item:hover { transform: translateY(-5px); background: #f9f9f9; }
+            .news-item h3 { font-size: 1.15em; font-weight: 700; color: #1a1a1a; margin-bottom: 12px; line-height: 1.3; }
+            .news-meta { display: flex; align-items: center; gap: 10px; border-top: 1px solid #f2f2f2; padding-top: 12px; }
+            .source-logo { width: 16px; height: 16px; object-fit: contain; filter: grayscale(100%); opacity: 0.6; }
 
             .page-footer { margin-top: auto; padding: 2em 0 2.5em 0; border-top: 1px solid #f2f2f2; opacity: 0.3; text-align: right; }
 
@@ -83,6 +84,7 @@
                 #wrapper { padding-left: 0 !important; }
                 .hero-split, .tech-sheet { flex-direction: column-reverse; display: flex; }
                 .hero-globe { width: 350px; height: 350px; margin: 0 auto; }
+                .castas-grid-compact { grid-template-columns: 1fr; }
             }
 		</style>
 	</head>
@@ -92,7 +94,7 @@
                 <div class="inner">
                     <section id="eno-section">
                         
-                        <!-- VISTA PRINCIPAL (LISTA E REGIONAL) -->
+                        <!-- VISTA PRINCIPAL -->
                         <div id="enologia-list-view">
                             <div class="hero-split">
                                 <div class="hero-text">
@@ -100,10 +102,13 @@
                                     <h1>Enologia: A Alma do Terroir</h1>
                                     <p style="font-size: 0.9em; font-style: italic; color: #bbb; margin-bottom: 25px;">Contexto regional: <strong id="reg-name" style="color:#6d1b32">...</strong></p>
                                     
-                                    <!-- CONTEÚDO REGIONAL SUBIU PARA AQUI -->
-                                    <div id="regional-content-box">
-                                        <p id="region-description" class="region-intro"></p>
-                                        <div id="regional-grid" class="regional-castas-compact"></div>
+                                    <p id="region-description" style="font-size: 1.1em; line-height: 1.7; color: #555; margin-bottom: 1.5em; text-align: justify;"></p>
+                                    
+                                    <!-- CASTAS DA REGIÃO (COMPACTO LADO A LADO COM IMAGEM) -->
+                                    <div id="regional-preview-box" style="display:none;">
+                                        <span class="sub-atlas">Castas da Região</span>
+                                        <div id="regional-grid-compact" class="castas-grid-compact"></div>
+                                        <span id="btn-expand-regional" class="btn-clean" onclick="toggleRegional(true)">+ ver todas as regionais</span>
                                     </div>
                                 </div>
                                 <div class="hero-visual">
@@ -113,41 +118,42 @@
                                 </div>
                             </div>
 
-                            <!-- 2. CLASSIFICAÇÃO BIO -->
+                            <!-- CASTAS REGIONAIS EXPANDIDAS (ABAIXO DA IMAGEM) -->
+                            <div id="regional-expanded-box" class="data-row" style="display:none; border-top: 1px solid #f2f2f2; margin-top: 2em;">
+                                <div id="regional-grid-full" class="castas-grid"></div>
+                                <span class="btn-clean" onclick="toggleRegional(false)" style="margin-top:20px; display:block;">- recolher lista</span>
+                            </div>
+
+                            <!-- CLASSIFICAÇÃO BIO -->
                             <div class="data-row">
                                 <h4>Classificação e Intervenção Mínima</h4>
                                 <div class="tech-content">
                                     <div class="vinhos-grid">
-                                        <div class="vinho-box bio-active">
-                                            <h5>Vinhos Tintos (Bio)</h5>
-                                            <p>Fermentação com leveduras indígenas e maceração prolongada. Foco na extração natural de taninos.</p>
-                                        </div>
-                                        <div class="vinho-box bio-active">
-                                            <h5>Vinhos Brancos (Minerais)</h5>
-                                            <p>Preservação da acidez natural e estágio sobre borras finas para complexidade e proteção antioxidante natural.</p>
-                                        </div>
-                                        <div class="vinho-box bio-active">
-                                            <h5>Vinhos "Orange"</h5>
-                                            <p>Brancos vinificados com contacto prolongado com as cascas, conferindo estrutura e estabilidade superior.</p>
-                                        </div>
-                                        <div class="vinho-box bio-active">
-                                            <h5>Espumantes Ancestrais</h5>
-                                            <p>Método 'Pét-Nat'. A fermentação termina na garrafa sem adição de açúcares, resultando num vinho vivo.</p>
-                                        </div>
+                                        <div class="vinho-box bio-active"><h5>Vinhos Tintos (Bio)</h5><p>Fermentação com leveduras indígenas e maceração prolongada.</p></div>
+                                        <div class="vinho-box bio-active"><h5>Vinhos Brancos (Minerais)</h5><p>Preservação da acidez natural e estágio sobre borras finas.</p></div>
+                                        <div class="vinho-box bio-active"><h5>Vinhos "Orange"</h5><p>Brancos vinificados com contacto prolongado com as cascas.</p></div>
+                                        <div class="vinho-box bio-active"><h5>Espumantes Ancestrais</h5><p>Método 'Pét-Nat'. Fermentação termina na garrafa sem aditivos.</p></div>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- 3. ATLAS GLOBAL -->
+                            <!-- ATLAS GLOBAL -->
                             <div class="data-row" style="border-bottom: none;">
                                 <h4>Atlas das Castas de Portugal</h4>
                                 <div id="global-atlas"></div>
                             </div>
+
+                            <!-- NOTÍCIAS -->
+                            <span class="news-header">noticias</span>
+                            <div id="noticias-enologia-dinamico" class="news-list"></div>
+                            <div style="text-align: left; margin-bottom: 4em;">
+                                <button id="btn-load-more-eno" class="btn-clean" style="margin-top:2em; font-size:0.8em">ver mais</button>
+                            </div>
                         </div>
 
-                        <!-- VISTA DE DETALHE (A BÍBLIA) -->
+                        <!-- VISTA DE DETALHE -->
                         <div id="casta-detail-view">
-                            <!-- O detalhe será injetado aqui usando a estrutura hero-split para manter o alinhamento -->
+                            <!-- Injetado via JS -->
                         </div>
 
                         <footer class="page-footer">
@@ -162,50 +168,59 @@
 
 		<script src="/assets/js/jquery.min.js"></script>
         <script>
-            let locationsDB = [], castasDB = [];
+            let locationsDB = [], castasDB = [], noticiasEno = [], visiveisEno = 4;
             let expandedRegions = {};
+            let regionalCastas = [];
 
             const regionIntros = {
                 "Lisboa": "A região de Lisboa é marcada pela forte influência atlântica, resultando em vinhos de frescura vibrante e salinidade única. As castas autóctones adaptaram-se aos solos argilo-calcários.",
                 "Douro": "O Douro, Património Mundial, é o berço de vinhos estruturados e complexos. O solo xistoso e o clima mediterrânico extremo forçam a concentração aromática.",
-                "Alentejo": "No Alentejo, o sol e as planícies graníticas moldam vinhos generosos e macios. A viticultura regenerativa foca-se na preservação da água.",
+                "Alentejo": "No Alentejo, o sol e as planícies graníticas moldam vinhos generosos e macios. A viticultura regenerativa foca-se aqui na preservação da água.",
                 "Dão": "O Dão produz vinhos de elegância ímpar. Rodeada por montanhas, as suas castas autóctones em solos graníticos revelam uma mineralidade profunda.",
                 "Beira Interior": "Região de altitude com solos graníticos e xistosos. O clima rigoroso permite vinhos com frescura e acidez natural notáveis."
             };
 
             async function inicializarPagina() {
                 try {
-                    const [rLoc, rCastas] = await Promise.all([
+                    const [rLoc, rCastas, rNews] = await Promise.all([
                         fetch('/data/bioregioes.json').then(r => r.json()),
-                        fetch('/data/castas.json').then(r => r.json())
+                        fetch('/data/castas.json').then(r => r.json()),
+                        fetch('/data/noticias.json').then(r => r.json())
                     ]);
                     locationsDB = rLoc;
                     castasDB = rCastas;
+                    noticiasEno = rNews.filter(n => (n.categoria || "").toLowerCase().includes('enologia') || (n.titulo || "").toLowerCase().includes('vinho'));
 
-                    const savedId = localStorage.getItem('biocultura_region') || "lisboa";
-                    const info = locationsDB.find(i => i.id === savedId) || locationsDB[0];
+                    const info = locationsDB.find(i => i.id === localStorage.getItem('biocultura_region')) || locationsDB[0];
                     
                     renderRegional(info);
                     renderGlobalAtlas();
+                    renderizarCardsEno();
                     setupLocationLogic();
-                } catch(e) { console.error("Erro no carregamento:", e); }
+                } catch(e) { console.error(e); }
             }
 
             function renderRegional(info) {
                 if(!info) return;
                 document.getElementById('reg-name').innerText = info.titulo;
-                const container = document.getElementById('regional-grid');
-                const desc = document.getElementById('region-description');
-                
                 const regionName = info.regiao_vinho || "Lisboa";
-                const autoctones = castasDB.filter(c => c.regioes.some(r => r.toLowerCase() === regionName.toLowerCase()) && c.autoctone);
+                regionalCastas = castasDB.filter(c => c.regioes.some(r => r.toLowerCase() === regionName.toLowerCase()) && c.autoctone);
 
-                desc.innerText = regionIntros[regionName] || `A região de ${regionName} possui um património vitícola riquíssimo.`;
+                document.getElementById('region-description').innerText = regionIntros[regionName] || `A região de ${regionName} possui um património vitícola riquíssimo.`;
                 
-                if(autoctones.length > 0) {
-                    container.innerHTML = autoctones.map(c => castaCardTemplate(c)).join('');
-                } else {
-                    container.innerHTML = `<p style="color:#bbb; font-style:italic">Nenhuma casta autóctone mapeada para a região de ${regionName}.</p>`;
+                if(regionalCastas.length > 0) {
+                    document.getElementById('regional-preview-box').style.display = 'block';
+                    document.getElementById('regional-grid-compact').innerHTML = regionalCastas.slice(0, 2).map(c => castaCardTemplate(c)).join('');
+                    document.getElementById('regional-grid-full').innerHTML = regionalCastas.map(c => castaCardTemplate(c)).join('');
+                    document.getElementById('btn-expand-regional').style.display = regionalCastas.length > 2 ? 'inline-block' : 'none';
+                }
+            }
+
+            function toggleRegional(expand) {
+                document.getElementById('regional-expanded-box').style.display = expand ? 'block' : 'none';
+                document.getElementById('btn-expand-regional').style.display = expand ? 'none' : 'inline-block';
+                if(expand) {
+                    window.scrollBy({ top: 400, behavior: 'smooth' });
                 }
             }
 
@@ -216,13 +231,13 @@
                 container.innerHTML = regioes.map(reg => {
                     const castas = castasDB.filter(c => c.regioes.includes(reg));
                     const isExpanded = expandedRegions[reg] || false;
-                    const visible = isExpanded ? castas : castas.slice(0, 3);
+                    const visible = isExpanded ? castas : castas.slice(0, 4);
 
                     return `
                         <div class="region-block">
                             <div class="region-header">
                                 <h5>${reg}</h5>
-                                ${castas.length > 3 ? `<span class="btn-clean" onclick="toggleRegion('${reg}')">${isExpanded ? '- recolher' : '+ veja todas ('+castas.length+')'}</span>` : ''}
+                                ${castas.length > 4 ? `<span class="btn-clean" onclick="toggleRegion('${reg}')">${isExpanded ? '- recolher' : '+ veja todas ('+castas.length+')'}</span>` : ''}
                             </div>
                             <div class="castas-grid">
                                 ${visible.map(c => castaCardTemplate(c)).join('')}
@@ -303,8 +318,18 @@
                 document.getElementById('casta-detail-view').style.display = 'none';
             }
 
+            function renderizarCardsEno() {
+                const container = document.getElementById('noticias-enologia-dinamico');
+                container.innerHTML = noticiasEno.map((n, i) => `
+                    <a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-item ${i >= visiveisEno ? 'hidden-card' : ''}" style="${i >= visiveisEno ? 'display:none' : ''}">
+                        <h3>${n.titulo}</h3>
+                        <div class="news-meta"><img src="${n.logo}" class="source-logo"><span>${n.data}</span></div>
+                    </a>`).join('');
+                document.getElementById('btn-load-more-eno').style.display = noticiasEno.length > visiveisEno ? 'inline-block' : 'none';
+            }
+
             function setupLocationLogic() {
-                $(document).off('input', '#loc-search-input').on('input', '#loc-search-input', function() {
+                $(document).on('input', '#loc-search-input', function() {
                     const val = $(this).val().toLowerCase(), dropdown = $('#loc-dropdown').empty();
                     if(val.length < 2) return dropdown.hide();
                     locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0,5).forEach(m => {
@@ -315,23 +340,14 @@
                     });
                     dropdown.show();
                 });
-                $(document).on('click', '#btn-gps-trigger', function() {
-                    navigator.geolocation.getCurrentPosition(pos => {
-                        let closest = locationsDB[0], minD = Infinity;
-                        locationsDB.forEach(c => {
-                            let d = Math.sqrt(Math.pow(pos.coords.latitude - c.lat, 2) + Math.pow(pos.coords.longitude - c.lon, 2));
-                            if(d < minD) { minD = d; closest = c; }
-                        });
-                        localStorage.setItem('biocultura_region', closest.id);
-                        location.reload();
-                    });
-                });
             }
 
             fetch('/sidebar-content.html').then(r => r.text()).then(html => {
                 document.getElementById('sidebar').innerHTML = html;
                 inicializarPagina();
             });
+
+            document.getElementById('btn-load-more-eno').onclick = () => { visiveisEno += 4; renderizarCardsEno(); };
         </script>
 	</body>
 </html>
