@@ -15,7 +15,7 @@
             .inner { padding: 2.2em 4em 0 4em !important; max-width: 1600px !important; margin: 0 auto; width: 100%; }
             .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; margin-bottom: 15px; display: block; }
 
-            /* HERO & CALENDÁRIO */
+            /* HERO & GLOBO */
             .hero-split { display: flex; align-items: flex-start; justify-content: space-between; gap: 4em; margin-bottom: 2em; }
             .hero-text { flex: 1.5; text-align: left; } 
             .hero-text h1 { font-size: 4em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; line-height: 0.95; margin: 0 0 20px 0; }
@@ -24,13 +24,19 @@
                 box-shadow: 0 40px 100px rgba(0,0,0,0.05); background: #fdfdfd; border: 1px solid #f2f2f2;
                 display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 60px 0;
             }
+            .week-stack { width: 100%; display: flex; flex-direction: column; gap: 12px; margin-top: 10px; }
+            .week-row { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; width: 100%; }
             .day-node { font-size: 0.85em; font-weight: 600; color: #ddd; display: flex; align-items: center; justify-content: center; height: 35px; }
             .day-node.active { color: #2e7d32; font-weight: 900; transform: scale(1.2); }
-            .day-node svg { width: 18px; height: 18px; }
+            .day-node svg { width: 18px; height: 18px; display: block; }
+            .globe-south { width: 60%; padding-top: 25px; border-top: 1px solid #f2f2f2; display: flex; align-items: center; justify-content: center; gap: 40px; }
+            .meteo-icon-big { font-size: 2.8em; color: #fbc02d; }
+            .moon-svg-big { width: 40px; height: 40px; }
 
             /* ORIENTAÇÃO REGIONAL */
-            .advice-block { margin-top: 20px; padding: 35px; background: #fdfdfd; border-radius: 25px; border: 1px solid #f2f2f2; border-left: 5px solid #2e7d32; }
+            .advice-block { margin-top: 20px; padding: 35px; background: #fdfdfd; border-radius: 25px; border: 1px solid #f2f2f2; border-left: 5px solid #2e7d32; min-height: 180px; }
             .advice-block h5 { font-size: 0.8em; font-weight: 900; text-transform: uppercase; color: #2e7d32; margin-bottom: 15px; }
+            .advice-content { font-size: 1.15em; line-height: 1.8; color: #555; text-align: justify; }
 
             /* SANIDADE VEGETAL */
             .sanidade-section { margin-top: 40px; }
@@ -42,10 +48,10 @@
             .disease-body b { color: #c62828; font-style: italic; font-size: 0.95em; display: block; margin-bottom: 5px; }
             .disease-body p { font-size: 0.85em; color: #777; line-height: 1.4; margin: 0; height: 2.8em; overflow: hidden; }
 
-            /* BOTÕES TOGGLE (LIMPOS) */
+            /* BOTÕES TOGGLE CINZENTOS */
             .toggle-container { text-align: left; margin: 0 0 40px 0; }
-            .btn-toggle { background: none !important; border: none !important; color: #bbb !important; padding: 0 !important; cursor: pointer; font-size: 2.5em; font-weight: 300; line-height: 1; transition: color 0.2s; outline: none; }
-            .btn-toggle:hover { color: #2e7d32 !important; }
+            .btn-toggle { background: none; border: none; color: #bbb; cursor: pointer; font-size: 2.5em; font-weight: 300; transition: color 0.2s; outline: none; }
+            .btn-toggle:hover { color: #2e7d32; }
             .hidden-item { display: none; }
 
             /* SÍNTESE */
@@ -64,8 +70,8 @@
                                 <span class="category-label">Agricultura bioCultura</span>
                                 <h1>Calendário de Regeneração</h1>
                                 <div class="advice-block">
-                                    <h5>Orientação Semanal: <span id="reg-name">...</span></h5>
-                                    <div id="advice-content" class="advice-content"></div>
+                                    <h5>Orientação Semanal: <span id="reg-name">Funchal</span></h5>
+                                    <div id="advice-content" class="advice-content">Carregando orientações...</div>
                                 </div>
                             </div>
                             <div class="hero-visual">
@@ -105,36 +111,22 @@
 
 		<script src="/assets/js/jquery.min.js"></script>
         <script>
-            let infoGlobal = null;
+            let infoGlobal = { titulo: "Funchal" };
 
-            // DADOS COMPLETOS - SANIDADE (8 ITENS)
             const pragasData = [
-                { id: "PRG-001", nome: "Cydia pomonella", comum: "Bichado da Fruta", img: "https://fitosistema.com/wp-content/uploads/2022/09/ctt_8x8.png", desc: "Aplicação de bioinseticidas virais ou nemátodos no tronco." },
+                { id: "PRG-001", nome: "Cydia pomonella", comum: "Bichado", img: "https://fitosistema.com/wp-content/uploads/2022/09/ctt_8x8.png", desc: "Aplicação de bioinseticidas virais ou nemátodos no tronco." },
                 { id: "PRG-002", nome: "Thaumetopoea pityocampa", comum: "Processionária", img: "https://florestas.pt/wp-content/uploads/2020/05/processionaria.jpg", desc: "Uso de Bacillus thuringiensis e armadilhas de cinta." },
                 { id: "PRG-003", nome: "Panonychus ulmi", comum: "Aranhiço Vermelho", img: "https://www.koppert.pt/content/_processed_/csm_aranhico_vermelho_teaser.png", desc: "Largada inundativa de ácaros predadores (Spidex)." },
-                { id: "DNC-001", nome: "Bursaphelenchus xylophilus", comum: "Nematodo do Pinheiro", img: "https://florestas.pt/wp-content/uploads/2020/05/nematodo.jpg", desc: "Controlo do inseto vetor Monochamus galloprovincialis." },
                 { id: "PRG-004", nome: "Trialeurodes vaporariorum", comum: "Mosca Branca", img: "https://www.koppert.pt/content/_processed_/csm_mosca_branca_teaser.png", desc: "Parasitismo por Encarsia formosa e placas amarelas." },
-                { id: "DNC-002", nome: "Venturia inaequalis", comum: "Pedrado da Macieira", img: "https://www.syngenta.pt/sites/g/files/zhg216/f/styles/syngenta_large/public/media/image/2021/04/pedrado.jpg", desc: "Bicarbonato de Potássio e Bacillus subtilis." },
-                { id: "PRG-005", nome: "Cacopsylla pyri", comum: "Psila da Pereira", img: "https://www.koppert.pt/content/_processed_/csm_psila_teaser.png", desc: "Uso de percevejos predadores Anthocoris nemoralis." },
-                { id: "PRG-006", nome: "Tomicus piniperda", comum: "Escolitídeo", img: "https://florestas.pt/wp-content/uploads/2020/05/escolitideo.jpg", desc: "Armadilhas de cairomonas e remoção de madeira morta." }
+                { id: "PRG-005", nome: "Cacopsylla pyri", comum: "Psila da Pereira", img: "https://www.koppert.pt/content/_processed_/csm_psila_teaser.png", desc: "Uso de percevejos predadores Anthocoris nemoralis." }
             ];
 
-            // DADOS COMPLETOS - INVASORAS (14 ITENS)
             const invasorasData = [
                 { id: "INV-001", nome: "Acacia dealbata", comum: "Mimosa", img: "https://invasoras.pt/sites/default/files/styles/especie_detalhe/public/acacia_dealbata_0.jpg", desc: "Controlo biológico com inseto galhador Eurytoma acaciae." },
                 { id: "INV-002", nome: "Acacia longifolia", comum: "Acácia-de-espigas", img: "https://invasoras.pt/sites/default/files/styles/especie_detalhe/public/acacia_longifolia_1.jpg", desc: "Vespa de galhas Trichilogaster acaciaelongifoliae." },
-                { id: "INV-003", nome: "Acacia saligna", comum: "Acácia-de-folhas-estreitas", img: "https://invasoras.pt/sites/default/files/styles/especie_detalhe/public/acacia_saligna_0.jpg", desc: "Uso do fungo Uromycladium tepperianum para causar morte." },
-                { id: "INV-004", nome: "Eichhornia crassipes", comum: "Jacinto-de-água", img: "https://invasoras.pt/sites/default/files/styles/especie_detalhe/public/eichhornia_crassipes_2.jpg", desc: "Herbivoria específica por Megamelus scutellaris." },
-                { id: "INV-005", nome: "Azolla filiculoides", comum: "Pinheirinha-de-água", img: "https://invasoras.pt/sites/default/files/styles/especie_detalhe/public/azolla_filiculoides_0.jpg", desc: "Controlo total pelo curculionídeo Stenopelmus rufinasus." },
-                { id: "INV-006", nome: "Ailanthus altissima", comum: "Ailanto", img: "https://invasoras.pt/sites/default/files/styles/especie_detalhe/public/ailanthus_altissima_0.jpg", desc: "Inoculação do fungo vascular Verticillium nonalfalfae." },
-                { id: "INV-007", nome: "Hakea sericea", comum: "Haquea-picante", img: "https://invasoras.pt/sites/default/files/styles/especie_detalhe/public/hakea_sericea_0.jpg", desc: "Traça Carposina autologa destrói as sementes." },
-                { id: "INV-008", nome: "Baccharis halimifolia", comum: "Baccharis", img: "https://invasoras.pt/sites/default/files/styles/especie_detalhe/public/baccharis_halimifolia_0.jpg", desc: "Besouro desfolhador Trirhabda bacharidis." },
-                { id: "INV-009", nome: "Cortaderia selloana", comum: "Erva-das-pampas", img: "https://invasoras.pt/sites/default/files/styles/especie_detalhe/public/cortaderia_selloana_0.jpg", desc: "Plantação densa de espécies nativas para ensombramento." },
-                { id: "INV-010", nome: "Oxalis pes-caprae", comum: "Azedas", img: "https://invasoras.pt/sites/default/files/styles/especie_detalhe/public/oxalis_pes_caprae_0.jpg", desc: "Pastoreio intensivo com ovinos no outono." },
-                { id: "INV-011", nome: "Carpobrotus edulis", comum: "Chora-das-praias", img: "https://invasoras.pt/sites/default/files/styles/especie_detalhe/public/carpobrotus_edulis_0.jpg", desc: "Cochonilha Pulvinariella mesembryanthemi suga a seiva." },
-                { id: "INV-012", nome: "Robinia pseudoacacia", comum: "Acácia-bastarda", img: "https://invasoras.pt/sites/default/files/styles/especie_detalhe/public/robinia_pseudoacacia_0.jpg", desc: "Mosca de galhas Obolodiplosis robiniae reduz o vigor." },
-                { id: "INV-013", nome: "Phytolacca americana", comum: "Tintureira", img: "https://invasoras.pt/sites/default/files/styles/especie_detalhe/public/phytolacca_americana_0.jpg", desc: "Arranque manual seguido de mulching denso." },
-                { id: "INV-014", nome: "Elodea canadensis", comum: "Elódea", img: "https://invasoras.pt/sites/default/files/styles/especie_detalhe/public/elodea_canadensis_0.jpg", desc: "Uso de carpa capim triplóide em sistemas fechados." }
+                { id: "INV-003", nome: "Eichhornia crassipes", comum: "Jacinto-de-água", img: "https://invasoras.pt/sites/default/files/styles/especie_detalhe/public/eichhornia_crassipes_2.jpg", desc: "Herbivoria específica por Megamelus scutellaris." },
+                { id: "INV-004", nome: "Cortaderia selloana", comum: "Erva-das-pampas", img: "https://invasoras.pt/sites/default/files/styles/especie_detalhe/public/cortaderia_selloana_0.jpg", desc: "Plantação densa de nativas para ensombramento." },
+                { id: "INV-005", nome: "Ailanthus altissima", comum: "Ailanto", img: "https://invasoras.pt/sites/default/files/styles/especie_detalhe/public/ailanthus_altissima_0.jpg", desc: "Inoculação do fungo vascular Verticillium nonalfalfae." }
             ];
 
             function renderSanidade(data, containerId, limit = 4) {
@@ -150,14 +142,8 @@
                 const gridId = type === 'pragas' ? '#grid-pragas' : '#grid-invasoras';
                 const btnId = type === 'pragas' ? '#btn-pragas' : '#btn-invasoras';
                 const hiddenItems = $(gridId).find('.hidden-item');
-
-                if (hiddenItems.length > 0) {
-                    hiddenItems.removeClass('hidden-item');
-                    $(btnId).text('-');
-                } else {
-                    $(gridId).find('a').slice(4).addClass('hidden-item');
-                    $(btnId).text('+');
-                }
+                if (hiddenItems.length > 0) { hiddenItems.removeClass('hidden-item'); $(btnId).text('-'); }
+                else { $(gridId).find('a').slice(4).addClass('hidden-item'); $(btnId).text('+'); }
             }
 
             const moonSVGs = {
@@ -166,28 +152,37 @@
                 cres: '<svg viewBox="0 0 24 24"><path fill="#616161" d="M12,2V20A8,8 0 0,0 12,4M12,22A10,10 0 0,1 12,2A10,10 0 0,1 12,22Z"/></svg>',
                 full: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#f9a825"/></svg>'
             };
-            const lunarPhases = { 7: moonSVGs.ming, 14: moonSVGs.new, 21: moonSVGs.cres, 29: moonSVGs.full };
+            const lunarPhases = { 7: {svg: moonSVGs.ming, label: 'Minguante'}, 14: {svg: moonSVGs.new, label: 'Nova'}, 21: {svg: moonSVGs.cres, label: 'Crescente'}, 29: {svg: moonSVGs.full, label: 'Cheia'} };
 
             function renderGlobe() {
                 const stack = document.getElementById('week-stack');
+                stack.innerHTML = '';
                 let today = new Date();
                 let monday = new Date(today); monday.setDate(today.getDate() - today.getDay() + (today.getDay() === 0 ? -6 : 1));
                 [-1, 0, 1].forEach(w => {
                     let row = document.createElement('div'); row.className = 'week-row';
                     for(let j=0; j<7; j++) {
                         let cur = new Date(monday); cur.setDate(monday.getDate() + (w*7) + j);
-                        let moon = (cur.getMonth() === 6 && lunarPhases[cur.getDate()]) ? lunarPhases[cur.getDate()] : cur.getDate();
-                        row.innerHTML += `<div class="day-node ${w===0?'current-week':''} ${today.toDateString()===cur.toDateString()?'active':''}">${moon}</div>`;
+                        let moon = (cur.getMonth() === 6 && lunarPhases[cur.getDate()]) ? lunarPhases[cur.getDate()] : null;
+                        row.innerHTML += `<div class="day-node ${w===0?'current-week':''} ${today.toDateString()===cur.toDateString()?'active':''}">${moon ? moon.svg : cur.getDate()}</div>`;
+                        if (today.toDateString()===cur.toDateString()) updateState(moon);
                     }
                     stack.appendChild(row);
                 });
+            }
+
+            function updateState(moon) {
+                const iconBox = document.getElementById('lunar-icon-container');
+                const advice = document.getElementById('advice-content');
+                const region = infoGlobal?.titulo || "Funchal";
+                iconBox.innerHTML = `<div class="moon-svg-big">${moon ? moon.svg : moonSVGs.ming}</div>`;
+                advice.innerHTML = `<p><b>Manutenção em ${region}:</b> Fase de transição hídrica. Foco na rega gota-a-gota e monda manual.</p><p><b>Tendência:</b> Céu limpo exige proteção solar das culturas sensíveis.</p>`;
             }
 
             async function inicializar() {
                 renderGlobe();
                 renderSanidade(pragasData, 'grid-pragas', 4);
                 renderSanidade(invasorasData, 'grid-invasoras', 4);
-                
                 const reports = [
                     { t: "AVISOS DRAP 2026", s: "FONTE: DRAP NORTE/ALGARVE", p: "Alertas para pressão do Oídio na vinha devido às noites quentes." },
                     { t: "INOVAÇÃO BIOLÓGICA", s: "FONTE: BASF / PLANTIX", p: "Diagnóstico por imagem identifica carências de Magnésio precocemente." },
@@ -195,7 +190,6 @@
                     { t: "RESILIÊNCIA HÍDRICA", s: "FONTE: AGROPORTAL.PT", p: "Gestão da água via retenção no solo com biochar e mulching." }
                 ];
                 document.getElementById('report-grid-agri').innerHTML = reports.map(r => `<div class="report-item"><h5>${r.t}</h5><p>${r.p}</p><span class="report-source">${r.s}</span></div>`).join('');
-                
                 fetch('/sidebar-content.html').then(r => r.text()).then(html => { document.getElementById('sidebar').innerHTML = html; });
             }
             inicializar();
