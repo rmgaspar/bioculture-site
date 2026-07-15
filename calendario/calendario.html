@@ -20,42 +20,47 @@
             /* HERO SPLIT */
             .hero-split { display: flex; align-items: flex-start; justify-content: space-between; gap: 4em; margin-bottom: 2em; }
             .hero-text { flex: 1.5; text-align: left; padding-top: 5px; } 
-            .hero-text h1 { font-size: 4em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; line-height: 0.95; margin-bottom: 20px; }
+            .hero-text h1 { font-size: 4em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; line-height: 0.95; margin: 0 0 20px 0; }
             
-            /* GLOBO CALENDÁRIO (SEM BORDER) */
+            /* GLOBO CALENDÁRIO (ESFÉRICO E SUBTIL) */
             .hero-visual { flex: 1; display: flex; justify-content: flex-end; }
             .hero-globe { 
                 position: relative; 
                 width: 480px; height: 480px; 
                 border-radius: 50%; overflow: hidden; 
-                box-shadow: 0 40px 100px rgba(0,0,0,0.12); 
-                background: #1a1a1a;
+                box-shadow: 0 20px 60px rgba(0,0,0,0.05); 
+                background: #fdfdfd; /* Cor da página */
                 display: flex; flex-direction: column; align-items: center; justify-content: center;
-                color: #fff;
+                border: 1px solid #f2f2f2;
             }
 
-            /* Efeito de Submergir (Dias da Semana) */
-            .calendar-globe-wrap { display: flex; align-items: center; justify-content: center; gap: 15px; width: 100%; }
-            .cal-day-node { transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1); text-align: center; }
-            .cal-day-node span { display: block; font-size: 0.5em; text-transform: uppercase; letter-spacing: 1px; color: #666; margin-bottom: 5px; }
+            /* Efeito Esférico de 3 Semanas */
+            .calendar-globe-wrap { 
+                display: grid; 
+                grid-template-columns: repeat(7, 1fr); 
+                gap: 5px; 
+                width: 95%; /* Aproxima os números da borda */
+                padding: 10px;
+            }
+            .cal-day-node { transition: all 0.4s ease; text-align: center; color: #bbb; font-weight: 600; }
             
-            /* Escalonamento Milimétrico */
-            .node-0, .node-6 { opacity: 0.1; transform: scale(0.4); filter: blur(2px); }
-            .node-1, .node-5 { opacity: 0.4; transform: scale(0.7); filter: blur(1px); }
-            .node-2, .node-4 { opacity: 0.7; transform: scale(0.9); }
-            .node-3 { opacity: 1; transform: scale(1.5); font-weight: 900; color: #4caf50; }
+            /* Lógica de Escala Esférica */
+            .node-week-prev, .node-week-next { opacity: 0.15; transform: scale(0.6); filter: blur(1px); }
+            .node-week-current { opacity: 0.6; transform: scale(0.9); color: #888; }
+            .node-week-current.active { opacity: 1; transform: scale(1.3); font-weight: 900; color: #2e7d32; }
+            
+            .cal-day-node span { display: block; font-size: 0.4em; text-transform: uppercase; color: #ccc; margin-bottom: 2px; }
 
             .lunar-hemisphere { 
-                margin-top: 40px; padding-top: 25px; border-top: 1px solid rgba(255,255,255,0.1); 
+                margin-top: 20px; padding-top: 20px; border-top: 1px solid #f2f2f2; 
                 width: 50%; text-align: center; 
             }
-            .moon-icon-big { font-size: 2.8em; display: block; margin-bottom: 5px; }
+            .moon-icon-big { font-size: 2.2em; display: block; margin-bottom: 5px; color: #444; }
 
-            /* ORIENTAÇÃO E METEO */
+            /* ADVICE BLOCK */
             .advice-block { margin-top: 20px; padding: 25px; background: #fdfdfd; border-radius: 20px; border: 1px solid #f2f2f2; }
             .advice-block h5 { font-size: 0.7em; font-weight: 900; text-transform: uppercase; color: #2e7d32; margin-bottom: 12px; }
             .meteo-note { font-size: 0.95em; color: #777; margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee; display: flex; align-items: center; gap: 12px; }
-            .meteo-note i { color: #fbc02d; font-size: 1.2em; }
 
             /* FITOSSANIDADE 2x2 */
             .disease-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 20px; }
@@ -63,21 +68,11 @@
             .disease-img { width: 100%; height: 180px; object-fit: cover; }
             .disease-body { padding: 25px; }
             .disease-body b { color: #c62828; font-style: italic; font-size: 1.1em; display: block; margin-bottom: 5px; }
-            .disease-body span { font-size: 0.75em; font-weight: 800; color: #bbb; text-transform: uppercase; display: block; margin-bottom: 10px; }
             .bio-sol { background: #f1f8e9; color: #2e7d32; padding: 12px; border-radius: 10px; font-size: 0.85em; font-weight: 600; border-left: 3px solid #2e7d32; }
 
-            /* MANUAIS (RECUPERADO) */
             .recipe-section { background: #1b4332; color: #fff; padding: 4em; border-radius: 40px; margin: 4em 0; }
             .recipe-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; margin-top: 30px; }
             .recipe-item h4 { color: #fff; font-size: 1.2em; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
-            .recipe-item p { font-size: 0.95em; color: rgba(255,255,255,0.8); line-height: 1.6; }
-            .recipe-item ul { font-size: 0.9em; padding-left: 20px; color: rgba(255,255,255,0.7); line-height: 1.8; }
-
-            .btn-nav-subtle { cursor: pointer; color: #ccc; font-size: 0.65em; text-transform: uppercase; letter-spacing: 2px; transition: 0.3s; font-weight: 700; }
-            .btn-nav-subtle:hover { color: #2e7d32; }
-
-            .data-row { display: block; padding: 3em 0; border-bottom: 1px solid #f2f2f2; }
-            .data-row h4 { font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin: 0 0 25px 0; }
 
             .page-footer { margin-top: auto; padding: 2em 0 2.5em 0; border-top: 1px solid #f2f2f2; opacity: 0.3; text-align: right; }
 
@@ -87,7 +82,6 @@
                 .hero-split { flex-direction: column-reverse; }
                 .hero-globe { width: 350px; height: 350px; margin: 0 auto; }
                 .disease-grid { grid-template-columns: 1fr; }
-                .recipe-section { padding: 2em; }
             }
 		</style>
 	</head>
@@ -96,34 +90,25 @@
 			<div id="main">
                 <div class="inner">
                     <section>
-                        <!-- 1. HERO & GLOBO DE TEMPO -->
                         <div class="hero-split">
                             <div class="hero-text">
                                 <span class="category-label">Agricultura bioCultura</span>
                                 <h1>Calendário de Regeneração</h1>
                                 
                                 <div class="advice-block">
-                                    <h5>Orientação Semanal: <span id="reg-name">...</span></h5>
+                                    <h5>Orientação para: <span id="reg-name">...</span></h5>
                                     <p id="advice-text" style="font-size: 1.15em; line-height: 1.7; color: #555;"></p>
                                     
                                     <div class="meteo-note">
                                         <i class="fas fa-cloud-sun"></i>
-                                        <span id="meteo-text">Tendência: Estabilidade térmica com vento NW. Ideal para tratamentos bio ao crepúsculo.</span>
-                                    </div>
-                                    
-                                    <div style="margin-top: 25px; display: flex; gap: 30px;">
-                                        <span class="btn-nav-subtle" onclick="changeWeek(-1)">‹ anterior</span>
-                                        <span class="btn-nav-subtle" onclick="changeWeek(1)">próxima ›</span>
+                                        <span id="meteo-text">Tendência: Estabilidade térmica regional. Ideal para monitorização de pragas ao amanhecer.</span>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="hero-visual">
                                 <div class="hero-globe">
-                                    <!-- Hemisfério Norte: Calendário Curvado -->
                                     <div class="calendar-globe-wrap" id="globe-days"></div>
-                                    
-                                    <!-- Hemisfério Sul: Lua -->
                                     <div class="lunar-hemisphere">
                                         <span id="lunar-icon" class="moon-icon-big"></span>
                                         <span style="font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #888;" id="lunar-name"></span>
@@ -132,7 +117,6 @@
                             </div>
                         </div>
 
-                        <!-- 2. FITOSSANIDADE 2x2 -->
                         <div class="data-row">
                             <h4>Sanidade Vegetal: Diagnóstico Bio</h4>
                             <div class="tech-content">
@@ -141,79 +125,74 @@
                                         <img src="https://images.unsplash.com/photo-1592419044706-39796d40f98c?q=80&w=800" class="disease-img">
                                         <div class="disease-body">
                                             <b>Plasmopara viticola <span>(Míldio)</span></b>
-                                            <p>Fungo que surge com calor e humidade relativa >75%. Cria manchas "oleosas" na face superior e bolor esbranquiçado na inferior.</p>
-                                            <div class="bio-sol">Solução: Calda Bordalesa ou Chá de Cavalinha.</div>
+                                            <p>Fungo de humidade alta. Cria manchas de óleo. Solução: Calda Bordalesa.</p>
+                                            <div class="bio-sol">Tratamento: Aplicação foliar preventiva.</div>
                                         </div>
                                     </div>
                                     <div class="disease-card">
                                         <img src="https://images.unsplash.com/photo-1628350565513-23e045310036?q=80&w=800" class="disease-img">
                                         <div class="disease-body">
                                             <b>Afídios <span>(Piolho)</span></b>
-                                            <p>Pequenos insetos que colonizam rebentos novos, sugando a seiva e deformando a planta. Atraem formigas e melada.</p>
-                                            <div class="bio-sol">Solução: Spray de Sabão de Potássio (2%).</div>
+                                            <p>Sugadores de seiva. Deformam rebentos. Solução: Sabão de Potássio.</p>
+                                            <div class="bio-sol">Tratamento: Pulverização direta nas colónias.</div>
                                         </div>
                                     </div>
                                     <div class="disease-card">
                                         <img src="https://images.unsplash.com/photo-1589923188900-85dae523342b?q=80&w=800" class="disease-img">
                                         <div class="disease-body">
                                             <b>Botrytis cinerea <span>(Podridão Cinzenta)</span></b>
-                                            <p>Aparece como um bolor cinzento denso nos frutos. Alastra-se rapidamente em condições de falta de ventilação.</p>
-                                            <div class="bio-sol">Solução: Desfolha para arejamento e pó de rocha.</div>
+                                            <p>Bolor cinzento em frutos. Solução: Arejamento e Pó de Rocha.</p>
+                                            <div class="bio-sol">Tratamento: Remoção de tecidos afetados.</div>
                                         </div>
                                     </div>
                                     <div class="disease-card">
                                         <img src="https://images.unsplash.com/photo-1615485243330-416560881bf4?q=80&w=800" class="disease-img">
                                         <div class="disease-body">
                                             <b>Elsinoë ampelina <span>(Antracnose)</span></b>
-                                            <p>Manchas circulares encovadas com centro cinzento e bordos negros ("olho de pássaro"). Ataca bagos e gavinhas.</p>
-                                            <div class="bio-sol">Solução: Enxofre molhável e remoção de ramos.</div>
+                                            <p>Manchas circulares em videiras. Solução: Enxofre molhável.</p>
+                                            <div class="bio-sol">Tratamento: Poda sanitária e queima de restos.</div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- 3. MANUAIS DE PREPARO (RECUPERADO) -->
                         <div class="recipe-section">
-                            <span class="category-label" style="color: rgba(255,255,255,0.5); text-align: left;">Farmácia da Horta</span>
-                            <h2 style="color: #fff; font-size: 2.5em; margin-bottom: 10px;">Como Preparar Soluções Bio</h2>
+                            <span class="category-label" style="color: rgba(255,255,255,0.5); text-align: left;">Manuais de Preparo</span>
+                            <h2 style="color: #fff; font-size: 2.5em; margin-bottom: 10px;">Soluções Biológicas de Precisão</h2>
                             <div class="recipe-grid">
                                 <div class="recipe-item">
-                                    <h4>Calda Bordalesa (Fungicida)</h4>
-                                    <p>Mistura de Sulfato de Cobre e Cal Hidratada. É o preventivo por excelência para fungos.</p>
+                                    <h4>Calda Bordalesa</h4>
+                                    <p>O fungicida preventivo mais eficaz para Míldio e Antracnose.</p>
                                     <ul>
-                                        <li>100g Sulfato de Cobre + 100g Cal em 10L água.</li>
-                                        <li>Dissolver separadamente antes de misturar.</li>
-                                        <li>Aplicar em dias nublados ou ao fim do dia.</li>
+                                        <li>100g de Sulfato de Cobre em 5L de água.</li>
+                                        <li>100g de Cal Hidratada em 5L de água.</li>
+                                        <li>Misturar vertendo o cobre sobre a cal.</li>
                                     </ul>
                                 </div>
                                 <div class="recipe-item">
-                                    <h4>Purim de Urtiga (Adubo)</h4>
-                                    <p>Rico em azoto e ferro, fortalece a imunidade das plantas contra pragas.</p>
+                                    <h4>Extrato de Própolis</h4>
+                                    <p>Antibiótico natural para tratar feridas de poda e evitar fungos do lenho.</p>
                                     <ul>
-                                        <li>1kg de urtigas frescas para 10L de água.</li>
-                                        <li>Deixar fermentar 10 a 15 dias à sombra.</li>
-                                        <li>Diluir 1L de purim para 10L de água de rega.</li>
+                                        <li>Diluir 10ml de tintura em 1L de água.</li>
+                                        <li>Pincelar cortes superiores a 2cm.</li>
                                     </ul>
                                 </div>
                                 <div class="recipe-item">
-                                    <h4>Sabão de Potássio (Inseticida)</h4>
-                                    <p>Atua por asfixia, pulverizando diretamente sobre as colónias de insetos de corpo mole.</p>
+                                    <h4>Infusão de Alho</h4>
+                                    <p>Poderoso repelente contra afídios e ácaros com ação fungicida.</p>
                                     <ul>
-                                        <li>200ml de sabão líquido por 10L água.</li>
-                                        <li>Adicionar uma colher de álcool para potenciar.</li>
-                                        <li>Pulverizar diretamente sobre as colónias.</li>
+                                        <li>100g de alhos picados em 1L de água.</li>
+                                        <li>Ferver e aplicar após arrefecimento.</li>
                                     </ul>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- 4. RELATÓRIOS (RECUPERADO) -->
                         <div class="data-row" style="border-bottom: none;">
                             <h4>Síntese das Autoridades 2026</h4>
                             <div class="tech-content">
-                                <h3 style="margin: 0 0 10px 0; font-weight: 300; font-size: 2em;">Inteligência Fitossanitária Nacional</h3>
-                                <div id="report-grid-agri" style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 20px;"></div>
+                                <div id="report-grid-agri" style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 10px;"></div>
                             </div>
                         </div>
 
@@ -229,21 +208,20 @@
 
 		<script src="/assets/js/jquery.min.js"></script>
         <script>
-            let currentWeekOffset = 0;
             let locationsDB = [];
 
             const lunarPhases = {
-                7: { icon: '◐', label: 'Quarto Minguante', color: '#bdbdbd', task: 'Energia concentrada nas raízes. Ideal para controlo de pragas do solo, podas de limpeza e sementeira de cenoura e rabanete.' },
-                14: { icon: '●', label: 'Lua Nova', color: '#9e9e9e', task: 'Fase de repouso vegetativo. Dedique-se à preparação de novos talhões com composto orgânico e à manutenção de ferramentas.' },
-                21: { icon: '◑', label: 'Quarto Crescente', color: '#616161', task: 'Vigor ascendente da seiva. Semear e transplantar tudo o que produz acima do solo: alfaces, tomates e pimentos.' },
-                29: { icon: '●', label: 'Lua Cheia', color: '#f9a825', task: 'Máxima vitalidade hídrica. Ideal para a colheita de frutos e ervas medicinais para secagem. Evite podas drásticas.' }
+                7: { icon: '◐', label: 'Quarto Minguante', color: '#bdbdbd', task: 'Ideal para o controlo de pragas do solo e podas de limpeza.' },
+                14: { icon: '●', label: 'Lua Nova', color: '#9e9e9e', task: 'Fase de repouso. Prepare o solo com composto orgânico.' },
+                21: { icon: '◑', label: 'Quarto Crescente', color: '#616161', task: 'Vigor ascendente. Semear e transplantar hortícolas de folha.' },
+                29: { icon: '●', label: 'Lua Cheia', color: '#f9a825', task: 'Máxima vitalidade hídrica. Ideal para colheita de medicinais.' }
             };
 
             const agriReports = [
-                { titulo: "Diretrizes PEPAC 2026", texto: "O Plano Estratégico da PAC prioriza o apoio financeiro a explorações que demonstrem aumento da biodiversidade no talhão. Estão abertas candidaturas para a instalação de charcas.", fonte: "agricultura.gov.pt" },
-                { titulo: "Vigilância Fitossanitária", texto: "O INIAV alerta para novos focos de Xylella fastidiosa. A recomendação técnica foca-se na eliminação de plantas hospedeiras e no uso de variedades nativas certificadas.", fonte: "iniav.pt" },
-                { titulo: "Mercados Agroportal", texto: "O consumo de produtos biológicos cresceu 18%. A escassez de água no sul força a transição para sistemas de sequeiro regenerativo com mulching denso.", fonte: "agroportal.pt" },
-                { titulo: "Rede de Hortas Bio PT", texto: "A consociação de culturas (ex: Tomate + Manjericão) reduziu a incidência de pragas em 35% sem uso de pesticidas sintéticos em 2025.", fonte: "hortasbiologicas.pt" }
+                { titulo: "Avisos DRAP 2026", texto: "Alerta para pressão de Oídio na vinha devido às noites quentes. Recomenda-se enrelvamento.", fonte: "DRAP" },
+                { titulo: "Inovação BASF/Plantix", texto: "Diagnóstico por imagem identifica carências de Magnésio com 90% de precisão.", fonte: "Plantix" },
+                { titulo: "Sanidade Vegetal INIAV", texto: "Vigilância apertada sobre a Xylella. Uso de variedades nativas é obrigatório.", fonte: "INIAV" },
+                { titulo: "Resiliência Hídrica", texto: "Gestão de água em 2026 foca-se na retenção via biochar e mulching denso.", fonte: "Agroportal" }
             ];
 
             function renderGlobeCalendar() {
@@ -251,28 +229,32 @@
                 container.innerHTML = '';
                 const labels = ['S','T','Q','Q','S','S','D'];
                 
-                let date = new Date();
-                date.setDate(date.getDate() + (currentWeekOffset * 7));
-                let dayOfWeek = date.getDay();
-                let diff = date.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1);
-                let monday = new Date(date.setDate(diff));
+                let today = new Date();
+                // Gerar 21 dias (Semana anterior, atual e próxima)
+                let start = new Date();
+                start.setDate(today.getDate() - today.getDay() + (today.getDay() === 0 ? -6 : 1) - 7);
 
-                for(let i=0; i<7; i++) {
-                    let current = new Date(monday);
-                    current.setDate(monday.getDate() + i);
+                for(let i=0; i<21; i++) {
+                    let current = new Date(start);
+                    current.setDate(start.getDate() + i);
                     let dayNum = current.getDate();
-                    let isToday = new Date().toDateString() === current.toDateString();
+                    let isToday = today.toDateString() === current.toDateString();
                     
+                    // Lógica de classe baseada na semana
+                    let weekClass = 'node-week-current';
+                    if (i < 7) weekClass = 'node-week-prev';
+                    if (i > 13) weekClass = 'node-week-next';
+
                     let moon = (current.getMonth() === 6 && lunarPhases[dayNum]) ? lunarPhases[dayNum] : null;
                     let content = moon ? `<i style="color:${moon.color}">${moon.icon}</i>` : dayNum;
 
                     container.innerHTML += `
-                        <div class="cal-day-node node-${i} ${isToday ? 'active' : ''}">
-                            <span>${labels[i]}</span>
+                        <div class="cal-day-node ${weekClass} ${isToday ? 'active' : ''}">
+                            <span>${labels[i % 7]}</span>
                             ${content}
                         </div>`;
                     
-                    if (isToday || (i === 3 && !isToday)) updateLunarHemisphere(moon);
+                    if (isToday) updateLunarHemisphere(moon);
                 }
             }
 
@@ -285,25 +267,21 @@
                     iconBox.innerHTML = moon.icon;
                     iconBox.style.color = moon.color;
                     nameBox.innerText = moon.label;
-                    advice.innerHTML = `Sob influência de <b>${moon.label}</b>, ${moon.task}`;
+                    advice.innerHTML = `Nesta semana sob influência de <b>${moon.label}</b>, ${moon.task} A regeneração do solo deve ser prioritária para manter a resiliência térmica.`;
                 } else {
                     iconBox.innerHTML = '☾';
                     iconBox.style.color = '#444';
-                    nameBox.innerText = 'Fase de Transição';
-                    advice.innerHTML = "Semana de manutenção geral. Verifique a cobertura de solo (mulching) e proceda à monda manual de ervas competidoras.";
+                    nameBox.innerText = 'Transição';
+                    advice.innerHTML = "Fase de manutenção geral. Verifique a cobertura de solo (mulching) e proceda à monda manual de ervas competidoras para preservar a humidade.";
                 }
-            }
-
-            function changeWeek(dir) {
-                currentWeekOffset += dir;
-                renderGlobeCalendar();
             }
 
             async function inicializar() {
                 try {
                     const rLoc = await fetch('/data/bioregioes.json');
                     locationsDB = await rLoc.json();
-                    const info = locationsDB.find(i => i.id === (localStorage.getItem('biocultura_region') || "proenca-a-nova"));
+                    const savedId = localStorage.getItem('biocultura_region') || "proenca-a-nova";
+                    const info = locationsDB.find(i => i.id === savedId);
                     if(info) document.getElementById('reg-name').innerText = info.titulo;
                     
                     renderGlobeCalendar();
