@@ -3,26 +3,25 @@
 	<head>
 		<title>bioCultura - Observatório da Água</title>
 		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<meta name="viewport" content="width=device-width, initial-scale, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
 		<style>
-            /* --- ESTRUTURA GLOBAL (PARIDADE TOTAL COM INDEX/BIODIVERSIDADE) --- */
+            /* --- ESTRUTURA GLOBAL (PARIDADE TOTAL COM INDEX) --- */
             body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
 			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
-            section { padding-top: 3em !important; min-height: 100vh; display: flex; flex-direction: column; }
+            section { min-height: 100vh; display: flex; flex-direction: column; }
 
             #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
             #wrapper { padding-left: 18em !important; }
 
-            /* RETIFICAÇÃO MILIMÉTRICA DO TOPO */
             .inner { padding: 2.2em 4em 0 4em !important; max-width: 1600px !important; margin: 0 auto; width: 100%; }
 
             .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; margin-bottom: 15px; display: block; }
 
-            /* HERO SPLIT (ALINHAMENTO COM INDEX) */
+            /* HERO SPLIT (ALINHAMENTO MILIMÉTRICO) */
             .hero-split { display: flex; align-items: flex-start; justify-content: space-between; gap: 4em; margin-bottom: 2em; }
             .hero-text { flex: 1.5; text-align: left; padding-top: 5px; } 
-            .hero-text h1 { font-size: 4em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; line-height: 0.95; margin: 0 0 20px 0; }
+            .hero-text h1 { font-size: 4em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; line-height: 0.95; margin-bottom: 20px; }
             
             .hero-visual { flex: 1; display: flex; justify-content: flex-end; }
             .hero-globe { 
@@ -34,7 +33,7 @@
             }
             .hero-globe img { width: 100%; height: 100%; object-fit: cover; }
 
-            /* REFORMULAÇÃO DO ALINHAMENTO (CONTEÚDO ABAIXO DOS SUBTÍTULOS) */
+            /* REFORMULAÇÃO DO ALINHAMENTO (VERTICAL) */
             .data-row { display: block; padding: 2.5em 0; border-bottom: 1px solid #f2f2f2; }
             .data-row h4 { 
                 font-size: 0.7em; 
@@ -69,7 +68,7 @@
             .report-item p { font-size: 0.95em; line-height: 1.7; color: #666; margin-bottom: 15px; text-align: justify; }
             .report-source { font-size: 0.65em; font-weight: 800; color: #bbb; text-transform: uppercase; letter-spacing: 1px; display: block; border-top: 1px solid #eee; padding-top: 8px; }
 
-            /* NOTÍCIAS (ESTILO INDEX) */
+            /* NEWS GRID */
             .news-header { font-size: 0.8em; font-weight: 400; text-transform: lowercase; letter-spacing: 3px; color: #bbb; margin-bottom: 2.5em; display: block; margin-top: 4em; }
             .news-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 30px; margin-bottom: 4em; }
             .news-item { 
@@ -79,16 +78,14 @@
             }
             .news-item:hover { transform: translateY(-5px); border-color: #ddd; }
             .news-item h3 { font-size: 1.15em; font-weight: 700; color: #1a1a1a; margin-bottom: 12px; line-height: 1.3; min-height: 2.6em; }
-            .news-item p { font-size: 0.9em; color: #777; line-height: 1.5; margin-bottom: 15px; }
             .news-meta { display: flex; align-items: center; gap: 10px; border-top: 1px solid #f9f9f9; padding-top: 12px; }
             .source-logo { width: 16px; height: 16px; object-fit: contain; filter: grayscale(100%); opacity: 0.6; }
             .news-meta span { font-size: 0.65em; font-weight: 800; color: #bbb; text-transform: uppercase; letter-spacing: 1px; }
 
             .btn-pagination { background: none !important; border: none !important; color: #bbb !important; font-size: 0.8em; letter-spacing: 3px; cursor: pointer; text-transform: lowercase; }
-            .hidden-card { display: none; }
             .bio-res-item { padding: 12px 18px; font-size: 0.9em; color: #666; cursor: pointer; border-bottom: 1px solid #f9f9f9 !important; }
 
-            /* RODAPÉ ALINHADO À SIDEBAR */
+            /* RODAPÉ ALINHADO */
             .page-footer { margin-top: auto; padding: 2em 0 2.5em 0; border-top: 1px solid #f2f2f2; opacity: 0.3; text-align: right; }
 
             @media screen and (max-width: 1280px) {
@@ -106,7 +103,7 @@
 			<div id="main">
                 <div class="inner">
                     <section>
-                        <!-- 1. HERO & DASHBOARD -->
+                        <!-- 1. HERO & DASHBOARD (ALINHADO AO INDEX) -->
                         <div class="hero-split">
                             <div class="hero-text">
                                 <span class="category-label">Recursos Vitais</span>
@@ -254,6 +251,7 @@
                     const dur = parseFloat(info.recursos_hidricos.dureza_fr) || 10;
                     document.getElementById('label-ph').innerText = "pH " + ph;
                     document.getElementById('label-dureza').innerText = dur + " ºf";
+                    
                     document.getElementById('water-advantages').innerText = ph < 7 
                         ? "Água ligeiramente ácida: Ideal para mirtilos e culturas acidófilas." 
                         : "Água equilibrada: Excelente para neutralizar solos ácidos e rega geral.";
@@ -279,7 +277,6 @@
                 container.innerHTML = noticiasAgua.map((n, i) => `
                     <a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-item ${i >= visiveisAgua ? 'hidden-card' : ''}">
                         <h3>${n.titulo}</h3>
-                        <p>${(n.resumo_biocultura || n.resumo || "").substring(0, 110)}...</p>
                         <div class="news-meta">
                             <img src="${n.logo}" class="source-logo">
                             <span>${n.data}</span>
