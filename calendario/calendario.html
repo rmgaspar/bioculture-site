@@ -6,7 +6,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
 		<style>
-            /* --- ESTRUTURA GLOBAL (PARIDADE TOTAL INDEX) --- */
+            /* --- ESTRUTURA GLOBAL --- */
             body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
 			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
             section { min-height: 100vh; display: flex; flex-direction: column; }
@@ -32,18 +32,17 @@
                 padding: 60px 0; border: 1px solid #f2f2f2;
             }
 
-            .month-year-label { font-size: 0.8em; font-weight: 900; text-transform: uppercase; color: #bbb; letter-spacing: 3px; }
+            .month-year-label { font-size: 0.8em; font-weight: 900; text-transform: uppercase; color: #2e7d32; letter-spacing: 3px; }
 
             .week-stack { 
                 width: 100%; display: flex; flex-direction: column; gap: 15px; margin-top: 20px; 
-                mask-image: linear-gradient(to right, transparent, black 20%, black 80%, transparent);
             }
             .week-row { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; width: 100%; }
             .day-node { font-size: 0.85em; font-weight: 600; color: #ddd; display: flex; align-items: center; justify-content: center; height: 30px; }
-            .day-node.current-week { color: #1a1a1a; }
-            .day-node.active { color: #2e7d32; font-weight: 900; transform: scale(1.2); }
+            .day-node.current-week { color: #1a1a1a; } /* Números da semana atual a preto */
+            .day-node.active { color: #2e7d32; font-weight: 900; transform: scale(1.3); }
             .day-node.weekend-red { color: #ef5350 !important; }
-            .day-node svg { width: 22px; height: 22px; display: block; }
+            .day-node svg { width: 18px; height: 18px; display: block; }
 
             .globe-south { width: 60%; padding-top: 25px; display: flex; align-items: center; justify-content: center; gap: 40px; }
             .meteo-icon-big { font-size: 2.8em; color: #fbc02d; }
@@ -55,38 +54,27 @@
             .advice-block h5 { font-size: 0.8em; font-weight: 900; text-transform: uppercase; color: #2e7d32; margin-bottom: 15px; }
             .advice-content { font-size: 1.15em; line-height: 1.8; color: #555; text-align: justify; }
 
-            /* DATA ROW & GRIDS */
+            /* GRIDS E CARDS */
             .data-row { display: block; padding: 5em 0; border-bottom: 1px solid #f2f2f2; }
             .data-row h4 { font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin: 0 0 35px 0; }
-
             .info-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; }
-            .info-card-compact { 
-                background: #fdfdfd; border: 1px solid #f2f2f2; border-radius: 12px; padding: 15px; 
-                cursor: pointer; transition: all 0.3s; display: block; text-decoration: none !important;
-            }
+            .info-card-compact { background: #fdfdfd; border: 1px solid #f2f2f2; border-radius: 12px; padding: 15px; cursor: pointer; transition: all 0.3s; display: block; text-decoration: none !important; }
             .info-card-compact:hover { transform: translateY(-5px); border-color: #2e7d32; }
             .compact-img { width: 100%; height: 120px; object-fit: cover; border-radius: 8px; margin-bottom: 12px; background: #f9f9f9; }
             .info-card-compact b { display: block; font-size: 0.95em; color: #c62828; font-style: italic; margin-bottom: 2px; }
             .info-card-compact span { display: block; font-size: 0.85em; color: #1a1a1a; font-weight: 700; margin-bottom: 8px; }
             .info-card-compact p { font-size: 0.8em; color: #777; line-height: 1.4; margin: 0; height: 2.8em; overflow: hidden; }
 
-            /* VISTA DE DETALHE (BIO-BÍBLIA) */
-            #sanity-detail-view { display: none; padding-bottom: 4em; }
+            #sanity-detail-view { display: none; padding-bottom: 4em; border-bottom: 1px solid #f2f2f2; }
             .tech-sheet { display: grid; grid-template-columns: 1.2fr 1fr; gap: 4em; }
             .btn-back { color: #bbb; font-size: 0.75em; font-weight: 800; text-transform: uppercase; cursor: pointer; display: inline-block; margin-bottom: 20px; }
-            .btn-back:hover { color: #2e7d32; }
-            .bio-box { background: #f1f8e9; color: #2e7d32; padding: 20px; border-radius: 15px; border-left: 4px solid #2e7d32; margin-top: 15px; }
-
-            /* BOTÕES CLEAN */
-            .btn-clean { background: none !important; border: none !important; box-shadow: none !important; color: #bbb !important; cursor: pointer; font-size: 0.7em; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; padding: 15px 0; outline: none; }
-            .btn-clean:hover { color: #2e7d32 !important; text-decoration: underline; }
+            .btn-clean { background: none !important; border: none !important; color: #bbb !important; cursor: pointer; font-size: 0.7em; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; padding: 15px 0; outline: none; }
+            .bio-sol { background: #f1f8e9; color: #2e7d32; padding: 12px; border-radius: 10px; font-size: 0.85em; font-weight: 600; border-left: 3px solid #2e7d32; margin-top: 15px; }
             .hidden-item { display: none; }
 
             .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; margin-top: 20px; }
             .report-item { border-top: 1px solid #f9f9f9; padding-top: 20px; }
             .report-item h5 { font-size: 0.75em; font-weight: 900; text-transform: uppercase; color: #2e7d32; margin-bottom: 12px; }
-            .report-item p { font-size: 1em; line-height: 1.7; color: #555; margin-bottom: 10px; text-align: justify; }
-
             .page-footer { margin-top: auto; padding: 2em 0 2.5em 0; border-top: 1px solid #f2f2f2; opacity: 0.3; text-align: right; }
 
             @media screen and (max-width: 1280px) {
@@ -102,14 +90,11 @@
 			<div id="main">
                 <div class="inner">
                     <section id="main-section">
-                        
-                        <!-- VISTA DE DETALHE -->
                         <div id="sanity-detail-view">
                             <span class="btn-back" onclick="hideDetail()">← voltar ao calendário</span>
                             <div id="detail-content"></div>
                         </div>
 
-                        <!-- VISTA PRINCIPAL -->
                         <div id="calendar-main-view">
                             <div class="hero-split">
                                 <div class="hero-text">
@@ -142,6 +127,27 @@
                                 <h4>Flora Invasora Regional</h4>
                                 <div id="flora-container" class="info-grid"></div>
                                 <button class="btn-clean" id="btn-invasoras" onclick="toggleGrid('flora')">+ ver todas as invasoras</button>
+                            </div>
+
+                            <div class="recipe-section">
+                                <h2 style="color: #fff; font-size: 2.5em; margin-bottom: 10px;">Soluções Biológicas de Precisão</h2>
+                                <div class="recipe-grid">
+                                    <div class="recipe-item">
+                                        <h4>Calda Bordalesa bioCultura</h4>
+                                        <p>Fungicida preventivo para Míldio e Antracnose.</p>
+                                        <ul><li>100g Sulfato Cobre + 100g Cal em 10L água.</li></ul>
+                                    </div>
+                                    <div class="recipe-item">
+                                        <h4>Extrato de Própolis</h4>
+                                        <p>Antibiótico natural para feridas de poda.</p>
+                                        <ul><li>Diluir 10ml em 1L de água. Pincelar cortes.</li></ul>
+                                    </div>
+                                    <div class="recipe-item">
+                                        <h4>Infusão de Alho</h4>
+                                        <p>Repelente contra afídios e ácaros.</p>
+                                        <ul><li>100g alhos macerados em 1L água por 24h.</li></ul>
+                                    </div>
+                                </div>
                             </div>
 
                             <div class="data-row" style="border-bottom: none;">
@@ -179,10 +185,10 @@
             };
 
             const agriReports = [
-                { t: "Diretrizes PEPAC 2026", p: "O Plano Estratégico prioriza o apoio à biodiversidade no talhão e sistemas de rega solar inteligente para mitigar o stress hídrico severo no interior.", s: "agricultura.gov.pt" },
-                { t: "Vigilância Fitossanitária", p: "O INIAV alerta para focos de Xylella fastidiosa. A recomendação técnica exige a diversificação de cultivares nativas e o uso de sebes vivas como barreira biológica.", s: "iniav.pt" },
-                { t: "Mercados Agroportal", p: "O consumo de produtos biológicos cresceu 18%. A agricultura de sequeiro regenerativo com mulching denso apresenta-se como a única via viável.", s: "agroportal.pt" },
-                { t: "Hortas Bio PT", p: "Monitorização comunitária revela que consociações estratégicas (ex: Tomate + Manjericão) reduziram pragas em 35% sem uso de pesticidas sintéticos.", s: "hortasbiologicas.pt" }
+                { t: "Diretrizes PEPAC 2026", p: "O Plano Estratégico prioriza o apoio à biodiversidade no talhão e sistemas de rega inteligente.", s: "agricultura.gov.pt" },
+                { t: "Vigilância Fitossanitária", p: "O INIAV alerta para focos de Xylella. Recomenda-se o uso de variedades nativas e sebes vivas.", s: "iniav.pt" },
+                { t: "Mercados Agroportal", p: "O consumo de produtos biológicos cresceu 18%. Foco na agricultura de sequeiro regenerativo.", s: "agroportal.pt" },
+                { t: "Hortas Bio PT", p: "Consociações (ex: Tomate + Manjericão) reduziram pragas em 35% sem uso de pesticidas sintéticos.", s: "hortasbiologicas.pt" }
             ];
 
             function renderGlobe() {
@@ -196,8 +202,11 @@
                     for(let j=0; j<7; j++) {
                         let cur = new Date(monday); cur.setDate(monday.getDate() + (w*7) + j);
                         let isToday = today.toDateString() === cur.toDateString();
+                        let isWeekend = (j >= 5);
+                        let weekType = (w === 0) ? 'current-week' : '';
                         let moon = (cur.getMonth() === 6 && lunarPhases[cur.getDate()]) ? lunarPhases[cur.getDate()] : null;
-                        row.innerHTML += `<div class="day-node ${w===0?'current-week':''} ${isToday?'active':''} ${j>=5?'weekend-red':''}">
+                        
+                        row.innerHTML += `<div class="day-node ${weekType} ${isToday?'active':''} ${isWeekend?'weekend-red':''}">
                             ${moon ? moon.svg : cur.getDate()}
                         </div>`;
                         if (isToday) updateState(moon);
@@ -215,7 +224,7 @@
                 iconBox.innerHTML = moon ? `<div class="moon-svg-big">${moon.svg}</div>` : moonSVGs.ming;
                 advice.innerHTML = `
                     <p><b>Estratégia Regenerativa:</b> ${moon ? `Sob a influência da <b>${moon.label}</b>, ${moon.task}` : "Fase de transição lunar: manutenção geral e observação recomendada."}</p>
-                    <p>Com solo regional predominantemente <b>${solo}</b>, a prioridade absoluta desta semana em <b>${region}</b> é a gestão da evapotranspiração. Aplique mulching denso para proteger a microvida do solo da radiação solar intensa.</p>
+                    <p>Com solo regional predominantemente <b>${solo}</b>, a prioridade absoluta desta semana em <b>${region}</b> é a gestão da evapotranspiração. Aplique mulching denso e tratamentos biológicos ao crepúsculo.</p>
                 `;
             }
 
@@ -237,7 +246,6 @@
                 const btnId = type === 'pragas' ? 'btn-pragas' : 'btn-invasoras';
                 const container = document.getElementById(containerId);
                 const hidden = container.querySelectorAll('.hidden-item');
-
                 if (hidden.length > 0) {
                     hidden.forEach(el => el.classList.remove('hidden-item'));
                     document.getElementById(btnId).innerText = `- recolher ${type}`;
@@ -250,26 +258,6 @@
             function showDetail(name, type) {
                 const db = type === 'praga' ? pragasDB : floraDB;
                 const item = db.find(i => i.nome_cientifico === name);
-                const detailView = document.getElementById('sanity-detail-view');
-                const mainView = document.getElementById('calendar-main-view');
-
-                let bioHtml = '';
-                if(type === 'praga') {
-                    bioHtml = `
-                        <div><h4 style="font-size:0.7em; color:#bbb">Solução Biológica</h4>
-                        <div class="bio-box">${item.solucao_biologica.metodo}</div></div>
-                        <div><h4 style="font-size:0.7em; color:#bbb; margin-top:20px">Prevenção</h4>
-                        <p><b>Estratégia:</b> ${item.prevencao_biologica.estrategia}</p>
-                        <p><b>Quando:</b> ${item.prevencao_biologica.quando_aplicar}</p></div>`;
-                } else {
-                    bioHtml = `
-                        <div><h4 style="font-size:0.7em; color:#bbb">Controlo Biológico</h4>
-                        <div class="bio-box">${item.solucao_biologica.metodo}</div></div>
-                        <div><h4 style="font-size:0.7em; color:#bbb; margin-top:20px">Implementação</h4>
-                        <p><b>Como:</b> ${item.solucao_biologica.como}</p>
-                        <p><b>Impacto:</b> ${item.observatorio_impacto}</p></div>`;
-                }
-
                 document.getElementById('detail-content').innerHTML = `
                     <div class="hero-split">
                         <div class="hero-text">
@@ -277,23 +265,18 @@
                             <h1 style="font-style:italic">${item.nome_cientifico}</h1>
                             <h2 style="margin-top:-15px; color:#666">${item.nome_comum}</h2>
                             <div class="tech-sheet" style="margin-top:30px">
-                                <div><h4 style="font-size:0.7em; color:#bbb">Diagnóstico / Impacto</h4>
-                                <p>${item.sintomas || item.impacto}</p></div>
-                                ${bioHtml}
+                                <div><h4 style="font-size:0.7em; color:#bbb">Diagnóstico</h4><p>${item.sintomas || item.impacto}</p></div>
+                                <div><h4 style="font-size:0.7em; color:#bbb">Combate Bio</h4><div class="bio-sol">${item.cura_bio || item.controlo_bio || item.solucao_biologica?.metodo}</div></div>
                             </div>
                         </div>
-                        <div class="hero-visual"><div class="hero-globe"><img src="${item.imagem || item.img || '/assets/img/placeholder.jpg'}" style="width:100%; height:100%; object-fit:cover"></div></div>
+                        <div class="hero-visual"><div class="hero-globe"><img src="${item.imagem || item.img}" style="width:100%; height:100%; object-fit:cover"></div></div>
                     </div>`;
-                
-                mainView.style.display = 'none';
-                detailView.style.display = 'block';
+                document.getElementById('calendar-main-view').style.display = 'none';
+                document.getElementById('sanity-detail-view').style.display = 'block';
                 window.scrollTo(0, 0);
             }
 
-            function hideDetail() { 
-                document.getElementById('calendar-main-view').style.display = 'block'; 
-                document.getElementById('sanity-detail-view').style.display = 'none'; 
-            }
+            function hideDetail() { document.getElementById('calendar-main-view').style.display = 'block'; document.getElementById('sanity-detail-view').style.display = 'none'; }
 
             async function renderAgriData() {
                 try {
@@ -315,13 +298,13 @@
                     if(infoGlobal) document.getElementById('reg-name').innerText = infoGlobal.titulo;
                     renderGlobe();
                     await renderAgriData();
-                    document.getElementById('report-grid-agri').innerHTML = agriReports.map(r => `<div class="report-item"><h5>${r.t}</h5><p>${r.p}</p><span class="report-source">Fonte: ${r.s}</span></div>`).join('');
+                    document.getElementById('report-grid-agri').innerHTML = agriReports.map(r => `<div class="report-item"><h5>${r.t}</h5><p>${r.p}</p></div>`).join('');
                     setupLocationLogic();
                 } catch(e) { console.error(e); }
             }
 
             function setupLocationLogic() {
-                $(document).off('input', '#loc-search-input').on('input', '#loc-search-input', function() {
+                $(document).on('input', '#loc-search-input', function() {
                     const val = $(this).val().toLowerCase(), dropdown = $('#loc-dropdown').empty();
                     if(val.length < 2) return dropdown.hide();
                     locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0,5).forEach(m => {
@@ -329,7 +312,7 @@
                     });
                     dropdown.show();
                 });
-                $(document).off('click', '#btn-gps-trigger').on('click', '#btn-gps-trigger', function() {
+                $(document).on('click', '#btn-gps-trigger', function() {
                     navigator.geolocation.getCurrentPosition(pos => {
                         let closest = locationsDB[0], minD = Infinity;
                         locationsDB.forEach(c => {
