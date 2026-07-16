@@ -20,7 +20,7 @@
             .hero-text { flex: 1.5; text-align: left; padding-top: 5px; } 
             .hero-text h1 { font-size: 4em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; line-height: 0.95; margin: 0; }
             
-            .region-header { font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #c62828; margin: 30px 0 5px 0; display: block; }
+            .region-header { font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #2e7d32; margin: 30px 0 5px 0; display: block; }
             .national-link { color: #bbb; cursor: pointer; font-weight: 400; font-size: 0.85em; display: block; text-transform: lowercase; letter-spacing: 1px; width: fit-content; border-bottom: 1px solid transparent; }
             .national-link:hover { color: #2e7d32; border-bottom-color: #eee; }
 
@@ -69,7 +69,7 @@
             .source-logo { width: 20px !important; height: 20px !important; min-width: 20px !important; object-fit: contain !important; filter: grayscale(100%); opacity: 0.6; }
             .news-meta span { font-size: 0.65em; font-weight: 800; color: #bbb; text-transform: uppercase; letter-spacing: 1px; }
 
-            /* BOTÕES SEM FRAME */
+            /* BOTÕES */
             .btn-pagination { background: none !important; border: none !important; box-shadow: none !important; color: #bbb !important; font-size: 0.8em; letter-spacing: 3px; cursor: pointer; text-transform: lowercase; margin-top: 2em; padding: 0 !important; }
             .btn-pagination:hover { color: #2e7d32 !important; }
 
@@ -115,7 +115,7 @@
 
                         <!-- 2. INFRAESTRUTURA -->
                         <div class="data-row">
-                            <h4>Centrais em Proximidade (Dados: OpenInfraMap / OSM)</h4>
+                            <h4>Centrais em Proximidade (Dados: LNEG / REN / DGEG)</h4>
                             <div id="plants-list-main"></div>
                             <div style="display: flex; gap: 30px;">
                                 <button id="btn-load-more-plants" class="btn-pagination">+ carregar mais centrais</button>
@@ -182,7 +182,7 @@
                     locationsDB = rLoc;
                     noticiasEnergy = rNews.filter(n => {
                         const keywords = ['energia', 'solar', 'eolica', 'renovavel', 'transição', 'climatica', 'pszaer'];
-                        const text = ((n.categoria || "") + (n.titulo || "")).toLowerCase();
+                        const text = ((n.category || n.categoria || "") + (n.titulo || "")).toLowerCase();
                         return keywords.some(k => text.includes(k));
                     });
                     
@@ -248,38 +248,6 @@
                 }, 5000);
             }
 
-            async function fetchNearbyPlants(lat, lon) {
-                const query = `[out:json];node["power"="plant"](around:50000,${lat},${lon});out;`;
-                const url = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`;
-                
-                try {
-                    const response = await fetch(url);
-                    const data = await response.json();
-                    
-                    allPlants = data.elements.map(el => {
-                        const tags = el.tags || {};
-                        return {
-                            id: el.id,
-                            nome: tags.name || "Central Renovável s/ nome",
-                            tipo: tags["plant:source"] || tags.power_source || "Energia",
-                            potencia: tags["plant:output:electricity"] || "Capacidade variável",
-                            local: tags["addr:city"] || tags["addr:suburb"] || "Região Próxima",
-                            lat: el.lat,
-                            lon: el.lon,
-                            dist: getDistance(lat, lon, el.lat, el.lon),
-                            detalhe: `Central identificada via base de dados aberta OSM. Tipo: ${tags["plant:source"] || 'N/A'}. Operador: ${tags.operator || 'Informação sob consulta'}.`
-                        };
-                    });
-
-                    // Ordenar por distância
-                    allPlants.sort((a, b) => a.dist - b.dist);
-                    renderPlants();
-                } catch (e) {
-                    console.error("Erro Overpass:", e);
-                    document.getElementById('plants-list-main').innerHTML = "<p style='color:#bbb'>Erro ao carregar centrais em tempo real.</p>";
-                }
-            }
-
             function renderDashboard(info) {
                 const container = document.getElementById('impact-container');
                 const titleCaps = document.getElementById('reg-name-caps');
@@ -302,28 +270,53 @@
                         <div class="energy-bar-bg"><div class="energy-bar-fill" style="width:${m.val}%; background:${m.color}"></div></div>
                     </div>`).join('');
 
+                // Extracção massiva de centrais de todas as regiões
+                let tempPlants = [];
                 const targetLat = info ? info.lat : userCoords.lat;
                 const targetLon = info ? info.lon : userCoords.lon;
-                
-                fetchNearbyPlants(targetLat, targetLon);
+
+                locationsDB.forEach(loc => {
+                    if(loc.energia?.centrais) {
+                        loc.energia.centrais.forEach(p => {
+                            p.dist = getDistance(targetLat, targetLon, p.lat, p.lon);
+                            p.regionName = loc.titulo;
+                            tempPlants.push(p);
+                        });
+                    }
+                });
+
+                // Ordenar por proximidade e depois potência
+                tempPlants.sort((a, b) => {
+                    if(a.dist !== b.dist) return a.dist - b.dist;
+                    return parseFloat(b.potencia) - parseFloat(a.potencia);
+                });
+
+                allPlants = tempPlants;
+                renderPlants();
             }
 
             function renderPlants() {
                 const list = document.getElementById('plants-list-main');
                 if(!list) return;
+                
+                if(allPlants.length === 0) {
+                    list.innerHTML = "<p style='color:#bbb; font-size:0.9em;'>Nenhuma central mapeada nesta zona.</p>";
+                    return;
+                }
+
                 const show = allPlants.slice(0, visiveisPlants);
                 list.innerHTML = show.map(p => `
                     <div style="border-bottom: 1px solid #f9f9f9; padding: 15px 0;">
                         <div class="plant-item">
                             <div class="plant-main">
                                 <span class="plant-name">${p.nome} <span class="plant-power-inline">${p.potencia}</span> <span class="btn-toggle-detail" onclick="toggleDetail('${p.id}')">+</span></span>
-                                <span class="plant-coords">${p.local} — ${p.dist.toFixed(1)} km de distância</span>
+                                <span class="plant-coords">${p.regionName} — ${p.dist.toFixed(1)} km de distância</span>
                             </div>
                             <span class="plant-type-tag">${p.tipo}</span>
                         </div>
                         <div id="detail-${p.id}" class="plant-detail-content">
-                            <h5>Especificações Técnicas</h5>
-                            <p>${p.detalhe}</p>
+                            <h5>Especificações Técnicas (LNEG / REN)</h5>
+                            <p>${p.detalhe || 'Infraestrutura de produção renovável integrada na rede nacional.'}</p>
                             <div class="source-list">
                                 <a href="https://geoportal.lneg.pt" target="_blank">LNEG Geoportal</a>
                                 <a href="https://datahub.ren.pt" target="_blank">REN Datahub</a>
