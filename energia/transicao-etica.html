@@ -6,7 +6,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
 		<style>
-            /* --- ESTRUTURA GLOBAL (PARIDADE TOTAL INDEX) --- */
+            /* --- ESTRUTURA GLOBAL --- */
             body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
 			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
             section { min-height: 100vh; display: flex; flex-direction: column; }
@@ -32,19 +32,10 @@
             }
             .hero-globe img { width: 100%; height: 100%; object-fit: cover; }
 
-            /* REFORMULAÇÃO DO ALINHAMENTO (VERTICAL) */
+            /* DASHBOARD & IMPACT GAUGES */
             .data-row { display: block; padding: 2.5em 0; border-bottom: 1px solid #f2f2f2; }
-            .data-row h4 { 
-                font-size: 0.7em; 
-                font-weight: 900; 
-                text-transform: uppercase; 
-                letter-spacing: 2px; 
-                color: #1a1a1a; 
-                margin: 0 0 25px 0; 
-                display: block;
-            }
+            .data-row h4 { font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #1a1a1a; margin: 0 0 25px 0; display: block; }
 
-            /* GAUGES DE IMPACTO COM DESCRIÇÃO FUSIONADA */
             .impact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px 30px; margin-bottom: 40px; }
             .impact-item { margin-bottom: 10px; }
             .impact-info { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px; }
@@ -65,21 +56,22 @@
 
             .impact-desc { font-size: 0.85em; line-height: 1.5; color: #777; text-align: justify; margin: 0; }
 
-            /* PROJETOS */
-            .project-item { padding: 15px 0; border-bottom: 1px solid #f9f9f9; display: flex; justify-content: flex-start; align-items: center; gap: 60px; }
+            /* PROJETOS & PSZAER DETAIL */
+            .project-item { display: flex; justify-content: flex-start; align-items: center; gap: 60px; }
             .project-main { display: flex; flex-direction: column; gap: 3px; min-width: 350px; }
             .project-name { font-weight: 700; color: #1a1a1a; font-size: 1em; }
-            .project-loc { font-size: 0.8em; color: #444; font-weight: 600; }
-            .project-coords { 
-                font-family: 'Courier New', Courier, monospace; 
-                font-size: 0.75em; 
-                color: #888; 
-                background: #f5f5f5; 
-                padding: 2px 8px; 
-                border-radius: 4px; 
-                width: fit-content;
-            }
+            .project-coords { font-family: 'Courier New', Courier, monospace; font-size: 0.75em; color: #888; background: #f5f5f5; padding: 2px 8px; border-radius: 4px; width: fit-content; }
             .project-status { font-size: 0.65em; font-weight: 800; color: #bbb; text-transform: uppercase; letter-spacing: 1px; }
+            
+            .btn-ver-resumo { font-size: 0.65em; font-weight: 800; text-transform: uppercase; color: #2e7d32; cursor: pointer; letter-spacing: 1px; margin-left: 15px; border-bottom: 1px solid transparent; }
+            .btn-ver-resumo:hover { border-bottom-color: #2e7d32; }
+            
+            .project-detail-content { display: none; background: #fcfcfc; border-left: 2px solid #2e7d32; padding: 20px; margin: 15px 0; font-size: 0.85em; color: #555; line-height: 1.6; }
+            .project-detail-content h5 { font-size: 1em; color: #1a1a1a; margin-bottom: 10px; text-transform: uppercase; }
+            .project-detail-content ul { list-style: none; padding-left: 0; margin-bottom: 15px; }
+            .project-detail-content li { margin-bottom: 8px; position: relative; padding-left: 15px; }
+            .project-detail-content li::before { content: "•"; position: absolute; left: 0; color: #2e7d32; font-weight: 900; }
+
             .btn-toggle { cursor: pointer; color: #bbb; font-size: 1.5em; font-weight: 300; transition: color 0.2s; user-select: none; }
 
             /* RELATÓRIOS */
@@ -90,36 +82,16 @@
             .report-source { font-size: 0.65em; font-weight: 400; color: #bbb; text-transform: uppercase; letter-spacing: 1px; display: block; border-top: 1px solid #eee; padding-top: 8px; }
 
             /* NOTÍCIAS */
-            .news-header { 
-                margin-top: 4em; 
-                display: block; 
-                font-size: 0.65em; 
-                font-weight: 900; 
-                text-transform: uppercase; 
-                letter-spacing: 4px; 
-                color: #bbb; /* Alterado de preto para cinzento */
-                margin-bottom: 20px;
-            }
+            .news-header { margin-top: 4em; display: block; font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; margin-bottom: 20px; }
             .news-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; }
-            .news-item { 
-                text-decoration: none; color: inherit; display: block; 
-                padding: 25px; background: #fdfdfd; border: none !important; 
-                border-radius: 12px; transition: all 0.3s; 
-            }
+            .news-item { text-decoration: none; color: inherit; display: block; padding: 25px; background: #fdfdfd; border-radius: 12px; transition: all 0.3s; }
             .news-item:hover { transform: translateY(-5px); background: #f9f9f9; }
             .news-item h3 { font-size: 1.15em; font-weight: 700; color: #1a1a1a; margin-bottom: 12px; line-height: 1.3; }
             .news-meta { display: flex; align-items: center; gap: 10px; border-top: 1px solid #f2f2f2; padding-top: 12px; }
             .source-logo { width: 16px; height: 16px; object-fit: contain; filter: grayscale(100%); opacity: 0.6; }
             .news-meta span { font-size: 0.65em; font-weight: 800; color: #bbb; text-transform: uppercase; letter-spacing: 1px; }
 
-            .btn-pagination { 
-                background: none !important; border: none !important; box-shadow: none !important; 
-                color: #bbb !important; font-size: 0.8em; font-weight: 400 !important; 
-                letter-spacing: 3px; cursor: pointer; text-transform: lowercase; 
-                display: block; text-align: left; padding: 0 !important; margin-top: 2em;
-            }
-
-            .bio-res-item { padding: 12px 18px; font-size: 0.9em; color: #666; cursor: pointer; border-bottom: 1px solid #f9f9f9 !important; }
+            .btn-pagination { background: none !important; border: none !important; color: #bbb !important; font-size: 0.8em; letter-spacing: 3px; cursor: pointer; text-transform: lowercase; margin-top: 2em; }
 
             /* RODAPÉ */
             .page-footer { margin-top: auto; padding: 2em 0 2.5em 0; border-top: 1px solid #f2f2f2; opacity: 0.3; text-align: right; }
@@ -148,7 +120,6 @@
                                 <div id="ethics-dashboard" style="display:none;">
                                     <h4 style="font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #1a1a1a; margin-bottom: 25px;">Indicadores de Impacto Negativo</h4>
                                     <div class="tech-content">
-                                        <!-- Grid de Impacto agora contém as descrições -->
                                         <div id="impact-container" class="impact-grid"></div>
                                     </div>
                                 </div>
@@ -203,26 +174,10 @@
             let locationsDB = [], noticiasEthics = [], allProjects = [], visiveisEthics = 4;
 
             const relatoriosEthics = [
-                { 
-                    titulo: "PFZAER: Licenciamento e Silêncio Positivo", 
-                    texto: "As Zonas de Aceleração (PFZAER) introduzem o 'silêncio positivo' no licenciamento ambiental. Este mecanismo permite que projetos de escala industrial avancem sem Avaliação de Impacto Ambiental (AIA) detalhada se os prazos administrativos forem excedidos.", 
-                    fonte: "DGEG / APA REA 2025", cor: "#8d6e63" 
-                },
-                { 
-                    titulo: "Mineração de Lítio e o Ciclo Hidrológico", 
-                    texto: "A exploração de lítio a céu aberto em Portugal exige o rebaixamento drástico do nível freático. Este processo altera permanentemente a hidrogeologia local, secando nascentes ancestrais e contaminando aquíferos.", 
-                    fonte: "IAmbiente / IPMA 2025", cor: "#c62828" 
-                },
-                { 
-                    titulo: "IA e a Drenagem de Recursos Hídricos", 
-                    texto: "Um mega centro de dados de IA consome diariamente água equivalente ao abastecimento de uma cidade média. A instalação destes hubs em zonas de stress hídrico cria uma competição direta com a agricultura.", 
-                    fonte: "REN Datahub / Pordata", cor: "#0288d1" 
-                },
-                { 
-                    titulo: "Impacto Social e 'Green Grabbing'", 
-                    texto: "O fenómeno de 'Green Grabbing' ocorre quando baldios e terras comunitárias são expropriados para fins industriais energéticos sem benefício direto para as populações locais.", 
-                    fonte: "Observatório da Coesão Territorial", cor: "#7b1fa2" 
-                }
+                { titulo: "PFZAER: Licenciamento e Silêncio Positivo", texto: "As Zonas de Aceleração (PFZAER) introduzem o 'silêncio positivo' no licenciamento ambiental, permitindo que projetos avancem sem AIA detalhada se prazos forem excedidos.", fonte: "DGEG / APA REA 2025", cor: "#8d6e63" },
+                { titulo: "Mineração de Lítio e o Ciclo Hidrológico", texto: "A exploração de lítio exige o rebaixamento do nível freático, secando nascentes ancestrais e contaminando aquíferos com metais pesados.", fonte: "IAmbiente / IPMA 2025", cor: "#c62828" },
+                { titulo: "IA e a Drenagem de Recursos Hídricos", texto: "Um centro de dados de IA consome água equivalente ao abastecimento de uma cidade média, criando stress hídrico severo.", fonte: "REN Datahub / Pordata", cor: "#0288d1" },
+                { titulo: "Impacto Social e 'Green Grabbing'", texto: "Expropriação de baldios e terras comunitárias para fins industriais energéticos sem benefício direto para as populações.", fonte: "Observatório da Coesão Territorial", cor: "#7b1fa2" }
             ];
 
             async function inicializarPagina() {
@@ -238,22 +193,7 @@
                     renderDashboard(info);
                     renderizarCardsEthics();
                     renderRelatorios();
-                    setupLocationLogic();
                 } catch(e) { console.error(e); }
-            }
-
-            function setupLocationLogic() {
-                $(document).on('input', '#loc-search-input', function() {
-                    const val = $(this).val().toLowerCase(), dropdown = $('#loc-dropdown').empty();
-                    if(val.length < 2) return dropdown.hide();
-                    locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0,5).forEach(m => {
-                        $('<div class="bio-res-item"></div>').text(m.titulo).on('click', () => {
-                            localStorage.setItem('biocultura_region', m.id);
-                            location.reload();
-                        }).appendTo(dropdown);
-                    });
-                    dropdown.show();
-                });
             }
 
             function renderDashboard(info) {
@@ -261,12 +201,11 @@
                 document.getElementById('ethics-dashboard').style.display = 'block';
                 document.getElementById('reg-name').innerText = info.titulo;
 
-                // Descrições integradas nos dados dos indicadores
                 const impacts = info.etica?.indicadores || [
-                    { label: "Ocupação de Solo RAN", val: 42, class: "fill-soil", textClass: "c-soil", desc: "Mede a conversão de solos de Reserva Agrícola Nacional para uso industrial. Valores elevados representam perda irreversível de solo fértil." },
-                    { label: "Fragmentação de Habitat", val: 28, class: "fill-habitat", textClass: "c-habitat", desc: "Representa a interrupção de corredores ecológicos por vedações de mega-parques, impedindo a dispersão da fauna." },
-                    { label: "Stress Hídrico (IA)", val: 65, class: "fill-water", textClass: "c-water-ia", desc: "Quantifica a pressão sobre aquíferos locais para o arrefecimento de centros de dados, competindo com o abastecimento humano." },
-                    { label: "Oposição Social", val: 85, class: "fill-social", textClass: "c-social", desc: "Nível de contestação das comunidades locais face ao licenciamento de mega-projetos sem benefícios reais para a região." }
+                    { label: "Ocupação de Solo RAN", val: 42, class: "fill-soil", textClass: "c-soil", desc: "Conversão de solos de Reserva Agrícola Nacional para uso industrial." },
+                    { label: "Fragmentação de Habitat", val: 28, class: "fill-habitat", textClass: "c-habitat", desc: "Interrupção de corredores ecológicos por vedações e infraestruturas." },
+                    { label: "Stress Hídrico (IA)", val: 65, class: "fill-water", textClass: "c-water-ia", desc: "Pressão sobre aquíferos locais para o arrefecimento de hubs tecnológicos." },
+                    { label: "Oposição Social", val: 85, class: "fill-social", textClass: "c-social", desc: "Nível de contestação das comunidades locais face ao licenciamento de mega-projetos." }
                 ];
 
                 document.getElementById('impact-container').innerHTML = impacts.map(m => `
@@ -276,10 +215,12 @@
                         <p class="impact-desc">${m.desc}</p>
                     </div>`).join('');
 
-                allProjects = info.etica?.projetos_criticos || [
-                    { nome: "Mega-Central Fotovoltaica", local: "Vale do Tejo", coords: "LAT 39.46 | LONG -8.19", status: "Em Licenciamento" },
-                    { nome: "Zona de Aceleração PFZAER", local: "Castelo Branco", coords: "LAT 39.82 | LONG -7.49", status: "Planeado" },
-                    { nome: "Prospecção Mineira de Lítio", local: "Boticas", coords: "LAT 41.69 | LONG -7.66", status: "Contestado" }
+                allProjects = [
+                    { id: "pfzaer", nome: "Plano Setorial PSZAER", local: "Nacional / ZAER", coords: "MAPA ESTRATÉGICO 2026", status: "Discussão Pública", hasDetail: true },
+                    ...(info.etica?.projetos_criticos || [
+                        { nome: "Mega-Central Fotovoltaica", local: "Vale do Tejo", coords: "LAT 39.46 | LONG -8.19", status: "Em Licenciamento" },
+                        { nome: "Prospecção Mineira de Lítio", local: "Boticas", coords: "LAT 41.69 | LONG -7.66", status: "Contestado" }
+                    ])
                 ];
                 renderProjects(false);
             }
@@ -287,15 +228,43 @@
             function renderProjects(expand) {
                 const show = expand ? allProjects : allProjects.slice(0, 3);
                 document.getElementById('projects-list-main').innerHTML = show.map(p => `
-                    <div class="project-item">
-                        <div class="project-main">
-                            <span class="project-name">${p.nome} — ${p.local}</span>
-                            <span class="project-coords">${p.coords}</span>
+                    <div style="border-bottom: 1px solid #f9f9f9; padding: 15px 0;">
+                        <div class="project-item">
+                            <div class="project-main">
+                                <span class="project-name">${p.nome} — ${p.local} ${p.hasDetail ? `<span class="btn-ver-resumo" onclick="toggleProjectDetail('${p.id}')">+ ver mais</span>` : ''}</span>
+                                <span class="project-coords">${p.coords}</span>
+                            </div>
+                            <span class="project-status">${p.status}</span>
                         </div>
-                        <span class="project-status">${p.status}</span>
+                        ${p.id === 'pfzaer' ? `
+                            <div id="detail-${p.id}" class="project-detail-content">
+                                <h5>O Projeto PSZAER em Pratos Limpos</h5>
+                                <p>O PSZAER (Plano Setorial para as Zonas de Aceleração de Energias Renováveis) é o novo "GPS" do Governo para acelerar a transição sem destruir o essencial.</p>
+                                <ul>
+                                    <li><strong>Via Verde (ZAER):</strong> Áreas pré-aprovadas com baixo impacto ambiental e licenciamento acelerado em Janela Única.</li>
+                                    <li><strong>Mapa Verde:</strong> Prioridade a minas abandonadas, zonas industriais e áreas a menos de 10km da rede elétrica.</li>
+                                    <li><strong>Linhas Vermelhas:</strong> Proibição em Parques Naturais, solos RAN férteis e distâncias de habitações (200m solar / 1km eólico).</li>
+                                    <li><strong>Regras de Regeneração:</strong> Proibição de herbicidas (pastoreio obrigatório), cortinas verdes de 40m e restauro de zonas degradadas.</li>
+                                    <li><strong>Benefícios Locais:</strong> Redução da fatura elétrica local e taxas pagas diretamente ao município.</li>
+                                </ul>
+                                <small style="color:#bbb">Meta 2030: Portugal independente de combustíveis fósseis.</small>
+                            </div>
+                        ` : ''}
                     </div>`).join('');
                 document.getElementById('btn-expand-projects').style.display = (!expand && allProjects.length > 3) ? 'block' : 'none';
                 document.getElementById('btn-collapse-projects').style.display = expand ? 'block' : 'none';
+            }
+
+            function toggleProjectDetail(id) {
+                const el = document.getElementById(`detail-${id}`);
+                const btn = event.target;
+                if (el.style.display === 'block') {
+                    el.style.display = 'none';
+                    btn.innerText = '+ ver mais';
+                } else {
+                    el.style.display = 'block';
+                    btn.innerText = '- fechar';
+                }
             }
 
             function renderRelatorios() {
