@@ -38,10 +38,11 @@
             .energy-bar-bg { height: 4px; width: 100%; background: #eee; border-radius: 10px; position: relative; overflow: hidden; }
             .energy-bar-fill { height: 100%; position: absolute; left: 0; top: 0; border-radius: 10px; transition: width 1.5s ease-in-out; }
 
-            /* CENTRAIS */
+            /* SECÇÕES DINÂMICAS */
             .data-row { display: block; padding: 2.5em 0; border-bottom: 1px solid #f2f2f2; }
             .data-row h4 { font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #2e7d32; margin: 0 0 25px 0; display: block; }
             
+            /* CENTRAIS */
             .plant-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; }
             .plant-main { display: flex; flex-direction: column; gap: 3px; }
             .plant-name { font-weight: 700; color: #1a1a1a; font-size: 1em; }
@@ -58,14 +59,22 @@
             .report-item h5 { font-size: 0.75em; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; color: #2e7d32; }
             .report-item p { font-size: 0.95em; line-height: 1.7; color: #666; margin-bottom: 15px; text-align: justify; }
 
-            /* NOTÍCIAS */
+            /* NOTÍCIAS (ESTILO CARDS) */
             .news-header { margin-top: 4em; display: block; font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; margin-bottom: 20px; }
-            .news-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; }
-            .news-item { text-decoration: none; color: inherit; display: block; padding: 25px; background: #fdfdfd; border-radius: 12px; transition: all 0.3s; }
-            .news-item:hover { transform: translateY(-5px); background: #f9f9f9; }
+            .news-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px; }
+            .news-item { 
+                text-decoration: none; color: inherit; display: block; 
+                padding: 30px; background: #fdfdfd; border: 1px solid #f2f2f2; 
+                border-radius: 16px; transition: all 0.3s; 
+            }
+            .news-item:hover { transform: translateY(-5px); border-color: #ddd; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+            .news-item h3 { font-size: 1.15em; font-weight: 700; color: #1a1a1a; margin-bottom: 15px; line-height: 1.3; }
+            .news-item p { font-size: 0.9em; color: #666; line-height: 1.6; margin-bottom: 20px; }
+            .news-meta { display: flex; align-items: center; gap: 12px; border-top: 1px solid #f2f2f2; padding-top: 15px; }
             .source-logo { width: 20px !important; height: 20px !important; min-width: 20px !important; object-fit: contain !important; filter: grayscale(100%); opacity: 0.6; }
+            .news-meta span { font-size: 0.65em; font-weight: 800; color: #bbb; text-transform: uppercase; letter-spacing: 1px; }
 
-            /* BOTÕES SEM FRAME */
+            /* BOTÕES */
             .btn-pagination { background: none !important; border: none !important; box-shadow: none !important; color: #bbb !important; font-size: 0.8em; letter-spacing: 3px; cursor: pointer; text-transform: lowercase; margin-top: 2em; padding: 0 !important; }
             .btn-pagination:hover { color: #2e7d32 !important; }
 
@@ -95,7 +104,7 @@
 
                                 <div id="energy-dashboard" style="display:block; margin-top:40px;">
                                     <div class="tech-content">
-                                        <div id="mix-container" class="energy-grid"></div>
+                                        <div id="impact-container" class="energy-grid"></div>
                                     </div>
                                 </div>
                             </div>
@@ -114,7 +123,7 @@
                             </div>
                         </div>
 
-                        <!-- 3. EVOLUÇÃO E METAS -->
+                        <!-- 3. EVOLUÇÃO -->
                         <div class="data-row">
                             <h4>Evolução da Matriz Renovável</h4>
                             <div id="report-grid-energy" class="report-grid"></div>
@@ -139,7 +148,7 @@
 		<script src="/assets/js/jquery.min.js"></script>
         <script>
             let locationsDB = [], noticiasEnergy = [], allPlants = [], visiveisEnergy = 4, visiveisPlants = 3;
-            let userCoords = null;
+            let userCoords = JSON.parse(localStorage.getItem('user_last_coords')) || null;
 
             const heroImages = [
                 "https://images.unsplash.com/photo-1509391366360-2e959784a276?auto=format&fit=crop&w=1024",
@@ -156,6 +165,7 @@
             ];
 
             function getDistance(lat1, lon1, lat2, lon2) {
+                if(!lat1 || !lon1 || !lat2 || !lon2) return 9999;
                 const R = 6371; 
                 const dLat = (lat2 - lat1) * Math.PI / 180;
                 const dLon = (lon2 - lon1) * Math.PI / 180;
@@ -166,11 +176,17 @@
             async function inicializarPagina() {
                 try {
                     const [rLoc, rNews] = await Promise.all([
-                        fetch('/data/bioregioes.json').then(r => r.json()).catch(() => []),
-                        fetch('/data/noticias.json').then(r => r.json()).catch(() => [])
+                        fetch('/data/bioregioes.json').then(r => r.json()),
+                        fetch('/data/noticias.json').then(r => r.json())
                     ]);
                     locationsDB = rLoc;
-                    noticiasEnergy = rNews.filter(n => (n.categoria || "").toLowerCase().includes('energia'));
+                    
+                    // Filtro de notícias corrigido
+                    noticiasEnergy = rNews.filter(n => {
+                        const keywords = ['energia', 'solar', 'eolica', 'renovavel', 'transição', 'climatica', 'pszaer', 'zaer'];
+                        const text = ((n.categoria || "") + (n.titulo || "")).toLowerCase();
+                        return keywords.some(k => text.includes(k));
+                    });
                     
                     const savedID = localStorage.getItem('biocultura_region');
                     const info = savedID ? locationsDB.find(i => i.id === savedID) : null;
@@ -180,7 +196,7 @@
                     renderRelatorios();
                     initCarousel();
                     setupLocationLogic();
-                } catch(e) { console.error(e); }
+                } catch(e) { console.error("Erro no carregamento:", e); }
             }
 
             function setupLocationLogic() {
@@ -199,6 +215,7 @@
                 $(document).on('click', '#btn-gps-trigger', function() {
                     navigator.geolocation.getCurrentPosition(pos => {
                         userCoords = { lat: pos.coords.latitude, lon: pos.coords.longitude };
+                        localStorage.setItem('user_last_coords', JSON.stringify(userCoords));
                         let closest = locationsDB[0], minD = Infinity;
                         locationsDB.forEach(c => {
                             let d = getDistance(userCoords.lat, userCoords.lon, c.lat, c.lon);
@@ -226,6 +243,7 @@
                 let current = 0;
                 setInterval(() => {
                     const imgs = container.getElementsByTagName('img');
+                    if(!imgs.length) return;
                     imgs[current].classList.remove('active');
                     current = (current + 1) % imgs.length;
                     imgs[current].classList.add('active');
@@ -233,7 +251,7 @@
             }
 
             function renderDashboard(info) {
-                const container = document.getElementById('mix-container');
+                const container = document.getElementById('impact-container');
                 const titleCaps = document.getElementById('reg-name-caps');
                 
                 const seed = info ? info.id.length : 10;
@@ -255,30 +273,33 @@
                         <div class="energy-bar-bg"><div class="energy-bar-fill" style="width:${m.val}%; background:${m.color}"></div></div>
                     </div>`).join('');
 
-                // Lógica de Centrais: Extrai todas do DB para serem dinâmicas
+                // Lógica de Centrais Dinâmicas
                 let tempPlants = [];
+                const targetLat = info ? info.lat : (userCoords ? userCoords.lat : 39.5);
+                const targetLon = info ? info.lon : (userCoords ? userCoords.lon : -8.0);
+
                 locationsDB.forEach(loc => {
                     if(loc.energia?.centrais) {
                         loc.energia.centrais.forEach(p => {
-                            // Calcula distância em relação ao ponto central da região selecionada (ou GPS)
-                            const targetLat = info ? info.lat : 39.5;
-                            const targetLon = info ? info.lon : -8.0;
                             p.dist = getDistance(targetLat, targetLon, p.lat, p.lon);
                             tempPlants.push(p);
                         });
                     }
                 });
 
-                // Ordenar por distância
                 tempPlants.sort((a, b) => a.dist - b.dist);
                 allPlants = tempPlants;
-
                 renderPlants();
             }
 
             function renderPlants() {
+                const list = document.getElementById('plants-list-main');
+                if(!list || !allPlants.length) {
+                    list.innerHTML = "<p style='font-size:0.9em; color:#bbb;'>A carregar centrais próximas...</p>";
+                    return;
+                }
                 const show = allPlants.slice(0, visiveisPlants);
-                document.getElementById('plants-list-main').innerHTML = show.map(p => `
+                list.innerHTML = show.map(p => `
                     <div style="border-bottom: 1px solid #f9f9f9; padding: 15px 0;">
                         <div class="plant-item">
                             <div class="plant-main">
@@ -288,7 +309,7 @@
                             <span class="plant-type-tag">${p.tipo}</span>
                         </div>
                         <div id="detail-${p.id}" class="plant-detail-content">
-                            <h5>Informação Técnica (LNEG / REN)</h5>
+                            <h5>Informação Técnica</h5>
                             <p>${p.detalhe}</p>
                             <div class="source-list">
                                 <a href="https://geoportal.lneg.pt" target="_blank">LNEG Geoportal</a>
@@ -322,11 +343,13 @@
                 container.innerHTML = noticiasEnergy.map((n, i) => `
                     <a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-item" style="${i >= visiveisEnergy ? 'display:none' : ''}">
                         <h3>${n.titulo}</h3>
+                        <p>${(n.resumo_biocultura || n.resumo || "").substring(0, 120)}...</p>
                         <div class="news-meta">
                             <img src="${n.logo || '/assets/img/logo.png'}" class="source-logo">
                             <span>${n.data}</span>
                         </div>
                     </a>`).join('');
+                document.getElementById('btn-load-more-energy').style.display = noticiasEnergy.length > visiveisEnergy ? 'inline-block' : 'none';
             }
 
             document.getElementById('btn-load-more-energy').onclick = () => { visiveisEnergy += 4; renderizarCardsEnergy(); };
