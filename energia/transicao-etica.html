@@ -3,7 +3,7 @@
 	<head>
 		<title>bioCultura - Observatório da Transição Ética</title>
 		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<meta name="viewport" content="width=device-width, initial-scale, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
 		<style>
             /* --- ESTRUTURA GLOBAL (PARIDADE TOTAL INDEX) --- */
@@ -39,16 +39,16 @@
                 font-weight: 900; 
                 text-transform: uppercase; 
                 letter-spacing: 2px; 
-                color: #1a1a1a; /* Subtítulos a Preto */
+                color: #1a1a1a; 
                 margin: 0 0 25px 0; 
                 display: block;
             }
 
-            /* GAUGES DE IMPACTO (COMPRIMIDOS) */
-            .impact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; max-width: 800px; }
+            /* GAUGES DE IMPACTO COM DESCRIÇÃO FUSIONADA */
+            .impact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px 30px; margin-bottom: 40px; }
             .impact-item { margin-bottom: 10px; }
-            .impact-info { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 6px; }
-            .impact-info b { font-size: 1em; color: #1a1a1a; }
+            .impact-info { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px; }
+            .impact-info b { font-size: 0.95em; color: #1a1a1a; text-transform: uppercase; letter-spacing: 1px; }
             .impact-info span { font-size: 0.85em; font-weight: 900; }
             
             .c-soil { color: #8d6e63 !important; }
@@ -56,25 +56,16 @@
             .c-water-ia { color: #0288d1 !important; }
             .c-social { color: #7b1fa2 !important; }
 
-            .impact-bar-bg { height: 5px; width: 100%; background: #eee; border-radius: 10px; position: relative; overflow: hidden; }
+            .impact-bar-bg { height: 4px; width: 100%; background: #eee; border-radius: 10px; position: relative; overflow: hidden; margin-bottom: 12px; }
             .impact-bar-fill { height: 100%; position: absolute; left: 0; top: 0; border-radius: 10px; transition: width 1.5s ease-in-out; }
             .fill-soil { background: #8d6e63; }
             .fill-habitat { background: #2e7d32; }
             .fill-water { background: #0288d1; }
             .fill-social { background: #7b1fa2; }
 
-            /* GLOSSÁRIO 2x2 ALINHADO */
-            .indicators-summary { 
-                display: grid; 
-                grid-template-columns: 1fr 1fr; 
-                gap: 30px; 
-                padding: 25px 0; 
-                border-top: 1px solid #f9f9f9;
-            }
-            .summary-item h6 { font-size: 0.65em; font-weight: 900; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 1px; }
-            .summary-item p { font-size: 0.9em; line-height: 1.6; color: #666; margin: 0; text-align: justify; }
+            .impact-desc { font-size: 0.85em; line-height: 1.5; color: #777; text-align: justify; margin: 0; }
 
-            /* PROJETOS (ESTADO MAIS PRÓXIMO) */
+            /* PROJETOS */
             .project-item { padding: 15px 0; border-bottom: 1px solid #f9f9f9; display: flex; justify-content: flex-start; align-items: center; gap: 60px; }
             .project-main { display: flex; flex-direction: column; gap: 3px; min-width: 350px; }
             .project-name { font-weight: 700; color: #1a1a1a; font-size: 1em; }
@@ -91,14 +82,24 @@
             .project-status { font-size: 0.65em; font-weight: 800; color: #bbb; text-transform: uppercase; letter-spacing: 1px; }
             .btn-toggle { cursor: pointer; color: #bbb; font-size: 1.5em; font-weight: 300; transition: color 0.2s; user-select: none; }
 
-            /* RELATÓRIOS 2 POR LINHA */
+            /* RELATÓRIOS */
             .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
             .report-item { border-top: 1px solid #f9f9f9; padding-top: 20px; }
             .report-item h5 { font-size: 0.75em; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; color: #c62828; }
             .report-item p { font-size: 0.95em; line-height: 1.7; color: #666; margin-bottom: 15px; text-align: justify; }
             .report-source { font-size: 0.65em; font-weight: 400; color: #bbb; text-transform: uppercase; letter-spacing: 1px; display: block; border-top: 1px solid #eee; padding-top: 8px; }
 
-            /* NOTÍCIAS (SEM BORDAS) */
+            /* NOTÍCIAS */
+            .news-header { 
+                margin-top: 4em; 
+                display: block; 
+                font-size: 0.65em; 
+                font-weight: 900; 
+                text-transform: uppercase; 
+                letter-spacing: 4px; 
+                color: #bbb; /* Alterado de preto para cinzento */
+                margin-bottom: 20px;
+            }
             .news-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; }
             .news-item { 
                 text-decoration: none; color: inherit; display: block; 
@@ -111,7 +112,6 @@
             .source-logo { width: 16px; height: 16px; object-fit: contain; filter: grayscale(100%); opacity: 0.6; }
             .news-meta span { font-size: 0.65em; font-weight: 800; color: #bbb; text-transform: uppercase; letter-spacing: 1px; }
 
-            /* BOTÃO VER MAIS (ALINHADO E SEM QUADRADO) */
             .btn-pagination { 
                 background: none !important; border: none !important; box-shadow: none !important; 
                 color: #bbb !important; font-size: 0.8em; font-weight: 400 !important; 
@@ -121,13 +121,13 @@
 
             .bio-res-item { padding: 12px 18px; font-size: 0.9em; color: #666; cursor: pointer; border-bottom: 1px solid #f9f9f9 !important; }
 
-            /* RODAPÉ ALINHADO */
+            /* RODAPÉ */
             .page-footer { margin-top: auto; padding: 2em 0 2.5em 0; border-top: 1px solid #f2f2f2; opacity: 0.3; text-align: right; }
 
             @media screen and (max-width: 1280px) {
                 #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
                 #wrapper { padding-left: 0 !important; }
-                .hero-split, .report-grid, .indicators-summary { grid-template-columns: 1fr; }
+                .hero-split, .report-grid, .impact-grid { grid-template-columns: 1fr; }
                 .hero-globe { width: 350px; height: 350px; margin: 0 auto; }
                 .project-item { flex-direction: column; align-items: flex-start; gap: 10px; }
             }
@@ -138,7 +138,7 @@
 			<div id="main">
                 <div class="inner">
                     <section>
-                        <!-- 1. HERO & DASHBOARD COMPRIMIDO -->
+                        <!-- 1. HERO & DASHBOARD -->
                         <div class="hero-split">
                             <div class="hero-text">
                                 <span class="category-label">Justiça Climática</span>
@@ -146,28 +146,10 @@
                                 <p style="font-size: 0.9em; font-style: italic; color: #bbb; margin-bottom: 30px;">Impacto territorial: <strong id="reg-name" style="color:#888">...</strong></p>
 
                                 <div id="ethics-dashboard" style="display:none;">
-                                    <h4>Indicadores de Impacto Negativo</h4>
+                                    <h4 style="font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #1a1a1a; margin-bottom: 25px;">Indicadores de Impacto Negativo</h4>
                                     <div class="tech-content">
+                                        <!-- Grid de Impacto agora contém as descrições -->
                                         <div id="impact-container" class="impact-grid"></div>
-                                        
-                                        <div class="indicators-summary">
-                                            <div class="summary-item">
-                                                <h6 class="c-soil">Ocupação de Solo RAN</h6>
-                                                <p>Mede a conversão de solos de Reserva Agrícola Nacional para uso industrial. Valores elevados representam perda irreversível de solo fértil.</p>
-                                            </div>
-                                            <div class="summary-item">
-                                                <h6 class="c-habitat">Fragmentação de Habitat</h6>
-                                                <p>Representa a interrupção de corredores ecológicos por vedações e infraestruturas de mega-parques, impedindo a dispersão da fauna.</p>
-                                            </div>
-                                            <div class="summary-item">
-                                                <h6 class="c-water-ia">Stress Hídrico (IA)</h6>
-                                                <p>Quantifica a pressão sobre aquíferos locais para o arrefecimento de centros de dados, competindo com o abastecimento humano e agrícola.</p>
-                                            </div>
-                                            <div class="summary-item">
-                                                <h6 class="c-social">Oposição Social</h6>
-                                                <p>Nível de contestação das comunidades locais face ao licenciamento de mega-projetos sem benefícios reais para a região.</p>
-                                            </div>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -190,7 +172,7 @@
                             </div>
                         </div>
 
-                        <!-- 3. RELATÓRIOS APROFUNDADOS -->
+                        <!-- 3. RELATÓRIOS -->
                         <div class="data-row">
                             <h4>Análise de Aceleração e Conflito</h4>
                             <div class="tech-content">
@@ -200,7 +182,7 @@
                         </div>
 
                         <!-- 4. NOTÍCIAS -->
-                        <span class="news-header" style="margin-top:4em; display:block">noticias</span>
+                        <span class="news-header">noticias</span>
                         <div id="noticias-ethics-dinamico" class="news-list"></div>
                         <div style="text-align: left; margin-bottom: 4em;">
                             <button id="btn-load-more-ethics" class="btn-pagination">ver mais</button>
@@ -223,23 +205,23 @@
             const relatoriosEthics = [
                 { 
                     titulo: "PFZAER: Licenciamento e Silêncio Positivo", 
-                    texto: "As Zonas de Aceleração (PFZAER) introduzem o 'silêncio positivo' no licenciamento ambiental. Este mecanismo permite que projetos de escala industrial avancem sem Avaliação de Impacto Ambiental (AIA) detalhada se os prazos administrativos forem excedidos. O resultado é a ocupação massiva de solos de Reserva Agrícola Nacional (RAN) e Reserva Ecológica Nacional (REN), destruindo a estrutura micorrízica do solo que levaria séculos a regenerar.", 
-                    fonte: "DGEG / APA REA 2025 - Monitorização de Impacto", cor: "#8d6e63" 
+                    texto: "As Zonas de Aceleração (PFZAER) introduzem o 'silêncio positivo' no licenciamento ambiental. Este mecanismo permite que projetos de escala industrial avancem sem Avaliação de Impacto Ambiental (AIA) detalhada se os prazos administrativos forem excedidos.", 
+                    fonte: "DGEG / APA REA 2025", cor: "#8d6e63" 
                 },
                 { 
                     titulo: "Mineração de Lítio e o Ciclo Hidrológico", 
-                    texto: "A exploração de lítio a céu aberto em Portugal (ex: Barroso) exige o rebaixamento drástico do nível freático para permitir a escavação profunda. Este processo altera permanentemente a hidrogeologia local, secando nascentes ancestrais e contaminando aquíferos com metais pesados. O processamento químico do minério consome volumes de água doce incompatíveis com as projeções de seca severa do IPMA para a próxima década.", 
-                    fonte: "IAmbiente / Portal Energia - Relatório Técnico Mineiro", cor: "#c62828" 
+                    texto: "A exploração de lítio a céu aberto em Portugal exige o rebaixamento drástico do nível freático. Este processo altera permanentemente a hidrogeologia local, secando nascentes ancestrais e contaminando aquíferos.", 
+                    fonte: "IAmbiente / IPMA 2025", cor: "#c62828" 
                 },
                 { 
                     titulo: "IA e a Drenagem de Recursos Hídricos", 
-                    texto: "Um mega centro de dados de IA consome diariamente água equivalente ao abastecimento de uma cidade média. Em Portugal, a instalação destes hubs em zonas de stress hídrico cria uma competição direta com a agricultura regenerativa. Além disso, a carga energética massiva destes centros obriga à manutenção de centrais a gás como backup, anulando o esforço de descarbonização real da rede elétrica nacional.", 
-                    fonte: "REN Datahub / Pordata - Intensidade Energética IA", cor: "#0288d1" 
+                    texto: "Um mega centro de dados de IA consome diariamente água equivalente ao abastecimento de uma cidade média. A instalação destes hubs em zonas de stress hídrico cria uma competição direta com a agricultura.", 
+                    fonte: "REN Datahub / Pordata", cor: "#0288d1" 
                 },
                 { 
                     titulo: "Impacto Social e 'Green Grabbing'", 
-                    texto: "O fenómeno de 'Green Grabbing' ocorre quando baldios e terras comunitárias são expropriados para fins industriais energéticos sem benefício direto para as populações. A desvalorização patrimonial e a destruição da paisagem cultural aceleram o despovoamento do interior português, substituindo economias rurais vivas por infraestruturas automatizadas que não geram fixação de famílias no território.", 
-                    fonte: "Observatório da Coesão Territorial / Pordata", cor: "#7b1fa2" 
+                    texto: "O fenómeno de 'Green Grabbing' ocorre quando baldios e terras comunitárias são expropriados para fins industriais energéticos sem benefício direto para as populações locais.", 
+                    fonte: "Observatório da Coesão Territorial", cor: "#7b1fa2" 
                 }
             ];
 
@@ -272,17 +254,6 @@
                     });
                     dropdown.show();
                 });
-                $(document).on('click', '#btn-gps-trigger', function() {
-                    navigator.geolocation.getCurrentPosition(pos => {
-                        let closest = locationsDB[0], minD = Infinity;
-                        locationsDB.forEach(c => {
-                            let d = Math.sqrt(Math.pow(pos.coords.latitude - c.lat, 2) + Math.pow(pos.coords.longitude - c.lon, 2));
-                            if(d < minD) { minD = d; closest = c; }
-                        });
-                        localStorage.setItem('biocultura_region', closest.id);
-                        location.reload();
-                    });
-                });
             }
 
             function renderDashboard(info) {
@@ -290,24 +261,25 @@
                 document.getElementById('ethics-dashboard').style.display = 'block';
                 document.getElementById('reg-name').innerText = info.titulo;
 
+                // Descrições integradas nos dados dos indicadores
                 const impacts = info.etica?.indicadores || [
-                    { label: "Ocupação de Solo RAN", val: 42, class: "fill-soil", textClass: "c-soil" },
-                    { label: "Fragmentação de Habitat", val: 28, class: "fill-habitat", textClass: "c-habitat" },
-                    { label: "Stress Hídrico (IA)", val: 65, class: "fill-water", textClass: "c-water-ia" },
-                    { label: "Oposição Social Local", val: 85, class: "fill-social", textClass: "c-social" }
+                    { label: "Ocupação de Solo RAN", val: 42, class: "fill-soil", textClass: "c-soil", desc: "Mede a conversão de solos de Reserva Agrícola Nacional para uso industrial. Valores elevados representam perda irreversível de solo fértil." },
+                    { label: "Fragmentação de Habitat", val: 28, class: "fill-habitat", textClass: "c-habitat", desc: "Representa a interrupção de corredores ecológicos por vedações de mega-parques, impedindo a dispersão da fauna." },
+                    { label: "Stress Hídrico (IA)", val: 65, class: "fill-water", textClass: "c-water-ia", desc: "Quantifica a pressão sobre aquíferos locais para o arrefecimento de centros de dados, competindo com o abastecimento humano." },
+                    { label: "Oposição Social", val: 85, class: "fill-social", textClass: "c-social", desc: "Nível de contestação das comunidades locais face ao licenciamento de mega-projetos sem benefícios reais para a região." }
                 ];
 
                 document.getElementById('impact-container').innerHTML = impacts.map(m => `
                     <div class="impact-item">
                         <div class="impact-info"><b>${m.label}</b> <span class="${m.textClass}">${m.val}%</span></div>
                         <div class="impact-bar-bg"><div class="impact-bar-fill ${m.class}" style="width: ${m.val}%"></div></div>
+                        <p class="impact-desc">${m.desc}</p>
                     </div>`).join('');
 
                 allProjects = info.etica?.projetos_criticos || [
                     { nome: "Mega-Central Fotovoltaica", local: "Vale do Tejo", coords: "LAT 39.46 | LONG -8.19", status: "Em Licenciamento" },
                     { nome: "Zona de Aceleração PFZAER", local: "Castelo Branco", coords: "LAT 39.82 | LONG -7.49", status: "Planeado" },
-                    { nome: "Prospecção Mineira de Lítio", local: "Boticas", coords: "LAT 41.69 | LONG -7.66", status: "Contestado" },
-                    { nome: "Data Center de IA Hub", local: "Sines", coords: "LAT 37.95 | LONG -8.86", status: "Em Estudo" }
+                    { nome: "Prospecção Mineira de Lítio", local: "Boticas", coords: "LAT 41.69 | LONG -7.66", status: "Contestado" }
                 ];
                 renderProjects(false);
             }
@@ -338,7 +310,7 @@
             function renderizarCardsEthics() {
                 const container = document.getElementById('noticias-ethics-dinamico');
                 container.innerHTML = noticiasEthics.map((n, i) => `
-                    <a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-item ${i >= visiveisEthics ? 'hidden-card' : ''}" style="${i >= visiveisEthics ? 'display:none' : ''}">
+                    <a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-item" style="${i >= visiveisEthics ? 'display:none' : ''}">
                         <h3>${n.titulo}</h3>
                         <p>${(n.resumo_biocultura || n.resumo || "").substring(0, 110)}...</p>
                         <div class="news-meta">
