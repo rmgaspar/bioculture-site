@@ -20,14 +20,16 @@
             .hero-text { flex: 1.5; text-align: left; padding-top: 5px; } 
             .hero-text h1 { font-size: 4em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; line-height: 0.95; margin: 0; }
             
-            /* BLOCO REGIONALIZAÇÃO COM ESPAÇAMENTO */
-            .region-header { font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #1a1a1a; margin: 45px 0 5px 0; display: block; }
+            /* BLOCO REGIONALIZAÇÃO - COR VERMELHA */
+            .region-header { font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #c62828; margin: 35px 0 5px 0; display: block; }
             .national-link { color: #bbb; cursor: pointer; font-weight: 400; font-size: 0.85em; display: block; text-transform: lowercase; letter-spacing: 1px; width: fit-content; border-bottom: 1px solid transparent; }
             .national-link:hover { color: #2e7d32; border-bottom-color: #eee; }
 
+            /* CAROUSEL SMOOTH */
             .hero-visual { flex: 1; display: flex; justify-content: flex-end; }
             .hero-globe { position: relative; width: 480px; height: 480px; border-radius: 50%; overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,0.12); background: #1a1a1a; }
-            #hero-carousel { width: 100%; height: 100%; object-fit: cover; transition: opacity 0.8s ease-in-out; }
+            .hero-globe img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; transition: opacity 2s ease-in-out; opacity: 0; }
+            .hero-globe img.active { opacity: 1; }
 
             /* DASHBOARD GAUGES */
             .impact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px 30px; margin-bottom: 40px; }
@@ -38,9 +40,11 @@
             .impact-bar-fill { height: 100%; position: absolute; left: 0; top: 0; border-radius: 10px; transition: width 1.5s ease-in-out; }
             .impact-desc { font-size: 0.85em; line-height: 1.5; color: #777; text-align: justify; margin: 0; }
 
-            /* PROJETOS */
+            /* SECÇÕES COM COR VERMELHA */
             .data-row { display: block; padding: 2.5em 0; border-bottom: 1px solid #f2f2f2; }
-            .data-row h4 { font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #1a1a1a; margin: 0 0 25px 0; display: block; }
+            .data-row h4 { font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #c62828; margin: 0 0 25px 0; display: block; }
+
+            /* PROJETOS */
             .project-item { display: flex; justify-content: flex-start; align-items: center; gap: 60px; }
             .project-main { display: flex; flex-direction: column; gap: 3px; min-width: 350px; }
             .project-name { font-weight: 700; color: #1a1a1a; font-size: 1em; }
@@ -50,15 +54,15 @@
             .project-summary-text { font-size: 0.9em; line-height: 1.6; color: #666; margin: 10px 0; text-align: justify; }
             .project-detail-content { display: none; background: #fcfcfc; border-left: 2px solid #2e7d32; padding: 25px; margin: 15px 0; font-size: 0.85em; color: #555; line-height: 1.6; }
             .project-detail-content h5 { font-size: 1em; color: #1a1a1a; margin-bottom: 10px; text-transform: uppercase; font-weight: 900; }
-            .project-detail-content ul { list-style: none; padding-left: 0; margin-bottom: 15px; }
-            .project-detail-content li { margin-bottom: 8px; position: relative; padding-left: 15px; }
-            .project-detail-content li::before { content: "•"; position: absolute; left: 0; color: #2e7d32; font-weight: 900; }
             .source-list { margin-top: 20px; padding-top: 15px; border-top: 1px solid #eee; }
             .source-list a { display: block; color: #bbb; font-size: 0.85em; text-decoration: none; margin-bottom: 5px; text-transform: lowercase; }
 
-            /* SEARCH DROPDOWN */
-            .bio-res-item { padding: 12px 18px; font-size: 0.9em; color: #666; cursor: pointer; border-bottom: 1px solid #f9f9f9 !important; }
-            .bio-res-item:hover { background: #f9f9f9; }
+            /* RELATÓRIOS - COR AZUL NOS TITULOS */
+            .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+            .report-item { border-top: 1px solid #f9f9f9; padding-top: 20px; }
+            .report-item h5 { font-size: 0.75em; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; color: #0288d1; }
+            .report-item p { font-size: 0.95em; line-height: 1.7; color: #666; margin-bottom: 15px; text-align: justify; }
+            .report-source { font-size: 0.65em; font-weight: 400; color: #bbb; text-transform: uppercase; letter-spacing: 1px; display: block; border-top: 1px solid #eee; padding-top: 8px; }
 
             /* NOTÍCIAS */
             .news-header { margin-top: 4em; display: block; font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; margin-bottom: 20px; }
@@ -71,25 +75,14 @@
             .news-meta span { font-size: 0.65em; font-weight: 800; color: #bbb; text-transform: uppercase; letter-spacing: 1px; }
 
             /* BOTÃO PAGINAÇÃO SEM FRAME */
-            .btn-pagination { 
-                background: none !important; 
-                border: none !important; 
-                box-shadow: none !important;
-                color: #bbb !important; 
-                font-size: 0.8em; 
-                letter-spacing: 3px; 
-                cursor: pointer; 
-                text-transform: lowercase; 
-                margin-top: 2em;
-                padding: 0 !important;
-            }
+            .btn-pagination { background: none !important; border: none !important; box-shadow: none !important; color: #bbb !important; font-size: 0.8em; letter-spacing: 3px; cursor: pointer; text-transform: lowercase; margin-top: 2em; padding: 0 !important; }
 
             .page-footer { margin-top: auto; padding: 2em 0 2.5em 0; border-top: 1px solid #f2f2f2; opacity: 0.3; text-align: right; }
 
             @media screen and (max-width: 1280px) {
                 #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
                 #wrapper { padding-left: 0 !important; }
-                .hero-split, .impact-grid { grid-template-columns: 1fr; }
+                .hero-split, .report-grid, .impact-grid { grid-template-columns: 1fr; }
                 .hero-globe { width: 350px; height: 350px; margin: 0 auto; }
             }
 		</style>
@@ -99,7 +92,7 @@
 			<div id="main">
                 <div class="inner">
                     <section>
-                        <!-- 1. HERO & TITULOS -->
+                        <!-- 1. HERO -->
                         <div class="hero-split">
                             <div class="hero-text">
                                 <span class="category-label">Justiça Climática</span>
@@ -115,8 +108,8 @@
                                 </div>
                             </div>
                             <div class="hero-visual">
-                                <div class="hero-globe">
-                                    <img id="hero-carousel" src="https://img.iol.pt/image/id/11983815/1024.jpg" alt="Impacto Territorial">
+                                <div class="hero-globe" id="globe-container">
+                                    <!-- Imagens carregadas dinamicamente para cross-fade -->
                                 </div>
                             </div>
                         </div>
@@ -130,9 +123,7 @@
                         <!-- 3. RELATÓRIOS -->
                         <div class="data-row">
                             <h4>Análise de Aceleração e Conflito</h4>
-                            <div id="report-grid-ethics" class="report-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
-                                <!-- Conteúdo gerado via JS -->
-                            </div>
+                            <div id="report-grid-ethics" class="report-grid"></div>
                         </div>
 
                         <!-- 4. NOTÍCIAS -->
@@ -156,10 +147,10 @@
             let locationsDB = [], noticiasEthics = [], allProjects = [], visiveisEthics = 4;
             
             const heroImages = [
-                "https://plus.unsplash.com/premium_photo-1678743133495-49199baeb582?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-                "https://images.ctfassets.net/kftzwdyauwt9/63hqWy8faGXpAUlgT2H5CW/4656ec5d4131584358285d2c687b6439/abilene-still4.jpg?w=3840&q=90&fm=webp",
-                "https://images.unsplash.com/photo-1543484967-376c003831e0?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-                "https://images.unsplash.com/photo-1718110445810-ff0949d21b50?q=80&w=1975&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                "https://img.iol.pt/image/id/11983815/1024.jpg",
+                "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=1024",
+                "https://images.unsplash.com/photo-1466611653911-95282fc365d5?auto=format&fit=crop&w=1024",
+                "https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?auto=format&fit=crop&w=1024"
             ];
 
             const relatoriosEthics = [
@@ -177,11 +168,11 @@
                     ]);
                     locationsDB = rLoc;
                     
-                    // Filtro de notícias alargado para garantir captura
+                    // Filtro de notícias otimizado
                     noticiasEthics = rNews.filter(n => {
-                        const cat = (n.categoria || "").toLowerCase();
-                        const tit = (n.titulo || "").toLowerCase();
-                        return cat.includes('etic') || tit.includes('etic') || tit.includes('contra') || cat.includes('justiça');
+                        const keywords = ['etica', 'ética', 'justiça', 'climatica', 'contra', 'impacto'];
+                        const text = ((n.categoria || "") + (n.titulo || "")).toLowerCase();
+                        return keywords.some(k => text.includes(k));
                     });
                     
                     const savedID = localStorage.getItem('biocultura_region');
@@ -190,13 +181,12 @@
                     renderDashboard(info);
                     renderizarCardsEthics();
                     renderRelatorios();
-                    startCarousel();
+                    initCarousel();
                     setupLocationLogic();
                 } catch(e) { console.error("Erro no fetch:", e); }
             }
 
             function setupLocationLogic() {
-                // Pesquisa por nome
                 $(document).on('input', '#loc-search-input', function() {
                     const val = $(this).val().toLowerCase(), dropdown = $('#loc-dropdown').empty();
                     if(val.length < 2) return dropdown.hide();
@@ -209,23 +199,17 @@
                     dropdown.show();
                 });
 
-                // GPS - Corrigido e testado
                 $(document).on('click', '#btn-gps-trigger', function() {
-                    if (!navigator.geolocation) return alert("O seu browser não suporta GPS.");
-                    
+                    if (!navigator.geolocation) return alert("GPS não suportado.");
                     navigator.geolocation.getCurrentPosition(pos => {
                         let closest = locationsDB[0], minD = Infinity;
                         locationsDB.forEach(c => {
-                            if (c.lat && c.lon) {
-                                let d = Math.sqrt(Math.pow(pos.coords.latitude - c.lat, 2) + Math.pow(pos.coords.longitude - c.lon, 2));
-                                if(d < minD) { minD = d; closest = c; }
-                            }
+                            let d = Math.sqrt(Math.pow(pos.coords.latitude - c.lat, 2) + Math.pow(pos.coords.longitude - c.lon, 2));
+                            if(d < minD) { minD = d; closest = c; }
                         });
                         localStorage.setItem('biocultura_region', closest.id);
                         location.reload();
-                    }, err => {
-                        alert("Não foi possível aceder à localização. Verifique as permissões do browser.");
-                    });
+                    }, () => alert("Erro ao obter GPS. Verifique as permissões."));
                 });
             }
 
@@ -234,12 +218,21 @@
                 location.reload();
             }
 
-            function startCarousel() {
-                let i = 0;
+            function initCarousel() {
+                const container = document.getElementById('globe-container');
+                heroImages.forEach((src, idx) => {
+                    const img = document.createElement('img');
+                    img.src = src;
+                    if(idx === 0) img.className = 'active';
+                    container.appendChild(img);
+                });
+
+                let current = 0;
+                const imgs = container.getElementsByTagName('img');
                 setInterval(() => {
-                    i = (i + 1) % heroImages.length;
-                    $('#hero-carousel').css('opacity', 0);
-                    setTimeout(() => { $('#hero-carousel').attr('src', heroImages[i]).css('opacity', 1); }, 800);
+                    imgs[current].classList.remove('active');
+                    current = (current + 1) % imgs.length;
+                    imgs[current].classList.add('active');
                 }, 5000);
             }
 
@@ -268,24 +261,12 @@
 
                 allProjects = [
                     { 
-                        id: "pszaer", 
-                        nome: "Plano Setorial PSZAER", 
-                        local: "Nacional / ZAER", 
-                        coords: "MAPA ESTRATÉGICO 2026", 
-                        status: "Consulta Pública Encerrada (15/07/2026)",
+                        id: "pszaer", nome: "Plano Setorial PSZAER", local: "Nacional / ZAER", coords: "MAPA ESTRATÉGICO 2026", status: "Consulta Encerrada (15/07/2026)",
                         resumo1: "O PSZAER identifica as áreas aptas para a instalação acelerada de projetos solares e eólicos em Portugal, garantindo um licenciamento simplificado.",
-                        detalhe: `
-                            <h5>Proposta de Programa Setorial (PSZAER)</h5>
-                            <p><strong>Estado:</strong> O prazo de discussão pública e contestação terminou ontem, 15 de Julho de 2026. O programa aguarda agora aprovação final.</p>
-                            <ul>
-                                <li><strong>Via Verde (ZAER):</strong> Licenciamento acelerado em Janela Única.</li>
-                                <li><strong>Salvaguardas:</strong> Exclusão de Rede Natura 2000 e solos RAN férteis.</li>
-                                <li><strong>Regeneração:</strong> Pastoreio obrigatório e cortinas verdes de 40m.</li>
-                            </ul>
-                        `
+                        detalhe: "<h5>Programa Setorial das ZAER</h5><p>O prazo de discussão pública terminou ontem, 15 de Julho de 2026. O programa aguarda agora aprovação final.</p>"
                     },
                     ...(info?.etica?.projetos_criticos || [
-                        { id: "litio", nome: "Mineração de Lítio", local: info ? info.titulo : "Boticas", coords: "LAT 41.69 | LONG -7.66", status: "Contestado", resumo1: "Projeto de exploração mineira a céu aberto com impacto crítico no ciclo hidrológico local.", detalhe: "A exploração exige o rebaixamento do nível freático, secando nascentes e contaminando aquíferos." }
+                        { id: "litio", nome: "Mineração de Lítio", local: info ? info.titulo : "Boticas", coords: "LAT 41.69 | LONG -7.66", status: "Contestado", resumo1: "Projeto de exploração mineira a céu aberto com impacto crítico no ciclo hidrológico local.", detalhe: "A exploração exige o rebaixamento do nível freático e contaminação de aquíferos." }
                     ])
                 ];
                 renderProjects();
@@ -315,9 +296,7 @@
                     </div>`).join('');
             }
 
-            function toggleDetail(id) {
-                $(`#detail-${id}`).slideToggle();
-            }
+            function toggleDetail(id) { $(`#detail-${id}`).slideToggle(); }
 
             function renderRelatorios() {
                 document.getElementById('report-grid-ethics').innerHTML = relatoriosEthics.map(r => `
@@ -331,7 +310,7 @@
             function renderizarCardsEthics() {
                 const container = document.getElementById('noticias-ethics-dinamico');
                 if (!noticiasEthics.length) {
-                    container.innerHTML = "<p style='font-size:0.8em; color:#bbb;'>Sem notícias recentes carregadas.</p>";
+                    container.innerHTML = "<p style='font-size:0.8em; color:#bbb;'>Sem notícias recentes nesta categoria.</p>";
                     return;
                 }
                 container.innerHTML = noticiasEthics.map((n, i) => `
