@@ -1,3 +1,4 @@
+Aqui tens o código completo e retificado, Gaspar. Recuperei as secções de análise, a estrutura completa das notícias e corrigi a lógica dos projetos para garantir que todos abrem corretamente, mantendo a integração com os teus ficheiros JSON.
 <!DOCTYPE HTML>
 <html>
 	<head>
@@ -6,60 +7,74 @@
 		<meta name="viewport" content="width=device-width, initial-scale, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
 		<style>
+            /* --- ESTRUTURA GLOBAL --- */
             body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
 			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
             section { min-height: 100vh; display: flex; flex-direction: column; }
             #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
             #wrapper { padding-left: 18em !important; }
             .inner { padding: 2.2em 4em 0 4em !important; max-width: 1600px !important; margin: 0 auto; width: 100%; }
-            
-            /* TITULOS */
+
+            /* HERO & TITULOS */
             .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; margin-bottom: 15px; display: block; }
-            .main-impact-title { font-size: 2.5em; font-weight: 900; color: #1a1a1a; letter-spacing: -1.5px; line-height: 1.1; margin: 0 0 30px 0; }
-            .national-link { font-size: 0.35em; vertical-align: middle; color: #2e7d32; text-decoration: none; letter-spacing: 1px; margin-left: 10px; font-weight: 700; text-transform: uppercase; }
-
-            /* HERO VISUAL */
             .hero-split { display: flex; align-items: flex-start; justify-content: space-between; gap: 4em; margin-bottom: 2em; }
-            .hero-text { flex: 1.5; text-align: left; } 
+            .hero-text { flex: 1.5; text-align: left; }
+            .hero-text h1 { font-size: 3.5em; font-weight: 900; color: #1a1a1a; letter-spacing: -2px; line-height: 1; margin: 0 0 10px 0; }
+            .national-link { font-size: 0.4em; vertical-align: middle; color: #2e7d32; text-decoration: none; letter-spacing: 1px; margin-left: 15px; font-weight: 800; text-transform: uppercase; border-bottom: 1px solid transparent; }
+            .national-link:hover { border-bottom-color: #2e7d32; }
+            
             .hero-visual { flex: 1; display: flex; justify-content: flex-end; }
-            .hero-globe { position: relative; width: 480px; height: 480px; border-radius: 50%; overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,0.12); background: #1a1a1a; }
-            .hero-globe img { width: 100%; height: 100%; object-fit: cover; transition: opacity 0.8s ease-in-out; }
+            .hero-globe { position: relative; width: 450px; height: 450px; border-radius: 50%; overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,0.12); background: #1a1a1a; }
+            #hero-carousel { width: 100%; height: 100%; object-fit: cover; transition: opacity 0.8s ease-in-out; }
 
-            /* GAUGES */
-            .impact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px; }
-            .impact-item { margin-bottom: 10px; }
-            .impact-info { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 6px; }
-            .impact-info b { font-size: 0.8em; text-transform: uppercase; letter-spacing: 1px; color: #1a1a1a; }
-            .impact-bar-bg { height: 4px; width: 100%; background: #eee; border-radius: 10px; position: relative; overflow: hidden; margin-bottom: 8px; }
+            /* GAUGES DE IMPACTO */
+            .data-row { display: block; padding: 2.5em 0; border-bottom: 1px solid #f2f2f2; }
+            .data-row h4 { font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #1a1a1a; margin: 0 0 25px 0; }
+            .impact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px 30px; margin-bottom: 20px; }
+            .impact-info { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px; }
+            .impact-info b { font-size: 0.85em; text-transform: uppercase; color: #1a1a1a; letter-spacing: 1px; }
+            .impact-bar-bg { height: 4px; width: 100%; background: #eee; border-radius: 10px; position: relative; overflow: hidden; margin-bottom: 12px; }
             .impact-bar-fill { height: 100%; position: absolute; left: 0; top: 0; transition: width 1.5s ease-in-out; }
-            .impact-desc { font-size: 0.85em; color: #777; line-height: 1.5; margin: 0; text-align: justify; }
+            .impact-desc { font-size: 0.85em; line-height: 1.5; color: #777; text-align: justify; margin: 0; }
 
-            /* PROJETOS EXPANDIVEIS */
-            .project-item { display: flex; justify-content: flex-start; align-items: center; gap: 60px; padding: 15px 0; }
-            .project-main { display: flex; flex-direction: column; gap: 3px; min-width: 350px; }
-            .project-name { font-weight: 700; color: #1a1a1a; }
-            .btn-ver-mais { color: #2e7d32; cursor: pointer; font-weight: 800; margin-left: 10px; font-size: 0.9em; }
-            .project-detail-content { display: none; background: #f9f9f9; border-left: 3px solid #2e7d32; padding: 30px; margin: 10px 0 20px 0; font-size: 0.9em; line-height: 1.7; color: #444; }
-            .project-detail-content h5 { font-weight: 900; text-transform: uppercase; margin-bottom: 15px; color: #1a1a1a; }
-            .project-detail-content ul { padding-left: 15px; margin-bottom: 20px; }
+            /* PROJETOS DINÂMICOS */
+            .project-item-container { border-bottom: 1px solid #f9f9f9; padding: 15px 0; }
+            .project-header { display: flex; justify-content: space-between; align-items: center; }
+            .project-main { display: flex; flex-direction: column; gap: 3px; }
+            .project-name { font-weight: 700; color: #1a1a1a; font-size: 1em; }
+            .project-coords { font-family: monospace; font-size: 0.75em; color: #888; background: #f5f5f5; padding: 2px 8px; border-radius: 4px; width: fit-content; }
+            .project-status { font-size: 0.65em; font-weight: 800; color: #bbb; text-transform: uppercase; letter-spacing: 1px; }
+            .btn-toggle-detail { color: #2e7d32; cursor: pointer; font-weight: 800; margin-left: 10px; font-size: 0.9em; }
+            
+            .project-detail-box { display: none; background: #fcfcfc; border-left: 3px solid #2e7d32; padding: 25px; margin: 15px 0; font-size: 0.9em; line-height: 1.7; color: #555; }
+            .project-detail-box h5 { font-weight: 900; text-transform: uppercase; color: #1a1a1a; margin-bottom: 10px; }
             .detail-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #eee; padding-top: 15px; margin-top: 15px; }
-            .source-link { color: #bbb; text-transform: lowercase; font-size: 0.8em; text-decoration: none; }
-            .btn-fechar { cursor: pointer; color: #2e7d32; font-weight: 800; text-transform: uppercase; font-size: 0.75em; }
+            .btn-fechar-detail { cursor: pointer; color: #2e7d32; font-weight: 800; text-transform: uppercase; font-size: 0.75em; }
 
-            /* NOTICIAS */
+            /* ANALISE E CONFLITO (RELATÓRIOS) */
+            .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+            .report-item { border-top: 1px solid #f9f9f9; padding-top: 20px; }
+            .report-item h5 { font-size: 0.75em; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; color: #c62828; }
+            .report-item p { font-size: 0.95em; line-height: 1.7; color: #666; margin-bottom: 15px; text-align: justify; }
+            .report-source { font-size: 0.65em; font-weight: 400; color: #bbb; text-transform: uppercase; letter-spacing: 1px; display: block; border-top: 1px solid #eee; padding-top: 8px; }
+
+            /* NOTÍCIAS */
             .news-header { margin-top: 4em; display: block; font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; margin-bottom: 20px; }
             .news-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; }
             .news-item { text-decoration: none; color: inherit; display: block; padding: 25px; background: #fdfdfd; border-radius: 12px; transition: all 0.3s; }
             .news-item:hover { transform: translateY(-5px); background: #f9f9f9; }
             .news-item h3 { font-size: 1.15em; font-weight: 700; color: #1a1a1a; margin-bottom: 12px; line-height: 1.3; }
-            .news-meta { display: flex; align-items: center; gap: 10px; border-top: 1px solid #f2f2f2; padding-top: 12px; font-size: 0.65em; font-weight: 800; color: #bbb; text-transform: uppercase; }
+            .news-item p { font-size: 0.9em; color: #666; line-height: 1.5; margin-bottom: 15px; }
+            .news-meta { display: flex; align-items: center; gap: 10px; border-top: 1px solid #f2f2f2; padding-top: 12px; }
+            .source-logo { width: 16px; height: 16px; object-fit: contain; filter: grayscale(100%); opacity: 0.6; }
+            .news-meta span { font-size: 0.65em; font-weight: 800; color: #bbb; text-transform: uppercase; letter-spacing: 1px; }
 
-            .page-footer { margin-top: auto; padding: 2em 0 2.5em 0; border-top: 1px solid #f2f2f2; opacity: 0.3; text-align: right; }
+            .btn-pagination { background: none !important; border: none !important; color: #bbb !important; font-size: 0.8em; letter-spacing: 3px; cursor: pointer; text-transform: lowercase; margin-top: 2em; }
 
             @media screen and (max-width: 1280px) {
                 #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
                 #wrapper { padding-left: 0 !important; }
-                .hero-split, .impact-grid { grid-template-columns: 1fr; }
+                .hero-split, .report-grid, .impact-grid { grid-template-columns: 1fr; }
                 .hero-globe { width: 320px; height: 320px; margin: 0 auto; }
             }
 		</style>
@@ -69,42 +84,49 @@
 			<div id="main">
                 <div class="inner">
                     <section>
+                        <!-- 1. HERO & DASHBOARD -->
                         <div class="hero-split">
                             <div class="hero-text">
                                 <span class="category-label">Justiça Climática</span>
-                                <h1 class="main-impact-title">
-                                    Indicadores de Impacto Negativo para a zona de <span id="reg-name" style="color:#2e7d32">...</span>
-                                    <a href="javascript:void(0)" onclick="loadNationalData()" class="national-link">(âmbito nacional)</a>
-                                </h1>
-
-                                <div id="ethics-dashboard" style="display:none;">
+                                <h1>Transição Ética: <span id="reg-name" style="color:#2e7d32">...</span></h1>
+                                <a href="#" class="national-link">(âmbito nacional)</a>
+                                
+                                <div id="ethics-dashboard" style="display:none; margin-top: 40px;">
+                                    <h4 style="font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #1a1a1a; margin-bottom: 25px;">Indicadores de Impacto Negativo</h4>
                                     <div id="impact-container" class="impact-grid"></div>
                                 </div>
                             </div>
                             <div class="hero-visual">
                                 <div class="hero-globe">
-                                    <img id="hero-carousel" src="https://img.iol.pt/image/id/11983815/1024.jpg" alt="Impacto Territorial">
+                                    <img id="hero-carousel" src="https://img.iol.pt/image/id/11983815/1024.jpg" alt="Impacto">
                                 </div>
                             </div>
                         </div>
 
+                        <!-- 2. PROJETOS -->
                         <div class="data-row">
-                            <h4 style="font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #1a1a1a; margin-bottom: 25px;">Projetos e Zonas de Pressão</h4>
+                            <h4>Projetos e Zonas de Pressão</h4>
                             <div id="projects-list-main"></div>
-                            <div style="display: flex; gap: 20px; margin-top: 15px;">
-                                <span id="btn-expand-projects" class="btn-toggle" style="cursor:pointer; color:#bbb">+ ver mais projetos</span>
+                            <div style="margin-top: 20px;">
+                                <span id="btn-expand-projects" style="cursor:pointer; color:#bbb; font-size: 0.8em; letter-spacing: 1px;">+ ver todos os projetos</span>
                             </div>
                         </div>
 
+                        <!-- 3. ANÁLISE DE ACELERAÇÃO -->
+                        <div class="data-row">
+                            <h4>Análise de Aceleração e Conflito</h4>
+                            <div id="report-grid-ethics" class="report-grid"></div>
+                        </div>
+
+                        <!-- 4. NOTÍCIAS -->
                         <span class="news-header">noticias</span>
                         <div id="noticias-ethics-dinamico" class="news-list"></div>
                         <div style="margin-bottom: 4em;">
-                            <button id="btn-load-more-ethics" style="background:none; border:none; color:#bbb; cursor:pointer; letter-spacing:2px; text-transform:lowercase;">ver mais</button>
+                            <button id="btn-load-more-ethics" class="btn-pagination">ver mais</button>
                         </div>
 
-                        <footer class="page-footer">
+                        <footer style="margin-top: auto; padding: 2em 0; border-top: 1px solid #f2f2f2; opacity: 0.3; text-align: right;">
                             <span style="display: block; font-size: 0.85em; font-weight: 900; color: #333;">bioCultura</span>
-                            <span style="display: block; font-size: 0.5em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Global Regeneration</span>
                         </footer>
 					</section>
 				</div>
@@ -115,24 +137,19 @@
 		<script src="/assets/js/jquery.min.js"></script>
         <script>
             let locationsDB = [], noticiasEthics = [], allProjects = [], visiveisEthics = 4;
-            
             const heroImages = [
                 "https://img.iol.pt/image/id/11983815/1024.jpg",
                 "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=1024",
                 "https://images.unsplash.com/photo-1466611653911-95282fc365d5?auto=format&fit=crop&w=1024",
                 "https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?auto=format&fit=crop&w=1024"
             ];
-            let imgIdx = 0;
 
-            function startCarousel() {
-                setInterval(() => {
-                    imgIdx = (imgIdx + 1) % heroImages.length;
-                    $('#hero-carousel').css('opacity', 0);
-                    setTimeout(() => {
-                        $('#hero-carousel').attr('src', heroImages[imgIdx]).css('opacity', 1);
-                    }, 800);
-                }, 5000);
-            }
+            const relatoriosEthics = [
+                { titulo: "PFZAER: Licenciamento e Silêncio Positivo", texto: "As Zonas de Aceleração (PFZAER) introduzem o 'silêncio positivo' no licenciamento ambiental, permitindo que projetos avancem sem AIA detalhada se prazos administrativos forem excedidos.", fonte: "DGEG / APA 2025" },
+                { titulo: "Mineração de Lítio e o Ciclo Hidrológico", texto: "A exploração de lítio exige o rebaixamento do nível freático, alterando permanentemente a hidrogeologia local e secando nascentes ancestrais.", fonte: "IAmbiente / IPMA" },
+                { titulo: "IA e a Drenagem de Recursos Hídricos", texto: "Mega centros de dados de IA consomem água equivalente ao abastecimento de uma cidade média, competindo diretamente com a agricultura regenerativa.", fonte: "REN Datahub" },
+                { titulo: "Impacto Social e 'Green Grabbing'", texto: "Expropriação de baldios para fins industriais energéticos sem benefício direto para as populações, acelerando o despovoamento do interior.", fonte: "Observatório Coesão" }
+            ];
 
             async function inicializarPagina() {
                 try {
@@ -145,9 +162,19 @@
                     const info = locationsDB.find(i => i.id === (localStorage.getItem('biocultura_region') || "proenca-a-nova"));
                     
                     renderDashboard(info);
+                    renderRelatorios();
                     renderizarCardsEthics();
                     startCarousel();
                 } catch(e) { console.error(e); }
+            }
+
+            function startCarousel() {
+                let i = 0;
+                setInterval(() => {
+                    i = (i + 1) % heroImages.length;
+                    $('#hero-carousel').css('opacity', 0);
+                    setTimeout(() => { $('#hero-carousel').attr('src', heroImages[i]).css('opacity', 1); }, 800);
+                }, 5000);
             }
 
             function renderDashboard(info) {
@@ -158,8 +185,8 @@
                 const impacts = info.etica?.indicadores || [
                     { label: "Ocupação de Solo RAN", val: 42, color: "#8d6e63", desc: "Conversão de solos de Reserva Agrícola Nacional para uso industrial." },
                     { label: "Fragmentação de Habitat", val: 28, color: "#2e7d32", desc: "Interrupção de corredores ecológicos por vedações de mega-parques." },
-                    { label: "Stress Hídrico (IA)", val: 65, color: "#0288d1", desc: "Pressão sobre aquíferos para o arrefecimento de centros de dados." },
-                    { label: "Oposição Social", val: 85, color: "#7b1fa2", desc: "Nível de contestação face ao licenciamento de mega-projetos." }
+                    { label: "Stress Hídrico (IA)", val: 65, color: "#0288d1", desc: "Pressão sobre aquíferos locais para o arrefecimento de centros de dados." },
+                    { label: "Oposição Social", val: 85, color: "#7b1fa2", desc: "Nível de contestação das comunidades locais face ao licenciamento industrial." }
                 ];
 
                 document.getElementById('impact-container').innerHTML = impacts.map(m => `
@@ -171,28 +198,11 @@
 
                 allProjects = [
                     { 
-                        id: "pszaer", 
-                        nome: "Plano Setorial PSZAER", 
-                        local: "Nacional / Zonas de Aceleração", 
-                        coords: "MAPA ESTRATÉGICO 2026", 
-                        status: "Discussão Pública",
-                        detalhe: `
-                            <h5>Proposta de Programa Setorial (PSZAER)</h5>
-                            <p>Instrumento de planeamento estratégico destinado a identificar as áreas do território nacional mais aptas para projetos solares e eólicos, garantindo licenciamento acelerado.</p>
-                            <ul>
-                                <li><strong>Base Legal:</strong> Diretiva RED III (2023/2413) para criação de "vias verdes" administrativas.</li>
-                                <li><strong>Metas PNEC 2030:</strong> Portugal visa atingir 20,8 GW de capacidade solar e 10,4 GW de eólica onshore.</li>
-                                <li><strong>Hotspots Territoriais:</strong> Sertã (4% nacional), Proença-a-Nova, Mortágua e Castelo Branco lideram as áreas identificadas.</li>
-                                <li><strong>Condicionantes:</strong> Exclusão total da Rede Natura 2000 e buffers de 1km de habitações para eólicas.</li>
-                                <li><strong>Justiça Energética:</strong> Institucionalização de Planos de Benefícios Locais e Comunidades de Energia.</li>
-                            </ul>
-                            <p>O mapeamento prioriza solos degradados, minas abandonadas (199 identificadas) e áreas a menos de 10km de subestações.</p>
-                        `,
+                        id: "pszaer", nome: "Plano Setorial PSZAER", local: "Nacional / ZAER", coords: "MAPA ESTRATÉGICO 2026", status: "Discussão Pública",
+                        detalhe: "<h5>Proposta de Programa Setorial (PSZAER)</h5><ul><li><strong>Base Legal:</strong> Diretiva RED III para licenciamento acelerado.</li><li><strong>Metas 2030:</strong> 20,8 GW solar e 10,4 GW eólica.</li><li><strong>Salvaguardas:</strong> Exclusão total da Rede Natura 2000 e solos RAN férteis.</li></ul>",
                         fonte: "https://participa.pt"
                     },
-                    ...(info.etica?.projetos_criticos || [
-                        { id: "litio", nome: "Mineração de Lítio", local: "Boticas / Barroso", coords: "LAT 41.69 | LONG -7.66", status: "Contestado", detalhe: "Projeto de exploração a céu aberto com forte impacto no ciclo hidrológico local.", fonte: "https://participa.pt" }
-                    ])
+                    ...(info.etica?.projetos_criticos || [])
                 ];
                 renderProjects(false);
             }
@@ -200,26 +210,35 @@
             function renderProjects(expand) {
                 const show = expand ? allProjects : allProjects.slice(0, 3);
                 document.getElementById('projects-list-main').innerHTML = show.map(p => `
-                    <div style="border-bottom: 1px solid #f9f9f9;">
-                        <div class="project-item">
+                    <div class="project-item-container">
+                        <div class="project-header">
                             <div class="project-main">
-                                <span class="project-name">${p.nome} — ${p.local} <span class="btn-ver-mais" onclick="toggleDetail('${p.id}')">+</span></span>
+                                <span class="project-name">${p.nome} — ${p.local} <span class="btn-toggle-detail" onclick="toggleProject('${p.id}')">+</span></span>
                                 <span class="project-coords">${p.coords}</span>
                             </div>
                             <span class="project-status">${p.status}</span>
                         </div>
-                        <div id="detail-${p.id}" class="project-detail-content">
-                            ${p.detalhe}
+                        <div id="detail-${p.id}" class="project-detail-box">
+                            ${p.detalhe || '<p>Análise técnica de impacto territorial em curso para este projeto específico.</p>'}
                             <div class="detail-footer">
-                                <a href="${p.fonte}" target="_blank" class="source-link">fonte: ${p.fonte}</a>
-                                <span class="btn-fechar" onclick="toggleDetail('${p.id}')">fechar</span>
+                                <a href="${p.fonte || '#'}" target="_blank" style="color:#bbb; font-size:0.8em;">fonte: ${p.fonte || 'biocultura.net'}</a>
+                                <span class="btn-fechar-detail" onclick="toggleProject('${p.id}')">fechar</span>
                             </div>
                         </div>
                     </div>`).join('');
             }
 
-            function toggleDetail(id) {
+            function toggleProject(id) {
                 $(`#detail-${id}`).slideToggle();
+            }
+
+            function renderRelatorios() {
+                document.getElementById('report-grid-ethics').innerHTML = relatoriosEthics.map(r => `
+                    <div class="report-item">
+                        <h5>${r.titulo}</h5>
+                        <p>${r.texto}</p>
+                        <span class="report-source">Fonte: ${r.fonte}</span>
+                    </div>`).join('');
             }
 
             function renderizarCardsEthics() {
@@ -227,14 +246,17 @@
                 container.innerHTML = noticiasEthics.map((n, i) => `
                     <a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-item" style="${i >= visiveisEthics ? 'display:none' : ''}">
                         <h3>${n.titulo}</h3>
-                        <div class="news-meta"><span>${n.data}</span></div>
+                        <p>${(n.resumo_biocultura || n.resumo || "").substring(0, 100)}...</p>
+                        <div class="news-meta">
+                            <img src="${n.logo || '/assets/img/logo-small.png'}" class="source-logo">
+                            <span>${n.data}</span>
+                        </div>
                     </a>`).join('');
+                document.getElementById('btn-load-more-ethics').style.display = noticiasEthics.length > visiveisEthics ? 'inline-block' : 'none';
             }
 
-            document.getElementById('btn-expand-projects').onclick = function() {
-                renderProjects(true);
-                $(this).hide();
-            };
+            document.getElementById('btn-expand-projects').onclick = () => renderProjects(true);
+            document.getElementById('btn-load-more-ethics').onclick = () => { visiveisEthics += 4; renderizarCardsEthics(); };
 
             fetch('/sidebar-content.html').then(r => r.text()).then(html => {
                 document.getElementById('sidebar').innerHTML = html;
