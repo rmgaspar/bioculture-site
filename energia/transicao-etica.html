@@ -56,7 +56,7 @@
             .source-list { margin-top: 20px; padding-top: 15px; border-top: 1px solid #eee; }
             .source-list a { display: block; color: #bbb; font-size: 0.85em; text-decoration: none; margin-bottom: 5px; text-transform: lowercase; }
 
-            /* SIDEBAR SEARCH DROPDOWN */
+            /* SEARCH DROPDOWN */
             .bio-res-item { padding: 12px 18px; font-size: 0.9em; color: #666; cursor: pointer; border-bottom: 1px solid #f9f9f9 !important; }
             .bio-res-item:hover { background: #f9f9f9; }
 
@@ -100,7 +100,7 @@
                                 <h1>Transição Ética: O Custo do Progresso</h1>
                                 
                                 <h4 class="region-header">INDICADORES DE IMPACTO NEGATIVO PARA A REGIÃO DE: <span id="reg-name-caps">PORTUGAL (MÉDIA NACIONAL)</span></h4>
-                                <span class="national-link" onclick="renderDashboard(null)">(ver ambito nacional)</span>
+                                <span class="national-link" onclick="resetToNational()">(ver ambito nacional)</span>
 
                                 <div id="ethics-dashboard" style="display:none; margin-top:40px;">
                                     <div class="tech-content">
@@ -170,7 +170,6 @@
                     locationsDB = rLoc;
                     noticiasEthics = rNews.filter(n => 
                         (n.categoria || "").toLowerCase().includes('etica') || 
-                        (n.titulo || "").toLowerCase().includes('etica') ||
                         (n.titulo || "").toLowerCase().includes('contra')
                     );
                     
@@ -186,16 +185,13 @@
             }
 
             function setupLocationLogic() {
-                // Escuta eventos no sidebar (mesmo que seja carregado depois)
                 $(document).on('input', '#loc-search-input', function() {
                     const val = $(this).val().toLowerCase(), dropdown = $('#loc-dropdown').empty();
                     if(val.length < 2) return dropdown.hide();
                     locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0,5).forEach(m => {
                         $('<div class="bio-res-item"></div>').text(m.titulo).on('click', () => {
                             localStorage.setItem('biocultura_region', m.id);
-                            renderDashboard(m); // Atualiza sem reload
-                            dropdown.hide();
-                            $('#loc-search-input').val(m.titulo);
+                            location.reload(); // Recarrega para aplicar todos os filtros JSON
                         }).appendTo(dropdown);
                     });
                     dropdown.show();
@@ -209,9 +205,14 @@
                             if(d < minD) { minD = d; closest = c; }
                         });
                         localStorage.setItem('biocultura_region', closest.id);
-                        renderDashboard(closest);
+                        location.reload();
                     });
                 });
+            }
+
+            function resetToNational() {
+                localStorage.removeItem('biocultura_region');
+                location.reload();
             }
 
             function startCarousel() {
@@ -261,14 +262,14 @@
                             <h5>Proposta de Programa Setorial (PSZAER)</h5>
                             <p><strong>Nota:</strong> O prazo de discussão pública e contestação terminou ontem, 15 de Julho de 2026.</p>
                             <ul>
-                                <li><strong>Via Verde (ZAER):</strong> Áreas pré-aprovadas com licenciamento acelerado em Janela Única.</li>
-                                <li><strong>Linhas Vermelhas:</strong> Proibição em Parques Naturais, solos RAN férteis e buffers de 1km de habitações.</li>
+                                <li><strong>Via Verde (ZAER):</strong> Licenciamento acelerado em áreas de baixo impacto ambiental.</li>
+                                <li><strong>Linhas Vermelhas:</strong> Proibição em Parques Naturais e solos RAN férteis.</li>
                                 <li><strong>Regeneração:</strong> Pastoreio obrigatório (sem herbicidas) e cortinas verdes de 40m.</li>
                             </ul>
                         `
                     },
                     ...(info?.etica?.projetos_criticos || [
-                        { id: "litio", nome: "Mineração de Lítio", local: "Boticas", coords: "LAT 41.69 | LONG -7.66", status: "Contestado", resumo1: "Projeto de exploração mineira a céu aberto com impacto crítico no ciclo hidrológico local.", detalhe: "A exploração exige o rebaixamento do nível freático, secando nascentes e contaminando aquíferos." }
+                        { id: "litio", nome: "Mineração de Lítio", local: "Boticas", coords: "LAT 41.69 | LONG -7.66", status: "Contestado", resumo1: "Projeto de exploração mineira a céu aberto com impacto crítico no ciclo hidrológico local.", detalhe: "A exploração exige o rebaixamento do nível freático e contaminação de aquíferos." }
                     ])
                 ];
                 renderProjects();
