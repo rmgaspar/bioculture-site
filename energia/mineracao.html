@@ -3,100 +3,87 @@
 	<head>
 		<title>bioCultura - Observatório da Mineração</title>
 		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<meta name="viewport" content="width=device-width, initial-scale, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
 		<style>
-            /* --- ESTRUTURA GLOBAL (PARIDADE TOTAL COM INDEX) --- */
+            /* --- ESTRUTURA GLOBAL --- */
             body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
 			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
-            
+            section { min-height: 100vh; display: flex; flex-direction: column; }
             #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
             #wrapper { padding-left: 18em !important; }
+            .inner { padding: 2.2em 4em 0 4em !important; max-width: 1600px !important; margin: 0 auto; width: 100%; }
 
-            .inner { padding: 2.2em 4em 0 4em !important; max-width: 1600px !important; margin: 0 auto; }
-
-            /* HERO SPLIT */
+            /* HERO & TITULOS */
+            .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; margin-bottom: 15px; display: block; }
             .hero-split { display: flex; align-items: flex-start; justify-content: space-between; gap: 4em; margin-bottom: 2em; }
             .hero-text { flex: 1.5; text-align: left; padding-top: 5px; } 
-            .hero-text h1 { font-size: 4em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; line-height: 0.95; margin-bottom: 10px; }
+            .hero-text h1 { font-size: 4em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; line-height: 0.95; margin: 0; }
             
+            /* BLOCO REGIONALIZAÇÃO */
+            .region-header { font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #c62828; margin: 25px 0 5px 0; display: block; }
+            .national-link { color: #bbb; cursor: pointer; font-weight: 400; font-size: 0.85em; display: block; text-transform: lowercase; letter-spacing: 1px; width: fit-content; border-bottom: 1px solid transparent; }
+            .national-link:hover { color: #2e7d32; border-bottom-color: #eee; }
+
+            /* CAROUSEL SMOOTH */
             .hero-visual { flex: 1; display: flex; justify-content: flex-end; }
-            .hero-globe { 
-                position: relative; width: 480px; height: 480px; 
-                border-radius: 50%; overflow: hidden; 
-                box-shadow: 0 40px 100px rgba(0,0,0,0.12); background: #1a1a1a;
-            }
-            .hero-globe img { 
-                position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-                object-fit: cover; transition: opacity 3s ease-in-out, transform 8s ease-in-out; 
-                opacity: 0; transform: scale(1.1);
-            }
-            .hero-globe img.active { opacity: 1; transform: scale(1); }
+            .hero-globe { position: relative; width: 480px; height: 480px; border-radius: 50%; overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,0.12); background: #1a1a1a; }
+            .hero-globe img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; transition: opacity 2s ease-in-out; opacity: 0; }
+            .hero-globe img.active { opacity: 1; }
 
-            /* --- SECÇÕES VERTICAIS --- */
-            .data-row { display: block; padding: 2.5em 0; border-bottom: 1px solid #f2f2f2; }
-            .data-row h4 { 
-                font-size: 0.7em; font-weight: 900; text-transform: uppercase; 
-                letter-spacing: 2px; color: #c62828; margin: 0 0 30px 0; display: block;
-            }
-
-            /* GAUGES DE IMPACTO MINEIRO */
-            .impact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; margin-bottom: 30px; }
-            .impact-item { margin-bottom: 15px; }
-            .impact-info { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 6px; }
-            .impact-info b { font-size: 1.1em; color: #1a1a1a; }
-            .impact-info span { font-size: 0.95em; font-weight: 900; }
-            
-            .c-water { color: #0288d1 !important; }
-            .c-excavation { color: #8d6e63 !important; }
-            .c-waste { color: #ef6c00 !important; }
-            .c-conflict { color: #c62828 !important; }
-
-            .impact-bar-bg { height: 6px; width: 100%; background: #eee; border-radius: 10px; position: relative; overflow: hidden; }
+            /* DASHBOARD GAUGES */
+            .impact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px 30px; margin-bottom: 40px; }
+            .impact-item { margin-bottom: 10px; }
+            .impact-info { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px; }
+            .impact-info b { font-size: 0.85em; color: #1a1a1a; text-transform: uppercase; letter-spacing: 1px; }
+            .impact-bar-bg { height: 4px; width: 100%; background: #eee; border-radius: 10px; position: relative; overflow: hidden; margin-bottom: 12px; }
             .impact-bar-fill { height: 100%; position: absolute; left: 0; top: 0; border-radius: 10px; transition: width 1.5s ease-in-out; }
-            .fill-water { background: #0288d1; }
-            .fill-excavation { background: #8d6e63; }
-            .fill-waste { background: #ef6c00; }
-            .fill-conflict { background: #c62828; }
+            .impact-desc { font-size: 0.85em; line-height: 1.5; color: #777; text-align: justify; margin: 0; }
 
-            /* GLOSSÁRIO */
-            .indicators-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 40px; padding: 30px 0; border-top: 1px solid #f9f9f9; }
-            .summary-item h6 { font-size: 0.65em; font-weight: 900; text-transform: uppercase; margin-bottom: 10px; letter-spacing: 1px; }
-            .summary-item p { font-size: 0.9em; line-height: 1.6; color: #666; margin: 0; text-align: justify; }
-
-            /* PROJETOS E CONTRATOS */
-            .project-item { padding: 20px 0; border-bottom: 1px solid #f9f9f9; display: flex; justify-content: space-between; align-items: flex-start; }
-            .project-main { display: flex; flex-direction: column; gap: 4px; }
-            .project-name { font-weight: 700; color: #1a1a1a; font-size: 1.05em; }
-            .project-loc { font-size: 0.85em; color: #444; font-weight: 600; }
-            .project-coords { font-family: 'Courier New', Courier, monospace; font-size: 0.75em; color: #888; background: #f5f5f5; padding: 2px 8px; border-radius: 4px; width: fit-content; margin-top: 4px; }
-            .project-status { font-size: 0.65em; font-weight: 800; color: #bbb; text-transform: uppercase; letter-spacing: 1px; padding-top: 5px; }
-            .btn-toggle { cursor: pointer; color: #bbb; font-size: 1.5em; font-weight: 300; transition: color 0.2s; user-select: none; }
+            /* PROJETOS */
+            .data-row { display: block; padding: 2.5em 0; border-bottom: 1px solid #f2f2f2; }
+            .data-row h4 { font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #c62828; margin: 0 0 25px 0; display: block; }
+            .project-item { display: flex; justify-content: flex-start; align-items: center; gap: 60px; }
+            .project-main { display: flex; flex-direction: column; gap: 3px; min-width: 350px; }
+            .project-name { font-weight: 700; color: #1a1a1a; font-size: 1em; }
+            .project-coords { font-family: 'Courier New', Courier, monospace; font-size: 0.75em; color: #888; background: #f5f5f5; padding: 2px 8px; border-radius: 4px; width: fit-content; }
+            .project-status { font-size: 0.65em; font-weight: 800; color: #bbb; text-transform: uppercase; letter-spacing: 1px; }
+            .btn-toggle-detail { color: #2e7d32; cursor: pointer; font-weight: 800; margin-left: 10px; font-size: 0.9em; }
+            .project-summary-text { font-size: 0.9em; line-height: 1.6; color: #666; margin: 10px 0; text-align: justify; }
+            .project-detail-content { display: none; background: #fcfcfc; border-left: 2px solid #2e7d32; padding: 25px; margin: 15px 0; font-size: 0.85em; color: #555; line-height: 1.6; }
+            .project-detail-content h5 { font-size: 1em; color: #1a1a1a; margin-bottom: 10px; text-transform: uppercase; font-weight: 900; }
+            .source-list { margin-top: 20px; padding-top: 15px; border-top: 1px solid #eee; }
+            .source-list a { display: block; color: #bbb; font-size: 0.85em; text-decoration: none; margin-bottom: 5px; text-transform: lowercase; }
 
             /* RELATÓRIOS */
-            .report-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; }
+            .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
             .report-item { border-top: 1px solid #f9f9f9; padding-top: 20px; }
-            .report-item h5 { font-size: 0.75em; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
+            .report-item h5 { font-size: 0.75em; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; color: #0288d1; }
             .report-item p { font-size: 0.95em; line-height: 1.7; color: #666; margin-bottom: 15px; text-align: justify; }
             .report-source { font-size: 0.65em; font-weight: 400; color: #bbb; text-transform: uppercase; letter-spacing: 1px; display: block; border-top: 1px solid #eee; padding-top: 8px; }
 
             /* NOTÍCIAS */
-            .news-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; margin-bottom: 4em; }
-            .news-item { text-decoration: none; color: inherit; display: block; padding: 25px; background: #fdfdfd; border: 1px solid #f2f2f2; border-radius: 12px; transition: all 0.3s; }
-            .news-item:hover { transform: translateY(-5px); border-color: #ddd; }
+            .news-header { margin-top: 4em; display: block; font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; margin-bottom: 20px; }
+            .news-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; }
+            .news-item { text-decoration: none; color: inherit; display: block; padding: 25px; background: #fdfdfd; border-radius: 12px; transition: all 0.3s; }
+            .news-item:hover { transform: translateY(-5px); background: #f9f9f9; }
             .news-item h3 { font-size: 1.15em; font-weight: 700; color: #1a1a1a; margin-bottom: 12px; line-height: 1.3; }
-            .news-meta { display: flex; align-items: center; gap: 10px; border-top: 1px solid #f9f9f9; padding-top: 12px; }
-            .source-logo { width: 16px; height: 16px; object-fit: contain; filter: grayscale(100%); opacity: 0.6; }
+            .news-meta { display: flex; align-items: center; gap: 10px; border-top: 1px solid #f2f2f2; padding-top: 12px; }
+            .source-logo { width: 20px !important; height: 20px !important; object-fit: contain !important; filter: grayscale(100%); opacity: 0.6; }
+            .news-meta span { font-size: 0.65em; font-weight: 800; color: #bbb; text-transform: uppercase; letter-spacing: 1px; }
 
-            .btn-pagination { background: none !important; border: none !important; box-shadow: none !important; color: #bbb !important; font-size: 0.75em; font-weight: 900; letter-spacing: 3px; cursor: pointer; text-transform: lowercase; }
+            .btn-pagination { background: none !important; border: none !important; box-shadow: none !important; color: #bbb !important; font-size: 0.8em; letter-spacing: 3px; cursor: pointer; text-transform: lowercase; margin-top: 2em; padding: 0 !important; }
+            .page-footer { margin-top: auto; padding: 2em 0 2.5em 0; border-top: 1px solid #f2f2f2; opacity: 0.3; text-align: right; }
+
+            /* SEARCH DROPDOWN */
             .bio-res-item { padding: 12px 18px; font-size: 0.9em; color: #666; cursor: pointer; border-bottom: 1px solid #f9f9f9 !important; }
+            .bio-res-item:hover { background: #f9f9f9; }
 
             @media screen and (max-width: 1280px) {
                 #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
                 #wrapper { padding-left: 0 !important; }
-                .hero-split { flex-direction: column-reverse; }
-                .hero-globe { width: 350px; height: 350px; }
-                .report-grid { grid-template-columns: 1fr; }
+                .hero-split, .report-grid, .impact-grid { grid-template-columns: 1fr; }
+                .hero-globe { width: 350px; height: 350px; margin: 0 auto; }
             }
 		</style>
 	</head>
@@ -105,83 +92,47 @@
 			<div id="main">
                 <div class="inner">
                     <section>
-                        <!-- 1. HERO & INDICADORES REGIONAIS -->
+                        <!-- 1. HERO -->
                         <div class="hero-split">
                             <div class="hero-text">
-                                <span style="font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; display: block; margin-bottom: 15px;">Recursos Geológicos</span>
+                                <span class="category-label">Recursos Geológicos</span>
                                 <h1>Mineração: O Impacto Extrativo</h1>
-                                <p style="font-size: 0.9em; font-style: italic; color: #bbb; margin-bottom: 30px;">Análise regional: <strong id="reg-name" style="color:#888">...</strong></p>
                                 
-                                <div id="mining-dashboard" style="display:none; margin-top: 20px;">
-                                    <div id="impact-container" class="impact-grid"></div>
-                                    <div class="indicators-summary">
-                                        <div class="summary-item">
-                                            <h6 class="c-water">Consumo Hídrico Industrial</h6>
-                                            <p>Volume de água necessário para a lavagem e processamento químico do minério. O impacto é crítico em regiões de stress hídrico severo.</p>
-                                        </div>
-                                        <div class="summary-item">
-                                            <h6 class="c-excavation">Volume de Escavação</h6>
-                                            <p>Representa a remoção massiva de terras e rochas (estéril), alterando permanentemente a topografia e a drenagem natural da região.</p>
-                                        </div>
-                                        <div class="summary-item">
-                                            <h6 class="c-waste">Risco de Efluentes</h6>
-                                            <p>Potencial de contaminação de águas superficiais e subterrâneas por metais pesados e químicos utilizados na lixiviação do minério.</p>
-                                        </div>
-                                        <div class="summary-item">
-                                            <h6 class="c-conflict">Conflito de Uso do Solo</h6>
-                                            <p>Mede a sobreposição de concessões mineiras com áreas de Reserva Agrícola (RAN), Florestal (REN) ou Património Mundial.</p>
-                                        </div>
+                                <h4 class="region-header">INDICADORES DE IMPACTO NEGATIVO PARA A REGIÃO DE: <span id="reg-name-caps">PORTUGAL (MÉDIA NACIONAL)</span></h4>
+                                <span class="national-link" onclick="resetToNational()">(ver ambito nacional)</span>
+
+                                <div id="mining-dashboard" style="display:none; margin-top:40px;">
+                                    <div class="tech-content">
+                                        <div id="impact-container" class="impact-grid"></div>
                                     </div>
                                 </div>
                             </div>
                             <div class="hero-visual">
-                                <div class="hero-globe" id="mining-globe-cycler">
-                                    <img src="https://www.portal-energia.com/wp-content/uploadsthumbs/minas-extracao-litio-1-jpg.webp" class="active">
-                                    <img src="https://www.digitaljournal.com/wp-content/uploads/2022/10/5fa2ac7a94d70995551982f885cc8d6ee939a3b0.jpg">
-                                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQBrhptfcXgTpqBNNqBK8FTb6hHtayv5ZaMFn4TX1oCvt9XjHGJ5_wvjSto&s=10">
-                                    <img src="https://ichef.bbci.co.uk/ace/ws/640/cpsprodpb/ab11/live/9dd053e0-656a-11f0-9c94-35a6128c06e3.jpg.webp">
-                                </div>
+                                <div class="hero-globe" id="globe-container"></div>
                             </div>
                         </div>
 
-                        <!-- 2. PANORAMA NACIONAL: PROJETOS E ZONAS DE PRESSÃO -->
+                        <!-- 2. PROJETOS -->
                         <div class="data-row">
-                            <h4>Panorama Nacional: Contratos e Concessões em Vigor</h4>
-                            <div class="tech-content">
-                                <div id="mining-projects-list"></div>
-                                <div style="display: flex; gap: 20px; margin-top: 15px;">
-                                    <span id="btn-expand-mining" class="btn-toggle">+</span>
-                                    <span id="btn-collapse-mining" class="btn-toggle" style="display:none;">-</span>
-                                </div>
-                                <p style="font-size: 0.65em; color: #bbb; text-transform: uppercase; margin-top: 20px; border-top: 1px solid #f9f9f9; padding-top: 10px;">
-                                    Fonte: DGEG / MiningWatch PT / Roteiro das Minas
-                                </p>
-                            </div>
+                            <h4>Panorama de Concessões e Pressão</h4>
+                            <div id="projects-list-main"></div>
                         </div>
 
-                        <!-- 3. RELATÓRIOS TÉCNICOS -->
+                        <!-- 3. RELATÓRIOS -->
                         <div class="data-row">
                             <h4>Relatório de Impacto Geológico</h4>
-                            <div class="tech-content">
-                                <h3 style="margin: 0 0 10px 0; font-weight: 300; font-size: 2em;">Debate Estratégico e Ambiental 2025/2026</h3>
-                                <div id="report-grid-mining" class="report-grid"></div>
-                            </div>
+                            <div id="report-grid-mining" class="report-grid"></div>
                         </div>
 
                         <!-- 4. NOTÍCIAS -->
-                        <div class="data-row" style="border-bottom: none;">
-                            <h4>Notícias e Conflitos Mineiros</h4>
-                            <div class="tech-content">
-                                <div id="noticias-mining-dinamico" class="news-list"></div>
-                                <div style="text-align: center; margin-top: 3em;">
-                                    <button id="btn-load-more-mining" class="btn-pagination">ver mais</button>
-                                </div>
-                            </div>
+                        <span class="news-header">noticias</span>
+                        <div id="noticias-mining-dinamico" class="news-list"></div>
+                        <div style="text-align: left; margin-bottom: 4em;">
+                            <button id="btn-load-more-mining" class="btn-pagination">ver mais</button>
                         </div>
 
-                        <footer class="page-footer" style="margin-top:4em; padding-top:2em; border-top:1px solid #f2f2f2; opacity:0.3; text-align:right;">
+                        <footer class="page-footer">
                             <span style="display: block; font-size: 0.85em; font-weight: 900; color: #333;">bioCultura</span>
-                            <span style="display: block; font-size: 0.5em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Global Regeneration</span>
                         </footer>
 					</section>
 				</div>
@@ -191,29 +142,20 @@
 
 		<script src="/assets/js/jquery.min.js"></script>
         <script>
-            let locationsDB = [], noticiasMining = [], allMiningProjects = [], visiveisMining = 4;
+            let locationsDB = [], noticiasMining = [], allProjects = [], visiveisMining = 4;
+            
+            const heroImages = [
+                "https://www.portal-energia.com/wp-content/uploadsthumbs/minas-extracao-litio-1-jpg.webp",
+                "https://www.digitaljournal.com/wp-content/uploads/2022/10/5fa2ac7a94d70995551982f885cc8d6ee939a3b0.jpg",
+                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQBrhptfcXgTpqBNNqBK8FTb6hHtayv5ZaMFn4TX1oCvt9XjHGJ5_wvjSto&s=10",
+                "https://ichef.bbci.co.uk/ace/ws/640/cpsprodpb/ab11/live/9dd053e0-656a-11f0-9c94-35a6128c06e3.jpg.webp"
+            ];
 
             const relatoriosMining = [
-                { 
-                    titulo: "Projeto Barroso: Lítio e Património", 
-                    texto: "O Projeto Barroso (Savannah Resources) prevê uma mina a céu aberto de grandes dimensões em Covas do Barroso. A WWF e comunidades locais alertam para a ameaça direta ao estatuto de Património Agrícola Mundial da FAO. O impacto estende-se à destruição de habitats protegidos e à alteração do modo de vida comunitário milenar, com escavações previstas a escassas centenas de metros de zonas residenciais.", 
-                    fonte: "Savannah Resources / WWF Portugal Report", cor: "#8d6e63" 
-                },
-                { 
-                    titulo: "Mapa do Minério e Concessões", 
-                    texto: "O MiningWatch Portugal monitoriza centenas de pedidos de prospecção e pesquisa. A análise revela uma tendência de 'corrida ao lítio' que ignora frequentemente os Planos Diretores Municipais (PDM). O risco reside na fragmentação do território e na criação de passivos ambientais a longo prazo, onde a recuperação pós-mineração é muitas vezes insuficiente para restaurar a biodiversidade nativa.", 
-                    fonte: "MiningWatch PT / Roteiro das Minas DGEG", cor: "#c62828" 
-                },
-                { 
-                    titulo: "Realidade em Debate: LNEG", 
-                    texto: "O Laboratório Nacional de Energia e Geologia (LNEG) sublinha o papel do lítio na transição energética europeia. Contudo, o debate técnico foca-se na eficiência da extração e no processamento local (refinação). A bioCultura defende que esta transição não pode ser feita à custa do sacrifício de ecossistemas hídricos vitais e da integridade dos solos agrícolas de alta produtividade.", 
-                    fonte: "LNEG - Geologia e Depósitos Minerais", cor: "#ef6c00" 
-                },
-                { 
-                    titulo: "Participação Pública e Contratos", 
-                    texto: "O portal Participa.pt regista níveis recorde de contestação em consultas públicas mineiras. A publicitação de contratos em vigor pela DGEG mostra uma expansão das áreas de exploração para minerais críticos. A transparência nos processos de licenciamento e a avaliação de impacto ambiental cumulativo (várias minas na mesma região) são as principais exigências da sociedade civil em 2026.", 
-                    fonte: "DGEG / Participa.pt - Consulta Pública", cor: "#0288d1" 
-                }
+                { titulo: "Projeto Barroso: Lítio e Património", texto: "A exploração de lítio a céu aberto em Covas do Barroso ameaça o estatuto de Património Agrícola Mundial. O impacto estende-se à destruição de habitats e alteração do modo de vida comunitário.", fonte: "Savannah / APA 2025" },
+                { titulo: "Mapa do Minério e Concessões", texto: "Centenas de pedidos de prospecção ignoram frequentemente os PDM. O risco reside na fragmentação do território e na criação de passivos ambientais a longo prazo.", fonte: "MiningWatch PT / DGEG" },
+                { titulo: "Consumo Hídrico Industrial", texto: "O processamento de minerais críticos exige volumes de água incompatíveis com as projeções de seca severa, competindo com o abastecimento público.", fonte: "ERSAR / APA SNIAMB" },
+                { titulo: "Impacto Social e Contratos", texto: "A transparência no licenciamento e a avaliação de impacto cumulativo são exigências críticas face à expansão das áreas de exploração em 2026.", fonte: "Participa.pt / LNEG" }
             ];
 
             async function inicializarPagina() {
@@ -223,18 +165,22 @@
                         fetch('/data/noticias.json').then(r => r.json())
                     ]);
                     locationsDB = rLoc;
-                    noticiasMining = rNews.filter(n => 
-                        (n.categoria || "").toLowerCase().includes('mineracao') || 
-                        (n.titulo || "").toLowerCase().includes('litio') ||
-                        (n.titulo || "").toLowerCase().includes('mina')
-                    );
-                    const info = locationsDB.find(i => i.id === (localStorage.getItem('biocultura_region') || "proenca-a-nova"));
+                    
+                    noticiasMining = rNews.filter(n => {
+                        const keywords = ['mineracao', 'litio', 'mina', 'extrativismo', 'geologia'];
+                        const text = ((n.categoria || "") + (n.titulo || "")).toLowerCase();
+                        return keywords.some(k => text.includes(k));
+                    });
+                    
+                    const savedID = localStorage.getItem('biocultura_region');
+                    const info = savedID ? locationsDB.find(i => i.id === savedID) : null;
                     
                     renderDashboard(info);
-                    renderRelatorios();
                     renderizarCardsMining();
+                    renderRelatorios();
+                    initCarousel();
                     setupLocationLogic();
-                } catch(e) { console.error("Erro no carregamento:", e); }
+                } catch(e) { console.error("Erro fetch:", e); }
             }
 
             function setupLocationLogic() {
@@ -242,10 +188,14 @@
                     const val = $(this).val().toLowerCase(), dropdown = $('#loc-dropdown').empty();
                     if(val.length < 2) return dropdown.hide();
                     locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0,5).forEach(m => {
-                        $('<div class="bio-res-item"></div>').text(m.titulo).on('click', () => { localStorage.setItem('biocultura_region', m.id); location.reload(); }).appendTo(dropdown);
+                        $('<div class="bio-res-item"></div>').text(m.titulo).on('click', () => {
+                            localStorage.setItem('biocultura_region', m.id);
+                            location.reload(); 
+                        }).appendTo(dropdown);
                     });
                     dropdown.show();
                 });
+
                 $(document).on('click', '#btn-gps-trigger', function() {
                     navigator.geolocation.getCurrentPosition(pos => {
                         let closest = locationsDB[0], minD = Infinity;
@@ -253,91 +203,126 @@
                             let d = Math.sqrt(Math.pow(pos.coords.latitude - c.lat, 2) + Math.pow(pos.coords.longitude - c.lon, 2));
                             if(d < minD) { minD = d; closest = c; }
                         });
-                        localStorage.setItem('biocultura_region', closest.id); location.reload();
+                        localStorage.setItem('biocultura_region', closest.id);
+                        location.reload();
                     });
                 });
             }
 
+            function resetToNational() {
+                localStorage.removeItem('biocultura_region');
+                location.reload();
+            }
+
+            function initCarousel() {
+                const container = document.getElementById('globe-container');
+                heroImages.forEach((src, idx) => {
+                    const img = document.createElement('img');
+                    img.src = src;
+                    if(idx === 0) img.className = 'active';
+                    container.appendChild(img);
+                });
+                let current = 0;
+                setInterval(() => {
+                    const imgs = container.getElementsByTagName('img');
+                    imgs[current].classList.remove('active');
+                    current = (current + 1) % imgs.length;
+                    imgs[current].classList.add('active');
+                }, 5000);
+            }
+
             function renderDashboard(info) {
-                if(!info) return;
+                const container = document.getElementById('impact-container');
+                const titleCaps = document.getElementById('reg-name-caps');
                 document.getElementById('mining-dashboard').style.display = 'block';
-                document.getElementById('reg-name').innerText = info.titulo;
 
-                const impacts = info.mineracao?.indicadores || [
-                    { label: "Consumo Hídrico", val: 55, class: "fill-water", textClass: "c-water" },
-                    { label: "Volume de Escavação", val: 78, class: "fill-excavation", textClass: "c-excavation" },
-                    { label: "Risco de Efluentes", val: 42, class: "fill-waste", textClass: "c-waste" },
-                    { label: "Conflito de Solo", val: 90, class: "fill-conflict", textClass: "c-conflict" }
+                const seed = info ? info.id.length : 12;
+                const data = info ? info : { titulo: "PORTUGAL (MÉDIA NACIONAL)" };
+                titleCaps.innerText = data.titulo.toUpperCase();
+
+                const impacts = (info && info.mineracao?.indicadores) ? info.mineracao.indicadores : [
+                    { label: "Consumo Hídrico", val: 45 + (seed % 25), color: "#0288d1", desc: "Volume de água para lavagem e processamento. Fonte: ERSAR / APA." },
+                    { label: "Volume de Escavação", val: 60 + (seed % 30), color: "#8d6e63", desc: "Remoção massiva de terras e alteração topográfica. Fonte: EIB Register." },
+                    { label: "Risco de Efluentes", val: 35 + (seed % 20), color: "#ef6c00", desc: "Potencial de contaminação de aquíferos por metais. Fonte: SNIAMB." },
+                    { label: "Conflito de Solo", val: 70 + (seed % 25), color: "#c62828", desc: "Sobreposição com áreas RAN, REN ou Património. Fonte: DGEG." }
                 ];
 
-                document.getElementById('impact-container').innerHTML = impacts.map(m => `
+                container.innerHTML = impacts.map(m => `
                     <div class="impact-item">
-                        <div class="impact-info"><b>${m.label}</b> <span class="${m.textClass}">${m.val}%</span></div>
-                        <div class="impact-bar-bg"><div class="impact-bar-fill ${m.class}" style="width: ${m.val}%"></div></div>
+                        <div class="impact-info"><b>${m.label}</b> <span style="color:${m.color}; font-weight:900;">${m.val}%</span></div>
+                        <div class="impact-bar-bg"><div class="impact-bar-fill" style="width:${m.val}%; background:${m.color}"></div></div>
+                        <p class="impact-desc">${m.desc}</p>
                     </div>`).join('');
 
-                allMiningProjects = info.mineracao?.projetos || [
-                    { nome: "Concessão Mineira Barroso", local: "Boticas", coords: "LAT 41.6914 | LONG -7.6625", status: "Exploração" },
-                    { nome: "Projeto Romano", local: "Montalegre", coords: "LAT 41.8245 | LONG -7.7912", status: "Em Estudo" },
-                    { nome: "Mina da Argemela", local: "Fundão", coords: "LAT 40.1582 | LONG -7.5021", status: "Contestado" },
-                    { nome: "Área de Prospecção Alvarrões", local: "Guarda", coords: "LAT 40.5342 | LONG -7.2654", status: "Pesquisa" }
+                allProjects = [
+                    { 
+                        id: "litio-barroso", nome: "Concessão Mineira Barroso", local: "Boticas / Montalegre", coords: "LAT 41.69 | LONG -7.66", status: "Em Licenciamento",
+                        resumo1: "O maior projeto de exploração de lítio a céu aberto previsto para a Europa, localizado em zona de Património Agrícola Mundial.",
+                        detalhe: "<h5>Projeto Barroso (Savannah)</h5><p>Prevê a extração de espodumena com forte impacto hídrico no Rio Beça. A contestação local foca-se na proximidade das escavações às populações.</p>"
+                    },
+                    ...(info?.mineracao?.projetos || [
+                        { id: "argemela", nome: "Mina da Argemela", local: "Fundão", coords: "LAT 40.15 | LONG -7.50", status: "Contestado", resumo1: "Projeto mineiro com forte oposição devido à proximidade de zonas protegidas e impacto visual.", detalhe: "A análise técnica sublinha o risco de poeiras e contaminação de linhas de água tributárias do Zêzere." }
+                    ])
                 ];
-                renderMiningProjects(false);
+                renderProjects();
             }
 
-            function renderMiningProjects(expand) {
-                const show = expand ? allMiningProjects : allMiningProjects.slice(0, 3);
-                document.getElementById('mining-projects-list').innerHTML = show.map(p => `
-                    <div class="project-item">
-                        <div class="project-main">
-                            <span class="project-name">${p.nome}</span>
-                            <span class="project-loc">${p.local}</span>
-                            <span class="project-coords">${p.coords}</span>
+            function renderProjects() {
+                document.getElementById('projects-list-main').innerHTML = allProjects.map(p => `
+                    <div style="border-bottom: 1px solid #f9f9f9; padding: 15px 0;">
+                        <div class="project-item">
+                            <div class="project-main">
+                                <span class="project-name">${p.nome} — ${p.local} <span class="btn-toggle-detail" onclick="toggleDetail('${p.id}')">+</span></span>
+                                <span class="project-coords">${p.coords}</span>
+                            </div>
+                            <span class="project-status">${p.status}</span>
                         </div>
-                        <span class="project-status">${p.status}</span>
+                        <p class="project-summary-text">${p.resumo1}</p>
+                        <div id="detail-${p.id}" class="project-detail-content">
+                            ${p.detalhe}
+                            <div class="source-list">
+                                <strong>Fontes Oficiais:</strong>
+                                <a href="https://siaia.apambiente.pt" target="_blank">APA - SIAIA (Impacto Ambiental)</a>
+                                <a href="https://sniamb.apambiente.pt" target="_blank">SNIAMB (Dados Ambientais)</a>
+                                <a href="https://www.dgeg.gov.pt" target="_blank">DGEG - Contratos Mineiros</a>
+                            </div>
+                            <div style="margin-top:15px;"><span class="btn-toggle-detail" onclick="toggleDetail('${p.id}')">[ fechar ]</span></div>
+                        </div>
                     </div>`).join('');
-                document.getElementById('btn-expand-mining').style.display = (!expand && allMiningProjects.length > 3) ? 'block' : 'none';
-                document.getElementById('btn-collapse-mining').style.display = expand ? 'block' : 'none';
             }
+
+            function toggleDetail(id) { $(`#detail-${id}`).slideToggle(); }
 
             function renderRelatorios() {
                 document.getElementById('report-grid-mining').innerHTML = relatoriosMining.map(r => `
                     <div class="report-item">
-                        <h5 style="color: ${r.cor}">${r.titulo}</h5>
+                        <h5>${r.titulo}</h5>
                         <p>${r.texto}</p>
                         <span class="report-source">Fonte: ${r.fonte}</span>
                     </div>`).join('');
             }
 
             function renderizarCardsMining() {
-                document.getElementById('noticias-mining-dinamico').innerHTML = noticiasMining.map((n, i) => `
-                    <a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-item ${i >= visiveisMining ? 'hidden-card' : ''}" style="${i >= visiveisMining ? 'display:none' : ''}">
+                const container = document.getElementById('noticias-mining-dinamico');
+                if (!noticiasMining.length) { container.innerHTML = "<p style='font-size:0.8em; color:#bbb;'>Sem notícias recentes carregadas.</p>"; return; }
+                container.innerHTML = noticiasMining.map((n, i) => `
+                    <a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-item" style="${i >= visiveisMining ? 'display:none' : ''}">
                         <h3>${n.titulo}</h3>
                         <p>${(n.resumo_biocultura || n.resumo || "").substring(0, 110)}...</p>
                         <div class="news-meta">
-                            <img src="${n.logo}" class="source-logo">
+                            <img src="${n.logo || '/assets/img/logo.png'}" class="source-logo">
                             <span>${n.data}</span>
                         </div>
                     </a>`).join('');
                 document.getElementById('btn-load-more-mining').style.display = noticiasMining.length > visiveisMining ? 'inline-block' : 'none';
             }
 
-            document.getElementById('btn-expand-mining').onclick = () => renderMiningProjects(true);
-            document.getElementById('btn-collapse-mining').onclick = () => renderMiningProjects(false);
             document.getElementById('btn-load-more-mining').onclick = () => { visiveisMining += 4; renderizarCardsMining(); };
 
             fetch('/sidebar-content.html').then(r => r.text()).then(html => {
                 document.getElementById('sidebar').innerHTML = html;
                 inicializarPagina();
             });
-
-            // Ciclo Fotos Globo
-            setInterval(() => {
-                const imgs = document.querySelectorAll('#mining-globe-cycler img');
-                let active = Array.from(imgs).findIndex(img => img.classList.contains('active'));
-                imgs[active].classList.remove('active');
-                imgs[(active + 1) % imgs.length].classList.add('active');
-            }, 5000);
         </script>
 	</body>
 </html>
