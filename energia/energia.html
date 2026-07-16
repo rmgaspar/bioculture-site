@@ -20,7 +20,7 @@
             .hero-text { flex: 1.5; text-align: left; padding-top: 5px; } 
             .hero-text h1 { font-size: 4em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; line-height: 0.95; margin: 0; }
             
-            .region-header { font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #2e7d32; margin: 25px 0 5px 0; display: block; }
+            .region-header { font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #2e7d32; margin: 30px 0 5px 0; display: block; }
             .national-link { color: #bbb; cursor: pointer; font-weight: 400; font-size: 0.85em; display: block; text-transform: lowercase; letter-spacing: 1px; width: fit-content; border-bottom: 1px solid transparent; }
             .national-link:hover { color: #2e7d32; border-bottom-color: #eee; }
 
@@ -52,7 +52,7 @@
             .btn-toggle-detail { color: #2e7d32; cursor: pointer; font-weight: 800; margin-left: 10px; font-size: 0.9em; }
             .plant-detail-content { display: none; background: #fcfcfc; border-left: 2px solid #2e7d32; padding: 25px; margin: 15px 0; font-size: 0.85em; color: #555; line-height: 1.6; }
 
-            /* RELATÓRIOS (EVOLUÇÃO POSITIVA) */
+            /* RELATÓRIOS */
             .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
             .report-item { border-top: 1px solid #f9f9f9; padding-top: 20px; }
             .report-item h5 { font-size: 0.75em; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; color: #2e7d32; }
@@ -63,14 +63,13 @@
             .news-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; }
             .news-item { text-decoration: none; color: inherit; display: block; padding: 25px; background: #fdfdfd; border-radius: 12px; transition: all 0.3s; }
             .news-item:hover { transform: translateY(-5px); background: #f9f9f9; }
-            .source-logo { width: 20px !important; height: 20px !important; object-fit: contain !important; filter: grayscale(100%); opacity: 0.6; }
+            .source-logo { width: 20px !important; height: 20px !important; min-width: 20px !important; object-fit: contain !important; filter: grayscale(100%); opacity: 0.6; }
 
+            /* BOTÕES SEM FRAME */
             .btn-pagination { background: none !important; border: none !important; box-shadow: none !important; color: #bbb !important; font-size: 0.8em; letter-spacing: 3px; cursor: pointer; text-transform: lowercase; margin-top: 2em; padding: 0 !important; }
-            .page-footer { margin-top: auto; padding: 2em 0 2.5em 0; border-top: 1px solid #f2f2f2; opacity: 0.3; text-align: right; }
+            .btn-pagination:hover { color: #2e7d32 !important; }
 
-            /* SEARCH DROPDOWN */
             .bio-res-item { padding: 12px 18px; font-size: 0.9em; color: #666; cursor: pointer; border-bottom: 1px solid #f9f9f9 !important; }
-            .bio-res-item:hover { background: #f9f9f9; }
 
             @media screen and (max-width: 1280px) {
                 #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
@@ -85,7 +84,7 @@
 			<div id="main">
                 <div class="inner">
                     <section>
-                        <!-- 1. HERO & MIX ENERGÉTICO -->
+                        <!-- 1. HERO -->
                         <div class="hero-split">
                             <div class="hero-text">
                                 <span class="category-label">Justiça Climática</span>
@@ -109,7 +108,10 @@
                         <div class="data-row">
                             <h4>Centrais em Proximidade (Ordenadas por GPS)</h4>
                             <div id="plants-list-main"></div>
-                            <button id="btn-load-more-plants" class="btn-pagination">+ carregar mais centrais</button>
+                            <div style="display: flex; gap: 30px;">
+                                <button id="btn-load-more-plants" class="btn-pagination">+ ver mais centrais</button>
+                                <button id="btn-collapse-plants" class="btn-pagination" style="display:none;">- fechar lista</button>
+                            </div>
                         </div>
 
                         <!-- 3. EVOLUÇÃO E METAS -->
@@ -136,7 +138,7 @@
 
 		<script src="/assets/js/jquery.min.js"></script>
         <script>
-            let locationsDB = [], noticiasEnergy = [], allPlants = [], visiveisEnergy = 4, visiveisPlants = 5;
+            let locationsDB = [], noticiasEnergy = [], allPlants = [], visiveisEnergy = 4, visiveisPlants = 3;
             let userCoords = null;
 
             const heroImages = [
@@ -149,7 +151,7 @@
             const relatoriosEnergiaPositiva = [
                 { titulo: "Independência Energética 2030", texto: "Portugal acelera para atingir 85% de energia renovável na matriz total. O foco na eletrificação do consumo industrial e residencial é a chave para a regeneração económica.", fonte: "PNEC 2030 / DGEG" },
                 { titulo: "Crescimento do Autoconsumo", texto: "As Unidades de Produção para Autoconsumo (UPAC) cresceram 40% este ano. Cidadãos e empresas tornam-se produtores ativos, reduzindo a pressão sobre a rede nacional.", fonte: "APREN / Portal Energia" },
-                { titulo: "O Potencial do Hidrogénio Verde", texto: "A infraestrutura de Sines posiciona Portugal como exportador líquido de energia limpa para a Europa, utilizando apenas excedentes renováveis e água residual tratada.", fonte: "H2 Sines / REN" },
+                { titulo: "O Potencial do Hidrogénio Verde", texto: "A infraestrutura de Sines posiciona Portugal como exportador líquido de energia limpa para a Europa, utilizando excedentes renováveis e água residual tratada.", fonte: "H2 Sines / REN" },
                 { titulo: "Regeneração de Ecossistemas", texto: "Novos projetos solares integram agora pastoreio e apicultura (agrivoltaico), provando que a produção de energia pode coexistir e potenciar a biodiversidade local.", fonte: "bioCultura / LNEG" }
             ];
 
@@ -238,14 +240,11 @@
                 const data = info ? info : { titulo: "PORTUGAL" };
                 titleCaps.innerText = data.titulo.toUpperCase();
 
-                // Fontes de Energia - Todas as possíveis sem descrição
                 const mix = [
                     { label: "Solar", val: 25 + (seed % 15), color: "#f1c40f" },
                     { label: "Eólica", val: 35 + (seed % 10), color: "#3498db" },
                     { label: "Hídrica", val: 15 + (seed % 5), color: "#2980b9" },
                     { label: "Biomassa", val: 8 + (seed % 4), color: "#27ae60" },
-                    { label: "Geotérmica", val: 2 + (seed % 2), color: "#e67e22" },
-                    { label: "Ondas/Marés", val: 1 + (seed % 2), color: "#1abc9c" },
                     { label: "Hidrogénio", val: 4 + (seed % 3), color: "#9b59b6" },
                     { label: "Outros", val: 10, color: "#95a5a6" }
                 ];
@@ -256,22 +255,23 @@
                         <div class="energy-bar-bg"><div class="energy-bar-fill" style="width:${m.val}%; background:${m.color}"></div></div>
                     </div>`).join('');
 
-                // Lista de Centrais Alargada
-                allPlants = (info && info.energia?.centrais) ? info.energia.centrais : [
-                    { id: "p1", nome: "Parque Eólico de Proença", local: "Proença-a-Nova", potencia: "44.5 MW", tipo: "Eólica", lat: 39.75, lon: -7.92, coords: "LAT 39.75 | LONG -7.92", detalhe: "Central de alta cota ligada à subestação local." },
-                    { id: "p2", nome: "Central Solar da Sertã", local: "Sertã", potencia: "12.2 MW", tipo: "Solar", lat: 39.85, lon: -8.10, coords: "LAT 39.85 | LONG -8.10", detalhe: "Unidade de larga escala com painéis bifaciais." },
-                    { id: "p3", nome: "Mini-Hídrica do Ocreza", local: "Vila Velha de Ródão", potencia: "2.8 MW", tipo: "Hídrica", lat: 39.65, lon: -7.67, coords: "LAT 39.65 | LONG -7.67", detalhe: "Aproveitamento de fio de água com baixo impacto ambiental." },
-                    { id: "p4", nome: "Parque Eólico da Gardunha", local: "Fundão", potencia: "112.0 MW", tipo: "Eólica", lat: 40.12, lon: -7.50, coords: "LAT 40.12 | LONG -7.50", detalhe: "Um dos maiores clusters eólicos da região centro." },
-                    { id: "p5", nome: "Solar Autoconsumo Industrial", local: "Castelo Branco", potencia: "1.5 MW", tipo: "Solar", lat: 39.82, lon: -7.49, coords: "LAT 39.82 | LONG -7.49", detalhe: "UPAC instalada em zona industrial." },
-                    { id: "p6", nome: "Central de Biomassa", local: "Oleiros", potencia: "5.0 MW", tipo: "Biomassa", lat: 39.91, lon: -7.91, coords: "LAT 39.91 | LONG -7.91", detalhe: "Valorização de sobrantes florestais locais." }
-                ];
+                // Lógica de Centrais: Extrai todas do DB para serem dinâmicas
+                let tempPlants = [];
+                locationsDB.forEach(loc => {
+                    if(loc.energia?.centrais) {
+                        loc.energia.centrais.forEach(p => {
+                            // Calcula distância em relação ao ponto central da região selecionada (ou GPS)
+                            const targetLat = info ? info.lat : 39.5;
+                            const targetLon = info ? info.lon : -8.0;
+                            p.dist = getDistance(targetLat, targetLon, p.lat, p.lon);
+                            tempPlants.push(p);
+                        });
+                    }
+                });
 
-                // Ordenação por Proximidade se GPS ativo
-                const savedSavedCoords = JSON.parse(localStorage.getItem('user_last_coords'));
-                if(savedSavedCoords || userCoords) {
-                    const coords = userCoords || savedSavedCoords;
-                    allPlants.sort((a, b) => getDistance(coords.lat, coords.lon, a.lat, a.lon) - getDistance(coords.lat, coords.lon, b.lat, b.lon));
-                }
+                // Ordenar por distância
+                tempPlants.sort((a, b) => a.dist - b.dist);
+                allPlants = tempPlants;
 
                 renderPlants();
             }
@@ -283,7 +283,7 @@
                         <div class="plant-item">
                             <div class="plant-main">
                                 <span class="plant-name">${p.nome} <span class="plant-power-inline">${p.potencia}</span> <span class="btn-toggle-detail" onclick="toggleDetail('${p.id}')">+</span></span>
-                                <span class="plant-coords">${p.local} — ${p.coords}</span>
+                                <span class="plant-coords">${p.local} — ${p.dist.toFixed(1)} km de distância</span>
                             </div>
                             <span class="plant-type-tag">${p.tipo}</span>
                         </div>
@@ -297,10 +297,15 @@
                             <div style="margin-top:15px;"><span class="btn-toggle-detail" onclick="toggleDetail('${p.id}')">[ fechar ]</span></div>
                         </div>
                     </div>`).join('');
+                
                 document.getElementById('btn-load-more-plants').style.display = allPlants.length > visiveisPlants ? 'block' : 'none';
+                document.getElementById('btn-collapse-plants').style.display = visiveisPlants > 3 ? 'block' : 'none';
             }
 
             function toggleDetail(id) { $(`#detail-${id}`).slideToggle(); }
+
+            document.getElementById('btn-load-more-plants').onclick = () => { visiveisPlants += 10; renderPlants(); };
+            document.getElementById('btn-collapse-plants').onclick = () => { visiveisPlants = 3; renderPlants(); };
 
             function renderRelatorios() {
                 document.getElementById('report-grid-energy').innerHTML = relatoriosEnergiaPositiva.map(r => `
@@ -324,7 +329,6 @@
                     </a>`).join('');
             }
 
-            document.getElementById('btn-load-more-plants').onclick = () => { visiveisPlants += 5; renderPlants(); };
             document.getElementById('btn-load-more-energy').onclick = () => { visiveisEnergy += 4; renderizarCardsEnergy(); };
 
             fetch('/sidebar-content.html').then(r => r.text()).then(html => {
