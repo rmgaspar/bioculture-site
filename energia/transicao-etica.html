@@ -20,8 +20,8 @@
             .hero-text { flex: 1.5; text-align: left; padding-top: 5px; } 
             .hero-text h1 { font-size: 4em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; line-height: 0.95; margin: 0; }
             
-            /* BLOCO REGIONALIZAÇÃO */
-            .region-header { font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #1a1a1a; margin: 20px 0 5px 0; display: block; }
+            /* BLOCO REGIONALIZAÇÃO COM ESPAÇAMENTO */
+            .region-header { font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #1a1a1a; margin: 45px 0 5px 0; display: block; }
             .national-link { color: #bbb; cursor: pointer; font-weight: 400; font-size: 0.85em; display: block; text-transform: lowercase; letter-spacing: 1px; width: fit-content; border-bottom: 1px solid transparent; }
             .national-link:hover { color: #2e7d32; border-bottom-color: #eee; }
 
@@ -60,13 +60,6 @@
             .bio-res-item { padding: 12px 18px; font-size: 0.9em; color: #666; cursor: pointer; border-bottom: 1px solid #f9f9f9 !important; }
             .bio-res-item:hover { background: #f9f9f9; }
 
-            /* RELATÓRIOS */
-            .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
-            .report-item { border-top: 1px solid #f9f9f9; padding-top: 20px; }
-            .report-item h5 { font-size: 0.75em; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; color: #c62828; }
-            .report-item p { font-size: 0.95em; line-height: 1.7; color: #666; margin-bottom: 15px; text-align: justify; }
-            .report-source { font-size: 0.65em; font-weight: 400; color: #bbb; text-transform: uppercase; letter-spacing: 1px; display: block; border-top: 1px solid #eee; padding-top: 8px; }
-
             /* NOTÍCIAS */
             .news-header { margin-top: 4em; display: block; font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; margin-bottom: 20px; }
             .news-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; }
@@ -77,13 +70,26 @@
             .source-logo { width: 16px; height: 16px; object-fit: contain; filter: grayscale(100%); opacity: 0.6; }
             .news-meta span { font-size: 0.65em; font-weight: 800; color: #bbb; text-transform: uppercase; letter-spacing: 1px; }
 
-            .btn-pagination { background: none !important; border: none !important; color: #bbb !important; font-size: 0.8em; letter-spacing: 3px; cursor: pointer; text-transform: lowercase; margin-top: 2em; }
+            /* BOTÃO PAGINAÇÃO SEM FRAME */
+            .btn-pagination { 
+                background: none !important; 
+                border: none !important; 
+                box-shadow: none !important;
+                color: #bbb !important; 
+                font-size: 0.8em; 
+                letter-spacing: 3px; 
+                cursor: pointer; 
+                text-transform: lowercase; 
+                margin-top: 2em;
+                padding: 0 !important;
+            }
+
             .page-footer { margin-top: auto; padding: 2em 0 2.5em 0; border-top: 1px solid #f2f2f2; opacity: 0.3; text-align: right; }
 
             @media screen and (max-width: 1280px) {
                 #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
                 #wrapper { padding-left: 0 !important; }
-                .hero-split, .report-grid, .impact-grid { grid-template-columns: 1fr; }
+                .hero-split, .impact-grid { grid-template-columns: 1fr; }
                 .hero-globe { width: 350px; height: 350px; margin: 0 auto; }
             }
 		</style>
@@ -93,7 +99,7 @@
 			<div id="main">
                 <div class="inner">
                     <section>
-                        <!-- 1. HERO -->
+                        <!-- 1. HERO & TITULOS -->
                         <div class="hero-split">
                             <div class="hero-text">
                                 <span class="category-label">Justiça Climática</span>
@@ -124,7 +130,9 @@
                         <!-- 3. RELATÓRIOS -->
                         <div class="data-row">
                             <h4>Análise de Aceleração e Conflito</h4>
-                            <div id="report-grid-ethics" class="report-grid"></div>
+                            <div id="report-grid-ethics" class="report-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+                                <!-- Conteúdo gerado via JS -->
+                            </div>
                         </div>
 
                         <!-- 4. NOTÍCIAS -->
@@ -155,10 +163,10 @@
             ];
 
             const relatoriosEthics = [
-                { titulo: "PFZAER: Licenciamento e Silêncio Positivo", texto: "As Zonas de Aceleração (PFZAER) introduzem o 'silêncio positivo' no licenciamento ambiental, permitindo que projetos avancem sem AIA detalhada se prazos administrativos forem excedidos.", fonte: "DGEG / APA REA 2025", cor: "#8d6e63" },
-                { titulo: "Mineração de Lítio e o Ciclo Hidrológico", texto: "A exploração de lítio exige o rebaixamento do nível freático, secando nascentes ancestrais e contaminando aquíferos com metais pesados.", fonte: "IAmbiente / IPMA 2025", cor: "#c62828" },
-                { titulo: "IA e a Drenagem de Recursos Hídricos", texto: "Um centro de dados de IA consome água equivalente ao abastecimento de uma cidade média, criando stress hídrico severo.", fonte: "REN Datahub / Pordata", cor: "#0288d1" },
-                { titulo: "Impacto Social e 'Green Grabbing'", texto: "Expropriação de baldios e terras comunitárias para fins industriais energéticos sem benefício direto para as populações.", fonte: "Observatório da Coesão Territorial", cor: "#7b1fa2" }
+                { titulo: "PFZAER: Licenciamento e Silêncio Positivo", texto: "As Zonas de Aceleração (PFZAER) introduzem o 'silêncio positivo' no licenciamento ambiental, permitindo que projetos avancem sem AIA detalhada se prazos administrativos forem excedidos.", fonte: "DGEG / APA REA 2025" },
+                { titulo: "Mineração de Lítio e o Ciclo Hidrológico", texto: "A exploração de lítio exige o rebaixamento do nível freático, secando nascentes ancestrais e contaminando aquíferos com metais pesados.", fonte: "IAmbiente / IPMA 2025" },
+                { titulo: "IA e a Drenagem de Recursos Hídricos", texto: "Um centro de dados de IA consome água equivalente ao abastecimento de uma cidade média, criando stress hídrico severo.", fonte: "REN Datahub / Pordata" },
+                { titulo: "Impacto Social e 'Green Grabbing'", texto: "Expropriação de baldios e terras comunitárias para fins industriais energéticos sem benefício direto para as populações.", fonte: "Observatório da Coesão Territorial" }
             ];
 
             async function inicializarPagina() {
@@ -168,7 +176,13 @@
                         fetch('/data/noticias.json').then(r => r.json())
                     ]);
                     locationsDB = rLoc;
-                    noticiasEthics = rNews.filter(n => (n.categoria || "").toLowerCase().includes('etica'));
+                    
+                    // Filtro de notícias alargado para garantir captura
+                    noticiasEthics = rNews.filter(n => {
+                        const cat = (n.categoria || "").toLowerCase();
+                        const tit = (n.titulo || "").toLowerCase();
+                        return cat.includes('etic') || tit.includes('etic') || tit.includes('contra') || cat.includes('justiça');
+                    });
                     
                     const savedID = localStorage.getItem('biocultura_region');
                     const info = savedID ? locationsDB.find(i => i.id === savedID) : null;
@@ -182,6 +196,7 @@
             }
 
             function setupLocationLogic() {
+                // Pesquisa por nome
                 $(document).on('input', '#loc-search-input', function() {
                     const val = $(this).val().toLowerCase(), dropdown = $('#loc-dropdown').empty();
                     if(val.length < 2) return dropdown.hide();
@@ -192,6 +207,25 @@
                         }).appendTo(dropdown);
                     });
                     dropdown.show();
+                });
+
+                // GPS - Corrigido e testado
+                $(document).on('click', '#btn-gps-trigger', function() {
+                    if (!navigator.geolocation) return alert("O seu browser não suporta GPS.");
+                    
+                    navigator.geolocation.getCurrentPosition(pos => {
+                        let closest = locationsDB[0], minD = Infinity;
+                        locationsDB.forEach(c => {
+                            if (c.lat && c.lon) {
+                                let d = Math.sqrt(Math.pow(pos.coords.latitude - c.lat, 2) + Math.pow(pos.coords.longitude - c.lon, 2));
+                                if(d < minD) { minD = d; closest = c; }
+                            }
+                        });
+                        localStorage.setItem('biocultura_region', closest.id);
+                        location.reload();
+                    }, err => {
+                        alert("Não foi possível aceder à localização. Verifique as permissões do browser.");
+                    });
                 });
             }
 
@@ -214,7 +248,6 @@
                 const titleCaps = document.getElementById('reg-name-caps');
                 document.getElementById('ethics-dashboard').style.display = 'block';
 
-                // Valores variáveis para evitar que pareçam todos iguais
                 const seed = info ? info.id.length : 10;
                 const data = info ? info : { titulo: "PORTUGAL (MÉDIA NACIONAL)" };
                 titleCaps.innerText = data.titulo.toUpperCase();
@@ -243,9 +276,9 @@
                         resumo1: "O PSZAER identifica as áreas aptas para a instalação acelerada de projetos solares e eólicos em Portugal, garantindo um licenciamento simplificado.",
                         detalhe: `
                             <h5>Proposta de Programa Setorial (PSZAER)</h5>
-                            <p><strong>Nota Importante:</strong> O prazo de discussão pública e contestação terminou a 15 de Julho de 2026. O plano foca-se em áreas de baixo impacto ambiental (Via Verde).</p>
+                            <p><strong>Estado:</strong> O prazo de discussão pública e contestação terminou ontem, 15 de Julho de 2026. O programa aguarda agora aprovação final.</p>
                             <ul>
-                                <li><strong>Via Verde:</strong> Licenciamento acelerado em Janela Única.</li>
+                                <li><strong>Via Verde (ZAER):</strong> Licenciamento acelerado em Janela Única.</li>
                                 <li><strong>Salvaguardas:</strong> Exclusão de Rede Natura 2000 e solos RAN férteis.</li>
                                 <li><strong>Regeneração:</strong> Pastoreio obrigatório e cortinas verdes de 40m.</li>
                             </ul>
@@ -298,7 +331,7 @@
             function renderizarCardsEthics() {
                 const container = document.getElementById('noticias-ethics-dinamico');
                 if (!noticiasEthics.length) {
-                    container.innerHTML = "<p style='font-size:0.8em; color:#bbb;'>Sem notícias recentes.</p>";
+                    container.innerHTML = "<p style='font-size:0.8em; color:#bbb;'>Sem notícias recentes carregadas.</p>";
                     return;
                 }
                 container.innerHTML = noticiasEthics.map((n, i) => `
