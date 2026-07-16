@@ -20,6 +20,7 @@
             .hero-text { flex: 1.5; text-align: left; padding-top: 5px; } 
             .hero-text h1 { font-size: 4em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; line-height: 0.95; margin: 0; }
             
+            /* BLOCO REGIONALIZAÇÃO */
             .region-header { font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #c62828; margin: 45px 0 5px 0; display: block; }
             .national-link { color: #bbb; cursor: pointer; font-weight: 400; font-size: 0.85em; display: block; text-transform: lowercase; letter-spacing: 1px; width: fit-content; border-bottom: 1px solid transparent; }
             .national-link:hover { color: #2e7d32; border-bottom-color: #eee; }
@@ -51,9 +52,7 @@
             .project-summary-text { font-size: 0.9em; line-height: 1.6; color: #666; margin: 10px 0; text-align: justify; }
             .project-detail-content { display: none; background: #fcfcfc; border-left: 2px solid #2e7d32; padding: 25px; margin: 15px 0; font-size: 0.85em; color: #555; line-height: 1.6; }
             .project-detail-content h5 { font-size: 1em; color: #1a1a1a; margin-bottom: 10px; text-transform: uppercase; font-weight: 900; }
-            .source-list { margin-top: 20px; padding-top: 15px; border-top: 1px solid #eee; }
-            .source-list a { display: block; color: #bbb; font-size: 0.85em; text-decoration: none; margin-bottom: 5px; text-transform: lowercase; }
-
+            
             /* RELATÓRIOS */
             .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
             .report-item { border-top: 1px solid #f9f9f9; padding-top: 20px; }
@@ -61,14 +60,27 @@
             .report-item p { font-size: 0.95em; line-height: 1.7; color: #666; margin-bottom: 15px; text-align: justify; }
             .report-source { font-size: 0.65em; font-weight: 400; color: #bbb; text-transform: uppercase; letter-spacing: 1px; display: block; border-top: 1px solid #eee; padding-top: 8px; }
 
-            /* NOTÍCIAS */
+            /* NOTÍCIAS - RETIFICAÇÃO DE ÍCONES */
             .news-header { margin-top: 4em; display: block; font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; margin-bottom: 20px; }
             .news-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; }
             .news-item { text-decoration: none; color: inherit; display: block; padding: 25px; background: #fdfdfd; border-radius: 12px; transition: all 0.3s; }
             .news-item:hover { transform: translateY(-5px); background: #f9f9f9; }
             .news-item h3 { font-size: 1.15em; font-weight: 700; color: #1a1a1a; margin-bottom: 12px; line-height: 1.3; }
+            .news-meta { display: flex; align-items: center; gap: 10px; border-top: 1px solid #f2f2f2; padding-top: 12px; }
+            
+            .source-logo { 
+                width: 20px !important; 
+                height: 20px !important; 
+                min-width: 20px !important;
+                object-fit: contain !important; 
+                filter: grayscale(100%); 
+                opacity: 0.6; 
+            }
+            .news-meta span { font-size: 0.65em; font-weight: 800; color: #bbb; text-transform: uppercase; letter-spacing: 1px; }
 
+            /* BOTÃO PAGINAÇÃO SEM FRAME */
             .btn-pagination { background: none !important; border: none !important; box-shadow: none !important; color: #bbb !important; font-size: 0.8em; letter-spacing: 3px; cursor: pointer; text-transform: lowercase; margin-top: 2em; padding: 0 !important; }
+
             .page-footer { margin-top: auto; padding: 2em 0 2.5em 0; border-top: 1px solid #f2f2f2; opacity: 0.3; text-align: right; }
 
             @media screen and (max-width: 1280px) {
@@ -157,6 +169,7 @@
                         fetch('/data/noticias.json').then(r => r.json())
                     ]);
                     locationsDB = rLoc;
+                    
                     noticiasEthics = rNews.filter(n => {
                         const keywords = ['etica', 'ética', 'justiça', 'climatica', 'contra'];
                         const text = ((n.categoria || "") + (n.titulo || "")).toLowerCase();
@@ -216,6 +229,7 @@
                 let current = 0;
                 setInterval(() => {
                     const imgs = container.getElementsByTagName('img');
+                    if(!imgs.length) return;
                     imgs[current].classList.remove('active');
                     current = (current + 1) % imgs.length;
                     imgs[current].classList.add('active');
@@ -247,12 +261,12 @@
 
                 allProjects = [
                     { 
-                        id: "pszaer", nome: "Plano Setorial PSZAER", local: "Nacional / ZAER", coords: "MAPA ESTRATÉGICO 2026", status: "Consulta Encerrada (15/07/2026)",
+                        id: "pszaer", nome: "Plano Setorial PSZAER", local: "Nacional / ZAER", coords: "MAPA ESTRATÉGICO 2026", status: "Consulta Pública Encerrada (15/07/2026)",
                         resumo1: "O PSZAER identifica as áreas aptas para a instalação acelerada de projetos solares e eólicos em Portugal, garantindo um licenciamento simplificado.",
-                        detalhe: "<h5>Programa Setorial das ZAER</h5><p>Nota: O prazo de discussão pública terminou ontem, 15 de Julho de 2026.</p><ul><li>RED III: Licenciamento acelerado.</li><li>Salvaguardas: Exclusão de Rede Natura 2000.</li></ul>"
+                        detalhe: "<h5>Programa Setorial das ZAER</h5><p>Nota: O prazo de discussão pública terminou ontem, 15 de Julho de 2026. O programa aguarda agora aprovação final.</p>"
                     },
                     ...(info?.etica?.projetos_criticos || [
-                        { id: "litio-barroso", nome: "Mineração de Lítio", local: "Barroso (Boticas/Montalegre)", coords: "LAT 41.69 | LONG -7.66", status: "Contestado", resumo1: "Projeto de exploração mineira a céu aberto com impacto crítico no ciclo hidrológico local.", detalhe: "A exploração exige o rebaixamento do nível freático e contaminação de aquíferos." }
+                        { id: "litio-barroso", nome: "Mineração de Lítio", local: "Barroso (Boticas/Montalegre)", coords: "LAT 41.69 | LONG -7.66", status: "Contestado", resumo1: "Projeto de exploração mineira a céu aberto com impacto crítico no ciclo hidrológico local.", detalhe: "A exploração exige o rebaixamento do nível freático, secando nascentes e contaminando aquíferos." }
                     ])
                 ];
                 renderProjects();
