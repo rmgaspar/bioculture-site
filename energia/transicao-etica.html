@@ -20,7 +20,7 @@
             .hero-text { flex: 1.5; text-align: left; padding-top: 5px; } 
             .hero-text h1 { font-size: 4em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; line-height: 0.95; margin: 0; }
             
-            /* BLOCO REGIONALIZAÇÃO RETIFICADO */
+            /* BLOCO REGIONALIZAÇÃO */
             .region-header { font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #1a1a1a; margin: 25px 0 5px 0; display: block; }
             .national-link { color: #bbb; cursor: pointer; font-weight: 400; font-size: 0.85em; display: block; text-transform: lowercase; letter-spacing: 1px; width: fit-content; border-bottom: 1px solid transparent; }
             .national-link:hover { color: #2e7d32; border-bottom-color: #eee; }
@@ -55,6 +55,10 @@
             .project-detail-content li::before { content: "•"; position: absolute; left: 0; color: #2e7d32; font-weight: 900; }
             .source-list { margin-top: 20px; padding-top: 15px; border-top: 1px solid #eee; }
             .source-list a { display: block; color: #bbb; font-size: 0.85em; text-decoration: none; margin-bottom: 5px; text-transform: lowercase; }
+
+            /* SIDEBAR SEARCH DROPDOWN */
+            .bio-res-item { padding: 12px 18px; font-size: 0.9em; color: #666; cursor: pointer; border-bottom: 1px solid #f9f9f9 !important; }
+            .bio-res-item:hover { background: #f9f9f9; }
 
             /* RELATÓRIOS */
             .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
@@ -95,7 +99,7 @@
                                 <span class="category-label">Justiça Climática</span>
                                 <h1>Transição Ética: O Custo do Progresso</h1>
                                 
-                                <h4 class="region-header">INDICADORES DE IMPACTO NEGATIVO PARA A REGIÃO DE: <span id="reg-name-caps">PORTUGAL</span></h4>
+                                <h4 class="region-header">INDICADORES DE IMPACTO NEGATIVO PARA A REGIÃO DE: <span id="reg-name-caps">PORTUGAL (MÉDIA NACIONAL)</span></h4>
                                 <span class="national-link" onclick="renderDashboard(null)">(ver ambito nacional)</span>
 
                                 <div id="ethics-dashboard" style="display:none; margin-top:40px;">
@@ -164,20 +168,50 @@
                         fetch('/data/noticias.json').then(r => r.json())
                     ]);
                     locationsDB = rLoc;
-                    // Filtro robusto para notícias
                     noticiasEthics = rNews.filter(n => 
                         (n.categoria || "").toLowerCase().includes('etica') || 
                         (n.titulo || "").toLowerCase().includes('etica') ||
                         (n.titulo || "").toLowerCase().includes('contra')
                     );
                     
-                    const info = locationsDB.find(i => i.id === (localStorage.getItem('biocultura_region') || "proenca-a-nova"));
+                    const savedID = localStorage.getItem('biocultura_region');
+                    const info = savedID ? locationsDB.find(i => i.id === savedID) : null;
                     
                     renderDashboard(info);
                     renderizarCardsEthics();
                     renderRelatorios();
                     startCarousel();
+                    setupLocationLogic();
                 } catch(e) { console.error("Erro no fetch:", e); }
+            }
+
+            function setupLocationLogic() {
+                // Escuta eventos no sidebar (mesmo que seja carregado depois)
+                $(document).on('input', '#loc-search-input', function() {
+                    const val = $(this).val().toLowerCase(), dropdown = $('#loc-dropdown').empty();
+                    if(val.length < 2) return dropdown.hide();
+                    locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0,5).forEach(m => {
+                        $('<div class="bio-res-item"></div>').text(m.titulo).on('click', () => {
+                            localStorage.setItem('biocultura_region', m.id);
+                            renderDashboard(m); // Atualiza sem reload
+                            dropdown.hide();
+                            $('#loc-search-input').val(m.titulo);
+                        }).appendTo(dropdown);
+                    });
+                    dropdown.show();
+                });
+
+                $(document).on('click', '#btn-gps-trigger', function() {
+                    navigator.geolocation.getCurrentPosition(pos => {
+                        let closest = locationsDB[0], minD = Infinity;
+                        locationsDB.forEach(c => {
+                            let d = Math.sqrt(Math.pow(pos.coords.latitude - c.lat, 2) + Math.pow(pos.coords.longitude - c.lon, 2));
+                            if(d < minD) { minD = d; closest = c; }
+                        });
+                        localStorage.setItem('biocultura_region', closest.id);
+                        renderDashboard(closest);
+                    });
+                });
             }
 
             function startCarousel() {
@@ -194,21 +228,19 @@
                 const titleCaps = document.getElementById('reg-name-caps');
                 document.getElementById('ethics-dashboard').style.display = 'block';
 
-                // Caso Nacional (Default)
                 const data = info ? info : {
                     titulo: "PORTUGAL (Média Nacional)",
                     etica: {
                         indicadores: [
-                            { label: "Ocupação de Solo RAN", val: 38, color: "#8d6e63", desc: "Média nacional de conversão de solos agrícolas." },
-                            { label: "Fragmentação de Habitat", val: 31, color: "#2e7d32", desc: "Impacto médio em corredores ecológicos." },
-                            { label: "Stress Hídrico (IA)", val: 55, color: "#0288d1", desc: "Pressão hídrica em polos tecnológicos nacionais." },
-                            { label: "Oposição Social", val: 72, color: "#7b1fa2", desc: "Média de contestação a mega-projetos." }
+                            { label: "Ocupação de Solo RAN", val: 38, color: "#8d6e63", desc: "Média nacional de conversão de solos agrícolas para uso industrial." },
+                            { label: "Fragmentação de Habitat", val: 31, color: "#2e7d32", desc: "Impacto médio em corredores ecológicos por infraestruturas energéticas." },
+                            { label: "Stress Hídrico (IA)", val: 55, color: "#0288d1", desc: "Pressão hídrica média nacional em polos tecnológicos." },
+                            { label: "Oposição Social", val: 72, color: "#7b1fa2", desc: "Nível médio de contestação a mega-projetos em Portugal." }
                         ]
                     }
                 };
 
                 titleCaps.innerText = data.titulo.toUpperCase();
-
                 const impacts = data.etica?.indicadores || [];
                 container.innerHTML = impacts.map(m => `
                     <div class="impact-item">
@@ -217,7 +249,6 @@
                         <p class="impact-desc">${m.desc}</p>
                     </div>`).join('');
 
-                // Projetos Dinâmicos
                 allProjects = [
                     { 
                         id: "pszaer", 
@@ -230,15 +261,14 @@
                             <h5>Proposta de Programa Setorial (PSZAER)</h5>
                             <p><strong>Nota:</strong> O prazo de discussão pública e contestação terminou ontem, 15 de Julho de 2026.</p>
                             <ul>
-                                <li><strong>Via Verde (ZAER):</strong> Licenciamento acelerado em áreas de baixo impacto.</li>
-                                <li><strong>Linhas Vermelhas:</strong> Proibição em Parques Naturais e solos RAN férteis.</li>
-                                <li><strong>Regras de Regeneração:</strong> Pastoreio obrigatório e cortinas verdes de 40m.</li>
-                                <li><strong>Meta 2030:</strong> 20,8 GW solar e 10,4 GW eólica onshore.</li>
+                                <li><strong>Via Verde (ZAER):</strong> Áreas pré-aprovadas com licenciamento acelerado em Janela Única.</li>
+                                <li><strong>Linhas Vermelhas:</strong> Proibição em Parques Naturais, solos RAN férteis e buffers de 1km de habitações.</li>
+                                <li><strong>Regeneração:</strong> Pastoreio obrigatório (sem herbicidas) e cortinas verdes de 40m.</li>
                             </ul>
                         `
                     },
                     ...(info?.etica?.projetos_criticos || [
-                        { id: "litio", nome: "Mineração de Lítio", local: "Boticas", coords: "LAT 41.69 | LONG -7.66", status: "Contestado", resumo1: "Projeto de exploração mineira a céu aberto com impacto crítico no ciclo hidrológico local.", detalhe: "A exploração exige o rebaixamento do nível freático e contaminação de aquíferos." }
+                        { id: "litio", nome: "Mineração de Lítio", local: "Boticas", coords: "LAT 41.69 | LONG -7.66", status: "Contestado", resumo1: "Projeto de exploração mineira a céu aberto com impacto crítico no ciclo hidrológico local.", detalhe: "A exploração exige o rebaixamento do nível freático, secando nascentes e contaminando aquíferos." }
                     ])
                 ];
                 renderProjects();
