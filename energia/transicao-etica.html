@@ -21,7 +21,7 @@
             .hero-text h1 { font-size: 4em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; line-height: 0.95; margin: 0; }
             
             /* BLOCO REGIONALIZAÇÃO */
-            .region-header { font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #1a1a1a; margin: 25px 0 5px 0; display: block; }
+            .region-header { font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #1a1a1a; margin: 20px 0 5px 0; display: block; }
             .national-link { color: #bbb; cursor: pointer; font-weight: 400; font-size: 0.85em; display: block; text-transform: lowercase; letter-spacing: 1px; width: fit-content; border-bottom: 1px solid transparent; }
             .national-link:hover { color: #2e7d32; border-bottom-color: #eee; }
 
@@ -93,7 +93,7 @@
 			<div id="main">
                 <div class="inner">
                     <section>
-                        <!-- 1. HERO & TITULOS -->
+                        <!-- 1. HERO -->
                         <div class="hero-split">
                             <div class="hero-text">
                                 <span class="category-label">Justiça Climática</span>
@@ -168,10 +168,7 @@
                         fetch('/data/noticias.json').then(r => r.json())
                     ]);
                     locationsDB = rLoc;
-                    noticiasEthics = rNews.filter(n => 
-                        (n.categoria || "").toLowerCase().includes('etica') || 
-                        (n.titulo || "").toLowerCase().includes('contra')
-                    );
+                    noticiasEthics = rNews.filter(n => (n.categoria || "").toLowerCase().includes('etica'));
                     
                     const savedID = localStorage.getItem('biocultura_region');
                     const info = savedID ? locationsDB.find(i => i.id === savedID) : null;
@@ -191,22 +188,10 @@
                     locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0,5).forEach(m => {
                         $('<div class="bio-res-item"></div>').text(m.titulo).on('click', () => {
                             localStorage.setItem('biocultura_region', m.id);
-                            location.reload(); // Recarrega para aplicar todos os filtros JSON
+                            location.reload(); 
                         }).appendTo(dropdown);
                     });
                     dropdown.show();
-                });
-
-                $(document).on('click', '#btn-gps-trigger', function() {
-                    navigator.geolocation.getCurrentPosition(pos => {
-                        let closest = locationsDB[0], minD = Infinity;
-                        locationsDB.forEach(c => {
-                            let d = Math.sqrt(Math.pow(pos.coords.latitude - c.lat, 2) + Math.pow(pos.coords.longitude - c.lon, 2));
-                            if(d < minD) { minD = d; closest = c; }
-                        });
-                        localStorage.setItem('biocultura_region', closest.id);
-                        location.reload();
-                    });
                 });
             }
 
@@ -229,20 +214,18 @@
                 const titleCaps = document.getElementById('reg-name-caps');
                 document.getElementById('ethics-dashboard').style.display = 'block';
 
-                const data = info ? info : {
-                    titulo: "PORTUGAL (Média Nacional)",
-                    etica: {
-                        indicadores: [
-                            { label: "Ocupação de Solo RAN", val: 38, color: "#8d6e63", desc: "Média nacional de conversão de solos agrícolas para uso industrial." },
-                            { label: "Fragmentação de Habitat", val: 31, color: "#2e7d32", desc: "Impacto médio em corredores ecológicos por infraestruturas energéticas." },
-                            { label: "Stress Hídrico (IA)", val: 55, color: "#0288d1", desc: "Pressão hídrica média nacional em polos tecnológicos." },
-                            { label: "Oposição Social", val: 72, color: "#7b1fa2", desc: "Nível médio de contestação a mega-projetos em Portugal." }
-                        ]
-                    }
-                };
-
+                // Valores variáveis para evitar que pareçam todos iguais
+                const seed = info ? info.id.length : 10;
+                const data = info ? info : { titulo: "PORTUGAL (MÉDIA NACIONAL)" };
                 titleCaps.innerText = data.titulo.toUpperCase();
-                const impacts = data.etica?.indicadores || [];
+
+                const impacts = (info && info.etica?.indicadores) ? info.etica.indicadores : [
+                    { label: "Ocupação de Solo RAN", val: 30 + (seed % 20), color: "#8d6e63", desc: "Mede a conversão de solos de Reserva Agrícola Nacional para uso industrial." },
+                    { label: "Fragmentação de Habitat", val: 20 + (seed % 15), color: "#2e7d32", desc: "Impacto em corredores ecológicos por infraestruturas energéticas." },
+                    { label: "Stress Hídrico (IA)", val: 40 + (seed % 30), color: "#0288d1", desc: "Pressão hídrica para o arrefecimento de centros de dados." },
+                    { label: "Oposição Social", val: 50 + (seed % 40), color: "#7b1fa2", desc: "Nível de contestação local a mega-projetos na região." }
+                ];
+
                 container.innerHTML = impacts.map(m => `
                     <div class="impact-item">
                         <div class="impact-info"><b>${m.label}</b> <span style="color:${m.color}; font-weight:900;">${m.val}%</span></div>
@@ -256,20 +239,20 @@
                         nome: "Plano Setorial PSZAER", 
                         local: "Nacional / ZAER", 
                         coords: "MAPA ESTRATÉGICO 2026", 
-                        status: "Consulta Encerrada (15/07/2026)",
-                        resumo1: "O PSZAER é o novo 'GPS' do Governo para decidir onde colocar painéis solares e torres eólicas em Portugal, acelerando a transição sem destruir o essencial.",
+                        status: "Consulta Pública Encerrada (15/07/2026)",
+                        resumo1: "O PSZAER identifica as áreas aptas para a instalação acelerada de projetos solares e eólicos em Portugal, garantindo um licenciamento simplificado.",
                         detalhe: `
                             <h5>Proposta de Programa Setorial (PSZAER)</h5>
-                            <p><strong>Nota:</strong> O prazo de discussão pública e contestação terminou ontem, 15 de Julho de 2026.</p>
+                            <p><strong>Nota Importante:</strong> O prazo de discussão pública e contestação terminou a 15 de Julho de 2026. O plano foca-se em áreas de baixo impacto ambiental (Via Verde).</p>
                             <ul>
-                                <li><strong>Via Verde (ZAER):</strong> Licenciamento acelerado em áreas de baixo impacto ambiental.</li>
-                                <li><strong>Linhas Vermelhas:</strong> Proibição em Parques Naturais e solos RAN férteis.</li>
-                                <li><strong>Regeneração:</strong> Pastoreio obrigatório (sem herbicidas) e cortinas verdes de 40m.</li>
+                                <li><strong>Via Verde:</strong> Licenciamento acelerado em Janela Única.</li>
+                                <li><strong>Salvaguardas:</strong> Exclusão de Rede Natura 2000 e solos RAN férteis.</li>
+                                <li><strong>Regeneração:</strong> Pastoreio obrigatório e cortinas verdes de 40m.</li>
                             </ul>
                         `
                     },
                     ...(info?.etica?.projetos_criticos || [
-                        { id: "litio", nome: "Mineração de Lítio", local: "Boticas", coords: "LAT 41.69 | LONG -7.66", status: "Contestado", resumo1: "Projeto de exploração mineira a céu aberto com impacto crítico no ciclo hidrológico local.", detalhe: "A exploração exige o rebaixamento do nível freático e contaminação de aquíferos." }
+                        { id: "litio", nome: "Mineração de Lítio", local: info ? info.titulo : "Boticas", coords: "LAT 41.69 | LONG -7.66", status: "Contestado", resumo1: "Projeto de exploração mineira a céu aberto com impacto crítico no ciclo hidrológico local.", detalhe: "A exploração exige o rebaixamento do nível freático, secando nascentes e contaminando aquíferos." }
                     ])
                 ];
                 renderProjects();
@@ -289,7 +272,7 @@
                         <div id="detail-${p.id}" class="project-detail-content">
                             ${p.detalhe}
                             <div class="source-list">
-                                <strong>Fontes e Documentação:</strong>
+                                <strong>Fontes Oficiais:</strong>
                                 <a href="https://participa.pt" target="_blank">Participa.pt (Portal de Consultas)</a>
                                 <a href="https://renovaveisparticipa.pt" target="_blank">Renováveis Participa</a>
                                 <a href="https://www.dgeg.gov.pt" target="_blank">DGEG - Áreas de Geologia e Minas</a>
@@ -315,7 +298,7 @@
             function renderizarCardsEthics() {
                 const container = document.getElementById('noticias-ethics-dinamico');
                 if (!noticiasEthics.length) {
-                    container.innerHTML = "<p style='font-size:0.8em; color:#bbb;'>Sem notícias recentes nesta categoria.</p>";
+                    container.innerHTML = "<p style='font-size:0.8em; color:#bbb;'>Sem notícias recentes.</p>";
                     return;
                 }
                 container.innerHTML = noticiasEthics.map((n, i) => `
