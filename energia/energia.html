@@ -90,10 +90,10 @@
                                 <span class="category-label">Justiça Climática</span>
                                 <h1>Energia: O Motor da Regeneração</h1>
                                 
-                                <h4 class="region-header">INDICADORES DE MIX ENERGÉTICO PARA A REGIÃO DE: <span id="reg-name-caps">PORTUGAL (MÉDIA NACIONAL)</span></h4>
+                                <h4 class="region-header">INDICADORES DE MIX ENERGÉTICO PARA A REGIÃO DE: <span id="reg-name-caps">PORTUGAL</span></h4>
                                 <span class="national-link" onclick="resetToNational()">(ver ambito nacional)</span>
 
-                                <div id="energy-dashboard" style="display:none; margin-top:40px;">
+                                <div id="energy-dashboard" style="display:block; margin-top:40px;">
                                     <div class="tech-content">
                                         <div id="impact-container" class="impact-grid"></div>
                                     </div>
@@ -111,9 +111,9 @@
 
                         <!-- 2. INFRAESTRUTURA -->
                         <div class="data-row">
-                            <h4>Centrais em Proximidade (Ordenadas por Distância)</h4>
+                            <h4>Centrais em Proximidade</h4>
                             <div id="plants-list-main"></div>
-                            <button id="btn-load-more-plants" class="btn-pagination">+ ver mais centrais</button>
+                            <button id="btn-load-more-plants" class="btn-pagination" style="display:none">+ ver mais centrais</button>
                         </div>
 
                         <!-- 3. RELATÓRIOS -->
@@ -150,7 +150,6 @@
                 { titulo: "Eólica Offshore", texto: "O leilão de 10GW marca a nova fronteira energética. O foco está na eletrificação industrial via PRR.", fonte: "Portugal Global / Pordata" }
             ];
 
-            // Cálculo de distância Haversine
             function getDistance(lat1, lon1, lat2, lon2) {
                 const R = 6371; 
                 const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -162,8 +161,8 @@
             async function inicializarPagina() {
                 try {
                     const [rLoc, rNews] = await Promise.all([
-                        fetch('/data/bioregioes.json').then(r => r.json()),
-                        fetch('/data/noticias.json').then(r => r.json())
+                        fetch('/data/bioregioes.json').then(r => r.json()).catch(() => []),
+                        fetch('/data/noticias.json').then(r => r.json()).catch(() => [])
                     ]);
                     locationsDB = rLoc;
                     noticiasEnergy = rNews.filter(n => (n.categoria || "").toLowerCase().includes('energia'));
@@ -176,7 +175,7 @@
                     renderRelatorios();
                     initCarousel();
                     setupLocationLogic();
-                } catch(e) { console.error(e); }
+                } catch(e) { console.error("Erro na inicialização:", e); }
             }
 
             function setupLocationLogic() {
@@ -201,8 +200,8 @@
                             if(d < minD) { minD = d; closest = c; }
                         });
                         localStorage.setItem('biocultura_region', closest.id);
-                        renderDashboard(closest); // Atualiza com ordenação por proximidade
-                    }, () => alert("Erro ao aceder ao GPS."));
+                        location.reload();
+                    }, () => alert("Ative o GPS para ordenar por proximidade."));
                 });
             }
 
@@ -214,6 +213,7 @@
             function initCarousel() {
                 let current = 0;
                 const imgs = document.querySelectorAll('#globe-container img');
+                if(!imgs.length) return;
                 setInterval(() => {
                     imgs[current].classList.remove('active');
                     current = (current + 1) % imgs.length;
@@ -222,74 +222,68 @@
             }
 
             function renderDashboard(info) {
-                const container = document.getElementById('mix-container');
+                const container = document.getElementById('impact-container');
                 const titleCaps = document.getElementById('reg-name-caps');
-                document.getElementById('energy-dashboard').style.display = 'block';
+                if(!container) return;
 
                 const seed = info ? info.id.length : 10;
                 const data = info ? info : { titulo: "PORTUGAL (MÉDIA NACIONAL)" };
                 titleCaps.innerText = data.titulo.toUpperCase();
 
                 const mix = (info && info.energia?.mix) ? info.energia.mix : [
-                    { label: "Solar", val: 25 + (seed % 10), color: "#f1c40f", desc: "Produção fotovoltaica em parques e autoconsumo UPAC." },
-                    { label: "Eólica", val: 35 + (seed % 5), color: "#3498db", desc: "Aproveitamento do recurso vento onshore e offshore." },
-                    { label: "Hídrica", val: 15, color: "#2980b9", desc: "Capacidade de regulação e armazenamento em barragens." },
-                    { label: "Biomassa", val: 10, color: "#27ae60", desc: "Valorização de resíduos florestais para produção térmica." }
+                    { label: "Solar", val: 25 + (seed % 10), color: "#f1c40f", desc: "Produção fotovoltaica regional. Fontes: LNEG / DGEG." },
+                    { label: "Eólica", val: 35 + (seed % 5), color: "#3498db", desc: "Aproveitamento do recurso vento. Fonte: REN Datahub." },
+                    { label: "Hídrica", val: 15, color: "#2980b9", desc: "Capacidade de regulação em barragens." },
+                    { label: "Biomassa", val: 10, color: "#27ae60", desc: "Valorização de resíduos florestais." }
                 ];
 
                 container.innerHTML = mix.map(m => `
-                    <div class="energy-item">
-                        <div class="energy-info"><b>${m.label}</b> <span style="color:${m.color}; font-weight:900;">${m.val}%</span></div>
-                        <div class="energy-bar-bg"><div class="energy-bar-fill" style="width:${m.val}%; background:${m.color}"></div></div>
-                        <p class="energy-desc">${m.desc}</p>
+                    <div class="impact-item">
+                        <div class="impact-info"><b>${m.label}</b> <span style="color:${m.color}; font-weight:900;">${m.val}%</span></div>
+                        <div class="impact-bar-bg"><div class="impact-bar-fill" style="width:${m.val}%; background:${m.color}"></div></div>
+                        <p class="impact-desc">${m.desc}</p>
                     </div>`).join('');
 
-                // Centrais Dinâmicas
                 allPlants = (info && info.energia?.centrais) ? info.energia.centrais : [
-                    { id: "eol-1", nome: "Parque Eólico do Coentral", tipo: "Eólica", potencia: "22 MW", local: info ? info.titulo : "Castanheira de Pera", coords: "LAT 40.01 | LONG -8.12", lat: 40.01, lon: -8.12, detalhe: "Central ligada à rede de transporte nacional. Fonte: REN Datahub." },
-                    { id: "sol-1", nome: "Central Solar de Proença", tipo: "Solar", potencia: "12 MW", local: info ? info.titulo : "Proença-a-Nova", coords: "LAT 39.75 | LONG -7.92", lat: 39.75, lon: -7.92, detalhe: "Parque fotovoltaico de alta eficiência. Fonte: DGEG Geoportal." },
-                    { id: "bio-1", nome: "Unidade Biomassa Local", tipo: "Biomassa", potencia: "5 MW", local: info ? info.titulo : "Sertã", coords: "LAT 39.85 | LONG -8.10", lat: 39.85, lon: -8.10, detalhe: "Valorização de biomassa florestal. Fonte: LNEG Recursos." }
+                    { id: "eol-1", nome: "Parque Eólico do Coentral", tipo: "Eólica", potencia: "22 MW", local: "Castanheira de Pera", coords: "LAT 40.01 | LONG -8.12", lat: 40.01, lon: -8.12, detalhe: "Ligação à RNT. Fonte: REN." },
+                    { id: "sol-1", nome: "Central Solar de Proença", tipo: "Solar", potencia: "12 MW", local: "Proença-a-Nova", coords: "LAT 39.75 | LONG -7.92", lat: 39.75, lon: -7.92, detalhe: "Painéis de alta eficiência. Fonte: DGEG." }
                 ];
-
-                // Ordenação por GPS se disponível
-                if(userCoords) {
-                    allPlants.sort((a, b) => getDistance(userCoords.lat, userCoords.lon, a.lat, a.lon) - getDistance(userCoords.lat, userCoords.lon, b.lat, b.lon));
-                }
 
                 renderPlants();
             }
 
             function renderPlants() {
+                const list = document.getElementById('plants-list-main');
+                if(!list) return;
                 const show = allPlants.slice(0, visiveisPlants);
-                document.getElementById('plants-list-main').innerHTML = show.map(p => {
-                    const distText = userCoords ? `<span style="color:#2e7d32; font-size:0.7em;">(${getDistance(userCoords.lat, userCoords.lon, p.lat, p.lon).toFixed(1)} km)</span>` : '';
-                    return `
+                list.innerHTML = show.map(p => `
                     <div style="border-bottom: 1px solid #f9f9f9; padding: 15px 0;">
                         <div class="plant-item">
                             <div class="plant-main">
-                                <span class="project-name">${p.nome} — ${p.local} ${distText} <span class="btn-toggle-detail" onclick="toggleDetail('${p.id}')">+</span></span>
+                                <span class="project-name">${p.nome} — ${p.local} <span class="btn-toggle-detail" onclick="toggleDetail('${p.id}')">+</span></span>
                                 <span class="plant-coords">${p.coords}</span>
                             </div>
-                            <span class="plant-status">${p.potencia} / ${p.tipo}</span>
+                            <span class="project-status">${p.potencia} / ${p.tipo}</span>
                         </div>
                         <div id="detail-${p.id}" class="plant-detail-content">
-                            <h5>Dados Técnicos (LNEG / DGEG)</h5>
+                            <h5>Dados Técnicos (LNEG / DGEG / REN)</h5>
                             <p>${p.detalhe}</p>
                             <div class="source-list">
-                                <a href="https://datahub.ren.pt" target="_blank">REN Datahub (Tempo Real)</a>
                                 <a href="https://geoportal.lneg.pt" target="_blank">LNEG Geoportal</a>
+                                <a href="https://datahub.ren.pt" target="_blank">REN Datahub</a>
                             </div>
                             <div style="margin-top:15px;"><span class="btn-toggle-detail" onclick="toggleDetail('${p.id}')">[ fechar ]</span></div>
                         </div>
-                    </div>`;
-                }).join('');
+                    </div>`).join('');
                 document.getElementById('btn-load-more-plants').style.display = allPlants.length > visiveisPlants ? 'block' : 'none';
             }
 
             function toggleDetail(id) { $(`#detail-${id}`).slideToggle(); }
 
             function renderRelatorios() {
-                document.getElementById('report-grid-energy').innerHTML = relatoriosEnergy.map(r => `
+                const grid = document.getElementById('report-grid-energy');
+                if(!grid) return;
+                grid.innerHTML = relatoriosEnergy.map(r => `
                     <div class="report-item">
                         <h5>${r.titulo}</h5>
                         <p>${r.texto}</p>
@@ -299,6 +293,7 @@
 
             function renderizarCardsEnergy() {
                 const container = document.getElementById('noticias-energy-dinamico');
+                if (!container) return;
                 if (!noticiasEnergy.length) { container.innerHTML = "<p style='font-size:0.8em; color:#bbb;'>Sem notícias recentes.</p>"; return; }
                 container.innerHTML = noticiasEnergy.map((n, i) => `
                     <a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-item" style="${i >= visiveisEnergy ? 'display:none' : ''}">
@@ -308,7 +303,6 @@
                             <span>${n.data}</span>
                         </div>
                     </a>`).join('');
-                document.getElementById('btn-load-more-energy').style.display = noticiasEnergy.length > visiveisEnergy ? 'inline-block' : 'none';
             }
 
             document.getElementById('btn-load-more-plants').onclick = () => { visiveisPlants += 5; renderPlants(); };
