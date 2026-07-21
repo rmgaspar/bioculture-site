@@ -198,9 +198,9 @@
 
                     // ← ALTERADO: fallback robusto sem depender de ID fixo
                     const savedId = localStorage.getItem('biocultura_region');
-                    const info = savedId
-                        ? locationsDB.find(i => i.id === savedId)
-                        : locationsDB.find(i => i.lat !== 0) || locationsDB[0];
+                    const infoSaved = savedId ? locationsDB.find(i => i.id === savedId) : null;
+                    if (savedId && !infoSaved) localStorage.removeItem('biocultura_region'); // limpa IDs inválidos
+                    const info = infoSaved || locationsDB.find(i => i.lat !== 0) || locationsDB[0];
 
                     renderDashboard(info);
                     renderizarCardsAgua();
