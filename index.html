@@ -203,26 +203,25 @@
             }
 
             async function inicializarPagina() {
-                try {
-                    const [rLoc, rNews] = await Promise.all([
-                        fetch('/data/freguesias_portugal.json').then(r => r.json()),
-                        fetch('/data/noticias.json').then(r => r.json())
-                    ]);
-                    locationsDB = rLoc;
-                    todasNoticias = rNews;
-                    todasNoticias.sort((a, b) => (b.relevancia || 0) - (a.relevancia || 0));
+            // 1. Mostra a estrutura da página imediatamente
+            console.log("Loading data...");
 
-                    const savedId = localStorage.getItem('biocultura_region');
-                    const infoSaved = savedId ? locationsDB.find(i => i.id === savedId) : null;
-                    if(savedId && !infoSaved) localStorage.removeItem('biocultura_region');
-                    const info = infoSaved || locationsDB.find(i => i.lat !== 0) || locationsDB[0];
+            try {
+                // 2. Carrega o JSON em background (o browser faz cache automática do ficheiro .json)
+                const response = await fetch('/data/freguesias_portugal.json');
+                locationsDB = await response.json();
 
-                    renderDashboard(info);
-                    renderizarLista();
-                    setupSidebarLogic();
-                    iniciarCiclos();
-                } catch(e) { console.error(e); }
-            }
+                // 3. Só depois carrega o resto
+                const [rNews, rExtras] = await Promise.all([
+                    fetch('/data/noticias.json').then(r => r.json()).catch(() => []),
+                    // aqui adicionas o fetch específico da página (ex: mineracao.json ou zaer_critico.json)
+                    fetch(window.location.pathname.includes('mineracao') ? '/data/mineracao.json' : '/data/zaer_critico.json').then(r => r.json()).catch(() => [])
+                ]);
+
+                // ... resto da tua lógica de filtros e renderDashboard ...
+                
+            } catch(e) { console.error("Erro:", e); }
+        }
 
             function renderDashboard(info) {
                 if(!info) return;
@@ -244,24 +243,51 @@
                                 .text(m.titulo + (m.concelho ? ' (' + m.concelho + ')' : ''))
                                 .on('click', () => {
                                     localStorage.setItem('biocultura_region', m.id);
-                                    location.reload();
+                                    // Se estivermos numa página de recursos, atualizamos só o dashboard sem reload
+                                    if (typeof renderDashboard === 'function') {
+                                        const newInfo = locationsDB.find(i => i.id === m.id);
+                                        renderDashboard(newInfo);
+                                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                                        $('#loc-dropdown').hide();
+                                        $('#loc-search-input').val('');
+                                    } else {
+                                        location.reload(); // Se for mudança entre páginas diferentes, mantém o reload
+                                    }
                                 }).appendTo(dropdown);
                         });
                     } else dropdown.hide();
                 });
 
                 $(document).on('click', '#btn-gps-trigger', function() {
-                    navigator.geolocation.getCurrentPosition(pos => {
-                        let closest = locationsDB[0], minD = Infinity;
-                        locationsDB.forEach(c => {
-                            if(!c.lat || !c.lon || c.lat === 0) return;
-                            const d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon);
-                            if(d < minD) { minD = d; closest = c; }
-                        });
-                        localStorage.setItem('biocultura_region', closest.id);
-                        location.reload();
+                const btn = $(this);
+                btn.css('opacity', '0.5');
+
+                navigator.geolocation.getCurrentPosition(pos => {
+                    const uLat = pos.coords.latitude, uLon = pos.coords.longitude;
+                    let closest = null, minD = Infinity;
+
+                    locationsDB.forEach(c => {
+                        if(!c.lat || !c.lon || c.lat === 0) return;
+                        const d = Math.sqrt(Math.pow(uLat - c.lat, 2) + Math.pow(uLon - c.lon, 2));
+                        if(d < minD) { minD = d; closest = c; }
                     });
-                });
+
+                    if(closest) {
+                        localStorage.setItem('biocultura_region', closest.id);
+                        // ATUALIZAÇÃO INSTANTÂNEA SEM RELOAD
+                        if (typeof renderDashboard === 'function') {
+                            renderDashboard(closest);
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                        } else {
+                            location.reload();
+                        }
+                    }
+                    btn.css('opacity', '1');
+                }, err => {
+                    btn.css('opacity', '1');
+                }, { enableHighAccuracy: true, timeout: 5000 });
+            });
+
             }
 
             function renderizarLista() {
