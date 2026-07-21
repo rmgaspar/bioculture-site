@@ -58,7 +58,7 @@
             .gauge-marker { position: absolute; top: -5px; left: 0%; width: 3px; height: 16px; background: #1a1a1a; border-radius: 2px; transition: left 1.5s cubic-bezier(0.4, 0, 0.2, 1); }
 
             /* IMPACTO & RELATÓRIOS */
-            .soil-impact-box { background: #fdfaf9; padding: 2.5em 3em; border-radius: 20px; margin: 1.5em 0; position: relative; overflow: hidden; border-left: 4px solid #8d6e63; }
+            .soil-impact-box { background: #fdfaf9; padding: 2.5em 3em; border-radius: 20px; margin: 1.5em 0; position: relative; overflow: hidden; }
             .fact-cycler-soil { min-height: 50px; position: relative; }
             .soil-fact-item { position: absolute; top: 0; opacity: 0; transition: opacity 1s ease; width: 100%; font-size: 1.1em; line-height: 1.5; color: #6d4c41; }
             .soil-fact-item.active { opacity: 1; position: relative; }
@@ -216,14 +216,18 @@
             async function inicializarPagina() {
                 try {
                     const [rLoc, rSoil, rNews] = await Promise.all([
-                        fetch('/data/bioregioes.json').then(r => r.json()),
+                        fetch('/data/freguesias_portugal.json').then(r => r.json()),
                         fetch('/data/solo_stats.json').then(r => r.json()),
                         fetch('/data/noticias.json').then(r => r.json())
                     ]);
                     locationsDB = rLoc; soilStats = rSoil;
                     noticiasSolo = rNews.filter(n => (n.categoria || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes('solo'));
-                    const info = locationsDB.find(i => i.id === (localStorage.getItem('biocultura_region') || "proenca-a-nova"));
-                    
+
+                    const savedId = localStorage.getItem('biocultura_region');
+                    const infoSaved = savedId ? locationsDB.find(i => i.id === savedId) : null;
+                    if (savedId && !infoSaved) localStorage.removeItem('biocultura_region');
+                    const info = infoSaved || locationsDB.find(i => i.lat !== 0) || locationsDB[0];
+
                     renderDashboard(info);
                     renderizarCardsSolo();
                     renderRelatorios();
@@ -236,11 +240,13 @@
                 $(document).on('input', '#loc-search-input', function() {
                     const val = $(this).val().toLowerCase(), dropdown = $('#loc-dropdown').empty();
                     if(val.length < 2) return dropdown.hide();
-                    locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0,5).forEach(m => {
-                        $('<div class="bio-res-item"></div>').text(m.titulo).on('click', () => {
-                            localStorage.setItem('biocultura_region', m.id);
-                            location.reload();
-                        }).appendTo(dropdown);
+                    locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0,8).forEach(m => {
+                        $('<div class="bio-res-item"></div>')
+                            .text(m.titulo + (m.concelho ? ' (' + m.concelho + ')' : ''))
+                            .on('click', () => {
+                                localStorage.setItem('biocultura_region', m.id);
+                                location.reload();
+                            }).appendTo(dropdown);
                     });
                     dropdown.show();
                 });
@@ -248,6 +254,7 @@
                     navigator.geolocation.getCurrentPosition(pos => {
                         let closest = locationsDB[0], minD = Infinity;
                         locationsDB.forEach(c => {
+                            if(!c.lat || !c.lon || c.lat === 0) return;
                             let d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon);
                             if(d < minD) { minD = d; closest = c; }
                         });
@@ -260,30 +267,34 @@
             function renderDashboard(info) {
                 if(!info || !soilStats.length) return;
                 document.getElementById('soil-dashboard').style.display = 'block';
-                document.getElementById('reg-name').innerText = info.titulo;
 
+                const toTitle = s => s.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+                document.getElementById('reg-name').innerText = info.titulo + (info.concelho ? ', ' + toTitle(info.concelho) : '');
+
+                // Usa dados de solo da própria freguesia se disponíveis
+                const soloFreg = info.extensao_biocultura?.estatisticas_solo;
                 let closest = soilStats[0]; let minD = Infinity;
                 soilStats.forEach(s => {
                     let d = calcularDistancia(info.lat, info.lon, s.lat, s.lon);
                     if(d < minD) { minD = d; closest = s; }
                 });
 
-                const moVal = info.biomas?.materia_organica || closest.materia_organica || "2.5";
+                const moVal = soloFreg?.materia_organica_pct || closest.materia_organica || "2.5";
                 const phVal = info.biomas?.ph_solo || "6.5";
-                const desertVal = closest.desertificacao || 0.30;
+                const desertVal = soloFreg?.indice_desertificacao || closest.desertificacao || 0.30;
 
                 document.getElementById('label-organic').innerText = "Matéria Orgânica " + moVal + "%";
                 document.getElementById('label-ph-solo').innerText = "pH " + phVal;
-                document.getElementById('label-desert').innerText = "Desertificação " + (desertVal * 100).toFixed(0) + "%";
-                
-                document.getElementById('soil-advantages').innerText = parseFloat(moVal) < 3 
-                    ? "Solo com défice de carbono: Requer aporte de matéria orgânica e proteção de cobertura." 
+                document.getElementById('label-desert').innerText = "Desertificação " + (parseFloat(desertVal) * 100).toFixed(0) + "%";
+
+                document.getElementById('soil-advantages').innerText = parseFloat(moVal) < 3
+                    ? "Solo com défice de carbono: Requer aporte de matéria orgânica e proteção de cobertura."
                     : "Solo resiliente: Boa capacidade de retenção hídrica e atividade biológica.";
 
                 setTimeout(() => {
                     document.getElementById('marker-organic').style.left = Math.min((parseFloat(moVal) / 8) * 100, 100) + "%";
                     document.getElementById('marker-ph-solo').style.left = (parseFloat(phVal) / 14 * 100) + "%";
-                    document.getElementById('marker-desert').style.left = (desertVal * 100) + "%";
+                    document.getElementById('marker-desert').style.left = Math.min(parseFloat(desertVal) * 100, 100) + "%";
                 }, 300);
             }
 
