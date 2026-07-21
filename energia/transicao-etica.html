@@ -144,10 +144,17 @@
 			<div id="sidebar"></div>
 		</div>
 
-		<script src="/assets/js/jquery.min.js"></script>
+        <script src="/assets/js/jquery.min.js"></script>
         <script>
             let locationsDB = [], noticiasEthics = [], allZAER = [], currentZAERList = [], visiveisEthics = 4, visiveisZAER = 3;
             
+            const relatoriosEthics = [
+                { titulo: "PFZAER: Licenciamento e Silêncio Positivo", texto: "As Zonas de Aceleração (PFZAER) introduzem o 'silêncio positivo' no licenciamento ambiental, permitindo que projetos avancem sem AIA detalhada se prazos administrativos forem excedidos.", fonte: "DGEG / APA REA 2025" },
+                { titulo: "Mineração de Lítio e o Ciclo Hidrológico", texto: "A exploração de lítio exige o rebaixamento do nível freático, secando nascentes ancestrais e contaminando aquíferos com metais pesados.", fonte: "IAmbiente / IPMA 2025" },
+                { titulo: "IA e a Drenagem de Recursos Hídricos", texto: "Um centro de dados de IA consome água equivalente ao abastecimento de uma cidade média, criando stress hídrico severo.", fonte: "REN Datahub / Pordata" },
+                { titulo: "Impacto Social e 'Green Grabbing'", texto: "Expropriação de baldios e terras comunitárias para fins industriais energéticos sem benefício direto para as populações.", fonte: "Observatório da Coesão Territorial" }
+            ];
+
             const toTitle = s => s.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 
             function getDistance(lat1, lon1, lat2, lon2) {
@@ -197,8 +204,18 @@
                     
                     renderDashboard(info);
                     renderizarCardsEthics();
+                    renderRelatorios(); // CHAMADA ADICIONADA
                     setupLocationLogic();
                 } catch(e) { console.error("Erro fetch:", e); }
+            }
+
+            function renderRelatorios() {
+                document.getElementById('report-grid-ethics').innerHTML = relatoriosEthics.map(r => `
+                    <div class="report-item">
+                        <h5>${r.titulo}</h5>
+                        <p>${r.texto}</p>
+                        <span class="report-source">Fonte: ${r.fonte}</span>
+                    </div>`).join('');
             }
 
             function setupLocationLogic() {
@@ -217,8 +234,7 @@
                 });
 
                 $(document).on('click', '#btn-gps-trigger', function() {
-                    const btn = $(this);
-                    btn.css('opacity', '0.5');
+                    const btn = $(this); btn.css('opacity', '0.5');
                     navigator.geolocation.getCurrentPosition(pos => {
                         const uLat = pos.coords.latitude, uLon = pos.coords.longitude;
                         let closest = null, minD = Infinity;
@@ -229,14 +245,10 @@
                         });
                         if(closest) {
                             localStorage.setItem('biocultura_region', closest.id);
-                            localStorage.setItem('user_last_coords', JSON.stringify({lat: uLat, lon: uLon}));
                             location.reload();
                         }
                         btn.css('opacity', '1');
-                    }, err => {
-                        alert("Erro ao aceder ao GPS.");
-                        btn.css('opacity', '1');
-                    }, { enableHighAccuracy: true, timeout: 5000 });
+                    }, err => { btn.css('opacity', '1'); }, { enableHighAccuracy: true, timeout: 5000 });
                 });
             }
 
@@ -244,7 +256,6 @@
                 const container = document.getElementById('impact-container');
                 const titleCaps = document.getElementById('reg-name-caps');
                 document.getElementById('ethics-dashboard').style.display = 'block';
-
                 const originLat = info ? info.lat : 39.5;
                 const originLon = info ? info.lon : -8.0;
 
@@ -275,7 +286,6 @@
                         <div class="impact-info"><b>${m.label}</b> <span>${m.val}%</span></div>
                         <div class="impact-bar-bg"><div class="impact-bar-fill" style="width:${m.val}%; background:${m.color}"></div></div>
                     </div>`).join('');
-
                 renderZAERProjects();
             }
 
@@ -307,7 +317,6 @@
             function loadMoreZAER() { visiveisZAER += 5; renderZAERProjects(); }
             function toggleDetail(id) { $(`#detail-${id}`).slideToggle(); }
             function resetToNational() { localStorage.removeItem('biocultura_region'); location.reload(); }
-
             function renderizarCardsEthics() {
                 const container = document.getElementById('noticias-ethics-dinamico');
                 container.innerHTML = noticiasEthics.map((n, i) => `

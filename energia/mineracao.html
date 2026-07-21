@@ -140,9 +140,16 @@
 			<div id="sidebar"></div>
 		</div>
 
-		<script src="/assets/js/jquery.min.js"></script>
+        <script src="/assets/js/jquery.min.js"></script>
         <script>
             let locationsDB = [], noticiasMining = [], allProjects = [], visiveisMining = 4;
+
+            const relatoriosMining = [
+                { titulo: "Projeto Barroso: Lítio e Património", texto: "A exploração de lítio a céu aberto em Covas do Barroso ameaça o estatuto de Património Agrícola Mundial. O impacto estende-se à destruição de habitats e alteração do modo de vida comunitário.", fonte: "Savannah / APA 2025" },
+                { titulo: "Mapa do Minério e Concessões", texto: "Centenas de pedidos de prospecção ignoram frequentemente os PDM. O risco reside na fragmentação do território e na criação de passivos ambientais a longo prazo.", fonte: "MiningWatch PT / DGEG" },
+                { titulo: "Consumo Hídrico Industrial", texto: "O processamento de minerais críticos exige volumes de água incompatíveis com as projeções de seca severa, competindo com o abastecimento público.", fonte: "ERSAR / APA SNIAMB" },
+                { titulo: "Impacto Social e Contratos", texto: "A transparência no licenciamento e a avaliação de impacto cumulativo são exigências críticas face à expansão das áreas de exploração em 2026.", fonte: "Participa.pt / LNEG" }
+            ];
 
             const toTitle = s => s.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 
@@ -157,7 +164,6 @@
 
             async function inicializarPagina() {
                 try {
-                    // Cache do JSON de freguesias
                     let cachedData = sessionStorage.getItem('biocultura_freguesias');
                     if (cachedData) {
                         locationsDB = JSON.parse(cachedData);
@@ -186,8 +192,18 @@
                     
                     renderDashboard(info);
                     renderizarCardsMining();
+                    renderRelatorios(); // CHAMADA ADICIONADA
                     setupLocationLogic();
                 } catch(e) { console.error("Erro fetch:", e); }
+            }
+
+            function renderRelatorios() {
+                document.getElementById('report-grid-mining').innerHTML = relatoriosMining.map(r => `
+                    <div class="report-item">
+                        <h5>${r.titulo}</h5>
+                        <p>${r.texto}</p>
+                        <span class="report-source">Fonte: ${r.fonte}</span>
+                    </div>`).join('');
             }
 
             function setupLocationLogic() {
@@ -206,8 +222,7 @@
                 });
 
                 $(document).on('click', '#btn-gps-trigger', function() {
-                    const btn = $(this);
-                    btn.css('opacity', '0.5');
+                    const btn = $(this); btn.css('opacity', '0.5');
                     navigator.geolocation.getCurrentPosition(pos => {
                         const uLat = pos.coords.latitude, uLon = pos.coords.longitude;
                         let closest = null, minD = Infinity;
@@ -218,14 +233,10 @@
                         });
                         if(closest) {
                             localStorage.setItem('biocultura_region', closest.id);
-                            localStorage.setItem('user_last_coords', JSON.stringify({lat: uLat, lon: uLon}));
                             location.reload();
                         }
                         btn.css('opacity', '1');
-                    }, err => {
-                        alert("Erro ao aceder ao GPS.");
-                        btn.css('opacity', '1');
-                    }, { enableHighAccuracy: true, timeout: 5000 });
+                    }, err => { btn.css('opacity', '1'); }, { enableHighAccuracy: true, timeout: 5000 });
                 });
             }
 
@@ -233,7 +244,6 @@
                 const container = document.getElementById('impact-container');
                 const titleCaps = document.getElementById('reg-name-caps');
                 document.getElementById('mining-dashboard').style.display = 'block';
-
                 const originLat = info ? info.lat : 39.5;
                 const originLon = info ? info.lon : -8.0;
 
@@ -275,7 +285,6 @@
                         <div class="impact-bar-bg"><div class="impact-bar-fill" style="width:${m.val}%; background:${m.color}"></div></div>
                         <p class="impact-desc">${m.desc}</p>
                     </div>`).join('');
-
                 renderProjects();
             }
 
@@ -298,7 +307,6 @@
             }
 
             function toggleDetail(id) { $(`#detail-${id}`).slideToggle(); }
-
             function renderizarCardsMining() {
                 const container = document.getElementById('noticias-mining-dinamico');
                 container.innerHTML = noticiasMining.map((n, i) => `
@@ -307,7 +315,6 @@
                         <div class="news-meta"><img src="${n.logo || '/assets/img/logo.png'}" class="source-logo"><span>${n.data}</span></div>
                     </a>`).join('');
             }
-
             function resetToNational() { localStorage.removeItem('biocultura_region'); location.reload(); }
 
             fetch('/sidebar-content.html').then(r => r.text()).then(html => {
