@@ -147,7 +147,7 @@
                                 <div class="hero-text">
                                     <span class="category-label">Agricultura bioCultura</span>
                                     <h1>Calendário de Regeneração</h1>
-                                    <p style="font-size: 0.9em; font-style: italic; color: #bbb; margin-bottom: 25px;">Orientação para: <strong id="reg-name" style="color:#2e7d32">...</strong></p>
+                                    <p style="font-size: 0.9em; font-style: italic; color: #bbb; margin-bottom: 35px;">Orientação para: <strong id="reg-name" style="color:#2e7d32">...</strong></p>
                                     <div class="advice-block">
                                         <div id="advice-content" class="advice-content"></div>
                                     </div>
@@ -270,6 +270,24 @@
                 29: { svg: moonSVGs.full, label: 'Lua Cheia',        task: 'fase de vitalidade máxima (ideal para colheita de medicinais).' }
             };
 
+            const weatherCodes = {
+                0:'Céu Limpo', 1:'Soalheiro', 2:'Parcialmente Nublado', 3:'Nublado',
+                45:'Nevoeiro', 48:'Nevoeiro',
+                51:'Chuvisco', 53:'Chuvisco', 55:'Chuvisco Forte',
+                61:'Chuva', 63:'Chuva', 65:'Chuva Forte',
+                71:'Neve', 80:'Aguaceiros', 81:'Aguaceiros', 82:'Aguaceiros Fortes',
+                95:'Trovoada', 96:'Trovoada', 99:'Trovoada com Granizo'
+            };
+
+            async function fetchWeather(lat, lon) {
+                try {
+                    const r = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
+                    const d = await r.json();
+                    return weatherCodes[d.current_weather?.weathercode] || 'Soalheiro';
+                } catch { return 'Soalheiro'; }
+            }
+
+
             const agriReports = [
                 { t: "Diretrizes PEPAC 2026", p: "O Plano Estratégico da PAC para 2026 prioriza o apoio financeiro a explorações que demonstrem aumento da biodiversidade no talhão. Estão abertas candidaturas para a instalação de charcas de biodiversidade e sistemas de rega solar inteligente, visando a resiliência hídrica do interior português.", s: "agricultura.gov.pt" },
                 { t: "Vigilância Fitossanitária INIAV", p: "O Laboratório de Fitobacteriologia alerta para novos focos de Xylella fastidiosa. A recomendação técnica foca-se na eliminação de plantas hospedeiras e no uso de variedades nativas certificadas. A bioCultura sublinha que o equilíbrio do microbioma do solo é a primeira barreira contra infeções.", s: "iniav.pt" },
@@ -284,7 +302,6 @@
                 const monday = new Date(today);
                 monday.setDate(today.getDate() - today.getDay() + (today.getDay() === 0 ? -6 : 1));
 
-                // Topo
                 document.getElementById('globe-year').innerText      = today.getFullYear();
                 document.getElementById('globe-weekday').innerText   = weekdaysPT[today.getDay()];
                 document.getElementById('globe-day-month').innerText = `${today.getDate()} de ${monthsPT[today.getMonth()]}`;
@@ -294,28 +311,20 @@
                 [-1, 0, 1].forEach(w => {
                     const row = document.createElement('div');
                     row.className = 'week-row';
-
                     for(let j = 0; j < 7; j++) {
                         const cur     = new Date(monday);
                         cur.setDate(monday.getDate() + (w * 7) + j);
                         const isToday = today.toDateString() === cur.toDateString();
                         const moon    = (cur.getMonth() === today.getMonth() && lunarPhases[cur.getDate()])
                                         ? lunarPhases[cur.getDate()] : null;
-
                         if(isToday) { todayMoon = moon; updateState(moon); }
-
                         const isCurWeek = w === 0;
                         const isWeekend = j >= 5;
-
                         let inner = '';
                         if(isToday) {
-                            if(moon) {
-                                // Lua de hoje — sublinhado verde
-                                inner = `<div class="today-moon-wrap">${moon.svg}<div class="today-moon-line"></div></div>`;
-                            } else {
-                                // Número de hoje — círculo escuro
-                                inner = `<span class="today-num">${cur.getDate()}</span>`;
-                            }
+                            inner = moon
+                                ? `<div class="today-moon-wrap">${moon.svg}<div class="today-moon-line"></div></div>`
+                                : `<span class="today-num">${cur.getDate()}</span>`;
                         } else if(moon && isCurWeek) {
                             inner = `<span style="opacity:0.55">${moon.svg}</span>`;
                         } else if(moon) {
@@ -323,24 +332,22 @@
                         } else {
                             inner = cur.getDate();
                         }
-
-                        const cls = [
-                            'day-node',
-                            isCurWeek ? 'current-week' : 'other-week',
-                            (isWeekend && isCurWeek && !isToday) ? 'weekend-cur' : ''
-                        ].filter(Boolean).join(' ');
-
+                        const cls = ['day-node', isCurWeek ? 'current-week' : 'other-week', (isWeekend && isCurWeek && !isToday) ? 'weekend-cur' : ''].filter(Boolean).join(' ');
                         row.innerHTML += `<div class="${cls}">${inner}</div>`;
                     }
                     stack.appendChild(row);
                 });
 
-                // Linha do meio
+                // Mid-info: tempo + lua (fetchWeather assíncrono)
+                const lat = infoGlobal?.lat || 39.5;
+                const lon = infoGlobal?.lon || -8.0;
                 const moonLabel = todayMoon ? todayMoon.label : 'Fase de Transição';
-                const shortDay  = weekdaysPT[today.getDay()].split('-')[0];
-                document.getElementById('globe-mid-info').innerHTML =
-                    `${shortDay}, ${today.getDate()} &nbsp;·&nbsp; <span class="moon-label">${moonLabel}</span>`;
+                fetchWeather(lat, lon).then(weather => {
+                    document.getElementById('globe-mid-info').innerHTML =
+                        `<span>${weather}</span> &nbsp;·&nbsp; <span class="moon-label">${moonLabel}</span>`;
+                });
             }
+
 
             function updateState(moon) {
                 const iconBox = document.getElementById('lunar-icon-container');
