@@ -242,10 +242,13 @@
         <script>
             let locationsDB = [], pragasDB = [], floraDB = [], infoGlobal = null;
 
-            const toTitle = s => s.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+            const toTitle = s => s ? s.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : '';
+
+            // Proxy para garantir que imagens externas carregam sem erros de CORS/Referer
+            const proxyImg = url => url && url.startsWith('http') ? `https://images.weserv.nl/?url=${encodeURIComponent(url)}&w=400` : (url || '/assets/img/placeholder.jpg');
 
             function getDistance(lat1, lon1, lat2, lon2) {
-                if(!lat1 || !lon1 || !lat2 || !lon2) return 9999;
+                if(!lat1 || !lat2) return 9999;
                 const R = 6371;
                 const dLat = (lat2 - lat1) * Math.PI / 180;
                 const dLon = (lon2 - lon1) * Math.PI / 180;
@@ -255,29 +258,7 @@
 
             const weekdaysPT = ['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'];
             const monthsPT   = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-
-            const moonSVGs = {
-                ming: '<svg viewBox="0 0 24 24" class="moon-svg-big"><path fill="#bdbdbd" d="M12,2A10,10 0 0,0 12,22A10,10 0 0,0 12,2M12,4A8,8 0 0,1 12,20V4Z"/></svg>',
-                new:  '<svg viewBox="0 0 24 24" class="moon-svg-big"><circle cx="12" cy="12" r="10" stroke="#9e9e9e" stroke-width="2" fill="none"/></svg>',
-                cres: '<svg viewBox="0 0 24 24" class="moon-svg-big"><path fill="#616161" d="M12,2V20A8,8 0 0,0 12,4M12,22A10,10 0 0,1 12,2A10,10 0 0,1 12,22Z"/></svg>',
-                full: '<svg viewBox="0 0 24 24" class="moon-svg-big"><circle cx="12" cy="12" r="10" fill="#f9a825"/></svg>'
-            };
-
-            const lunarPhases = {
-                7:  { svg: moonSVGs.ming, label: 'Quarto Minguante', task: 'fase de energia radicular (ideal para controlo de pragas do solo).' },
-                14: { svg: moonSVGs.new,  label: 'Lua Nova',         task: 'fase de repouso (foco em preparação de solo e mulching).' },
-                21: { svg: moonSVGs.cres, label: 'Quarto Crescente', task: 'fase de vigor ascendente (ideal para sementeiras de folha).' },
-                29: { svg: moonSVGs.full, label: 'Lua Cheia',        task: 'fase de vitalidade máxima (ideal para colheita de medicinais).' }
-            };
-
-            const weatherCodes = {
-                0:'Céu Limpo', 1:'Soalheiro', 2:'Parcialmente Nublado', 3:'Nublado',
-                45:'Nevoeiro', 48:'Nevoeiro',
-                51:'Chuvisco', 53:'Chuvisco', 55:'Chuvisco Forte',
-                61:'Chuva', 63:'Chuva', 65:'Chuva Forte',
-                71:'Neve', 80:'Aguaceiros', 81:'Aguaceiros', 82:'Aguaceiros Fortes',
-                95:'Trovoada', 96:'Trovoada', 99:'Trovoada com Granizo'
-            };
+            const weatherCodes = { 0:'Céu Limpo', 1:'Soalheiro', 2:'Parcialmente Nublado', 3:'Nublado', 45:'Nevoeiro', 48:'Nevoeiro', 51:'Chuvisco', 53:'Chuvisco', 55:'Chuvisco Forte', 61:'Chuva', 63:'Chuva', 65:'Chuva Forte', 71:'Neve', 80:'Aguaceiros', 81:'Aguaceiros', 82:'Aguaceiros Fortes', 95:'Trovoada', 96:'Trovoada', 99:'Trovoada com Granizo' };
 
             async function fetchWeather(lat, lon) {
                 try {
@@ -287,89 +268,66 @@
                 } catch { return 'Soalheiro'; }
             }
 
+            const moonSVGs = {
+                ming: '<svg viewBox="0 0 24 24" class="moon-svg-big"><path fill="#bdbdbd" d="M12,2A10,10 0 0,0 12,22A10,10 0 0,0 12,2M12,4A8,8 0 0,1 12,20V4Z"/></svg>',
+                new:  '<svg viewBox="0 0 24 24" class="moon-svg-big"><circle cx="12" cy="12" r="10" stroke="#9e9e9e" stroke-width="2" fill="none"/></svg>',
+                cres: '<svg viewBox="0 0 24 24" class="moon-svg-big"><path fill="#616161" d="M12,2V20A8,8 0 0,0 12,4M12,22A10,10 0 0,1 12,2A10,10 0 0,1 12,22Z"/></svg>',
+                full: '<svg viewBox="0 0 24 24" class="moon-svg-big"><circle cx="12" cy="12" r="10" fill="#f9a825"/></svg>'
+            };
 
-            const agriReports = [
-                { t: "Diretrizes PEPAC 2026", p: "O Plano Estratégico da PAC para 2026 prioriza o apoio financeiro a explorações que demonstrem aumento da biodiversidade no talhão. Estão abertas candidaturas para a instalação de charcas de biodiversidade e sistemas de rega solar inteligente, visando a resiliência hídrica do interior português.", s: "agricultura.gov.pt" },
-                { t: "Vigilância Fitossanitária INIAV", p: "O Laboratório de Fitobacteriologia alerta para novos focos de Xylella fastidiosa. A recomendação técnica foca-se na eliminação de plantas hospedeiras e no uso de variedades nativas certificadas. A bioCultura sublinha que o equilíbrio do microbioma do solo é a primeira barreira contra infeções.", s: "iniav.pt" },
-                { t: "Mercados Agroportal 2026", p: "O consumo de produtos biológicos em Portugal cresceu 18% no último ano. A escassez de água no sul está a forçar uma reestruturação das culturas para sistemas de sequeiro regenerativo, utilizando mulching denso para reduzir a evapotranspiração em 40%.", s: "agroportal.pt" },
-                { t: "Rede de Hortas Biológicas PT", p: "Monitorização comunitária revela que consociações estratégicas (ex: Tomate + Manjericão) reduziram a incidência de pragas em 35% sem uso de pesticidas sintéticos. O foco para este verão é a produção de sementes próprias para garantir a soberania genética local.", s: "hortasbiologicas.pt" }
-            ];
+            const lunarPhases = { 7:{svg:moonSVGs.ming,label:'Quarto Minguante',task:'fase radicular (controlo pragas solo).'}, 14:{svg:moonSVGs.new,label:'Lua Nova',task:'repouso (preparação de solo).'}, 21:{svg:moonSVGs.cres,label:'Quarto Crescente',task:'vigor ascendente (sementeiras folha).'}, 29:{svg:moonSVGs.full,label:'Lua Cheia',task:'vitalidade máxima (colheita medicinais).'} };
 
             function renderGlobe() {
-                const stack  = document.getElementById('week-stack');
+                const stack = document.getElementById('week-stack');
+                if(!stack) return;
                 stack.innerHTML = '';
-                const today  = new Date();
+                const today = new Date();
                 const monday = new Date(today);
                 monday.setDate(today.getDate() - today.getDay() + (today.getDay() === 0 ? -6 : 1));
 
-                document.getElementById('globe-year').innerText      = today.getFullYear();
-                document.getElementById('globe-weekday').innerText   = weekdaysPT[today.getDay()];
+                document.getElementById('globe-year').innerText = today.getFullYear();
+                document.getElementById('globe-weekday').innerText = weekdaysPT[today.getDay()];
                 document.getElementById('globe-day-month').innerText = `${today.getDate()} de ${monthsPT[today.getMonth()]}`;
 
                 let todayMoon = null;
-
                 [-1, 0, 1].forEach(w => {
                     const row = document.createElement('div');
                     row.className = 'week-row';
-                    for(let j = 0; j < 7; j++) {
-                        const cur     = new Date(monday);
-                        cur.setDate(monday.getDate() + (w * 7) + j);
+                    for(let j=0; j<7; j++) {
+                        const cur = new Date(monday);
+                        cur.setDate(monday.getDate() + (w*7) + j);
                         const isToday = today.toDateString() === cur.toDateString();
-                        const moon    = (cur.getMonth() === today.getMonth() && lunarPhases[cur.getDate()])
-                                        ? lunarPhases[cur.getDate()] : null;
-                        if(isToday) { todayMoon = moon; updateState(moon); }
-                        const isCurWeek = w === 0;
-                        const isWeekend = j >= 5;
-                        let inner = '';
-                        if(isToday) {
-                            inner = moon
-                                ? `<div class="today-moon-wrap">${moon.svg}<div class="today-moon-line"></div></div>`
-                                : `<span class="today-num">${cur.getDate()}</span>`;
-                        } else if(moon && isCurWeek) {
-                            inner = `<span style="opacity:0.55">${moon.svg}</span>`;
-                        } else if(moon) {
-                            inner = `<span style="opacity:0.25">${moon.svg}</span>`;
-                        } else {
-                            inner = cur.getDate();
-                        }
-                        const cls = ['day-node', isCurWeek ? 'current-week' : 'other-week', (isWeekend && isCurWeek && !isToday) ? 'weekend-cur' : ''].filter(Boolean).join(' ');
+                        const moon = (cur.getMonth() === today.getMonth() && lunarPhases[cur.getDate()]) ? lunarPhases[cur.getDate()] : null;
+                        if(isToday) todayMoon = moon;
+
+                        let inner = isToday ? (moon ? `<div class="today-moon-wrap">${moon.svg}<div class="today-moon-line"></div></div>` : `<span class="today-num">${cur.getDate()}</span>`) : (moon ? `<span style="opacity:${w===0?'0.55':'0.25'}">${moon.svg}</span>` : cur.getDate());
+                        const cls = `day-node ${w===0?'current-week':'other-week'} ${isToday?'active':''} ${j>=5 && w===0 && !isToday?'weekend-cur':''}`;
                         row.innerHTML += `<div class="${cls}">${inner}</div>`;
                     }
                     stack.appendChild(row);
                 });
 
-                // Mid-info: tempo + lua (fetchWeather assíncrono)
-                const lat = infoGlobal?.lat || 39.5;
-                const lon = infoGlobal?.lon || -8.0;
-                const moonLabel = todayMoon ? todayMoon.label : 'Fase de Transição';
-                fetchWeather(lat, lon).then(weather => {
-                    document.getElementById('globe-mid-info').innerHTML =
-                        `<span>${weather}</span> &nbsp;·&nbsp; <span class="moon-label">${moonLabel}</span>`;
+                const lat = infoGlobal?.lat || 39.5, lon = infoGlobal?.lon || -8.0;
+                fetchWeather(lat, lon).then(w => {
+                    document.getElementById('globe-mid-info').innerHTML = `<span>${w}</span> &nbsp;·&nbsp; <span class="moon-label">${todayMoon?todayMoon.label:'Transição'}</span>`;
                 });
+                updateState(todayMoon);
             }
 
-
             function updateState(moon) {
-                const iconBox = document.getElementById('lunar-icon-container');
-                const advice  = document.getElementById('advice-content');
-                // Só o nome da freguesia — o concelho já aparece em cima
-                const region  = infoGlobal?.titulo || 'sua região';
-                const solo    = infoGlobal?.biomas?.solo || 'misto';
-                iconBox.innerHTML = moon ? moon.svg : moonSVGs.ming;
-                advice.innerHTML = `
-                    <p><b>Estratégia Regenerativa:</b> ${moon
-                        ? `Sob a influência da <b>${moon.label}</b>, ${moon.task}`
-                        : "Fase de transição lunar: manutenção geral e observação recomendada."
-                    }</p>
-                    <p>Com solo regional predominantemente <b>${solo}</b>, a prioridade absoluta desta semana em <b>${region}</b> é a gestão da evapotranspiração. Aplique mulching denso e tratamentos biológicos ao crepúsculo.</p>
-                `;
+                const advice = document.getElementById('advice-content');
+                const region = infoGlobal?.titulo || 'sua região';
+                const solo = infoGlobal?.biomas?.solo || 'misto';
+                document.getElementById('lunar-icon-container').innerHTML = moon ? moon.svg : moonSVGs.ming;
+                advice.innerHTML = `<p><b>Estratégia Regenerativa:</b> ${moon ? `Sob a influência da <b>${moon.label}</b>, ${moon.task}` : "Fase de transição lunar: manutenção geral."}</p><p>Com solo regional predominantemente <b>${solo}</b>, a prioridade absoluta desta semana em <b>${region}</b> é a gestão da evapotranspiração. Aplique mulching denso.</p>`;
             }
 
             function renderGrid(data, containerId, limit = 4) {
                 const container = document.getElementById(containerId);
+                if(!container) return;
                 container.innerHTML = data.map((item, index) => `
                     <div class="info-card-compact ${index >= limit ? 'hidden-item' : ''}" onclick="showDetail('${item.nome_cientifico}', '${containerId.includes('pragas') ? 'praga' : 'flora'}')">
-                        <img src="${item.imagem || item.img || '/assets/img/placeholder.jpg'}" class="compact-img">
+                        <img src="${proxyImg(item.imagem)}" class="compact-img" onerror="this.src='/assets/img/placeholder.jpg'">
                         <div class="info-body">
                             <b>${item.nome_cientifico}</b>
                             <span>${item.nome_comum}</span>
@@ -378,78 +336,20 @@
                     </div>`).join('');
             }
 
-            function toggleGrid(type) {
-                const containerId = type === 'pragas' ? 'pragas-container' : 'flora-container';
-                const btnId       = type === 'pragas' ? 'btn-pragas' : 'btn-invasoras';
-                const container   = document.getElementById(containerId);
-                const hidden      = container.querySelectorAll('.hidden-item');
-                if(hidden.length > 0) {
-                    hidden.forEach(el => el.classList.remove('hidden-item'));
-                    document.getElementById(btnId).innerText = `- recolher ${type}`;
-                } else {
-                    renderAgriData();
-                    document.getElementById(btnId).innerText = `+ ver todas as ${type}`;
-                }
-            }
-
-            function showDetail(name, type) {
-                const db   = type === 'praga' ? pragasDB : floraDB;
-                const item = db.find(i => i.nome_cientifico === name);
-                const bioHtml = `<div><h4 style="font-size:0.7em; color:#bbb">${type === 'praga' ? 'Cura Bio' : 'Controlo Bio'}</h4><div class="bio-sol">${item.solucao_biologica.metodo}</div></div>`;
-                document.getElementById('detail-content').innerHTML = `
-                    <div class="hero-split">
-                        <div class="hero-text">
-                            <span class="category-label">${type === 'praga' ? 'Fitossanidade' : 'Flora Invasora'}</span>
-                            <h1 style="font-style:italic">${item.nome_cientifico}</h1>
-                            <h2 style="margin-top:-15px; color:#666">${item.nome_comum}</h2>
-                            <div class="tech-sheet" style="margin-top:30px">
-                                <div><h4 style="font-size:0.7em; color:#bbb">Diagnóstico</h4><p>${item.sintomas || item.impacto}</p></div>
-                                ${bioHtml}
-                            </div>
-                        </div>
-                        <div class="hero-visual"><div class="hero-globe"><img src="${item.imagem || item.img}" style="width:100%; height:100%; object-fit:cover"></div></div>
-                    </div>`;
-                document.getElementById('calendar-main-view').style.display = 'none';
-                document.getElementById('sanity-detail-view').style.display = 'block';
-                window.scrollTo(0, 0);
-            }
-
-            function hideDetail() {
-                document.getElementById('calendar-main-view').style.display = 'block';
-                document.getElementById('sanity-detail-view').style.display = 'none';
-            }
-
-            async function renderAgriData() {
+            async function inicializarPagina() {
                 try {
-                    const [rPragas, rFlora] = await Promise.all([
+                    const [rLoc, rPragas, rFlora] = await Promise.all([
+                        fetch('/data/freguesias_portugal.json').then(r => r.json()),
                         fetch('/data/pragas.json').then(r => r.json()),
                         fetch('/data/flora_invasora.json').then(r => r.json())
                     ]);
-                    pragasDB = rPragas; floraDB = rFlora;
-                    renderGrid(pragasDB, 'pragas-container', 4);
-                    renderGrid(floraDB,  'flora-container',  4);
-                } catch(e) { console.error(e); }
-            }
-
-            async function inicializarPagina() {
-                try {
-                    locationsDB = await fetch('/data/freguesias_portugal.json').then(r => r.json());
-
-                    const savedId   = localStorage.getItem('biocultura_region');
-                    const infoSaved = savedId ? locationsDB.find(i => i.id === savedId) : null;
-                    if(savedId && !infoSaved) localStorage.removeItem('biocultura_region');
-                    infoGlobal = infoSaved || locationsDB.find(i => i.lat !== 0) || locationsDB[0];
-
-                    if(infoGlobal) {
-                        document.getElementById('reg-name').innerText =
-                            infoGlobal.titulo + (infoGlobal.concelho ? ', ' + toTitle(infoGlobal.concelho) : '');
-                    }
-
+                    locationsDB = rLoc; pragasDB = rPragas; floraDB = rFlora;
+                    const savedId = localStorage.getItem('biocultura_region');
+                    infoGlobal = locationsDB.find(i => i.id === savedId) || locationsDB.find(i => i.lat !== 0) || locationsDB[0];
+                    if(infoGlobal) document.getElementById('reg-name').innerText = infoGlobal.titulo + (infoGlobal.concelho ? ', ' + toTitle(infoGlobal.concelho) : '');
                     renderGlobe();
-                    await renderAgriData();
-                    document.getElementById('report-grid-agri').innerHTML = agriReports.map(r =>
-                        `<div class="report-item"><h5>${r.t}</h5><p>${r.p}</p><span class="report-source">Fonte: ${r.s}</span></div>`
-                    ).join('');
+                    renderGrid(pragasDB, 'pragas-container', 4);
+                    renderGrid(floraDB, 'flora-container', 4);
                     setupLocationLogic();
                 } catch(e) { console.error(e); }
             }
@@ -459,25 +359,27 @@
                     const val = $(this).val().toLowerCase(), dropdown = $('#loc-dropdown').empty();
                     if(val.length < 2) return dropdown.hide();
                     locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0,8).forEach(m => {
-                        $('<div class="bio-res-item"></div>')
-                            .text(m.titulo + (m.concelho ? ' (' + m.concelho + ')' : ''))
-                            .on('click', () => { localStorage.setItem('biocultura_region', m.id); location.reload(); })
-                            .appendTo(dropdown);
+                        $('<div class="bio-res-item"></div>').text(m.titulo + (m.concelho ? ' (' + m.concelho + ')' : '')).on('click', () => {
+                            localStorage.setItem('biocultura_region', m.id);
+                            location.reload();
+                        }).appendTo(dropdown);
                     });
                     dropdown.show();
                 });
 
                 $(document).off('click', '#btn-gps-trigger').on('click', '#btn-gps-trigger', function() {
+                    const btn = $(this); btn.css('opacity', '0.5');
                     navigator.geolocation.getCurrentPosition(pos => {
-                        let closest = locationsDB[0], minD = Infinity;
+                        const uLat = pos.coords.latitude, uLon = pos.coords.longitude;
+                        let closest = null, minD = Infinity;
                         locationsDB.forEach(c => {
-                            if(!c.lat || !c.lon || c.lat === 0) return;
-                            const d = getDistance(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon);
+                            if(!c.lat || c.lat === 0) return;
+                            const d = getDistance(uLat, uLon, c.lat, c.lon);
                             if(d < minD) { minD = d; closest = c; }
                         });
-                        localStorage.setItem('biocultura_region', closest.id);
-                        location.reload();
-                    });
+                        if(closest) { localStorage.setItem('biocultura_region', closest.id); location.reload(); }
+                        btn.css('opacity', '1');
+                    }, () => btn.css('opacity', '1'), { timeout: 5000 });
                 });
             }
 
