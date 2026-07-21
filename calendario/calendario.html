@@ -17,7 +17,7 @@
             .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; margin-bottom: 15px; display: block; }
 
             .hero-split { display: flex; align-items: flex-start; justify-content: space-between; gap: 4em; margin-bottom: 2em; }
-            .hero-text { flex: 1.5; text-align: left; padding-top: 5px; }
+            .hero-text { flex: 1.5; text-align: left; padding-top: 5px; } 
             .hero-text h1 { font-size: 4em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; line-height: 0.95; margin: 0 0 20px 0; }
 
             /* GLOBO REDESENHADO */
@@ -28,16 +28,14 @@
                 box-shadow: 0 40px 100px rgba(0,0,0,0.05);
                 background: #fdfdfd; display: flex; flex-direction: column;
                 align-items: center; justify-content: space-between;
-                padding: 38px 0 45px 0; border: 1px solid #f2f2f2;
+                padding: 40px 0 45px 0; border: 1px solid #f2f2f2;
             }
 
-            /* TOPO — DATA COMPLETA */
             .globe-top { display: flex; flex-direction: column; align-items: center; gap: 3px; }
             .globe-year { font-size: 0.55em; font-weight: 900; color: #ccc; letter-spacing: 4px; text-transform: uppercase; }
             .globe-weekday { font-size: 0.68em; font-weight: 900; color: #2e7d32; text-transform: uppercase; letter-spacing: 2px; }
             .globe-day-month { font-size: 1.45em; font-weight: 900; color: #1a1a1a; letter-spacing: -0.5px; line-height: 1; }
 
-            /* SEMANAS */
             .week-stack { width: 100%; display: flex; flex-direction: column; gap: 14px; margin: 0; mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent); }
             .week-row { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; width: 100%; }
 
@@ -47,48 +45,38 @@
             .day-node.weekend-cur  { color: #ef5350 !important; }
             .day-node svg { width: 18px; height: 18px; display: block; }
 
-            /* HOJE — círculo escuro para números */
-            .today-num {
-                display: inline-flex; align-items: center; justify-content: center;
-                width: 26px; height: 26px;
-                background: #1a1a1a; color: #fff !important;
-                border-radius: 50%; font-size: 0.85em; font-weight: 900;
-            }
-
-            /* HOJE — sublinhado verde para luas */
+            .today-num { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; background: #1a1a1a; color: #fff !important; border-radius: 50%; font-size: 0.85em; font-weight: 900; }
             .today-moon-wrap { display: flex; flex-direction: column; align-items: center; gap: 3px; }
             .today-moon-wrap svg { width: 18px; height: 18px; }
             .today-moon-line { width: 18px; height: 2px; background: #2e7d32; border-radius: 1px; }
 
-            /* INFO DO MEIO */
-            .globe-mid-info {
-                font-size: 0.65em; font-weight: 700; color: #aaa;
-                text-align: center; letter-spacing: 0.5px; padding: 0 30px; line-height: 1.5;
+            /* GRELHA 2x2 NA BASE DO GLOBO */
+            .globe-south { 
+                width: 80%; 
+                display: grid; 
+                grid-template-columns: 1fr 1px 1fr; 
+                grid-template-rows: auto auto;
+                align-items: center; 
+                justify-items: center;
+                row-gap: 8px;
+                padding-top: 10px;
             }
-            .globe-mid-info .moon-label { color: #2e7d32; font-weight: 900; }
+            .v-sep { grid-column: 2; grid-row: 1 / span 2; width: 1px; height: 55px; background: #eee; }
+            .meteo-icon-big { font-size: 2.2em; color: #fbc02d; grid-row: 1; grid-column: 1; }
+            .moon-svg-big { width: 34px; height: 34px; grid-row: 1; grid-column: 3; }
+            .temp-range-label { grid-row: 2; grid-column: 1; font-size: 0.75em; font-weight: 800; color: #1a1a1a; letter-spacing: 1px; }
+            .moon-phase-name { grid-row: 2; grid-column: 3; font-size: 0.6em; font-weight: 900; color: #2e7d32; text-transform: uppercase; letter-spacing: 1px; text-align: center; }
 
-            /* ÍCONES BAIXO */
-            .globe-south { width: 60%; display: flex; align-items: center; justify-content: center; gap: 35px; }
-            .meteo-icon-big { font-size: 2.4em; color: #fbc02d; }
-            .moon-svg-big { width: 36px; height: 36px; }
-            .v-sep { width: 1px; height: 36px; background: #eee; }
-
-            /* ADVICE BLOCK — sem borda, alinhado à esquerda */
-            .advice-block {
-                margin-top: 20px; padding: 0;
-                background: transparent; border: none; min-height: 140px;
-            }
+            /* ADVICE BLOCK ALINHADO */
+            .advice-block { margin-top: 20px; padding: 0; background: transparent; border: none; min-height: 220px; }
             .advice-content { font-size: 1.1em; line-height: 1.8; color: #555; text-align: left; }
+            .advice-content p { margin-bottom: 20px !important; }
 
-            /* DATA ROW */
             .data-row { display: block; padding: 5em 0; border-bottom: 1px solid #f2f2f2; }
             .data-row h4 { font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin: 0 0 35px 0; }
 
             .info-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
-            .info-card-compact {
-                background: #fdfdfd; border: 1px solid #f2f2f2; border-radius: 12px; padding: 15px;
-                cursor: pointer; transition: all 0.3s; display: block; text-decoration: none !important;
-            }
+            .info-card-compact { background: #fdfdfd; border: 1px solid #f2f2f2; border-radius: 12px; padding: 15px; cursor: pointer; transition: all 0.3s; display: block; text-decoration: none !important; }
             .info-card-compact:hover { transform: translateY(-5px); border-color: #2e7d32; }
             .compact-img { width: 100%; height: 120px; object-fit: cover; border-radius: 8px; margin-bottom: 12px; background: #f9f9f9; }
             .info-card-compact b { display: block; font-size: 0.95em; color: #c62828; font-style: italic; margin-bottom: 2px; }
@@ -100,11 +88,7 @@
             .btn-back { color: #bbb; font-size: 0.75em; font-weight: 800; text-transform: uppercase; cursor: pointer; display: inline-block; margin-bottom: 20px; }
             .btn-back:hover { color: #2e7d32; }
 
-            .btn-clean {
-                background: none !important; border: none !important; box-shadow: none !important;
-                color: #bbb !important; cursor: pointer; font-size: 0.7em; font-weight: 800;
-                text-transform: uppercase; letter-spacing: 1px; padding: 15px 0; outline: none !important;
-            }
+            .btn-clean { background: none !important; border: none !important; box-shadow: none !important; color: #bbb !important; cursor: pointer; font-size: 0.7em; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; padding: 15px 0; outline: none !important; }
             .btn-clean:hover { color: #2e7d32 !important; text-decoration: underline; }
             .hidden-item { display: none; }
 
@@ -135,13 +119,11 @@
 			<div id="main">
                 <div class="inner">
                     <section id="main-section">
-                        <!-- VISTA DE DETALHE -->
                         <div id="sanity-detail-view">
                             <span class="btn-back" onclick="hideDetail()">← voltar ao calendário</span>
                             <div id="detail-content"></div>
                         </div>
 
-                        <!-- VISTA PRINCIPAL -->
                         <div id="calendar-main-view">
                             <div class="hero-split">
                                 <div class="hero-text">
@@ -155,24 +137,21 @@
 
                                 <div class="hero-visual">
                                     <div class="hero-globe">
-                                        <!-- TOPO: ANO + DIA DA SEMANA + DATA -->
                                         <div class="globe-top">
-                                            <span class="globe-year"   id="globe-year">2026</span>
+                                            <span class="globe-year" id="globe-year">2026</span>
                                             <span class="globe-weekday" id="globe-weekday">...</span>
                                             <span class="globe-day-month" id="globe-day-month">...</span>
                                         </div>
 
-                                        <!-- SEMANAS -->
                                         <div class="week-stack" id="week-stack"></div>
 
-                                        <!-- MEIO: DIA ABREVIADO + FASE LUNAR -->
-                                        <div class="globe-mid-info" id="globe-mid-info"></div>
-
-                                        <!-- BAIXO: SOL + LUA -->
                                         <div class="globe-south">
-                                            <div><i class="fas fa-sun meteo-icon-big"></i></div>
+                                            <i class="fas fa-sun meteo-icon-big" id="main-meteo-icon"></i>
                                             <div class="v-sep"></div>
                                             <div id="lunar-icon-container"></div>
+                                            
+                                            <span class="temp-range-label" id="temp-range">--º / --º</span>
+                                            <span class="moon-phase-name" id="moon-phase-name">...</span>
                                         </div>
                                     </div>
                                 </div>
@@ -260,10 +239,16 @@
 
             async function fetchWeather(lat, lon) {
                 try {
-                    const r = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
+                    const r = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&daily=temperature_2m_max,temperature_2m_min&hourly=relative_humidity_2m&timezone=auto`);
                     const d = await r.json();
-                    return weatherCodes[d.current_weather?.weathercode] || 'Soalheiro';
-                } catch { return 'Soalheiro'; }
+                    return {
+                        current: weatherCodes[d.current_weather?.weathercode] || 'Soalheiro',
+                        temp: Math.round(d.current_weather?.temperature),
+                        min: Math.round(d.daily.temperature_2m_min[0]),
+                        max: Math.round(d.daily.temperature_2m_max[0]),
+                        hum: d.hourly.relative_humidity_2m[0]
+                    };
+                } catch { return { current: 'Soalheiro', temp: 20, min: 15, max: 25, hum: 50 }; }
             }
 
             const moonSVGs = {
@@ -275,32 +260,23 @@
 
             const lunarPhases = { 7:{svg:moonSVGs.ming,label:'Quarto Minguante',task:'fase radicular (controlo pragas solo).'}, 14:{svg:moonSVGs.new,label:'Lua Nova',task:'repouso (preparação de solo).'}, 21:{svg:moonSVGs.cres,label:'Quarto Crescente',task:'vigor ascendente (sementeiras folha).'}, 29:{svg:moonSVGs.full,label:'Lua Cheia',task:'vitalidade máxima (colheita medicinais).'} };
 
+            const lunarDetails = {
+                'Quarto Minguante': { do: "Controlo de pragas, podas de limpeza, colheita de raízes.", avoid: "Sementeiras de plantas de folha ou fruto." },
+                'Lua Nova': { do: "Preparação de canteiros, mulching, monda de infestantes.", avoid: "Plantar ou transplantar (baixa vitalidade)." },
+                'Quarto Crescente': { do: "Sementeiras de hortaliças, enxertias, transplantes.", avoid: "Podas drásticas (risco de perda de seiva)." },
+                'Lua Cheia': { do: "Colheita de plantas medicinais e aromáticas, rega moderada.", avoid: "Podas e cortes (máxima circulação de seiva)." },
+                'Transição': { do: "Manutenção geral de ferramentas e observação.", avoid: "Operações críticas de sementeira." }
+            };
+
             const agriReports = [
-                { 
-                    t: "Diretrizes PEPAC 2026", 
-                    p: "O Plano Estratégico da PAC para 2026 prioriza o apoio financeiro a explorações que demonstrem aumento da biodiversidade no talhão. Estão abertas candidaturas para sistemas de rega solar inteligente.", 
-                    s: "agricultura.gov.pt" 
-                },
-                { 
-                    t: "Caderno de Campo Digital", 
-                    p: "O novo sistema eletrónico de registo de operações é agora obrigatório para beneficiários de ajudas. Permite o registo desmaterializado de fertilizações e tratamentos fitossanitários biológicos.", 
-                    s: "Portal da Agricultura" 
-                },
-                { 
-                    t: "Vigilância Fitossanitária INIAV", 
-                    p: "Alerta para novos focos de Xylella fastidiosa. A recomendação técnica foca-se na eliminação de plantas hospedeiras e no uso de variedades nativas certificadas.", 
-                    s: "iniav.pt" 
-                },
-                { 
-                    t: "Rede de Hortas Biológicas PT", 
-                    p: "Monitorização comunitária revela que consociações estratégicas reduziram a incidência de pragas em 35% sem uso de pesticidas sintéticos.", 
-                    s: "hortasbiologicas.pt" 
-                }
+                { t: "Diretrizes PEPAC 2026", p: "O Plano Estratégico da PAC para 2026 prioriza o apoio financeiro a explorações que demonstrem aumento da biodiversidade no talhão. Estão abertas candidaturas para sistemas de rega solar inteligente.", s: "agricultura.gov.pt" },
+                { t: "Caderno de Campo Digital", p: "O novo sistema eletrónico de registo de operações é agora obrigatório para beneficiários de ajudas. Permite o registo desmaterializado de fertilizações e tratamentos fitossanitários biológicos.", s: "Portal da Agricultura" },
+                { t: "Vigilância Fitossanitária INIAV", p: "Alerta para novos focos de Xylella fastidiosa. A recomendação técnica foca-se na eliminação de plantas hospedeiras e no uso de variedades nativas certificadas.", s: "iniav.pt" },
+                { t: "Rede de Hortas Biológicas PT", p: "Monitorização comunitária revela que consociações estratégicas reduziram a incidência de pragas em 35% sem uso de pesticidas sintéticos.", s: "hortasbiologicas.pt" }
             ];
 
             function renderGlobe() {
                 const stack = document.getElementById('week-stack');
-                if(!stack) return;
                 stack.innerHTML = '';
                 const today = new Date();
                 const monday = new Date(today);
@@ -330,17 +306,31 @@
 
                 const lat = infoGlobal?.lat || 39.5, lon = infoGlobal?.lon || -8.0;
                 fetchWeather(lat, lon).then(w => {
-                    document.getElementById('globe-mid-info').innerHTML = `<span>${w}</span> &nbsp;·&nbsp; <span class="moon-label">${todayMoon?todayMoon.label:'Transição'}</span>`;
+                    document.getElementById('temp-range').innerText = `${w.min}º / ${w.max}º`;
+                    document.getElementById('moon-phase-name').innerText = todayMoon ? todayMoon.label : 'Transição';
+                    updateState(todayMoon, w);
                 });
-                updateState(todayMoon);
             }
 
-            function updateState(moon) {
+            function updateState(moon, weather = null) {
                 const advice = document.getElementById('advice-content');
                 const region = infoGlobal?.titulo || 'sua região';
                 const solo = infoGlobal?.biomas?.solo || 'misto';
+                const ph = infoGlobal?.biomas?.ph_solo || '6.5';
+                
                 document.getElementById('lunar-icon-container').innerHTML = moon ? moon.svg : moonSVGs.ming;
-                advice.innerHTML = `<p><b>Estratégia Regenerativa:</b> ${moon ? `Sob a influência da <b>${moon.label}</b>, ${moon.task}` : "Fase de transição lunar: manutenção geral."}</p><p>Com solo regional predominantemente <b>${solo}</b>, a prioridade absoluta desta semana em <b>${region}</b> é a gestão da evapotranspiração. Aplique mulching denso.</p>`;
+                
+                let climaTxt = weather && weather.hum < 45 ? "Clima seco detetado: Prioridade absoluta à irrigação profunda e reforço do mulching." : "Humidade estável: Mantenha o regime de rega e vigie o aparecimento de fungos.";
+                let phTxt = parseFloat(ph) < 6.0 ? `Solo ácido (pH ${ph}): Ideal para mirtilos. Evite excesso de azoto.` : `Solo equilibrado (pH ${ph}): Versatilidade alta para hortícolas.`;
+                let phaseKey = moon ? moon.label : 'Transição';
+                let moonTxt = `Sob <b>${phaseKey}</b>: Recomenda-se ${lunarDetails[phaseKey].do} <br>Evite: ${lunarDetails[phaseKey].avoid}`;
+
+                advice.innerHTML = `
+                    <p style="font-size:1.1em; color:#1a1a1a;"><b>Estratégia Regenerativa para ${region}:</b></p>
+                    <p><b>Solo:</b> Predominantemente ${solo}. ${phTxt}</p>
+                    <p><b>Clima:</b> ${climaTxt}</p>
+                    <p><b>Ciclo Lunar:</b> ${moonTxt}</p>
+                `;
             }
 
             function renderGrid(data, containerId, limit = 4) {
@@ -362,12 +352,10 @@
                 const btnId = type === 'pragas' ? 'btn-pragas' : 'btn-invasoras';
                 const container = document.getElementById(containerId);
                 const hidden = container.querySelectorAll('.hidden-item');
-                
                 if(hidden.length > 0) {
                     hidden.forEach(el => el.classList.remove('hidden-item'));
                     document.getElementById(btnId).innerText = `- recolher ${type}`;
                 } else {
-                    // Se já estiver expandido, volta ao estado inicial (4 itens)
                     renderGrid(type === 'pragas' ? pragasDB : floraDB, containerId, 4);
                     document.getElementById(btnId).innerText = `+ ver todas as ${type}`;
                 }
@@ -377,12 +365,11 @@
                 const db = type === 'praga' ? pragasDB : floraDB;
                 const item = db.find(i => i.nome_cientifico === name);
                 if(!item) return;
-
                 const bioHtml = `<div><h4 style="font-size:0.7em; color:#bbb">${type === 'praga' ? 'Cura Bio' : 'Controlo Bio'}</h4><div class="bio-sol" style="font-size:0.95em; line-height:1.6; color:#555;">${item.solucao_biologica.metodo}</div></div>`;
-                
                 document.getElementById('detail-content').innerHTML = `
                     <div class="hero-split">
                         <div class="hero-text">
+                            <span class="btn-back" onclick="hideDetail()">← voltar ao calendário</span>
                             <span class="category-label">${type === 'praga' ? 'Fitossanidade' : 'Flora Invasora'}</span>
                             <h1 style="font-style:italic">${item.nome_cientifico}</h1>
                             <h2 style="margin-top:-15px; color:#666; font-size:1.5em;">${item.nome_comum}</h2>
@@ -391,68 +378,43 @@
                                 ${bioHtml}
                             </div>
                         </div>
-                        <div class="hero-visual">
-                            <div class="hero-globe" style="padding:0; border:none; background:none;">
-                                <img src="${proxyImg(item.imagem)}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">
-                            </div>
-                        </div>
+                        <div class="hero-visual"><div class="hero-globe" style="padding:0; border:none; background:none;"><img src="${proxyImg(item.imagem)}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;"></div></div>
                     </div>`;
-                
                 document.getElementById('calendar-main-view').style.display = 'none';
                 document.getElementById('sanity-detail-view').style.display = 'block';
                 window.scrollTo(0, 0);
             }
 
-            function hideDetail() {
-                document.getElementById('calendar-main-view').style.display = 'block';
-                document.getElementById('sanity-detail-view').style.display = 'none';
-            }
+            function hideDetail() { document.getElementById('calendar-main-view').style.display = 'block'; document.getElementById('sanity-detail-view').style.display = 'none'; }
 
             async function inicializarPagina() {
-            try {
-                const [rLoc, rPragas, rFlora] = await Promise.all([
-                    fetch('/data/freguesias_portugal.json').then(r => r.json()),
-                    fetch('/data/pragas.json').then(r => r.json()),
-                    fetch('/data/flora_invasora.json').then(r => r.json())
-                ]);
-                locationsDB = rLoc; pragasDB = rPragas; floraDB = rFlora;
-                
-                const savedId = localStorage.getItem('biocultura_region');
-                infoGlobal = locationsDB.find(i => i.id === savedId) || locationsDB.find(i => i.lat !== 0) || locationsDB[0];
-                
-                if(infoGlobal) {
-                    document.getElementById('reg-name').innerText = infoGlobal.titulo + (infoGlobal.concelho ? ', ' + toTitle(infoGlobal.concelho) : '');
-                }
-                
-                renderGlobe();
-                renderGrid(pragasDB, 'pragas-container', 4);
-                renderGrid(floraDB, 'flora-container', 4);
-
-                // RENDER SÍNTESE AUTORIDADES
-                document.getElementById('report-grid-agri').innerHTML = agriReports.map(r => `
-                    <div class="report-item">
-                        <h5>${r.t}</h5>
-                        <p>${r.p}</p>
-                        <span class="report-source">Fonte: ${r.s}</span>
-                    </div>`).join('');
-
-                setupLocationLogic();
-            } catch(e) { console.error(e); }
-        }
+                try {
+                    const [rLoc, rPragas, rFlora] = await Promise.all([
+                        fetch('/data/freguesias_portugal.json').then(r => r.json()),
+                        fetch('/data/pragas.json').then(r => r.json()),
+                        fetch('/data/flora_invasora.json').then(r => r.json())
+                    ]);
+                    locationsDB = rLoc; pragasDB = rPragas; floraDB = rFlora;
+                    const savedId = localStorage.getItem('biocultura_region');
+                    infoGlobal = locationsDB.find(i => i.id === savedId) || locationsDB.find(i => i.lat !== 0) || locationsDB[0];
+                    if(infoGlobal) document.getElementById('reg-name').innerText = infoGlobal.titulo + (infoGlobal.concelho ? ', ' + toTitle(infoGlobal.concelho) : '');
+                    renderGlobe();
+                    renderGrid(pragasDB, 'pragas-container', 4);
+                    renderGrid(floraDB, 'flora-container', 4);
+                    document.getElementById('report-grid-agri').innerHTML = agriReports.map(r => `<div class="report-item"><h5>${r.t}</h5><p>${r.p}</p><span class="report-source">Fonte: ${r.s}</span></div>`).join('');
+                    setupLocationLogic();
+                } catch(e) { console.error(e); }
+            }
 
             function setupLocationLogic() {
                 $(document).off('input', '#loc-search-input').on('input', '#loc-search-input', function() {
                     const val = $(this).val().toLowerCase(), dropdown = $('#loc-dropdown').empty();
                     if(val.length < 2) return dropdown.hide();
                     locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0,8).forEach(m => {
-                        $('<div class="bio-res-item"></div>').text(m.titulo + (m.concelho ? ' (' + m.concelho + ')' : '')).on('click', () => {
-                            localStorage.setItem('biocultura_region', m.id);
-                            location.reload();
-                        }).appendTo(dropdown);
+                        $('<div class="bio-res-item"></div>').text(m.titulo + (m.concelho ? ' (' + m.concelho + ')' : '')).on('click', () => { localStorage.setItem('biocultura_region', m.id); location.reload(); }).appendTo(dropdown);
                     });
                     dropdown.show();
                 });
-
                 $(document).off('click', '#btn-gps-trigger').on('click', '#btn-gps-trigger', function() {
                     const btn = $(this); btn.css('opacity', '0.5');
                     navigator.geolocation.getCurrentPosition(pos => {
