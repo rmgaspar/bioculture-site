@@ -173,29 +173,53 @@
             let expandedRegions = {};
             let regionalCastas = [];
 
-            const regionOrder = ["Vinhos Verdes", "Trás-os-Montes", "Douro", "Dão", "Bairrada", "Beira Interior", "Lisboa", "Tejo", "Península de Setúbal", "Alentejo", "Algarve", "Madeira", "Açores"];
+            const toTitle = s => s.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+
+            function getDistance(lat1, lon1, lat2, lon2) {
+                if(!lat1 || !lon1 || !lat2 || !lon2) return 9999;
+                const R = 6371;
+                const dLat = (lat2 - lat1) * Math.PI / 180;
+                const dLon = (lon2 - lon1) * Math.PI / 180;
+                const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
+                return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+            }
+
+            const regionOrder = ["Vinhos Verdes","Trás-os-Montes","Douro","Dão","Bairrada","Beira Interior","Lisboa","Tejo","Península de Setúbal","Alentejo","Algarve","Madeira","Açores"];
 
             const regionIntros = {
-                "Lisboa": "A região de Lisboa é marcada pela forte influência atlântica, resultando em vinhos de frescura vibrante e salinidade única. As castas autóctones adaptaram-se aos solos argilo-calcários.",
-                "Douro": "O Douro, Património Mundial, é o berço de vinhos estruturados e complexos. O solo xistoso e o clima mediterrânico extremo forçam a concentração aromática.",
+                "Lisboa":   "A região de Lisboa é marcada pela forte influência atlântica, resultando em vinhos de frescura vibrante e salinidade única. As castas autóctones adaptaram-se aos solos argilo-calcários.",
+                "Douro":    "O Douro, Património Mundial, é o berço de vinhos estruturados e complexos. O solo xistoso e o clima mediterrânico extremo forçam a concentração aromática.",
                 "Alentejo": "No Alentejo, o sol e as planícies graníticas moldam vinhos generosos e macios. A viticultura regenerativa foca-se aqui na preservação da água.",
-                "Dão": "O Dão produz vinhos de elegância ímpar. Rodeada por montanhas, as suas castas autóctones em solos graníticos revelam uma mineralidade profunda."
+                "Dão":      "O Dão produz vinhos de elegância ímpar. Rodeada por montanhas, as suas castas autóctones em solos graníticos revelam uma mineralidade profunda."
+            };
+
+            // Mapa simplificado regiao → região vitivinícola
+            const regiaoVinho = {
+                "minho": "Vinhos Verdes", "douro litoral": "Vinhos Verdes",
+                "trás-os-montes": "Trás-os-Montes",
+                "beira alta": "Dão", "beira litoral": "Bairrada",
+                "beira baixa": "Beira Interior",
+                "estremadura": "Lisboa", "ribatejo": "Tejo",
+                "alentejo": "Alentejo", "algarve": "Algarve",
+                "madeira": "Madeira", "açores": "Açores"
             };
 
             async function inicializarPagina() {
                 try {
                     const [rLoc, rCastas, rNews] = await Promise.all([
-                        fetch('/data/bioregioes.json').then(r => r.json()),
+                        fetch('/data/freguesias_portugal.json').then(r => r.json()),
                         fetch('/data/castas.json').then(r => r.json()),
                         fetch('/data/noticias.json').then(r => r.json())
                     ]);
                     locationsDB = rLoc;
-                    castasDB = rCastas;
+                    castasDB    = rCastas;
                     noticiasEno = rNews.filter(n => (n.categoria || "").toLowerCase().includes('enologia') || (n.titulo || "").toLowerCase().includes('vinho'));
 
-                    const savedId = localStorage.getItem('biocultura_region') || "lisboa";
-                    const info = locationsDB.find(i => i.id === savedId) || locationsDB[0];
-                    
+                    const savedId = localStorage.getItem('biocultura_region');
+                    const infoSaved = savedId ? locationsDB.find(i => i.id === savedId) : null;
+                    if(savedId && !infoSaved) localStorage.removeItem('biocultura_region');
+                    const info = infoSaved || locationsDB.find(i => i.lat !== 0) || locationsDB[0];
+
                     renderRegional(info);
                     renderGlobalAtlas();
                     renderizarCardsEno();
@@ -205,11 +229,16 @@
 
             function renderRegional(info) {
                 if(!info) return;
-                document.getElementById('reg-name').innerText = info.titulo;
-                const regionName = info.regiao_vinho || "Lisboa";
+
+                const nomeCompleto = info.titulo + (info.concelho ? ', ' + toTitle(info.concelho) : '');
+                document.getElementById('reg-name').innerText = nomeCompleto;
+
+                // Deriva região vitivinícola da regiao do JSON
+                const regionName = info.regiao_vinho || regiaoVinho[info.regiao?.toLowerCase()] || "Lisboa";
                 regionalCastas = castasDB.filter(c => c.regioes.some(r => r.toLowerCase() === regionName.toLowerCase()) && c.autoctone);
+
                 document.getElementById('region-description').innerText = regionIntros[regionName] || `A região de ${regionName} possui um património vitícola riquíssimo.`;
-                
+
                 if(regionalCastas.length > 0) {
                     document.getElementById('regional-preview-box').style.display = 'block';
                     document.getElementById('regional-grid-compact').innerHTML = regionalCastas.slice(0, 2).map(c => castaCardTemplate(c)).join('');
@@ -221,7 +250,7 @@
             function toggleRegional(expand) {
                 document.getElementById('regional-expanded-box').style.display = expand ? 'block' : 'none';
                 document.getElementById('btn-expand-regional').style.display = expand ? 'none' : 'inline-block';
-                if(expand) { window.scrollBy({ top: 400, behavior: 'smooth' }); }
+                if(expand) window.scrollBy({ top: 400, behavior: 'smooth' });
             }
 
             function renderGlobalAtlas() {
@@ -231,7 +260,10 @@
                     const castas = castasDB.filter(c => c.regioes.includes(reg));
                     const isExpanded = expandedRegions[reg] || false;
                     const visible = isExpanded ? castas : castas.slice(0, 4);
-                    return `<div class="region-block"><div class="region-header"><h5>${reg}</h5>${castas.length > 4 ? `<span class="btn-clean" onclick="toggleRegion('${reg}')">${isExpanded ? '- recolher' : '+ veja todas ('+castas.length+')'}</span>` : ''}</div><div class="castas-grid">${visible.map(c => castaCardTemplate(c)).join('')}</div></div>`;
+                    return `<div class="region-block">
+                        <div class="region-header"><h5>${reg}</h5>${castas.length > 4 ? `<span class="btn-clean" onclick="toggleRegion('${reg}')">${isExpanded ? '- recolher' : '+ veja todas (' + castas.length + ')'}</span>` : ''}</div>
+                        <div class="castas-grid">${visible.map(c => castaCardTemplate(c)).join('')}</div>
+                    </div>`;
                 }).join('');
             }
 
@@ -274,13 +306,19 @@
                 window.scrollTo(0, 0);
             }
 
-            function renderBar(label, val) { return `<div class="attribute-row"><div class="attribute-label"><span>${label}</span><span>${val}/10</span></div><div class="bar-bg"><div class="bar-fill" style="width:${val*10}%"></div></div></div>`; }
-            function hideDetail() { document.getElementById('enologia-list-view').style.display = 'block'; document.getElementById('casta-detail-view').style.display = 'none'; }
+            function renderBar(label, val) {
+                return `<div class="attribute-row"><div class="attribute-label"><span>${label}</span><span>${val}/10</span></div><div class="bar-bg"><div class="bar-fill" style="width:${val*10}%"></div></div></div>`;
+            }
+
+            function hideDetail() {
+                document.getElementById('enologia-list-view').style.display = 'block';
+                document.getElementById('casta-detail-view').style.display = 'none';
+            }
 
             function renderizarCardsEno() {
                 const container = document.getElementById('noticias-enologia-dinamico');
                 container.innerHTML = noticiasEno.map((n, i) => `
-                    <a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-item ${i >= visiveisEno ? 'hidden-card' : ''}" style="${i >= visiveisEno ? 'display:none' : ''}">
+                    <a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-item" style="${i >= visiveisEno ? 'display:none' : ''}">
                         <h3>${n.titulo}</h3>
                         <div class="news-meta"><img src="${n.logo}" class="source-logo"><span>${n.data}</span></div>
                     </a>`).join('');
@@ -291,13 +329,26 @@
                 $(document).off('input', '#loc-search-input').on('input', '#loc-search-input', function() {
                     const val = $(this).val().toLowerCase(), dropdown = $('#loc-dropdown').empty();
                     if(val.length < 2) return dropdown.hide();
-                    locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0,5).forEach(m => {
-                        $('<div class="bio-res-item"></div>').text(m.titulo).on('click', () => {
-                            localStorage.setItem('biocultura_region', m.id);
-                            location.reload();
-                        }).appendTo(dropdown);
+                    locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0,8).forEach(m => {
+                        $('<div class="bio-res-item"></div>')
+                            .text(m.titulo + (m.concelho ? ' (' + m.concelho + ')' : ''))
+                            .on('click', () => { localStorage.setItem('biocultura_region', m.id); location.reload(); })
+                            .appendTo(dropdown);
                     });
                     dropdown.show();
+                });
+
+                $(document).off('click', '#btn-gps-trigger').on('click', '#btn-gps-trigger', function() {
+                    navigator.geolocation.getCurrentPosition(pos => {
+                        let closest = locationsDB[0], minD = Infinity;
+                        locationsDB.forEach(c => {
+                            if(!c.lat || !c.lon || c.lat === 0) return;
+                            const d = getDistance(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon);
+                            if(d < minD) { minD = d; closest = c; }
+                        });
+                        localStorage.setItem('biocultura_region', closest.id);
+                        location.reload();
+                    });
                 });
             }
 
