@@ -242,7 +242,7 @@
             function renderDashboard(info) {
                 if(!info) return;
                 document.getElementById('water-dashboard').style.display = 'block';
-                const toTitle = s => s.replace(/\b\w/g, c => c.toUpperCase());
+                const toTitle = s => s.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
                 document.getElementById('reg-name').innerText = info.titulo + (info.concelho ? ', ' + toTitle(info.concelho) : '');     
 
                 // ← ALTERADO: usa biomas.ph_solo em vez de recursos_hidricos.ph_agua
