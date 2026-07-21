@@ -161,11 +161,14 @@
 
             async function inicializarPagina() {
                 try {
-                    const [rLoc, rNews, rZAER] = await Promise.all([
-                        fetch('/data/freguesias_portugal.json').then(r => r.json()),
-                        fetch('/data/noticias.json').then(r => r.json()),
-                        fetch('/data/zaer_critico.json').then(r => r.json())
-                    ]);
+                    const rawZAER = Array.isArray(rZAER) ? rZAER : Object.values(rZAER).flat();
+                    const seenZAER = new Set();
+                    allZAER = rawZAER.filter(z => {
+                        const key = `${z.titulo}|${parseFloat(z.lat).toFixed(3)}|${parseFloat(z.lon).toFixed(3)}`;
+                        if (seenZAER.has(key)) return false;
+                        seenZAER.add(key);
+                        return true;
+                    });
                     
                     locationsDB = rLoc;
                     // Flatten ZAER list if it's a dictionary
