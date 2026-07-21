@@ -144,54 +144,42 @@
         <script>
             let locationsDB = [], noticiasMining = [], allProjects = [], visiveisMining = 4;
 
-            const heroImages = [
-                "https://www.portal-energia.com/wp-content/uploadsthumbs/minas-extracao-litio-1-jpg.webp",
-                "https://www.digitaljournal.com/wp-content/uploads/2022/10/5fa2ac7a94d70995551982f885cc8d6ee939a3b0.jpg",
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQBrhptfcXgTpqBNNqBK8FTb6hHtayv5ZaMFn4TX1oCvt9XjHGJ5_wvjSto&s=10",
-                "https://ichef.bbci.co.uk/ace/ws/640/cpsprodpb/ab11/live/9dd053e0-656a-11f0-9c94-35a6128c06e3.jpg.webp"
-            ];
-
-            const relatoriosMining = [
-                { titulo: "Projeto Barroso: Lítio e Património", texto: "A exploração de lítio a céu aberto em Covas do Barroso ameaça o estatuto de Património Agrícola Mundial. O impacto estende-se à destruição de habitats e alteração do modo de vida comunitário.", fonte: "Savannah / APA 2025" },
-                { titulo: "Mapa do Minério e Concessões", texto: "Centenas de pedidos de prospecção ignoram frequentemente os PDM. O risco reside na fragmentação do território e na criação de passivos ambientais a longo prazo.", fonte: "MiningWatch PT / DGEG" },
-                { titulo: "Consumo Hídrico Industrial", texto: "O processamento de minerais críticos exige volumes de água incompatíveis com as projeções de seca severa, competindo com o abastecimento público.", fonte: "ERSAR / APA SNIAMB" },
-                { titulo: "Impacto Social e Contratos", texto: "A transparência no licenciamento e a avaliação de impacto cumulativo são exigências críticas face à expansão das áreas de exploração em 2026.", fonte: "Participa.pt / LNEG" }
-            ];
+            const toTitle = s => s.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 
             function getDistance(lat1, lon1, lat2, lon2) {
                 if(!lat1 || !lon1 || !lat2 || !lon2) return 9999;
-                const R = 6371;
+                const R = 6371; 
                 const dLat = (lat2 - lat1) * Math.PI / 180;
                 const dLon = (lon2 - lon1) * Math.PI / 180;
                 const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
                 return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
             }
 
-            const toTitle = s => s.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-
             async function inicializarPagina() {
                 try {
-                    const [rLoc, rNews] = await Promise.all([
+                    const [rLoc, rNews, rMineracao] = await Promise.all([
                         fetch('/data/freguesias_portugal.json').then(r => r.json()),
-                        fetch('/data/noticias.json').then(r => r.json())
+                        fetch('/data/noticias.json').then(r => r.json()),
+                        fetch('/data/mineracao.json').then(r => r.json())
                     ]);
+                    
                     locationsDB = rLoc;
-
+                    window.mineracaoDB = rMineracao;
+                    
                     noticiasMining = rNews.filter(n => {
                         const keywords = ['mineracao', 'litio', 'mina', 'extrativismo', 'geologia'];
                         const text = ((n.categoria || "") + (n.titulo || "")).toLowerCase();
                         return keywords.some(k => text.includes(k));
                     });
-
+                    
                     const savedId = localStorage.getItem('biocultura_region');
                     const infoSaved = savedId ? locationsDB.find(i => i.id === savedId) : null;
                     if (savedId && !infoSaved) localStorage.removeItem('biocultura_region');
                     const info = infoSaved || null;
-
+                    
                     renderDashboard(info);
                     renderizarCardsMining();
                     renderRelatorios();
-                    initCarousel();
                     setupLocationLogic();
                 } catch(e) { console.error("Erro fetch:", e); }
             }
@@ -205,7 +193,7 @@
                             .text(m.titulo + (m.concelho ? ' (' + m.concelho + ')' : ''))
                             .on('click', () => {
                                 localStorage.setItem('biocultura_region', m.id);
-                                location.reload();
+                                location.reload(); 
                             }).appendTo(dropdown);
                     });
                     dropdown.show();
@@ -225,34 +213,13 @@
                 });
             }
 
-            function resetToNational() {
-                localStorage.removeItem('biocultura_region');
-                location.reload();
-            }
-
-            function initCarousel() {
-                const container = document.getElementById('globe-container');
-                heroImages.forEach((src, idx) => {
-                    const img = document.createElement('img');
-                    img.src = src;
-                    if(idx === 0) img.className = 'active';
-                    container.appendChild(img);
-                });
-                let current = 0;
-                setInterval(() => {
-                    const imgs = container.getElementsByTagName('img');
-                    imgs[current].classList.remove('active');
-                    current = (current + 1) % imgs.length;
-                    imgs[current].classList.add('active');
-                }, 5000);
-            }
-
             function renderDashboard(info) {
                 const container = document.getElementById('impact-container');
                 const titleCaps = document.getElementById('reg-name-caps');
                 document.getElementById('mining-dashboard').style.display = 'block';
 
-                const seed = info ? info.id.length : 12;
+                const originLat = info ? info.lat : 39.5;
+                const originLon = info ? info.lon : -8.0;
 
                 if(info) {
                     const nomeCompleto = info.titulo + (info.concelho ? ', ' + toTitle(info.concelho) : '');
@@ -261,11 +228,31 @@
                     titleCaps.innerText = "PORTUGAL (MÉDIA NACIONAL)";
                 }
 
-                const impacts = (info && info.mineracao?.indicadores) ? info.mineracao.indicadores : [
-                    { label: "Consumo Hídrico",     val: 45 + (seed % 25), color: "#0288d1", desc: "Volume de água para lavagem e processamento. Fonte: ERSAR / APA." },
-                    { label: "Volume de Escavação", val: 60 + (seed % 30), color: "#8d6e63", desc: "Remoção massiva de terras e alteração topográfica. Fonte: EIB Register." },
-                    { label: "Risco de Efluentes",  val: 35 + (seed % 20), color: "#ef6c00", desc: "Potencial de contaminação de aquíferos por metais. Fonte: SNIAMB." },
-                    { label: "Conflito de Solo",    val: 70 + (seed % 25), color: "#c62828", desc: "Sobreposição com áreas RAN, REN ou Património. Fonte: DGEG." }
+                // Ordenar concessões por proximidade
+                const projetos = (window.mineracaoDB || []).map(p => {
+                    p.dist = getDistance(originLat, originLon, p.lat, p.lon);
+                    return p;
+                }).sort((a,b) => a.dist - b.dist);
+
+                allProjects = projetos.map(p => ({
+                    id: p.id,
+                    nome: p.nome,
+                    local: p.concelho + " / " + p.distrito,
+                    coords: `LAT ${p.lat} | LONG ${p.lon}`,
+                    status: p.status,
+                    resumo1: `${p.empresa} · ${p.mineral} · Distância: ${p.dist.toFixed(1)} km`,
+                    detalhe: `<h5>${p.nome}</h5><p>${p.impacto}</p><div class='source-list'><strong>Fonte:</strong> ${p.fonte_legal}</div>`
+                }));
+
+                // Indicadores simulados baseados na proximidade (se houver mina a < 50km o impacto sobe)
+                const minDistance = projetos.length > 0 ? projetos[0].dist : 100;
+                const pressure = Math.max(10, 100 - minDistance);
+
+                const impacts = [
+                    { label: "Consumo Hídrico", val: Math.round(pressure * 0.8), color: "#0288d1", desc: "Volume de água estimado para processamento mineiro na região." },
+                    { label: "Volume de Escavação", val: Math.round(pressure * 0.9), color: "#8d6e63", desc: "Remoção massiva de terras e alteração topográfica prevista." },
+                    { label: "Risco de Efluentes", val: Math.round(pressure * 0.7), color: "#ef6c00", desc: "Potencial de contaminação de aquíferos por metais pesados." },
+                    { label: "Conflito de Solo", val: Math.round(pressure), color: "#c62828", desc: "Sobreposição com áreas de proteção ou agricultura regenerativa." }
                 ];
 
                 container.innerHTML = impacts.map(m => `
@@ -275,25 +262,15 @@
                         <p class="impact-desc">${m.desc}</p>
                     </div>`).join('');
 
-                allProjects = [
-                    {
-                        id: "litio-barroso", nome: "Concessão Mineira Barroso", local: "Boticas / Montalegre", coords: "LAT 41.69 | LONG -7.66", status: "Em Licenciamento",
-                        resumo1: "O maior projeto de exploração de lítio a céu aberto previsto para a Europa, localizado em zona de Património Agrícola Mundial.",
-                        detalhe: "<h5>Projeto Barroso (Savannah)</h5><p>Prevê a extração de espodumena com forte impacto hídrico no Rio Beça. A contestação local foca-se na proximidade das escavações às populações.</p>"
-                    },
-                    ...(info?.mineracao?.projetos || [
-                        { id: "argemela", nome: "Mina da Argemela", local: "Fundão", coords: "LAT 40.15 | LONG -7.50", status: "Contestado", resumo1: "Projeto mineiro com forte oposição devido à proximidade de zonas protegidas e impacto visual.", detalhe: "A análise técnica sublinha o risco de poeiras e contaminação de linhas de água tributárias do Zêzere." }
-                    ])
-                ];
                 renderProjects();
             }
 
             function renderProjects() {
                 document.getElementById('projects-list-main').innerHTML = allProjects.map(p => `
-                    <div style="border-bottom: 1px solid #f9f9f9; padding: 15px 0;">
+                    <div style="border-bottom: 1px solid #f9f9f9; padding: 20px 0;">
                         <div class="project-item">
                             <div class="project-main">
-                                <span class="project-name">${p.nome} — ${p.local} <span class="btn-toggle-detail" onclick="toggleDetail('${p.id}')">+</span></span>
+                                <span class="project-name">${p.nome} <span class="btn-toggle-detail" onclick="toggleDetail('${p.id}')">+</span></span>
                                 <span class="project-coords">${p.coords}</span>
                             </div>
                             <span class="project-status">${p.status}</span>
@@ -301,12 +278,6 @@
                         <p class="project-summary-text">${p.resumo1}</p>
                         <div id="detail-${p.id}" class="project-detail-content">
                             ${p.detalhe}
-                            <div class="source-list">
-                                <strong>Fontes Oficiais:</strong>
-                                <a href="https://siaia.apambiente.pt" target="_blank">APA - SIAIA (Impacto Ambiental)</a>
-                                <a href="https://sniamb.apambiente.pt" target="_blank">SNIAMB (Dados Ambientais)</a>
-                                <a href="https://www.dgeg.gov.pt" target="_blank">DGEG - Contratos Mineiros</a>
-                            </div>
                             <div style="margin-top:15px;"><span class="btn-toggle-detail" onclick="toggleDetail('${p.id}')">[ fechar ]</span></div>
                         </div>
                     </div>`).join('');
@@ -314,31 +285,15 @@
 
             function toggleDetail(id) { $(`#detail-${id}`).slideToggle(); }
 
-            function renderRelatorios() {
-                document.getElementById('report-grid-mining').innerHTML = relatoriosMining.map(r => `
-                    <div class="report-item">
-                        <h5>${r.titulo}</h5>
-                        <p>${r.texto}</p>
-                        <span class="report-source">Fonte: ${r.fonte}</span>
-                    </div>`).join('');
-            }
-
             function renderizarCardsMining() {
                 const container = document.getElementById('noticias-mining-dinamico');
-                if(!noticiasMining.length) { container.innerHTML = "<p style='font-size:0.8em; color:#bbb;'>Sem notícias recentes carregadas.</p>"; return; }
                 container.innerHTML = noticiasMining.map((n, i) => `
                     <a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-item" style="${i >= visiveisMining ? 'display:none' : ''}">
                         <h3>${n.titulo}</h3>
                         <p>${(n.resumo_biocultura || n.resumo || "").substring(0, 110)}...</p>
-                        <div class="news-meta">
-                            <img src="${n.logo || '/assets/img/logo.png'}" class="source-logo">
-                            <span>${n.data}</span>
-                        </div>
+                        <div class="news-meta"><img src="${n.logo || '/assets/img/logo.png'}" class="source-logo"><span>${n.data}</span></div>
                     </a>`).join('');
-                document.getElementById('btn-load-more-mining').style.display = noticiasMining.length > visiveisMining ? 'inline-block' : 'none';
             }
-
-            document.getElementById('btn-load-more-mining').onclick = () => { visiveisMining += 4; renderizarCardsMining(); };
 
             fetch('/sidebar-content.html').then(r => r.text()).then(html => {
                 document.getElementById('sidebar').innerHTML = html;
