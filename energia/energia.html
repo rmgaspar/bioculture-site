@@ -168,36 +168,41 @@
 
             function getDistance(lat1, lon1, lat2, lon2) {
                 if(!lat1 || !lon1 || !lat2 || !lon2) return 9999;
-                const R = 6371; 
+                const R = 6371;
                 const dLat = (lat2 - lat1) * Math.PI / 180;
                 const dLon = (lon2 - lon1) * Math.PI / 180;
                 const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
                 return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
             }
 
+            const toTitle = s => s.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+
             async function inicializarPagina() {
                 try {
                     const [rLoc, rNews, rPlants] = await Promise.all([
-                        fetch('/data/bioregioes.json').then(r => r.json()),
+                        fetch('/data/freguesias_portugal.json').then(r => r.json()),
                         fetch('/data/noticias.json').then(r => r.json()),
                         fetch('/data/centrais_full.json').then(r => r.json())
                     ]);
                     locationsDB = rLoc;
-                    
-                    // De-duplicação rigorosa baseada em coordenadas (3 casas decimais)
+
+                    // De-duplicação por coordenadas
                     const seen = new Set();
-                    allFullPlants = rPlants.filter(p => {
-                        const key = `${p.lat.toFixed(3)}|${p.lon.toFixed(3)}`;
+                    allFullPlants = (Array.isArray(rPlants) ? rPlants : Object.values(rPlants)).filter(p => {
+                        const key = `${parseFloat(p.lat).toFixed(3)}|${parseFloat(p.lon).toFixed(3)}`;
                         if(seen.has(key)) return false;
                         seen.add(key);
                         return true;
                     });
 
                     noticiasEnergy = rNews.filter(n => (n.categoria || "").toLowerCase().includes('energia') || (n.titulo || "").toLowerCase().includes('renovaveis'));
-                    
-                    const savedID = localStorage.getItem('biocultura_region');
-                    const info = savedID ? locationsDB.find(i => i.id === savedID) : null;
-                    
+
+                    // localStorage fix — limpa IDs inválidos
+                    const savedId = localStorage.getItem('biocultura_region');
+                    const infoSaved = savedId ? locationsDB.find(i => i.id === savedId) : null;
+                    if (savedId && !infoSaved) localStorage.removeItem('biocultura_region');
+                    const info = infoSaved || null;
+
                     renderDashboard(info);
                     renderizarCardsEnergy();
                     initCarousel();
@@ -209,11 +214,13 @@
                 $(document).on('input', '#loc-search-input', function() {
                     const val = $(this).val().toLowerCase(), dropdown = $('#loc-dropdown').empty();
                     if(val.length < 2) return dropdown.hide();
-                    locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0,5).forEach(m => {
-                        $('<div class="bio-res-item"></div>').text(m.titulo).on('click', () => {
-                            localStorage.setItem('biocultura_region', m.id);
-                            location.reload(); 
-                        }).appendTo(dropdown);
+                    locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0,8).forEach(m => {
+                        $('<div class="bio-res-item"></div>')
+                            .text(m.titulo + (m.concelho ? ' (' + m.concelho + ')' : ''))
+                            .on('click', () => {
+                                localStorage.setItem('biocultura_region', m.id);
+                                location.reload();
+                            }).appendTo(dropdown);
                     });
                     dropdown.show();
                 });
@@ -224,6 +231,7 @@
                         localStorage.setItem('user_last_coords', JSON.stringify(userCoords));
                         let closest = locationsDB[0], minD = Infinity;
                         locationsDB.forEach(c => {
+                            if(!c.lat || !c.lon || c.lat === 0) return;
                             let d = getDistance(userCoords.lat, userCoords.lon, c.lat, c.lon);
                             if(d < minD) { minD = d; closest = c; }
                         });
@@ -260,12 +268,18 @@
                 const container = document.getElementById('impact-container');
                 const titleCaps = document.getElementById('reg-name-caps');
                 const seed = info ? info.id.length : 10;
-                
+
                 const originLat = info ? info.lat : (userCoords ? userCoords.lat : 39.5);
                 const originLon = info ? info.lon : (userCoords ? userCoords.lon : -8.0);
 
-                titleCaps.innerText = info ? info.titulo.toUpperCase() : "PORTUGAL";
-                document.getElementById('plants-title').innerText = info ? "Centrais em Proximidade de " + info.titulo : "Maiores Centrais de Portugal (Top Nacional)";
+                if(info) {
+                    const nomeCompleto = info.titulo + (info.concelho ? ', ' + toTitle(info.concelho) : '');
+                    titleCaps.innerText = nomeCompleto.toUpperCase();
+                    document.getElementById('plants-title').innerText = "Centrais em Proximidade de " + nomeCompleto;
+                } else {
+                    titleCaps.innerText = "PORTUGAL";
+                    document.getElementById('plants-title').innerText = "Maiores Centrais de Portugal (Top Nacional)";
+                }
 
                 currentList = allFullPlants.map(p => {
                     p.dist = getDistance(originLat, originLon, p.lat, p.lon);
@@ -279,12 +293,12 @@
                 }
 
                 const mix = [
-                    { label: "Solar", val: 25 + (seed % 10), color: "#f1c40f" },
-                    { label: "Eólica", val: 35 + (seed % 5), color: "#3498db" },
-                    { label: "Hídrica", val: 19, color: "#2980b9" },
-                    { label: "Biomassa", val: 10, color: "#27ae60" },
-                    { label: "Hidrogénio", val: 6, color: "#9b59b6" },
-                    { label: "Outros", val: 10, color: "#95a5a6" }
+                    { label: "Solar",      val: 25 + (seed % 10), color: "#f1c40f" },
+                    { label: "Eólica",     val: 35 + (seed % 5),  color: "#3498db" },
+                    { label: "Hídrica",    val: 19,               color: "#2980b9" },
+                    { label: "Biomassa",   val: 10,               color: "#27ae60" },
+                    { label: "Hidrogénio", val: 6,                color: "#9b59b6" },
+                    { label: "Outros",     val: 10,               color: "#95a5a6" }
                 ];
 
                 container.innerHTML = mix.map(m => `
@@ -299,7 +313,7 @@
             function renderPlants() {
                 const list = document.getElementById('plants-list-main');
                 const show = currentList.slice(0, visiveisPlants);
-                
+
                 list.innerHTML = show.map(p => `
                     <div class="plant-item-wrapper">
                         <div class="plant-header" onclick="toggleDetail('${p.id}')">
@@ -314,7 +328,7 @@
                             <div style="margin-top:10px;"><span class="btn-toggle-detail" onclick="toggleDetail('${p.id}')">[ fechar ]</span></div>
                         </div>
                     </div>`).join('');
-                
+
                 document.getElementById('btn-load-more-plants').style.display = currentList.length > visiveisPlants ? 'block' : 'none';
                 document.getElementById('btn-collapse-plants').style.display = visiveisPlants > 3 ? 'block' : 'none';
             }
