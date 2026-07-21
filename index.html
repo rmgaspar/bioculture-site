@@ -186,9 +186,16 @@
 			<div id="sidebar"></div>
 		</div>
 
-		<script src="/assets/js/jquery.min.js"></script>
+        <script src="/assets/js/jquery.min.js"></script>
         <script>
             let locationsDB = [], todasNoticias = [], visiveis = 6;
+
+            const iaFacts = [
+                { cor: '#1a237e', titulo: '500ml de Água por Conversa', desc: 'Uma interação de 20 a 50 perguntas com um LLM "bebe" o equivalente a uma garrafa de água para refrigeração.' },
+                { cor: '#ef6c00', titulo: '2.9 Wh por Consulta', desc: 'Uma pesquisa com IA consome 10x mais eletricidade do que uma pesquisa tradicional no Google (0.3 Wh).' },
+                { cor: '#c62828', titulo: '502 Toneladas de CO2', desc: 'O treino de um único modelo de grande escala emite o equivalente a 5 carros conduzidos durante toda a sua vida útil.' },
+                { cor: '#795548', titulo: 'Densidade Energética Extrema', desc: 'Um rack de servidores de IA moderno consome até 100kW, exigindo infraestruturas de refrigeração líquida de alto impacto.' }
+            ];
 
             const toTitle = s => s ? s.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : '';
 
@@ -203,29 +210,24 @@
 
             async function inicializarPagina() {
                 try {
-                    // 1. Carregar Freguesias
                     const rLoc = await fetch('/data/freguesias_portugal.json');
                     locationsDB = await rLoc.json();
 
-                    // 2. Carregar Notícias
                     const rNews = await fetch('/data/noticias.json');
                     todasNoticias = await rNews.json();
                     todasNoticias.sort((a, b) => (b.relevancia || 0) - (a.relevancia || 0));
 
-                    // 3. Definir Região Atual
                     const savedId = localStorage.getItem('biocultura_region');
                     const info = locationsDB.find(i => i.id === savedId) || locationsDB.find(i => i.lat !== 0) || locationsDB[0];
                     
-                    // 4. Renderizar tudo na ordem correta
                     renderDashboard(info);
                     renderizarLista();
+                    renderIAFacts(); // Injeta os factos da IA
                     setupSidebarLogic();
-                    iniciarCiclos();
+                    iniciarCiclos(); // Inicia as animações
 
-                    console.log("bioCultura: Dados carregados.");
-                } catch(e) { 
-                    console.error("Erro no carregamento:", e); 
-                }
+                    console.log("bioCultura: Sistema pronto.");
+                } catch(e) { console.error("Erro:", e); }
             }
 
             function renderDashboard(info) {
@@ -234,8 +236,43 @@
                 if(el) el.innerText = info.titulo + (info.concelho ? ', ' + toTitle(info.concelho) : '');
             }
 
+            function renderIAFacts() {
+                const container = document.getElementById('fact-cycler');
+                if(!container) return;
+                container.innerHTML = iaFacts.map((f, i) => `
+                    <div class="fact-item ${i === 0 ? 'active' : ''}" style="color: ${f.cor}">
+                        <div class="fact-content">
+                            <b>${f.titulo}</b>
+                            <span>${f.desc}</span>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            function iniciarCiclos() {
+                // Ciclo do Hero (Imagens)
+                const imgs = document.querySelectorAll('#hero-cycler img');
+                let imgP = 0;
+                if(imgs.length > 0) {
+                    setInterval(() => {
+                        imgs.forEach(i => i.classList.remove('active'));
+                        imgP = (imgP + 1) % imgs.length;
+                        imgs[imgP].classList.add('active');
+                    }, 5000);
+                }
+
+                // Ciclo dos Factos IA
+                let factP = 0;
+                setInterval(() => {
+                    const facts = document.querySelectorAll('#fact-cycler .fact-item');
+                    if(facts.length === 0) return;
+                    facts.forEach(f => f.classList.remove('active'));
+                    factP = (factP + 1) % facts.length;
+                    facts[factP].classList.add('active');
+                }, 10000);
+            }
+
             function setupSidebarLogic() {
-                // Search Logic
                 $(document).off('input', '#loc-search-input').on('input', '#loc-search-input', function() {
                     const val = $(this).val().toLowerCase(), dropdown = $('#loc-dropdown').empty();
                     if(val.length < 2) return dropdown.hide();
@@ -256,7 +293,6 @@
                     }
                 });
 
-                // GPS Logic
                 $(document).off('click', '#btn-gps-trigger').on('click', '#btn-gps-trigger', function() {
                     const btn = $(this); btn.css('opacity', '0.5');
                     navigator.geolocation.getCurrentPosition(pos => {
@@ -293,8 +329,8 @@
                 document.getElementById('btn-show-less').style.display = visiveis > 6 ? 'inline-block' : 'none';
             }
 
-            // Mantém as tuas funções iaFacts, renderIAFacts e iniciarCiclos aqui...
-            // [Inserir aqui o resto das funções do teu index original]
+            document.getElementById('btn-load-more').onclick = () => { visiveis += 6; renderizarLista(); };
+            document.getElementById('btn-show-less').onclick = () => { visiveis = 6; renderizarLista(); };
 
             fetch('/sidebar-content.html').then(r => r.text()).then(html => {
                 document.getElementById('sidebar').innerHTML = html;
