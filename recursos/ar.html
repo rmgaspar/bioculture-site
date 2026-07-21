@@ -69,7 +69,7 @@
             .anomaly-tag { font-size: 0.7em; font-weight: 900; color: #ef6c00; }
 
             /* IMPACTO & RELATÓRIOS */
-            .air-impact-box { background: #fffaf4; padding: 2.5em 3em; border-radius: 20px; margin: 1.5em 0; position: relative; overflow: hidden; border-left: 4px solid #ffb74d; }
+            .air-impact-box { background: #fffaf4; padding: 2.5em 3em; border-radius: 20px; margin: 1.5em 0; position: relative; overflow: hidden; }
             .fact-cycler-air { min-height: 50px; position: relative; }
             .air-fact-item { position: absolute; top: 0; opacity: 0; transition: opacity 1s ease; width: 100%; font-size: 1.1em; line-height: 1.5; color: #a67c52; }
             .air-fact-item.active { opacity: 1; position: relative; }
@@ -230,14 +230,18 @@
             async function inicializarPagina() {
                 try {
                     const [rLoc, rAir, rNews] = await Promise.all([
-                        fetch('/data/bioregioes.json').then(r => r.json()),
+                        fetch('/data/freguesias_portugal.json').then(r => r.json()),
                         fetch('/data/qualidade_ar.json').then(r => r.json()),
                         fetch('/data/noticias.json').then(r => r.json())
                     ]);
                     locationsDB = rLoc; airStations = rAir;
                     noticiasAr = rNews.filter(n => (n.categoria || "").toLowerCase().includes('ar'));
-                    const info = locationsDB.find(i => i.id === (localStorage.getItem('biocultura_region') || "proenca-a-nova"));
-                    
+
+                    const savedId = localStorage.getItem('biocultura_region');
+                    const infoSaved = savedId ? locationsDB.find(i => i.id === savedId) : null;
+                    if (savedId && !infoSaved) localStorage.removeItem('biocultura_region');
+                    const info = infoSaved || locationsDB.find(i => i.lat !== 0) || locationsDB[0];
+
                     renderDashboard(info);
                     renderizarCardsAr();
                     renderRelatorios();
@@ -250,11 +254,13 @@
                 $(document).on('input', '#loc-search-input', function() {
                     const val = $(this).val().toLowerCase(), dropdown = $('#loc-dropdown').empty();
                     if(val.length < 2) return dropdown.hide();
-                    locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0,5).forEach(m => {
-                        $('<div class="bio-res-item"></div>').text(m.titulo).on('click', () => {
-                            localStorage.setItem('biocultura_region', m.id);
-                            location.reload();
-                        }).appendTo(dropdown);
+                    locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0,8).forEach(m => {
+                        $('<div class="bio-res-item"></div>')
+                            .text(m.titulo + (m.concelho ? ' (' + m.concelho + ')' : ''))
+                            .on('click', () => {
+                                localStorage.setItem('biocultura_region', m.id);
+                                location.reload();
+                            }).appendTo(dropdown);
                     });
                     dropdown.show();
                 });
@@ -262,6 +268,7 @@
                     navigator.geolocation.getCurrentPosition(pos => {
                         let closest = locationsDB[0], minD = Infinity;
                         locationsDB.forEach(c => {
+                            if(!c.lat || !c.lon || c.lat === 0) return;
                             let d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon);
                             if(d < minD) { minD = d; closest = c; }
                         });
@@ -274,27 +281,36 @@
             function renderDashboard(info) {
                 if(!info || !airStations.length) return;
                 document.getElementById('air-dashboard').style.display = 'block';
-                document.getElementById('reg-name').innerText = info.titulo;
 
-                let closest = airStations[0]; let minD = Infinity;
-                airStations.forEach(s => {
-                    let d = calcularDistancia(info.lat, info.lon, s.lat, s.lon);
-                    if(d < minD) { minD = d; closest = s; }
-                });
+                const toTitle = s => s.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+                document.getElementById('reg-name').innerText = info.titulo + (info.concelho ? ', ' + toTitle(info.concelho) : '');
+
+                // Usa dados de ar da própria freguesia se disponíveis, senão encontra estação mais próxima
+                const arFreg = info.extensao_biocultura?.monitorizacao_ar;
+                let closest;
+                if (arFreg && arFreg.pm10) {
+                    closest = { estacao: arFreg.estacao_proxima, indice: arFreg.indice, pm10: arFreg.pm10, no2: arFreg.no2, o3: arFreg.o3, pm25: arFreg.pm25 };
+                } else {
+                    closest = airStations[0]; let minD = Infinity;
+                    airStations.forEach(s => {
+                        let d = calcularDistancia(info.lat, info.lon, s.lat, s.lon);
+                        if(d < minD) { minD = d; closest = s; }
+                    });
+                }
 
                 document.getElementById('val-pm25').innerText = (closest.pm25 || "12") + " µg/m³";
-                document.getElementById('val-pm10').innerText = closest.pm10 + " µg/m³";
-                document.getElementById('val-no2').innerText = closest.no2 + " µg/m³";
-                document.getElementById('val-o3').innerText = closest.o3 + " µg/m³";
+                document.getElementById('val-pm10').innerText = (closest.pm10 || "--") + " µg/m³";
+                document.getElementById('val-no2').innerText = (closest.no2 || "--") + " µg/m³";
+                document.getElementById('val-o3').innerText = (closest.o3 || "--") + " µg/m³";
 
                 let aqiVal = 20; let trendHtml = '<span class="trend-indicator trend-down">↓ 4.2%</span>';
                 if(closest.indice === "Médio") { aqiVal = 45; trendHtml = '<span class="trend-indicator trend-up">↑ 2.1%</span>'; }
                 if(closest.indice === "Mau") { aqiVal = 75; trendHtml = '<span class="trend-indicator trend-up">↑ 8.5%</span>'; }
 
-                document.getElementById('label-aqi').innerText = "Índice: " + closest.indice;
+                document.getElementById('label-aqi').innerText = "Índice: " + (closest.indice || "Bom");
                 document.getElementById('trend-aqi').innerHTML = trendHtml;
-                document.getElementById('status-aqi').innerText = "Estação: " + closest.estacao;
-                
+                document.getElementById('status-aqi').innerText = "Estação: " + (closest.estacao || closest.estacao_proxima || "");
+
                 const tempAtual = 24.5; const anomalia = +1.2;
                 document.getElementById('air-temp').innerText = tempAtual + "ºC";
                 document.getElementById('temp-anomaly').innerText = `Anomalia: ${anomalia > 0 ? '+' : ''}${anomalia}ºC vs média histórica`;
