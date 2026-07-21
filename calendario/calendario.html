@@ -28,7 +28,7 @@
                 box-shadow: 0 40px 100px rgba(0,0,0,0.05);
                 background: #fdfdfd; display: flex; flex-direction: column;
                 align-items: center; justify-content: space-between;
-                padding: 45px 0 30px 0; border: 1px solid #f2f2f2;
+                padding: 40px 0 45px 0; border: 1px solid #f2f2f2;
             }
 
             .globe-top { display: flex; flex-direction: column; align-items: center; gap: 3px; }
@@ -50,34 +50,28 @@
             .today-moon-wrap svg { width: 18px; height: 18px; }
             .today-moon-line { width: 18px; height: 2px; background: #2e7d32; border-radius: 1px; }
 
-            /* GRELHA 2x2 NA BASE DO GLOBO */
+            /* RODAPÉ DO GLOBO - FLEXBOX 2x2 */
             .globe-south { 
-                width: 55%; /* Aproxima os ícones da linha central */
-                display: grid; 
-                grid-template-columns: 1fr 1px 1fr; 
-                grid-template-rows: auto auto;
+                width: 85%;
+                display: flex;
+                justify-content: space-around;
                 align-items: center; 
-                justify-items: center;
-                row-gap: 4px;
-                margin-top: -35px; /* Sobe a secção para junto da última semana */
+                margin-top: -80px; 
                 z-index: 10;
             }
-            .v-sep { 
-                grid-column: 2; 
-                grid-row: 1 / span 2; 
-                width: 1px; 
-                height: 45px; 
-                background: #eee; 
-            }
-            .meteo-icon-big { font-size: 2em; color: #fbc02d; grid-row: 1; grid-column: 1; }
-            .moon-svg-big { width: 30px; height: 30px; grid-row: 1; grid-column: 3; }
-            .temp-range-label { grid-row: 2; grid-column: 1; font-size: 0.7em; font-weight: 800; color: #1a1a1a; }
-            .moon-phase-name { grid-row: 2; grid-column: 3; font-size: 0.55em; font-weight: 900; color: #2e7d32; text-transform: uppercase; text-align: center; }
+            .south-col { display: flex; flex-direction: column; align-items: center; gap: 8px; flex: 1; }
+            .v-sep { width: 1px; height: 60px; background: #eee; margin: 0 10px; }
+            .meteo-icon-big { font-size: 2.8em; color: #fbc02d; line-height: 1; }
+            .moon-svg-big { width: 45px; height: 45px; display: block; }
+            .temp-range-label { font-size: 0.85em; font-weight: 800; color: #1a1a1a; letter-spacing: 1px; }
+            .moon-phase-name { font-size: 0.6em; font-weight: 900; color: #2e7d32; text-transform: uppercase; letter-spacing: 1px; text-align: center; }
 
-            /* ADVICE BLOCK ALINHADO */
-            .advice-block { margin-top: 20px; padding: 0; background: transparent; border: none; min-height: 220px; }
-            .advice-content { font-size: 1.1em; line-height: 1.8; color: #555; text-align: left; }
-            .advice-content p { margin-bottom: 20px !important; }
+            /* ADVICE BLOCK */
+            .advice-block { margin-top: 20px; padding: 0; background: transparent; border: none; }
+            .advice-content { font-size: 1.05em; line-height: 1.7; color: #555; text-align: left; }
+            .advice-section { margin-bottom: 22px; }
+            .advice-section b { color: #1a1a1a; text-transform: uppercase; font-size: 0.85em; letter-spacing: 1px; display: block; margin-bottom: 4px; }
+            .tag-reg { display: inline-block; background: #f1f8e9; color: #2e7d32; padding: 2px 10px; border-radius: 4px; font-weight: 700; font-size: 0.9em; margin-right: 5px; }
 
             .data-row { display: block; padding: 5em 0; border-bottom: 1px solid #f2f2f2; }
             .data-row h4 { font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin: 0 0 35px 0; }
@@ -153,12 +147,15 @@
                                         <div class="week-stack" id="week-stack"></div>
 
                                         <div class="globe-south">
-                                            <i class="fas fa-sun meteo-icon-big" id="main-meteo-icon"></i>
+                                            <div class="south-col">
+                                                <i class="fas fa-sun meteo-icon-big" id="main-meteo-icon"></i>
+                                                <span class="temp-range-label" id="temp-range">--º / --º</span>
+                                            </div>
                                             <div class="v-sep"></div>
-                                            <div id="lunar-icon-container"></div>
-                                            
-                                            <span class="temp-range-label" id="temp-range">--º / --º</span>
-                                            <span class="moon-phase-name" id="moon-phase-name">...</span>
+                                            <div class="south-col">
+                                                <div id="lunar-icon-container"></div>
+                                                <span class="moon-phase-name" id="moon-phase-name">...</span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -322,22 +319,41 @@
             function updateState(moon, weather = null) {
                 const advice = document.getElementById('advice-content');
                 const region = infoGlobal?.titulo || 'sua região';
-                const solo = infoGlobal?.biomas?.solo || 'misto';
+                const flora = infoGlobal?.biomas?.flora || [];
+                const solo = infoGlobal?.biomas?.solo || 'Misto';
                 const ph = infoGlobal?.biomas?.ph_solo || '6.5';
-                
-                document.getElementById('lunar-icon-container').innerHTML = moon ? moon.svg : moonSVGs.ming;
-                
+                const uso = infoGlobal?.extensao_biocultura?.estatisticas_solo?.uso || 'Agrícola';
+
+                const tarefasJulho = {
+                    manutencao: "Rega profunda ao amanhecer, renovação de mulching (palha/aparas) para proteger microorganismos do solo e monda de infestantes.",
+                    colheita: "Tomate, pimento, beringela, pepino e ervas aromáticas para secagem.",
+                    sementeira: "Couve-galega, brócolos e couve-flor para o outono."
+                };
+
                 let climaTxt = weather && weather.hum < 45 ? "Clima seco detetado: Prioridade absoluta à irrigação profunda e reforço do mulching." : "Humidade estável: Mantenha o regime de rega e vigie o aparecimento de fungos.";
                 let phTxt = parseFloat(ph) < 6.0 ? `Solo ácido (pH ${ph}): Ideal para mirtilos. Evite excesso de azoto.` : `Solo equilibrado (pH ${ph}): Versatilidade alta para hortícolas.`;
-                let phaseKey = moon ? moon.label : 'Transição';
-                let moonTxt = `Sob <b>${phaseKey}</b>: Recomenda-se ${lunarDetails[phaseKey].do} <br>Evite: ${lunarDetails[phaseKey].avoid}`;
+                const phaseKey = moon ? moon.label : 'Transição';
+                const moonAdvice = `Sob <b>${phaseKey}</b>: Recomenda-se ${lunarDetails[phaseKey].do} <br>Evite: ${lunarDetails[phaseKey].avoid}`;
 
                 advice.innerHTML = `
-                    <p style="font-size:1.1em; color:#1a1a1a;"><b>Estratégia Regenerativa para ${region}:</b></p>
-                    <p><b>Solo:</b> Predominantemente ${solo}. ${phTxt}</p>
-                    <p><b>Clima:</b> ${climaTxt}</p>
-                    <p><b>Ciclo Lunar:</b> ${moonTxt}</p>
+                    <div class="advice-section">
+                        <b>Culturas Atuais em ${region}</b>
+                        <p>${flora.map(f => `<span class="tag-reg">${f}</span>`).join('')}</p>
+                    </div>
+                    <div class="advice-section">
+                        <b>Manutenção Prioritária (Julho)</b>
+                        <p>${tarefasJulho.manutencao} Solo <b>${solo}</b> (${phTxt}). Em regime de <b>${uso}</b>, a retenção hídrica é crítica.</p>
+                    </div>
+                    <div class="advice-section">
+                        <b>O que semear e colher agora</b>
+                        <p>Sementeira de ${tarefasJulho.sementeira} Colheita ativa de ${tarefasJulho.colheita}</p>
+                    </div>
+                    <div class="advice-section">
+                        <b>Clima e Influência Lunar</b>
+                        <p>${climaTxt}<br>${moonAdvice}</p>
+                    </div>
                 `;
+                document.getElementById('lunar-icon-container').innerHTML = moon ? moon.svg : moonSVGs.ming;
             }
 
             function renderGrid(data, containerId, limit = 4) {
