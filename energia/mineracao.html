@@ -143,7 +143,7 @@
 		<script src="/assets/js/jquery.min.js"></script>
         <script>
             let locationsDB = [], noticiasMining = [], allProjects = [], visiveisMining = 4;
-            
+
             const heroImages = [
                 "https://www.portal-energia.com/wp-content/uploadsthumbs/minas-extracao-litio-1-jpg.webp",
                 "https://www.digitaljournal.com/wp-content/uploads/2022/10/5fa2ac7a94d70995551982f885cc8d6ee939a3b0.jpg",
@@ -158,23 +158,36 @@
                 { titulo: "Impacto Social e Contratos", texto: "A transparência no licenciamento e a avaliação de impacto cumulativo são exigências críticas face à expansão das áreas de exploração em 2026.", fonte: "Participa.pt / LNEG" }
             ];
 
+            function getDistance(lat1, lon1, lat2, lon2) {
+                if(!lat1 || !lon1 || !lat2 || !lon2) return 9999;
+                const R = 6371;
+                const dLat = (lat2 - lat1) * Math.PI / 180;
+                const dLon = (lon2 - lon1) * Math.PI / 180;
+                const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
+                return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+            }
+
+            const toTitle = s => s.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+
             async function inicializarPagina() {
                 try {
                     const [rLoc, rNews] = await Promise.all([
-                        fetch('/data/bioregioes.json').then(r => r.json()),
+                        fetch('/data/freguesias_portugal.json').then(r => r.json()),
                         fetch('/data/noticias.json').then(r => r.json())
                     ]);
                     locationsDB = rLoc;
-                    
+
                     noticiasMining = rNews.filter(n => {
                         const keywords = ['mineracao', 'litio', 'mina', 'extrativismo', 'geologia'];
                         const text = ((n.categoria || "") + (n.titulo || "")).toLowerCase();
                         return keywords.some(k => text.includes(k));
                     });
-                    
-                    const savedID = localStorage.getItem('biocultura_region');
-                    const info = savedID ? locationsDB.find(i => i.id === savedID) : null;
-                    
+
+                    const savedId = localStorage.getItem('biocultura_region');
+                    const infoSaved = savedId ? locationsDB.find(i => i.id === savedId) : null;
+                    if (savedId && !infoSaved) localStorage.removeItem('biocultura_region');
+                    const info = infoSaved || null;
+
                     renderDashboard(info);
                     renderizarCardsMining();
                     renderRelatorios();
@@ -187,11 +200,13 @@
                 $(document).on('input', '#loc-search-input', function() {
                     const val = $(this).val().toLowerCase(), dropdown = $('#loc-dropdown').empty();
                     if(val.length < 2) return dropdown.hide();
-                    locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0,5).forEach(m => {
-                        $('<div class="bio-res-item"></div>').text(m.titulo).on('click', () => {
-                            localStorage.setItem('biocultura_region', m.id);
-                            location.reload(); 
-                        }).appendTo(dropdown);
+                    locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0,8).forEach(m => {
+                        $('<div class="bio-res-item"></div>')
+                            .text(m.titulo + (m.concelho ? ' (' + m.concelho + ')' : ''))
+                            .on('click', () => {
+                                localStorage.setItem('biocultura_region', m.id);
+                                location.reload();
+                            }).appendTo(dropdown);
                     });
                     dropdown.show();
                 });
@@ -200,7 +215,8 @@
                     navigator.geolocation.getCurrentPosition(pos => {
                         let closest = locationsDB[0], minD = Infinity;
                         locationsDB.forEach(c => {
-                            let d = Math.sqrt(Math.pow(pos.coords.latitude - c.lat, 2) + Math.pow(pos.coords.longitude - c.lon, 2));
+                            if(!c.lat || !c.lon || c.lat === 0) return;
+                            let d = getDistance(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon);
                             if(d < minD) { minD = d; closest = c; }
                         });
                         localStorage.setItem('biocultura_region', closest.id);
@@ -237,14 +253,19 @@
                 document.getElementById('mining-dashboard').style.display = 'block';
 
                 const seed = info ? info.id.length : 12;
-                const data = info ? info : { titulo: "PORTUGAL (MÉDIA NACIONAL)" };
-                titleCaps.innerText = data.titulo.toUpperCase();
+
+                if(info) {
+                    const nomeCompleto = info.titulo + (info.concelho ? ', ' + toTitle(info.concelho) : '');
+                    titleCaps.innerText = nomeCompleto.toUpperCase();
+                } else {
+                    titleCaps.innerText = "PORTUGAL (MÉDIA NACIONAL)";
+                }
 
                 const impacts = (info && info.mineracao?.indicadores) ? info.mineracao.indicadores : [
-                    { label: "Consumo Hídrico", val: 45 + (seed % 25), color: "#0288d1", desc: "Volume de água para lavagem e processamento. Fonte: ERSAR / APA." },
+                    { label: "Consumo Hídrico",     val: 45 + (seed % 25), color: "#0288d1", desc: "Volume de água para lavagem e processamento. Fonte: ERSAR / APA." },
                     { label: "Volume de Escavação", val: 60 + (seed % 30), color: "#8d6e63", desc: "Remoção massiva de terras e alteração topográfica. Fonte: EIB Register." },
-                    { label: "Risco de Efluentes", val: 35 + (seed % 20), color: "#ef6c00", desc: "Potencial de contaminação de aquíferos por metais. Fonte: SNIAMB." },
-                    { label: "Conflito de Solo", val: 70 + (seed % 25), color: "#c62828", desc: "Sobreposição com áreas RAN, REN ou Património. Fonte: DGEG." }
+                    { label: "Risco de Efluentes",  val: 35 + (seed % 20), color: "#ef6c00", desc: "Potencial de contaminação de aquíferos por metais. Fonte: SNIAMB." },
+                    { label: "Conflito de Solo",    val: 70 + (seed % 25), color: "#c62828", desc: "Sobreposição com áreas RAN, REN ou Património. Fonte: DGEG." }
                 ];
 
                 container.innerHTML = impacts.map(m => `
@@ -255,7 +276,7 @@
                     </div>`).join('');
 
                 allProjects = [
-                    { 
+                    {
                         id: "litio-barroso", nome: "Concessão Mineira Barroso", local: "Boticas / Montalegre", coords: "LAT 41.69 | LONG -7.66", status: "Em Licenciamento",
                         resumo1: "O maior projeto de exploração de lítio a céu aberto previsto para a Europa, localizado em zona de Património Agrícola Mundial.",
                         detalhe: "<h5>Projeto Barroso (Savannah)</h5><p>Prevê a extração de espodumena com forte impacto hídrico no Rio Beça. A contestação local foca-se na proximidade das escavações às populações.</p>"
@@ -304,7 +325,7 @@
 
             function renderizarCardsMining() {
                 const container = document.getElementById('noticias-mining-dinamico');
-                if (!noticiasMining.length) { container.innerHTML = "<p style='font-size:0.8em; color:#bbb;'>Sem notícias recentes carregadas.</p>"; return; }
+                if(!noticiasMining.length) { container.innerHTML = "<p style='font-size:0.8em; color:#bbb;'>Sem notícias recentes carregadas.</p>"; return; }
                 container.innerHTML = noticiasMining.map((n, i) => `
                     <a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-item" style="${i >= visiveisMining ? 'display:none' : ''}">
                         <h3>${n.titulo}</h3>
