@@ -157,15 +157,22 @@
 
             async function inicializarPagina() {
                 try {
-                    const [rLoc, rNews, rMineracao] = await Promise.all([
-                        fetch('/data/freguesias_portugal.json').then(r => r.json()),
+                    // Cache do JSON de freguesias
+                    let cachedData = sessionStorage.getItem('biocultura_freguesias');
+                    if (cachedData) {
+                        locationsDB = JSON.parse(cachedData);
+                    } else {
+                        const rLoc = await fetch('/data/freguesias_portugal.json');
+                        locationsDB = await rLoc.json();
+                        sessionStorage.setItem('biocultura_freguesias', JSON.stringify(locationsDB));
+                    }
+
+                    const [rNews, rMineracao] = await Promise.all([
                         fetch('/data/noticias.json').then(r => r.json()),
                         fetch('/data/mineracao.json').then(r => r.json())
                     ]);
                     
-                    locationsDB = rLoc;
                     window.mineracaoDB = rMineracao;
-                    
                     noticiasMining = rNews.filter(n => {
                         const keywords = ['mineracao', 'litio', 'mina', 'extrativismo', 'geologia'];
                         const text = ((n.categoria || "") + (n.titulo || "")).toLowerCase();
@@ -179,7 +186,6 @@
                     
                     renderDashboard(info);
                     renderizarCardsMining();
-                    renderRelatorios();
                     setupLocationLogic();
                 } catch(e) { console.error("Erro fetch:", e); }
             }
@@ -200,16 +206,26 @@
                 });
 
                 $(document).on('click', '#btn-gps-trigger', function() {
+                    const btn = $(this);
+                    btn.css('opacity', '0.5');
                     navigator.geolocation.getCurrentPosition(pos => {
-                        let closest = locationsDB[0], minD = Infinity;
+                        const uLat = pos.coords.latitude, uLon = pos.coords.longitude;
+                        let closest = null, minD = Infinity;
                         locationsDB.forEach(c => {
                             if(!c.lat || !c.lon || c.lat === 0) return;
-                            let d = getDistance(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon);
+                            const d = Math.sqrt(Math.pow(uLat - c.lat, 2) + Math.pow(uLon - c.lon, 2));
                             if(d < minD) { minD = d; closest = c; }
                         });
-                        localStorage.setItem('biocultura_region', closest.id);
-                        location.reload();
-                    });
+                        if(closest) {
+                            localStorage.setItem('biocultura_region', closest.id);
+                            localStorage.setItem('user_last_coords', JSON.stringify({lat: uLat, lon: uLon}));
+                            location.reload();
+                        }
+                        btn.css('opacity', '1');
+                    }, err => {
+                        alert("Erro ao aceder ao GPS.");
+                        btn.css('opacity', '1');
+                    }, { enableHighAccuracy: true, timeout: 5000 });
                 });
             }
 
@@ -228,7 +244,6 @@
                     titleCaps.innerText = "PORTUGAL (MÉDIA NACIONAL)";
                 }
 
-                // Ordenar concessões por proximidade
                 const projetos = (window.mineracaoDB || []).map(p => {
                     p.dist = getDistance(originLat, originLon, p.lat, p.lon);
                     return p;
@@ -244,15 +259,14 @@
                     detalhe: `<h5>${p.nome}</h5><p>${p.impacto}</p><div class='source-list'><strong>Fonte:</strong> ${p.fonte_legal}</div>`
                 }));
 
-                // Indicadores simulados baseados na proximidade (se houver mina a < 50km o impacto sobe)
                 const minDistance = projetos.length > 0 ? projetos[0].dist : 100;
                 const pressure = Math.max(10, 100 - minDistance);
 
                 const impacts = [
-                    { label: "Consumo Hídrico", val: Math.round(pressure * 0.8), color: "#0288d1", desc: "Volume de água estimado para processamento mineiro na região." },
-                    { label: "Volume de Escavação", val: Math.round(pressure * 0.9), color: "#8d6e63", desc: "Remoção massiva de terras e alteração topográfica prevista." },
-                    { label: "Risco de Efluentes", val: Math.round(pressure * 0.7), color: "#ef6c00", desc: "Potencial de contaminação de aquíferos por metais pesados." },
-                    { label: "Conflito de Solo", val: Math.round(pressure), color: "#c62828", desc: "Sobreposição com áreas de proteção ou agricultura regenerativa." }
+                    { label: "Consumo Hídrico", val: Math.round(pressure * 0.8), color: "#0288d1", desc: "Volume de água estimado para processamento mineiro." },
+                    { label: "Volume de Escavação", val: Math.round(pressure * 0.9), color: "#8d6e63", desc: "Remoção massiva de terras prevista." },
+                    { label: "Risco de Efluentes", val: Math.round(pressure * 0.7), color: "#ef6c00", desc: "Potencial de contaminação de aquíferos." },
+                    { label: "Conflito de Solo", val: Math.round(pressure), color: "#c62828", desc: "Sobreposição com áreas de proteção ou RAN." }
                 ];
 
                 container.innerHTML = impacts.map(m => `
@@ -290,10 +304,11 @@
                 container.innerHTML = noticiasMining.map((n, i) => `
                     <a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-item" style="${i >= visiveisMining ? 'display:none' : ''}">
                         <h3>${n.titulo}</h3>
-                        <p>${(n.resumo_biocultura || n.resumo || "").substring(0, 110)}...</p>
                         <div class="news-meta"><img src="${n.logo || '/assets/img/logo.png'}" class="source-logo"><span>${n.data}</span></div>
                     </a>`).join('');
             }
+
+            function resetToNational() { localStorage.removeItem('biocultura_region'); location.reload(); }
 
             fetch('/sidebar-content.html').then(r => r.text()).then(html => {
                 document.getElementById('sidebar').innerHTML = html;
