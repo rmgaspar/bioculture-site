@@ -243,9 +243,7 @@
             let locationsDB = [], pragasDB = [], floraDB = [], infoGlobal = null;
 
             const toTitle = s => s ? s.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : '';
-
-            // Proxy para garantir que imagens externas carregam sem erros de CORS/Referer
-            const proxyImg = url => url && url.startsWith('http') ? `https://images.weserv.nl/?url=${encodeURIComponent(url)}&w=400` : (url || '/assets/img/placeholder.jpg');
+            const proxyImg = url => url && url.startsWith('http') ? `https://images.weserv.nl/?url=${encodeURIComponent(url)}&w=600` : (url || '/assets/img/placeholder.jpg');
 
             function getDistance(lat1, lon1, lat2, lon2) {
                 if(!lat1 || !lat2) return 9999;
@@ -336,6 +334,57 @@
                     </div>`).join('');
             }
 
+            function toggleGrid(type) {
+                const containerId = type === 'pragas' ? 'pragas-container' : 'flora-container';
+                const btnId = type === 'pragas' ? 'btn-pragas' : 'btn-invasoras';
+                const container = document.getElementById(containerId);
+                const hidden = container.querySelectorAll('.hidden-item');
+                
+                if(hidden.length > 0) {
+                    hidden.forEach(el => el.classList.remove('hidden-item'));
+                    document.getElementById(btnId).innerText = `- recolher ${type}`;
+                } else {
+                    // Se já estiver expandido, volta ao estado inicial (4 itens)
+                    renderGrid(type === 'pragas' ? pragasDB : floraDB, containerId, 4);
+                    document.getElementById(btnId).innerText = `+ ver todas as ${type}`;
+                }
+            }
+
+            function showDetail(name, type) {
+                const db = type === 'praga' ? pragasDB : floraDB;
+                const item = db.find(i => i.nome_cientifico === name);
+                if(!item) return;
+
+                const bioHtml = `<div><h4 style="font-size:0.7em; color:#bbb">${type === 'praga' ? 'Cura Bio' : 'Controlo Bio'}</h4><div class="bio-sol" style="font-size:0.95em; line-height:1.6; color:#555;">${item.solucao_biologica.metodo}</div></div>`;
+                
+                document.getElementById('detail-content').innerHTML = `
+                    <div class="hero-split">
+                        <div class="hero-text">
+                            <span class="category-label">${type === 'praga' ? 'Fitossanidade' : 'Flora Invasora'}</span>
+                            <h1 style="font-style:italic">${item.nome_cientifico}</h1>
+                            <h2 style="margin-top:-15px; color:#666; font-size:1.5em;">${item.nome_comum}</h2>
+                            <div class="tech-sheet" style="margin-top:30px; display:grid; grid-template-columns:1fr 1fr; gap:30px;">
+                                <div><h4 style="font-size:0.7em; color:#bbb">Diagnóstico</h4><p style="font-size:0.95em; line-height:1.6; color:#555;">${item.sintomas || item.impacto}</p></div>
+                                ${bioHtml}
+                            </div>
+                        </div>
+                        <div class="hero-visual">
+                            <div class="hero-globe" style="padding:0; border:none; background:none;">
+                                <img src="${proxyImg(item.imagem)}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">
+                            </div>
+                        </div>
+                    </div>`;
+                
+                document.getElementById('calendar-main-view').style.display = 'none';
+                document.getElementById('sanity-detail-view').style.display = 'block';
+                window.scrollTo(0, 0);
+            }
+
+            function hideDetail() {
+                document.getElementById('calendar-main-view').style.display = 'block';
+                document.getElementById('sanity-detail-view').style.display = 'none';
+            }
+
             async function inicializarPagina() {
                 try {
                     const [rLoc, rPragas, rFlora] = await Promise.all([
@@ -344,9 +393,14 @@
                         fetch('/data/flora_invasora.json').then(r => r.json())
                     ]);
                     locationsDB = rLoc; pragasDB = rPragas; floraDB = rFlora;
+                    
                     const savedId = localStorage.getItem('biocultura_region');
                     infoGlobal = locationsDB.find(i => i.id === savedId) || locationsDB.find(i => i.lat !== 0) || locationsDB[0];
-                    if(infoGlobal) document.getElementById('reg-name').innerText = infoGlobal.titulo + (infoGlobal.concelho ? ', ' + toTitle(infoGlobal.concelho) : '');
+                    
+                    if(infoGlobal) {
+                        document.getElementById('reg-name').innerText = infoGlobal.titulo + (infoGlobal.concelho ? ', ' + toTitle(infoGlobal.concelho) : '');
+                    }
+                    
                     renderGlobe();
                     renderGrid(pragasDB, 'pragas-container', 4);
                     renderGrid(floraDB, 'flora-container', 4);
@@ -373,7 +427,7 @@
                         const uLat = pos.coords.latitude, uLon = pos.coords.longitude;
                         let closest = null, minD = Infinity;
                         locationsDB.forEach(c => {
-                            if(!c.lat || c.lat === 0) return;
+                            if(!c.lat || !c.lon || c.lat === 0) return;
                             const d = getDistance(uLat, uLon, c.lat, c.lon);
                             if(d < minD) { minD = d; closest = c; }
                         });
