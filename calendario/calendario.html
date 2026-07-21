@@ -275,6 +275,29 @@
 
             const lunarPhases = { 7:{svg:moonSVGs.ming,label:'Quarto Minguante',task:'fase radicular (controlo pragas solo).'}, 14:{svg:moonSVGs.new,label:'Lua Nova',task:'repouso (preparação de solo).'}, 21:{svg:moonSVGs.cres,label:'Quarto Crescente',task:'vigor ascendente (sementeiras folha).'}, 29:{svg:moonSVGs.full,label:'Lua Cheia',task:'vitalidade máxima (colheita medicinais).'} };
 
+            const agriReports = [
+                { 
+                    t: "Diretrizes PEPAC 2026", 
+                    p: "O Plano Estratégico da PAC para 2026 prioriza o apoio financeiro a explorações que demonstrem aumento da biodiversidade no talhão. Estão abertas candidaturas para sistemas de rega solar inteligente.", 
+                    s: "agricultura.gov.pt" 
+                },
+                { 
+                    t: "Caderno de Campo Digital", 
+                    p: "O novo sistema eletrónico de registo de operações é agora obrigatório para beneficiários de ajudas. Permite o registo desmaterializado de fertilizações e tratamentos fitossanitários biológicos.", 
+                    s: "Portal da Agricultura" 
+                },
+                { 
+                    t: "Vigilância Fitossanitária INIAV", 
+                    p: "Alerta para novos focos de Xylella fastidiosa. A recomendação técnica foca-se na eliminação de plantas hospedeiras e no uso de variedades nativas certificadas.", 
+                    s: "iniav.pt" 
+                },
+                { 
+                    t: "Rede de Hortas Biológicas PT", 
+                    p: "Monitorização comunitária revela que consociações estratégicas reduziram a incidência de pragas em 35% sem uso de pesticidas sintéticos.", 
+                    s: "hortasbiologicas.pt" 
+                }
+            ];
+
             function renderGlobe() {
                 const stack = document.getElementById('week-stack');
                 if(!stack) return;
@@ -386,27 +409,36 @@
             }
 
             async function inicializarPagina() {
-                try {
-                    const [rLoc, rPragas, rFlora] = await Promise.all([
-                        fetch('/data/freguesias_portugal.json').then(r => r.json()),
-                        fetch('/data/pragas.json').then(r => r.json()),
-                        fetch('/data/flora_invasora.json').then(r => r.json())
-                    ]);
-                    locationsDB = rLoc; pragasDB = rPragas; floraDB = rFlora;
-                    
-                    const savedId = localStorage.getItem('biocultura_region');
-                    infoGlobal = locationsDB.find(i => i.id === savedId) || locationsDB.find(i => i.lat !== 0) || locationsDB[0];
-                    
-                    if(infoGlobal) {
-                        document.getElementById('reg-name').innerText = infoGlobal.titulo + (infoGlobal.concelho ? ', ' + toTitle(infoGlobal.concelho) : '');
-                    }
-                    
-                    renderGlobe();
-                    renderGrid(pragasDB, 'pragas-container', 4);
-                    renderGrid(floraDB, 'flora-container', 4);
-                    setupLocationLogic();
-                } catch(e) { console.error(e); }
-            }
+            try {
+                const [rLoc, rPragas, rFlora] = await Promise.all([
+                    fetch('/data/freguesias_portugal.json').then(r => r.json()),
+                    fetch('/data/pragas.json').then(r => r.json()),
+                    fetch('/data/flora_invasora.json').then(r => r.json())
+                ]);
+                locationsDB = rLoc; pragasDB = rPragas; floraDB = rFlora;
+                
+                const savedId = localStorage.getItem('biocultura_region');
+                infoGlobal = locationsDB.find(i => i.id === savedId) || locationsDB.find(i => i.lat !== 0) || locationsDB[0];
+                
+                if(infoGlobal) {
+                    document.getElementById('reg-name').innerText = infoGlobal.titulo + (infoGlobal.concelho ? ', ' + toTitle(infoGlobal.concelho) : '');
+                }
+                
+                renderGlobe();
+                renderGrid(pragasDB, 'pragas-container', 4);
+                renderGrid(floraDB, 'flora-container', 4);
+
+                // RENDER SÍNTESE AUTORIDADES
+                document.getElementById('report-grid-agri').innerHTML = agriReports.map(r => `
+                    <div class="report-item">
+                        <h5>${r.t}</h5>
+                        <p>${r.p}</p>
+                        <span class="report-source">Fonte: ${r.s}</span>
+                    </div>`).join('');
+
+                setupLocationLogic();
+            } catch(e) { console.error(e); }
+        }
 
             function setupLocationLogic() {
                 $(document).off('input', '#loc-search-input').on('input', '#loc-search-input', function() {
