@@ -192,6 +192,8 @@
         <script>
             let locationsDB = [], todasNoticias = [], visiveis = 6;
 
+            const toTitle = s => s.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+
             function calcularDistancia(lat1, lon1, lat2, lon2) {
                 const R = 6371;
                 const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -203,15 +205,18 @@
             async function inicializarPagina() {
                 try {
                     const [rLoc, rNews] = await Promise.all([
-                        fetch('/data/bioregioes.json').then(r => r.json()),
+                        fetch('/data/freguesias_portugal.json').then(r => r.json()),
                         fetch('/data/noticias.json').then(r => r.json())
                     ]);
-                    locationsDB = rLoc; todasNoticias = rNews;
+                    locationsDB = rLoc;
+                    todasNoticias = rNews;
                     todasNoticias.sort((a, b) => (b.relevancia || 0) - (a.relevancia || 0));
 
-                    const savedId = localStorage.getItem('biocultura_region') || "proenca-a-nova";
-                    const info = locationsDB.find(i => i.id === savedId);
-                    
+                    const savedId = localStorage.getItem('biocultura_region');
+                    const infoSaved = savedId ? locationsDB.find(i => i.id === savedId) : null;
+                    if(savedId && !infoSaved) localStorage.removeItem('biocultura_region');
+                    const info = infoSaved || locationsDB.find(i => i.lat !== 0) || locationsDB[0];
+
                     renderDashboard(info);
                     renderizarLista();
                     setupSidebarLogic();
@@ -221,26 +226,41 @@
 
             function renderDashboard(info) {
                 if(!info) return;
-                document.getElementById('reg-name').innerText = info.titulo;
+                document.getElementById('reg-name').innerText =
+                    info.titulo + (info.concelho ? ', ' + toTitle(info.concelho) : '');
             }
 
             function setupSidebarLogic() {
                 $(document).on('focus', '#loc-search-input', function() { $(this).val(''); });
                 $(document).on('input', '#loc-search-input', function() {
                     const val = $(this).val().toLowerCase();
-                    const dropdown = $('#loc-dropdown');
-                    dropdown.empty();
+                    const dropdown = $('#loc-dropdown').empty();
                     if(val.length < 2) { dropdown.hide(); return; }
-                    const matches = locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0, 6);
+                    const matches = locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0, 8);
                     if(matches.length > 0) {
                         dropdown.show();
                         matches.forEach(m => {
-                            $('<div class="bio-res-item"></div>').text(m.titulo).on('click', () => {
-                                localStorage.setItem('biocultura_region', m.id);
-                                location.reload();
-                            }).appendTo(dropdown);
+                            $('<div class="bio-res-item"></div>')
+                                .text(m.titulo + (m.concelho ? ' (' + m.concelho + ')' : ''))
+                                .on('click', () => {
+                                    localStorage.setItem('biocultura_region', m.id);
+                                    location.reload();
+                                }).appendTo(dropdown);
                         });
                     } else dropdown.hide();
+                });
+
+                $(document).on('click', '#btn-gps-trigger', function() {
+                    navigator.geolocation.getCurrentPosition(pos => {
+                        let closest = locationsDB[0], minD = Infinity;
+                        locationsDB.forEach(c => {
+                            if(!c.lat || !c.lon || c.lat === 0) return;
+                            const d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon);
+                            if(d < minD) { minD = d; closest = c; }
+                        });
+                        localStorage.setItem('biocultura_region', closest.id);
+                        location.reload();
+                    });
                 });
             }
 
@@ -254,8 +274,7 @@
                             <img src="${n.logo}" class="source-logo" alt="${n.fonte}">
                             <span>${n.data}</span>
                         </div>
-                    </a>
-                `).join('');
+                    </a>`).join('');
                 document.getElementById('btn-load-more').style.display = visiveis < todasNoticias.length ? 'inline-block' : 'none';
                 document.getElementById('btn-show-less').style.display = visiveis > 6 ? 'inline-block' : 'none';
             }
@@ -275,8 +294,7 @@
                             <b>${f.titulo}</b>
                             <span>${f.desc}</span>
                         </div>
-                    </div>
-                `).join('');
+                    </div>`).join('');
             }
 
             function iniciarCiclos() {
