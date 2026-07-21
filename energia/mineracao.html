@@ -151,7 +151,7 @@
                 { titulo: "Impacto Social e Contratos", texto: "A transparência no licenciamento e a avaliação de impacto cumulativo são exigências críticas face à expansão das áreas de exploração em 2026.", fonte: "Participa.pt / LNEG" }
             ];
 
-            const toTitle = s => s.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+            const toTitle = s => s ? s.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : '';
 
             function getDistance(lat1, lon1, lat2, lon2) {
                 if(!lat1 || !lon1 || !lat2 || !lon2) return 9999;
@@ -163,19 +163,15 @@
             }
 
             async function inicializarPagina() {
+                console.log("Iniciando Mineração...");
                 try {
-                    let cachedData = sessionStorage.getItem('biocultura_freguesias');
-                    if (cachedData) {
-                        locationsDB = JSON.parse(cachedData);
-                    } else {
-                        const rLoc = await fetch('/data/freguesias_portugal.json');
-                        locationsDB = await rLoc.json();
-                        sessionStorage.setItem('biocultura_freguesias', JSON.stringify(locationsDB));
-                    }
+                    // Carregamento direto sem cache para testar
+                    const rLoc = await fetch('/data/freguesias_portugal.json');
+                    locationsDB = await rLoc.json();
 
                     const [rNews, rMineracao] = await Promise.all([
-                        fetch('/data/noticias.json').then(r => r.json()),
-                        fetch('/data/mineracao.json').then(r => r.json())
+                        fetch('/data/noticias.json').then(r => r.json()).catch(() => []),
+                        fetch('/data/mineracao.json').then(r => r.json()).catch(() => [])
                     ]);
                     
                     window.mineracaoDB = rMineracao;
@@ -186,28 +182,30 @@
                     });
                     
                     const savedId = localStorage.getItem('biocultura_region');
-                    const infoSaved = savedId ? locationsDB.find(i => i.id === savedId) : null;
-                    if (savedId && !infoSaved) localStorage.removeItem('biocultura_region');
-                    const info = infoSaved || null;
+                    const info = savedId ? locationsDB.find(i => i.id === savedId) : null;
                     
                     renderDashboard(info);
                     renderizarCardsMining();
-                    renderRelatorios(); // CHAMADA ADICIONADA
+                    renderRelatorios();
                     setupLocationLogic();
-                } catch(e) { console.error("Erro fetch:", e); }
+                    console.log("Mineração carregada com sucesso.");
+                } catch(e) { console.error("Erro na inicialização:", e); }
             }
 
             function renderRelatorios() {
-                document.getElementById('report-grid-mining').innerHTML = relatoriosMining.map(r => `
-                    <div class="report-item">
-                        <h5>${r.titulo}</h5>
-                        <p>${r.texto}</p>
-                        <span class="report-source">Fonte: ${r.fonte}</span>
-                    </div>`).join('');
+                const grid = document.getElementById('report-grid-mining');
+                if(grid) {
+                    grid.innerHTML = relatoriosMining.map(r => `
+                        <div class="report-item">
+                            <h5>${r.titulo}</h5>
+                            <p>${r.texto}</p>
+                            <span class="report-source">Fonte: ${r.fonte}</span>
+                        </div>`).join('');
+                }
             }
 
             function setupLocationLogic() {
-                $(document).on('input', '#loc-search-input', function() {
+                $(document).off('input', '#loc-search-input').on('input', '#loc-search-input', function() {
                     const val = $(this).val().toLowerCase(), dropdown = $('#loc-dropdown').empty();
                     if(val.length < 2) return dropdown.hide();
                     locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0,8).forEach(m => {
@@ -221,7 +219,7 @@
                     dropdown.show();
                 });
 
-                $(document).on('click', '#btn-gps-trigger', function() {
+                $(document).off('click', '#btn-gps-trigger').on('click', '#btn-gps-trigger', function() {
                     const btn = $(this); btn.css('opacity', '0.5');
                     navigator.geolocation.getCurrentPosition(pos => {
                         const uLat = pos.coords.latitude, uLon = pos.coords.longitude;
@@ -262,10 +260,10 @@
                 allProjects = projetos.map(p => ({
                     id: p.id,
                     nome: p.nome,
-                    local: p.concelho + " / " + p.distrito,
+                    local: (p.concelho || '') + " / " + (p.distrito || ''),
                     coords: `LAT ${p.lat} | LONG ${p.lon}`,
                     status: p.status,
-                    resumo1: `${p.empresa} · ${p.mineral} · Distância: ${p.dist.toFixed(1)} km`,
+                    resumo1: `${p.empresa || ''} · ${p.mineral} · Distância: ${p.dist.toFixed(1)} km`,
                     detalhe: `<h5>${p.nome}</h5><p>${p.impacto}</p><div class='source-list'><strong>Fonte:</strong> ${p.fonte_legal}</div>`
                 }));
 
@@ -279,41 +277,48 @@
                     { label: "Conflito de Solo", val: Math.round(pressure), color: "#c62828", desc: "Sobreposição com áreas de proteção ou RAN." }
                 ];
 
-                container.innerHTML = impacts.map(m => `
-                    <div class="impact-item">
-                        <div class="impact-info"><b>${m.label}</b> <span style="color:${m.color}; font-weight:900;">${m.val}%</span></div>
-                        <div class="impact-bar-bg"><div class="impact-bar-fill" style="width:${m.val}%; background:${m.color}"></div></div>
-                        <p class="impact-desc">${m.desc}</p>
-                    </div>`).join('');
+                if(container) {
+                    container.innerHTML = impacts.map(m => `
+                        <div class="impact-item">
+                            <div class="impact-info"><b>${m.label}</b> <span style="color:${m.color}; font-weight:900;">${m.val}%</span></div>
+                            <div class="impact-bar-bg"><div class="impact-bar-fill" style="width:${m.val}%; background:${m.color}"></div></div>
+                            <p class="impact-desc">${m.desc}</p>
+                        </div>`).join('');
+                }
                 renderProjects();
             }
 
             function renderProjects() {
-                document.getElementById('projects-list-main').innerHTML = allProjects.map(p => `
-                    <div style="border-bottom: 1px solid #f9f9f9; padding: 20px 0;">
-                        <div class="project-item">
-                            <div class="project-main">
-                                <span class="project-name">${p.nome} <span class="btn-toggle-detail" onclick="toggleDetail('${p.id}')">+</span></span>
-                                <span class="project-coords">${p.coords}</span>
+                const list = document.getElementById('projects-list-main');
+                if(list) {
+                    list.innerHTML = allProjects.map(p => `
+                        <div style="border-bottom: 1px solid #f9f9f9; padding: 20px 0;">
+                            <div class="project-item">
+                                <div class="project-main">
+                                    <span class="project-name">${p.nome} <span class="btn-toggle-detail" onclick="toggleDetail('${p.id}')">+</span></span>
+                                    <span class="project-coords">${p.coords}</span>
+                                </div>
+                                <span class="project-status">${p.status}</span>
                             </div>
-                            <span class="project-status">${p.status}</span>
-                        </div>
-                        <p class="project-summary-text">${p.resumo1}</p>
-                        <div id="detail-${p.id}" class="project-detail-content">
-                            ${p.detalhe}
-                            <div style="margin-top:15px;"><span class="btn-toggle-detail" onclick="toggleDetail('${p.id}')">[ fechar ]</span></div>
-                        </div>
-                    </div>`).join('');
+                            <p class="project-summary-text">${p.resumo1}</p>
+                            <div id="detail-${p.id}" class="project-detail-content">
+                                ${p.detalhe}
+                                <div style="margin-top:15px;"><span class="btn-toggle-detail" onclick="toggleDetail('${p.id}')">[ fechar ]</span></div>
+                            </div>
+                        </div>`).join('');
+                }
             }
 
             function toggleDetail(id) { $(`#detail-${id}`).slideToggle(); }
             function renderizarCardsMining() {
                 const container = document.getElementById('noticias-mining-dinamico');
-                container.innerHTML = noticiasMining.map((n, i) => `
-                    <a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-item" style="${i >= visiveisMining ? 'display:none' : ''}">
-                        <h3>${n.titulo}</h3>
-                        <div class="news-meta"><img src="${n.logo || '/assets/img/logo.png'}" class="source-logo"><span>${n.data}</span></div>
-                    </a>`).join('');
+                if(container) {
+                    container.innerHTML = noticiasMining.map((n, i) => `
+                        <a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-item" style="${i >= visiveisMining ? 'display:none' : ''}">
+                            <h3>${n.titulo}</h3>
+                            <div class="news-meta"><img src="${n.logo || '/assets/img/logo.png'}" class="source-logo"><span>${n.data}</span></div>
+                        </a>`).join('');
+                }
             }
             function resetToNational() { localStorage.removeItem('biocultura_region'); location.reload(); }
 

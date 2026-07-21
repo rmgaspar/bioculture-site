@@ -155,7 +155,7 @@
                 { titulo: "Impacto Social e 'Green Grabbing'", texto: "Expropriação de baldios e terras comunitárias para fins industriais energéticos sem benefício direto para as populações.", fonte: "Observatório da Coesão Territorial" }
             ];
 
-            const toTitle = s => s.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+            const toTitle = s => s ? s.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : '';
 
             function getDistance(lat1, lon1, lat2, lon2) {
                 if(!lat1 || !lon1 || !lat2 || !lon2) return 9999;
@@ -167,19 +167,14 @@
             }
 
             async function inicializarPagina() {
+                console.log("Iniciando Transição Ética...");
                 try {
-                    let cachedData = sessionStorage.getItem('biocultura_freguesias');
-                    if (cachedData) {
-                        locationsDB = JSON.parse(cachedData);
-                    } else {
-                        const rLoc = await fetch('/data/freguesias_portugal.json');
-                        locationsDB = await rLoc.json();
-                        sessionStorage.setItem('biocultura_freguesias', JSON.stringify(locationsDB));
-                    }
+                    const rLoc = await fetch('/data/freguesias_portugal.json');
+                    locationsDB = await rLoc.json();
 
                     const [rNews, rZAER] = await Promise.all([
-                        fetch('/data/noticias.json').then(r => r.json()),
-                        fetch('/data/zaer_critico.json').then(r => r.json())
+                        fetch('/data/noticias.json').then(r => r.json()).catch(() => []),
+                        fetch('/data/zaer_critico.json').then(r => r.json()).catch(() => [])
                     ]);
                     
                     const rawZAER = Array.isArray(rZAER) ? rZAER : Object.values(rZAER).flat();
@@ -198,24 +193,26 @@
                     });
                     
                     const savedId = localStorage.getItem('biocultura_region');
-                    const infoSaved = savedId ? locationsDB.find(i => i.id === savedId) : null;
-                    if (savedId && !infoSaved) localStorage.removeItem('biocultura_region');
-                    const info = infoSaved || null;
+                    const info = savedId ? locationsDB.find(i => i.id === savedId) : null;
                     
                     renderDashboard(info);
                     renderizarCardsEthics();
-                    renderRelatorios(); // CHAMADA ADICIONADA
+                    renderRelatorios();
                     setupLocationLogic();
-                } catch(e) { console.error("Erro fetch:", e); }
+                    console.log("Transição Ética carregada com sucesso.");
+                } catch(e) { console.error("Erro na inicialização:", e); }
             }
 
             function renderRelatorios() {
-                document.getElementById('report-grid-ethics').innerHTML = relatoriosEthics.map(r => `
-                    <div class="report-item">
-                        <h5>${r.titulo}</h5>
-                        <p>${r.texto}</p>
-                        <span class="report-source">Fonte: ${r.fonte}</span>
-                    </div>`).join('');
+                const grid = document.getElementById('report-grid-ethics');
+                if(grid) {
+                    grid.innerHTML = relatoriosEthics.map(r => `
+                        <div class="report-item">
+                            <h5>${r.titulo}</h5>
+                            <p>${r.texto}</p>
+                            <span class="report-source">Fonte: ${r.fonte}</span>
+                        </div>`).join('');
+                }
             }
 
             function setupLocationLogic() {
@@ -281,36 +278,40 @@
                     { label: "Oposição Social", val: Math.round(pressure), color: "#7b1fa2" }
                 ];
 
-                container.innerHTML = impacts.map(m => `
-                    <div class="impact-item">
-                        <div class="impact-info"><b>${m.label}</b> <span>${m.val}%</span></div>
-                        <div class="impact-bar-bg"><div class="impact-bar-fill" style="width:${m.val}%; background:${m.color}"></div></div>
-                    </div>`).join('');
+                if(container) {
+                    container.innerHTML = impacts.map(m => `
+                        <div class="impact-item">
+                            <div class="impact-info"><b>${m.label}</b> <span>${m.val}%</span></div>
+                            <div class="impact-bar-bg"><div class="impact-bar-fill" style="width:${m.val}%; background:${m.color}"></div></div>
+                        </div>`).join('');
+                }
                 renderZAERProjects();
             }
 
             function renderZAERProjects() {
                 const container = document.getElementById('projects-list-main');
-                const show = currentZAERList.slice(0, visiveisZAER);
-                container.innerHTML = show.map(p => `
-                    <div style="border-bottom: 1px solid #f9f9f9; padding: 20px 0;">
-                        <div class="project-item">
-                            <div class="project-main">
-                                <span class="project-name">${p.titulo} <span class="btn-toggle-detail" onclick="toggleDetail('${p.id}')">+</span></span>
-                                <span class="project-coords">DISTÂNCIA: ${p.dist.toFixed(1)} KM</span>
+                if(container) {
+                    const show = currentZAERList.slice(0, visiveisZAER);
+                    container.innerHTML = show.map(p => `
+                        <div style="border-bottom: 1px solid #f9f9f9; padding: 20px 0;">
+                            <div class="project-item">
+                                <div class="project-main">
+                                    <span class="project-name">${p.titulo} <span class="btn-toggle-detail" onclick="toggleDetail('${p.id}')">+</span></span>
+                                    <span class="project-coords">DISTÂNCIA: ${p.dist.toFixed(1)} KM</span>
+                                </div>
+                                <span class="project-status">${p.tipo || 'PFZAER'}</span>
                             </div>
-                            <span class="project-status">${p.tipo || 'PFZAER'}</span>
-                        </div>
-                        <p class="project-summary-text">${p.impacto || 'Área identificada sob o plano PSZAER.'}</p>
-                        <div id="detail-${p.id}" class="project-detail-content">
-                            <h5>Análise de Impacto</h5>
-                            <p>Zona crítica de transição. Recomendada monitorização de bacias hidrográficas.</p>
-                            <div style="margin-top:15px;"><span class="btn-toggle-detail" onclick="toggleDetail('${p.id}')">[ fechar ]</span></div>
-                        </div>
-                    </div>`).join('');
+                            <p class="project-summary-text">${p.impacto || 'Área identificada sob o plano PSZAER.'}</p>
+                            <div id="detail-${p.id}" class="project-detail-content">
+                                <h5>Análise de Impacto</h5>
+                                <p>Zona crítica de transição. Recomendada monitorização de bacias hidrográficas.</p>
+                                <div style="margin-top:15px;"><span class="btn-toggle-detail" onclick="toggleDetail('${p.id}')">[ fechar ]</span></div>
+                            </div>
+                        </div>`).join('');
 
-                if (currentZAERList.length > visiveisZAER) {
-                    container.innerHTML += `<div style="text-align:center; margin-top:30px;"><button class="btn-pagination" onclick="loadMoreZAER()">+ ver mais zonas</button></div>`;
+                    if (currentZAERList.length > visiveisZAER) {
+                        container.innerHTML += `<div style="text-align:center; margin-top:30px;"><button class="btn-pagination" onclick="loadMoreZAER()">+ ver mais zonas</button></div>`;
+                    }
                 }
             }
 
@@ -319,11 +320,13 @@
             function resetToNational() { localStorage.removeItem('biocultura_region'); location.reload(); }
             function renderizarCardsEthics() {
                 const container = document.getElementById('noticias-ethics-dinamico');
-                container.innerHTML = noticiasEthics.map((n, i) => `
-                    <a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-item" style="${i >= visiveisEthics ? 'display:none' : ''}">
-                        <h3>${n.titulo}</h3>
-                        <div class="news-meta"><img src="${n.logo || '/assets/img/logo.png'}" class="source-logo"><span>${n.data}</span></div>
-                    </a>`).join('');
+                if(container) {
+                    container.innerHTML = noticiasEthics.map((n, i) => `
+                        <a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-item" style="${i >= visiveisEthics ? 'display:none' : ''}">
+                            <h3>${n.titulo}</h3>
+                            <div class="news-meta"><img src="${n.logo || '/assets/img/logo.png'}" class="source-logo"><span>${n.data}</span></div>
+                        </a>`).join('');
+                }
             }
 
             fetch('/sidebar-content.html').then(r => r.text()).then(html => {
