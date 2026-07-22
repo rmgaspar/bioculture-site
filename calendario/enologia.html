@@ -6,7 +6,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
 		<style>
-            /* --- ESTRUTURA GLOBAL (PARIDADE TOTAL) --- */
+            /* --- ESTRUTURA GLOBAL --- */
             body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
 			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
             section { min-height: 100vh; display: flex; flex-direction: column; }
@@ -14,7 +14,6 @@
             #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
             #wrapper { padding-left: 18em !important; }
 
-            /* RETIFICAÇÃO DO ESPAÇAMENTO DO TOPO */
             .inner { padding: 2.2em 4em 0 4em !important; max-width: 1600px !important; margin: 0 auto; width: 100%; }
             .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; margin-bottom: 15px; display: block; }
 
@@ -25,18 +24,15 @@
             
             .hero-visual { flex: 1; display: flex; justify-content: flex-end; }
             .hero-globe { 
-                position: relative; 
-                width: 480px; height: 480px; 
+                position: relative; width: 480px; height: 480px; 
                 border-radius: 50%; overflow: hidden; 
-                box-shadow: 0 40px 100px rgba(0,0,0,0.12); 
-                background: #1a1a1a;
+                box-shadow: 0 40px 100px rgba(0,0,0,0.12); background: #1a1a1a;
             }
             .hero-globe img { width: 100%; height: 100%; object-fit: cover; }
 
-            /* SUBTÍTULOS ESTILO ATLAS */
             .sub-atlas { font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #6d1b32; margin: 2em 0 20px 0; display: block; }
 
-            /* GRID DE CASTAS */
+            /* GRID DE CASTAS - TOQUE PREMIUM */
             .castas-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
             .castas-grid-compact { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 15px; }
             
@@ -44,7 +40,7 @@
                 background: #fdfdfd; border: 1px solid #f2f2f2; border-radius: 12px; padding: 20px; 
                 cursor: pointer; transition: all 0.3s; position: relative;
             }
-            .casta-card:hover { transform: translateY(-5px); border-color: #6d1b32; }
+            .casta-card:hover { transform: translateY(-5px); border-color: #6d1b32; background: #fff; box-shadow: 0 10px 20px rgba(0,0,0,0.03); }
             .casta-card b { display: block; font-size: 1.1em; color: #1a1a1a; margin-bottom: 5px; }
             .casta-card span { font-size: 0.65em; font-weight: 900; text-transform: uppercase; color: #bbb; }
             .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 8px; }
@@ -54,8 +50,7 @@
             .btn-clean { background: none !important; border: none !important; padding: 0 !important; color: #bbb !important; font-size: 0.7em; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: color 0.2s; }
             .btn-clean:hover { color: #6d1b32 !important; text-decoration: underline; }
 
-            /* CLASSIFICAÇÃO BIO */
-            .data-row { display: block; padding: 2.5em 0; border-bottom: 1px solid #f2f2f2; }
+            .data-row { display: block; padding: 3em 0; border-bottom: 1px solid #f2f2f2; }
             .vinhos-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 10px; }
             .vinho-box { border-left: 3px solid #eee; padding: 15px 20px; background: #fcfcfc; border-radius: 0 12px 12px 0; }
             .vinho-box h5 { font-size: 0.9em; font-weight: 900; text-transform: uppercase; margin-bottom: 8px; color: #1a1a1a; }
@@ -95,12 +90,8 @@
                 <div class="inner">
                     <section id="eno-section">
                         
-                        <!-- VISTA DE DETALHE (AGORA NO TOPO) -->
-                        <div id="casta-detail-view">
-                            <!-- Injetado via JS -->
-                        </div>
+                        <div id="casta-detail-view"></div>
 
-                        <!-- VISTA PRINCIPAL -->
                         <div id="enologia-list-view">
                             <div class="hero-split">
                                 <div class="hero-text">
@@ -110,7 +101,6 @@
                                     
                                     <p id="region-description" style="font-size: 1.1em; line-height: 1.7; color: #555; margin-bottom: 1.5em; text-align: justify;"></p>
                                     
-                                    <!-- CASTAS DA REGIÃO (COMPACTO) -->
                                     <div id="regional-preview-box" style="display:none;">
                                         <span class="sub-atlas">Castas da Região</span>
                                         <div id="regional-grid-compact" class="castas-grid-compact"></div>
@@ -124,13 +114,11 @@
                                 </div>
                             </div>
 
-                            <!-- CASTAS REGIONAIS EXPANDIDAS -->
                             <div id="regional-expanded-box" class="data-row" style="display:none; border-top: 1px solid #f2f2f2; margin-top: 2em;">
                                 <div id="regional-grid-full" class="castas-grid"></div>
                                 <span class="btn-clean" onclick="toggleRegional(false)" style="margin-top:20px; display:block;">- recolher lista</span>
                             </div>
 
-                            <!-- CLASSIFICAÇÃO BIO -->
                             <div class="data-row">
                                 <h4>Classificação e Intervenção Mínima</h4>
                                 <div class="tech-content">
@@ -143,13 +131,11 @@
                                 </div>
                             </div>
 
-                            <!-- ATLAS GLOBAL -->
                             <div class="data-row" style="border-bottom: none;">
                                 <h4>Atlas das Castas de Portugal</h4>
                                 <div id="global-atlas"></div>
                             </div>
 
-                            <!-- NOTÍCIAS -->
                             <span class="news-header">noticias</span>
                             <div id="noticias-enologia-dinamico" class="news-list"></div>
                             <div style="text-align: left; margin-bottom: 4em;">
@@ -173,10 +159,10 @@
             let expandedRegions = {};
             let regionalCastas = [];
 
-            const toTitle = s => s.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+            const toTitle = s => s ? s.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : '';
 
             function getDistance(lat1, lon1, lat2, lon2) {
-                if(!lat1 || !lon1 || !lat2 || !lon2) return 9999;
+                if(!lat1 || !lat2) return 9999;
                 const R = 6371;
                 const dLat = (lat2 - lat1) * Math.PI / 180;
                 const dLon = (lon2 - lon1) * Math.PI / 180;
@@ -187,20 +173,18 @@
             const regionOrder = ["Vinhos Verdes","Trás-os-Montes","Douro","Dão","Bairrada","Beira Interior","Lisboa","Tejo","Península de Setúbal","Alentejo","Algarve","Madeira","Açores"];
 
             const regionIntros = {
-                "Lisboa":   "A região de Lisboa é marcada pela forte influência atlântica, resultando em vinhos de frescura vibrante e salinidade única. As castas autóctones adaptaram-se aos solos argilo-calcários.",
-                "Douro":    "O Douro, Património Mundial, é o berço de vinhos estruturados e complexos. O solo xistoso e o clima mediterrânico extremo forçam a concentração aromática.",
-                "Alentejo": "No Alentejo, o sol e as planícies graníticas moldam vinhos generosos e macios. A viticultura regenerativa foca-se aqui na preservação da água.",
-                "Dão":      "O Dão produz vinhos de elegância ímpar. Rodeada por montanhas, as suas castas autóctones em solos graníticos revelam uma mineralidade profunda."
+                "Lisboa":   "A região de Lisboa é marcada pela forte influência atlântica, resultando em vinhos de frescura vibrante e salinidade única.",
+                "Douro":    "O Douro, Património Mundial, é o berço de vinhos estruturados e complexos em solos xistosos.",
+                "Alentejo": "No Alentejo, o sol e as planícies graníticas moldam vinhos generosos e macios.",
+                "Dão":      "O Dão produz vinhos de elegância ímpar, protegidos por montanhas em solos graníticos.",
+                "Madeira":  "A ilha da Madeira produz vinhos generosos únicos em solos vulcânicos e clima subtropical.",
+                "Açores":   "Os Açores revelam vinhos de mineralidade vulcânica extrema e salinidade pura do Atlântico."
             };
 
-            // Mapa simplificado regiao → região vitivinícola
-            const regiaoVinho = {
-                "minho": "Vinhos Verdes", "douro litoral": "Vinhos Verdes",
-                "trás-os-montes": "Trás-os-Montes",
-                "beira alta": "Dão", "beira litoral": "Bairrada",
-                "beira baixa": "Beira Interior",
-                "estremadura": "Lisboa", "ribatejo": "Tejo",
-                "alentejo": "Alentejo", "algarve": "Algarve",
+            const regiaoVinhoMap = {
+                "minho": "Vinhos Verdes", "douro litoral": "Vinhos Verdes", "trás-os-montes": "Trás-os-Montes",
+                "beira alta": "Dão", "beira litoral": "Bairrada", "beira baixa": "Beira Interior",
+                "estremadura": "Lisboa", "ribatejo": "Tejo", "alentejo": "Alentejo", "algarve": "Algarve",
                 "madeira": "Madeira", "açores": "Açores"
             };
 
@@ -211,34 +195,27 @@
                         fetch('/data/castas.json').then(r => r.json()),
                         fetch('/data/noticias.json').then(r => r.json())
                     ]);
-                    locationsDB = rLoc;
-                    castasDB    = rCastas;
+                    locationsDB = rLoc; castasDB = rCastas;
                     noticiasEno = rNews.filter(n => (n.categoria || "").toLowerCase().includes('enologia') || (n.titulo || "").toLowerCase().includes('vinho'));
 
                     const savedId = localStorage.getItem('biocultura_region');
-                    const infoSaved = savedId ? locationsDB.find(i => i.id === savedId) : null;
-                    if(savedId && !infoSaved) localStorage.removeItem('biocultura_region');
-                    const info = infoSaved || locationsDB.find(i => i.lat !== 0) || locationsDB[0];
-
+                    const info = locationsDB.find(i => i.id === savedId) || locationsDB.find(i => i.lat !== 0) || locationsDB[0];
+                    
                     renderRegional(info);
                     renderGlobalAtlas();
                     renderizarCardsEno();
                     setupLocationLogic();
                 } catch(e) { console.error(e); }
             }
-
             function renderRegional(info) {
                 if(!info) return;
-
                 const nomeCompleto = info.titulo + (info.concelho ? ', ' + toTitle(info.concelho) : '');
                 document.getElementById('reg-name').innerText = nomeCompleto;
 
-                // Deriva região vitivinícola da regiao do JSON
-                const regionName = info.regiao_vinho || regiaoVinho[info.regiao?.toLowerCase()] || "Lisboa";
+                const regionName = info.regiao_vinho || regiaoVinhoMap[info.regiao?.toLowerCase()] || "Lisboa";
                 regionalCastas = castasDB.filter(c => c.regioes.some(r => r.toLowerCase() === regionName.toLowerCase()) && c.autoctone);
-
-                document.getElementById('region-description').innerText = regionIntros[regionName] || `A região de ${regionName} possui um património vitícola riquíssimo.`;
-
+                document.getElementById('region-description').innerText = regionIntros[regionName] || `A região de ${regionName} possui um património vitícola riquíssimo, moldado pelo clima e solos locais.`;
+                
                 if(regionalCastas.length > 0) {
                     document.getElementById('regional-preview-box').style.display = 'block';
                     document.getElementById('regional-grid-compact').innerHTML = regionalCastas.slice(0, 2).map(c => castaCardTemplate(c)).join('');
@@ -250,7 +227,7 @@
             function toggleRegional(expand) {
                 document.getElementById('regional-expanded-box').style.display = expand ? 'block' : 'none';
                 document.getElementById('btn-expand-regional').style.display = expand ? 'none' : 'inline-block';
-                if(expand) window.scrollBy({ top: 400, behavior: 'smooth' });
+                if(expand) { window.scrollBy({ top: 400, behavior: 'smooth' }); }
             }
 
             function renderGlobalAtlas() {
@@ -260,22 +237,30 @@
                     const castas = castasDB.filter(c => c.regioes.includes(reg));
                     const isExpanded = expandedRegions[reg] || false;
                     const visible = isExpanded ? castas : castas.slice(0, 4);
-                    return `<div class="region-block">
-                        <div class="region-header"><h5>${reg}</h5>${castas.length > 4 ? `<span class="btn-clean" onclick="toggleRegion('${reg}')">${isExpanded ? '- recolher' : '+ veja todas (' + castas.length + ')'}</span>` : ''}</div>
-                        <div class="castas-grid">${visible.map(c => castaCardTemplate(c)).join('')}</div>
-                    </div>`;
+                    return `
+                        <div class="region-block" style="margin-bottom:40px;">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; border-bottom:1px solid #f2f2f2; padding-bottom:10px;">
+                                <h5 style="margin:0; font-size:0.8em; color:#6d1b32; text-transform:uppercase; letter-spacing:1px;">${reg}</h5>
+                                ${castas.length > 4 ? `<span class="btn-clean" onclick="toggleRegion('${reg}')">${isExpanded ? '- recolher' : '+ veja todas ('+castas.length+')'}</span>` : ''}
+                            </div>
+                            <div class="castas-grid">${visible.map(c => castaCardTemplate(c)).join('')}</div>
+                        </div>`;
                 }).join('');
             }
 
             function castaCardTemplate(c) {
-                return `<div class="casta-card" onclick="showDetail('${c.id}')"><span class="dot ${c.cor === 'Tinto' ? 'dot-tinto' : 'dot-branco'}"></span><b>${c.nome} ${c.renowned ? '<span style="color:#f1c40f">★</span>' : ''}</b><span>${c.cor} | ${c.tipo_vinho}</span></div>`;
+                return `
+                    <div class="casta-card" onclick="showDetail('${c.id}')">
+                        <span class="dot ${c.cor === 'Tinto' ? 'dot-tinto' : 'dot-branco'}"></span>
+                        <b>${c.nome} ${c.renowned ? '<span style="color:#f1c40f">★</span>' : ''}</b>
+                        <span>${c.cor} | ${c.tipo_vinho}</span>
+                    </div>`;
             }
 
             function toggleRegion(reg) { expandedRegions[reg] = !expandedRegions[reg]; renderGlobalAtlas(); }
 
             function showDetail(id) {
                 const c = castasDB.find(item => item.id === id);
-                const listView = document.getElementById('enologia-list-view');
                 const detailView = document.getElementById('casta-detail-view');
                 detailView.innerHTML = `
                     <div class="hero-split">
@@ -288,22 +273,32 @@
                                 <div>
                                     <h4 style="font-size:0.7em; color:#bbb; text-transform:uppercase; margin-bottom:15px">Perfil Sensorial</h4>
                                     ${renderBar("Acidez", c.perfil.acidez)}${renderBar("Corpo", c.perfil.corpo)}${renderBar("Taninos", c.perfil.taninos)}${renderBar("Álcool", c.perfil.alcool)}
-                                    <div style="margin-top:20px; background:#f9f9f9; padding:15px; border-radius:12px"><span class="attribute-label" style="font-size:0.6em">Aromas Principais</span><p style="color:#6d1b32; font-weight:700; margin:5px 0 0 0; font-size:0.9em">${c.aromas.join(' • ')}</p></div>
+                                    <div style="margin-top:20px; background:#f9f9f9; padding:15px; border-radius:12px">
+                                        <span class="attribute-label" style="font-size:0.6em">Aromas Principais</span>
+                                        <p style="color:#6d1b32; font-weight:700; margin:5px 0 0 0; font-size:0.9em">${c.aromas.join(' • ')}</p>
+                                    </div>
                                 </div>
                                 <div>
                                     <h4 style="font-size:0.7em; color:#bbb; text-transform:uppercase; margin-bottom:15px">Diretrizes Bio</h4>
                                     <p style="font-size:0.9em; margin-bottom:10px"><b>Solo Ideal:</b> ${c.tecnico.solo}</p>
                                     <p style="font-size:0.9em; margin-bottom:10px"><b>Clima:</b> ${c.tecnico.clima}</p>
-                                    <p style="font-size:0.9em; margin-bottom:10px"><b>Compasso:</b> ${c.tecnico.distancia}</p>
                                     <p style="font-size:0.9em; margin-bottom:10px"><b>Irrigação:</b> ${c.tecnico.irrigacao}</p>
                                 </div>
                             </div>
                         </div>
-                        <div class="hero-visual"><div class="hero-globe"><img src="https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?q=80&w=2070&auto=format&fit=crop" alt="${c.nome}"></div></div>
+                        <div class="hero-visual">
+                            <div class="hero-globe" style="background:#fff;">
+                                <img src="https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?q=80&w=2070&auto=format&fit=crop" style="opacity:0.3; filter:grayscale(100%);">
+                                <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); text-align:center; width:100%;">
+                                    <span style="font-size:5em; display:block; margin-bottom:10px;">🍇</span>
+                                    <span style="font-weight:900; color:#6d1b32; text-transform:uppercase; letter-spacing:2px;">Ficha Técnica</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>`;
-                listView.style.display = 'none';
+                document.getElementById('enologia-list-view').style.display = 'none';
                 detailView.style.display = 'block';
-                window.scrollTo(0, 0);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             }
 
             function renderBar(label, val) {
@@ -313,6 +308,7 @@
             function hideDetail() {
                 document.getElementById('enologia-list-view').style.display = 'block';
                 document.getElementById('casta-detail-view').style.display = 'none';
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             }
 
             function renderizarCardsEno() {
@@ -330,34 +326,36 @@
                     const val = $(this).val().toLowerCase(), dropdown = $('#loc-dropdown').empty();
                     if(val.length < 2) return dropdown.hide();
                     locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0,8).forEach(m => {
-                        $('<div class="bio-res-item"></div>')
-                            .text(m.titulo + (m.concelho ? ' (' + m.concelho + ')' : ''))
-                            .on('click', () => { localStorage.setItem('biocultura_region', m.id); location.reload(); })
-                            .appendTo(dropdown);
+                        $('<div class="bio-res-item"></div>').text(m.titulo + (m.concelho ? ' (' + m.concelho + ')' : '')).on('click', () => {
+                            localStorage.setItem('biocultura_region', m.id);
+                            location.reload();
+                        }).appendTo(dropdown);
                     });
                     dropdown.show();
                 });
 
                 $(document).off('click', '#btn-gps-trigger').on('click', '#btn-gps-trigger', function() {
+                    const btn = $(this); btn.css('opacity', '0.5');
                     navigator.geolocation.getCurrentPosition(pos => {
-                        let closest = locationsDB[0], minD = Infinity;
+                        const uLat = pos.coords.latitude, uLon = pos.coords.longitude;
+                        let closest = null, minD = Infinity;
                         locationsDB.forEach(c => {
                             if(!c.lat || !c.lon || c.lat === 0) return;
-                            const d = getDistance(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon);
+                            const d = getDistance(uLat, uLon, c.lat, c.lon);
                             if(d < minD) { minD = d; closest = c; }
                         });
-                        localStorage.setItem('biocultura_region', closest.id);
-                        location.reload();
-                    });
+                        if(closest) { localStorage.setItem('biocultura_region', closest.id); location.reload(); }
+                        btn.css('opacity', '1');
+                    }, () => btn.css('opacity', '1'), { timeout: 5000 });
                 });
             }
+
+            document.getElementById('btn-load-more-eno').onclick = () => { visiveisEno += 4; renderizarCardsEno(); };
 
             fetch('/sidebar-content.html').then(r => r.text()).then(html => {
                 document.getElementById('sidebar').innerHTML = html;
                 inicializarPagina();
             });
-
-            document.getElementById('btn-load-more-eno').onclick = () => { visiveisEno += 4; renderizarCardsEno(); };
         </script>
 	</body>
 </html>
