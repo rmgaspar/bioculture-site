@@ -28,8 +28,50 @@
 
             .noticia-hero-img { width: 100%; height: 500px; object-fit: cover; border-radius: 30px; margin: 2em 0; background: #f5f5f5; }
 
-            .resumo-banner { background: #f4f7fb; padding: 2.5em; border-radius: 25px; border-left: 5px solid #5c6bc0; margin: 3em 0; }
-            .resumo-text { font-style: italic; color: #333; font-size: 1.2em; line-height: 1.7; margin: 0; }
+            /* Banner de Contexto bioCultura - Sem border-left, mais discreto */
+            .resumo-banner { 
+                background: #f8faff; 
+                padding: 2.5em; 
+                border-radius: 25px; 
+                margin: 3em 0; 
+                border: 1px solid #eef2f7; 
+            }
+
+            .resumo-label { 
+                display: block; 
+                font-size: 0.65em; 
+                font-weight: 900; 
+                text-transform: uppercase; 
+                letter-spacing: 2px; 
+                color: #5c6bc0; 
+                margin-bottom: 15px; 
+            }
+
+            .resumo-text { 
+                font-style: normal; /* Removido o itálico para diferenciar da notícia */
+                color: #333; 
+                font-size: 1.15em; 
+                line-height: 1.7; 
+                margin: 0; 
+            }
+
+            /* Link para notícia original */
+            .link-oficial { 
+                font-size: 0.8em; 
+                font-weight: 800; 
+                text-transform: lowercase; 
+                color: #5c6bc0 !important; 
+                text-decoration: underline !important;
+                margin-left: 15px;
+            }
+
+            .source-logo-detail { 
+                width: 20px; 
+                height: 20px; 
+                object-fit: contain; 
+                background: #fff; 
+                border-radius: 4px;
+            }
 
             .noticia-corpo { font-size: 1.15em; line-height: 1.8; color: #444; width: 100%; }
             .noticia-corpo p { margin-bottom: 1.5em; text-align: justify; }
@@ -74,6 +116,23 @@
                         <div id="loading" style="color: #bbb; font-style: italic; padding-left: 2.5em;">A carregar notícia...</div>
 
                         <div id="noticia-render" class="noticia-container" style="display:none;">
+                            <!-- Banner de Contexto -->
+                            <div class="resumo-banner" id="resumo-box" style="display:none;">
+                                <span class="resumo-label">Observatório bioCultura</span>
+                                <p class="resumo-text" id="resumo-txt"></p>
+                            </div>
+
+                            <div class="noticia-corpo noticia-indent" id="corpo"></div>
+
+                            <!-- Meta Fundo (Com Link Oficial) -->
+                            <div class="noticia-meta-footer noticia-indent">
+                                <div style="display: flex; align-items: center; flex-wrap: wrap;">
+                                    <img src="" class="source-logo-detail" id="footer-source-logo">
+                                    <span class="source-name" id="footer-source-name" style="margin-left:10px;">--</span>
+                                    <span class="source-date" id="footer-source-date" style="margin-left:10px;">--</span>
+                                    <a id="footer-official-link" href="#" target="_blank" class="link-oficial">ver noticia</a>
+                                </div>
+                            </div>
                             <!-- Header -->
                             <div class="noticia-header noticia-indent">
                                 <span class="noticia-cat" id="cat">--</span>
@@ -134,10 +193,7 @@
                 const urlParams = new URLSearchParams(window.location.search);
                 const noticiaId = urlParams.get('id');
 
-                if (!noticiaId) {
-                    window.location.href = '/index.html';
-                    return;
-                }
+                if (!noticiaId) { window.location.href = '/index.html'; return; }
 
                 try {
                     const response = await fetch('/data/noticias.json');
@@ -156,33 +212,42 @@
 
                         document.getElementById('titulo').innerText = n.titulo;
                         
-                        // Meta Topo
-                        document.getElementById('source-logo').src = n.logo || '';
-                        document.getElementById('source-name-top').innerText = n.fonte || '';
+                        // Tratamento de Logo (Fallback se não existir)
+                        const logoUrl = n.logo || `https://www.google.com/s2/favicons?domain=${n.url?.split('/')[2]}&sz=64`;
+                        
+                        document.getElementById('source-logo').src = logoUrl;
+                        document.getElementById('source-name-top').innerText = n.fonte;
                         document.getElementById('data').innerText = n.data;
                         
                         document.getElementById('imagem').src = n.imagem;
                         document.getElementById('corpo').innerHTML = n.corpo;
                         
-                        // Meta Fundo
-                        document.getElementById('footer-source-logo').src = n.logo || '';
-                        document.getElementById('footer-source-name').innerText = n.fonte || '';
+                        // Contexto bioCultura (Prioriza resumo_biocultura)
+                        const resumoBox = document.getElementById('resumo-box');
+                        if (n.resumo_biocultura || n.resumo) {
+                            resumoBox.style.display = 'block';
+                            document.getElementById('resumo-txt').innerText = n.resumo_biocultura || n.resumo;
+                        }
+
+                        // Meta Fundo e Link Oficial
+                        document.getElementById('footer-source-logo').src = logoUrl;
+                        document.getElementById('footer-source-name').innerText = n.fonte;
                         document.getElementById('footer-source-date').innerText = n.data;
-                        document.getElementById('footer-source-link').href = n.url || '#';
+                        
+                        const officialLink = document.getElementById('footer-official-link');
+                        if (n.url) {
+                            officialLink.href = n.url;
+                            officialLink.style.display = 'inline-block';
+                        } else {
+                            officialLink.style.display = 'none';
+                        }
 
                         document.getElementById('link-relacionado').href = `/index.html?filter=${n.categoria}`;
 
-                        if (n.resumo) {
-                            document.getElementById('resumo-txt').innerText = `"${n.resumo}"`;
-                        } else {
-                            document.getElementById('resumo-box').style.display = 'none';
-                        }
                     } else {
                         document.getElementById('loading').innerText = "Notícia não encontrada.";
                     }
-                } catch (e) {
-                    console.error("Erro no carregamento:", e);
-                }
+                } catch (e) { console.error("Erro:", e); }
             }
 
             fetch('/sidebar-content.html').then(r => r.text()).then(html => {
