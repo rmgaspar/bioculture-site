@@ -20,7 +20,7 @@
             .hero-text { flex: 1.5; text-align: left; padding-top: 5px; } 
             .hero-text h1 { font-size: 4em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; line-height: 0.95; margin: 0 0 15px 0; }
 
-            /* GLOBO - CENTRALIZAÇÃO TOTAL */
+            /* GLOBO - ESTILO VERDE */
             .hero-visual { flex: 1; display: flex; justify-content: flex-end; }
             .hero-globe {
                 position: relative; width: 480px; height: 480px;
@@ -32,11 +32,10 @@
             }
 
             .globe-top { margin-bottom: auto; display: flex; flex-direction: column; align-items: center; gap: 2px; }
-            .globe-year { font-size: 0.55em; font-weight: 900; color: #ccc; letter-spacing: 4px; text-transform: uppercase; }
-            .globe-weekday { font-size: 0.65em; font-weight: 900; color: #2e7d32; text-transform: uppercase; letter-spacing: 2px; }
-            .globe-day-month { font-size: 1.4em; font-weight: 900; color: #1a1a1a; letter-spacing: -0.5px; line-height: 1; }
+            .globe-year { font-size: 0.75em; font-weight: 900; color: #2e7d32; letter-spacing: 5px; text-transform: uppercase; margin-bottom: 3px; }
+            .globe-weekday { font-size: 0.65em; font-weight: 900; color: #bbb; text-transform: uppercase; letter-spacing: 2px; }
+            .globe-day-month { font-size: 1.5em; font-weight: 900; color: #2e7d32; letter-spacing: -0.5px; line-height: 1; }
 
-            /* CALENDÁRIO NO CENTRO DO CÍRCULO */
             .week-stack { 
                 position: absolute; top: 50%; transform: translateY(-50%);
                 width: 100%; display: flex; flex-direction: column; gap: 10px; 
@@ -54,10 +53,9 @@
             .today-moon-wrap svg { width: 16px; height: 16px; }
             .today-moon-line { width: 16px; height: 2px; background: #2e7d32; border-radius: 1px; }
 
-            /* RODAPÉ DO GLOBO - CONVERGÊNCIA CENTRAL */
             .globe-south { 
                 margin-top: auto;
-                width: 38%; /* Ícones quase colados à linha vertical */
+                width: 38%; 
                 display: flex;
                 justify-content: space-between;
                 align-items: center; 
@@ -70,7 +68,7 @@
             .temp-range-label { font-size: 0.75em; font-weight: 800; color: #1a1a1a; }
             .moon-phase-name { font-size: 0.5em; font-weight: 900; color: #2e7d32; text-transform: uppercase; letter-spacing: 1px; text-align: center; }
 
-            /* ESTRATÉGIA REGENERATIVA - COMPACTAÇÃO TOTAL */
+            /* ESTRATÉGIA REGENERATIVA */
             .advice-block { margin-top: 5px; padding: 0; background: transparent; border: none; }
             .advice-content { font-size: 1.05em; line-height: 1.5; color: #555; text-align: left; }
             .advice-section { margin-bottom: 12px; }
@@ -330,14 +328,12 @@
 
                 const culturasHorticolas = horticolasDB.filter(h => h.r.includes(regSlug)).map(h => h.n);
 
-                // Lógica de Solo e pH sem mencionar nomes técnicos
                 let soilText = "Mantenha a fertilização biológica equilibrada.";
-                if (solo.includes('xistoso') || solo.includes('granítico')) soilText = "Em terrenos de rápida drenagem, reforce a camada de mulching para preservar a humidade e a vida microbiana.";
-                else if (solo.includes('argiloso')) soilText = "Evite a compactação do terreno e garanta um arejamento adequado das raízes.";
-                
-                if (ph < 6.0) soilText += " Aplique correções orgânicas para equilibrar a acidez natural e favorecer a absorção de nutrientes.";
+                if (solo.includes('xistoso') || solo.includes('granítico')) soilText = "Em terrenos de rápida drenagem, reforce o mulching para preservar a humidade microbiana.";
+                else if (solo.includes('argiloso')) soilText = "Evite a compactação e garanta o arejamento das raízes.";
+                if (ph < 6.0) soilText += " Aplique correções orgânicas para equilibrar a acidez natural.";
 
-                let climaTxt = weather && weather.hum < 45 ? "Ar seco detetado: Priorize a irrigação profunda e proteja o solo da evapotranspiração." : "Humidade estável: Mantenha a vigilância contra o aparecimento de fungos.";
+                let climaTxt = weather && weather.hum < 45 ? "Ar seco: Priorize irrigação profunda e proteja o solo." : "Humidade estável: Vigie o aparecimento de fungos.";
                 const phaseKey = moon ? moon.label : 'Transição';
                 const moonAdvice = `Sob <b>${phaseKey}</b>: ${lunarDetails[phaseKey].do}`;
 
@@ -352,7 +348,7 @@
                     </div>
                     <div class="advice-section">
                         <b>Ciclo Atual: Julho</b>
-                        <p>Semear: Couve-galega e brócolos para o outono. <br>Colher: Tomate, pimento e beringela.</p>
+                        <p>Semear: Couve-galega e brócolos. <br>Colher: Tomate, pimento e beringela.</p>
                     </div>
                     <div class="advice-section">
                         <b>Clima e Lua</b>
