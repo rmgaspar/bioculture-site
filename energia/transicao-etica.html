@@ -148,6 +148,32 @@
         <script>
             let locationsDB = [], noticiasEthics = [], allZAER = [], currentZAERList = [], visiveisEthics = 4, visiveisZAER = 3;
             
+            const heroImages = [
+                "https://plus.unsplash.com/premium_photo-1678743133488-3e3400aafee2?q=80&w=2071&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1610028290816-5d937a395a49?q=80&w=2071&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1543484967-376c003831e0?q=80&w=2071&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1718110445810-ff0949d21b50?q=80&w=1975&auto=format&fit=crop"
+            ];
+
+            function initCarousel() {
+                const container = document.getElementById('globe-container');
+                if(!container) return;
+                heroImages.forEach((src, idx) => {
+                    const img = document.createElement('img');
+                    img.src = src;
+                    if(idx === 0) img.className = 'active';
+                    container.appendChild(img);
+                });
+                let current = 0;
+                setInterval(() => {
+                    const imgs = container.getElementsByTagName('img');
+                    if(!imgs.length) return;
+                    imgs[current].classList.remove('active');
+                    current = (current + 1) % imgs.length;
+                    imgs[current].classList.add('active');
+                }, 5000);
+            }
+
             const relatoriosEthics = [
                 { titulo: "PFZAER: Licenciamento e Silêncio Positivo", texto: "As Zonas de Aceleração (PFZAER) introduzem o 'silêncio positivo' no licenciamento ambiental, permitindo que projetos avancem sem AIA detalhada se prazos administrativos forem excedidos.", fonte: "DGEG / APA REA 2025" },
                 { titulo: "Mineração de Lítio e o Ciclo Hidrológico", texto: "A exploração de lítio exige o rebaixamento do nível freático, secando nascentes ancestrais e contaminando aquíferos com metais pesados.", fonte: "IAmbiente / IPMA 2025" },
@@ -169,6 +195,8 @@
             async function inicializarPagina() {
                 console.log("Iniciando Transição Ética...");
                 try {
+                    initCarousel();
+
                     const rLoc = await fetch('/data/freguesias_portugal.json');
                     locationsDB = await rLoc.json();
 

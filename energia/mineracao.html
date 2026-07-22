@@ -144,6 +144,32 @@
         <script>
             let locationsDB = [], noticiasMining = [], allProjects = [], visiveisMining = 4;
 
+            const heroImages = [
+                "https://www.portal-energia.com/wp-content/uploadsthumbs/minas-extracao-litio-1-jpg.webp",
+                "https://www.digitaljournal.com/wp-content/uploads/2022/10/5fa2ac7a94d70995551982f885cc8d6ee939a3b0.jpg",
+                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQBrhptfcXgTpqBNNqBK8FTb6hHtayv5ZaMFn4TX1oCvt9XjHGJ5_wvjSto&s=10",
+                "https://ichef.bbci.co.uk/ace/ws/640/cpsprodpb/ab11/live/9dd053e0-656a-11f0-9c94-35a6128c06e3.jpg.webp"
+            ];
+
+            function initCarousel() {
+                const container = document.getElementById('globe-container');
+                if(!container) return;
+                heroImages.forEach((src, idx) => {
+                    const img = document.createElement('img');
+                    img.src = src;
+                    if(idx === 0) img.className = 'active';
+                    container.appendChild(img);
+                });
+                let current = 0;
+                setInterval(() => {
+                    const imgs = container.getElementsByTagName('img');
+                    if(!imgs.length) return;
+                    imgs[current].classList.remove('active');
+                    current = (current + 1) % imgs.length;
+                    imgs[current].classList.add('active');
+                }, 5000);
+            }
+
             const relatoriosMining = [
                 { titulo: "Projeto Barroso: Lítio e Património", texto: "A exploração de lítio a céu aberto em Covas do Barroso ameaça o estatuto de Património Agrícola Mundial. O impacto estende-se à destruição de habitats e alteração do modo de vida comunitário.", fonte: "Savannah / APA 2025" },
                 { titulo: "Mapa do Minério e Concessões", texto: "Centenas de pedidos de prospecção ignoram frequentemente os PDM. O risco reside na fragmentação do território e na criação de passivos ambientais a longo prazo.", fonte: "MiningWatch PT / DGEG" },
@@ -165,6 +191,7 @@
             async function inicializarPagina() {
                 console.log("Iniciando Mineração...");
                 try {
+                    initCarousel();
                     // Carregamento direto sem cache para testar
                     const rLoc = await fetch('/data/freguesias_portugal.json');
                     locationsDB = await rLoc.json();
