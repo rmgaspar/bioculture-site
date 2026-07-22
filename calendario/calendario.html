@@ -28,7 +28,7 @@
                 box-shadow: 0 40px 100px rgba(0,0,0,0.05);
                 background: #fdfdfd; display: flex; flex-direction: column;
                 align-items: center; justify-content: space-between;
-                padding: 40px 0 45px 0; border: 1px solid #f2f2f2;
+                padding: 30px 0 40px 0; border: 1px solid #f2f2f2;
             }
 
             .globe-top { display: flex; flex-direction: column; align-items: center; gap: 3px; }
@@ -36,7 +36,11 @@
             .globe-weekday { font-size: 0.68em; font-weight: 900; color: #2e7d32; text-transform: uppercase; letter-spacing: 2px; }
             .globe-day-month { font-size: 1.45em; font-weight: 900; color: #1a1a1a; letter-spacing: -0.5px; line-height: 1; }
 
-            .week-stack { width: 100%; display: flex; flex-direction: column; gap: 14px; margin: 0; mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent); }
+            .week-stack { 
+                width: 100%; display: flex; flex-direction: column; gap: 12px; 
+                margin-top: -10px; /* Sobe a grelha de dias */
+                mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent); 
+            }
             .week-row { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; width: 100%; }
 
             .day-node { font-size: 0.85em; font-weight: 600; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 34px; color: #e0e0e0; }
@@ -52,15 +56,15 @@
 
             /* RODAPÉ DO GLOBO - FLEXBOX 2x2 */
             .globe-south { 
-                width: 85%;
+                width: 70%; /* Aproxima as colunas da linha central */
                 display: flex;
-                justify-content: space-around;
+                justify-content: space-between;
                 align-items: center; 
-                margin-top: -80px; 
+                margin-top: -110px; /* Sobe significativamente para a base do círculo */
                 z-index: 10;
             }
             .south-col { display: flex; flex-direction: column; align-items: center; gap: 8px; flex: 1; }
-            .v-sep { width: 1px; height: 60px; background: #eee; margin: 0 10px; }
+            .v-sep { width: 1px; height: 50px; background: #eee; margin: 0; }
             .meteo-icon-big { font-size: 2.8em; color: #fbc02d; line-height: 1; }
             .moon-svg-big { width: 45px; height: 45px; display: block; }
             .temp-range-label { font-size: 0.85em; font-weight: 800; color: #1a1a1a; letter-spacing: 1px; }
@@ -410,23 +414,73 @@
 
             function hideDetail() { document.getElementById('calendar-main-view').style.display = 'block'; document.getElementById('sanity-detail-view').style.display = 'none'; }
 
+            let horticolasDB = []; // Nova variável global
+
             async function inicializarPagina() {
                 try {
-                    const [rLoc, rPragas, rFlora] = await Promise.all([
+                    const [rLoc, rPragas, rFlora, rHorta] = await Promise.all([
                         fetch('/data/freguesias_portugal.json').then(r => r.json()),
                         fetch('/data/pragas.json').then(r => r.json()),
-                        fetch('/data/flora_invasora.json').then(r => r.json())
+                        fetch('/data/flora_invasora.json').then(r => r.json()),
+                        fetch('/data/horticolas.json').then(r => r.json()) // Novo fetch
                     ]);
-                    locationsDB = rLoc; pragasDB = rPragas; floraDB = rFlora;
+                    locationsDB = rLoc; pragasDB = rPragas; floraDB = rFlora; horticolasDB = rHorta;
+                    
                     const savedId = localStorage.getItem('biocultura_region');
                     infoGlobal = locationsDB.find(i => i.id === savedId) || locationsDB.find(i => i.lat !== 0) || locationsDB[0];
-                    if(infoGlobal) document.getElementById('reg-name').innerText = infoGlobal.titulo + (infoGlobal.concelho ? ', ' + toTitle(infoGlobal.concelho) : '');
+                    
+                    if(infoGlobal) {
+                        document.getElementById('reg-name').innerText = infoGlobal.titulo + (infoGlobal.concelho ? ', ' + toTitle(infoGlobal.concelho) : '');
+                    }
+                    
                     renderGlobe();
                     renderGrid(pragasDB, 'pragas-container', 4);
                     renderGrid(floraDB, 'flora-container', 4);
                     document.getElementById('report-grid-agri').innerHTML = agriReports.map(r => `<div class="report-item"><h5>${r.t}</h5><p>${r.p}</p><span class="report-source">Fonte: ${r.s}</span></div>`).join('');
                     setupLocationLogic();
                 } catch(e) { console.error(e); }
+            }
+
+            function updateState(moon, weather = null) {
+                const advice = document.getElementById('advice-content');
+                const region = infoGlobal?.titulo || 'sua região';
+                const regSlug = infoGlobal?.regiao?.toLowerCase() || '';
+                
+                // FILTRAGEM: Apenas produtos hortícolas que coincidam com a região do utilizador
+                const culturasHorticolas = horticolasDB.filter(h => h.r.includes(regSlug)).map(h => h.n);
+                
+                const solo = infoGlobal?.biomas?.solo || 'Misto';
+                const ph = infoGlobal?.biomas?.ph_solo || '6.5';
+
+                const tarefasJulho = {
+                    manutencao: "Rega profunda ao amanhecer, mulching orgânico e monda de infestantes.",
+                    colheita: "Tomate, pimento, beringela e ervas aromáticas.",
+                    sementeira: "Couve-galega, brócolos e couve-flor para o ciclo de outono."
+                };
+
+                let phTxt = parseFloat(ph) < 6.0 ? `Solo ácido (pH ${ph})` : `Solo equilibrado (pH ${ph})`;
+                const phaseKey = moon ? moon.label : 'Transição';
+                const moonAdvice = `Sob <b>${phaseKey}</b>: ${lunarDetails[phaseKey].do}`;
+
+                advice.innerHTML = `
+                    <div class="advice-section">
+                        <b>Culturas Hortícolas Recomendadas para ${region}</b>
+                        <p>${culturasHorticolas.length > 0 ? culturasHorticolas.map(f => `<span class="tag-reg">${f}</span>`).join('') : '<span class="tag-reg">Hortícolas de Verão</span>'}</p>
+                    </div>
+                    <div class="advice-section">
+                        <b>Manutenção e Solo</b>
+                        <p>${tarefasJulho.manutencao} Solo <b>${solo}</b> (${phTxt}).</p>
+                    </div>
+                    <div class="advice-section">
+                        <b>Ciclo Atual: Julho</b>
+                        <p>Sementeira: ${tarefasJulho.sementeira} <br>Colheita: ${tarefasJulho.colheita}</p>
+                    </div>
+                    <div class="advice-section">
+                        <b>Influência Lunar</b>
+                        <p>${moonAdvice}</p>
+                    </div>
+                `;
+                document.getElementById('lunar-icon-container').innerHTML = moon ? moon.svg : moonSVGs.ming;
             }
 
             function setupLocationLogic() {
