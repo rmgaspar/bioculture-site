@@ -1,0 +1,293 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>bioCultura - Impacto Digital & IA</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="/assets/css/main.css" />
+		<style>
+            body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
+			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
+            section { min-height: 100vh; display: flex; flex-direction: column; }
+            #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
+            #wrapper { padding-left: 18em !important; }
+            .inner { padding: 2.2em 4em 0 4em !important; max-width: 1600px !important; margin: 0 auto; width: 100%; }
+
+            .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; margin-bottom: 15px; display: block; }
+            .hero-split { display: flex; align-items: flex-start; justify-content: space-between; gap: 4em; margin-bottom: 2em; }
+            .hero-text { flex: 1.5; text-align: left; padding-top: 5px; } 
+            .hero-text h1 { font-size: 4em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; line-height: 0.95; margin: 0; }
+            
+            .region-header { font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #1a237e; margin: 25px 0 5px 0; display: block; }
+            .national-link { color: #bbb; cursor: pointer; font-weight: 400; font-size: 0.85em; display: block; text-transform: lowercase; letter-spacing: 1px; width: fit-content; }
+
+            .hero-visual { flex: 1; display: flex; justify-content: flex-end; }
+            .hero-globe { position: relative; width: 480px; height: 480px; border-radius: 50%; overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,0.12); background: #1a1a1a; }
+            .hero-globe img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; transition: opacity 2s ease-in-out; opacity: 0; }
+            .hero-globe img.active { opacity: 1; }
+
+            .impact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px 30px; margin-bottom: 40px; }
+            .impact-info { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px; }
+            .impact-info b { font-size: 0.85em; color: #1a1a1a; text-transform: uppercase; letter-spacing: 1px; }
+            .impact-bar-bg { height: 4px; width: 100%; background: #eee; border-radius: 10px; position: relative; overflow: hidden; margin-bottom: 12px; }
+            .impact-bar-fill { height: 100%; position: absolute; left: 0; top: 0; border-radius: 10px; transition: width 1.5s ease-in-out; }
+            .impact-desc { font-size: 0.85em; line-height: 1.5; color: #777; text-align: justify; margin: 0; }
+
+            .data-row { display: block; padding: 2.5em 0; border-bottom: 1px solid #f2f2f2; }
+            .data-row h4 { font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #1a237e; margin: 0 0 25px 0; display: block; }
+            
+            .project-item { display: flex; justify-content: space-between; align-items: center; }
+            .project-main { display: flex; flex-direction: column; gap: 3px; }
+            .project-name { font-weight: 700; color: #1a1a1a; font-size: 1.1em; }
+            .project-coords { font-size: 0.75em; color: #888; font-weight: 800; }
+            .project-detail-content { display: none; background: #fcfcfc; border-left: 2px solid #1a237e; padding: 25px; margin: 15px 0; font-size: 0.9em; color: #555; line-height: 1.6; }
+            .btn-toggle-detail { color: #1a237e; cursor: pointer; font-weight: 800; font-size: 0.9em; }
+
+            .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+            .report-item { border-top: 1px solid #f9f9f9; padding-top: 20px; }
+            .report-item h5 { font-size: 0.75em; font-weight: 900; text-transform: uppercase; color: #1a237e; margin-bottom: 12px; }
+            .report-item p { font-size: 0.9em; line-height: 1.7; color: #666; text-align: justify; }
+
+            .news-header { margin-top: 4em; display: block; font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; margin-bottom: 20px; }
+            .news-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px; }
+            .news-item { text-decoration: none; color: inherit; display: block; padding: 25px; background: #fdfdfd; border: 1px solid #f2f2f2; border-radius: 12px; transition: all 0.3s; }
+            .news-item:hover { transform: translateY(-5px); border-color: #ddd; }
+            .news-item h3 { font-size: 1.15em; font-weight: 700; color: #1a1a1a; margin-bottom: 12px; line-height: 1.3; }
+            .news-meta { display: flex; align-items: center; gap: 10px; border-top: 1px solid #f9f9f9; padding-top: 12px; margin-top: auto; }
+            .source-logo { width: 18px !important; height: 18px !important; object-fit: contain !important; filter: grayscale(100%); opacity: 0.6; }
+
+            .page-footer { margin-top: auto; padding: 4em 0 2.5em 0; border-top: 1px solid #f2f2f2; opacity: 0.3; text-align: right; }
+            .bio-res-item { padding: 12px 18px; font-size: 0.9em; color: #666; cursor: pointer; border-bottom: 1px solid #f9f9f9 !important; }
+
+            @media screen and (max-width: 1280px) {
+                #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
+                #wrapper { padding-left: 0 !important; }
+                .hero-split, .report-grid, .impact-grid { grid-template-columns: 1fr; }
+                .hero-globe { width: 350px; height: 350px; margin: 0 auto; }
+            }
+		</style>
+	</head>
+	<body class="is-preload">
+		<div id="wrapper">
+			<div id="main">
+                <div class="inner">
+                    <section>
+                        <div class="hero-split">
+                            <div class="hero-text">
+                                <span class="category-label">Extrativismo de Recursos Vitais</span>
+                                <h1>Impacto Digital & IA</h1>
+                                
+                                <h4 class="region-header">PRESSÃO TÉRMICA E HÍDRICA EM: <span id="reg-name-caps">PORTUGAL</span></h4>
+                                <span class="national-link" onclick="resetToNational()">(ver ambito nacional)</span>
+
+                                <div id="digital-dashboard" style="display:none; margin-top:40px;">
+                                    <div id="impact-container" class="impact-grid"></div>
+                                </div>
+                            </div>
+                            <div class="hero-visual">
+                                <div class="hero-globe" id="globe-container"></div>
+                            </div>
+                        </div>
+
+                        <div class="data-row">
+                            <h4>Nós de Dados e Centros de IA</h4>
+                            <div id="projects-list-main"></div>
+                        </div>
+
+                        <div class="data-row">
+                            <h4>O Custo Físico do Virtual</h4>
+                            <div id="report-grid-digital" class="report-grid"></div>
+                        </div>
+
+                        <span class="news-header">noticias</span>
+                        <div id="noticias-digital-dinamico" class="news-list"></div>
+
+                        <footer class="page-footer">
+                            <span style="display: block; font-size: 0.85em; font-weight: 900; color: #333;">bioCultura</span>
+                            <span style="display: block; font-size: 0.5em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Global Regeneration</span>
+                        </footer>
+					</section>
+				</div>
+            </div>
+			<div id="sidebar"></div>
+		</div>
+
+		<script src="/assets/js/jquery.min.js"></script>
+        <script>
+            let locationsDB = [], noticiasDigital = [], allDigital = [], currentDigitalList = [], visiveisDigital = 4;
+            
+            const heroImages = [
+                "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2070&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2070&auto=format&fit=crop"
+            ];
+
+            const relatoriosDigital = [
+                { titulo: "A Sede da IA", texto: "Uma conversa de 20 perguntas com uma IA 'consome' 500ml de água potável para arrefecimento dos servidores. À escala global, isto representa biliões de litros desviados de ecossistemas naturais.", fonte: "Universidade das Nações Unidas" },
+                { titulo: "Ilhas de Calor Digital", texto: "Data Centers Hyperscale emitem calor residual constante, elevando a temperatura do solo circundante em até 16ºC, o que altera a microvida e a humidade da terra local.", fonte: "Allianz Research" },
+                { titulo: "Carga na Rede Nacional", texto: "A expansão de centros de dados em Sines e Lisboa exige o reforço de linhas de alta tensão, competindo com a energia disponível para o consumo doméstico e industrial.", fonte: "REN / DGEG" },
+                { titulo: "Resíduos de Hardware", texto: "O ciclo de vida acelerado dos chips de IA gera milhões de toneladas de lixo eletrónico tóxico, cuja reciclagem em Portugal ainda é insuficiente para o volume previsto até 2030.", fonte: "Observatório de Resíduos" }
+            ];
+
+            const toTitle = s => s ? s.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : '';
+
+            function getDistance(lat1, lon1, lat2, lon2) {
+                if(!lat1 || !lat2) return 9999;
+                const R = 6371; 
+                const dLat = (lat2 - lat1) * Math.PI / 180;
+                const dLon = (lon2 - lon1) * Math.PI / 180;
+                const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
+                return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+            }
+
+            async function inicializarPagina() {
+                try {
+                    const [rLoc, rNews, rDigital] = await Promise.all([
+                        fetch('/data/freguesias_portugal.json').then(r => r.json()),
+                        fetch('/data/noticias.json').then(r => r.json()),
+                        fetch('/data/impacto_digital.json').then(r => r.json())
+                    ]);
+                    
+                    locationsDB = rLoc;
+                    allDigital = rDigital;
+                    noticiasDigital = rNews.filter(n => (n.categoria || "").toLowerCase().includes('solo') || (n.titulo || "").toLowerCase().includes('ia') || (n.titulo || "").toLowerCase().includes('dados'));
+                    
+                    const savedId = localStorage.getItem('biocultura_region');
+                    const info = savedId ? locationsDB.find(i => i.id === savedId) : null;
+                    
+                    renderDashboard(info);
+                    renderizarCards();
+                    renderRelatorios();
+                    initCarousel();
+                    setupLocationLogic();
+                } catch(e) { console.error(e); }
+            }
+
+            function setupLocationLogic() {
+                $(document).on('input', '#loc-search-input', function() {
+                    const val = $(this).val().toLowerCase(), dropdown = $('#loc-dropdown').empty();
+                    if(val.length < 2) return dropdown.hide();
+                    locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0,8).forEach(m => {
+                        $('<div class="bio-res-item"></div>').text(m.titulo + (m.concelho ? ' (' + m.concelho + ')' : '')).on('click', () => {
+                            localStorage.setItem('biocultura_region', m.id);
+                            location.reload(); 
+                        }).appendTo(dropdown);
+                    });
+                    dropdown.show();
+                });
+
+                $(document).on('click', '#btn-gps-trigger', function() {
+                    const btn = $(this); btn.css('opacity', '0.5');
+                    navigator.geolocation.getCurrentPosition(pos => {
+                        const uLat = pos.coords.latitude, uLon = pos.coords.longitude;
+                        let closest = null, minD = Infinity;
+                        locationsDB.forEach(c => {
+                            if(!c.lat || !c.lon || c.lat === 0) return;
+                            const d = getDistance(uLat, uLon, c.lat, c.lon);
+                            if(d < minD) { minD = d; closest = c; }
+                        });
+                        if(closest) { localStorage.setItem('biocultura_region', closest.id); location.reload(); }
+                        btn.css('opacity', '1');
+                    }, () => { btn.css('opacity', '1'); }, { timeout: 5000 });
+                });
+            }
+
+            function initCarousel() {
+                const container = document.getElementById('globe-container');
+                heroImages.forEach((src, idx) => {
+                    const img = document.createElement('img');
+                    img.src = src;
+                    if(idx === 0) img.className = 'active';
+                    container.appendChild(img);
+                });
+                let current = 0;
+                setInterval(() => {
+                    const imgs = container.querySelectorAll('img');
+                    if(!imgs.length) return;
+                    imgs[current].classList.remove('active');
+                    current = (current + 1) % imgs.length;
+                    imgs[current].classList.add('active');
+                }, 5000);
+            }
+
+            function renderDashboard(info) {
+                const container = document.getElementById('impact-container');
+                const titleCaps = document.getElementById('reg-name-caps');
+                document.getElementById('digital-dashboard').style.display = 'block';
+
+                const originLat = info ? info.lat : 39.5;
+                const originLon = info ? info.lon : -8.0;
+
+                titleCaps.innerText = info ? (info.titulo + (info.concelho ? ', ' + toTitle(info.concelho) : '')).toUpperCase() : "PORTUGAL";
+
+                currentDigitalList = allDigital.map(p => {
+                    p.dist = getDistance(originLat, originLon, p.lat, p.lon);
+                    return p;
+                }).sort((a,b) => a.dist - b.dist);
+
+                const minDistance = currentDigitalList.length > 0 ? currentDigitalList[0].dist : 100;
+                const pressure = Math.max(10, 100 - (minDistance * 1.5));
+
+                const impacts = [
+                    { label: "Pegada Hídrica IA", val: Math.round(pressure * 0.8), color: "#0288d1", desc: "Consumo de água potável para refrigeração de racks de alta densidade." },
+                    { label: "Intensidade Energética", val: Math.round(pressure * 0.9), color: "#f1c40f", desc: "Carga na rede elétrica local e dependência de fontes renováveis dedicadas." },
+                    { label: "Calor Residual", val: Math.round(pressure * 0.75), color: "#c62828", desc: "Emissão de calor antropogénico que afeta o microclima e solo regional." },
+                    { label: "Risco de E-Waste", val: 65, color: "#795548", desc: "Volume de componentes eletrónicos obsoletos com metais pesados." }
+                ];
+
+                container.innerHTML = impacts.map(m => `
+                    <div class="impact-item">
+                        <div class="impact-info"><b>${m.label}</b> <span>${m.val}%</span></div>
+                        <div class="impact-bar-bg"><div class="impact-bar-fill" style="width:${m.val}%; background:${m.color}"></div></div>
+                        <p class="impact-desc">${m.desc}</p>
+                    </div>`).join('');
+
+                renderDigitalList();
+            }
+
+            function renderDigitalList() {
+                const list = document.getElementById('projects-list-main');
+                list.innerHTML = currentDigitalList.map(p => `
+                    <div style="border-bottom: 1px solid #f9f9f9; padding: 20px 0;">
+                        <div class="project-item">
+                            <div class="project-main">
+                                <span class="project-name">${p.nome} <span class="btn-toggle-detail" onclick="toggleDetail('${p.id}')">+</span></span>
+                                <span class="project-coords">${p.concelho} / ${p.distrito} — ${p.dist.toFixed(1)} km</span>
+                            </div>
+                            <span class="project-status">${p.tipo}</span>
+                        </div>
+                        <p class="project-summary-text">${p.detalhe}</p>
+                        <div id="detail-${p.id}" class="project-detail-content">
+                            <h5>Métricas de Pressão</h5>
+                            <p><b>Energia:</b> ${p.consumo_energia}</p>
+                            <p><b>Água:</b> ${p.consumo_agua}</p>
+                            <p><b>Estado:</b> ${p.status}</p>
+                            <div style="margin-top:15px;"><span class="btn-toggle-detail" onclick="toggleDetail('${p.id}')">[ fechar ]</span></div>
+                        </div>
+                    </div>`).join('');
+            }
+
+            function toggleDetail(id) { $(`#detail-${id}`).slideToggle(); }
+            function renderRelatorios() {
+                document.getElementById('report-grid-digital').innerHTML = relatoriosDigital.map(r => `
+                    <div class="report-item"><h5>${r.titulo}</h5><p>${r.texto}</p><span style="font-size:0.65em; color:#bbb; text-transform:uppercase;">FONTE: ${r.fonte}</span></div>`).join('');
+            }
+            function renderizarCards() {
+                document.getElementById('noticias-digital-dinamico').innerHTML = noticiasDigital.slice(0,4).map(n => `
+                    <a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-item">
+                        <h3>${n.titulo}</h3>
+                        <div class="news-meta">
+                            <img src="${n.logo || '/assets/img/logo.png'}" class="source-logo" onerror="this.style.display='none'">
+                            <span>${n.data}</span>
+                        </div>
+                    </a>`).join('');
+            }
+            function resetToNational() { localStorage.removeItem('biocultura_region'); location.reload(); }
+
+            fetch('/sidebar-content.html').then(r => r.text()).then(html => {
+                document.getElementById('sidebar').innerHTML = html;
+                inicializarPagina();
+            });
+        </script>
+	</body>
+</html>
