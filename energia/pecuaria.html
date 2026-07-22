@@ -64,6 +64,44 @@
                 .hero-split, .report-grid, .impact-grid { grid-template-columns: 1fr; }
                 .hero-globe { width: 350px; height: 350px; margin: 0 auto; }
             }
+            /* Subtítulo padrão bioCultura */
+            .news-header { 
+                margin-top: 4em; 
+                display: block; 
+                font-size: 0.65em; 
+                font-weight: 900; 
+                text-transform: uppercase; 
+                letter-spacing: 4px; 
+                color: #bbb; 
+                margin-bottom: 20px; 
+            }
+
+            /* Contentor de Meta das Notícias */
+            .news-meta { 
+                display: flex; 
+                align-items: center; 
+                gap: 10px; 
+                border-top: 1px solid #f9f9f9; 
+                padding-top: 12px; 
+                margin-top: auto;
+            }
+
+            /* Ícones das fontes (Forçados a cinza e pequenos) */
+            .source-logo { 
+                width: 18px !important; 
+                height: 18px !important; 
+                object-fit: contain !important; 
+                filter: grayscale(100%); 
+                opacity: 0.6; 
+            }
+
+            .news-meta span { 
+                font-size: 0.65em; 
+                font-weight: 800; 
+                color: #bbb; 
+                text-transform: uppercase; 
+                letter-spacing: 1px; 
+            }
 		</style>
 	</head>
 	<body class="is-preload">
@@ -101,7 +139,7 @@
                             <div id="report-grid-pecuaria" class="report-grid"></div>
                         </div>
 
-                        <span class="news-header">noticias relacionadas</span>
+                        <span class="news-header">noticias</span>
                         <div id="noticias-pecuaria-dinamico" class="news-list"></div>
 
                         <footer class="page-footer">
@@ -279,10 +317,16 @@
                     <div class="report-item"><h5>${r.titulo}</h5><p>${r.texto}</p><span style="font-size:0.65em; color:#bbb;">FONTE: ${r.fonte}</span></div>`).join('');
             }
             function renderizarCards() {
-                document.getElementById('noticias-pecuaria-dinamico').innerHTML = noticiasBio.slice(0,4).map(n => `
+                const container = document.getElementById('noticias-pecuaria-dinamico');
+                if(!container) return;
+                
+                container.innerHTML = noticiasBio.slice(0, 4).map(n => `
                     <a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-item">
                         <h3>${n.titulo}</h3>
-                        <div class="news-meta"><img src="${n.logo}" class="source-logo"><span>${n.data}</span></div>
+                        <div class="news-meta">
+                            <img src="${n.logo || '/assets/img/logo.png'}" class="source-logo" onerror="this.style.display='none'">
+                            <span>${n.data}</span>
+                        </div>
                     </a>`).join('');
             }
             function resetToNational() { localStorage.removeItem('biocultura_region'); location.reload(); }
