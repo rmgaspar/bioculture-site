@@ -86,6 +86,14 @@
                 .hero-globe { width: 350px; height: 350px; margin: 0 auto; }
             }
 		</style>
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV0FD8PXC"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-6PV0FD8PXC');
+        </script>
 	</head>
 	<body class="is-preload">
 		<div id="wrapper">
@@ -219,6 +227,7 @@
                             .text(m.titulo + (m.concelho ? ' (' + m.concelho + ')' : ''))
                             .on('click', () => {
                                 localStorage.setItem('biocultura_region', m.id);
+                                trackRegionChange(m.id);
                                 location.reload();
                             }).appendTo(dropdown);
                     });
@@ -236,6 +245,7 @@
                             if(d < minD) { minD = d; closest = c; }
                         });
                         localStorage.setItem('biocultura_region', closest.id);
+                        trackRegionChange(closest.id);
                         location.reload();
                     });
                 });
@@ -357,6 +367,28 @@
                 document.getElementById('sidebar').innerHTML = html;
                 inicializarPagina();
             });
+         // 1. Tracking de cliques em links e botões
+            $(document).on('click', 'a, button', function() {
+                const label = $(this).text().trim() || $(this).attr('id') || 'unnamed';
+                const destination = $(this).attr('href') || 'action';
+                if (typeof gtag === 'function') {
+                    gtag('event', 'click', {
+                        'event_category': 'engagement',
+                        'event_label': label,
+                        'value': destination
+                    });
+                }
+            });
+
+            // 2. Função para tracking de mudança de localidade
+            function trackRegionChange(regionId) {
+                if (typeof gtag === 'function') {
+                    gtag('event', 'region_change', {
+                        'event_category': 'localization',
+                        'event_label': regionId
+                    });
+                }
+            }      
         </script>
 	</body>
 </html>
