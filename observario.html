@@ -1,0 +1,155 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Observatório - bioCultura</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+	</head>
+	<body class="is-preload">
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Main -->
+					<div id="main">
+						<div class="inner">
+
+							<!-- Header -->
+								<header id="header">
+									<a href="index.html" class="logo"><strong>bioCultura</strong> Observatório de Impacto</a>
+								</header>
+
+							<!-- Content -->
+								<section>
+									<header class="main">
+										<h1>Observatório Ambiental (2004 - 2024)</h1>
+									</header>
+
+									<p>Análise comparativa de dados estatísticos oficiais dos últimos 20 anos. Este observatório cruza dados de incêndios, produção agrícola, pecuária, temperatura e consumo de água para monitorizar a regeneração e o impacto no território português.</p>
+
+									<hr class="major" />
+
+									<!-- Container do Gráfico -->
+									<div class="box" style="background: #ffffff;">
+										<canvas id="chartBioCultura" style="width: 100%; height: 400px;"></canvas>
+									</div>
+
+									<hr class="major" />
+
+									<div class="row">
+										<div class="col-6 col-12-small">
+											<h3>Fontes de Dados</h3>
+											<ul>
+												<li><strong>Incêndios:</strong> ICNF (Área Ardida em Hectares)</li>
+												<li><strong>Produção:</strong> Banco Mundial / INE (Índices de Produção)</li>
+												<li><strong>Clima:</strong> IPMA (Temperatura Média Anual)</li>
+												<li><strong>Água:</strong> ERSAR / PORDATA (Consumo m3/pessoa)</li>
+											</ul>
+										</div>
+									</div>
+								</section>
+
+						</div>
+					</div>
+
+				<!-- Sidebar -->
+					<div id="sidebar">
+						<div class="inner" id="sidebar-content">
+							<!-- O conteúdo da sidebar será carregado dinamicamente como nas outras páginas -->
+						</div>
+					</div>
+
+			</div>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+			
+			<!-- Chart.js para o Observatório -->
+			<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+			<script>
+				async function initObservatorio() {
+					try {
+						const response = await fetch('observatorio.json');
+						const data = await response.json();
+						const ds = data.datasets;
+
+						// Alinhamento dinâmico de anos (Eixo X)
+						const anos = [...new Set([
+							...Object.keys(ds.incendios), 
+							...Object.keys(ds.agricultura),
+							...Object.keys(ds.temperatura)
+						])].sort();
+
+						const ctx = document.getElementById('chartBioCultura').getContext('2d');
+						
+						new Chart(ctx, {
+							type: 'line',
+							data: {
+								labels: anos,
+								datasets: [
+									{
+										label: 'Área Ardida (ha)',
+										data: anos.map(a => ds.incendios[a] || null),
+										borderColor: '#e74c3c',
+										backgroundColor: 'rgba(231, 76, 60, 0.1)',
+										yAxisID: 'y',
+										borderWidth: 2,
+										tension: 0.3
+									},
+									{
+										label: 'Prod. Agrícola (Índice)',
+										data: anos.map(a => ds.agricultura[a] || null),
+										borderColor: '#2ecc71',
+										yAxisID: 'y1',
+										borderWidth: 2,
+										tension: 0.3
+									},
+									{
+										label: 'Temp. Média (°C)',
+										data: anos.map(a => ds.temperatura[a] || null),
+										borderColor: '#f1c40f',
+										yAxisID: 'y1',
+										borderWidth: 2,
+										tension: 0.3
+									}
+								]
+							},
+							options: {
+								responsive: true,
+								maintainAspectRatio: false,
+								scales: {
+									y: { 
+										type: 'linear', position: 'left', 
+										title: { display: true, text: 'Hectares (Incêndios)' } 
+									},
+									y1: { 
+										type: 'linear', position: 'right', 
+										title: { display: true, text: 'Índice / Graus' },
+										grid: { drawOnChartArea: false }
+									}
+								},
+								plugins: {
+									legend: { position: 'bottom' }
+								}
+							}
+						});
+					} catch (e) {
+						console.error("Erro ao carregar dados do observatório:", e);
+					}
+				}
+
+				// Carregar Sidebar e Gráfico
+				$(function() {
+					$("#sidebar-content").load("sidebar-content.html"); // Mantendo a lógica do teu projeto
+					initObservatorio();
+				});
+			</script>
+
+	</body>
+</html>
