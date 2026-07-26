@@ -1,0 +1,75 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Observatório da Terra - bioCultura</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+	</head>
+	<body class="is-preload">
+		<div id="wrapper">
+			<div id="main">
+				<div class="inner">
+					<header id="header">
+						<a href="index.html" class="logo"><strong>bioCultura</strong> Observatório da Terra</a>
+					</header>
+
+					<section>
+						<header class="main">
+							<h1>Indicadores de Pressão Planetária</h1>
+						</header>
+						<p>Correlação entre atividades humanas (Pressão) e o estado dos recursos vitais (Impacto).</p>
+
+						<div class="box">
+							<h3>Clima: Veículos vs Temperatura Média</h3>
+							<canvas id="chartClima" style="height:400px;"></canvas>
+						</div>
+
+						<div class="box">
+							<h3>Solo: Área Ardida vs Produção de Carne (Metano)</h3>
+							<canvas id="chartSolo" style="height:400px;"></canvas>
+						</div>
+					</section>
+				</div>
+			</div>
+			<div id="sidebar"><div class="inner" id="sidebar-content"></div></div>
+		</div>
+
+		<script src="assets/js/jquery.min.js"></script>
+		<script src="assets/js/main.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+		<script>
+			async function init() {
+				const res = await fetch('observatorio_terra.json');
+				const data = await res.json();
+				const esferas = data.esferas;
+
+				// Gráfico Clima
+				const labelsClima = Object.keys(esferas.atmosfera.temp_media).sort();
+				new Chart(document.getElementById('chartClima'), {
+					type: 'line',
+					data: {
+						labels: labelsClima,
+						datasets: [
+							{ label: 'Veículos Novos', data: labelsClima.map(y => esferas.atmosfera.veiculos_novos[y]), borderColor: '#3498db', yAxisID: 'y' },
+							{ label: 'Temp. Média (ºC)', data: labelsClima.map(y => esferas.atmosfera.temp_media[y]), borderColor: '#e74c3c', yAxisID: 'y1' }
+						]
+					},
+					options: { scales: { y: { position: 'left' }, y1: { position: 'right', grid: { drawOnChartArea: false } } } }
+				});
+
+				// Gráfico Solo/Bio
+				const labelsBio = Object.keys(esferas.biosfera.area_ardida_ha).sort();
+				new Chart(document.getElementById('chartSolo'), {
+					type: 'bar',
+					data: {
+						labels: labelsBio,
+						datasets: [{ label: 'Área Ardida (ha)', data: labelsBio.map(y => esferas.biosfera.area_ardida_ha[y]), backgroundColor: '#e67e22' }]
+					}
+				});
+			}
+			$(function() { $("#sidebar-content").load("sidebar-content.html"); init(); });
+		</script>
+	</body>
+</html>
