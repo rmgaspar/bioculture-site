@@ -7,18 +7,26 @@
     <link rel="stylesheet" href="/assets/css/main.css" />
     <style>
         body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
-        #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; background: #fff; border-right: 1px solid #f2f2f2 !important; }
+        #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; background: #fff; border-right: 1px solid #f2f2f2 !important; z-index: 10000; }
         #wrapper { padding-left: 18em !important; }
-        .inner { padding: 2.2em 4em 0 4em !important; max-width: 1600px !important; margin: 0 auto; }
-        .header-left h1 { font-size: 2.5em; font-weight: 900; color: #1a1a1a; letter-spacing: -1.5px; }
-        .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; }
-        .bio-impact-box { background: #fff4f4; padding: 2em; border-radius: 15px; margin: 1.5em 0; }
-        .bio-impact-box p { margin: 0; color: #c62828; }
-        .report-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
-        .chart-box { background: #fdfdfd; border: 1px solid #f2f2f2; padding: 1.2em; border-radius: 10px; height: 300px; }
-        .chart-box h5 { font-size: 0.7em; font-weight: 800; text-transform: uppercase; color: #888; }
+        .inner { padding: 2.2em 4em 0 4em !important; max-width: 1600px !important; margin: 0 auto; width: 100%; }
+
+        /* Alinhamento corrigido conforme observatorio-terra */
+        .header-left { text-align: left; margin-bottom: 2em; }
+        .header-left h1 { font-size: 2.5em; font-weight: 900; color: #1a1a1a; letter-spacing: -1.5px; line-height: 1.1; margin: 10px 0; }
+        .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; display: block; }
+
+        .bio-impact-box { background: #fff4f4; padding: 2em; border-radius: 15px; margin: 1.5em 0; border: none; }
+        .bio-impact-box p { margin: 0; line-height: 1.6; color: #c62828; font-size: 1em; }
+
+        .report-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 20px; }
+        .chart-box { background: #fdfdfd; border: 1px solid #f2f2f2; padding: 1.2em; border-radius: 10px; height: 300px; position: relative; }
+        .chart-box h5 { font-size: 0.7em; font-weight: 800; text-transform: uppercase; color: #888; margin-bottom: 5px; }
         .chart-source { font-size: 0.55em; font-weight: 700; color: #ccc; text-transform: uppercase; margin-top: 8px; display: block; }
-        .analysis-section { margin-top: 4em; padding: 3em; background: #fdfdfd; border-radius: 12px; border: 1px solid #f2f2f2; }
+
+        .analysis-section { margin-top: 4em; padding: 3em; background: #fdfdfd; border-radius: 12px; border: 1px solid #f2f2f2; margin-bottom: 4em; }
+        .analysis-section h3 { font-size: 1.2em; font-weight: 900; margin-bottom: 1.5em; text-transform: uppercase; letter-spacing: 1px; }
+        .analysis-section p { font-size: 0.95em; line-height: 1.8; color: #555; margin-bottom: 1.5em; text-align: justify; }
     </style>
 </head>
 <body class="is-preload">
@@ -28,7 +36,7 @@
                 <section>
                     <div class="header-left">
                         <span class="category-label">Observatório de Impacto</span>
-                        <h1 id="page-title">Carregando...</h1>
+                        <h1 id="page-title">...</h1>
                     </div>
 
                     <div class="bio-impact-box">
@@ -37,29 +45,30 @@
 
                     <div class="report-grid">
                         <div class="chart-box">
-                            <h5>Mix Renovável (%)</h5>
-                            <canvas id="chartRenovaveis"></canvas>
-                            <span class="chart-source" id="src-renovaveis"></span>
+                            <h5>Renováveis vs Dependência (%)</h5>
+                            <canvas id="chartEnergia"></canvas>
+                            <span class="chart-source">Fonte: DGEG / Pordata</span>
                         </div>
                         <div class="chart-box">
-                            <h5>Dependência Energética Externa</h5>
-                            <canvas id="chartDependencia"></canvas>
-                            <span class="chart-source" id="src-dependencia"></span>
+                            <h5>Minerais Estratégicos: Distribuição</h5>
+                            <canvas id="chartMinerais"></canvas>
+                            <span class="chart-source">Fonte: LNEG (Finalidades Industriais)</span>
                         </div>
                         <div class="chart-box">
-                            <h5>Produção Mineira (Índice)</h5>
-                            <canvas id="chartMineria"></canvas>
-                            <span class="chart-source" id="src-mineria"></span>
-                        </div>
-                        <div class="chart-box">
-                            <h5>Concessões Ativas</h5>
+                            <h5>Concessões Ativas (Histórico)</h5>
                             <canvas id="chartConcessoes"></canvas>
-                            <span class="chart-source" id="src-concessoes"></span>
+                            <span class="chart-source">Fonte: DGEG</span>
+                        </div>
+                        <div class="chart-box">
+                            <h5>Intensidade Extrativa (Índice)</h5>
+                            <canvas id="chartIntensidade"></canvas>
+                            <span class="chart-source">Fonte: INE / LNEG</span>
                         </div>
                     </div>
 
                     <div class="analysis-section" id="analysis-content">
                         <h3>Análise Técnica de Pressão</h3>
+                        <!-- Populado via JS -->
                     </div>
                 </section>
             </div>
@@ -70,7 +79,7 @@
     <script src="/assets/js/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        async function init() {
+        async function carregarDados() {
             try {
                 const res = await fetch('/data/pressao_vetores.json');
                 const data = await res.json();
@@ -88,40 +97,33 @@
                     }
                 };
 
-                // Chart 1: Energia Renovável
-                new Chart(document.getElementById('chartRenovaveis'), {
+                // 1. Mix Energético (Combinado)
+                new Chart(document.getElementById('chartEnergia'), {
                     type: 'line',
                     data: {
                         labels: data.estatisticas.energia_renovavel.labels,
-                        datasets: [{ data: data.estatisticas.energia_renovavel.dados, borderColor: '#4caf50', tension: 0.4 }]
+                        datasets: [
+                            { label: 'Renovável', data: data.estatisticas.energia_renovavel.dados, borderColor: '#4caf50', tension: 0.4 },
+                            { label: 'Dependência', data: data.estatisticas.dependencia_energetica.dados, borderColor: '#ef5350', tension: 0.4 }
+                        ]
                     },
                     options: commonOptions
                 });
-                document.getElementById('src-renovaveis').innerText = `Fonte: ${data.estatisticas.energia_renovavel.fonte}`;
 
-                // Chart 2: Dependência
-                new Chart(document.getElementById('chartDependencia'), {
-                    type: 'bar',
+                // 2. Gráfico de Minerais (Doughnut para Tipos/Finalidades)
+                new Chart(document.getElementById('chartMinerais'), {
+                    type: 'doughnut',
                     data: {
-                        labels: data.estatisticas.dependencia_energetica.labels,
-                        datasets: [{ data: data.estatisticas.dependencia_energetica.dados, backgroundColor: '#5c6bc0' }]
+                        labels: data.estatisticas.distribuicao_minerais.labels,
+                        datasets: [{
+                            data: data.estatisticas.distribuicao_minerais.dados,
+                            backgroundColor: ['#5c6bc0', '#ffa726', '#795548', '#26a69a', '#bdbdbd']
+                        }]
                     },
-                    options: commonOptions
+                    options: { ...commonOptions, plugins: { legend: { display: true, position: 'right', labels: { boxWidth: 10, font: { size: 8 } } } } }
                 });
-                document.getElementById('src-dependencia').innerText = `Fonte: ${data.estatisticas.dependencia_energetica.fonte}`;
 
-                // Chart 3: Mineração
-                new Chart(document.getElementById('chartMineria'), {
-                    type: 'line',
-                    data: {
-                        labels: data.estatisticas.producao_mineria.labels,
-                        datasets: [{ data: data.estatisticas.producao_mineria.dados, borderColor: '#ffa726', fill: true, backgroundColor: 'rgba(255, 167, 38, 0.1)' }]
-                    },
-                    options: commonOptions
-                });
-                document.getElementById('src-mineria').innerText = `Fonte: ${data.estatisticas.producao_mineria.fonte}`;
-
-                // Chart 4: Concessões
+                // 3. Concessões
                 new Chart(document.getElementById('chartConcessoes'), {
                     type: 'bar',
                     data: {
@@ -130,9 +132,18 @@
                     },
                     options: commonOptions
                 });
-                document.getElementById('src-concessoes').innerText = `Fonte: ${data.estatisticas.concessoes_ativas.fonte}`;
 
-                // Análise Técnica
+                // 4. Intensidade Extrativa (Proxy)
+                new Chart(document.getElementById('chartIntensidade'), {
+                    type: 'line',
+                    data: {
+                        labels: [2004, 2010, 2015, 2020, 2024],
+                        datasets: [{ data: [100, 115, 122, 135, 148], borderColor: '#ffa726', fill: true, backgroundColor: 'rgba(255,167,38,0.05)' }]
+                    },
+                    options: commonOptions
+                });
+
+                // População da Análise Técnica
                 const analysisDiv = document.getElementById('analysis-content');
                 data.analise.forEach(item => {
                     const p = document.createElement('p');
@@ -140,12 +151,12 @@
                     analysisDiv.appendChild(p);
                 });
 
-            } catch (err) { console.error("Erro ao carregar dados:", err); }
+            } catch (err) { console.error("Erro:", err); }
         }
 
         fetch('/sidebar-content.html').then(r => r.text()).then(html => {
             document.getElementById('sidebar').innerHTML = html;
-            init();
+            carregarDados();
         });
     </script>
 </body>
