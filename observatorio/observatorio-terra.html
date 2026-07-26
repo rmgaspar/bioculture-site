@@ -1,75 +1,80 @@
-<!DOCTYPE HTML>
-<html>
-	<head>
-		<title>Observatório da Terra - bioCultura</title>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-		<link rel="stylesheet" href="assets/css/main.css" />
-	</head>
-	<body class="is-preload">
-		<div id="wrapper">
-			<div id="main">
-				<div class="inner">
-					<header id="header">
-						<a href="index.html" class="logo"><strong>bioCultura</strong> Observatório da Terra</a>
-					</header>
+<section>
+    <header class="main">
+        <h1>Observatório da Terra v2.0</h1>
+    </header>
 
-					<section>
-						<header class="main">
-							<h1>Indicadores de Pressão Planetária</h1>
-						</header>
-						<p>Correlação entre atividades humanas (Pressão) e o estado dos recursos vitais (Impacto).</p>
+    <div class="row">
+        <!-- Dashboard Clima: CO2 vs Temperatura -->
+        <div class="col-6 col-12-small">
+            <div class="box">
+                <h3>Atmosfera: CO2 vs Aquecimento</h3>
+                <canvas id="chartAtmosfera" style="height:300px;"></canvas>
+            </div>
+        </div>
 
-						<div class="box">
-							<h3>Clima: Veículos vs Temperatura Média</h3>
-							<canvas id="chartClima" style="height:400px;"></canvas>
-						</div>
+        <!-- Dashboard Mar: Pesca vs Qualidade Água -->
+        <div class="col-6 col-12-small">
+            <div class="box">
+                <h3>Recursos Marinhos: Capturas vs Saúde Balnear</h3>
+                <canvas id="chartMar" style="height:300px;"></canvas>
+            </div>
+        </div>
 
-						<div class="box">
-							<h3>Solo: Área Ardida vs Produção de Carne (Metano)</h3>
-							<canvas id="chartSolo" style="height:400px;"></canvas>
-						</div>
-					</section>
-				</div>
-			</div>
-			<div id="sidebar"><div class="inner" id="sidebar-content"></div></div>
-		</div>
+        <!-- Dashboard Biodiversidade -->
+        <div class="col-12">
+            <div class="box">
+                <h3>Pressão Biológica: Área Ardida vs Pesticidas</h3>
+                <canvas id="chartBio" style="height:400px;"></canvas>
+            </div>
+        </div>
+    </div>
+</section>
 
-		<script src="assets/js/jquery.min.js"></script>
-		<script src="assets/js/main.js"></script>
-		<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+async function render() {
+    const res = await fetch('observatorio_terra.json');
+    const data = await res.json();
+    const e = data.esferas;
 
-		<script>
-			async function init() {
-				const res = await fetch('observatorio_terra.json');
-				const data = await res.json();
-				const esferas = data.esferas;
+    // 1. Atmosfera (CO2 vs Temp)
+    const labelsAtmos = Object.keys(e.atmosfera.temp_anomalia).sort();
+    new Chart(document.getElementById('chartAtmosfera'), {
+        type: 'line',
+        data: {
+            labels: labelsAtmos,
+            datasets: [
+                { label: 'CO2 (kt)', data: labelsAtmos.map(y => e.atmosfera.co2_kt[y]), borderColor: '#95a5a6', yAxisID: 'y' },
+                { label: 'Temp (ºC)', data: labelsAtmos.map(y => e.atmosfera.temp_anomalia[y]), borderColor: '#e74c3c', yAxisID: 'y1' }
+            ]
+        },
+        options: { scales: { y1: { position: 'right' } } }
+    });
 
-				// Gráfico Clima
-				const labelsClima = Object.keys(esferas.atmosfera.temp_media).sort();
-				new Chart(document.getElementById('chartClima'), {
-					type: 'line',
-					data: {
-						labels: labelsClima,
-						datasets: [
-							{ label: 'Veículos Novos', data: labelsClima.map(y => esferas.atmosfera.veiculos_novos[y]), borderColor: '#3498db', yAxisID: 'y' },
-							{ label: 'Temp. Média (ºC)', data: labelsClima.map(y => esferas.atmosfera.temp_media[y]), borderColor: '#e74c3c', yAxisID: 'y1' }
-						]
-					},
-					options: { scales: { y: { position: 'left' }, y1: { position: 'right', grid: { drawOnChartArea: false } } } }
-				});
+    // 2. Mar (Pesca vs Qualidade)
+    const labelsMar = Object.keys(e.mar.capturas_pesca_t).sort();
+    new Chart(document.getElementById('chartMar'), {
+        type: 'bar',
+        data: {
+            labels: labelsMar,
+            datasets: [
+                { label: 'Pesca (t)', data: labelsMar.map(y => e.mar.capturas_pesca_t[y]), backgroundColor: '#3498db' },
+                { label: 'Águas Excelentes (%)', data: labelsMar.map(y => e.mar.aguas_balneares_excelentes_percent[y] || null), type: 'line', borderColor: '#2ecc71' }
+            ]
+        }
+    });
 
-				// Gráfico Solo/Bio
-				const labelsBio = Object.keys(esferas.biosfera.area_ardida_ha).sort();
-				new Chart(document.getElementById('chartSolo'), {
-					type: 'bar',
-					data: {
-						labels: labelsBio,
-						datasets: [{ label: 'Área Ardida (ha)', data: labelsBio.map(y => esferas.biosfera.area_ardida_ha[y]), backgroundColor: '#e67e22' }]
-					}
-				});
-			}
-			$(function() { $("#sidebar-content").load("sidebar-content.html"); init(); });
-		</script>
-	</body>
-</html>
+    // 3. Bio (Incêndios vs Pesticidas)
+    const labelsBio = Object.keys(e.biosfera.area_ardida_ha).sort();
+    new Chart(document.getElementById('chartBio'), {
+        type: 'line',
+        data: {
+            labels: labelsBio,
+            datasets: [
+                { label: 'Área Ardida (ha)', data: labelsBio.map(y => e.biosfera.area_ardida_ha[y]), borderColor: '#e67e22', fill: true },
+                { label: 'Uso Pesticidas (t)', data: labelsBio.map(y => e.biosfera.pesticidas_t[y] || null), borderColor: '#8e44ad' }
+            ]
+        }
+    });
+}
+render();
+</script>
