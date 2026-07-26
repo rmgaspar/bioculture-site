@@ -13,26 +13,29 @@
             #wrapper { padding-left: 18em !important; }
             .inner { padding: 2.2em 4em 0 4em !important; max-width: 1600px !important; margin: 0 auto; width: 100%; }
 
-            .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; margin-bottom: 15px; display: block; }
-            .hero-text h1 { font-size: 4em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; line-height: 0.95; margin-bottom: 20px; }
+            /* Título Alinhado à Direita e Menor */
+            .header-right { text-align: right; margin-bottom: 3em; }
+            .header-right h1 { font-size: 2.8em; font-weight: 900; color: #1a1a1a; letter-spacing: -1.5px; line-height: 1; margin: 10px 0; }
+            .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; display: block; }
 
-            .data-row { display: block; padding: 2.5em 0; border-bottom: 1px solid #f2f2f2; }
-            .data-row h4 { font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin: 0 0 25px 0; }
+            /* Grelha de Gráficos Otimizada */
+            .report-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 25px; margin-top: 20px; }
+            .chart-box { background: #fdfdfd; border: 1px solid #f2f2f2; padding: 1.5em; border-radius: 12px; height: 280px; position: relative; }
+            .chart-box h5 { font-size: 0.75em; font-weight: 800; text-transform: uppercase; color: #888; margin-bottom: 15px; border-bottom: 1px solid #f9f9f9; padding-bottom: 8px; }
 
-            /* Estilo dos Gráficos */
-            .report-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; margin-top: 20px; }
-            .chart-box { background: #fdfdfd; border: 1px solid #f2f2f2; padding: 20px; border-radius: 12px; height: 320px; position: relative; }
-            
-            .bio-impact-box { background: #f4f9ff; padding: 2.5em 3em; border-radius: 20px; margin: 1.5em 0; }
+            .bio-impact-box { background: #f4f9ff; padding: 2em 2.5em; border-radius: 20px; margin: 1.5em 0; border-left: 5px solid #5c6bc0; }
             .report-item { border-top: 1px solid #f9f9f9; padding-top: 20px; }
-            .report-item h5 { font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; color: #4fc3f7; margin-bottom: 12px; }
+            .report-item h5 { font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; color: #4fc3f7; margin-bottom: 8px; }
             
-            .page-footer { padding: 4em 0 2em 0; opacity: 0.3; text-align: right; }
+            .page-footer { padding: 4em 0 2em 0; text-align: right; }
+            .logo-footer { display: block; font-size: 0.85em; font-weight: 900; color: #333; }
+            .sublogo-footer { display: block; font-size: 0.5em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #bbb; }
 
             @media screen and (max-width: 1280px) {
                 #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
                 #wrapper { padding-left: 0 !important; }
                 .report-grid { grid-template-columns: 1fr; }
+                .header-right { text-align: left; }
             }
 		</style>
         <!-- Google tag (gtag.js) -->
@@ -49,62 +52,63 @@
 			<div id="main">
                 <div class="inner">
                     <section>
-                        <header id="header">
+                        <!-- Cabeçalho Alinhado à Direita -->
+                        <div class="header-right">
                             <span class="category-label">Observatório Planetário</span>
-                            <h1>Recursos Vitais: Relatório Global</h1>
-                        </header>
+                            <h1>Recursos Vitais:<br>Relatório Global</h1>
+                        </div>
 
                         <div class="bio-impact-box">
-                            <h3 style="margin:0 0 15px 0; font-weight: 700;">Resumo da Regeneração 2024</h3>
-                            <p style="margin:0; line-height: 1.6; color: #5c6bc0;">
-                                Portugal apresenta indicadores contraditórios: um avanço histórico nas energias renováveis (86,2%), mas uma pressão crescente sobre o solo e biodiversidade, com a área ardida a atingir o 4º maior valor da década. A correlação entre o consumo e o estado dos recursos vitais exige uma transição imediata para modelos regenerativos.
+                            <h3 style="margin:0 0 10px 0; font-weight: 700; font-size: 1.2em; color: #1a237e;">Resumo da Regeneração 2024</h3>
+                            <p style="margin:0; line-height: 1.6; color: #5c6bc0; font-size: 0.95em;">
+                                Portugal avança na descarbonização elétrica (86,2%), mas a biodiversidade enfrenta pressões críticas. A área ardida em 2024 e a redução da qualidade das águas balneares exigem uma monitorização rigorosa e uma transição para modelos regenerativos de larga escala.
                             </p>
                         </div>
 
                         <div class="report-grid">
                             <!-- Atmosfera -->
                             <div class="chart-box">
-                                <span class="category-label" style="font-size: 0.5em;">Atmosfera</span>
-                                <h5 style="margin-bottom:15px;">Veículos vs Temperatura</h5>
+                                <h5>Atmosfera: Veículos vs Temp</h5>
                                 <canvas id="chartAtmosfera"></canvas>
                             </div>
                             <!-- Mar -->
                             <div class="chart-box">
-                                <span class="category-label" style="font-size: 0.5em;">Recursos Marinhos</span>
-                                <h5 style="margin-bottom:15px;">Pesca vs Qualidade Balnear</h5>
+                                <h5>Mar: Pesca vs Qualidade</h5>
                                 <canvas id="chartMar"></canvas>
                             </div>
                             <!-- Solo -->
                             <div class="chart-box">
-                                <span class="category-label" style="font-size: 0.5em;">Biosfera</span>
-                                <h5 style="margin-bottom:15px;">Área Ardida vs Gado</h5>
+                                <h5>Solo: Área Ardida vs Gado</h5>
                                 <canvas id="chartSolo"></canvas>
                             </div>
                             <!-- Biodiversidade -->
                             <div class="chart-box">
-                                <span class="category-label" style="font-size: 0.5em;">Conservação</span>
-                                <h5 style="margin-bottom:15px;">Espécies Ameaçadas</h5>
+                                <h5>Bio: Espécies Ameaçadas</h5>
                                 <canvas id="chartEspecies"></canvas>
                             </div>
                         </div>
 
-                        <div class="data-row">
-                            <h4>Fontes Oficiais</h4>
-                            <div class="report-grid" style="gap:20px;">
+                        <div style="margin-top: 4em; border-top: 1px solid #f2f2f2; padding-top: 2em;">
+                            <h4 class="category-label">Fontes Oficiais</h4>
+                            <div class="report-grid" style="grid-template-columns: repeat(3, 1fr); gap:20px;">
                                 <div class="report-item">
                                     <h5>INE Ambiente</h5>
-                                    <p>Dados consolidados sobre resíduos, energia e despesa ambiental em Portugal.</p>
+                                    <p style="font-size: 0.85em;">Estatísticas de resíduos e energia.</p>
                                 </div>
                                 <div class="report-item">
                                     <h5>ICNF & IPMA</h5>
-                                    <p>Registos oficiais de incêndios rurais e anomalias térmicas anuais.</p>
+                                    <p style="font-size: 0.85em;">Fogos e anomalias térmicas.</p>
+                                </div>
+                                <div class="report-item">
+                                    <h5>World Bank</h5>
+                                    <p style="font-size: 0.85em;">Indicadores globais de CO2.</p>
                                 </div>
                             </div>
                         </div>
 
                         <footer class="page-footer">
-                            <span style="display: block; font-size: 0.85em; font-weight: 900; color: #333;">bioCultura</span>
-                            <span style="display: block; font-size: 0.5em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Global Regeneration</span>
+                            <span class="logo-footer">bioCultura</span>
+                            <span class="sublogo-footer">Global Regeneration</span>
                         </footer>
 					</section>
 				</div>
@@ -122,60 +126,70 @@
                     const data = await res.json();
                     const e = data.esferas;
 
-                    const chartOptions = {
+                    const commonOptions = {
                         responsive: true,
                         maintainAspectRatio: false,
                         plugins: { legend: { display: false } },
                         scales: {
-                            x: { grid: { display: false }, ticks: { font: { size: 10 } } },
-                            y: { ticks: { font: { size: 10 } } }
+                            x: { grid: { display: false }, ticks: { font: { size: 9, family: 'Source Sans Pro' } } },
+                            y: { ticks: { font: { size: 9 } } }
                         }
                     };
 
-                    // 1. Atmosfera
+                    // 1. Atmosfera (Dual Axis para corrigir escala)
                     new Chart(document.getElementById('chartAtmosfera'), {
                         type: 'line',
                         data: {
-                            labels: Object.keys(e.atmosfera.temp_media),
+                            labels: Object.keys(e.atmosfera.temp_media).sort(),
                             datasets: [
-                                { label: 'Temp', data: Object.values(e.atmosfera.temp_media), borderColor: '#ef5350', tension: 0.4 },
-                                { label: 'Veículos', data: Object.values(e.atmosfera.veiculos_novos), borderColor: '#4fc3f7', tension: 0.4 }
+                                { label: 'Veículos', data: Object.values(e.atmosfera.veiculos_novos), borderColor: '#4fc3f7', yAxisID: 'y', tension: 0.4 },
+                                { label: 'Temp', data: Object.values(e.atmosfera.temp_media), borderColor: '#ef5350', yAxisID: 'y1', tension: 0.4 }
                             ]
                         },
-                        options: chartOptions
+                        options: {
+                            ...commonOptions,
+                            scales: {
+                                ...commonOptions.scales,
+                                y: { position: 'left', ticks: { font: { size: 8 } } },
+                                y1: { position: 'right', grid: { drawOnChartArea: false }, ticks: { font: { size: 8 } } }
+                            }
+                        }
                     });
 
                     // 2. Mar
+                    const marLabels = Object.keys(e.mar.capturas_pesca_t).sort();
                     new Chart(document.getElementById('chartMar'), {
                         type: 'bar',
                         data: {
-                            labels: Object.keys(e.mar.capturas_pesca_t),
-                            datasets: [{ data: Object.values(e.mar.capturas_pesca_t), backgroundColor: '#5c6bc0', borderRadius: 4 }]
+                            labels: marLabels,
+                            datasets: [{ data: marLabels.map(l => e.mar.capturas_pesca_t[l]), backgroundColor: '#5c6bc0', borderRadius: 4 }]
                         },
-                        options: chartOptions
+                        options: commonOptions
                     });
 
                     // 3. Solo
+                    const soloLabels = Object.keys(e.biosfera.area_ardida_ha).sort();
                     new Chart(document.getElementById('chartSolo'), {
                         type: 'line',
                         data: {
-                            labels: Object.keys(e.biosfera.area_ardida_ha),
-                            datasets: [{ data: Object.values(e.biosfera.area_ardida_ha), borderColor: '#ffa726', fill: true, backgroundColor: 'rgba(255, 167, 38, 0.1)', tension: 0.4 }]
+                            labels: soloLabels,
+                            datasets: [{ data: soloLabels.map(l => e.biosfera.area_ardida_ha[l]), borderColor: '#ffa726', fill: true, backgroundColor: 'rgba(255, 167, 38, 0.05)', tension: 0.4 }]
                         },
-                        options: chartOptions
+                        options: commonOptions
                     });
 
                     // 4. Espécies
+                    const espLabels = Object.keys(e.biosfera.especies_ameacadas).sort();
                     new Chart(document.getElementById('chartEspecies'), {
                         type: 'line',
                         data: {
-                            labels: Object.keys(e.biosfera.especies_ameacadas),
-                            datasets: [{ data: Object.values(e.biosfera.especies_ameacadas), borderColor: '#66bb6a', tension: 0.4 }]
+                            labels: espLabels,
+                            datasets: [{ data: espLabels.map(l => e.biosfera.especies_ameacadas[l]), borderColor: '#66bb6a', tension: 0.4 }]
                         },
-                        options: chartOptions
+                        options: commonOptions
                     });
 
-                } catch (err) { console.error("Erro no Observatório:", err); }
+                } catch (err) { console.error("Erro dados:", err); }
             }
 
 			fetch('/sidebar-content.html').then(r => r.text()).then(html => {
