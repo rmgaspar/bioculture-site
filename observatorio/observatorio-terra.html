@@ -1,10 +1,20 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<title>Observatório da Terra - bioCultura</title>
+		<title>bioCultura - Observatório da Terra</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="../assets/css/main.css" />
+		<style>
+            /* Overrides para manter consistência com o teu código de Biodiversidade */
+            body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
+            #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; background: #fff; border-right: 1px solid #f2f2f2 !important; }
+            #wrapper { padding-left: 18em !important; }
+            .inner { padding: 2.2em 4em 0 4em !important; max-width: 1600px !important; margin: 0 auto; }
+            .data-row { display: block; padding: 2.5em 0; border-bottom: 1px solid #f2f2f2; }
+            .data-row h4 { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin-bottom: 25px; }
+            .chart-container { background: #fdfdfd; padding: 20px; border-radius: 12px; border: 1px solid #f2f2f2; margin-bottom: 20px; }
+		</style>
 	</head>
 	<body class="is-preload">
 		<div id="wrapper">
@@ -15,108 +25,119 @@
 					</header>
 
 					<section>
-						<header class="main">
-							<p class="breadcrumbs">RECURSOS VITAIS</p>
-							<h1 style="font-size: 4em; margin-bottom: 0.2em;">Terra: O Observatório</h1>
-							<p>Análise de correlação: Pressão Humana vs Regeneração Planetária</p>
+						<header class="main" style="margin-bottom: 3em;">
+                            <span class="category-label" style="font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb;">Observatório Global</span>
+							<h1 style="font-size: 4em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; line-height: 0.95; margin: 10px 0;">Recursos Vitais: O Relatório</h1>
 						</header>
 
-						<!-- Hero Section Estilo bioCultura -->
-						<div class="row">
-							<div class="col-7 col-12-small">
-								<h3>Saúde Global</h3>
-								<p>Este observatório cruza dados oficiais do INE, ICNF e World Bank para demonstrar o impacto das atividades humanas nos recursos vitais. A curva de regeneração depende da nossa capacidade de inverter as tendências de pressão abaixo indicadas.</p>
-							</div>
-							<div class="col-5 col-12-small">
-								<span class="image fit"><img src="../images/terra_observatorio.jpg" alt="" style="border-radius: 50%; width: 350px; height: 350px; object-fit: cover; float: right;" /></span>
-							</div>
-						</div>
+                        <!-- Resumo do Relatório 2024 -->
+                        <div class="bio-impact-box" style="background: #f6f9ff; padding: 2.5em; border-radius: 20px; margin-bottom: 3em;">
+                            <h3 style="margin-top: 0;">Resumo da Biodiversidade e Impacto (INE 2024)</h3>
+                            <p>Portugal regista uma trajetória de descarbonização, com <strong>86,2%</strong> da eletricidade vinda de renováveis. No entanto, a pressão sobre a biodiversidade intensifica-se: 2024 foi o 4º ano com maior área ardida da década. Na hidrosfera, a contaminação de aquíferos e a redução de águas balneares de qualidade "Excelente" (de 85% para 83,1%) sinalizam a urgência de regeneração.</p>
+                        </div>
 
-						<hr class="major" />
-
-						<!-- Gráficos com Estilo Box -->
 						<div class="row">
 							<div class="col-6 col-12-small">
-								<div class="box" style="border: none; background: #fcfcfc;">
-									<h4 class="breadcrumbs">ATMOSFERA</h4>
-									<p>Veículos Novos vs Temperatura Média</p>
-									<canvas id="chartAtmosfera" style="width: 100%; height: 300px;"></canvas>
+								<div class="chart-container">
+									<h4>Atmosfera: Veículos vs Temperatura</h4>
+									<canvas id="chartAtmos" style="height: 250px;"></canvas>
 								</div>
 							</div>
 							<div class="col-6 col-12-small">
-								<div class="box" style="border: none; background: #fcfcfc;">
-									<h4 class="breadcrumbs">BIOSFERA</h4>
-									<p>Área Ardida (ha) vs Produção de Carne (Índice)</p>
-									<canvas id="chartBio" style="width: 100%; height: 300px;"></canvas>
+								<div class="chart-container">
+									<h4>Mar: Pesca vs Qualidade Balnear</h4>
+									<canvas id="chartMar" style="height: 250px;"></canvas>
+								</div>
+							</div>
+							<div class="col-6 col-12-small">
+								<div class="chart-container">
+									<h4>Solo: Área Ardida vs Gado (Metano)</h4>
+									<canvas id="chartSolo" style="height: 250px;"></canvas>
+								</div>
+							</div>
+                            <div class="col-6 col-12-small">
+								<div class="chart-container">
+									<h4>Biodiversidade: Espécies Ameaçadas</h4>
+									<canvas id="chartEspecies" style="height: 250px;"></canvas>
 								</div>
 							</div>
 						</div>
 
+                        <div class="data-row">
+                            <h4>Fontes Oficiais e Registos</h4>
+                            <div class="news-list">
+                                <div class="news-item"><h3>INE Ambiente 2024</h3><p>Relatório estatístico nacional.</p></div>
+                                <div class="news-item"><h3>ICNF Fogos</h3><p>Registos de área ardida e fauna.</p></div>
+                                <div class="news-item"><h3>World Bank PRT</h3><p>Indicadores de CO2 e Pecuária.</p></div>
+                            </div>
+                        </div>
+
+						<footer style="padding: 4em 0 2em 0; text-align: right; opacity: 0.5;">
+                            <span style="display: block; font-size: 0.85em; font-weight: 900; color: #333;">bioCultura</span>
+                            <span style="display: block; font-size: 0.5em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Global Regeneration</span>
+                        </footer>
 					</section>
 				</div>
 			</div>
-
-			<div id="sidebar">
-				<div class="inner" id="sidebar-content"></div>
-			</div>
+			<div id="sidebar"></div>
 		</div>
 
-		<!-- Scripts -->
 		<script src="../assets/js/jquery.min.js"></script>
-		<script src="../assets/js/browser.min.js"></script>
-		<script src="../assets/js/breakpoints.min.js"></script>
-		<script src="../assets/js/util.js"></script>
-		<script src="../assets/js/main.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 		<script>
 			async function init() {
 				try {
-					// Caminho absoluto para evitar erro de subpasta
-					const res = await fetch('/observatorio_terra.json');
-					if (!res.ok) throw new Error("JSON não encontrado na raiz");
+					const res = await fetch('../observatorio_terra.json');
 					const data = await res.json();
 					const e = data.esferas;
 
-					// Configuração Global do Chart.js para combinar com bioCultura
-					Chart.defaults.font.family = "'Source Sans Pro', sans-serif";
-					Chart.defaults.color = "#666";
+					const options = { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } };
 
 					// 1. Atmosfera
-					const labelsAtmos = Object.keys(e.atmosfera.temp_media).sort();
-					new Chart(document.getElementById('chartAtmosfera'), {
+					new Chart(document.getElementById('chartAtmos'), {
 						type: 'line',
 						data: {
-							labels: labelsAtmos,
+							labels: Object.keys(e.atmosfera.temp_media),
 							datasets: [
-								{ label: 'Veículos', data: labelsAtmos.map(y => e.atmosfera.veiculos_novos[y]), borderColor: '#3498db', tension: 0.4, yAxisID: 'y' },
-								{ label: 'Temp (ºC)', data: labelsAtmos.map(y => e.atmosfera.temp_media[y]), borderColor: '#e74c3c', tension: 0.4, yAxisID: 'y1' }
+								{ data: Object.values(e.atmosfera.veiculos_novos), borderColor: '#3498db', tension: 0.4 },
+								{ data: Object.values(e.atmosfera.temp_media), borderColor: '#e74c3c', tension: 0.4 }
 							]
-						},
-						options: { scales: { y1: { position: 'right', grid: { drawOnChartArea: false } } } }
+						}, options
 					});
 
-					// 2. Bio
-					const labelsBio = Object.keys(e.biosfera.area_ardida_ha).sort();
-					new Chart(document.getElementById('chartBio'), {
+					// 2. Mar
+					new Chart(document.getElementById('chartMar'), {
 						type: 'bar',
 						data: {
-							labels: labelsBio,
-							datasets: [
-								{ label: 'Área Ardida', data: labelsBio.map(y => e.biosfera.area_ardida_ha[y]), backgroundColor: '#e67e22', borderRadius: 5 },
-								{ label: 'Ind. Carne', data: labelsBio.map(y => e.biosfera.carne_indice[y] || null), type: 'line', borderColor: '#2ecc71', tension: 0.4 }
-							]
-						}
+							labels: Object.keys(e.mar.capturas_pesca_t),
+							datasets: [{ data: Object.values(e.mar.capturas_pesca_t), backgroundColor: '#2980b9' }]
+						}, options
 					});
 
-				} catch (err) {
-					console.error("Erro bioCultura:", err);
-					document.querySelector('section').innerHTML += `<div class="box">Erro ao carregar dados: ${err.message}. Verifica se o ficheiro observatorio_terra.json está na raiz do site.</div>`;
-				}
+					// 3. Solo
+					new Chart(document.getElementById('chartSolo'), {
+						type: 'line',
+						data: {
+							labels: Object.keys(e.biosfera.area_ardida_ha),
+							datasets: [{ data: Object.values(e.biosfera.area_ardida_ha), borderColor: '#e67e22', fill: true }]
+						}, options
+					});
+
+                    // 4. Espécies
+					new Chart(document.getElementById('chartEspecies'), {
+						type: 'line',
+						data: {
+							labels: Object.keys(e.biosfera.especies_ameacadas),
+							datasets: [{ data: Object.values(e.biosfera.especies_ameacadas), borderColor: '#27ae60', tension: 0.4 }]
+						}, options
+					});
+
+				} catch (err) { console.error("Erro no fetch:", err); }
 			}
 
-			$(function() {
-				$("#sidebar-content").load("../sidebar-content.html");
+			fetch('../sidebar-content.html').then(r => r.text()).then(html => {
+				document.getElementById('sidebar').innerHTML = html;
 				init();
 			});
 		</script>
