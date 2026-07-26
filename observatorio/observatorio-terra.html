@@ -1,80 +1,135 @@
-<section>
-    <header class="main">
-        <h1>Observatório da Terra v2.0</h1>
-    </header>
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Observatório da Terra - bioCultura</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<!-- Caminho corrigido para o CSS -->
+		<link rel="stylesheet" href="../assets/css/main.css" />
+	</head>
+	<body class="is-preload">
 
-    <div class="row">
-        <!-- Dashboard Clima: CO2 vs Temperatura -->
-        <div class="col-6 col-12-small">
-            <div class="box">
-                <h3>Atmosfera: CO2 vs Aquecimento</h3>
-                <canvas id="chartAtmosfera" style="height:300px;"></canvas>
-            </div>
-        </div>
+		<div id="wrapper">
+			<div id="main">
+				<div class="inner">
 
-        <!-- Dashboard Mar: Pesca vs Qualidade Água -->
-        <div class="col-6 col-12-small">
-            <div class="box">
-                <h3>Recursos Marinhos: Capturas vs Saúde Balnear</h3>
-                <canvas id="chartMar" style="height:300px;"></canvas>
-            </div>
-        </div>
+					<header id="header">
+						<a href="../index.html" class="logo"><strong>bioCultura</strong> Observatório Planetário</a>
+					</header>
 
-        <!-- Dashboard Biodiversidade -->
-        <div class="col-12">
-            <div class="box">
-                <h3>Pressão Biológica: Área Ardida vs Pesticidas</h3>
-                <canvas id="chartBio" style="height:400px;"></canvas>
-            </div>
-        </div>
-    </div>
-</section>
+					<section>
+						<header class="main">
+							<h1>Observatório da Terra v2.0</h1>
+						</header>
 
-<script>
-async function render() {
-    const res = await fetch('observatorio_terra.json');
-    const data = await res.json();
-    const e = data.esferas;
+						<p>Análise de correlação entre indicadores de pressão humana e o estado dos recursos vitais (Dados 2004-2024).</p>
 
-    // 1. Atmosfera (CO2 vs Temp)
-    const labelsAtmos = Object.keys(e.atmosfera.temp_anomalia).sort();
-    new Chart(document.getElementById('chartAtmosfera'), {
-        type: 'line',
-        data: {
-            labels: labelsAtmos,
-            datasets: [
-                { label: 'CO2 (kt)', data: labelsAtmos.map(y => e.atmosfera.co2_kt[y]), borderColor: '#95a5a6', yAxisID: 'y' },
-                { label: 'Temp (ºC)', data: labelsAtmos.map(y => e.atmosfera.temp_anomalia[y]), borderColor: '#e74c3c', yAxisID: 'y1' }
-            ]
-        },
-        options: { scales: { y1: { position: 'right' } } }
-    });
+						<div class="row">
+							<!-- Dashboard Clima -->
+							<div class="col-6 col-12-small">
+								<div class="box">
+									<h3>Atmosfera: CO2 vs Aquecimento</h3>
+									<canvas id="chartAtmosfera" style="height:300px;"></canvas>
+								</div>
+							</div>
 
-    // 2. Mar (Pesca vs Qualidade)
-    const labelsMar = Object.keys(e.mar.capturas_pesca_t).sort();
-    new Chart(document.getElementById('chartMar'), {
-        type: 'bar',
-        data: {
-            labels: labelsMar,
-            datasets: [
-                { label: 'Pesca (t)', data: labelsMar.map(y => e.mar.capturas_pesca_t[y]), backgroundColor: '#3498db' },
-                { label: 'Águas Excelentes (%)', data: labelsMar.map(y => e.mar.aguas_balneares_excelentes_percent[y] || null), type: 'line', borderColor: '#2ecc71' }
-            ]
-        }
-    });
+							<!-- Dashboard Mar -->
+							<div class="col-6 col-12-small">
+								<div class="box">
+									<h3>Mar: Pesca vs Saúde Balnear</h3>
+									<canvas id="chartMar" style="height:300px;"></canvas>
+								</div>
+							</div>
 
-    // 3. Bio (Incêndios vs Pesticidas)
-    const labelsBio = Object.keys(e.biosfera.area_ardida_ha).sort();
-    new Chart(document.getElementById('chartBio'), {
-        type: 'line',
-        data: {
-            labels: labelsBio,
-            datasets: [
-                { label: 'Área Ardida (ha)', data: labelsBio.map(y => e.biosfera.area_ardida_ha[y]), borderColor: '#e67e22', fill: true },
-                { label: 'Uso Pesticidas (t)', data: labelsBio.map(y => e.biosfera.pesticidas_t[y] || null), borderColor: '#8e44ad' }
-            ]
-        }
-    });
-}
-render();
-</script>
+							<!-- Dashboard Biodiversidade -->
+							<div class="col-12">
+								<div class="box">
+									<h3>Solo: Área Ardida vs Pesticidas</h3>
+									<canvas id="chartBio" style="height:400px;"></canvas>
+								</div>
+							</div>
+						</div>
+					</section>
+
+				</div>
+			</div>
+
+			<!-- Sidebar -->
+			<div id="sidebar">
+				<div class="inner" id="sidebar-content">
+					<!-- Carregado via JS -->
+				</div>
+			</div>
+		</div>
+
+		<!-- Scripts Base -->
+		<script src="../assets/js/jquery.min.js"></script>
+		<script src="../assets/js/browser.min.js"></script>
+		<script src="../assets/js/breakpoints.min.js"></script>
+		<script src="../assets/js/util.js"></script>
+		<script src="../assets/js/main.js"></script>
+		
+		<!-- Chart.js -->
+		<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+		<script>
+			async function renderObservatorio() {
+				try {
+					// Caminho corrigido para o JSON (sobe um nível)
+					const res = await fetch('../observatorio_terra.json');
+					const data = await res.json();
+					const e = data.esferas;
+
+					// 1. Atmosfera
+					const labelsAtmos = Object.keys(e.atmosfera.temp_anomalia).sort();
+					new Chart(document.getElementById('chartAtmosfera'), {
+						type: 'line',
+						data: {
+							labels: labelsAtmos,
+							datasets: [
+								{ label: 'CO2 (kt)', data: labelsAtmos.map(y => e.atmosfera.co2_kt[y] || null), borderColor: '#95a5a6', yAxisID: 'y' },
+								{ label: 'Temp (ºC)', data: labelsAtmos.map(y => e.atmosfera.temp_anomalia[y]), borderColor: '#e74c3c', yAxisID: 'y1' }
+							]
+						},
+						options: { scales: { y1: { position: 'right', grid: { drawOnChartArea: false } } } }
+					});
+
+					// 2. Mar
+					const labelsMar = Object.keys(e.mar.capturas_pesca_t).sort();
+					new Chart(document.getElementById('chartMar'), {
+						type: 'bar',
+						data: {
+							labels: labelsMar,
+							datasets: [
+								{ label: 'Pesca (t)', data: labelsMar.map(y => e.mar.capturas_pesca_t[y]), backgroundColor: '#3498db' },
+								{ label: 'Águas Excelentes (%)', data: labelsMar.map(y => e.mar.aguas_balneares_excelentes_percent[y] || null), type: 'line', borderColor: '#2ecc71' }
+							]
+						}
+					});
+
+					// 3. Bio
+					const labelsBio = Object.keys(e.biosfera.area_ardida_ha).sort();
+					new Chart(document.getElementById('chartBio'), {
+						type: 'line',
+						data: {
+							labels: labelsBio,
+							datasets: [
+								{ label: 'Área Ardida (ha)', data: labelsBio.map(y => e.biosfera.area_ardida_ha[y]), borderColor: '#e67e22', fill: true, backgroundColor: 'rgba(230, 126, 34, 0.1)' },
+								{ label: 'Uso Pesticidas (t)', data: labelsBio.map(y => e.biosfera.pesticidas_t[y] || null), borderColor: '#8e44ad' }
+							]
+						}
+					});
+
+				} catch (err) {
+					console.error("Erro ao carregar dados:", err);
+				}
+			}
+
+			$(function() {
+				// Caminho corrigido para a sidebar
+				$("#sidebar-content").load("../sidebar-content.html");
+				renderObservatorio();
+			});
+		</script>
+	</body>
+</html>
