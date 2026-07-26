@@ -13,18 +13,15 @@
             #wrapper { padding-left: 18em !important; }
             .inner { padding: 2.2em 4em 0 4em !important; max-width: 1600px !important; margin: 0 auto; width: 100%; }
 
-            /* Título Alinhado à Esquerda */
             .header-left { text-align: left; margin-bottom: 2em; }
             .header-left h1 { font-size: 2.5em; font-weight: 900; color: #1a1a1a; letter-spacing: -1.5px; line-height: 1.1; margin: 10px 0; }
             .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; display: block; }
 
-            /* Banner sem border e sem título extra */
             .bio-impact-box { background: #f4f9ff; padding: 2em; border-radius: 15px; margin: 1.5em 0; border: none; }
             .bio-impact-box p { margin: 0; line-height: 1.6; color: #5c6bc0; font-size: 1em; }
 
-            /* Grelha de Gráficos */
             .report-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 20px; }
-            .chart-box { background: #fdfdfd; border: 1px solid #f2f2f2; padding: 1.2em; border-radius: 10px; height: 300px; position: relative; }
+            .chart-box { background: #fdfdfd; border: 1px solid #f2f2f2; padding: 1.2em; border-radius: 10px; height: 320px; position: relative; }
             .chart-box h5 { font-size: 0.7em; font-weight: 800; text-transform: uppercase; color: #888; margin-bottom: 10px; }
             .chart-source { font-size: 0.55em; font-weight: 700; color: #ccc; text-transform: uppercase; margin-top: 10px; display: block; text-align: right; }
 
@@ -42,7 +39,7 @@
                 .report-grid { grid-template-columns: 1fr; }
             }
 		</style>
-        <!-- Google tag (gtag.js) -->
+        <!-- Google Analytics -->
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV0FD8PXC"></script>
         <script>
             window.dataLayer = window.dataLayer || [];
@@ -66,25 +63,21 @@
                         </div>
 
                         <div class="report-grid">
-                            <!-- Atmosfera -->
                             <div class="chart-box">
                                 <h5>Atmosfera: Veículos vs Temp</h5>
                                 <canvas id="chartAtmosfera"></canvas>
                                 <span class="chart-source">Fonte: IMTT / IPMA</span>
                             </div>
-                            <!-- Mar -->
                             <div class="chart-box">
-                                <h5>Mar: Pesca vs Qualidade</h5>
+                                <h5>Mar: Pesca Industrial (t)</h5>
                                 <canvas id="chartMar"></canvas>
                                 <span class="chart-source">Fonte: INE / APA</span>
                             </div>
-                            <!-- Solo -->
                             <div class="chart-box">
-                                <h5>Solo: Área Ardida vs Gado</h5>
+                                <h5>Solo: Área Ardida (ha)</h5>
                                 <canvas id="chartSolo"></canvas>
-                                <span class="chart-source">Fonte: ICNF / World Bank</span>
+                                <span class="chart-source">Fonte: ICNF</span>
                             </div>
-                            <!-- Biodiversidade -->
                             <div class="chart-box">
                                 <h5>Bio: Espécies Ameaçadas</h5>
                                 <canvas id="chartEspecies"></canvas>
@@ -92,12 +85,10 @@
                             </div>
                         </div>
 
-                        <!-- Análise Detalhada -->
                         <div class="analysis-section">
                             <h3>Análise Técnica de Impacto</h3>
-                            <p><b>Correlação Atmosférica:</b> Observa-se que, apesar do aumento no parque de veículos ligeiros (+4,6% em 2024), Portugal conseguiu reduzir as emissões de GEE em 4,4%. Este fenómeno explica-se pela eficiência do setor energético, onde as renováveis atingiram um recorde de 86,2%. Contudo, a temperatura média continua a registar desvios positivos (+0,9 ºC), confirmando que o aquecimento local é influenciado por dinâmicas globais de CO2.</p>
-                            <p><b>Pressão sobre a Biosfera:</b> O aumento do índice de produção pecuária correlaciona-se com a emissão de metano (CH4), que representa cerca de 19,6% do total de GEE em Portugal. A gestão do solo revela-se vulnerável: embora o número de ignições tenha baixado, a severidade dos incêndios em 2024 resultou numa das maiores áreas ardidas da década, impactando diretamente a fauna terrestre, que vê o número de espécies ameaçadas subir para 480.</p>
-                            <p><b>Recursos Hídricos e Marinhos:</b> A qualidade das águas balneares iniciou uma curva descendente (83,1% de excelência), coincidindo com períodos de seca extrema e aumento do consumo per capita (194 m3). A redução nas capturas de pesca reflete não só a gestão de quotas, mas também a degradação dos ecossistemas marinhos costeiros.</p>
+                            <p><b>Correlação Atmosférica:</b> Observa-se que, apesar do aumento no parque de veículos ligeiros (+4,6% em 2024), Portugal reduziu emissões de GEE em 4,4% devido ao recorde nas renováveis. Contudo, a temperatura média mantém desvios positivos (+0,9 ºC), confirmando o impacto das dinâmicas globais.</p>
+                            <p><b>Pressão sobre a Biosfera:</b> O aumento da produção pecuária contribui para os 19,6% de emissões de metano. A severidade dos incêndios em 2024 resultou numa das maiores áreas ardidas da década, impactando as 480 espécies terrestres atualmente ameaçadas.</p>
                         </div>
 
                         <footer class="page-footer">
@@ -116,7 +107,7 @@
 		<script>
             async function carregarDados() {
                 try {
-                    const res = await fetch('/observatorio_terra.json');
+                    const res = await fetch('/data/observatorio_terra.json');
                     const data = await res.json();
                     const e = data.esferas;
 
@@ -125,53 +116,46 @@
                         maintainAspectRatio: false,
                         plugins: { legend: { display: false } },
                         scales: {
-                            x: { grid: { display: false }, ticks: { font: { size: 9 } } },
+                            x: { grid: { display: false }, ticks: { font: { size: 9, family: 'Source Sans Pro' } } },
                             y: { ticks: { font: { size: 9 } } }
                         }
                     };
 
-                    const anos = [2004, 2010, 2017, 2023, 2024];
-
-                    // 1. Atmosfera
+                    // 1. Atmosfera (Dual Axis)
+                    const anosAtmos = Object.keys(e.atmosfera.temp_media).sort();
                     new Chart(document.getElementById('chartAtmosfera'), {
                         type: 'line',
                         data: {
-                            labels: anos,
+                            labels: anosAtmos,
                             datasets: [
-                                { label: 'Veículos', data: anos.map(a => e.atmosfera.veiculos_novos[a]), borderColor: '#4fc3f7', yAxisID: 'y', tension: 0.4 },
-                                { label: 'Temp', data: anos.map(a => e.atmosfera.temp_media[a]), borderColor: '#ef5350', yAxisID: 'y1', tension: 0.4 }
+                                { label: 'Veículos', data: anosAtmos.map(a => e.atmosfera.veiculos_novos[a]), borderColor: '#4fc3f7', yAxisID: 'y', tension: 0.4 },
+                                { label: 'Temp', data: anosAtmos.map(a => e.atmosfera.temp_media[a]), borderColor: '#ef5350', yAxisID: 'y1', tension: 0.4 }
                             ]
                         },
                         options: { ...commonOptions, scales: { y: { position: 'left' }, y1: { position: 'right', grid: { drawOnChartArea: false } } } }
                     });
 
                     // 2. Mar
+                    const marLabels = Object.keys(e.mar.capturas_pesca_t).sort();
                     new Chart(document.getElementById('chartMar'), {
                         type: 'bar',
-                        data: {
-                            labels: [2010, 2015, 2020, 2023, 2024],
-                            datasets: [{ data: [165000, 150000, 140000, 135000, 132000], backgroundColor: '#5c6bc0' }]
-                        },
+                        data: { labels: marLabels, datasets: [{ data: marLabels.map(l => e.mar.capturas_pesca_t[l]), backgroundColor: '#5c6bc0', borderRadius: 4 }] },
                         options: commonOptions
                     });
 
                     // 3. Solo
+                    const soloLabels = Object.keys(e.biosfera.area_ardida_ha).sort();
                     new Chart(document.getElementById('chartSolo'), {
                         type: 'line',
-                        data: {
-                            labels: anos,
-                            datasets: [{ data: anos.map(a => e.biosfera.area_ardida_ha[a]), borderColor: '#ffa726', fill: true, backgroundColor: 'rgba(255, 167, 38, 0.1)', tension: 0.4 }]
-                        },
+                        data: { labels: soloLabels, datasets: [{ data: soloLabels.map(l => e.biosfera.area_ardida_ha[l]), borderColor: '#ffa726', fill: true, backgroundColor: 'rgba(255, 167, 38, 0.1)', tension: 0.4 }] },
                         options: commonOptions
                     });
 
                     // 4. Espécies
+                    const espLabels = Object.keys(e.biosfera.especies_ameacadas).sort();
                     new Chart(document.getElementById('chartEspecies'), {
                         type: 'line',
-                        data: {
-                            labels: [2004, 2010, 2015, 2020, 2024],
-                            datasets: [{ data: [310, 345, 390, 420, 480], borderColor: '#66bb6a', tension: 0.4 }]
-                        },
+                        data: { labels: espLabels, datasets: [{ data: espLabels.map(l => e.biosfera.especies_ameacadas[l]), borderColor: '#66bb6a', tension: 0.4 }] },
                         options: commonOptions
                     });
 
