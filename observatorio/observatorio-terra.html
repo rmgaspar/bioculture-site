@@ -4,131 +4,120 @@
 		<title>Observatório da Terra - bioCultura</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-		<!-- Caminho corrigido para o CSS -->
 		<link rel="stylesheet" href="../assets/css/main.css" />
 	</head>
 	<body class="is-preload">
-
 		<div id="wrapper">
 			<div id="main">
 				<div class="inner">
-
 					<header id="header">
-						<a href="../index.html" class="logo"><strong>bioCultura</strong> Observatório Planetário</a>
+						<a href="../index.html" class="logo"><strong>bioCultura</strong> GLOBAL REGENERATION</a>
 					</header>
 
 					<section>
 						<header class="main">
-							<h1>Observatório da Terra v2.0</h1>
+							<p class="breadcrumbs">RECURSOS VITAIS</p>
+							<h1 style="font-size: 4em; margin-bottom: 0.2em;">Terra: O Observatório</h1>
+							<p>Análise de correlação: Pressão Humana vs Regeneração Planetária</p>
 						</header>
 
-						<p>Análise de correlação entre indicadores de pressão humana e o estado dos recursos vitais (Dados 2004-2024).</p>
-
+						<!-- Hero Section Estilo bioCultura -->
 						<div class="row">
-							<!-- Dashboard Clima -->
+							<div class="col-7 col-12-small">
+								<h3>Saúde Global</h3>
+								<p>Este observatório cruza dados oficiais do INE, ICNF e World Bank para demonstrar o impacto das atividades humanas nos recursos vitais. A curva de regeneração depende da nossa capacidade de inverter as tendências de pressão abaixo indicadas.</p>
+							</div>
+							<div class="col-5 col-12-small">
+								<span class="image fit"><img src="../images/terra_observatorio.jpg" alt="" style="border-radius: 50%; width: 350px; height: 350px; object-fit: cover; float: right;" /></span>
+							</div>
+						</div>
+
+						<hr class="major" />
+
+						<!-- Gráficos com Estilo Box -->
+						<div class="row">
 							<div class="col-6 col-12-small">
-								<div class="box">
-									<h3>Atmosfera: CO2 vs Aquecimento</h3>
-									<canvas id="chartAtmosfera" style="height:300px;"></canvas>
+								<div class="box" style="border: none; background: #fcfcfc;">
+									<h4 class="breadcrumbs">ATMOSFERA</h4>
+									<p>Veículos Novos vs Temperatura Média</p>
+									<canvas id="chartAtmosfera" style="width: 100%; height: 300px;"></canvas>
 								</div>
 							</div>
-
-							<!-- Dashboard Mar -->
 							<div class="col-6 col-12-small">
-								<div class="box">
-									<h3>Mar: Pesca vs Saúde Balnear</h3>
-									<canvas id="chartMar" style="height:300px;"></canvas>
-								</div>
-							</div>
-
-							<!-- Dashboard Biodiversidade -->
-							<div class="col-12">
-								<div class="box">
-									<h3>Solo: Área Ardida vs Pesticidas</h3>
-									<canvas id="chartBio" style="height:400px;"></canvas>
+								<div class="box" style="border: none; background: #fcfcfc;">
+									<h4 class="breadcrumbs">BIOSFERA</h4>
+									<p>Área Ardida (ha) vs Produção de Carne (Índice)</p>
+									<canvas id="chartBio" style="width: 100%; height: 300px;"></canvas>
 								</div>
 							</div>
 						</div>
-					</section>
 
+					</section>
 				</div>
 			</div>
 
-			<!-- Sidebar -->
 			<div id="sidebar">
-				<div class="inner" id="sidebar-content">
-					<!-- Carregado via JS -->
-				</div>
+				<div class="inner" id="sidebar-content"></div>
 			</div>
 		</div>
 
-		<!-- Scripts Base -->
+		<!-- Scripts -->
 		<script src="../assets/js/jquery.min.js"></script>
 		<script src="../assets/js/browser.min.js"></script>
 		<script src="../assets/js/breakpoints.min.js"></script>
 		<script src="../assets/js/util.js"></script>
 		<script src="../assets/js/main.js"></script>
-		
-		<!-- Chart.js -->
 		<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 		<script>
-			async function renderObservatorio() {
+			async function init() {
 				try {
-					// Caminho corrigido para o JSON (sobe um nível)
-					const res = await fetch('../observatorio_terra.json');
+					// Caminho absoluto para evitar erro de subpasta
+					const res = await fetch('/observatorio_terra.json');
+					if (!res.ok) throw new Error("JSON não encontrado na raiz");
 					const data = await res.json();
 					const e = data.esferas;
 
+					// Configuração Global do Chart.js para combinar com bioCultura
+					Chart.defaults.font.family = "'Source Sans Pro', sans-serif";
+					Chart.defaults.color = "#666";
+
 					// 1. Atmosfera
-					const labelsAtmos = Object.keys(e.atmosfera.temp_anomalia).sort();
+					const labelsAtmos = Object.keys(e.atmosfera.temp_media).sort();
 					new Chart(document.getElementById('chartAtmosfera'), {
 						type: 'line',
 						data: {
 							labels: labelsAtmos,
 							datasets: [
-								{ label: 'CO2 (kt)', data: labelsAtmos.map(y => e.atmosfera.co2_kt[y] || null), borderColor: '#95a5a6', yAxisID: 'y' },
-								{ label: 'Temp (ºC)', data: labelsAtmos.map(y => e.atmosfera.temp_anomalia[y]), borderColor: '#e74c3c', yAxisID: 'y1' }
+								{ label: 'Veículos', data: labelsAtmos.map(y => e.atmosfera.veiculos_novos[y]), borderColor: '#3498db', tension: 0.4, yAxisID: 'y' },
+								{ label: 'Temp (ºC)', data: labelsAtmos.map(y => e.atmosfera.temp_media[y]), borderColor: '#e74c3c', tension: 0.4, yAxisID: 'y1' }
 							]
 						},
 						options: { scales: { y1: { position: 'right', grid: { drawOnChartArea: false } } } }
 					});
 
-					// 2. Mar
-					const labelsMar = Object.keys(e.mar.capturas_pesca_t).sort();
-					new Chart(document.getElementById('chartMar'), {
-						type: 'bar',
-						data: {
-							labels: labelsMar,
-							datasets: [
-								{ label: 'Pesca (t)', data: labelsMar.map(y => e.mar.capturas_pesca_t[y]), backgroundColor: '#3498db' },
-								{ label: 'Águas Excelentes (%)', data: labelsMar.map(y => e.mar.aguas_balneares_excelentes_percent[y] || null), type: 'line', borderColor: '#2ecc71' }
-							]
-						}
-					});
-
-					// 3. Bio
+					// 2. Bio
 					const labelsBio = Object.keys(e.biosfera.area_ardida_ha).sort();
 					new Chart(document.getElementById('chartBio'), {
-						type: 'line',
+						type: 'bar',
 						data: {
 							labels: labelsBio,
 							datasets: [
-								{ label: 'Área Ardida (ha)', data: labelsBio.map(y => e.biosfera.area_ardida_ha[y]), borderColor: '#e67e22', fill: true, backgroundColor: 'rgba(230, 126, 34, 0.1)' },
-								{ label: 'Uso Pesticidas (t)', data: labelsBio.map(y => e.biosfera.pesticidas_t[y] || null), borderColor: '#8e44ad' }
+								{ label: 'Área Ardida', data: labelsBio.map(y => e.biosfera.area_ardida_ha[y]), backgroundColor: '#e67e22', borderRadius: 5 },
+								{ label: 'Ind. Carne', data: labelsBio.map(y => e.biosfera.carne_indice[y] || null), type: 'line', borderColor: '#2ecc71', tension: 0.4 }
 							]
 						}
 					});
 
 				} catch (err) {
-					console.error("Erro ao carregar dados:", err);
+					console.error("Erro bioCultura:", err);
+					document.querySelector('section').innerHTML += `<div class="box">Erro ao carregar dados: ${err.message}. Verifica se o ficheiro observatorio_terra.json está na raiz do site.</div>`;
 				}
 			}
 
 			$(function() {
-				// Caminho corrigido para a sidebar
 				$("#sidebar-content").load("../sidebar-content.html");
-				renderObservatorio();
+				init();
 			});
 		</script>
 	</body>
