@@ -16,28 +16,20 @@
         .header-left h1 { font-size: 2.5em; font-weight: 900; color: #1a1a1a; letter-spacing: -1.5px; line-height: 1.1; margin: 10px 0; }
         .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; display: block; line-height: 1; }
 
-        /* Mapa Mundial Dinâmico */
-        .map-container { background: #000; border-radius: 15px; height: 600px; margin: 2em 0; overflow: hidden; border: 1px solid #333; position: relative; }
+        .map-container { background: #000; border-radius: 15px; height: 600px; margin: 2em 0; overflow: hidden; border: 1px solid #333; }
         
-        /* Grid de Gráficos Expandido */
-        .report-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 20px; }
-        .chart-box { background: #fdfdfd; border: 1px solid #f2f2f2; padding: 1.2em; border-radius: 10px; height: 280px; }
-        .chart-box h5 { font-size: 0.65em; font-weight: 800; text-transform: uppercase; color: #888; margin-bottom: 10px; }
+        .report-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 20px; }
+        .chart-box { background: #fdfdfd; border: 1px solid #f2f2f2; padding: 1.2em; border-radius: 10px; height: 320px; }
+        .chart-box h5 { font-size: 0.7em; font-weight: 800; text-transform: uppercase; color: #888; margin-bottom: 10px; }
         
-        /* Cores de Legenda */
+        /* Cores das Legendas */
         .leg-temp { color: #ef5350; } .leg-pluv { color: #42a5f5; }
-        .leg-ice { color: #90caf9; } .leg-sst { color: #ff7043; }
-        .leg-forest { color: #66bb6a; } .leg-meat { color: #795548; }
+        .leg-forest { color: #66bb6a; } .leg-bio { color: #ffa726; }
+        .leg-meat { color: #795548; } .leg-fish { color: #5c6bc0; }
 
-        /* Relatório Técnico Vasto */
         .analysis-section { margin-top: 4em; padding: 4em; background: #fdfdfd; border-radius: 12px; border: 1px solid #f2f2f2; margin-bottom: 4em; }
         .analysis-section h3 { font-size: 1.4em; font-weight: 900; margin-bottom: 2em; text-transform: uppercase; border-bottom: 2px solid #eee; padding-bottom: 15px; }
-        .analysis-section .report-block { margin-bottom: 3em; }
-        .analysis-section h4 { font-size: 1.1em; font-weight: 800; color: #333; margin-bottom: 1em; text-transform: uppercase; }
-        .analysis-section p { font-size: 1em; line-height: 1.8; text-align: justify; color: #555; }
-
-        @media screen and (max-width: 1400px) { .report-grid { grid-template-columns: repeat(2, 1fr); } }
-        @media screen and (max-width: 1280px) { #wrapper { padding-left: 0 !important; } .report-grid { grid-template-columns: 1fr; } }
+        .analysis-section p { font-size: 1em; line-height: 1.8; text-align: justify; color: #555; margin-bottom: 2em; }
     </style>
 </head>
 <body class="is-preload">
@@ -47,46 +39,35 @@
                 <section>
                     <div class="header-left">
                         <span class="category-label">Planetarium Global Assistant</span>
-                        <h1 id="page-title">Relatório de Impacto Biosférico 2026</h1>
+                        <h1 id="page-title">...</h1>
                     </div>
 
                     <div class="map-container">
-                        <!-- Mapa Global focado em SST e Correntes (Nullschool) -->
-                        <iframe src="https://earth.nullschool.net/#current/ocean/surface/currents/overlay=sea_surface_temp_anomaly/orthographic=-15.00,20.00,400" width="100%" height="100%" frameborder="0"></iframe>
+                        <!-- Mapa Mundial Orthographic (Vista Global) -->
+                        <iframe src="https://earth.nullschool.net/#current/wind/surface/level/overlay=temp/orthographic=0.00,0.00,300" width="100%" height="100%" frameborder="0"></iframe>
                     </div>
 
                     <div class="report-grid">
                         <div class="chart-box">
-                            <h5><span class="leg-temp">Anomalia Temp (ºC)</span> vs <span class="leg-pluv">Pluviosidade (%)</span></h5>
+                            <h5><span class="leg-temp">Anomalia Temp</span> vs <span class="leg-pluv">Pluviosidade</span></h5>
                             <canvas id="chartClima"></canvas>
                         </div>
                         <div class="chart-box">
-                            <h5><span class="leg-sst">Temp Mar (SST)</span> vs <span class="leg-ice">Massa Glaciar (Gt)</span></h5>
-                            <canvas id="chartOceanos"></canvas>
+                            <h5><span class="leg-forest">Desmatamento</span> vs <span class="leg-bio">Biodiversidade</span></h5>
+                            <canvas id="chartBiosfera"></canvas>
                         </div>
                         <div class="chart-box">
-                            <h5><span class="leg-forest">Desmatamento (Mha)</span> vs <span class="leg-meat">Consumo Carne (kg)</span></h5>
-                            <canvas id="chartPressao"></canvas>
+                            <h5><span class="leg-meat">Consumo Carne (kg)</span> vs <span class="leg-fish">Saturação Pesca (%)</span></h5>
+                            <canvas id="chartConsumo"></canvas>
+                        </div>
+                        <div class="chart-box">
+                            <h5>Emissões CO2 (ppm) vs Glaciares (Gt)</h5>
+                            <canvas id="chartGeral"></canvas>
                         </div>
                     </div>
 
-                    <div class="analysis-section">
+                    <div class="analysis-section" id="analysis-content">
                         <h3>Análise Técnica Multidimensional (Julho 2026)</h3>
-                        
-                        <div class="report-block">
-                            <h4>1. Criosfera e Termodinâmica Oceânica</h4>
-                            <p>A perda de <b>520 Gt de massa glaciar</b> em 2026 marca o ponto de não-retorno para diversos glaciares de latitude média. Este degelo, combinado com anomalias de <b>SST (Sea Surface Temperature) de até 2.8ºC</b>, está a alterar a circulação da AMOC (Atlantic Meridional Overturning Circulation). O oceano, ao absorver 90% do calor excedente, atua como uma bateria térmica que intensifica ciclogéneses explosivas. Em Portugal, isto traduz-se em invernos com precipitação extrema concentrada e verões com "ebulição marinha" que destrói a biodiversidade costeira.</p>
-                        </div>
-
-                        <div class="report-block">
-                            <h4>2. Nexo Desmatamento-Pluviosidade</h4>
-                            <p>A análise gráfica confirma que o aumento do desmatamento global (21 Mha/ano) está a interromper os "rios voadores". A perda de biomassa na Amazónia e África Central reduziu a pluviosidade global em 15%, acelerando a desertificação no Sul da Europa. Sem a transpiração florestal, o ciclo hidrológico torna-se puramente mecânico, resultando em solos hidrofóbicos e perda de aquíferos.</p>
-                        </div>
-
-                        <div class="report-block">
-                            <h4>3. Antropoceno: Carne e Colapso Marinho</h4>
-                            <p>O consumo de carne atingiu 49kg per capita global, mas a pressão real é exercida por países como <b>EUA (123.8kg)</b> e <b>Portugal (98.4kg)</b>. Cada kg de carne bovina exige 15.000 litros de água e 27m² de solo, convertendo ecossistemas biodiversos em monoculturas de soja. No mar, a situação é análoga: 35% das espécies estão em colapso. Portugal, maior consumidor da UE (54kg/hab), enfrenta uma crise de soberania alimentar, com a pesca selvagem a ser substituída por aquacultura de alto impacto químico.</p>
-                        </div>
                     </div>
                 </section>
             </div>
@@ -100,52 +81,66 @@
         async function loadGlobal() {
             const res = await fetch('/data/observatorio_global.json');
             const data = await res.json();
-            const ds = data.datasets;
+            const ind = data.indicadores;
 
-            const opt = {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: { x: { grid: { display: false } }, y: { ticks: { font: { size: 8 } } } }
-            };
+            document.getElementById('page-title').innerText = data.titulo;
 
-            // Gráfico 1: Clima
+            const opt = { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } };
+
+            // 1. Clima
             new Chart(document.getElementById('chartClima'), {
                 type: 'line',
                 data: {
-                    labels: ds.clima.labels,
+                    labels: ind.clima.labels,
                     datasets: [
-                        { data: ds.clima.temp, borderColor: '#ef5350', tension: 0.4 },
-                        { data: ds.clima.pluviosidade, borderColor: '#42a5f5', tension: 0.4 }
+                        { data: ind.clima.temp_anomalia, borderColor: '#ef5350', tension: 0.4 },
+                        { data: ind.clima.pluviosidade_global, borderColor: '#42a5f5', tension: 0.4 }
                     ]
-                },
-                options: opt
+                }, options: opt
             });
 
-            // Gráfico 2: Oceanos
-            new Chart(document.getElementById('chartOceanos'), {
+            // 2. Biosfera
+            new Chart(document.getElementById('chartBiosfera'), {
                 type: 'line',
                 data: {
-                    labels: ds.clima.labels,
+                    labels: ind.clima.labels,
                     datasets: [
-                        { data: ds.oceanos.sst_anomalia, borderColor: '#ff7043', tension: 0.4 },
-                        { data: ds.oceanos.glaciares_gt, borderColor: '#90caf9', type: 'bar' }
+                        { data: ind.biosfera.desmatamento_mha, borderColor: '#66bb6a', tension: 0.4 },
+                        { data: ind.biosfera.perda_biodiversidade_index, borderColor: '#ffa726', tension: 0.4 }
                     ]
-                },
-                options: opt
+                }, options: opt
             });
 
-            // Gráfico 3: Pressão
-            new Chart(document.getElementById('chartPressao'), {
+            // 3. Consumo
+            new Chart(document.getElementById('chartConsumo'), {
+                type: 'bar',
+                data: {
+                    labels: ind.clima.labels,
+                    datasets: [
+                        { data: ind.consumo_pressao.carne_per_capita_kg, backgroundColor: '#795548' },
+                        { data: ind.consumo_pressao.peixe_sobreexplorado_pct, backgroundColor: '#5c6bc0' }
+                    ]
+                }, options: opt
+            });
+
+            // 4. Geral (CO2 vs Gelo)
+            new Chart(document.getElementById('chartGeral'), {
                 type: 'line',
                 data: {
-                    labels: ds.clima.labels,
+                    labels: ind.clima.labels,
                     datasets: [
-                        { data: ds.biosfera.desmatamento, borderColor: '#66bb6a', tension: 0.4 },
-                        { data: ds.biosfera.carne_kg, borderColor: '#795548', tension: 0.4 }
+                        { data: ind.clima.co2_ppm, borderColor: '#444', tension: 0.4 },
+                        { data: ind.oceanos.perda_glaciares_gt, borderColor: '#90caf9', type: 'bar' }
                     ]
-                },
-                options: opt
+                }, options: opt
+            });
+
+            // Relatório Técnico
+            const analysisDiv = document.getElementById('analysis-content');
+            data.analise_tecnica.forEach(item => {
+                const p = document.createElement('p');
+                p.innerHTML = `<b>${item.setor}:</b> ${item.texto}`;
+                analysisDiv.appendChild(p);
             });
         }
 
