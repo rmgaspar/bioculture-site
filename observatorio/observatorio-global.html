@@ -10,19 +10,20 @@
         #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; background: #fff; border-right: 1px solid #f2f2f2 !important; z-index: 10000; }
         #wrapper { padding-left: 18em !important; }
         
-        /* Alinhamento Preciso com o Logótipo */
-        .inner { padding: 3.5em 4em 0 4em !important; max-width: 1600px !important; margin: 0 auto; width: 100%; }
-        .header-left { text-align: left; margin-bottom: 2.5em; margin-top: 0 !important; }
-        .header-left h1 { font-size: 2.5em; font-weight: 900; color: #1a1a1a; letter-spacing: -1.5px; line-height: 1.1; margin: 10px 0; }
-        .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; display: block; line-height: 1; }
+        /* Alinhamento Milimétrico com o Logótipo */
+        .inner { padding: 2em 4em 0 4em !important; max-width: 1600px !important; margin: 0 auto; width: 100%; }
+        .header-left { text-align: left; margin-bottom: 2em; margin-top: 0 !important; }
+        .header-left h1 { font-size: 2.5em; font-weight: 900; color: #1a1a1a; letter-spacing: -1.5px; line-height: 1; margin: 8px 0 0 0; }
+        .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; display: block; line-height: 1; margin: 0; }
 
-        .map-container { background: #000; border-radius: 15px; height: 600px; margin: 2em 0; overflow: hidden; border: 1px solid #333; }
+        /* Mapa Mundial Espalmado (Visibilidade Total) */
+        .map-container { background: #000; border-radius: 12px; height: 550px; margin: 2em 0; overflow: hidden; border: none; }
         
         .report-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 20px; }
         .chart-box { background: #fdfdfd; border: 1px solid #f2f2f2; padding: 1.2em; border-radius: 10px; height: 320px; }
         .chart-box h5 { font-size: 0.7em; font-weight: 800; text-transform: uppercase; color: #888; margin-bottom: 10px; }
         
-        /* Cores das Legendas */
+        /* Cores das Legendas nos Títulos */
         .leg-temp { color: #ef5350; } .leg-pluv { color: #42a5f5; }
         .leg-forest { color: #66bb6a; } .leg-bio { color: #ffa726; }
         .leg-meat { color: #795548; } .leg-fish { color: #5c6bc0; }
@@ -30,6 +31,12 @@
         .analysis-section { margin-top: 4em; padding: 4em; background: #fdfdfd; border-radius: 12px; border: 1px solid #f2f2f2; margin-bottom: 4em; }
         .analysis-section h3 { font-size: 1.4em; font-weight: 900; margin-bottom: 2em; text-transform: uppercase; border-bottom: 2px solid #eee; padding-bottom: 15px; }
         .analysis-section p { font-size: 1em; line-height: 1.8; text-align: justify; color: #555; margin-bottom: 2em; }
+
+        @media screen and (max-width: 1280px) {
+            .inner { padding: 2em !important; }
+            .report-grid { grid-template-columns: 1fr; }
+            .map-container { height: 350px; }
+        }
     </style>
 </head>
 <body class="is-preload">
@@ -43,8 +50,8 @@
                     </div>
 
                     <div class="map-container">
-                        <!-- Mapa Mundial Orthographic (Vista Global) -->
-                        <iframe src="https://earth.nullschool.net/#current/wind/surface/level/overlay=temp/orthographic=0.00,0.00,300" width="100%" height="100%" frameborder="0"></iframe>
+                        <!-- Mapa Mundial Equirectangular (Espalmado) focado em SST -->
+                        <iframe src="https://earth.nullschool.net/#current/ocean/surface/currents/overlay=sea_surface_temp_anomaly/equirectangular=0,0,180" width="100%" height="100%" frameborder="0"></iframe>
                     </div>
 
                     <div class="report-grid">
@@ -57,7 +64,7 @@
                             <canvas id="chartBiosfera"></canvas>
                         </div>
                         <div class="chart-box">
-                            <h5><span class="leg-meat">Consumo Carne (kg)</span> vs <span class="leg-fish">Saturação Pesca (%)</span></h5>
+                            <h5><span class="leg-meat">Carne (kg)</span> vs <span class="leg-fish">Pesca Saturação (%)</span></h5>
                             <canvas id="chartConsumo"></canvas>
                         </div>
                         <div class="chart-box">
@@ -79,69 +86,71 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         async function loadGlobal() {
-            const res = await fetch('/data/observatorio_global.json');
-            const data = await res.json();
-            const ind = data.indicadores;
+            try {
+                const res = await fetch('/data/observatorio_global.json');
+                const data = await res.json();
+                const ind = data.indicadores;
 
-            document.getElementById('page-title').innerText = data.titulo;
+                document.getElementById('page-title').innerText = data.titulo;
 
-            const opt = { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } };
+                const opt = { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } };
 
-            // 1. Clima
-            new Chart(document.getElementById('chartClima'), {
-                type: 'line',
-                data: {
-                    labels: ind.clima.labels,
-                    datasets: [
-                        { data: ind.clima.temp_anomalia, borderColor: '#ef5350', tension: 0.4 },
-                        { data: ind.clima.pluviosidade_global, borderColor: '#42a5f5', tension: 0.4 }
-                    ]
-                }, options: opt
-            });
+                // 1. Clima
+                new Chart(document.getElementById('chartClima'), {
+                    type: 'line',
+                    data: {
+                        labels: ind.clima.labels,
+                        datasets: [
+                            { data: ind.clima.temp_anomalia, borderColor: '#ef5350', tension: 0.4 },
+                            { data: ind.clima.pluviosidade_global, borderColor: '#42a5f5', tension: 0.4 }
+                        ]
+                    }, options: opt
+                });
 
-            // 2. Biosfera
-            new Chart(document.getElementById('chartBiosfera'), {
-                type: 'line',
-                data: {
-                    labels: ind.clima.labels,
-                    datasets: [
-                        { data: ind.biosfera.desmatamento_mha, borderColor: '#66bb6a', tension: 0.4 },
-                        { data: ind.biosfera.perda_biodiversidade_index, borderColor: '#ffa726', tension: 0.4 }
-                    ]
-                }, options: opt
-            });
+                // 2. Biosfera
+                new Chart(document.getElementById('chartBiosfera'), {
+                    type: 'line',
+                    data: {
+                        labels: ind.clima.labels,
+                        datasets: [
+                            { data: ind.biosfera.desmatamento_mha, borderColor: '#66bb6a', tension: 0.4 },
+                            { data: ind.biosfera.perda_biodiversidade_index, borderColor: '#ffa726', tension: 0.4 }
+                        ]
+                    }, options: opt
+                });
 
-            // 3. Consumo
-            new Chart(document.getElementById('chartConsumo'), {
-                type: 'bar',
-                data: {
-                    labels: ind.clima.labels,
-                    datasets: [
-                        { data: ind.consumo_pressao.carne_per_capita_kg, backgroundColor: '#795548' },
-                        { data: ind.consumo_pressao.peixe_sobreexplorado_pct, backgroundColor: '#5c6bc0' }
-                    ]
-                }, options: opt
-            });
+                // 3. Consumo
+                new Chart(document.getElementById('chartConsumo'), {
+                    type: 'bar',
+                    data: {
+                        labels: ind.clima.labels,
+                        datasets: [
+                            { data: ind.consumo_pressao.carne_per_capita_kg, backgroundColor: '#795548' },
+                            { data: ind.consumo_pressao.peixe_sobreexplorado_pct, backgroundColor: '#5c6bc0' }
+                        ]
+                    }, options: opt
+                });
 
-            // 4. Geral (CO2 vs Gelo)
-            new Chart(document.getElementById('chartGeral'), {
-                type: 'line',
-                data: {
-                    labels: ind.clima.labels,
-                    datasets: [
-                        { data: ind.clima.co2_ppm, borderColor: '#444', tension: 0.4 },
-                        { data: ind.oceanos.perda_glaciares_gt, borderColor: '#90caf9', type: 'bar' }
-                    ]
-                }, options: opt
-            });
+                // 4. CO2 vs Gelo
+                new Chart(document.getElementById('chartGeral'), {
+                    type: 'line',
+                    data: {
+                        labels: ind.clima.labels,
+                        datasets: [
+                            { data: ind.clima.co2_ppm, borderColor: '#444', tension: 0.4 },
+                            { data: ind.oceanos.perda_glaciares_gt, borderColor: '#90caf9', type: 'bar' }
+                        ]
+                    }, options: opt
+                });
 
-            // Relatório Técnico
-            const analysisDiv = document.getElementById('analysis-content');
-            data.analise_tecnica.forEach(item => {
-                const p = document.createElement('p');
-                p.innerHTML = `<b>${item.setor}:</b> ${item.texto}`;
-                analysisDiv.appendChild(p);
-            });
+                // Relatório
+                const analysisDiv = document.getElementById('analysis-content');
+                data.analise_tecnica.forEach(item => {
+                    const p = document.createElement('p');
+                    p.innerHTML = `<b>${item.setor}:</b> ${item.texto}`;
+                    analysisDiv.appendChild(p);
+                });
+            } catch (err) { console.error("Erro:", err); }
         }
 
         fetch('/sidebar-content.html').then(r => r.text()).then(html => {
