@@ -8,9 +8,11 @@
     <style>
         body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
         section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
+        
         #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
         #wrapper { padding-left: 18em !important; }
         
+        /* Alinhamento Milimétrico com o Logótipo */
         .inner { padding: 2.2em 4em 0 4em !important; max-width: 1600px !important; margin: 0 auto; width: 100%; }
         .header-left { text-align: left; margin-bottom: 2em; }
         .header-left h1 { font-size: 2.5em; font-weight: 900; color: #1a1a1a; letter-spacing: -1.5px; line-height: 1.1; margin: 10px 0 !important; }
@@ -18,26 +20,32 @@
 
         /* Mapa e Nota Interativa */
         .map-container { background: #000; border-radius: 15px; height: 500px; margin: 2em 0; overflow: hidden; position: relative; border: 1px solid #eee; }
-        .map-mask { position: absolute; bottom: 0; left: 0; width: 100%; height: 45px; background: #000; z-index: 10; }
+        .map-mask { position: absolute; bottom: 0; left: 0; width: 150px; height: 50px; background: #000; z-index: 10; }
         .map-note { position: absolute; bottom: 15px; right: 20px; color: rgba(255,255,255,0.4); font-size: 0.6em; text-transform: uppercase; letter-spacing: 1.5px; z-index: 20; pointer-events: none; }
 
-        /* Banner de Sumário (Borda removida) */
-        .summary-box { background: #f9f9f9; padding: 2em 0; margin-bottom: 3em; display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; border-left: none !important; }
+        /* Banner de Sumário (Sem borda vertical) */
+        .summary-box { background: #f9f9f9; padding: 2.5em; margin-bottom: 2em; display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; border-left: none !important; border-radius: 12px; }
         .summary-item h5 { font-size: 0.65em; font-weight: 900; text-transform: uppercase; margin-bottom: 8px; color: #333; }
-        .summary-item p { font-size: 0.8em; line-height: 1.5; margin: 0; color: #666; }
+        .summary-item p { font-size: 0.8em; line-height: 1.5; margin: 0; color: #666; text-align: justify; }
 
-        /* Sumário de Correlação de Dados */
-        .correlation-summary { background: #fff; border: 1px solid #eee; padding: 2.5em; border-radius: 12px; margin-bottom: 3em; }
-        .correlation-summary h4 { font-size: 0.75em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #1a1a1a; margin-bottom: 1.5em; display: flex; align-items: center; gap: 10px; }
+        /* Sumário de Correlação */
+        .correlation-summary { background: #fff; border: 1px solid #f2f2f2; padding: 2.5em; border-radius: 12px; margin-bottom: 3em; }
+        .correlation-summary h4 { font-size: 0.75em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #1a1a1a; margin-bottom: 1.2em; display: flex; align-items: center; gap: 10px; }
         .correlation-summary h4::before { content: ''; width: 20px; height: 2px; background: #ef5350; display: inline-block; }
         .correlation-summary p { font-size: 0.95em; line-height: 1.8; color: #555; text-align: justify; margin: 0; }
 
+        /* Grid de Gráficos */
         .report-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 20px; }
         .chart-box { background: #fdfdfd; border: 1px solid #f2f2f2; padding: 1.2em; border-radius: 10px; height: 260px; }
         .chart-box h5 { font-size: 0.6em; font-weight: 800; text-transform: uppercase; color: #888; margin-bottom: 10px; }
+        
+        /* Rodapé bioCultura */
+        .page-footer { padding: 4em 0 4em 0; text-align: right; opacity: 0.4; }
+        .logo-footer { display: block; font-size: 0.85em; font-weight: 900; color: #333; }
+        .sublogo-footer { display: block; font-size: 0.5em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #bbb; }
 
         @media screen and (max-width: 1400px) { .report-grid { grid-template-columns: repeat(2, 1fr); } .summary-box { grid-template-columns: repeat(2, 1fr); } }
-        @media screen and (max-width: 1280px) { #wrapper { padding-left: 0 !important; } }
+        @media screen and (max-width: 1280px) { #wrapper { padding-left: 0 !important; } .report-grid, .summary-box { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body class="is-preload">
@@ -47,7 +55,7 @@
                 <section>
                     <div class="header-left">
                         <span class="category-label">Global Impact Observatory</span>
-                        <h1 id="page-title">...</h1>
+                        <h1 id="page-title">Relatório de Impacto Planetário 1970-2026</h1>
                     </div>
 
                     <div class="map-container">
@@ -63,22 +71,21 @@
                         </div>
                         <div class="summary-item">
                             <h5>Biodiversidade</h5>
-                            <p>45.300 espécies em risco crítico (IUCN). Perda de 37% da riqueza marinha (OBIS).</p>
+                            <p>45.300 espécies em risco crítico (IUCN). Perda de 37% da riqueza marinha monitorizada pelo OBIS.</p>
                         </div>
                         <div class="summary-item">
                             <h5>Saúde do Solo</h5>
-                            <p>Declínio de 45% na integridade biológica (FAO), afetando a resiliência agrícola.</p>
+                            <p>Declínio de 45% na integridade biológica do solo (FAO), afetando o sequestro de carbono natural.</p>
                         </div>
                         <div class="summary-item">
                             <h5>Atividade Sísmica</h5>
-                            <p>Crescimento de 77% na frequência de sismos Mag 5+ correlacionado com redistribuição de massa.</p>
+                            <p>Crescimento de 77% na frequência de sismos Mag 5+; correlação em estudo com redistribuição de massa.</p>
                         </div>
                     </div>
 
-                    <!-- Sumário de Correlação de Dados -->
                     <div class="correlation-summary">
                         <h4>Análise de Correlação Multidimensional</h4>
-                        <p id="correlation-text">Carregando análise das fontes Copernicus, WMO e FAO...</p>
+                        <p id="correlation-text">A série histórica revela um nexo crítico: o aquecimento térmico não gera apenas aridez, mas sim uma desestruturação termodinâmica...</p>
                     </div>
 
                     <div class="report-grid">
@@ -107,6 +114,11 @@
                             <canvas id="chartIncendios"></canvas>
                         </div>
                     </div>
+
+                    <footer class="page-footer">
+                        <span class="logo-footer">bioCultura</span>
+                        <span class="sublogo-footer">Global Regeneration</span>
+                    </footer>
                 </section>
             </div>
         </div>
@@ -115,108 +127,99 @@
 
     <script src="/assets/js/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <script>
-            async function loadGlobal() {
-                try {
-                    const res = await fetch('/data/observatorio_global.json');
-                    const data = await res.json();
-                    const ind = data.indicadores;
+    <script>
+        async function loadGlobal() {
+            try {
+                const res = await fetch('/data/observatorio_global.json');
+                const data = await res.json();
+                const ind = data.indicadores;
 
-                    document.getElementById('page-title').innerText = data.titulo;
-                    document.getElementById('correlation-text').innerText = data.sumario_correlacao;
+                document.getElementById('page-title').innerText = data.titulo;
+                document.getElementById('correlation-text').innerHTML = data.sumario_correlacao;
 
-                    const opt = { 
-                        responsive: true, 
-                        maintainAspectRatio: false, 
-                        plugins: { legend: { display: false } }, 
-                        scales: { 
-                            x: { grid: { display: false }, ticks: { font: { size: 8 } } }, 
-                            y: { ticks: { font: { size: 8 } } } 
-                        } 
-                    };
+                const opt = { 
+                    responsive: true, 
+                    maintainAspectRatio: false, 
+                    plugins: { legend: { display: false } }, 
+                    scales: { 
+                        x: { grid: { display: false }, ticks: { font: { size: 8 } } }, 
+                        y: { ticks: { font: { size: 8 } } } 
+                    } 
+                };
 
-                    // 1. SECA EXTREMA VS CHEIAS
-                    new Chart(document.getElementById('chartExtremos'), {
-                        type: 'line',
-                        data: {
-                            labels: ind.clima_extremos.labels,
-                            datasets: [
-                                { label: 'Seca', data: ind.clima_extremos.indice_seca_extrema, borderColor: '#ef5350', tension: 0.4 },
-                                { label: 'Cheias', data: ind.clima_extremos.eventos_cheias_anuais, borderColor: '#42a5f5', tension: 0.4 }
-                            ]
-                        }, options: opt
-                    });
+                // 1. Extremos
+                new Chart(document.getElementById('chartExtremos'), {
+                    type: 'line',
+                    data: {
+                        labels: ind.clima_extremos.labels,
+                        datasets: [
+                            { label: 'Seca', data: ind.clima_extremos.indice_seca_extrema, borderColor: '#ef5350', tension: 0.4 },
+                            { label: 'Cheias', data: ind.clima_extremos.eventos_cheias_anuais, borderColor: '#42a5f5', tension: 0.4 }
+                        ]
+                    }, options: opt
+                });
 
-                    // 2. ESPÉCIES EM RISCO VS SAÚDE SOLO
-                    new Chart(document.getElementById('chartBiosfera'), {
-                        type: 'line',
-                        data: {
-                            labels: ind.biosfera_solo.labels,
-                            datasets: [
-                                { label: 'Espécies', data: ind.biosfera_solo.especies_ameacas_iucn, borderColor: '#ffa726', tension: 0.4 },
-                                { label: 'Solo', data: ind.biosfera_solo.saude_solo_index, borderColor: '#66bb6a', tension: 0.4 }
-                            ]
-                        }, options: opt
-                    });
+                // 2. Biosfera
+                new Chart(document.getElementById('chartBiosfera'), {
+                    type: 'line',
+                    data: {
+                        labels: ind.biosfera_solo.labels,
+                        datasets: [
+                            { label: 'Espécies', data: ind.biosfera_solo.especies_ameacas_iucn, borderColor: '#ffa726', tension: 0.4 },
+                            { label: 'Solo', data: ind.biosfera_solo.saude_solo_index, borderColor: '#66bb6a', tension: 0.4 }
+                        ]
+                    }, options: opt
+                });
 
-                    // 3. SISMOS MAG 5+
-                    new Chart(document.getElementById('chartSismos'), {
-                        type: 'bar',
-                        data: {
-                            labels: ind.geologia_sismos.labels,
-                            datasets: [{ data: ind.geologia_sismos.sismos_mag_5_plus, backgroundColor: '#9575cd' }]
-                        }, options: opt
-                    });
+                // 3. Sismos
+                new Chart(document.getElementById('chartSismos'), {
+                    type: 'bar',
+                    data: {
+                        labels: ind.geologia_sismos.labels,
+                        datasets: [{ data: ind.geologia_sismos.sismos_mag_5_plus, backgroundColor: '#9575cd' }]
+                    }, options: opt
+                });
 
-                    // 4. TEMP MAR (SST) VS RIQUEZA OBIS
-                    new Chart(document.getElementById('chartOceanos'), {
-                        type: 'line',
-                        data: {
-                            labels: ind.oceanos_obis.labels,
-                            datasets: [
-                                { label: 'SST', data: ind.oceanos_obis.temp_superficie_mar, borderColor: '#42a5f5', tension: 0.4 },
-                                { label: 'Biodiversidade', data: ind.oceanos_obis.riqueza_especies_marinhas, borderColor: '#ffa726', tension: 0.4 }
-                            ]
-                        }, options: opt
-                    });
+                // 4. Oceanos
+                new Chart(document.getElementById('chartOceanos'), {
+                    type: 'line',
+                    data: {
+                        labels: ind.oceanos_obis.labels,
+                        datasets: [
+                            { label: 'SST', data: ind.oceanos_obis.temp_superficie_mar, borderColor: '#42a5f5', tension: 0.4 },
+                            { label: 'Biodiversidade', data: ind.oceanos_obis.riqueza_especies_marinhas, borderColor: '#ffa726', tension: 0.4 }
+                        ]
+                    }, options: opt
+                });
 
-                    // 5. ANOMALIA TÉRMICA GLOBAL (ºC)
-                    new Chart(document.getElementById('chartTemp'), {
-                        type: 'line',
-                        data: {
-                            labels: ind.clima_extremos.labels,
-                            datasets: [{ 
-                                data: ind.clima_extremos.anomalia_temp, 
-                                borderColor: '#ef5350', 
-                                fill: true, 
-                                backgroundColor: 'rgba(239, 83, 80, 0.1)', 
-                                tension: 0.4 
-                            }]
-                        }, options: opt
-                    });
+                // 5. Temperatura
+                new Chart(document.getElementById('chartTemp'), {
+                    type: 'line',
+                    data: {
+                        labels: ind.clima_extremos.labels,
+                        datasets: [{ data: ind.clima_extremos.anomalia_temp, borderColor: '#ef5350', fill: true, backgroundColor: 'rgba(239, 83, 80, 0.1)', tension: 0.4 }]
+                    }, options: opt
+                });
 
-                    // 6. EVENTOS SEVEROS (FURACÕES/INCÊNDIOS)
-                    new Chart(document.getElementById('chartIncendios'), {
-                        type: 'line',
-                        data: {
-                            labels: ind.clima_extremos.labels,
-                            datasets: [
-                                { label: 'Incêndios', data: [10, 15, 25, 40, 65, 85, 110], borderColor: '#ffa726', tension: 0.4 },
-                                { label: 'Furacões', data: [5, 7, 12, 18, 22, 28, 35], borderColor: '#78909c', tension: 0.4 }
-                            ]
-                        }, options: opt
-                    });
+                // 6. Eventos Severos
+                new Chart(document.getElementById('chartIncendios'), {
+                    type: 'line',
+                    data: {
+                        labels: ind.clima_extremos.labels,
+                        datasets: [
+                            { label: 'Incêndios', data: [10, 15, 25, 40, 65, 85, 110], borderColor: '#ffa726', tension: 0.4 },
+                            { label: 'Furacões', data: [5, 7, 12, 18, 22, 28, 35], borderColor: '#78909c', tension: 0.4 }
+                        ]
+                    }, options: opt
+                });
 
-                } catch (err) { 
-                    console.error("Erro ao carregar gráficos globais:", err); 
-                }
-            }
+            } catch (err) { console.error("Erro Global:", err); }
+        }
 
-            // Inicialização após carregar a sidebar
-            fetch('/sidebar-content.html').then(r => r.text()).then(html => {
-                document.getElementById('sidebar').innerHTML = html;
-                loadGlobal();
-            });
-        </script>
+        fetch('/sidebar-content.html').then(r => r.text()).then(html => {
+            document.getElementById('sidebar').innerHTML = html;
+            loadGlobal();
+        });
+    </script>
 </body>
 </html>
