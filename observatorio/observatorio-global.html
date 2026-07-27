@@ -8,40 +8,47 @@
     <style>
         body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
         section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
+        
         #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
         #wrapper { padding-left: 18em !important; }
         
+        /* Alinhamento Milimétrico com Sidebar */
         .inner { padding: 2.2em 4em 0 4em !important; max-width: 1600px !important; margin: 0 auto; width: 100%; }
         .header-left { text-align: left; margin-bottom: 2em; }
         .header-left h1 { font-size: 2.5em; font-weight: 900; color: #1a1a1a; letter-spacing: -1.5px; line-height: 1.1; margin: 10px 0 !important; }
         .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; display: block; }
 
-        /* Mapa: Máscara total para ocultar barra de menu */
+        /* Mapa e Nota Interativa */
         .map-container { background: #000; border-radius: 15px; height: 500px; margin: 2em 0; overflow: hidden; position: relative; border: 1px solid #eee; }
         .map-mask-bottom { position: absolute; bottom: 0; left: 0; width: 100%; height: 55px; background: #000; z-index: 10; }
         .map-note { position: absolute; bottom: 15px; right: 25px; color: rgba(255,255,255,0.5); font-size: 0.65em; text-transform: uppercase; letter-spacing: 1px; z-index: 20; pointer-events: none; }
 
-        /* Banner de Sumário: Mais espaçamento e sem borda */
-        .summary-box { background: #f9f9f9; padding: 3.5em; margin-bottom: 2.5em; display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; border-left: none !important; border-radius: 15px; }
+        /* Banner de Sumário (Sem Borda) */
+        .summary-box { background: #f9f9f9; padding: 3.5em; margin-bottom: 2.5em; display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; border-radius: 15px; }
         .summary-item h5 { font-size: 0.7em; font-weight: 900; text-transform: uppercase; margin-bottom: 12px; color: #1a1a1a; letter-spacing: 1px; }
         .summary-item p { font-size: 0.85em; line-height: 1.7; margin: 0; color: #555; text-align: justify; }
 
-        /* Análise de Correlação Enriquecida */
+        /* Análise de Correlação */
         .correlation-summary { background: #fff; border: 1px solid #f2f2f2; padding: 4em; border-radius: 15px; margin-bottom: 3.5em; }
         .correlation-summary h4 { font-size: 0.8em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #1a1a1a; margin-bottom: 2em; display: flex; align-items: center; gap: 15px; }
         .correlation-summary h4::before { content: ''; width: 30px; height: 3px; background: #ef5350; display: inline-block; }
-        .correlation-summary h3 { font-size: 1.1em; font-weight: 800; margin-bottom: 1em; color: #333; }
         .correlation-summary p { font-size: 1em; line-height: 1.9; color: #444; text-align: justify; }
 
+        /* Grid de Gráficos (3 colunas) */
         .report-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; margin-top: 20px; }
         .chart-box { background: #fdfdfd; border: 1px solid #f2f2f2; padding: 1.5em; border-radius: 12px; height: 280px; }
         .chart-box h5 { font-size: 0.65em; font-weight: 800; text-transform: uppercase; color: #888; margin-bottom: 12px; }
         
+        /* Legendas Coloridas */
+        .leg-red { color: #ef5350; font-weight: 900; } .leg-blue { color: #42a5f5; font-weight: 900; }
+        .leg-green { color: #66bb6a; font-weight: 900; } .leg-orange { color: #ffa726; font-weight: 900; }
+        .leg-purple { color: #9575cd; font-weight: 900; } .leg-money { color: #81c784; font-weight: 900; }
+
         .page-footer { padding: 5em 0 4em 0; text-align: right; opacity: 0.4; }
         .logo-footer { display: block; font-size: 0.85em; font-weight: 900; color: #333; }
         .sublogo-footer { display: block; font-size: 0.5em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #bbb; }
 
-        @media screen and (max-width: 1400px) { .report-grid { grid-template-columns: repeat(2, 1fr); } .summary-box { grid-template-columns: repeat(2, 1fr); padding: 2em; } }
+        @media screen and (max-width: 1400px) { .report-grid { grid-template-columns: repeat(2, 1fr); } }
         @media screen and (max-width: 1280px) { #wrapper { padding-left: 0 !important; } .report-grid, .summary-box { grid-template-columns: 1fr; } }
     </style>
 </head>
@@ -52,7 +59,7 @@
                 <section>
                     <div class="header-left">
                         <span class="category-label">Global Impact Observatory</span>
-                        <h1 id="page-title">...</h1>
+                        <h1 id="page-title">Relatório Planetário 1970-2026</h1>
                     </div>
 
                     <div class="map-container">
@@ -82,29 +89,41 @@
 
                     <div class="correlation-summary">
                         <h4>Análise de Correlação Multidimensional</h4>
-                        <div id="correlation-text">Carregando análise profunda...</div>
+                        <div id="correlation-text">Carregando análise técnica profunda...</div>
                     </div>
 
                     <div class="report-grid">
                         <div class="chart-box">
-                            <h5>Seca Extrema vs Cheias (Qtd)</h5>
+                            <h5><span class="leg-red">Seca Extrema</span> vs <span class="leg-blue">Cheias (Qtd)</span></h5>
                             <canvas id="chartExtremos"></canvas>
                         </div>
                         <div class="chart-box">
-                            <h5>Espécies em Risco vs Saúde Solo</h5>
+                            <h5><span class="leg-orange">Espécies (IUCN)</span> vs <span class="leg-green">Saúde Solo</span></h5>
                             <canvas id="chartBiosfera"></canvas>
                         </div>
                         <div class="chart-box">
-                            <h5>Sismos Mag 5+ (Frequência)</h5>
+                            <h5><span class="leg-purple">Sismos Mag 5+</span> (Frequência)</h5>
                             <canvas id="chartSismos"></canvas>
                         </div>
                         <div class="chart-box">
-                            <h5>Temp Mar (SST) vs Riqueza OBIS</h5>
+                            <h5><span class="leg-blue">SST (ºC)</span> vs <span class="leg-orange">Riqueza OBIS</span></h5>
                             <canvas id="chartOceanos"></canvas>
                         </div>
                         <div class="chart-box">
                             <h5>Anomalia Térmica Global (ºC)</h5>
                             <canvas id="chartTemp"></canvas>
+                        </div>
+                        <div class="chart-box">
+                            <h5><span class="leg-money">Custos NOAA (Biliões USD)</span></h5>
+                            <canvas id="chartNoaaEcon"></canvas>
+                        </div>
+                        <div class="chart-box">
+                            <h5><span class="leg-green">Desmatamento</span> vs <span class="leg-red">CO2 (ppm)</span></h5>
+                            <canvas id="chartAtmosfera"></canvas>
+                        </div>
+                        <div class="chart-box">
+                            <h5>Massa Glaciar Acumulada (Gt)</h5>
+                            <canvas id="chartGelo"></canvas>
                         </div>
                         <div class="chart-box">
                             <h5>Eventos Severos (Furacões/Incêndios)</h5>
@@ -134,42 +153,57 @@
                 document.getElementById('page-title').innerText = data.titulo;
                 document.getElementById('correlation-text').innerHTML = data.sumario_correlacao;
 
-                const opt = { 
-                    responsive: true, 
-                    maintainAspectRatio: false, 
-                    plugins: { legend: { display: false } }, 
-                    scales: { 
-                        x: { grid: { display: false }, ticks: { font: { size: 8 } } }, 
-                        y: { ticks: { font: { size: 8 } } } 
-                    } 
-                };
+                const opt = { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false }, ticks: { font: { size: 8 } } }, y: { ticks: { font: { size: 8 } } } } };
 
-                // Renderização de todos os 6 gráficos
+                // 1. Extremos
                 new Chart(document.getElementById('chartExtremos'), {
                     type: 'line',
                     data: { labels: ind.clima_extremos.labels, datasets: [{ data: ind.clima_extremos.indice_seca_extrema, borderColor: '#ef5350', tension: 0.4 }, { data: ind.clima_extremos.eventos_cheias_anuais, borderColor: '#42a5f5', tension: 0.4 }] }, options: opt
                 });
 
+                // 2. Biosfera
                 new Chart(document.getElementById('chartBiosfera'), {
                     type: 'line',
                     data: { labels: ind.biosfera_solo.labels, datasets: [{ data: ind.biosfera_solo.especies_ameacas_iucn, borderColor: '#ffa726', tension: 0.4 }, { data: ind.biosfera_solo.saude_solo_index, borderColor: '#66bb6a', tension: 0.4 }] }, options: opt
                 });
 
+                // 3. Sismos
                 new Chart(document.getElementById('chartSismos'), {
                     type: 'bar',
                     data: { labels: ind.geologia_sismos.labels, datasets: [{ data: ind.geologia_sismos.sismos_mag_5_plus, backgroundColor: '#9575cd' }] }, options: opt
                 });
 
+                // 4. Oceanos
                 new Chart(document.getElementById('chartOceanos'), {
                     type: 'line',
                     data: { labels: ind.oceanos_obis.labels, datasets: [{ data: ind.oceanos_obis.temp_superficie_mar, borderColor: '#42a5f5', tension: 0.4 }, { data: ind.oceanos_obis.riqueza_especies_marinhas, borderColor: '#ffa726', tension: 0.4 }] }, options: opt
                 });
 
+                // 5. Temperatura
                 new Chart(document.getElementById('chartTemp'), {
                     type: 'line',
                     data: { labels: ind.clima_extremos.labels, datasets: [{ data: ind.clima_extremos.anomalia_temp, borderColor: '#ef5350', fill: true, backgroundColor: 'rgba(239, 83, 80, 0.1)', tension: 0.4 }] }, options: opt
                 });
 
+                // 6. NOAA Económico
+                new Chart(document.getElementById('chartNoaaEcon'), {
+                    type: 'bar',
+                    data: { labels: ind.noaa_economico.labels, datasets: [{ data: ind.noaa_economico.custo_bilioes_usd, backgroundColor: '#81c784' }] }, options: opt
+                });
+
+                // 7. Atmosfera (CO2 vs Desmatamento)
+                new Chart(document.getElementById('chartAtmosfera'), {
+                    type: 'line',
+                    data: { labels: ind.clima_extremos.labels, datasets: [{ data: ind.clima_extremos.co2_ppm, borderColor: '#444', tension: 0.4 }, { data: ind.biosfera_solo.desmatamento_mha, borderColor: '#66bb6a', tension: 0.4 }] }, options: opt
+                });
+
+                // 8. Gelo
+                new Chart(document.getElementById('chartGelo'), {
+                    type: 'line',
+                    data: { labels: ind.oceanos_obis.labels, datasets: [{ data: ind.oceanos_obis.perda_glaciares_gt, borderColor: '#5c6bc0', fill: true, backgroundColor: 'rgba(92, 107, 192, 0.1)', tension: 0.4 }] }, options: opt
+                });
+
+                // 9. Eventos Severos
                 new Chart(document.getElementById('chartIncendios'), {
                     type: 'line',
                     data: { labels: ind.clima_extremos.labels, datasets: [{ label: 'Incêndios', data: [10, 15, 25, 40, 65, 85, 110], borderColor: '#ffa726', tension: 0.4 }, { label: 'Furacões', data: [5, 7, 12, 18, 22, 28, 35], borderColor: '#78909c', tension: 0.4 }] }, options: opt
