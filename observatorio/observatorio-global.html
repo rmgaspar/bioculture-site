@@ -115,56 +115,108 @@
 
     <script src="/assets/js/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        async function loadGlobal() {
-            const res = await fetch('/data/observatorio_global.json');
-            const data = await res.json();
-            const ind = data.indicadores;
+        <script>
+            async function loadGlobal() {
+                try {
+                    const res = await fetch('/data/observatorio_global.json');
+                    const data = await res.json();
+                    const ind = data.indicadores;
 
-            document.getElementById('page-title').innerText = data.titulo;
-            document.getElementById('correlation-text').innerText = data.sumario_correlacao;
+                    document.getElementById('page-title').innerText = data.titulo;
+                    document.getElementById('correlation-text').innerText = data.sumario_correlacao;
 
-            const opt = { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false }, ticks: { font: { size: 8 } } }, y: { ticks: { font: { size: 8 } } } } };
+                    const opt = { 
+                        responsive: true, 
+                        maintainAspectRatio: false, 
+                        plugins: { legend: { display: false } }, 
+                        scales: { 
+                            x: { grid: { display: false }, ticks: { font: { size: 8 } } }, 
+                            y: { ticks: { font: { size: 8 } } } 
+                        } 
+                    };
 
-            // Graficos (mantendo a lógica anterior, adicionando o de Incêndios/Furacões)
-            new Chart(document.getElementById('chartExtremos'), {
-                type: 'line',
-                data: {
-                    labels: ind.clima_extremos.labels,
-                    datasets: [
-                        { data: ind.clima_extremos.indice_seca_extrema, borderColor: '#ef5350', tension: 0.4 },
-                        { data: ind.clima_extremos.eventos_cheias_anuais, borderColor: '#42a5f5', tension: 0.4 }
-                    ]
-                }, options: opt
+                    // 1. SECA EXTREMA VS CHEIAS
+                    new Chart(document.getElementById('chartExtremos'), {
+                        type: 'line',
+                        data: {
+                            labels: ind.clima_extremos.labels,
+                            datasets: [
+                                { label: 'Seca', data: ind.clima_extremos.indice_seca_extrema, borderColor: '#ef5350', tension: 0.4 },
+                                { label: 'Cheias', data: ind.clima_extremos.eventos_cheias_anuais, borderColor: '#42a5f5', tension: 0.4 }
+                            ]
+                        }, options: opt
+                    });
+
+                    // 2. ESPÉCIES EM RISCO VS SAÚDE SOLO
+                    new Chart(document.getElementById('chartBiosfera'), {
+                        type: 'line',
+                        data: {
+                            labels: ind.biosfera_solo.labels,
+                            datasets: [
+                                { label: 'Espécies', data: ind.biosfera_solo.especies_ameacas_iucn, borderColor: '#ffa726', tension: 0.4 },
+                                { label: 'Solo', data: ind.biosfera_solo.saude_solo_index, borderColor: '#66bb6a', tension: 0.4 }
+                            ]
+                        }, options: opt
+                    });
+
+                    // 3. SISMOS MAG 5+
+                    new Chart(document.getElementById('chartSismos'), {
+                        type: 'bar',
+                        data: {
+                            labels: ind.geologia_sismos.labels,
+                            datasets: [{ data: ind.geologia_sismos.sismos_mag_5_plus, backgroundColor: '#9575cd' }]
+                        }, options: opt
+                    });
+
+                    // 4. TEMP MAR (SST) VS RIQUEZA OBIS
+                    new Chart(document.getElementById('chartOceanos'), {
+                        type: 'line',
+                        data: {
+                            labels: ind.oceanos_obis.labels,
+                            datasets: [
+                                { label: 'SST', data: ind.oceanos_obis.temp_superficie_mar, borderColor: '#42a5f5', tension: 0.4 },
+                                { label: 'Biodiversidade', data: ind.oceanos_obis.riqueza_especies_marinhas, borderColor: '#ffa726', tension: 0.4 }
+                            ]
+                        }, options: opt
+                    });
+
+                    // 5. ANOMALIA TÉRMICA GLOBAL (ºC)
+                    new Chart(document.getElementById('chartTemp'), {
+                        type: 'line',
+                        data: {
+                            labels: ind.clima_extremos.labels,
+                            datasets: [{ 
+                                data: ind.clima_extremos.anomalia_temp, 
+                                borderColor: '#ef5350', 
+                                fill: true, 
+                                backgroundColor: 'rgba(239, 83, 80, 0.1)', 
+                                tension: 0.4 
+                            }]
+                        }, options: opt
+                    });
+
+                    // 6. EVENTOS SEVEROS (FURACÕES/INCÊNDIOS)
+                    new Chart(document.getElementById('chartIncendios'), {
+                        type: 'line',
+                        data: {
+                            labels: ind.clima_extremos.labels,
+                            datasets: [
+                                { label: 'Incêndios', data: [10, 15, 25, 40, 65, 85, 110], borderColor: '#ffa726', tension: 0.4 },
+                                { label: 'Furacões', data: [5, 7, 12, 18, 22, 28, 35], borderColor: '#78909c', tension: 0.4 }
+                            ]
+                        }, options: opt
+                    });
+
+                } catch (err) { 
+                    console.error("Erro ao carregar gráficos globais:", err); 
+                }
+            }
+
+            // Inicialização após carregar a sidebar
+            fetch('/sidebar-content.html').then(r => r.text()).then(html => {
+                document.getElementById('sidebar').innerHTML = html;
+                loadGlobal();
             });
-
-            new Chart(document.getElementById('chartSismos'), {
-                type: 'bar',
-                data: {
-                    labels: ind.geologia_sismos.labels,
-                    datasets: [{ data: ind.geologia_sismos.sismos_mag_5_plus, backgroundColor: '#9575cd' }]
-                }, options: opt
-            });
-
-            // Novo Gráfico: Eventos Severos (Tendência baseada em WMO)
-            new Chart(document.getElementById('chartIncendios'), {
-                type: 'line',
-                data: {
-                    labels: ind.clima_extremos.labels,
-                    datasets: [
-                        { label: 'Incêndios', data: [10, 15, 25, 40, 65, 85, 110], borderColor: '#ffa726', tension: 0.4 },
-                        { label: 'Furacões', data: [5, 7, 12, 18, 22, 28, 35], borderColor: '#78909c', tension: 0.4 }
-                    ]
-                }, options: opt
-            });
-
-            // Restantes graficos seguem a mesma lógica...
-        }
-
-        fetch('/sidebar-content.html').then(r => r.text()).then(html => {
-            document.getElementById('sidebar').innerHTML = html;
-            loadGlobal();
-        });
-    </script>
+        </script>
 </body>
 </html>
