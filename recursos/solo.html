@@ -1,187 +1,219 @@
 <!DOCTYPE HTML>
 <html>
-<head>
-    <title>bioCultura - Observatório do Solo</title>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-    <link rel="stylesheet" href="/assets/css/main.css" />
-    <style>
-        body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
-        section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
-        section { min-height: 100vh; display: flex; flex-direction: column; }
+	<head>
+		<title>bioCultura - Observatório do Solo</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="/assets/css/main.css" />
+		<style>
+            /* --- ESTRUTURA GLOBAL (PARIDADE TOTAL COM INDEX) --- */
+            body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
+			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
+            section { min-height: 100vh; display: flex; flex-direction: column; }
 
-        #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
-        #wrapper { padding-left: 18em !important; }
+            #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
+            #wrapper { padding-left: 18em !important; }
 
-        /* Alinhamento Milimétrico com o Logótipo */
-        .inner { padding: 2.2em 4em 0 4em !important; max-width: 1600px !important; margin: 0 auto; width: 100%; }
+            /* RETIFICAÇÃO DO ESPAÇAMENTO DO TOPO */
+            .inner { padding: 2.2em 4em 0 4em !important; max-width: 1600px !important; margin: 0 auto; width: 100%; }
 
-        .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; margin-bottom: 15px; display: block; line-height: 1; }
+            .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; margin-bottom: 15px; display: block; }
 
-        .hero-split { display: flex; align-items: flex-start; justify-content: space-between; gap: 4em; margin-bottom: 2em; }
-        .hero-text { flex: 1.5; text-align: left; padding-top: 5px; } 
-        .hero-text h1 { font-size: 4em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; line-height: 0.95; margin: 0 0 20px 0; }
-        
-        .hero-visual { flex: 1; display: flex; justify-content: flex-end; }
-        .hero-globe { position: relative; width: 480px; height: 480px; border-radius: 50%; overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,0.12); background: #1a1a1a; }
-        .hero-globe img { width: 100%; height: 100%; object-fit: cover; }
+            /* HERO SPLIT (ALINHAMENTO MILIMÉTRICO) */
+            .hero-split { display: flex; align-items: flex-start; justify-content: space-between; gap: 4em; margin-bottom: 2em; }
+            .hero-text { flex: 1.5; text-align: left; padding-top: 5px; } 
+            .hero-text h1 { font-size: 4em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; line-height: 0.95; margin: 0 0 20px 0; }
+            
+            .hero-visual { flex: 1; display: flex; justify-content: flex-end; }
+            .hero-globe { 
+                position: relative; 
+                width: 480px; height: 480px; 
+                border-radius: 50%; overflow: hidden; 
+                box-shadow: 0 40px 100px rgba(0,0,0,0.12); 
+                background: #1a1a1a;
+            }
+            .hero-globe img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* Estilo dos Indicadores (Gauges) */
-        .data-row { display: block; padding: 2.5em 0; border-bottom: 1px solid #f2f2f2; }
-        .data-row h4 { font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin: 0 0 25px 0; display: block; }
+            /* REFORMULAÇÃO DO ALINHAMENTO (VERTICAL) */
+            .data-row { display: block; padding: 2.5em 0; border-bottom: 1px solid #f2f2f2; }
+            .data-row h4 { 
+                font-size: 0.7em; 
+                font-weight: 900; 
+                text-transform: uppercase; 
+                letter-spacing: 2px; 
+                color: #bbb; 
+                margin: 0 0 25px 0; 
+                display: block;
+            }
 
-        .gauge-container { margin-bottom: 25px; width: 100%; max-width: 500px; }
-        .gauge-label { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 6px; }
-        .current-val { font-size: 1.2em; font-weight: 700; color: #1a1a1a; }
-        .unit { font-size: 0.6em; font-weight: 800; color: #bbb; text-transform: uppercase; }
-        .gauge-bar { height: 6px; width: 100%; border-radius: 10px; position: relative; background: #eee; }
-        .bar-organic { background: linear-gradient(to right, #ef5350 0%, #ffb74d 30%, #81c784 100%); }
-        .bar-ph-solo { background: linear-gradient(to right, #ef5350 0%, #81c784 50%, #5c6bc0 100%); }
-        .bar-desert { background: linear-gradient(to right, #81c784 0%, #ff9800 100%); }
-        .gauge-marker { position: absolute; top: -5px; left: 0%; width: 3px; height: 16px; background: #1a1a1a; border-radius: 2px; transition: left 1.5s cubic-bezier(0.4, 0, 0.2, 1); }
+            /* GAUGES DE SOLO */
+            .gauge-container { margin-bottom: 15px; width: 100%; max-width: 500px; }
+            .gauge-label { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 6px; }
+            .current-val { font-size: 1.2em; font-weight: 700; color: #1a1a1a; }
+            .unit { font-size: 0.6em; font-weight: 800; color: #bbb; text-transform: uppercase; }
+            .gauge-bar { height: 6px; width: 100%; border-radius: 10px; position: relative; background: #eee; }
+            .bar-organic { background: linear-gradient(to right, #ef5350 0%, #ffb74d 30%, #81c784 100%); }
+            .bar-ph-solo { background: linear-gradient(to right, #ef5350 0%, #81c784 50%, #5c6bc0 100%); }
+            .bar-desert { background: linear-gradient(to right, #81c784 0%, #ff9800 100%); }
+            .gauge-marker { position: absolute; top: -5px; left: 0%; width: 3px; height: 16px; background: #1a1a1a; border-radius: 2px; transition: left 1.5s cubic-bezier(0.4, 0, 0.2, 1); }
 
-        /* Sumários e Fontes (Padrão Global) */
-        .chart-explanation { font-size: 0.8em; line-height: 1.6; color: #666; margin-top: 12px; text-align: justify; min-height: 3em; }
-        .chart-source-subtle { font-size: 0.6em; font-weight: 700; color: #ccc; text-transform: uppercase; margin-top: 8px; display: block; letter-spacing: 0.5px; }
+            /* IMPACTO & RELATÓRIOS */
+            .soil-impact-box { background: #fdfaf9; padding: 2.5em 3em; border-radius: 20px; margin: 1.5em 0; position: relative; overflow: hidden; }
+            .fact-cycler-soil { min-height: 50px; position: relative; }
+            .soil-fact-item { position: absolute; top: 0; opacity: 0; transition: opacity 1s ease; width: 100%; font-size: 1.1em; line-height: 1.5; color: #6d4c41; }
+            .soil-fact-item.active { opacity: 1; position: relative; }
+            .soil-fact-item b { color: #3e2723; margin-right: 10px; }
 
-        /* Seletor de Contexto */
-        .context-switcher { display: flex; gap: 15px; margin-top: 20px; }
-        .context-switcher a { font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; text-decoration: none !important; border-bottom: none !important; padding-bottom: 5px; }
-        .context-active-green { color: #1a1a1a !important; border-bottom: 2px solid #2e7d32 !important; }
-        .context-inactive { color: #bbb !important; transition: color 0.3s; }
-        .context-inactive:hover { color: #2e7d32 !important; }
+            .report-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; margin-top: 10px; }
+            .report-item { border-top: 1px solid #f9f9f9; padding-top: 20px; }
+            .report-item h5 { font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; color: #8d6e63; margin-bottom: 12px; }
+            .report-item p { font-size: 0.95em; line-height: 1.7; color: #666; margin-bottom: 15px; text-align: justify; }
+            .report-source { font-size: 0.65em; font-weight: 800; color: #bbb; text-transform: uppercase; letter-spacing: 1px; display: block; border-top: 1px solid #eee; padding-top: 8px; }
 
-        .soil-impact-box { background: #fdfaf9; padding: 2.5em 3em; border-radius: 20px; margin: 1.5em 0; position: relative; overflow: hidden; }
-        .fact-cycler-soil { min-height: 50px; position: relative; }
-        .soil-fact-item { position: absolute; top: 0; opacity: 0; transition: opacity 1s ease; width: 100%; font-size: 1.1em; line-height: 1.5; color: #6d4c41; }
-        .soil-fact-item.active { opacity: 1; position: relative; }
-        .soil-fact-item b { color: #3e2723; margin-right: 10px; }
+            /* NOTÍCIAS (ESTILO INDEX) */
+            .news-header { font-size: 0.8em; font-weight: 400; text-transform: lowercase; letter-spacing: 3px; color: #bbb; margin-bottom: 2.5em; display: block; margin-top: 4em; }
+            .news-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 30px; margin-bottom: 4em; }
+            .news-item { 
+                text-decoration: none; color: inherit; display: block; 
+                padding: 25px; background: #fdfdfd; border: 1px solid #f2f2f2; 
+                border-radius: 12px; transition: all 0.3s; 
+            }
+            .news-item:hover { transform: translateY(-5px); border-color: #ddd; }
+            .news-item h3 { font-size: 1.15em; font-weight: 700; color: #1a1a1a; margin-bottom: 12px; line-height: 1.3; min-height: 2.6em; }
+            .news-meta { display: flex; align-items: center; gap: 10px; border-top: 1px solid #f9f9f9; padding-top: 12px; }
+            .source-logo { width: 16px; height: 16px; object-fit: contain; filter: grayscale(100%); opacity: 0.6; }
+            .news-meta span { font-size: 0.65em; font-weight: 800; color: #bbb; text-transform: uppercase; letter-spacing: 1px; }
 
-        .report-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; margin-top: 10px; }
-        .report-item { border-top: 1px solid #f9f9f9; padding-top: 20px; }
-        .report-item h5 { font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; color: #8d6e63; margin-bottom: 12px; }
-        .report-item p { font-size: 0.95em; line-height: 1.7; color: #666; margin-bottom: 15px; text-align: justify; }
+            /* BOTÃO VER MAIS (RETIFICADO) */
+            .btn-pagination { 
+                background: none !important; border: none !important; box-shadow: none !important; 
+                color: #bbb !important; font-size: 0.8em; font-weight: 400 !important; 
+                letter-spacing: 3px; cursor: pointer; text-transform: lowercase; 
+                display: block; text-align: left; padding: 0 !important; margin-top: 2em;
+            }
+            .hidden-card { display: none; }
+            .bio-res-item { padding: 12px 18px; font-size: 0.9em; color: #666; cursor: pointer; border-bottom: 1px solid #f9f9f9 !important; }
 
-        /* Notícias */
-        .news-header { font-size: 0.8em; font-weight: 400; text-transform: lowercase; letter-spacing: 3px; color: #bbb; margin-bottom: 2.5em; display: block; margin-top: 4em; }
-        .news-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 30px; margin-bottom: 4em; }
-        .news-item { text-decoration: none; color: inherit; display: block; padding: 25px; background: #fdfdfd; border: 1px solid #f2f2f2; border-radius: 12px; transition: all 0.3s; }
-        .news-item:hover { transform: translateY(-5px); border-color: #ddd; }
-        .news-item h3 { font-size: 1.15em; font-weight: 700; color: #1a1a1a; margin-bottom: 12px; line-height: 1.3; min-height: 2.6em; }
-        .news-meta { display: flex; align-items: center; gap: 10px; border-top: 1px solid #f9f9f9; padding-top: 12px; }
-        .source-logo { width: 16px; height: 16px; object-fit: contain; filter: grayscale(100%); opacity: 0.6; }
+            /* RODAPÉ ALINHADO */
+            .page-footer { margin-top: auto; padding: 2em 0 2.5em 0; border-top: 1px solid #f2f2f2; opacity: 0.3; text-align: right; }
 
-        .btn-pagination { background: none !important; border: 0 !important; color: #bbb !important; font-size: 0.8em; letter-spacing: 3px; cursor: pointer; text-transform: lowercase; outline: none !important; box-shadow: none !important; }
-        .btn-pagination:hover { color: #333 !important; text-decoration: underline; }
+            @media screen and (max-width: 1280px) {
+                #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
+                #wrapper { padding-left: 0 !important; }
+                .hero-split { flex-direction: column-reverse; }
+                .hero-visual { justify-content: center; width: 100%; }
+                .hero-globe { width: 350px; height: 350px; }
+                .report-grid { grid-template-columns: 1fr; }
+            }
+		</style>
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV0FD8PXC"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-6PV0FD8PXC');
+        </script>
+	</head>
+	<body class="is-preload">
+		<div id="wrapper">
+			<div id="main">
+                <div class="inner">
+                    <section>
+                        <!-- 1. HERO & DASHBOARD (ALINHADO AO INDEX) -->
+                        <div class="hero-split">
+                            <div class="hero-text">
+                                <span class="category-label">Recursos Vitais</span>
+                                <h1>Solo: A Base da Vida</h1>
+                                <p style="font-size: 0.9em; font-style: italic; color: #bbb; margin-bottom: 30px;">Análise regional: <strong id="reg-name" style="color:#888">...</strong></p>
 
-        .page-footer { margin-top: auto; padding: 2em 0 2.5em 0; border-top: 1px solid #f2f2f2; opacity: 0.3; text-align: right; }
-
-        @media screen and (max-width: 1280px) {
-            #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
-            #wrapper { padding-left: 0 !important; }
-            .hero-split { flex-direction: column-reverse; }
-            .hero-visual { justify-content: center; width: 100%; }
-            .hero-globe { width: 350px; height: 350px; }
-            .report-grid { grid-template-columns: 1fr; }
-        }
-    </style>
-</head>
-<body class="is-preload">
-    <div id="wrapper">
-        <div id="main">
-            <div class="inner">
-                <section>
-                    <div class="hero-split">
-                        <div class="hero-text">
-                            <span class="category-label">Recursos Vitais</span>
-                            <h1>Solo: A Base da Vida</h1>
-                            <p style="font-size: 0.9em; font-style: italic; color: #bbb; margin: 30px 0;">Análise regional: <strong id="reg-name" style="color:#888">...</strong></p>
-
-                            <div id="soil-dashboard" style="display:none;">
-                                <h4 style="font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin-bottom: 20px;">Saúde da Terra Local</h4>
-                                <div class="tech-content">
-                                    <div style="display: flex; gap: 40px; flex-wrap: wrap;">
-                                        <!-- Gauge Matéria Orgânica -->
-                                        <div class="gauge-container">
-                                            <div class="gauge-label"><span class="current-val" id="label-organic">MO --%</span><span class="unit">Ideal: >5%</span></div>
-                                            <div class="gauge-bar bar-organic"><div id="marker-organic" class="gauge-marker"></div></div>
-                                            <p class="chart-explanation">A matéria orgânica define a fertilidade e a capacidade de retenção hídrica do solo.</p>
-                                            <span class="chart-source-subtle">Fonte: Estimativa Biopedológica</span>
+                                <div id="soil-dashboard" style="display:none;">
+                                    <h4 style="font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin-bottom: 20px;">Saúde da Terra</h4>
+                                    <div class="tech-content">
+                                        <div style="display: flex; gap: 40px; flex-wrap: wrap;">
+                                            <div class="gauge-container">
+                                                <div class="gauge-label"><span class="current-val" id="label-organic">Matéria Orgânica --%</span><span class="unit">Ideal: >5%</span></div>
+                                                <div class="gauge-bar bar-organic"><div id="marker-organic" class="gauge-marker"></div></div>
+                                            </div>
+                                            <div class="gauge-container">
+                                                <div class="gauge-label"><span class="current-val" id="label-ph-solo">pH --</span><span class="unit">Acidez/Alcal.</span></div>
+                                                <div class="gauge-bar bar-ph-solo"><div id="marker-ph-solo" class="gauge-marker"></div></div>
+                                            </div>
+                                            <div class="gauge-container">
+                                                <div class="gauge-label"><span class="current-val" id="label-desert">Desertificação --%</span><span class="unit">Risco Crítico</span></div>
+                                                <div class="gauge-bar bar-desert"><div id="marker-desert" class="gauge-marker"></div></div>
+                                            </div>
                                         </div>
-                                        <!-- Gauge pH -->
-                                        <div class="gauge-container">
-                                            <div class="gauge-label"><span class="current-val" id="label-ph-solo">pH --</span><span class="unit">Acidez/Alcal.</span></div>
-                                            <div class="gauge-bar bar-ph-solo"><div id="marker-ph-solo" class="gauge-marker"></div></div>
-                                            <p class="chart-explanation">O pH influencia a disponibilidade de nutrientes e a atividade microbiológica subterrânea.</p>
-                                            <span class="chart-source-subtle">Fonte: Dados Geológicos Regionais</span>
-                                        </div>
+                                        <p class="tech-detail" id="soil-advantages" style="color:#bbb; font-style:italic"></p>
                                     </div>
-                                    <p class="tech-detail" id="soil-advantages" style="color:#bbb; font-style:italic"></p>
+                                </div>
+                            </div>
+                            <div class="hero-visual">
+                                <div class="hero-globe">
+                                    <img src="https://plus.unsplash.com/premium_photo-1779486080078-3785b006c212?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Recursos Geológicos">
                                 </div>
                             </div>
                         </div>
-                        <div class="hero-visual">
-                            <div class="hero-globe">
-                                <img src="https://plus.unsplash.com/premium_photo-1779486080078-3785b006c212?q=80&w=2070&auto=format&fit=crop" alt="Recursos Geológicos">
+
+                        <!-- 2. ALERTA DE EROSÃO -->
+                        <div class="data-row">
+                            <h4>Alerta de Erosão</h4>
+                            <div class="tech-content">
+                                <p style="font-size: 1.15em; line-height: 1.7; color: #777; margin-bottom: 1em; max-width: 1000px; text-align: justify;">
+                                    <strong>Panorama Nacional:</strong> Portugal apresenta uma vulnerabilidade elevada à degradação do solo, com mais de 30% do território em risco de desertificação. A perda de carbono orgânico e a erosão hídrica no interior são os maiores desafios para a segurança alimentar nacional.<br><br>
+                                    <strong>Contexto Global:</strong> A FAO estima que um terço dos solos mundiais já está degradado. A nível global, a compactação mecanizada e o uso de químicos destroem a microvida do solo a uma velocidade 100 vezes superior à sua taxa de formação natural.
+                                </p>
+                                
+                                <div class="soil-impact-box">
+                                    <div class="fact-cycler-soil" id="soil-facts-container"></div>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="data-row">
-                        <h4>Alerta de Erosão</h4>
-                        <div class="tech-content">
-                            <p style="font-size: 1.15em; line-height: 1.7; color: #777; margin-bottom: 1em; max-width: 1000px; text-align: justify;">
-                                Portugal apresenta uma vulnerabilidade elevada à degradação do solo. A monitorização da matéria orgânica e do risco de desertificação é vital para a segurança alimentar.
-                            </p>
-                            <div class="soil-impact-box">
-                                <div class="fact-cycler-soil" id="soil-facts-container"></div>
+                        <!-- 3. RELATÓRIO TÉCNICO -->
+                        <div class="data-row">
+                            <h4>Relatório Técnico</h4>
+                            <div class="tech-content">
+                                <h3 style="margin: 0 0 10px 0; font-weight: 300; font-size: 2em;">Análise de Fertilidade e Carbono</h3>
+                                <div id="report-grid-soil" class="report-grid"></div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="data-row">
-                        <h4>Relatório de Fertilidade</h4>
-                        <div class="tech-content">
-                            <h3 style="margin: 0 0 10px 0; font-weight: 300; font-size: 2em;">Análise Técnica: Portugal 2026</h3>
-                            <div id="report-grid-soil" class="report-grid"></div>
+                        <!-- 4. NOTÍCIAS (ESTILO INDEX) -->
+                        <span class="news-header">noticias</span>
+                        <div id="noticias-solo-dinamico" class="news-list"></div>
+                        <div style="text-align: left; margin-bottom: 4em;">
+                            <button id="btn-load-more-solo" class="btn-pagination">ver mais</button>
                         </div>
-                    </div>
 
-                    <span class="news-header" data-i18n="ui.news">noticias</span>
-                    <div id="noticias-solo-dinamico" class="news-list"></div>
-                    <div style="text-align: center; margin-bottom: 4em;">
-                        <button id="btn-load-more-solo" class="btn-pagination" style="display:none;" data-i18n="ui.view_more">ver mais</button>
-                    </div>
-
-                    <footer class="page-footer">
-                        <span style="display: block; font-size: 0.85em; font-weight: 900; color: #333;">bioCultura</span>
-                        <span style="display: block; font-size: 0.5em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Global Regeneration</span>
-                    </footer>
-                </section>
+                        <footer class="page-footer">
+                            <span style="display: block; font-size: 0.85em; font-weight: 900; color: #333;">bioCultura</span>
+                            <span style="display: block; font-size: 0.5em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Global Regeneration</span>
+                        </footer>
+					</section>
+				</div>
             </div>
-        </div>
-        <div id="sidebar"></div>
-    </div>
+			<div id="sidebar"></div>
+		</div>
 
-    <script src="/assets/js/jquery.min.js"></script>
-    <script>
-            let locationsDB = [], noticiasAgua = [], visiveisAgua = 4;
+		<script src="/assets/js/jquery.min.js"></script>
+        <script>
+            let locationsDB = [], soilStats = [], noticiasSolo = [], visiveisSolo = 4;
 
-            const waterFacts = [
-                { titulo: "Agricultura Global", desc: "70% da água doce do planeta é consumida pela agricultura industrial (FAO)." },
-                { titulo: "Consumo Invisível da IA", desc: "Uma conversa de 20 perguntas com uma IA consome 500ml de água para refrigeração." },
-                { titulo: "Stress Hídrico Portugal", desc: "Portugal é um dos países europeus com maior risco de desertificação a sul do Tejo." }
+            const soilFacts = [
+                { titulo: "Sequestro de Carbono", desc: "Solos saudáveis são o maior reservatório terrestre de carbono. Um aumento de 1% na matéria orgânica permite reter mais 150.000 litros de água por hectare." },
+                { titulo: "Bio-diversidade Oculta", desc: "Numa única colher de sopa de solo saudável existem mais organismos vivos do que seres humanos em todo o planeta Terra." },
+                { titulo: "O Tempo do Solo", desc: "A natureza demora cerca de 500 anos para formar apenas 2,5 centímetros de solo superficial fértil." }
             ];
 
-            const relatoriosAgua = [
-                { titulo: "Pontos Críticos em Portugal", texto: "Portugal enfrenta um stress hídrico severo, com o Alentejo e o Algarve em níveis de alerta máximo.", fonte: "Worldometers" },
-                { titulo: "Principais Causas de Consumo", texto: "O setor agrícola continua a ser o maior consumidor, absorvendo cerca de 70% das retiradas globais.", fonte: "FAO" },
-                { titulo: "Problemas Estruturais Globais", texto: "A crise hídrica é agravada pela poluição por nitratos e microplásticos que se infiltram nos lençóis freáticos.", fonte: "UN-Water" },
-                { titulo: "Estratégias de Regeneração", texto: "A solução passa pela transição para a agricultura regenerativa e sistemas de reutilização de águas cinzentas.", fonte: "World Water Council" }
+            const relatoriosSolo = [
+                { titulo: "Mapeamento InfoSolo", texto: "O projeto do INIAV foca-se na quantificação dos stocks de Carbono Orgânico e na infraestrutura de dados espaciais para apoiar a conservação.", fonte: "INIAV" },
+                { titulo: "Nutrição Vegetal", texto: "A investigação sublinha a necessidade de equilibrar a fertilização mineral com a biológica para evitar a lixiviação para aquíferos.", fonte: "INIAV" },
+                { titulo: "Soil Factory Lab", texto: "Metodologias de precisão permitem medir a biodisponibilidade de nutrientes em 48h, otimizando a regeneração do solo.", fonte: "AGQ Labs" },
+                { titulo: "Monitorização Contínua", texto: "O uso de sondas de sucção revela que a agricultura regenerativa melhora a capacidade de troca catiónica (CTC) do solo.", fonte: "AGQ Labs" }
             ];
 
             function calcularDistancia(lat1, lon1, lat2, lon2) {
-                if(!lat1 || !lat2) return 9999;
                 const R = 6371;
                 const dLat = (lat2 - lat1) * Math.PI / 180;
                 const dLon = (lon2 - lon1) * Math.PI / 180;
@@ -191,29 +223,29 @@
 
             async function inicializarPagina() {
                 try {
-                    const [rLoc, rNews] = await Promise.all([
+                    const [rLoc, rSoil, rNews] = await Promise.all([
                         fetch('/data/freguesias_portugal.json').then(r => r.json()),
+                        fetch('/data/solo_stats.json').then(r => r.json()),
                         fetch('/data/noticias.json').then(r => r.json())
                     ]);
-                    locationsDB = rLoc;
-                    
-                    // Filtro de notícias por ID técnico 'water' e idioma
-                    const lang = localStorage.getItem('selected_lang') || 'pt';
-                    noticiasAgua = rNews.filter(n => n.categoria === 'water' && n[lang]);
+                    locationsDB = rLoc; soilStats = rSoil;
+                    noticiasSolo = rNews.filter(n => (n.categoria || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes('solo'));
 
                     const savedId = localStorage.getItem('biocultura_region');
-                    const info = locationsDB.find(i => String(i.id) === String(savedId)) || locationsDB[0];
+                    const infoSaved = savedId ? locationsDB.find(i => i.id === savedId) : null;
+                    if (savedId && !infoSaved) localStorage.removeItem('biocultura_region');
+                    const info = infoSaved || locationsDB.find(i => i.lat !== 0) || locationsDB[0];
 
                     renderDashboard(info);
-                    renderizarCardsAgua();
+                    renderizarCardsSolo();
                     renderRelatorios();
-                    iniciarCiclosAgua();
+                    iniciarCiclosSolo();
                     setupLocationLogic();
                 } catch(e) { console.error(e); }
             }
 
             function setupLocationLogic() {
-                $(document).off('input', '#loc-search-input').on('input', '#loc-search-input', function() {
+                $(document).on('input', '#loc-search-input', function() {
                     const val = $(this).val().toLowerCase(), dropdown = $('#loc-dropdown').empty();
                     if(val.length < 2) return dropdown.hide();
                     locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0,8).forEach(m => {
@@ -221,52 +253,62 @@
                             .text(m.titulo + (m.concelho ? ' (' + m.concelho + ')' : ''))
                             .on('click', () => {
                                 localStorage.setItem('biocultura_region', m.id);
+                                trackRegionChange(m.id);
                                 location.reload();
                             }).appendTo(dropdown);
                     });
                     dropdown.show();
                 });
-
-                $(document).off('click', '#btn-gps-trigger').on('click', '#btn-gps-trigger', function() {
+                $(document).on('click', '#btn-gps-trigger', function() {
                     navigator.geolocation.getCurrentPosition(pos => {
                         let closest = locationsDB[0], minD = Infinity;
                         locationsDB.forEach(c => {
-                            if(!c.lat || c.lat === 0) return;
+                            if(!c.lat || !c.lon || c.lat === 0) return;
                             let d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon);
                             if(d < minD) { minD = d; closest = c; }
                         });
                         localStorage.setItem('biocultura_region', closest.id);
+                        trackRegionChange(closest.id);
                         location.reload();
                     });
                 });
             }
 
             function renderDashboard(info) {
-                if(!info) return;
-                document.getElementById('water-dashboard').style.display = 'block';
-                document.getElementById('reg-name').innerText = info.titulo + (info.concelho ? ', ' + info.concelho : '');     
+                if(!info || !soilStats.length) return;
+                document.getElementById('soil-dashboard').style.display = 'block';
 
-                const ph = parseFloat(info.biomas?.ph_solo) || 7.0;
-                const solo = (info.biomas?.solo || '').toLowerCase();
-                const dur = solo.includes('calcário') ? 28 : solo.includes('granítico') ? 7 : 12;
+                const toTitle = s => s.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+                document.getElementById('reg-name').innerText = info.titulo + (info.concelho ? ', ' + toTitle(info.concelho) : '');
 
-                document.getElementById('label-ph').innerText = "pH " + ph.toFixed(1);
-                document.getElementById('label-dureza').innerText = dur + " ºf";
+                const soloFreg = info.extensao_biocultura?.estatisticas_solo;
+                let closest = soilStats[0]; let minD = Infinity;
+                soilStats.forEach(s => {
+                    let d = calcularDistancia(info.lat, info.lon, s.lat, s.lon);
+                    if(d < minD) { minD = d; closest = s; }
+                });
 
-                document.getElementById('water-advantages').innerText = ph < 6.5
-                    ? "Água ligeiramente ácida: Ideal para mirtilos e culturas acidófilas."
-                    : ph > 7.5
-                    ? "Água alcalina: Adequada para rega de olival e solos ácidos."
-                    : "Água equilibrada: Excelente para horticultura diversificada.";
+                const moVal = soloFreg?.materia_organica_pct || closest.materia_organica || "2.5";
+                const phVal = info.biomas?.ph_solo || "6.5";
+                const desertVal = soloFreg?.indice_desertificacao || closest.desertificacao || 0.30;
+
+                document.getElementById('label-organic').innerText = "Matéria Orgânica " + moVal + "%";
+                document.getElementById('label-ph-solo').innerText = "pH " + phVal;
+                document.getElementById('label-desert').innerText = "Desertificação " + (parseFloat(desertVal) * 100).toFixed(0) + "%";
+
+                document.getElementById('soil-advantages').innerText = parseFloat(moVal) < 3
+                    ? "Solo com défice de carbono: Requer aporte de matéria orgânica e proteção de cobertura."
+                    : "Solo resiliente: Boa capacidade de retenção hídrica e atividade biológica.";
 
                 setTimeout(() => {
-                    document.getElementById('marker-ph').style.left = (ph / 14 * 100) + "%";
-                    document.getElementById('marker-dureza').style.left = Math.min(dur / 50 * 100, 100) + "%";
+                    document.getElementById('marker-organic').style.left = Math.min((parseFloat(moVal) / 8) * 100, 100) + "%";
+                    document.getElementById('marker-ph-solo').style.left = (parseFloat(phVal) / 14 * 100) + "%";
+                    document.getElementById('marker-desert').style.left = Math.min(parseFloat(desertVal) * 100, 100) + "%";
                 }, 300);
             }
 
             function renderRelatorios() {
-                document.getElementById('report-grid-dynamic').innerHTML = relatoriosAgua.map(r => `
+                document.getElementById('report-grid-soil').innerHTML = relatoriosSolo.map(r => `
                     <div class="report-item">
                         <h5>${r.titulo}</h5>
                         <p>${r.texto}</p>
@@ -274,29 +316,28 @@
                     </div>`).join('');
             }
 
-            function renderizarCardsAgua() {
-                const container = document.getElementById('noticias-agua-dinamico');
-                const lang = localStorage.getItem('selected_lang') || 'pt';
-                container.innerHTML = noticiasAgua.slice(0, visiveisAgua).map(n => `
-                    <a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-item">
-                        <h3>${n[lang].titulo}</h3>
+            function renderizarCardsSolo() {
+                const container = document.getElementById('noticias-solo-dinamico');
+                container.innerHTML = noticiasSolo.map((n, i) => `
+                    <a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-item ${i >= visiveisSolo ? 'hidden-card' : ''}">
+                        <h3>${n.titulo}</h3>
                         <div class="news-meta">
                             <img src="${n.logo}" class="source-logo">
                             <span>${n.data}</span>
                         </div>
                     </a>`).join('');
-                document.getElementById('btn-load-more-agua').style.display = noticiasAgua.length > visiveisAgua ? 'inline-block' : 'none';
+                document.getElementById('btn-load-more-solo').style.display = noticiasSolo.length > visiveisSolo ? 'inline-block' : 'none';
             }
 
-            function iniciarCiclosAgua() {
-                const container = document.getElementById('water-facts-container');
-                container.innerHTML = waterFacts.map((f, i) => `
-                    <div class="water-fact-item ${i === 0 ? 'active' : ''}">
+            function iniciarCiclosSolo() {
+                const container = document.getElementById('soil-facts-container');
+                container.innerHTML = soilFacts.map((f, i) => `
+                    <div class="soil-fact-item ${i === 0 ? 'active' : ''}">
                         <b>${f.titulo}</b> ${f.desc}
                     </div>`).join('');
                 let factP = 0;
                 setInterval(() => {
-                    const items = document.querySelectorAll('.water-fact-item');
+                    const items = document.querySelectorAll('.soil-fact-item');
                     if(items.length === 0) return;
                     items.forEach(el => el.classList.remove('active'));
                     factP = (factP + 1) % items.length;
@@ -304,12 +345,26 @@
                 }, 8000);
             }
 
-            $(document).on('click', '#btn-load-more-agua', () => { visiveisAgua += 4; renderizarCardsAgua(); });
+            $(document).on('click', '#btn-load-more-solo', () => { visiveisSolo += 4; renderizarCardsSolo(); });
 
             fetch('/sidebar-content.html').then(r => r.text()).then(html => {
                 document.getElementById('sidebar').innerHTML = html;
                 inicializarPagina();
             });
+
+            $(document).on('click', 'a, button', function() {
+                const label = $(this).text().trim() || $(this).attr('id') || 'unnamed';
+                const destination = $(this).attr('href') || 'action';
+                if (typeof gtag === 'function') {
+                    gtag('event', 'click', { 'event_category': 'engagement', 'event_label': label, 'value': destination });
+                }
+            });
+
+            function trackRegionChange(regionId) {
+                if (typeof gtag === 'function') {
+                    gtag('event', 'region_change', { 'event_category': 'localization', 'event_label': regionId });
+                }
+            }  
         </script>
-    </body>
+	</body>
 </html>
