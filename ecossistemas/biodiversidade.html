@@ -74,8 +74,8 @@
                             <span class="category-label">Ecossistemas</span>
                             <h1>Biodiversidade: A Teia da Vida</h1>
                             <div class="context-switcher">
-                                <a href="/observatorio/observatorio-global.html" class="context-inactive">Visão Global</a>
-                                <a href="/observatorio/biodiversidade.html" class="context-active-green">● Portugal (Detalhe)</a>
+                                <a href="/observatorio/observatorio-global.html" class="context-inactive" data-i18n="ui.view_global">Visão Global</a>
+                                <a href="/observatorio/biodiversidade.html" class="context-active-green" data-i18n="ui.view_portugal">● Portugal (Detalhe)</a>
                             </div>
                             <p style="font-size: 0.9em; font-style: italic; color: #bbb; margin: 30px 0;">Análise regional: <strong id="reg-name" style="color:#888">...</strong></p>
 
@@ -93,7 +93,6 @@
                         </div>
                     </div>
 
-                    <!-- Bloco de 4 Caixas Restaurado -->
                     <div class="summary-box">
                         <div class="summary-item">
                             <h5>Espécies Ameaçadas</h5>
@@ -156,8 +155,8 @@
         }
 
         function setupSidebarLogic() {
-            // Pesquisa por texto
-            $(document).on('input', '#loc-search-input', function() {
+            // Pesquisa por texto (Delegação de evento)
+            $(document).off('input', '#loc-search-input').on('input', '#loc-search-input', function() {
                 const val = $(this).val().toLowerCase(), dropdown = $('#loc-dropdown').empty();
                 if(val.length < 2) return dropdown.hide();
                 window.locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0,8).forEach(m => {
@@ -169,18 +168,20 @@
                 dropdown.show();
             });
 
-            // GPS (Seta)
-            $(document).on('click', '#btn-gps-trigger', function() {
-                navigator.geolocation.getCurrentPosition(pos => {
-                    let closest = window.locationsDB[0], minD = Infinity;
-                    window.locationsDB.forEach(c => {
-                        if(!c.lat || c.lat === 0) return;
-                        const d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon);
-                        if(d < minD) { minD = d; closest = c; }
+            // GPS (Delegação de evento)
+            $(document).off('click', '#btn-gps-trigger').on('click', '#btn-gps-trigger', function() {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(pos => {
+                        let closest = window.locationsDB[0], minD = Infinity;
+                        window.locationsDB.forEach(c => {
+                            if(!c.lat || c.lat === 0) return;
+                            const d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon);
+                            if(d < minD) { minD = d; closest = c; }
+                        });
+                        localStorage.setItem('biocultura_region', closest.id);
+                        location.reload();
                     });
-                    localStorage.setItem('biocultura_region', closest.id);
-                    location.reload();
-                });
+                }
             });
         }
 
