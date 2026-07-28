@@ -25,21 +25,22 @@
         .fact-cycler { position: relative; height: 120px; margin-bottom: 100px; }
         .fact-item { position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 1.5s ease-in-out; display: flex; align-items: flex-start; width: 100%; }
         .fact-item.active { opacity: 1; }
+        .fact-content { flex: 1; }
         .fact-item b { font-size: 1.6em; color: #1a1a1a; display: block; line-height: 1.1; margin-bottom: 8px; }
         .fact-item span { font-size: 1.15em; color: #666; line-height: 1.4; display: block; max-width: 750px; }
 
         .critical-summary { margin: 2em 0 4em 0; max-width: 1100px; padding-bottom: 3em; border-bottom: 1px solid #f2f2f2; }
         .critical-summary p { font-size: 1.2em !important; line-height: 1.8 !important; color: #555 !important; margin-bottom: 1.5em; text-align: justify; }
-        
         .impact-cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin: 4em 0; }
         .impact-card { background: #fff; border: 1px solid #f2f2f2; padding: 30px; border-radius: 16px; transition: all 0.3s; }
         .impact-card:hover { border-color: #c62828; transform: translateY(-5px); }
         .impact-card h4 { font-size: 0.8em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
         .impact-card p { font-size: 0.95em; line-height: 1.6; color: #666; margin: 0; }
         
-        .lnk-bio { font-weight: 700; text-decoration: none; border-bottom: 1px solid #1a1a1a; color: #1a1a1a; }
+        .lnk-bio { font-weight: 700; text-decoration: none; border-bottom: 1px solid currentColor; transition: all 0.3s; }
         .icon-red { color: #c62828; } .icon-green { color: #2e7d32; }
 
+        .news-header { font-size: 0.8em; font-weight: 400; text-transform: lowercase; letter-spacing: 3px; color: #bbb; margin-bottom: 2.5em; display: block; }
         .news-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 30px; margin-bottom: 4em; }
         .news-item { text-decoration: none; color: inherit; display: block; padding: 25px; background: #fdfdfd; border: 1px solid #f2f2f2; border-radius: 12px; transition: all 0.3s; }
         .news-item:hover { transform: translateY(-5px); border-color: #ddd; }
@@ -48,14 +49,20 @@
         .source-logo { width: 16px; height: 16px; object-fit: contain; filter: grayscale(100%); opacity: 0.6; }
         .news-meta span { font-size: 0.65em; font-weight: 800; color: #bbb; text-transform: uppercase; letter-spacing: 1px; }
 
+        .pagination-container { display: flex; gap: 30px; margin: 4em 0; }
+        .btn-pagination { background: none !important; border: none !important; color: #bbb !important; font-size: 0.8em; letter-spacing: 3px; cursor: pointer; text-transform: lowercase; }
+        .btn-pagination:hover { color: #333 !important; text-decoration: underline; }
+        .hidden-card { display: none; }
+
         .page-footer { padding: 4em 0 2em 0; border-top: 1px solid #f2f2f2; opacity: 0.3; text-align: right; }
-        
+
         @media screen and (max-width: 1280px) {
             #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
             #wrapper { padding-left: 0 !important; }
             .hero-globe { width: 350px; height: 350px; }
         }
     </style>
+    <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV0FD8PXC"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
@@ -74,7 +81,7 @@
                     <section class="hero-split">
                         <div class="hero-text">
                             <span class="category-label" data-i18n="index.hero_label">Observatório bioCultura</span>
-                            <h1 data-i18n="index.hero_title">O progresso consciente é a única via de regeneração.</h1>
+                            <h1 data-i18n="index.hero_title">O progresso não pode ser o fim do seu horizonte.</h1>
                             <div class="ia-impact-box">
                                 <span class="ia-impact-subtitle">Global Fact Check 2026</span>
                                 <div class="fact-cycler" id="fact-cycler"></div>
@@ -88,6 +95,8 @@
                             </div>
                         </div>
                     </section>
+
+                    <h2 style="border:none !important; margin-bottom: 1em;" data-i18n="ui.observatory">Observatório de Impacto</h2>
 
                     <div class="critical-summary">
                         <p data-i18n="index.manifesto_p1"></p>
@@ -113,11 +122,20 @@
 
                         <p data-i18n="index.manifesto_p2"></p>
 
-                        <p style="font-size: 0.95em !important; font-style: italic; color: #888; border-top: 1px solid #f2f2f2; padding-top: 2em;" data-i18n="index.manifesto_p3">
+                        <p style="font-size: 0.95em !important; font-style: italic; color: #888; border-top: 1px solid #f2f2f2; padding-top: 2em;">
+                            <span data-i18n="index.manifesto_gps_prefix">Utilize o GPS na barra lateral para detetar o impacto em</span> 
+                            <b id="reg-name" style="color:#1a1a1a">...</b> 
+                            <span data-i18n="index.manifesto_gps_suffix">e compreender o custo real do desenvolvimento na sua região.</span>
                         </p>
                     </div>
 
+                    <span class="news-header" data-i18n="ui.news">notícias</span>
                     <div id="observatorio-dinamico" class="news-list"></div>
+
+                    <div class="pagination-container">
+                        <button id="btn-load-more" class="btn-pagination" data-i18n="ui.view_more">ver mais</button>
+                        <button id="btn-show-less" class="btn-pagination" style="display:none;" data-i18n="ui.view_less">ver menos</button>
+                    </div>
                 </div>
 
                 <footer class="page-footer">
@@ -131,7 +149,7 @@
 
     <script src="/assets/js/jquery.min.js"></script>
     <script>
-        let todasNoticias = [];
+        let locationsDB = [], todasNoticias = [], visiveis = 6;
 
         async function applyLanguage(lang) {
             if (!lang) lang = localStorage.getItem('selected_lang') || 'pt';
@@ -142,10 +160,13 @@
                 document.querySelectorAll('[data-i18n]').forEach(el => {
                     const key = el.getAttribute('data-i18n');
                     const text = key.split('.').reduce((obj, i) => (obj ? obj[i] : null), t);
-                    if (text) el.innerHTML = text;
+                    if (text) {
+                        if (el.tagName === 'INPUT') el.placeholder = text;
+                        else el.innerHTML = text;
+                    }
                 });
 
-                // Renderiza factos dinâmicos baseados na língua
+                // Factos do Ciclo (Injetados via JSON)
                 const cycler = document.getElementById('fact-cycler');
                 if (cycler && t.index.critical_facts) {
                     cycler.innerHTML = t.index.critical_facts.map((f, i) => `
@@ -156,20 +177,55 @@
 
                 localStorage.setItem('selected_lang', lang);
                 if(document.getElementById('lang-selector')) document.getElementById('lang-selector').value = lang;
-            } catch (err) { console.error(err); }
+            } catch (err) { console.error("Erro i18n:", err); }
+        }
+
+        function calcularDistancia(lat1, lon1, lat2, lon2) {
+            if(!lat1 || !lat2) return 9999;
+            const R = 6371;
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
+            return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
         }
 
         async function inicializarPagina() {
             try {
+                const rLoc = await fetch('/data/freguesias_portugal.json');
+                locationsDB = await rLoc.json();
                 const rNews = await fetch('/data/noticias.json');
                 todasNoticias = await rNews.json();
+                todasNoticias.sort((a, b) => (b.relevancia || 0) - (a.relevancia || 0));
+
+                const savedId = localStorage.getItem('biocultura_region');
+                const info = locationsDB.find(i => i.id === savedId) || locationsDB.find(i => i.lat !== 0) || locationsDB[0];
+                
+                renderRegionName(info);
                 renderizarLista();
                 iniciarCiclos();
+                setupSidebarLogic();
             } catch(e) { console.error(e); }
         }
 
+        function renderRegionName(info) {
+            if(!info) return;
+            const el = document.getElementById('reg-name');
+            if(el) el.innerText = info.titulo + (info.concelho ? ', ' + info.concelho : '');
+        }
+
+        function renderizarLista() {
+            const container = document.getElementById('observatorio-dinamico');
+            if(!container) return;
+            container.innerHTML = todasNoticias.map((n, i) => `
+                <a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-item ${i >= visiveis ? 'hidden-card' : ''}">
+                    <h3>${n.titulo}</h3>
+                    <div class="news-meta"><img src="${n.logo}" class="source-logo"><span>${n.data}</span></div>
+                </a>`).join('');
+            document.getElementById('btn-load-more').style.display = visiveis < todasNoticias.length ? 'inline-block' : 'none';
+            document.getElementById('btn-show-less').style.display = visiveis > 6 ? 'inline-block' : 'none';
+        }
+
         function iniciarCiclos() {
-            // Ciclo de Imagens
             const imgs = document.querySelectorAll('#hero-cycler img');
             let imgP = 0;
             setInterval(() => {
@@ -178,7 +234,6 @@
                 imgs[imgP].classList.add('active');
             }, 6000);
 
-            // Ciclo de Factos
             let factP = 0;
             setInterval(() => {
                 const facts = document.querySelectorAll('#fact-cycler .fact-item');
@@ -189,21 +244,31 @@
             }, 12000);
         }
 
-        function renderizarLista() {
-            const container = document.getElementById('observatorio-dinamico');
-            if(!container) return;
-            container.innerHTML = todasNoticias.slice(0, 6).map(n => `
-                <a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-item">
-                    <h3>${n.titulo}</h3>
-                    <div class="news-meta"><img src="${n.logo}" class="source-logo"><span>${n.data}</span></div>
-                </a>`).join('');
+        function setupSidebarLogic() {
+            $(document).off('click', '#btn-gps-trigger').on('click', '#btn-gps-trigger', function() {
+                navigator.geolocation.getCurrentPosition(pos => {
+                    const uLat = pos.coords.latitude, uLon = pos.coords.longitude;
+                    let closest = null, minD = Infinity;
+                    locationsDB.forEach(c => {
+                        const d = calcularDistancia(uLat, uLon, c.lat, c.lon);
+                        if(d < minD) { minD = d; closest = c; }
+                    });
+                    if(closest) {
+                        localStorage.setItem('biocultura_region', closest.id);
+                        renderRegionName(closest);
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                });
+            });
         }
+
+        document.getElementById('btn-load-more').onclick = () => { visiveis += 6; renderizarLista(); };
+        document.getElementById('btn-show-less').onclick = () => { visiveis = 6; renderizarLista(); };
 
         fetch('/sidebar-content.html').then(r => r.text()).then(html => {
             document.getElementById('sidebar').innerHTML = html;
             const savedLang = localStorage.getItem('selected_lang') || 'pt';
             applyLanguage(savedLang).then(() => inicializarPagina());
-            
             document.addEventListener('change', (e) => {
                 if (e.target.id === 'lang-selector') applyLanguage(e.target.value);
             });
