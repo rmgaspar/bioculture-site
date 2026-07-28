@@ -13,9 +13,8 @@
         #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
         #wrapper { padding-left: 18em !important; }
 
-        /* Alinhamento Milimétrico */
+        /* Alinhamento Milimétrico com o Logótipo */
         .inner { padding: 2.2em 4em 0 4em !important; max-width: 1600px !important; margin: 0 auto; width: 100%; }
-
         .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; margin-bottom: 15px; display: block; line-height: 1; }
 
         .hero-split { display: flex; align-items: flex-start; justify-content: space-between; gap: 4em; margin-bottom: 2em; }
@@ -39,6 +38,7 @@
         .summary-item h5 { font-size: 0.7em; font-weight: 900; text-transform: uppercase; margin-bottom: 12px; color: #2e7d32; }
         .summary-item p { font-size: 0.85em; line-height: 1.7; margin: 0; color: #555; text-align: justify; }
 
+        /* Espécies */
         .species-group { margin-bottom: 35px; }
         .label-mini { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; color: #888; }
         .species-list { display: flex; flex-wrap: wrap; gap: 12px; }
@@ -97,11 +97,11 @@
                     <div class="summary-box">
                         <div class="summary-item">
                             <h5>Espécies Ameaçadas</h5>
-                            <p>Monitorização de fauna e flora em risco crítico devido à fragmentação de habitats e uso de químicos.</p>
+                            <p>Monitorização de fauna e flora em risco crítico devido à fragmentação de habitats e uso de químicos industriais.</p>
                         </div>
                         <div class="summary-item">
                             <h5>Flora Nativa</h5>
-                            <p>Preservação de sementes e vegetação autóctone como barreira contra a desertificação e erosão do solo.</p>
+                            <p>Preservação de sementes e vegetação autóctone como barreira natural contra a desertificação e erosão do solo.</p>
                         </div>
                         <div class="summary-item">
                             <h5>Invasoras</h5>
@@ -109,7 +109,7 @@
                         </div>
                         <div class="summary-item">
                             <h5>Polinizadores</h5>
-                            <p>Proteção de insetos auxiliares essenciais para a viabilidade da agricultura biológica e regenerativa.</p>
+                            <p>Proteção de insetos auxiliares essenciais para a viabilidade da agricultura biológica e regenerativa em Portugal.</p>
                         </div>
                     </div>
 
@@ -128,7 +128,9 @@
 
     <script src="/assets/js/jquery.min.js"></script>
     <script>
-        let locationsDB = [], todasNoticias = [], visiveisBio = 6;
+        window.locationsDB = [];
+        let todasNoticias = [];
+        let visiveisBio = 6;
 
         async function applyLanguage(lang) {
             if (!lang) lang = localStorage.getItem('selected_lang') || 'pt';
@@ -153,16 +155,44 @@
             return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
         }
 
+        function setupSidebarLogic() {
+            // Pesquisa por texto
+            $(document).on('input', '#loc-search-input', function() {
+                const val = $(this).val().toLowerCase(), dropdown = $('#loc-dropdown').empty();
+                if(val.length < 2) return dropdown.hide();
+                window.locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0,8).forEach(m => {
+                    $('<div class="bio-res-item"></div>').text(m.titulo).on('click', () => {
+                        localStorage.setItem('biocultura_region', m.id);
+                        location.reload();
+                    }).appendTo(dropdown);
+                });
+                dropdown.show();
+            });
+
+            // GPS (Seta)
+            $(document).on('click', '#btn-gps-trigger', function() {
+                navigator.geolocation.getCurrentPosition(pos => {
+                    let closest = window.locationsDB[0], minD = Infinity;
+                    window.locationsDB.forEach(c => {
+                        if(!c.lat || c.lat === 0) return;
+                        const d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon);
+                        if(d < minD) { minD = d; closest = c; }
+                    });
+                    localStorage.setItem('biocultura_region', closest.id);
+                    location.reload();
+                });
+            });
+        }
+
         async function inicializarPagina() {
             try {
                 const [rLoc, rNews] = await Promise.all([
                     fetch('/data/freguesias_portugal.json').then(r => r.json()),
                     fetch('/data/noticias.json').then(r => r.json())
                 ]);
-                locationsDB = rLoc; todasNoticias = rNews;
-                
+                window.locationsDB = rLoc; todasNoticias = rNews;
                 const savedId = localStorage.getItem('biocultura_region');
-                const info = locationsDB.find(i => i.id === savedId) || locationsDB.find(i => i.lat !== 0) || locationsDB[0];
+                const info = window.locationsDB.find(i => String(i.id) === String(savedId)) || window.locationsDB[0];
                 
                 renderDashboard(info);
                 renderizarNoticiasBio();
@@ -186,42 +216,10 @@
             document.getElementById('group-flora').innerHTML = build('Invasoras', b.flora_invasora, 'invasive') + build('Flora Protegida', b.flora_protegida, 'protected');
         }
 
-        function setupSidebarLogic() {
-            $(document).off('click', '#btn-gps-trigger').on('click', '#btn-gps-trigger', function() {
-                navigator.geolocation.getCurrentPosition(pos => {
-                    const uLat = pos.coords.latitude, uLon = pos.coords.longitude;
-                    let closest = null, minD = Infinity;
-                    locationsDB.forEach(c => {
-                        if(!c.lat || c.lat === 0) return;
-                        const d = calcularDistancia(uLat, uLon, c.lat, c.lon);
-                        if(d < minD) { minD = d; closest = c; }
-                    });
-                    if(closest) {
-                        localStorage.setItem('biocultura_region', closest.id);
-                        renderRegionName(closest);
-                        location.reload(); // Recarrega para atualizar biomas
-                    }
-                });
-            });
-
-            $(document).off('input', '#loc-search-input').on('input', '#loc-search-input', function() {
-                const val = $(this).val().toLowerCase(), dropdown = $('#loc-dropdown').empty();
-                if(val.length < 2) return dropdown.hide();
-                locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0,8).forEach(m => {
-                    $('<div class="bio-res-item"></div>').text(m.titulo).on('click', () => {
-                        localStorage.setItem('biocultura_region', m.id);
-                        location.reload();
-                    }).appendTo(dropdown);
-                });
-                dropdown.show();
-            });
-        }
-
         function renderizarNoticiasBio() {
-            const container = document.getElementById('noticias-bio-dinamico');
             const lang = localStorage.getItem('selected_lang') || 'pt';
             const filtradas = todasNoticias.filter(n => n.categoria === 'biodiv' && n[lang]);
-            container.innerHTML = filtradas.slice(0, visiveisBio).map(n => `
+            document.getElementById('noticias-bio-dinamico').innerHTML = filtradas.slice(0, visiveisBio).map(n => `
                 <a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-item">
                     <h3>${n[lang].titulo}</h3>
                     <div class="news-meta"><span>${n.data}</span></div>
@@ -244,9 +242,6 @@
             document.getElementById('sidebar').innerHTML = html;
             const savedLang = localStorage.getItem('selected_lang') || 'pt';
             applyLanguage(savedLang).then(() => inicializarPagina());
-            document.addEventListener('change', (e) => {
-                if (e.target.id === 'lang-selector') applyLanguage(e.target.value).then(() => renderizarNoticiasBio());
-            });
         });
     </script>
 </body>
