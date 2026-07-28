@@ -159,13 +159,13 @@
                             <span class="chart-source-subtle" id="src-chartAtmosfera"></span>
                         </div>
                         <div class="chart-box">
-                            <h5 data-i18n="charts.ice_mass">Massa Glaciar Acumulada (Gt)</h5>
+                            <h5>Massa Glaciar Acumulada (Gt)</h5>
                             <div class="chart-container"><canvas id="chartGelo"></canvas></div>
                             <p class="chart-explanation" id="exp-chartGelo"></p>
                             <span class="chart-source-subtle" id="src-chartGelo"></span>
                         </div>
                         <div class="chart-box">
-                            <h5 data-i18n="charts.severe_events">Eventos Severos (Furacões/Incêndios)</h5>
+                            <h5>Eventos Severos (Furacões/Incêndios)</h5>
                             <div class="chart-container"><canvas id="chartIncendios"></canvas></div>
                             <p class="chart-explanation" id="exp-chartIncendios"></p>
                             <span class="chart-source-subtle" id="src-chartIncendios"></span>
@@ -185,81 +185,73 @@
     <script src="/assets/js/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        // FUNÇÃO DE TRADUÇÃO ROBUSTA
         async function applyLanguage(lang) {
-        if (!lang) lang = localStorage.getItem('selected_lang') || 'pt';
-        try {
-            const response = await fetch(`/assets/lang/${lang}.json`);
-            if (!response.ok) return;
-            const t = await response.json();
+            if (!lang) lang = localStorage.getItem('selected_lang') || 'pt';
+            try {
+                const response = await fetch(`/assets/lang/${lang}.json`);
+                if (!response.ok) return;
+                const t = await response.json();
 
-            // 1. Traduz elementos com data-i18n (UI estática)
-            document.querySelectorAll('[data-i18n]').forEach(el => {
-                const key = el.getAttribute('data-i18n');
-                const text = key.split('.').reduce((obj, i) => (obj ? obj[i] : null), t);
-                if (text) el.innerHTML = text;
-            });
-
-            // 2. Traduz Conteúdo Dinâmico (Análise e Explicações)
-            if (t.dynamic) {
-                document.getElementById('correlation-text').innerHTML = t.dynamic.correlation_text;
-                
-                // Traduz as explicações por baixo de cada gráfico
-                const charts = ['Extremos', 'Biosfera', 'Sismos', 'Oceanos', 'Temp', 'NoaaEcon', 'Atmosfera', 'Gelo', 'Incendios'];
-                charts.forEach(id => {
-                    const expEl = document.getElementById(`exp-chart${id}`);
-                    if (expEl) expEl.innerText = t.dynamic[`exp-chart${id}`];
+                document.querySelectorAll('[data-i18n]').forEach(el => {
+                    const key = el.getAttribute('data-i18n');
+                    const text = key.split('.').reduce((obj, i) => (obj ? obj[i] : null), t);
+                    if (text) el.innerHTML = text;
                 });
-            }
 
-            // 3. Traduz as Fontes (Subtil)
-            // Como as fontes são nomes de instituições, podes mantê-las ou traduzir no JSON também.
+                if (t.dynamic) {
+                    document.getElementById('correlation-text').innerHTML = t.dynamic.correlation_text;
+                    const charts = ['Extremos', 'Biosfera', 'Sismos', 'Oceanos', 'Temp', 'NoaaEcon', 'Atmosfera', 'Gelo', 'Incendios'];
+                    charts.forEach(id => {
+                        const expEl = document.getElementById(`exp-chart${id}`);
+                        if (expEl) expEl.innerText = t.dynamic[`exp-chart${id}`];
+                    });
+                }
 
-            const selector = document.getElementById('lang-selector');
-            if (selector) selector.value = lang;
-            localStorage.setItem('selected_lang', lang);
-        } catch (err) { console.error("Erro i18n:", err); }
-    }
+                const selector = document.getElementById('lang-selector');
+                if (selector) selector.value = lang;
+                localStorage.setItem('selected_lang', lang);
+            } catch (err) { console.error("Erro i18n:", err); }
+        }
 
-    async function loadGlobal() {
-        try {
-            const res = await fetch('/data/observatorio_global.json');
-            const data = await res.json();
-            const ind = data.indicadores;
+        async function loadGlobal() {
+            try {
+                const res = await fetch('/data/observatorio_global.json');
+                const data = await res.json();
+                const ind = data.indicadores;
 
-            // Mantemos apenas a lógica de renderização dos gráficos aqui
-            // Os textos de título já são tratados pelo data-i18n no HTML
-            
-            const opt = { 
-                responsive: true, 
-                maintainAspectRatio: false, 
-                plugins: { legend: { display: false } }, 
-                scales: { x: { grid: { display: false }, ticks: { font: { size: 8 } } }, y: { ticks: { font: { size: 8 } } } } 
-            };
+                const opt = { 
+                    responsive: true, 
+                    maintainAspectRatio: false, 
+                    plugins: { legend: { display: false } }, 
+                    scales: { 
+                        x: { grid: { display: false }, ticks: { font: { size: 8 } } }, 
+                        y: { ticks: { font: { size: 8 } } } 
+                    } 
+                };
 
-            // Renderização dos 9 gráficos (mantém o teu código de Chart.js aqui...)
-            // ... (ChartExtremos, ChartBiosfera, etc.)
+                new Chart(document.getElementById('chartExtremos'), { type: 'line', data: { labels: ind.clima_extremos.labels, datasets: [{ data: ind.clima_extremos.indice_seca_extrema, borderColor: '#ef5350', tension: 0.4 }, { data: ind.clima_extremos.eventos_cheias_anuais, borderColor: '#42a5f5', tension: 0.4 }] }, options: opt });
+                new Chart(document.getElementById('chartBiosfera'), { type: 'line', data: { labels: ind.biosfera_solo.labels, datasets: [{ data: ind.biosfera_solo.especies_ameacas_iucn, borderColor: '#ffa726', tension: 0.4 }, { data: ind.biosfera_solo.saude_solo_index, borderColor: '#66bb6a', tension: 0.4 }] }, options: opt });
+                new Chart(document.getElementById('chartSismos'), { type: 'bar', data: { labels: ind.geologia_sismos.labels, datasets: [{ data: ind.geologia_sismos.sismos_mag_5_plus, backgroundColor: '#9575cd' }] }, options: opt });
+                new Chart(document.getElementById('chartOceanos'), { type: 'line', data: { labels: ind.oceanos_obis.labels, datasets: [ { label: 'SST', data: ind.oceanos_obis.temp_superficie_mar, borderColor: '#42a5f5', tension: 0.4 }, { label: 'OBIS', data: ind.oceanos_obis.riqueza_especies_marinhas, borderColor: '#ffa726', tension: 0.4 } ] }, options: opt });
+                new Chart(document.getElementById('chartTemp'), { type: 'line', data: { labels: ind.clima_extremos.labels, datasets: [{ data: ind.clima_extremos.anomalia_temp, borderColor: '#ef5350', fill: true, backgroundColor: 'rgba(239, 83, 80, 0.1)', tension: 0.4 }] }, options: opt });
+                new Chart(document.getElementById('chartNoaaEcon'), { type: 'bar', data: { labels: ind.noaa_economico.labels, datasets: [{ data: ind.noaa_economico.custo_bilioes_usd, backgroundColor: '#81c784' }] }, options: opt });
+                new Chart(document.getElementById('chartAtmosfera'), { type: 'line', data: { labels: ind.clima_extremos.labels, datasets: [{ data: ind.clima_extremos.co2_ppm, borderColor: '#444', tension: 0.4 }, { data: ind.biosfera_solo.desmatamento_mha, borderColor: '#66bb6a', tension: 0.4 }] }, options: opt });
+                new Chart(document.getElementById('chartGelo'), { type: 'line', data: { labels: ind.oceanos_obis.labels, datasets: [{ data: ind.oceanos_obis.perda_glaciares_gt, borderColor: '#5c6bc0', fill: true, backgroundColor: 'rgba(92, 107, 192, 0.1)', tension: 0.4 }] }, options: opt });
+                new Chart(document.getElementById('chartIncendios'), { type: 'line', data: { labels: ind.clima_extremos.labels, datasets: [{ label: 'Incêndios', data: [10, 15, 25, 40, 65, 85, 110], borderColor: '#ffa726', tension: 0.4 }, { label: 'Furacões', data: [5, 7, 12, 18, 22, 28, 35], borderColor: '#78909c', tension: 0.4 }] }, options: opt });
 
-        } catch (err) { console.error(err); }
-    }
+            } catch (err) { console.error(err); }
+        }
 
-    // Inicialização unificada
-    fetch('/sidebar-content.html').then(r => r.text()).then(html => {
-        document.getElementById('sidebar').innerHTML = html;
-        
-        const savedLang = localStorage.getItem('selected_lang') || 'pt';
-        
-        // Primeiro aplicamos a língua, depois carregamos os gráficos
-        applyLanguage(savedLang).then(() => {
-            loadGlobal();
+        fetch('/sidebar-content.html').then(r => r.text()).then(html => {
+            document.getElementById('sidebar').innerHTML = html;
+            const savedLang = localStorage.getItem('selected_lang') || 'pt';
+            applyLanguage(savedLang).then(() => {
+                loadGlobal();
+            });
+            document.addEventListener('change', (e) => {
+                if (e.target.id === 'lang-selector') applyLanguage(e.target.value);
+            });
         });
-        
-        document.addEventListener('change', (e) => {
-            if (e.target.id === 'lang-selector') {
-                applyLanguage(e.target.value);
-            }
-        });
-    });
     </script>
 </body>
 </html>
