@@ -105,6 +105,51 @@
 
 		<script src="/assets/js/jquery.min.js"></script>
         <script>
+
+            async function carregarNoticia() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const noticiaId = urlParams.get('id');
+                const lang = localStorage.getItem('selected_lang') || 'pt'; // Deteta idioma
+
+                if (!noticiaId) { window.location.href = '/index.html'; return; }
+
+                try {
+                    const response = await fetch('/data/noticias.json');
+                    const noticias = await response.json();
+                    const n = noticias.find(item => item.id === noticiaId);
+
+                    if (n) {
+                        // Seleciona o conteúdo traduzido (Fallback para PT se a tradução não existir)
+                        const content = n[lang] || n['pt'];
+
+                        document.getElementById('loading').style.display = 'none';
+                        document.getElementById('noticia-render').style.display = 'block';
+                        document.title = content.titulo + " - bioCultura";
+                        
+                        document.getElementById('cat').innerText = n.categoria;
+                        document.getElementById('titulo').innerText = content.titulo;
+                        document.getElementById('source-name-top').innerText = n.fonte;
+                        document.getElementById('data').innerText = n.data;
+                        document.getElementById('imagem').src = n.imagem;
+                        document.getElementById('corpo').innerHTML = content.corpo;
+                        
+                        // Análise bioCultura Traduzida
+                        if (content.resumo_biocultura) {
+                            document.getElementById('biocultura-box').style.display = 'block';
+                            document.getElementById('biocultura-txt').innerHTML = content.resumo_biocultura;
+                        }
+
+                        // Footer
+                        document.getElementById('footer-source').innerText = n.fonte;
+                        document.getElementById('footer-date').innerText = n.data;
+                        document.getElementById('official-link').href = n.url || "#";
+
+                    } else {
+                        document.getElementById('loading').innerText = "Notícia não encontrada / News not found.";
+                    }
+                } catch (e) { console.error(e); }
+            }
+
             const catColors = { 'Energia': '#f1c40f', 'Biodiversidade': '#2ecc71', 'Água': '#3498db', 'Ar': '#95a5a6', 'Solo': '#e67e22', 'Mineração': '#c62828', 'Transição Ética': '#7b1fa2' };
 
             async function carregarNoticia() {
