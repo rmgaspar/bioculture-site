@@ -155,13 +155,13 @@
     </div>
 
     <script src="/assets/js/jquery.min.js"></script>
-   <script>
-    // 1. Variáveis de Estado Global
+  <script>
+    // 1. Variáveis Globais
     window.locationsDB = [];
     window.todasNoticias = [];
     let visiveis = 6;
 
-    // 2. Função de Tradução (i18n)
+    // 2. Tradução Dinâmica
     async function applyLanguage(lang) {
         if (!lang) lang = localStorage.getItem('selected_lang') || 'pt';
         try {
@@ -172,134 +172,82 @@
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.getAttribute('data-i18n');
                 const text = key.split('.').reduce((obj, i) => (obj ? obj[i] : null), t);
-                if (text) el.innerHTML = text;
+                if (text) {
+                    if (el.tagName === 'INPUT') el.placeholder = text;
+                    else el.innerHTML = text;
+                }
             });
             localStorage.setItem('selected_lang', lang);
-            console.log("Idioma aplicado:", lang);
         } catch (err) { console.error("Erro i18n:", err); }
     }
 
-    // 3. Inicialização e Carregamento de Dados
+    // 3. Cálculo de Distância (Haversine)
+    function calcularDistancia(lat1, lon1, lat2, lon2) {
+        const R = 6371;
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLon = (lon2 - lon1) * Math.PI / 180;
+        const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
+        return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+    }
+
+    // 4. Inicialização de Dados
     async function inicializarPagina() {
         try {
-            console.log("A carregar base de dados...");
             const [rLoc, rNews] = await Promise.all([
                 fetch('/data/freguesias_portugal.json').then(r => r.json()),
                 fetch('/data/noticias.json').then(r => r.json())
             ]);
-            
             window.locationsDB = rLoc;
             window.todasNoticias = rNews;
 
             const savedId = localStorage.getItem('biocultura_region');
-            console.log("ID guardado no LocalStorage:", savedId);
-
-            // Comparação robusta convertendo ambos para String
             const info = window.locationsDB.find(i => String(i.id) === String(savedId)) || window.locationsDB[0];
             
             if (info) {
-                console.log("Localidade encontrada:", info.titulo);
                 renderDashboard(info);
-                
-                // Detetar categoria de notícias pela URL
+                // Deteta categoria pela URL
                 const path = window.location.pathname;
-                let cat = 'soil'; // default
-                if (path.includes('biodiversidade')) cat = 'biodiv';
-                if (path.includes('agua')) cat = 'water';
-                if (path.includes('ar')) cat = 'air';
-                
+                const cat = path.includes('agua') ? 'water' : path.includes('solo') ? 'soil' : path.includes('ar') ? 'air' : 'biodiv';
                 renderizarNoticias(cat);
             }
-
-            setupSidebarLogic();
-        } catch(e) { console.error("Erro na inicialização:", e); }
+        } catch(e) { console.error("Erro ao carregar JSONs:", e); }
     }
 
-    // 4. Injeção de Dados no Dashboard
-    function renderDashboard(info) {
-        if(!info) return;
-        
-        // Nome da Localidade
-        const regEl = document.getElementById('reg-name');
-        if(regEl) regEl.innerText = info.titulo + (info.concelho ? ', ' + info.concelho : '');
-
-        // Mostrar Dashboard
-        const dashs = ['bio-dashboard', 'water-dashboard', 'soil-dashboard', 'air-dashboard'];
-        dashs.forEach(id => {
-            const el = document.getElementById(id);
-            if(el) el.style.display = 'block';
-        });
-
-        const b = info.biomas || {};
-
-        // Injetar Fauna/Flora (Biodiversidade)
-        const buildBadges = (items, type) => (items || []).map(i => `<span class="species-badge ${type}">${i}</span>`).join('');
-        
-        const faunaCont = document.getElementById('group-fauna');
-        if(faunaCont) {
-            faunaCont.innerHTML = `<div class="species-group"><span class="label-mini">Fauna</span><div class="species-list">` +
-                buildBadges(b.fauna_ameacada, 'threatened') + 
-                buildBadges(b.fauna_protegida, 'protected') + `</div></div>`;
-        }
-
-        const floraCont = document.getElementById('group-flora');
-        if(floraCont) {
-            floraCont.innerHTML = `<div class="species-group"><span class="label-mini">Flora</span><div class="species-list">` +
-                buildBadges(b.flora_invasora, 'invasive') + 
-                buildBadges(b.flora_protegida, 'protected') + `</div></div>`;
-        }
-
-        // Injetar Gauges (Água / Solo)
-        const ph = parseFloat(b.ph_solo) || 7.0;
-        const phMarker = document.getElementById('marker-ph') || document.getElementById('marker-ph-solo');
-        if(phMarker) phMarker.style.left = (ph / 14 * 100) + "%";
-        
-        const labelPh = document.getElementById('label-ph') || document.getElementById('label-ph-solo');
-        if(labelPh) labelPh.innerText = "pH " + ph.toFixed(1);
-    }
-
-    // 5. Notícias Dinâmicas
-    function renderizarNoticias(categoria) {
-        const container = document.getElementById('noticias-bio-dinamico') || 
-                          document.getElementById('noticias-agua-dinamico') || 
-                          document.getElementById('noticias-solo-dinamico') ||
-                          document.getElementById('noticias-ar-dinamico');
-        if(!container) return;
-
-        const lang = localStorage.getItem('selected_lang') || 'pt';
-        const filtradas = window.todasNoticias.filter(n => n.categoria === categoria && n[lang]);
-
-        container.innerHTML = filtradas.slice(0, visiveis).map(n => `
-            <a href="/observatorio/noticia-detail.html?id=${n.id}" class="news-item">
-                <h3>${n[lang].titulo}</h3>
-                <div class="news-meta"><span>${n.data}</span></div>
-            </a>`).join('');
-    }
-
-    // 6. Lógica de Sidebar (GPS e Pesquisa)
-    function setupSidebarLogic() {
-        // GPS
+    // 5. Lógica da Sidebar (Event Delegation - Resolve o GPS)
+    function setupSidebarEvents() {
+        // GPS (Seta)
         $(document).off('click', '#btn-gps-trigger').on('click', '#btn-gps-trigger', function() {
-            console.log("GPS Ativado...");
-            navigator.geolocation.getCurrentPosition(pos => {
-                let closest = null, minD = Infinity;
-                window.locationsDB.forEach(c => {
-                    if(!c.lat || c.lat === 0) return;
-                    const d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon);
-                    if(d < minD) { minD = d; closest = c; }
-                });
-                if(closest) {
-                    localStorage.setItem('biocultura_region', closest.id);
-                    location.reload(); 
-                }
-            }, (err) => console.error("Erro Geolocation:", err));
+            const btn = $(this);
+            btn.css('opacity', '0.5');
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(pos => {
+                    const uLat = pos.coords.latitude, uLon = pos.coords.longitude;
+                    let closest = null, minD = Infinity;
+
+                    window.locationsDB.forEach(c => {
+                        if(!c.lat || c.lat === 0) return;
+                        const d = calcularDistancia(uLat, uLon, c.lat, c.lon);
+                        if(d < minD) { minD = d; closest = c; }
+                    });
+
+                    if(closest) {
+                        localStorage.setItem('biocultura_region', closest.id);
+                        location.reload(); 
+                    }
+                    btn.css('opacity', '1');
+                }, () => btn.css('opacity', '1'), { enableHighAccuracy: true });
+            }
         });
 
-        // Pesquisa
+        // Pesquisa por Texto
         $(document).off('input', '#loc-search-input').on('input', '#loc-search-input', function() {
-            const val = $(this).val().toLowerCase(), dropdown = $('#loc-dropdown').empty();
+            const val = $(this).val().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""), 
+                  dropdown = $('#loc-dropdown').empty();
             if(val.length < 2) return dropdown.hide();
-            window.locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0,8).forEach(m => {
+
+            window.locationsDB.filter(i => 
+                i.titulo.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(val)
+            ).slice(0,8).forEach(m => {
                 $('<div class="bio-res-item"></div>').text(m.titulo).on('click', () => {
                     localStorage.setItem('biocultura_region', m.id);
                     location.reload();
@@ -309,17 +257,26 @@
         });
     }
 
-    function calcularDistancia(lat1, lon1, lat2, lon2) {
-        const R = 6371;
-        const dLat = (lat2 - lat1) * Math.PI / 180;
-        const dLon = (lon2 - lon1) * Math.PI / 180;
-        const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
-        return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+    // 6. Renderizar Notícias
+    function renderizarNoticias(categoria) {
+        const container = document.getElementById('noticias-bio-dinamico') || 
+                          document.getElementById('noticias-agua-dinamico') || 
+                          document.getElementById('noticias-solo-dinamico') ||
+                          document.getElementById('noticias-ar-dinamico');
+        if(!container) return;
+        const lang = localStorage.getItem('selected_lang') || 'pt';
+        const filtradas = window.todasNoticias.filter(n => n.categoria === categoria && n[lang]);
+        container.innerHTML = filtradas.slice(0, visiveis).map(n => `
+            <a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-item">
+                <h3>${n[lang].titulo}</h3>
+                <div class="news-meta"><span>${n.data}</span></div>
+            </a>`).join('');
     }
 
-    // Início do Ciclo
+    // INÍCIO: Carregar Sidebar e depois disparar lógica
     fetch('/sidebar-content.html').then(r => r.text()).then(html => {
         document.getElementById('sidebar').innerHTML = html;
+        setupSidebarEvents(); // Ativa GPS e Pesquisa imediatamente
         const savedLang = localStorage.getItem('selected_lang') || 'pt';
         applyLanguage(savedLang).then(() => inicializarPagina());
         
