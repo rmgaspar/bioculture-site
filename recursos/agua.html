@@ -83,97 +83,133 @@
 
     <script src="/assets/js/jquery.min.js"></script>
     <script>
-        let locationsDB = [], todasNoticias = [];
+    let locationsDB = [], todasNoticias = [];
 
-        // 1. Lógica de Localização (Pesquisa e GPS)
-        function setupLocationLogic() {
-            $(document).on('input', '#loc-search-input', function() {
-                const val = $(this).val().toLowerCase(), dropdown = $('#loc-dropdown').empty();
-                if(val.length < 2) return dropdown.hide();
-                locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0,8).forEach(m => {
-                    $('<div class="bio-res-item"></div>').text(m.titulo).on('click', () => {
-                        localStorage.setItem('biocultura_region', m.id);
-                        location.reload();
-                    }).appendTo(dropdown);
-                });
-                dropdown.show();
+    // 1. Cálculo de Distância Real (Haversine)
+    function calcularDistancia(lat1, lon1, lat2, lon2) {
+        const R = 6371;
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLon = (lon2 - lon1) * Math.PI / 180;
+        const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
+        return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+    }
+
+    // 2. Lógica de Localização (Pesquisa e GPS)
+    function setupLocationLogic() {
+        // Pesquisa manual
+        $(document).off('input', '#loc-search-input').on('input', '#loc-search-input', function() {
+            const val = $(this).val().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""), 
+                  dropdown = $('#loc-dropdown').empty();
+            if(val.length < 2) return dropdown.hide();
+            
+            locationsDB.filter(i => i.titulo.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(val)).slice(0,8).forEach(m => {
+                $('<div class="bio-res-item"></div>').text(m.titulo).on('click', () => {
+                    localStorage.setItem('biocultura_region', m.id);
+                    location.reload();
+                }).appendTo(dropdown);
             });
+            dropdown.show();
+        });
 
-            $(document).on('click', '#btn-gps-trigger', function() {
+        // GPS (Seta) - Correção Crítica
+        $(document).off('click', '#btn-gps-trigger').on('click', '#btn-gps-trigger', function() {
+            const btn = $(this);
+            btn.css('opacity', '0.5');
+
+            if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(pos => {
-                    let closest = locationsDB[0], minD = Infinity;
+                    const uLat = pos.coords.latitude;
+                    const uLon = pos.coords.longitude;
+                    let closest = null, minD = Infinity;
+
                     locationsDB.forEach(c => {
                         if(!c.lat || c.lat === 0) return;
-                        const d = Math.sqrt(Math.pow(pos.coords.latitude - c.lat, 2) + Math.pow(pos.coords.longitude - c.lon, 2));
+                        const d = calcularDistancia(uLat, uLon, c.lat, c.lon);
                         if(d < minD) { minD = d; closest = c; }
                     });
-                    localStorage.setItem('biocultura_region', closest.id);
-                    location.reload();
+
+                    if(closest) {
+                        localStorage.setItem('biocultura_region', closest.id);
+                        location.reload();
+                    }
+                    btn.css('opacity', '1');
+                }, (err) => {
+                    console.error("Erro GPS:", err);
+                    btn.css('opacity', '1');
+                    alert("Não foi possível detetar a localização. Verifique as permissões de GPS do seu navegador.");
+                }, { 
+                    enableHighAccuracy: true, 
+                    timeout: 10000, 
+                    maximumAge: 0 
                 });
-            });
-        }
-
-        // 2. Renderização do Dashboard
-        function renderDashboard(info) {
-            if(!info) return;
-            document.getElementById('reg-name').innerText = info.titulo + (info.concelho ? ', ' + info.concelho : '');
-            
-            const ph = parseFloat(info.biomas?.ph_solo) || 7.0;
-            const solo = (info.biomas?.solo || "").toLowerCase();
-            let dur = solo.includes('calcário') ? 28 : solo.includes('granítico') ? 7 : 12;
-
-            document.getElementById('label-ph').innerText = "pH " + ph.toFixed(1);
-            document.getElementById('label-dureza').innerText = dur + " ºf";
-            
-            document.getElementById('water-advantages').innerText = ph < 6.5 ? "Água ligeiramente ácida." : ph > 7.5 ? "Água alcalina." : "Água equilibrada.";
-
-            setTimeout(() => {
-                document.getElementById('marker-ph').style.left = (ph / 14 * 100) + "%";
-                document.getElementById('marker-dureza').style.left = Math.min(dur / 50 * 100, 100) + "%";
-            }, 300);
-        }
-
-        // 3. Notícias
-        function renderizarNoticias() {
-            const lang = localStorage.getItem('selected_lang') || 'pt';
-            const container = document.getElementById('noticias-agua-dinamico');
-            const filtradas = todasNoticias.filter(n => n.categoria === 'water' && n[lang]);
-            container.innerHTML = filtradas.map(n => `
-                <a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-item">
-                    <h3>${n[lang].titulo}</h3>
-                    <div class="news-meta"><span>${n.data}</span></div>
-                </a>`).join('');
-        }
-
-        // 4. i18n (Sidebar apenas)
-        async function applyLanguage(lang) {
-            const res = await fetch(`/assets/lang/${lang}.json`);
-            const t = await res.json();
-            document.querySelectorAll('[data-i18n]').forEach(el => {
-                const key = el.getAttribute('data-i18n');
-                const text = key.split('.').reduce((obj, i) => (obj ? obj[i] : null), t);
-                if (text) el.innerHTML = text;
-            });
-        }
-
-        // INIT
-        fetch('/sidebar-content.html').then(r => r.text()).then(async html => {
-            document.getElementById('sidebar').innerHTML = html;
-            
-            const [rLoc, rNews] = await Promise.all([
-                fetch('/data/freguesias_portugal.json').then(r => r.json()),
-                fetch('/data/noticias.json').then(r => r.json())
-            ]);
-            locationsDB = rLoc; todasNoticias = rNews;
-
-            const savedId = localStorage.getItem('biocultura_region');
-            const info = locationsDB.find(i => String(i.id) === String(savedId)) || locationsDB[0];
-            
-            renderDashboard(info);
-            renderizarNoticias();
-            setupLocationLogic();
-            applyLanguage(localStorage.getItem('selected_lang') || 'pt');
+            } else {
+                alert("O seu navegador não suporta geolocalização.");
+                btn.css('opacity', '1');
+            }
         });
-    </script>
+    }
+
+    // 3. Renderização do Dashboard (Gauges)
+    function renderDashboard(info) {
+        if(!info) return;
+        const regName = document.getElementById('reg-name');
+        if(regName) regName.innerText = info.titulo + (info.concelho ? ', ' + info.concelho : '');
+        
+        const b = info.biomas || {};
+        const ph = parseFloat(b.ph_solo) || 7.0;
+        const solo = (b.solo || "").toLowerCase();
+        let dur = solo.includes('calcário') ? 28 : solo.includes('granítico') ? 7 : 12;
+
+        // Atualizar Labels
+        if(document.getElementById('label-ph')) document.getElementById('label-ph').innerText = "pH " + ph.toFixed(1);
+        if(document.getElementById('label-dureza')) document.getElementById('label-dureza').innerText = dur + " ºf";
+
+        // Animar Marcadores
+        setTimeout(() => {
+            const mPh = document.getElementById('marker-ph') || document.getElementById('marker-ph-solo');
+            const mDur = document.getElementById('marker-dureza');
+            if(mPh) mPh.style.left = (ph / 14 * 100) + "%";
+            if(mDur) mDur.style.left = Math.min(dur / 50 * 100, 100) + "%";
+        }, 300);
+    }
+
+    // 4. Notícias
+    function renderizarNoticias() {
+        const lang = localStorage.getItem('selected_lang') || 'pt';
+        const path = window.location.pathname;
+        const cat = path.includes('agua') ? 'water' : path.includes('solo') ? 'soil' : path.includes('ar') ? 'air' : 'biodiv';
+        const container = document.getElementById('noticias-agua-dinamico') || 
+                          document.getElementById('noticias-solo-dinamico') || 
+                          document.getElementById('noticias-ar-dinamico') || 
+                          document.getElementById('noticias-bio-dinamico');
+        
+        if(!container) return;
+
+        const filtradas = todasNoticias.filter(n => n.categoria === cat && n[lang]);
+        container.innerHTML = filtradas.map(n => `
+            <a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-item">
+                <h3>${n[lang].titulo}</h3>
+                <div class="news-meta"><span>${n.data}</span></div>
+            </a>`).join('');
+    }
+
+    // INIT
+    fetch('/sidebar-content.html').then(r => r.text()).then(async html => {
+        document.getElementById('sidebar').innerHTML = html;
+        
+        const [rLoc, rNews] = await Promise.all([
+            fetch('/data/freguesias_portugal.json').then(r => r.json()),
+            fetch('/data/noticias.json').then(r => r.json())
+        ]);
+        locationsDB = rLoc; todasNoticias = rNews;
+
+        const savedId = localStorage.getItem('biocultura_region');
+        const info = locationsDB.find(i => String(i.id) === String(savedId)) || locationsDB[0];
+        
+        renderDashboard(info);
+        renderizarNoticias();
+        setupLocationLogic();
+    });
+</script>
 </body>
 </html>
