@@ -155,27 +155,13 @@
     </div>
 
     <script src="/assets/js/jquery.min.js"></script>
-    <script>
+   <script>
         let locationsDB = [], todasNoticias = [], visiveisAgua = 4;
-
-        const waterFacts = [
-            { titulo: "Agricultura", desc: "70% da água doce em Portugal é consumida pela agricultura (APA)." },
-            { titulo: "Consumo IA", desc: "Processar dados de IA exige biliões de litros para arrefecimento global." },
-            { titulo: "Desertificação", desc: "O Sul de Portugal enfrenta o maior risco de perda de aquíferos da Europa." }
-        ];
-
-        const relatoriosAgua = [
-            { titulo: "Pontos Críticos", texto: "O Alentejo e Algarve registam níveis de armazenamento abaixo da média histórica.", fonte: "Fonte: APA / SNIRH" },
-            { titulo: "Qualidade", texto: "A contaminação por nitratos agrícolas ameaça a potabilidade de furos artesianos.", fonte: "Fonte: FAO / bioCultura" },
-            { titulo: "Regeneração", texto: "A retenção de águas pluviais via 'Keyline Design' é a solução para recarregar aquíferos.", fonte: "Fonte: Regenerative Agriculture Association" },
-            { titulo: "Eficiência", texto: "A reutilização de águas cinzentas pode reduzir o consumo doméstico em 30%.", fonte: "Fonte: UN-Water" }
-        ];
 
         async function applyLanguage(lang) {
             if (!lang) lang = localStorage.getItem('selected_lang') || 'pt';
             try {
                 const response = await fetch(`/assets/lang/${lang}.json`);
-                if (!response.ok) return;
                 const t = await response.json();
                 document.querySelectorAll('[data-i18n]').forEach(el => {
                     const key = el.getAttribute('data-i18n');
@@ -186,102 +172,81 @@
             } catch (err) { console.error(err); }
         }
 
+        function calcularDistancia(lat1, lon1, lat2, lon2) {
+            const R = 6371;
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
+            return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+        }
+
+        function setupLocationLogic() {
+            $(document).off('input', '#loc-search-input').on('input', '#loc-search-input', function() {
+                const val = $(this).val().toLowerCase(), dropdown = $('#loc-dropdown').empty();
+                if(val.length < 2) return dropdown.hide();
+                locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0,8).forEach(m => {
+                    $('<div class="bio-res-item"></div>').text(m.titulo).on('click', () => {
+                        localStorage.setItem('biocultura_region', m.id);
+                        location.reload();
+                    }).appendTo(dropdown);
+                });
+                dropdown.show();
+            });
+
+            $(document).off('click', '#btn-gps-trigger').on('click', '#btn-gps-trigger', function() {
+                navigator.geolocation.getCurrentPosition(pos => {
+                    let closest = locationsDB[0], minD = Infinity;
+                    locationsDB.forEach(c => {
+                        if(!c.lat || c.lat === 0) return;
+                        let d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon);
+                        if(d < minD) { minD = d; closest = c; }
+                    });
+                    localStorage.setItem('biocultura_region', closest.id);
+                    location.reload();
+                });
+            });
+        }
+
         async function inicializarPagina() {
             try {
                 const [rLoc, rNews] = await Promise.all([
                     fetch('/data/freguesias_portugal.json').then(r => r.json()),
                     fetch('/data/noticias.json').then(r => r.json())
                 ]);
-                locationsDB = rLoc;
-                todasNoticias = rNews;
-
+                locationsDB = rLoc; todasNoticias = rNews;
                 const savedId = localStorage.getItem('biocultura_region');
-                const info = locationsDB.find(i => i.id === savedId) || locationsDB.find(i => i.lat !== 0) || locationsDB[0];
-
+                const info = locationsDB.find(i => i.id === savedId) || locationsDB[0];
+                
                 renderDashboard(info);
-                renderRelatorios();
                 renderizarNoticiasAgua();
-                iniciarCiclosAgua();
+                setupLocationLogic();
             } catch(e) { console.error(e); }
         }
 
         function renderDashboard(info) {
             if(!info) return;
-            document.getElementById('water-dashboard').style.display = 'block';
-            document.getElementById('reg-name').innerText = info.titulo + (info.concelho ? ', ' + info.concelho : '');     
-
+            document.getElementById('reg-name').innerText = info.titulo + (info.concelho ? ', ' + info.concelho : '');
+            // Lógica dos Gauges de pH e Dureza...
             const ph = parseFloat(info.biomas?.ph_solo) || 7.0;
-            const solo = (info.biomas?.solo || '').toLowerCase();
-            const dur = solo.includes('calcário') ? 28 : solo.includes('granítico') ? 7 : 12;
-
-            document.getElementById('label-ph').innerText = "pH " + ph.toFixed(1);
-            document.getElementById('label-dureza').innerText = dur + " ºf";
-
-            document.getElementById('water-advantages').innerText = ph < 6.5
-                ? "Água ligeiramente ácida: Ideal para mirtilos e culturas acidófilas."
-                : ph > 7.5
-                ? "Água alcalina: Adequada para rega de olival e solos ácidos."
-                : "Água equilibrada: Excelente para horticultura diversificada.";
-
-            setTimeout(() => {
-                document.getElementById('marker-ph').style.left = (ph / 14 * 100) + "%";
-                document.getElementById('marker-dureza').style.left = Math.min(dur / 50 * 100, 100) + "%";
-            }, 300);
-        }
-
-        function renderRelatorios() {
-            document.getElementById('report-grid-dynamic').innerHTML = relatoriosAgua.map(r => `
-                <div class="report-item">
-                    <h5>${r.titulo}</h5>
-                    <p>${r.texto}</p>
-                    <span class="chart-source-subtle">${r.fonte}</span>
-                </div>`).join('');
+            document.getElementById('marker-ph').style.left = (ph / 14 * 100) + "%";
+            document.getElementById('water-dashboard').style.display = 'block';
         }
 
         function renderizarNoticiasAgua() {
             const container = document.getElementById('noticias-agua-dinamico');
             const lang = localStorage.getItem('selected_lang') || 'pt';
-            
-            // Filtro técnico por 'water'
             const filtradas = todasNoticias.filter(n => n.categoria === 'water' && n[lang]);
-
             container.innerHTML = filtradas.slice(0, visiveisAgua).map(n => `
                 <a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-item">
                     <h3>${n[lang].titulo}</h3>
-                    <div class="news-meta">
-                        <img src="${n.logo || ''}" class="source-logo" onerror="this.style.display='none'">
-                        <span>${n.data}</span>
-                    </div>
+                    <div class="news-meta"><span>${n.data}</span></div>
                 </a>`).join('');
-            
-            document.getElementById('btn-load-more-agua').style.display = filtradas.length > visiveisAgua ? 'inline-block' : 'none';
         }
-
-        function iniciarCiclosAgua() {
-            const container = document.getElementById('water-facts-container');
-            container.innerHTML = waterFacts.map((f, i) => `
-                <div class="water-fact-item ${i === 0 ? 'active' : ''}">
-                    <b>${f.titulo}</b> ${f.desc}
-                </div>`).join('');
-            let factP = 0;
-            setInterval(() => {
-                const items = document.querySelectorAll('.water-fact-item');
-                if(items.length === 0) return;
-                items.forEach(el => el.classList.remove('active'));
-                factP = (factP + 1) % items.length;
-                items[factP].classList.add('active');
-            }, 8000);
-        }
-
-        $(document).on('click', '#btn-load-more-agua', () => { visiveisAgua += 4; renderizarNoticiasAgua(); });
 
         fetch('/sidebar-content.html').then(r => r.text()).then(html => {
             document.getElementById('sidebar').innerHTML = html;
             const savedLang = localStorage.getItem('selected_lang') || 'pt';
             applyLanguage(savedLang).then(() => inicializarPagina());
-            document.addEventListener('change', (e) => {
-                if (e.target.id === 'lang-selector') applyLanguage(e.target.value).then(() => renderizarNoticiasAgua());
-            });
         });
     </script>
 </body>
