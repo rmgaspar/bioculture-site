@@ -13,13 +13,16 @@
         #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
         #wrapper { padding-left: 18em !important; }
 
+        /* Alinhamento Milimétrico com o Logótipo */
         .inner { padding: 2.2em 4em 0 4em !important; max-width: 1600px !important; margin: 0 auto; width: 100%; }
+
         .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; margin-bottom: 15px; display: block; line-height: 1; }
 
         .hero-split { display: flex; align-items: flex-start; justify-content: space-between; gap: 4em; margin-bottom: 2em; }
         .hero-text { flex: 1.5; text-align: left; padding-top: 5px; } 
         .hero-text h1 { font-size: 4em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; line-height: 0.95; margin: 0 0 20px 0; }
         
+        /* Seletor de Contexto */
         .context-switcher { display: flex; gap: 15px; margin-top: 20px; }
         .context-switcher a { font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; text-decoration: none !important; border-bottom: none !important; padding-bottom: 5px; }
         .context-active-green { color: #1a1a1a !important; border-bottom: 2px solid #2e7d32 !important; }
@@ -64,12 +67,14 @@
         .news-item { text-decoration: none; color: inherit; display: block; padding: 25px; background: #fdfdfd; border: 1px solid #f2f2f2; border-radius: 12px; transition: all 0.3s; }
         .news-item:hover { transform: translateY(-5px); border-color: #ddd; }
         .news-item h3 { font-size: 1.15em; font-weight: 700; color: #1a1a1a; margin-bottom: 12px; line-height: 1.3; min-height: 2.6em; }
+
         .page-footer { margin-top: auto; padding: 2em 0 2.5em 0; border-top: 1px solid #f2f2f2; opacity: 0.3; text-align: right; }
 
         @media screen and (max-width: 1280px) {
             #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
             #wrapper { padding-left: 0 !important; }
             .hero-split { flex-direction: column-reverse; }
+            .hero-visual { justify-content: center; width: 100%; margin-bottom: 2em; }
             .hero-globe { width: 350px; height: 350px; margin: 0 auto; }
             .report-grid { grid-template-columns: 1fr; }
         }
@@ -85,8 +90,8 @@
                             <span class="category-label">Recursos Vitais</span>
                             <h1>Ar: O Sopro da Vida</h1>
                             <div class="context-switcher">
-                                <a href="/observatorio/observatorio-global.html" class="context-inactive">Visão Global</a>
-                                <a href="/observatorio/ar.html" class="context-active-green">● Portugal (Detalhe)</a>
+                                <a href="/observatorio/observatorio-global.html" class="context-inactive" data-i18n="ui.view_global">Visão Global</a>
+                                <a href="/observatorio/ar.html" class="context-active-green" data-i18n="ui.view_portugal">● Portugal (Detalhe)</a>
                             </div>
                             <p style="font-size: 0.9em; font-style: italic; color: #bbb; margin: 30px 0;">Análise regional: <strong id="reg-name" style="color:#888">...</strong></p>
 
@@ -109,8 +114,8 @@
                                     </div>
 
                                     <div class="temp-anomaly-box">
-                                        <div class="temp-val" id="air-temp">--ºC</div>
-                                        <div class="temp-label">Temperatura do Ar<br><span id="temp-anomaly" style="color:#ef6c00; font-size:0.9em;">Anomalia: --ºC</span></div>
+                                        <div class="temp-val" id="air-temp">24.5ºC</div>
+                                        <div class="temp-label">Temperatura do Ar<br><span id="temp-anomaly" style="color:#ef6c00; font-size:0.9em;">Anomalia: +1.2ºC</span></div>
                                     </div>
                                 </div>
                             </div>
@@ -160,15 +165,15 @@
 
         const airFacts = [
             { titulo: "Biomassa", desc: "A queima de lenha em lareiras é responsável por 60% das partículas finas no inverno urbano." },
-            { titulo: "Filtros Vivos", desc: "Um hectare de floresta madura absorve até 6 toneladas de CO2 e filtra toneladas de poeiras." },
+            { titulo: "Filtros Vivos", desc: "Um hectare de floresta madura absorve até 6 toneladas de CO2 e filtra poeiras." },
             { titulo: "Transportes", desc: "O tráfego rodoviário é a principal fonte de dióxido de azoto (NO2) nas cidades portuguesas." }
         ];
 
         const relatoriosAr = [
-            { titulo: "Rede QualAr", texto: "A monitorização em tempo real permite identificar episódios de poluição por Ozono troposférico no verão.", fonte: "APA / Rede QualAr" },
-            { titulo: "Mobilidade", texto: "A estagnação das emissões no setor dos transportes exige uma transição urgente para modos suaves.", fonte: "REA / Estado do Ambiente" },
-            { titulo: "Ilhas de Calor", texto: "A falta de espaços verdes intensifica a temperatura do ar nas zonas urbanas em até 5ºC.", fonte: "IPMA / bioCultura" },
-            { titulo: "Partículas PM2.5", texto: "As partículas finas são o maior risco ambiental para a saúde pública em Portugal.", fonte: "OMS / AQICN" }
+            { titulo: "Rede QualAr", texto: "A monitorização em tempo real permite identificar episódios de poluição por Ozono troposférico no verão.", fonte: "Fonte: APA / Rede QualAr" },
+            { titulo: "Mobilidade", texto: "A estagnação das emissões no setor dos transportes exige uma transição urgente para modos suaves.", fonte: "Fonte: REA / Estado do Ambiente" },
+            { titulo: "Ilhas de Calor", texto: "A falta de espaços verdes intensifica a temperatura do ar nas zonas urbanas em até 5ºC.", fonte: "Fonte: IPMA / bioCultura" },
+            { titulo: "Partículas PM2.5", texto: "As partículas finas são o maior risco ambiental para a saúde pública em Portugal.", fonte: "Fonte: OMS / AQICN" }
         ];
 
         function calcularDistancia(lat1, lon1, lat2, lon2) {
@@ -240,9 +245,6 @@
             document.getElementById('status-aqi').innerText = "Estação: " + (arData?.estacao_proxima || "Rede Nacional");
 
             let aqiPos = indice === "Bom" ? 15 : indice === "Médio" ? 45 : 75;
-            document.getElementById('air-temp').innerText = "24.5ºC";
-            document.getElementById('temp-anomaly').innerText = "Anomalia: +1.2ºC";
-
             setTimeout(() => {
                 document.getElementById('marker-aqi').style.left = aqiPos + "%";
             }, 300);
@@ -250,7 +252,7 @@
 
         function renderRelatorios() {
             document.getElementById('report-grid-air').innerHTML = relatoriosAr.map(r => `
-                <div class="report-item"><h5>${r.titulo}</h5><p>${r.texto}</p><span class="report-source">Fonte: ${r.fonte}</span></div>`).join('');
+                <div class="report-item"><h5>${r.titulo}</h5><p>${r.texto}</p><span class="report-source">${r.fonte}</span></div>`).join('');
         }
 
         function renderizarNoticiasAr() {
