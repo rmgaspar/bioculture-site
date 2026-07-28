@@ -1,330 +1,213 @@
 <!DOCTYPE HTML>
 <html>
-	<head>
-		<title>bioCultura - Observatório de Regeneração Planetária</title>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale, user-scalable=no" />
-		<link rel="stylesheet" href="/assets/css/main.css" />
-		<style>
-            /* --- ESTRUTURA GLOBAL --- */
-            body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
-			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
-            #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
-            #wrapper { padding-left: 18em !important; }
-            .inner { padding: 2.2em 4em 0 4em !important; max-width: 1600px !important; margin: 0 auto; }
+<head>
+    <title data-i18n="index.hero_label">bioCultura - Observatório de Regeneração Planetária</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="/assets/css/main.css" />
+    <style>
+        body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
+        section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
+        #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
+        #wrapper { padding-left: 18em !important; }
+        .inner { padding: 2.2em 4em 0 4em !important; max-width: 1600px !important; margin: 0 auto; }
 
-            /* HERO SPLIT */
-            .hero-split { display: flex; align-items: flex-start; justify-content: space-between; gap: 4em; margin-bottom: 2em; }
-            .hero-text { flex: 1.5; text-align: left; padding-top: 5px; } 
-            .hero-text h1 { font-size: 4em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; line-height: 0.95; margin-bottom: 20px; }
-            .hero-visual { flex: 1; display: flex; justify-content: flex-end; }
-            .hero-globe { position: relative; width: 480px; height: 480px; border-radius: 50%; overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,0.12); background: #1a1a1a; }
-            .hero-globe img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; transition: opacity 3s ease-in-out, transform 8s ease-in-out; opacity: 0; transform: scale(1.1); }
-            .hero-globe img.active { opacity: 1; transform: scale(1); }
+        .hero-split { display: flex; align-items: flex-start; justify-content: space-between; gap: 4em; margin-bottom: 2em; }
+        .hero-text { flex: 1.5; text-align: left; padding-top: 5px; } 
+        .hero-text h1 { font-size: 4em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; line-height: 0.95; margin-bottom: 20px; }
+        .hero-visual { flex: 1; display: flex; justify-content: flex-end; }
+        .hero-globe { position: relative; width: 480px; height: 480px; border-radius: 50%; overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,0.12); background: #1a1a1a; }
+        .hero-globe img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; transition: opacity 3s ease-in-out, transform 8s ease-in-out; opacity: 0; transform: scale(1.1); }
+        .hero-globe img.active { opacity: 1; transform: scale(1); }
 
-            /* IMPACTO IA / CLIMA */
-            .ia-impact-box { margin-top: 80px; padding-left: 0; position: relative; }
-            .ia-impact-subtitle { font-size: 0.85em; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; color: #c62828; margin-bottom: 25px; display: block; }
-            .fact-cycler { position: relative; height: 120px; margin-bottom: 100px; }
-            .fact-item { position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 1.5s ease-in-out; display: flex; align-items: flex-start; width: 100%; }
-            .fact-item.active { opacity: 1; }
-            .fact-content { flex: 1; }
-            .fact-item b { font-size: 1.6em; color: #1a1a1a; display: block; line-height: 1.1; margin-bottom: 8px; }
-            .fact-item span { font-size: 1.15em; color: #666; line-height: 1.4; display: block; max-width: 750px; }
+        .ia-impact-box { margin-top: 80px; padding-left: 0; position: relative; }
+        .ia-impact-subtitle { font-size: 0.85em; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; color: #c62828; margin-bottom: 25px; display: block; }
+        .fact-cycler { position: relative; height: 120px; margin-bottom: 100px; }
+        .fact-item { position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 1.5s ease-in-out; display: flex; align-items: flex-start; width: 100%; }
+        .fact-item.active { opacity: 1; }
+        .fact-item b { font-size: 1.6em; color: #1a1a1a; display: block; line-height: 1.1; margin-bottom: 8px; }
+        .fact-item span { font-size: 1.15em; color: #666; line-height: 1.4; display: block; max-width: 750px; }
 
-            /* MANIFESTO E IMPACTO */
-            .critical-summary { margin: 2em 0 4em 0; max-width: 1100px; padding-bottom: 3em; border-bottom: 1px solid #f2f2f2; }
-            .critical-summary p { font-size: 1.2em !important; line-height: 1.8 !important; color: #555 !important; margin-bottom: 1.5em; text-align: justify; }
-            .impact-cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin: 4em 0; }
-            .impact-card { background: #fff; border: 1px solid #f2f2f2; padding: 30px; border-radius: 16px; transition: all 0.3s; }
-            .impact-card:hover { border-color: #c62828; transform: translateY(-5px); }
-            .impact-card h4 { font-size: 0.8em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
-            .impact-card p { font-size: 0.95em; line-height: 1.6; color: #666; margin: 0; }
-            
-            .lnk-bio { font-weight: 700; text-decoration: none; border-bottom: 1px solid transparent; transition: all 0.3s; }
-            .lnk-bio:hover { border-bottom-color: currentColor; opacity: 0.8; }
-            .c-agua { color: #1a237e !important; }
-            .c-ar { color: #2196f3 !important; }
-            .c-terra { color: #795548 !important; }
-            .c-biodiv { color: #2e7d32 !important; }
-            .icon-red { color: #c62828; }
-            .icon-green { color: #2e7d32; }
+        .critical-summary { margin: 2em 0 4em 0; max-width: 1100px; padding-bottom: 3em; border-bottom: 1px solid #f2f2f2; }
+        .critical-summary p { font-size: 1.2em !important; line-height: 1.8 !important; color: #555 !important; margin-bottom: 1.5em; text-align: justify; }
+        
+        .impact-cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin: 4em 0; }
+        .impact-card { background: #fff; border: 1px solid #f2f2f2; padding: 30px; border-radius: 16px; transition: all 0.3s; }
+        .impact-card:hover { border-color: #c62828; transform: translateY(-5px); }
+        .impact-card h4 { font-size: 0.8em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+        .impact-card p { font-size: 0.95em; line-height: 1.6; color: #666; margin: 0; }
+        
+        .lnk-bio { font-weight: 700; text-decoration: none; border-bottom: 1px solid #1a1a1a; color: #1a1a1a; }
+        .icon-red { color: #c62828; } .icon-green { color: #2e7d32; }
 
-            /* NOTÍCIAS */
-            .news-header { font-size: 0.8em; font-weight: 400; text-transform: lowercase; letter-spacing: 3px; color: #bbb; margin-bottom: 2.5em; display: block; }
-            .news-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 30px; margin-bottom: 4em; }
-            .news-item { text-decoration: none; color: inherit; display: block; padding: 25px; background: #fdfdfd; border: 1px solid #f2f2f2; border-radius: 12px; transition: all 0.3s; }
-            .news-item:hover { transform: translateY(-5px); border-color: #ddd; }
-            .news-item h3 { font-size: 1.15em; font-weight: 700; color: #1a1a1a; margin-bottom: 12px; line-height: 1.3; min-height: 2.6em; }
-            .news-meta { display: flex; align-items: center; gap: 10px; border-top: 1px solid #f9f9f9; padding-top: 12px; }
-            .source-logo { width: 16px; height: 16px; object-fit: contain; filter: grayscale(100%); opacity: 0.6; }
-            .news-meta span { font-size: 0.65em; font-weight: 800; color: #bbb; text-transform: uppercase; letter-spacing: 1px; }
+        .news-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 30px; margin-bottom: 4em; }
+        .news-item { text-decoration: none; color: inherit; display: block; padding: 25px; background: #fdfdfd; border: 1px solid #f2f2f2; border-radius: 12px; transition: all 0.3s; }
+        .news-item:hover { transform: translateY(-5px); border-color: #ddd; }
+        .news-item h3 { font-size: 1.15em; font-weight: 700; color: #1a1a1a; margin-bottom: 12px; line-height: 1.3; min-height: 2.6em; }
+        .news-meta { display: flex; align-items: center; gap: 10px; border-top: 1px solid #f9f9f9; padding-top: 12px; }
+        .source-logo { width: 16px; height: 16px; object-fit: contain; filter: grayscale(100%); opacity: 0.6; }
+        .news-meta span { font-size: 0.65em; font-weight: 800; color: #bbb; text-transform: uppercase; letter-spacing: 1px; }
 
-            .pagination-container { display: flex; gap: 30px; margin: 4em 0; }
-            .btn-pagination { background: none !important; border: none !important; outline: none !important; box-shadow: none !important; padding: 0 !important; color: #bbb !important; font-size: 0.8em; font-weight: 400; text-transform: lowercase; letter-spacing: 3px; cursor: pointer; transition: color 0.3s; }
-            .btn-pagination:hover { color: #333 !important; text-decoration: underline; }
-            .hidden-card { display: none; }
-
-            .bio-res-item { padding: 12px 18px; font-size: 0.9em; color: #666; cursor: pointer; border-bottom: 1px solid #f9f9f9 !important; }
-            .bio-res-item:hover { background: #f1f8e9; color: #2e7d32; }
-
-            @media screen and (max-width: 1280px) {
-                #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
-                #wrapper { padding-left: 0 !important; }
-                .hero-globe { width: 350px; height: 350px; }
-            }
-		</style>
-        <!-- Google tag (gtag.js) -->
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV0FD8PXC"></script>
-        <script>
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-6PV0FD8PXC');
-        </script>
-	</head>
-	<body class="is-preload">
-		<div id="wrapper">
-			<div id="main">
-                <div class="inner">
-					<header id="header" style="height: 0; margin: 0; padding: 0; overflow: hidden;"></header>
-					
-                    <div class="index-container">
-                        <section class="hero-split">
-                            <div class="hero-text">
-                                <span style="font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; display: block; margin-bottom: 15px;">Observatório bioCultura</span>
-                                <h1>O progresso não pode ser o fim do seu horizonte.</h1>
-                                <div class="ia-impact-box">
-                                    <span class="ia-impact-subtitle">O Custo do Progresso e a Crise Climática</span>
-                                    <div class="fact-cycler" id="fact-cycler"></div>
-                                </div>
+        .page-footer { padding: 4em 0 2em 0; border-top: 1px solid #f2f2f2; opacity: 0.3; text-align: right; }
+        
+        @media screen and (max-width: 1280px) {
+            #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
+            #wrapper { padding-left: 0 !important; }
+            .hero-globe { width: 350px; height: 350px; }
+        }
+    </style>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV0FD8PXC"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-6PV0FD8PXC');
+    </script>
+</head>
+<body class="is-preload">
+    <div id="wrapper">
+        <div id="main">
+            <div class="inner">
+                <header id="header" style="height: 0; margin: 0; padding: 0; overflow: hidden;"></header>
+                
+                <div class="index-container">
+                    <section class="hero-split">
+                        <div class="hero-text">
+                            <span class="category-label" data-i18n="index.hero_label">Observatório bioCultura</span>
+                            <h1 data-i18n="index.hero_title">O progresso consciente é a única via de regeneração.</h1>
+                            <div class="ia-impact-box">
+                                <span class="ia-impact-subtitle">Global Fact Check 2026</span>
+                                <div class="fact-cycler" id="fact-cycler"></div>
                             </div>
-                            <div class="hero-visual">
-                                <div class="hero-globe" id="hero-cycler">
-                                    <img src="https://images.unsplash.com/photo-1470240731273-7821a6eeb6bd?q=80&w=2070&auto=format&fit=crop" class="active">
-                                    <img src="https://images.unsplash.com/photo-1641959166364-6c9b9898e804?q=80&w=2071&auto=format&fit=crop">
-                                    <img src="https://images.unsplash.com/photo-1586400792375-d6b8f82db2e6?q=80&w=2071&auto=format&fit=crop">
-                                    <img src="https://plus.unsplash.com/premium_photo-1661902468900-8528a81ed688?q=80&w=2013&auto=format&fit=crop">
-                                </div>
+                        </div>
+                        <div class="hero-visual">
+                            <div class="hero-globe" id="hero-cycler">
+                                <img src="https://images.unsplash.com/photo-1470240731273-7821a6eeb6bd?q=80&w=2070&auto=format&fit=crop" class="active">
+                                <img src="https://images.unsplash.com/photo-1641959166364-6c9b9898e804?q=80&w=2071&auto=format&fit=crop">
+                                <img src="https://images.unsplash.com/photo-1586400792375-d6b8f82db2e6?q=80&w=2071&auto=format&fit=crop">
                             </div>
-                        </section>
+                        </div>
+                    </section>
 
-                        <h2 id="observatorio-de-impacto" style="border:none !important; margin-bottom: 1em;">Observatório de Impacto</h2>
+                    <div class="critical-summary">
+                        <p data-i18n="index.manifesto_p1"></p>
                         
-                        <div class="critical-summary">
-                            <p>
-                                O planeta atravessa uma metamorfose forçada. Fenómenos como o <b>El Niño</b> extremo, o aquecimento recorde do Atlântico e o <b>furacão Kristin</b> são sintomas de um sistema em desequilíbrio. Em Portugal, esta crise manifesta-se na violência dos fogos e na imprevisibilidade das cheias, exigindo uma vigilância ética sobre a gestão do nosso território.
-                            </p>
-
-                            <div class="impact-cards-grid">
-                                <div class="impact-card">
-                                    <h4 class="icon-red"><span>⛏️</span> Mineração e Lítio</h4>
-                                    <p>Megaprojetos de extração a céu aberto ameaçam fragmentar ecossistemas e comprometer as reservas de água locais.</p>
-                                </div>
-                                <div class="impact-card">
-                                    <h4 class="icon-red"><span>🥩</span> Pecuária Industrial</h4>
-                                    <p>Unidades intensivas financiadas pela <b>PAC</b> com elevadas emissões de metano e contaminação de aquíferos por nitratos.</p>
-                                </div>
-                                <div class="impact-card">
-                                    <h4 class="icon-red"><span>💻</span> Impacto Digital & IA</h4>
-                                    <p>O custo invisível do virtual: consumo massivo de água para arrefecimento e pressão térmica sobre o solo e a rede elétrica.</p>
-                                </div>
-                                <div class="impact-card">
-                                    <h4 class="icon-green"><span>🌱</span> Solo e Meteorologia</h4>
-                                    <p>Um solo vivo regula a temperatura local. O uso de químicos aniquila a microvida e transforma a terra num emissor de calor.</p>
-                                </div>
+                        <div class="impact-cards-grid">
+                            <div class="impact-card">
+                                <h4 class="icon-red"><span>⛏️</span> <span data-i18n="index.cards.mining">Mineração</span></h4>
+                                <p data-i18n="index.cards.mining_text"></p>
                             </div>
-
-                            <p>
-                                A preservação da <a href="/ecossistemas/biodiversidade.html" class="lnk-bio c-biodiv">Biodiversidade</a> é a nossa última linha de defesa. No bioCultura, monitorizamos os <b>Vetores de Pressão</b> que ameaçam os recursos vitais: o <a href="/recursos/solo.html" class="lnk-bio c-terra">Solo</a>, o <a href="/recursos/ar.html" class="lnk-bio c-ar">Ar</a> e a <a href="/recursos/agua.html" class="lnk-bio c-agua">Água</a>.
-                            </p>
-
-                            <p>
-                                Como alternativa ao modelo extrativo, promovemos a <b>Agricultura Biológica</b> e a proteção de polinizadores e fauna auxiliar. No nosso <a href="/calendario/calendario.html" class="lnk-bio c-cal">Calendário Hortícola</a>, ensinamos a cultivar ao ritmo da natureza, combatendo a desertificação com regeneração ativa.
-                            </p>
-
-                            <p style="font-size: 0.95em !important; font-style: italic; color: #888; border-top: 1px solid #f2f2f2; padding-top: 2em;">
-                                Utilize o <b>GPS</b> na barra lateral para detetar a área de impacto de <b id="reg-name" style="color:#1a1a1a">...</b> e compreender o custo real do desenvolvimento na sua região.
-                            </p>
+                            <div class="impact-card">
+                                <h4 class="icon-red"><span>🥩</span> <span data-i18n="index.cards.livestock">Produção</span></h4>
+                                <p data-i18n="index.cards.livestock_text"></p>
+                            </div>
+                            <div class="impact-card">
+                                <h4 class="icon-red"><span>💻</span> <span data-i18n="index.cards.digital">Digital</span></h4>
+                                <p data-i18n="index.cards.digital_text"></p>
+                            </div>
+                            <div class="impact-card">
+                                <h4 class="icon-green"><span>🌱</span> <span data-i18n="index.cards.organic">Solo</span></h4>
+                                <p data-i18n="index.cards.organic_text"></p>
+                            </div>
                         </div>
 
-                        <span class="news-header">noticias</span>
-                        <div id="observatorio-dinamico" class="news-list"></div>
+                        <p data-i18n="index.manifesto_p2"></p>
 
-                        <div class="pagination-container">
-                            <button id="btn-load-more" class="btn-pagination">ver mais</button>
-                            <button id="btn-show-less" class="btn-pagination" style="display:none;">ver menos</button>
-                        </div>
+                        <p style="font-size: 0.95em !important; font-style: italic; color: #888; border-top: 1px solid #f2f2f2; padding-top: 2em;" data-i18n="index.manifesto_p3">
+                        </p>
                     </div>
 
-                    <footer style="padding: 4em 0 2em 0; border-top: 1px solid #f2f2f2; opacity: 0.3; text-align: right;" class="index-container">
-                        <span style="display: block; font-size: 0.85em; font-weight: 900; color: #333;">bioCultura</span>
-                        <span style="display: block; font-size: 0.5em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Global Regeneration</span>
-                    </footer>
-				</div>
+                    <div id="observatorio-dinamico" class="news-list"></div>
+                </div>
+
+                <footer class="page-footer">
+                    <span style="display: block; font-size: 0.85em; font-weight: 900; color: #333;">bioCultura</span>
+                    <span style="display: block; font-size: 0.5em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Global Regeneration</span>
+                </footer>
             </div>
-			<div id="sidebar"></div>
-		</div>
+        </div>
+        <div id="sidebar"></div>
+    </div>
 
-        <script src="/assets/js/jquery.min.js"></script>
-        <script>
-            let locationsDB = [], todasNoticias = [], visiveis = 6;
+    <script src="/assets/js/jquery.min.js"></script>
+    <script>
+        let todasNoticias = [];
 
-            const criticalFacts = [
-                { cor: '#c62828', titulo: 'Crise Climática 2026', desc: 'O furacão Kristin e o aquecimento recorde do Atlântico geram fenómenos meteorológicos extremos e imprevisíveis.' },
-                { cor: '#ef6c00', titulo: 'Pecuária e Metano', desc: 'A produção intensiva de gado bovino é um dos maiores emissores de CH4, afetando diretamente a qualidade do ar e o clima local.' },
-                { cor: '#1a237e', titulo: 'A Sede da IA', desc: 'Cada consulta complexa a um modelo de IA pode consumir até 500ml de água para arrefecimento de servidores em Data Centers.' },
-                { cor: '#2e7d32', titulo: 'Polinizadores em Risco', desc: 'O uso de pesticidas financiado por modelos agrícolas industriais está a dizimar abelhas e borboletas, essenciais à nossa alimentação.' },
-                { cor: '#795548', titulo: 'Solo: O Termostato Vivo', desc: 'A regeneração da matéria orgânica no solo é a forma mais barata e eficaz de capturar carbono e arrefecer a temperatura regional.' }
-            ];
+        async function applyLanguage(lang) {
+            if (!lang) lang = localStorage.getItem('selected_lang') || 'pt';
+            try {
+                const response = await fetch(`/assets/lang/${lang}.json`);
+                const t = await response.json();
 
-            const toTitle = s => s ? s.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : '';
-
-            function calcularDistancia(lat1, lon1, lat2, lon2) {
-                if(!lat1 || !lat2) return 9999;
-                const R = 6371;
-                const dLat = (lat2 - lat1) * Math.PI / 180;
-                const dLon = (lon2 - lon1) * Math.PI / 180;
-                const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
-                return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
-            }
-
-            async function inicializarPagina() {
-                try {
-                    const rLoc = await fetch('/data/freguesias_portugal.json');
-                    locationsDB = await rLoc.json();
-                    const rNews = await fetch('/data/noticias.json');
-                    todasNoticias = await rNews.json();
-                    todasNoticias.sort((a, b) => (b.relevancia || 0) - (a.relevancia || 0));
-
-                    const savedId = localStorage.getItem('biocultura_region');
-                    const info = locationsDB.find(i => i.id === savedId) || locationsDB.find(i => i.lat !== 0) || locationsDB[0];
-                    
-                    renderDashboard(info);
-                    renderizarLista();
-                    renderCriticalFacts(); 
-                    setupSidebarLogic();
-                    iniciarCiclos();
-                } catch(e) { console.error(e); }
-            }
-
-            function renderDashboard(info) {
-                if(!info) return;
-                const el = document.getElementById('reg-name');
-                if(el) el.innerText = info.titulo + (info.concelho ? ', ' + toTitle(info.concelho) : '');
-            }
-
-            function renderCriticalFacts() {
-                const container = document.getElementById('fact-cycler');
-                if(!container) return;
-                container.innerHTML = criticalFacts.map((f, i) => `
-                    <div class="fact-item ${i === 0 ? 'active' : ''}" style="color: ${f.cor}">
-                        <div class="fact-content"><b>${f.titulo}</b><span>${f.desc}</span></div>
-                    </div>`).join('');
-            }
-
-            function iniciarCiclos() {
-                const imgs = document.querySelectorAll('#hero-cycler img');
-                let imgP = 0;
-                if(imgs.length > 0) {
-                    setInterval(() => {
-                        imgs.forEach(i => i.classList.remove('active'));
-                        imgP = (imgP + 1) % imgs.length;
-                        imgs[imgP].classList.add('active');
-                    }, 6000);
-                }
-                
-                // CORRIGIDO: Chamar renderCriticalFacts em vez de renderIAFacts
-                renderCriticalFacts();
-                
-                let factP = 0;
-                setInterval(() => {
-                    const facts = document.querySelectorAll('#fact-cycler .fact-item');
-                    if(facts.length === 0) return;
-                    facts.forEach(f => f.classList.remove('active'));
-                    factP = (factP + 1) % facts.length;
-                    facts[factP].classList.add('active');
-                }, 12000);
-            }
-
-            function setupSidebarLogic() {
-                $(document).off('input', '#loc-search-input').on('input', '#loc-search-input', function() {
-                    const val = $(this).val().toLowerCase(), dropdown = $('#loc-dropdown').empty();
-                    if(val.length < 2) return dropdown.hide();
-                    const matches = locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0, 8);
-                    if(matches.length > 0) {
-                        dropdown.show();
-                        matches.forEach(m => {
-                            $('<div class="bio-res-item"></div>')
-                                .text(m.titulo + (m.concelho ? ' (' + m.concelho + ')' : ''))
-                                .on('click', () => {
-                                    localStorage.setItem('biocultura_region', m.id);
-                                    trackRegionChange(m.id);
-                                    renderDashboard(m);
-                                    dropdown.hide();
-                                    $('#loc-search-input').val('');
-                                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                                }).appendTo(dropdown);
-                        });
-                    }
+                document.querySelectorAll('[data-i18n]').forEach(el => {
+                    const key = el.getAttribute('data-i18n');
+                    const text = key.split('.').reduce((obj, i) => (obj ? obj[i] : null), t);
+                    if (text) el.innerHTML = text;
                 });
 
-                $(document).off('click', '#btn-gps-trigger').on('click', '#btn-gps-trigger', function() {
-                    const btn = $(this); btn.css('opacity', '0.5');
-                    navigator.geolocation.getCurrentPosition(pos => {
-                        const uLat = pos.coords.latitude, uLon = pos.coords.longitude;
-                        let closest = null, minD = Infinity;
-                        locationsDB.forEach(c => {
-                            if(!c.lat || !c.lon || c.lat === 0) return;
-                            const d = calcularDistancia(uLat, uLon, c.lat, c.lon);
-                            if(d < minD) { minD = d; closest = c; }
-                        });
-                        if(closest) {
-                            localStorage.setItem('biocultura_region', closest.id);
-                            trackRegionChange(closest.id);
-                            renderDashboard(closest);
-                            window.scrollTo({ top: 0, behavior: 'smooth' });
-                        }
-                        btn.css('opacity', '1');
-                    }, () => { btn.css('opacity', '1'); }, { timeout: 5000 });
-                });
-            }
-
-            function renderizarLista() {
-                const container = document.getElementById('observatorio-dinamico');
-                if(!container) return;
-                container.innerHTML = todasNoticias.map((n, i) => `
-                    <a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-item ${i >= visiveis ? 'hidden-card' : ''}">
-                        <h3>${n.titulo}</h3>
-                        <p>${(n.resumo_biocultura || n.resumo || "").substring(0, 110)}...</p>
-                        <div class="news-meta"><img src="${n.logo}" class="source-logo"><span>${n.data}</span></div>
-                    </a>`).join('');
-                document.getElementById('btn-load-more').style.display = visiveis < todasNoticias.length ? 'inline-block' : 'none';
-                document.getElementById('btn-show-less').style.display = visiveis > 6 ? 'inline-block' : 'none';
-            }
-
-            document.getElementById('btn-load-more').onclick = () => { visiveis += 6; renderizarLista(); };
-            document.getElementById('btn-show-less').onclick = () => { visiveis = 6; renderizarLista(); };
-
-            fetch('/sidebar-content.html').then(r => r.text()).then(html => {
-                document.getElementById('sidebar').innerHTML = html;
-                inicializarPagina();
-            });
-
-            // --- Tracking de Analytics ---
-            $(document).on('click', 'a, button', function() {
-                const label = $(this).text().trim() || $(this).attr('id') || 'unnamed';
-                const destination = $(this).attr('href') || 'action';
-                if (typeof gtag === 'function') {
-                    gtag('event', 'click', { 'event_category': 'engagement', 'event_label': label, 'value': destination });
+                // Renderiza factos dinâmicos baseados na língua
+                const cycler = document.getElementById('fact-cycler');
+                if (cycler && t.index.critical_facts) {
+                    cycler.innerHTML = t.index.critical_facts.map((f, i) => `
+                        <div class="fact-item ${i === 0 ? 'active' : ''}" style="color: ${f.cor}">
+                            <div class="fact-content"><b>${f.titulo}</b><span>${f.desc}</span></div>
+                        </div>`).join('');
                 }
-            });
 
-            function trackRegionChange(regionId) {
-                if (typeof gtag === 'function') {
-                    gtag('event', 'region_change', { 'event_category': 'localization', 'event_label': regionId });
-                }
-            }    
-        </script>
-	</body>
+                localStorage.setItem('selected_lang', lang);
+                if(document.getElementById('lang-selector')) document.getElementById('lang-selector').value = lang;
+            } catch (err) { console.error(err); }
+        }
+
+        async function inicializarPagina() {
+            try {
+                const rNews = await fetch('/data/noticias.json');
+                todasNoticias = await rNews.json();
+                renderizarLista();
+                iniciarCiclos();
+            } catch(e) { console.error(e); }
+        }
+
+        function iniciarCiclos() {
+            // Ciclo de Imagens
+            const imgs = document.querySelectorAll('#hero-cycler img');
+            let imgP = 0;
+            setInterval(() => {
+                imgs.forEach(i => i.classList.remove('active'));
+                imgP = (imgP + 1) % imgs.length;
+                imgs[imgP].classList.add('active');
+            }, 6000);
+
+            // Ciclo de Factos
+            let factP = 0;
+            setInterval(() => {
+                const facts = document.querySelectorAll('#fact-cycler .fact-item');
+                if(facts.length === 0) return;
+                facts.forEach(f => f.classList.remove('active'));
+                factP = (factP + 1) % facts.length;
+                facts[factP].classList.add('active');
+            }, 12000);
+        }
+
+        function renderizarLista() {
+            const container = document.getElementById('observatorio-dinamico');
+            if(!container) return;
+            container.innerHTML = todasNoticias.slice(0, 6).map(n => `
+                <a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-item">
+                    <h3>${n.titulo}</h3>
+                    <div class="news-meta"><img src="${n.logo}" class="source-logo"><span>${n.data}</span></div>
+                </a>`).join('');
+        }
+
+        fetch('/sidebar-content.html').then(r => r.text()).then(html => {
+            document.getElementById('sidebar').innerHTML = html;
+            const savedLang = localStorage.getItem('selected_lang') || 'pt';
+            applyLanguage(savedLang).then(() => inicializarPagina());
+            
+            document.addEventListener('change', (e) => {
+                if (e.target.id === 'lang-selector') applyLanguage(e.target.value);
+            });
+        });
+    </script>
+</body>
 </html>
