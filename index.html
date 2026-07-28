@@ -58,8 +58,23 @@
         .news-meta span { font-size: 0.65em; font-weight: 800; color: #bbb; text-transform: uppercase; letter-spacing: 1px; }
 
         .pagination-container { display: flex; gap: 30px; margin: 4em 0; }
-        .btn-pagination { background: none !important; border: none !important; color: #bbb !important; font-size: 0.8em; letter-spacing: 3px; cursor: pointer; text-transform: lowercase; outline: none !important; }
-        .btn-pagination:hover { color: #333 !important; text-decoration: underline; }
+        .btn-pagination { 
+            background: none !important; 
+            border: 0 !important; /* Remove a borda vermelha */
+            outline: none !important; 
+            box-shadow: none !important; 
+            padding: 0 !important; 
+            color: #bbb !important; 
+            font-size: 0.8em; 
+            letter-spacing: 3px; 
+            cursor: pointer; 
+            text-transform: lowercase; 
+            transition: color 0.3s;
+        }
+        .btn-pagination:hover { 
+            color: #333 !important; 
+            text-decoration: underline; 
+        }
         .hidden-card { display: none; }
 
         .page-footer { padding: 4em 0 2em 0; border-top: 1px solid #f2f2f2; opacity: 0.3; text-align: right; }
@@ -152,7 +167,7 @@
                 </div>
 
                 <footer class="page-footer">
-                    <span style="display: block; font-size: 0.85em; font-weight: 900; color: #333;">bioCultura</span>
+                    <span style="display: block; font-size: 0.85em; font-weight: 900; color: #333;">bioCulture</span>
                     <span style="display: block; font-size: 0.5em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Global Regeneration</span>
                 </footer>
             </div>
@@ -292,13 +307,25 @@
         function renderizarLista() {
             const container = document.getElementById('observatorio-dinamico');
             if(!container) return;
-            container.innerHTML = todasNoticias.map((n, i) => `
+
+            // Filtra para garantir que o item existe e tem os campos necessários
+            const noticiasValidas = todasNoticias.filter(n => n && n.id && n.titulo);
+
+            container.innerHTML = noticiasValidas.map((n, i) => `
                 <a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-item ${i >= visiveis ? 'hidden-card' : ''}">
                     <h3>${n.titulo}</h3>
-                    <div class="news-meta"><img src="${n.logo}" class="source-logo"><span>${n.data}</span></div>
+                    <div class="news-meta">
+                        <img src="${n.logo || ''}" class="source-logo" onerror="this.style.display='none'">
+                        <span>${n.data || ''}</span>
+                    </div>
                 </a>`).join('');
-            document.getElementById('btn-load-more').style.display = visiveis < todasNoticias.length ? 'inline-block' : 'none';
-            document.getElementById('btn-show-less').style.display = visiveis > 6 ? 'inline-block' : 'none';
+
+            // Ajusta visibilidade dos botões baseada em notícias válidas
+            const btnMore = document.getElementById('btn-load-more');
+            const btnLess = document.getElementById('btn-show-less');
+            
+            if(btnMore) btnMore.style.display = visiveis < noticiasValidas.length ? 'inline-block' : 'none';
+            if(btnLess) btnLess.style.display = visiveis > 6 ? 'inline-block' : 'none';
         }
 
         function iniciarCiclos() {
