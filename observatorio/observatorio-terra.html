@@ -80,8 +80,10 @@
                         <!-- 1. Atmosfera -->
                         <div class="chart-box">
                             <h5><span class="leg-blue">Veículos</span> vs <span class="leg-red">Temperatura</span></h5>
-                            <div class="chart-container"><canvas id="chartAtmosfera"></canvas></div>
-                            <p class="chart-explanation">O aumento da frota automóvel correlaciona-se com a subida da temperatura média urbana, intensificando o efeito de ilha de calor nas principais metrópoles.</p>
+                            <div class="chart-container">
+                                <canvas id="chartAtmosfera"></canvas>
+                            </div>
+                            <p class="chart-explanation">O aumento da frota automóvel correlaciona-se com a subida da temperatura média urbana, intensificando o efeito de ilha de calor.</p>
                             <span class="chart-source-subtle">Fonte: IMTT / IPMA</span>
                         </div>
 
@@ -145,8 +147,8 @@
                     }
                 };
 
-                // 1. Atmosfera
-                new Chart(document.getElementById('chartAtmosferas'), {
+                // 1. Atmosfera (Corrigido o ID de 'chartAtmosferas' para 'chartAtmosfera')
+                new Chart(document.getElementById('chartAtmosfera'), {
                     type: 'line',
                     data: {
                         labels: [2004, 2017, 2024, 2025],
@@ -155,7 +157,13 @@
                             { label: 'Temp', data: [15.2, 16.3, 16.4, 16.6], borderColor: '#ef5350', yAxisID: 'y1', tension: 0.4 }
                         ]
                     },
-                    options: { ...commonOptions, scales: { y: { position: 'left' }, y1: { position: 'right', grid: { drawOnChartArea: false } } } }
+                    options: { 
+                        ...commonOptions, 
+                        scales: { 
+                            y: { position: 'left', ticks: { font: { size: 9 } } }, 
+                            y1: { position: 'right', grid: { drawOnChartArea: false }, ticks: { font: { size: 9 } } } 
+                        } 
+                    }
                 });
 
                 // 2. Economia Agrícola
