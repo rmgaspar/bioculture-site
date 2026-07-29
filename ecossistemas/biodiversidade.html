@@ -84,11 +84,11 @@
     </div>
     <script src="/assets/js/jquery.min.js"></script>
         <script>
-            // Variáveis globais
+            // 1. Variáveis Globais (Garantir acesso em todos os scopes)
             window.locationsDB = []; 
             let todasNoticias = []; 
-            let visiveisBio = 6;
 
+            // Função de cálculo de distância para o GPS
             function calcularDistancia(lat1, lon1, lat2, lon2) { 
                 const R = 6371; 
                 const dLat = (lat2 - lat1) * Math.PI / 180; 
@@ -97,11 +97,11 @@
                 return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))); 
             }
 
+            // 2. Tradução Dinâmica (Caminho corrigido para subpasta)
             async function applyLanguage(lang) { 
                 if (!lang) lang = localStorage.getItem('selected_lang') || 'pt'; 
                 try { 
-                    // Caminho relativo para subir um nível (..) até à raiz
-                    const response = await fetch(`../assets/lang/${lang}.json`); 
+                    const response = await fetch('../assets/lang/' + lang + '.json'); 
                     if (!response.ok) return; 
                     const t = await response.json(); 
                     document.querySelectorAll('[data-i18n]').forEach(el => { 
@@ -113,9 +113,9 @@
                 } catch (err) { console.error("Erro i18n:", err); } 
             }
 
+            // 3. Inicialização de Dados
             async function inicializarPagina() {
                 try {
-                    // Ajuste de caminhos: ../ para sair de 'ecossistemas' e chegar a 'data'
                     const [rLoc, rNews] = await Promise.all([
                         fetch('../data/freguesias_portugal.json').then(r => r.json()), 
                         fetch('../data/noticias.json').then(r => r.json())
@@ -130,14 +130,14 @@
                     renderDashboard(info); 
                     renderizarNoticiasBio(); 
                     iniciarCiclosBio();
-                } catch(e) { console.error("Erro no carregamento de dados:", e); }
+                } catch(e) { console.error("Erro no carregamento:", e); }
             }
 
+            // 4. Renderização do Dashboard (Fix: Conteúdo em falta)
             function renderDashboard(info) {
                 if(!info) return; 
-                const dashboard = document.getElementById('bio-dashboard');
-                if(dashboard) dashboard.style.display = 'block'; 
                 
+                // Nome da região
                 const regName = document.getElementById('reg-name');
                 if(regName) regName.innerText = info.titulo + (info.concelho ? ', ' + info.concelho : '');
                 
@@ -147,20 +147,20 @@
                     return `<div class="species-group"><span class="label-mini">${title}</span><div class="species-list">${items.map(i => `<span class="species-badge ${type}">${i}</span>`).join('')}</div></div>`; 
                 };
                 
-                const fauna = document.getElementById('group-fauna');
-                const flora = document.getElementById('group-flora');
-                if(fauna) fauna.innerHTML = build('Fauna Ameaçada', b.fauna_ameacada, 'threatened') + build('Fauna Protegida', b.fauna_protegida, 'protected');
-                if(flora) flora.innerHTML = build('Invasoras', b.flora_invasora, 'invasive') + build('Flora Protegida', b.flora_protegida, 'protected');
+                const faunaContainer = document.getElementById('group-fauna');
+                const floraContainer = document.getElementById('group-flora');
+                
+                if(faunaContainer) faunaContainer.innerHTML = build('Fauna Ameaçada', b.fauna_ameacada, 'threatened') + build('Fauna Protegida', b.fauna_protegida, 'protected');
+                if(floraContainer) floraContainer.innerHTML = build('Invasoras', b.flora_invasora, 'invasive') + build('Flora Protegida', b.flora_protegida, 'protected');
             }
 
+            // 5. Renderização de Notícias (Fix: i18n e Categoria)
             function renderizarNoticiasBio() {
                 const container = document.getElementById('noticias-bio-dinamico');
                 if(!container) return;
 
                 const lang = localStorage.getItem('selected_lang') || 'pt';
-                
-                // Filtro correto: categoria 'biodiv' e existência da tradução
-                const filtradas = todasNoticias.filter(n => n && n.categoria === 'biodiv' && n[lang]);
+                const filtradas = todasNoticias.filter(n => n && (n.categoria === 'biodiv' || n.categoria === 'Biodiversidade') && n[lang]);
 
                 container.innerHTML = filtradas.map(n => {
                     const content = n[lang]; 
@@ -186,11 +186,11 @@
                 } 
             }
 
-            // Carregamento da Sidebar e Inicialização
+            // 6. Sidebar e Event Listeners (Fix: GPS não funcionava por delegação de eventos)
             fetch('../sidebar-content.html').then(r => r.text()).then(html => {
                 document.getElementById('sidebar').innerHTML = html;
                 
-                // Listeners da Sidebar
+                // Pesquisa de localidade
                 $(document).on('input', '#loc-search-input', function() {
                     const val = $(this).val().toLowerCase(); 
                     const dropdown = $('#loc-dropdown').empty(); 
@@ -204,22 +204,25 @@
                     dropdown.show();
                 });
 
+                // GPS Trigger (Fix: Delegated Event)
                 $(document).on('click', '#btn-gps-trigger', function() {
-                    navigator.geolocation.getCurrentPosition(pos => {
-                        let closest = window.locationsDB[0], minD = Infinity;
-                        window.locationsDB.forEach(c => { 
-                            if(!c.lat || c.lat === 0) return; 
-                            const d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon); 
-                            if(d < minD) { minD = d; closest = c; } 
-                        });
-                        localStorage.setItem('biocultura_region', closest.id); 
-                        location.reload();
-                    }, null, { enableHighAccuracy: true });
+                    if (navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition(pos => {
+                            let closest = window.locationsDB[0], minD = Infinity;
+                            window.locationsDB.forEach(c => { 
+                                if(!c.lat || c.lat === 0) return; 
+                                const d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon); 
+                                if(d < minD) { minD = d; closest = c; } 
+                            });
+                            localStorage.setItem('biocultura_region', closest.id); 
+                            location.reload();
+                        }, null, { enableHighAccuracy: true });
+                    }
                 });
 
                 const savedLang = localStorage.getItem('selected_lang') || 'pt';
                 applyLanguage(savedLang).then(() => inicializarPagina());
             });
         </script>
-</body>
+    </body>
 </html>
