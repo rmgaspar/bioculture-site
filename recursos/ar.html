@@ -115,7 +115,6 @@
 
         <script src="/assets/js/jquery.min.js"></script>
         <script>
-            // 1. Variáveis Globais
             window.locationsDB = []; 
             let todasNoticias = []; 
 
@@ -127,7 +126,6 @@
                 return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))); 
             }
 
-            // 2. Tradução Dinâmica (Caminho ../ para subir um nível)
             async function applyLanguage(lang) { 
                 if (!lang) lang = localStorage.getItem('selected_lang') || 'pt'; 
                 try { 
@@ -143,50 +141,46 @@
                 } catch (err) { console.error("Erro i18n:", err); } 
             }
 
-            // 3. Inicialização de Dados
             async function inicializarPagina() {
                 try {
+                    // FIX: ../ para sair de /recursos/ e entrar em /data/
                     const [rLoc, rNews] = await Promise.all([
                         fetch('../data/freguesias_portugal.json').then(r => r.json()), 
                         fetch('../data/noticias.json').then(r => r.json())
                     ]);
-                    
                     window.locationsDB = rLoc; 
                     todasNoticias = rNews;
-                    
                     const savedId = localStorage.getItem('biocultura_region');
                     const info = window.locationsDB.find(i => String(i.id) === String(savedId)) || window.locationsDB[0];
-                    
-                    renderizarNoticiasAr(); 
+                    renderDashboard(info); 
+                    renderizarNoticias(); 
                 } catch(e) { console.error("Erro no carregamento:", e); }
             }
 
-            // 4. Renderizar Notícias do Ar
-            function renderizarNoticiasAr() {
-                const container = document.getElementById('noticias-ar-dinamico'); 
-                if(!container) return;
-
-                const lang = localStorage.getItem('selected_lang') || 'pt';
-                
-                // Filtra por categoria 'air' ou 'Ar'
-                const filtradas = todasNoticias.filter(n => n && (n.categoria === 'air' || n.categoria === 'Ar') && n[lang]);
-
-                container.innerHTML = filtradas.map(n => {
-                    const content = n[lang]; 
-                    return `
-                        <a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-item">
-                            <h3>${content.titulo}</h3>
-                            <div class="news-meta">
-                                <span>${n.data || ''}</span>
-                            </div>
-                        </a>`;
-                }).join('');
+            function renderDashboard(info) {
+                if(!info) return; 
+                const el = document.getElementById('reg-name');
+                if(el) el.innerText = info.titulo + (info.concelho ? ', ' + info.concelho : '');
             }
 
-            // 5. Sidebar e GPS (Fix: Delegação de Eventos)
+            function renderizarNoticias() {
+                const container = document.getElementById('noticias-dinamico'); // Garante que o ID no HTML é este
+                if(!container) return;
+                const lang = localStorage.getItem('selected_lang') || 'pt';
+                
+                // AJUSTA A CATEGORIA AQUI: 'water', 'air' ou 'soil'
+                const filtradas = todasNoticias.filter(n => n && (n.categoria === 'Ar' || n.categoria === 'Água') && n[lang]);
+
+                container.innerHTML = filtradas.map(n => `
+                    <a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-item">
+                        <h3>${n[lang].titulo}</h3>
+                        <div class="news-meta"><span>${n.data}</span></div>
+                    </a>`).join('');
+            }
+
+            // Sidebar e GPS
             fetch('../sidebar-content.html').then(r => r.text()).then(html => {
                 document.getElementById('sidebar').innerHTML = html;
-                
                 $(document).on('input', '#loc-search-input', function() {
                     const val = $(this).val().toLowerCase(); 
                     const dropdown = $('#loc-dropdown').empty(); 
@@ -199,22 +193,18 @@
                     }); 
                     dropdown.show();
                 });
-
                 $(document).on('click', '#btn-gps-trigger', function() {
-                    if (navigator.geolocation) {
-                        navigator.geolocation.getCurrentPosition(pos => {
-                            let closest = window.locationsDB[0], minD = Infinity;
-                            window.locationsDB.forEach(c => { 
-                                if(!c.lat || c.lat === 0) return; 
-                                const d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon); 
-                                if(d < minD) { minD = d; closest = c; } 
-                            });
-                            localStorage.setItem('biocultura_region', closest.id); 
-                            location.reload();
-                        }, null, { enableHighAccuracy: true });
-                    }
+                    navigator.geolocation.getCurrentPosition(pos => {
+                        let closest = window.locationsDB[0], minD = Infinity;
+                        window.locationsDB.forEach(c => { 
+                            if(!c.lat || c.lat === 0) return; 
+                            const d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon); 
+                            if(d < minD) { minD = d; closest = c; } 
+                        });
+                        localStorage.setItem('biocultura_region', closest.id); 
+                        location.reload();
+                    });
                 });
-
                 const savedLang = localStorage.getItem('selected_lang') || 'pt';
                 applyLanguage(savedLang).then(() => inicializarPagina());
             });
