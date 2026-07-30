@@ -173,7 +173,6 @@
         <script>
             let locationsDB = [], todasNoticias = [];
 
-            // Cálculo de proximidade para GPS
             function calcularDistancia(lat1, lon1, lat2, lon2) {
                 const R = 6371;
                 const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -184,7 +183,7 @@
 
             async function init() {
                 try {
-                    // Caminhos relativos ../ para sair das subpastas /recursos/ ou /ecossistemas/
+                    // FIX: Caminhos relativos ../ para sair de /recursos/ ou /ecossistemas/
                     const [rLoc, rNews] = await Promise.all([
                         fetch('../data/freguesias_portugal.json').then(r => r.json()),
                         fetch('../data/noticias.json').then(r => r.json())
@@ -192,7 +191,6 @@
                     locationsDB = rLoc;
                     todasNoticias = rNews;
 
-                    // Carregar região selecionada ou GPS
                     const savedId = localStorage.getItem('biocultura_region');
                     const info = locationsDB.find(i => String(i.id) === String(savedId)) || locationsDB[0];
 
@@ -200,27 +198,30 @@
                     if (regEl) regEl.innerText = info.titulo + (info.concelho ? ', ' + info.concelho : '');
                     
                     renderNoticias();
-                } catch (e) { console.error("Erro no carregamento de dados:", e); }
+                } catch (e) { console.error("Erro no fetch:", e); }
             }
 
             function renderNoticias() {
                 const path = window.location.pathname;
-                let cat = 'biodiv';
-                let containerId = 'noticias-bio-dinamico';
+                let cat = 'air'; // Default
+                if (path.includes('agua')) cat = 'water';
+                if (path.includes('solo')) cat = 'soil';
+                if (path.includes('biodiversidade')) cat = 'biodiv';
 
-                // Deteção automática de categoria e container pelo URL
-                if (path.includes('agua')) { cat = 'water'; containerId = 'noticias-agua-dinamico'; }
-                if (path.includes('ar')) { cat = 'air'; containerId = 'noticias-ar-dinamico'; }
-                if (path.includes('solo')) { cat = 'soil'; containerId = 'noticias-solo-dinamico'; }
+                // Tenta encontrar qualquer container de notícias disponível
+                const container = document.getElementById('noticias-ar-dinamico') || 
+                                document.getElementById('noticias-agua-dinamico') || 
+                                document.getElementById('noticias-solo-dinamico') ||
+                                document.getElementById('noticias-bio-dinamico') ||
+                                document.getElementById('noticias-dinamico');
 
-                const container = document.getElementById(containerId) || document.getElementById('noticias-dinamico');
                 if (!container) return;
 
-                // Filtra notícias e usa o objeto 'pt' por defeito (já que não queres tradução)
+                // Filtra e acede ao objeto 'pt' (mesmo sem tradução ativa, o JSON tem esta estrutura)
                 const filtradas = todasNoticias.filter(n => n.categoria === cat);
 
                 container.innerHTML = filtradas.map(n => {
-                    const content = n.pt || n; // Fallback para raiz caso o JSON mude
+                    const content = n.pt || n; 
                     return `
                         <a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-item">
                             <h3>${content.titulo}</h3>
@@ -229,7 +230,7 @@
                 }).join('');
             }
 
-            // Sidebar e GPS (Delegado para funcionar com fetch)
+            // Sidebar e GPS (Delegado para funcionar sempre)
             fetch('../sidebar-content.html').then(r => r.text()).then(html => {
                 document.getElementById('sidebar').innerHTML = html;
 
@@ -248,7 +249,6 @@
                     }
                 });
 
-                // Pesquisa manual na sidebar
                 $(document).on('input', '#loc-search-input', function() {
                     const val = $(this).val().toLowerCase(), dropdown = $('#loc-dropdown').empty();
                     if(val.length < 2) return dropdown.hide();
