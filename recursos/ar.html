@@ -115,6 +115,7 @@
 
         <script src="/assets/js/jquery.min.js"></script>
         <script>
+            // 1. Variáveis Globais
             window.locationsDB = []; 
             let todasNoticias = []; 
 
@@ -143,41 +144,71 @@
 
             async function inicializarPagina() {
                 try {
-                    // FIX: ../ para sair de /recursos/ e entrar em /data/
                     const [rLoc, rNews] = await Promise.all([
                         fetch('../data/freguesias_portugal.json').then(r => r.json()), 
                         fetch('../data/noticias.json').then(r => r.json())
                     ]);
+                    
                     window.locationsDB = rLoc; 
                     todasNoticias = rNews;
+                    
                     const savedId = localStorage.getItem('biocultura_region');
                     const info = window.locationsDB.find(i => String(i.id) === String(savedId)) || window.locationsDB[0];
+                    
                     renderDashboard(info); 
-                    renderizarNoticias(); 
+                    renderizarNoticiasAr(); 
                 } catch(e) { console.error("Erro no carregamento:", e); }
             }
 
             function renderDashboard(info) {
                 if(!info) return; 
-                const el = document.getElementById('reg-name');
-                if(el) el.innerText = info.titulo + (info.concelho ? ', ' + info.concelho : '');
+                const regName = document.getElementById('reg-name');
+                if(regName) regName.innerText = info.titulo + (info.concelho ? ', ' + info.concelho : '');
+                
+                // Se tiveres uma caixa de alerta de qualidade do ar, ela é preenchida aqui
+                const alertaBox = document.getElementById('alerta-ar-texto');
+                if(alertaBox && info.qualidade_ar) {
+                    alertaBox.innerText = info.qualidade_ar;
+                }
             }
 
-            function renderizarNoticias() {
-                const container = document.getElementById('noticias-ar-dinamico'); // ID correto para ar
-                if(!container) return;
+            function renderizarNoticiasAr() {
+                // Tenta encontrar o container por vários IDs possíveis para evitar erros
+                const container = document.getElementById('noticias-ar-dinamico') || 
+                                document.getElementById('noticias-dinamico') || 
+                                document.getElementById('observatorio-dinamico');
+                
+                if(!container) {
+                    console.error("Erro: Container de notícias não encontrado no HTML.");
+                    return;
+                }
+
                 const lang = localStorage.getItem('selected_lang') || 'pt';
+                
+                // Filtra por categoria 'air' (como está no teu JSON) ou 'Ar'
                 const filtradas = todasNoticias.filter(n => n && (n.categoria === 'air' || n.categoria === 'Ar') && n[lang]);
-                container.innerHTML = filtradas.map(n => `
-                    <a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-item">
-                        <h3>${n[lang].titulo}</h3>
-                        <div class="news-meta"><span>${n.data}</span></div>
-                    </a>`).join('');
+
+                if(filtradas.length === 0) {
+                    container.innerHTML = '<p style="color: #bbb; padding: 20px;">Sem notícias recentes sobre a qualidade do Ar.</p>';
+                    return;
+                }
+
+                container.innerHTML = filtradas.map(n => {
+                    const content = n[lang]; 
+                    return `
+                        <a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-item">
+                            <h3>${content.titulo}</h3>
+                            <div class="news-meta">
+                                <span>${n.data || ''}</span>
+                            </div>
+                        </a>`;
+                }).join('');
             }
 
-            // Sidebar e GPS
+            // Sidebar e GPS (Delegação de Eventos)
             fetch('../sidebar-content.html').then(r => r.text()).then(html => {
                 document.getElementById('sidebar').innerHTML = html;
+                
                 $(document).on('input', '#loc-search-input', function() {
                     const val = $(this).val().toLowerCase(); 
                     const dropdown = $('#loc-dropdown').empty(); 
@@ -190,18 +221,22 @@
                     }); 
                     dropdown.show();
                 });
+
                 $(document).on('click', '#btn-gps-trigger', function() {
-                    navigator.geolocation.getCurrentPosition(pos => {
-                        let closest = window.locationsDB[0], minD = Infinity;
-                        window.locationsDB.forEach(c => { 
-                            if(!c.lat || c.lat === 0) return; 
-                            const d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon); 
-                            if(d < minD) { minD = d; closest = c; } 
+                    if (navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition(pos => {
+                            let closest = window.locationsDB[0], minD = Infinity;
+                            window.locationsDB.forEach(c => { 
+                                if(!c.lat || c.lat === 0) return; 
+                                const d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon); 
+                                if(d < minD) { minD = d; closest = c; } 
+                            });
+                            localStorage.setItem('biocultura_region', closest.id); 
+                            location.reload();
                         });
-                        localStorage.setItem('biocultura_region', closest.id); 
-                        location.reload();
-                    });
+                    }
                 });
+
                 const savedLang = localStorage.getItem('selected_lang') || 'pt';
                 applyLanguage(savedLang).then(() => inicializarPagina());
             });
