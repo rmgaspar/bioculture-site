@@ -93,105 +93,20 @@
                 .hero-globe { width: 350px; height: 350px; }
                 .report-grid { grid-template-columns: 1fr; }
             }
+
+            /* Forçar a capitalização correta do concelho */
+            #reg-name { 
+                text-transform: none !important; 
+                font-variant: normal !important; 
+            }
+
 		</style>
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV0FD8PXC"></script>
+        <script src="/assets/js/jquery.min.js"></script>
         <script>
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-6PV0FD8PXC');
-        </script>
-	</head>
-	<body class="is-preload">
-		<div id="wrapper">
-			<div id="main">
-                <div class="inner">
-                    <section>
-                        <div class="hero-split">
-                            <div class="hero-text">
-                                <span class="category-label">Recursos Vitais</span>
-                                <h1>Água: O Sangue da Terra</h1>
-                                <p style="font-size: 0.9em; font-style: italic; color: #bbb; margin-bottom: 30px;">Análise regional: <strong id="reg-name" style="color:#888">...</strong></p>
+            let locationsDB = [], todasNoticias = [];
 
-                                <div id="water-dashboard" style="display:none;">
-                                    <h4 style="font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin-bottom: 20px;">Perfil Químico</h4>
-                                    <div class="tech-content">
-                                        <div style="display: flex; gap: 40px; flex-wrap: wrap;">
-                                            <div class="gauge-container">
-                                                <div class="gauge-label"><span class="current-val" id="label-ph">pH --</span><span class="unit">Escala 0-14</span></div>
-                                                <div class="gauge-bar bar-ph"><div id="marker-ph" class="gauge-marker"></div></div>
-                                            </div>
-                                            <div class="gauge-container">
-                                                <div class="gauge-label"><span class="current-val" id="label-dureza">-- ºf</span><span class="unit">Dureza estimada</span></div>
-                                                <div class="gauge-bar bar-dureza"><div id="marker-dureza" class="gauge-marker"></div></div>
-                                            </div>
-                                        </div>
-                                        <p class="tech-detail" id="water-advantages" style="color:#bbb; font-style:italic">A analisar composição mineral...</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="hero-visual">
-                                <div class="hero-globe">
-                                    <img src="https://plus.unsplash.com/premium_photo-1683288081743-5161d099f16e?q=80&w=1035&auto=format&fit=crop" alt="Recursos Hídricos">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="data-row">
-                            <h4>Alerta Hídrico</h4>
-                            <div class="tech-content">
-                                <p style="font-size: 1.1em; line-height: 1.6; color: #777; margin-bottom: 1em; max-width: 1000px;">
-                                    A escassez de água é um desafio multidimensional que afeta ecossistemas e sociedades. A monitorização constante dos níveis hídricos e a compreensão dos novos padrões de consumo são fundamentais para uma gestão regenerativa e resiliente.
-                                </p>
-                                <div class="water-impact-box">
-                                    <div class="fact-cycler-water" id="water-facts-container"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="data-row">
-                            <h4>Relatório Global</h4>
-                            <div class="tech-content">
-                                <h3 style="margin: 0 0 10px 0; font-weight: 300; font-size: 2em;">Análise Crítica de Stress Hídrico</h3>
-                                <div id="report-grid-dynamic" class="report-grid"></div>
-                            </div>
-                        </div>
-
-                        <span class="news-header">noticias</span>
-                        <div id="noticias-agua-dinamico" class="news-list"></div>
-                        <div style="text-align: center; margin-bottom: 4em;">
-                            <button id="btn-load-more-agua" class="btn-pagination" style="display:none;">ver mais</button>
-                        </div>
-
-                        <footer class="page-footer">
-                            <span style="display: block; font-size: 0.85em; font-weight: 900; color: #333;">bioCultura</span>
-                            <span style="display: block; font-size: 0.5em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Global Regeneration</span>
-                        </footer>
-					</section>
-				</div>
-            </div>
-			<div id="sidebar"></div>
-		</div>
-
-		<script src="/assets/js/jquery.min.js"></script>
-        <script>
-            let locationsDB = [], noticiasAgua = [], visiveisAgua = 4;
-
-            const waterFacts = [
-                { titulo: "Agricultura Global", desc: "70% da água doce do planeta é consumida pela agricultura industrial (FAO)." },
-                { titulo: "Consumo Invisível da IA", desc: "Uma conversa de 20 perguntas com uma IA consome 500ml de água para refrigeração." },
-                { titulo: "Stress Hídrico Portugal", desc: "Portugal é um dos países europeus com maior risco de desertificação a sul do Tejo." }
-            ];
-
-            const relatoriosAgua = [
-                { titulo: "Pontos Críticos em Portugal", texto: "Portugal enfrenta um stress hídrico severo, com o Alentejo e o Algarve em níveis de alerta máximo.", fonte: "Worldometers" },
-                { titulo: "Principais Causas de Consumo", texto: "O setor agrícola continua a ser o maior consumidor, absorvendo cerca de 70% das retiradas globais.", fonte: "FAO" },
-                { titulo: "Problemas Estruturais Globais", texto: "A crise hídrica é agravada pela poluição por nitratos e microplásticos que se infiltram nos lençóis freáticos.", fonte: "UN-Water" },
-                { titulo: "Estratégias de Regeneração", texto: "A solução passa pela transição para a agricultura regenerativa e sistemas de reutilização de águas cinzentas.", fonte: "World Water Council" }
-            ];
-
+            // Cálculo de distância para o GPS
             function calcularDistancia(lat1, lon1, lat2, lon2) {
-                if(!lat1 || !lat2) return 9999;
                 const R = 6371;
                 const dLat = (lat2 - lat1) * Math.PI / 180;
                 const dLon = (lon2 - lon1) * Math.PI / 180;
@@ -199,127 +114,87 @@
                 return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
             }
 
-            async function inicializarPagina() {
+            async function init() {
                 try {
+                    // 1. Carregar Dados com caminhos relativos para subpasta
                     const [rLoc, rNews] = await Promise.all([
-                        fetch('/data/freguesias_portugal.json').then(r => r.json()),
-                        fetch('/data/noticias.json').then(r => r.json())
+                        fetch('../data/freguesias_portugal.json').then(r => r.json()),
+                        fetch('../data/noticias.json').then(r => r.json())
                     ]);
                     locationsDB = rLoc;
-                    
-                    // Filtro de notícias por ID técnico 'water' e idioma
-                    const lang = localStorage.getItem('selected_lang') || 'pt';
-                    noticiasAgua = rNews.filter(n => n.categoria === 'water' && n[lang]);
+                    todasNoticias = rNews;
 
+                    // 2. Definir Região (Local ou GPS)
                     const savedId = localStorage.getItem('biocultura_region');
                     const info = locationsDB.find(i => String(i.id) === String(savedId)) || locationsDB[0];
 
-                    renderDashboard(info);
-                    renderizarCardsAgua();
-                    renderRelatorios();
-                    iniciarCiclosAgua();
-                    setupLocationLogic();
-                } catch(e) { console.error(e); }
+                    // 3. Injetar Nome (Fix Mação)
+                    const regEl = document.getElementById('reg-name');
+                    if (regEl) {
+                        regEl.innerText = info.titulo + (info.concelho ? ', ' + info.concelho : '');
+                        regEl.style.textTransform = "none";
+                    }
+                    
+                    renderizarNoticiasAgua();
+                } catch (e) { console.error("Erro no carregamento:", e); }
             }
 
-            function setupLocationLogic() {
-                $(document).off('input', '#loc-search-input').on('input', '#loc-search-input', function() {
+            function renderizarNoticiasAgua() {
+                // Tenta encontrar o container (procura por vários IDs possíveis)
+                const container = document.getElementById('noticias-agua-dinamico') || document.getElementById('noticias-dinamico');
+                if (!container) return;
+
+                const lang = localStorage.getItem('selected_lang') || 'pt';
+                
+                // Filtra por categoria water/água
+                const filtradas = todasNoticias.filter(n => n.categoria && (n.categoria.toLowerCase() === 'water' || n.categoria.toLowerCase() === 'água'));
+
+                container.innerHTML = filtradas.map(n => {
+                    // Suporte para o novo formato JSON (n.pt.titulo) ou antigo (n.titulo)
+                    const content = n[lang] || n.pt || n;
+                    return `
+                        <a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-item">
+                            <h3>${content.titulo || 'Sem título'}</h3>
+                            <div class="news-meta"><span>${n.data || ''}</span></div>
+                        </a>`;
+                }).join('');
+            }
+
+            // 4. Sidebar e GPS (Delegação de Eventos para funcionar com o fetch)
+            fetch('../sidebar-content.html').then(r => r.text()).then(html => {
+                document.getElementById('sidebar').innerHTML = html;
+
+                // Listener do GPS
+                $(document).on('click', '#btn-gps-trigger', function() {
+                    if (navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition(pos => {
+                            let closest = locationsDB[0], minD = Infinity;
+                            locationsDB.forEach(c => {
+                                if (!c.lat) return;
+                                const d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon);
+                                if (d < minD) { minD = d; closest = c; }
+                            });
+                            localStorage.setItem('biocultura_region', closest.id);
+                            location.reload();
+                        });
+                    }
+                });
+
+                // Listener da Pesquisa
+                $(document).on('input', '#loc-search-input', function() {
                     const val = $(this).val().toLowerCase(), dropdown = $('#loc-dropdown').empty();
                     if(val.length < 2) return dropdown.hide();
-                    locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0,8).forEach(m => {
-                        $('<div class="bio-res-item"></div>')
-                            .text(m.titulo + (m.concelho ? ' (' + m.concelho + ')' : ''))
-                            .on('click', () => {
-                                localStorage.setItem('biocultura_region', m.id);
-                                location.reload();
-                            }).appendTo(dropdown);
+                    locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0,5).forEach(m => {
+                        $('<div class="bio-res-item"></div>').text(m.titulo).on('click', () => {
+                            localStorage.setItem('biocultura_region', m.id);
+                            location.reload();
+                        }).appendTo(dropdown);
                     });
                     dropdown.show();
                 });
-
-                $(document).off('click', '#btn-gps-trigger').on('click', '#btn-gps-trigger', function() {
-                    navigator.geolocation.getCurrentPosition(pos => {
-                        let closest = locationsDB[0], minD = Infinity;
-                        locationsDB.forEach(c => {
-                            if(!c.lat || c.lat === 0) return;
-                            let d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon);
-                            if(d < minD) { minD = d; closest = c; }
-                        });
-                        localStorage.setItem('biocultura_region', closest.id);
-                        location.reload();
-                    });
-                });
-            }
-
-            function renderDashboard(info) {
-                if(!info) return;
-                document.getElementById('water-dashboard').style.display = 'block';
-                document.getElementById('reg-name').innerText = info.titulo + (info.concelho ? ', ' + info.concelho : '');     
-
-                const ph = parseFloat(info.biomas?.ph_solo) || 7.0;
-                const solo = (info.biomas?.solo || '').toLowerCase();
-                const dur = solo.includes('calcário') ? 28 : solo.includes('granítico') ? 7 : 12;
-
-                document.getElementById('label-ph').innerText = "pH " + ph.toFixed(1);
-                document.getElementById('label-dureza').innerText = dur + " ºf";
-
-                document.getElementById('water-advantages').innerText = ph < 6.5
-                    ? "Água ligeiramente ácida: Ideal para mirtilos e culturas acidófilas."
-                    : ph > 7.5
-                    ? "Água alcalina: Adequada para rega de olival e solos ácidos."
-                    : "Água equilibrada: Excelente para horticultura diversificada.";
-
-                setTimeout(() => {
-                    document.getElementById('marker-ph').style.left = (ph / 14 * 100) + "%";
-                    document.getElementById('marker-dureza').style.left = Math.min(dur / 50 * 100, 100) + "%";
-                }, 300);
-            }
-
-            function renderRelatorios() {
-                document.getElementById('report-grid-dynamic').innerHTML = relatoriosAgua.map(r => `
-                    <div class="report-item">
-                        <h5>${r.titulo}</h5>
-                        <p>${r.texto}</p>
-                        <span class="report-source">Fonte: ${r.fonte}</span>
-                    </div>`).join('');
-            }
-
-            function renderizarCardsAgua() {
-                const container = document.getElementById('noticias-agua-dinamico');
-                const lang = localStorage.getItem('selected_lang') || 'pt';
-                container.innerHTML = noticiasAgua.slice(0, visiveisAgua).map(n => `
-                    <a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-item">
-                        <h3>${n[lang].titulo}</h3>
-                        <div class="news-meta">
-                            <img src="${n.logo}" class="source-logo">
-                            <span>${n.data}</span>
-                        </div>
-                    </a>`).join('');
-                document.getElementById('btn-load-more-agua').style.display = noticiasAgua.length > visiveisAgua ? 'inline-block' : 'none';
-            }
-
-            function iniciarCiclosAgua() {
-                const container = document.getElementById('water-facts-container');
-                container.innerHTML = waterFacts.map((f, i) => `
-                    <div class="water-fact-item ${i === 0 ? 'active' : ''}">
-                        <b>${f.titulo}</b> ${f.desc}
-                    </div>`).join('');
-                let factP = 0;
-                setInterval(() => {
-                    const items = document.querySelectorAll('.water-fact-item');
-                    if(items.length === 0) return;
-                    items.forEach(el => el.classList.remove('active'));
-                    factP = (factP + 1) % items.length;
-                    items[factP].classList.add('active');
-                }, 8000);
-            }
-
-            $(document).on('click', '#btn-load-more-agua', () => { visiveisAgua += 4; renderizarCardsAgua(); });
-
-            fetch('/sidebar-content.html').then(r => r.text()).then(html => {
-                document.getElementById('sidebar').innerHTML = html;
-                inicializarPagina();
             });
+
+            init();
         </script>
 	</body>
 </html>
