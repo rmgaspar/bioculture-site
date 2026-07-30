@@ -166,7 +166,7 @@
                 renderPageData(info);
                 setupSidebarLogic();
                 iniciarCiclos();
-            } catch(e) { console.error(e); }
+            } catch(e) { console.error("Falha ao carregar bioregioes.json:", e); }
         }
 
         function renderPageData(info) {
@@ -188,7 +188,11 @@
 
         function filterBy(cat) {
             currentCategory = cat; visibleCount = 8;
-            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.toggle('active', btn.innerText === (cat === 'All' ? 'Todos' : translateTaxonomyReverse(cat))));
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                const btnText = btn.innerText;
+                const match = (cat === 'All' && btnText === 'Todos') || (translateTaxonomyReverse(cat) === btnText);
+                btn.classList.toggle('active', match);
+            });
             filteredSpecies = cat === 'All' ? currentSpeciesList : currentSpeciesList.filter(s => s.grupo === cat);
             renderSpeciesGrid();
         }
@@ -196,12 +200,20 @@
         function renderSpeciesGrid() {
             const grid = document.getElementById('species-grid');
             const show = filteredSpecies.slice(0, visibleCount);
-            grid.innerHTML = show.length ? show.map(s => `<div class="species-card"><img src="${s.imagem}" onerror="this.src='../images/placeholder-bio.jpg'"><b>${s.nome}</b><span>${translateTaxonomy(s.grupo)}</span></div>`).join('') : '<p style="grid-column:1/-1;text-align:center;padding:40px;">Sem registos nesta categoria.</p>';
-            document.getElementById('btn-load-more').style.display = filteredSpecies.length > visibleCount ? 'block' : 'none';
+            grid.innerHTML = show.length ? show.map(s => `
+                <div class="species-card">
+                    <img src="${s.imagem}" onerror="this.src='../images/placeholder-bio.jpg'">
+                    <b>${s.nome}</b>
+                    <span>${translateTaxonomy(s.grupo)}</span>
+                </div>
+            `).join('') : '<p style="grid-column:1/-1;text-align:center;padding:40px;color:#bbb;">Sem registos nesta categoria para esta região.</p>';
+            
+            const btnLoad = document.getElementById('btn-load-more');
+            if(btnLoad) btnLoad.style.display = filteredSpecies.length > visibleCount ? 'block' : 'none';
         }
 
         function translateTaxonomy(g) { const d = { "Amphibia": "Anfíbio", "Insecta": "Inseto", "Reptilia": "Réptil", "Plantae": "Planta", "Mammalia": "Mamífero", "Aves": "Ave", "Mollusca": "Molusco", "Fungi": "Fungo", "Actinopterygii": "Peixe" }; return d[g] || g; }
-        function translateTaxonomyReverse(g) { const d = { "Anfíbios": "Amphibia", "Insetos": "Insecta", "Répteis": "Reptilia", "Plantas": "Plantae", "Mamíferos": "Mammalia", "Aves": "Aves", "Moluscos": "Mollusca", "Fungos": "Fungi", "Peixe": "Actinopterygii" }; return d[g] || g; }
+        function translateTaxonomyReverse(g) { const d = { "Amphibia": "Anfíbios", "Insecta": "Insetos", "Reptilia": "Répteis", "Plantae": "Plantas", "Mammalia": "Mamíferos", "Aves": "Aves", "Mollusca": "Moluscos", "Fungi": "Fungos", "Actinopterygii": "Peixe" }; for(let k in d) if(d[k] === g) return k; return g; }
 
         function setupSidebarLogic() {
             $(document).on('click', '#btn-gps-trigger', function() {
@@ -226,13 +238,16 @@
 
         function iniciarCiclos() {
             const imgs = document.querySelectorAll('#bio-globe-cycler img');
-            let imgP = 0; setInterval(() => { imgs.forEach(i => i.classList.remove('active')); imgP = (imgP + 1) % imgs.length; imgs[imgP].classList.add('active'); }, 6000);
+            let imgP = 0; if(imgs.length) setInterval(() => { imgs.forEach(i => i.classList.remove('active')); imgP = (imgP + 1) % imgs.length; imgs[imgP].classList.add('active'); }, 6000);
             const container = document.getElementById('bio-facts-container');
-            container.innerHTML = bioFacts.map((f, i) => `<div class="bio-fact-item ${i === 0 ? 'active' : ''}"><b>${f.titulo}:</b> ${f.desc}</div>`).join('');
-            let factP = 0; setInterval(() => { const items = document.querySelectorAll('.bio-fact-item'); if(items.length) { items.forEach(el => el.classList.remove('active')); factP = (factP + 1) % items.length; items[factP].classList.add('active'); } }, 8000);
+            if(container) {
+                container.innerHTML = bioFacts.map((f, i) => `<div class="bio-fact-item ${i === 0 ? 'active' : ''}"><b>${f.titulo}:</b> ${f.desc}</div>`).join('');
+                let factP = 0; setInterval(() => { const items = document.querySelectorAll('.bio-fact-item'); if(items.length) { items.forEach(el => el.classList.remove('active')); factP = (factP + 1) % items.length; items[factP].classList.add('active'); } }, 8000);
+            }
         }
 
-        document.getElementById('btn-load-more').onclick = () => { visibleCount += 8; renderSpeciesGrid(); };
+        const btnLoad = document.getElementById('btn-load-more');
+        if(btnLoad) btnLoad.onclick = () => { visibleCount += 8; renderSpeciesGrid(); };
 
         fetch('../sidebar-content.html').then(r => r.text()).then(html => {
             document.getElementById('sidebar').innerHTML = html;
