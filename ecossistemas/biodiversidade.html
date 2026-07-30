@@ -40,7 +40,7 @@
             /* FIX CAPITALIZAÇÃO CONCELHO */
             #reg-name { text-transform: none !important; font-variant: normal !important; }
 
-            /* RELATÓRIOS E ALERTAS */
+            /* SECÇÕES DE DADOS */
             .data-row { display: block; padding: 2.5em 0; border-bottom: 1px solid #f2f2f2; }
             .data-row h4 { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin: 0 0 25px 0; }
             .report-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; }
@@ -64,6 +64,7 @@
                 #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
                 #wrapper { padding-left: 0 !important; }
                 .hero-split { flex-direction: column-reverse; }
+                .hero-visual { justify-content: center; width: 100%; }
                 .hero-globe { width: 350px; height: 350px; margin: 0 auto; }
                 .report-grid { grid-template-columns: 1fr; }
             }
@@ -97,7 +98,8 @@
                         <div class="data-row">
                             <h4>Espécies Ameaçadas</h4>
                             <p style="font-size: 1.15em; line-height: 1.7; color: #555; text-align: justify; max-width: 1000px;">
-                                <strong style="color: #2f855a;">Panorama Nacional:</strong> Portugal enfrenta um declínio severo em espécies estepárias e polinizadores. O ICNF alerta que a fragmentação de habitats está a empurrar a flora endémica para o colapso funcional.
+                                <strong style="color: #2f855a;">Panorama Nacional:</strong> Portugal enfrenta um declínio severo em espécies estepárias e polinizadores. O ICNF alerta que a fragmentação de habitats está a empurrar a flora endémica para o colapso funcional.<br><br>
+                                <strong style="color: #4299e1;">Contexto Global:</strong> A Lista Vermelha da IUCN (2026) monitoriza agora mais de 160.000 espécies, das quais 28% estão sob ameaça direta.
                             </p>
                         </div>
 
@@ -116,7 +118,6 @@
                         <div class="data-row" style="border-bottom: none;">
                             <h4>Notícias</h4>
                             <div id="noticias-bio-dinamico" class="news-list"></div>
-                            <div style="text-align: center;"><button id="btn-load-more-bio" class="species-badge" style="cursor:pointer">ver mais</button></div>
                         </div>
 
                         <footer class="page-footer">
@@ -131,11 +132,21 @@
 
 		<script src="/assets/js/jquery.min.js"></script>
         <script>
-            let locationsDB = [], todasNoticias = [];
+            let locationsDB = [], todasNoticias = [], visiveisBio = 4;
+
+            const bioFacts = [
+                { titulo: "Extinção em Massa", desc: "Mais de 44.000 espécies estão em risco iminente de extinção global (IUCN 2026)." },
+                { titulo: "Aves em Risco", desc: "O Sisão e a Águia-imperial-ibérica precisam de intervenção urgente." }
+            ];
+
+            const relatoriosBio = [
+                { titulo: "Flora Vascular", texto: "O levantamento nacional identifica pressões extremas de urbanização.", fonte: "ICNF", cor: "#2e7d32" },
+                { titulo: "Vida Marinha", texto: "As pradarias marinhas são vitais para o sequestro de carbono.", fonte: "Oceanário / WWF", cor: "#0288d1" }
+            ];
 
             async function inicializarPagina() {
                 try {
-                    // FIX: Caminho relativo para subir um nível
+                    // FIX: Caminho relativo ../ para sair de subpasta
                     const [rLoc, rNews] = await Promise.all([
                         fetch('../data/freguesias_portugal.json').then(r => r.json()),
                         fetch('../data/noticias.json').then(r => r.json())
@@ -148,7 +159,9 @@
 
                     renderDashboard(info);
                     renderizarCardsBio();
-                } catch(e) { console.error("Erro técnico:", e); }
+                    renderRelatorios();
+                    iniciarCiclosBio();
+                } catch(e) { console.error("Erro no carregamento:", e); }
             }
 
             function renderDashboard(info) {
@@ -158,50 +171,46 @@
 
                 const b = info.biomas || {};
 
-                // Helper para badges simples (strings)
-                const buildSimple = (items, type) => {
+                const buildSimple = (title, items, type) => {
                     if(!items || items.length === 0) return '';
-                    return items.map(i => `<span class="species-badge ${type}">${i}</span>`).join('');
+                    return `<div class="species-group"><span class="label-mini">${title}</span><div class="species-list">${items.map(i => `<span class="species-badge ${type}">${i}</span>`).join('')}</div></div>`;
                 };
 
-                // Helper para a Biodiversidade iNaturalist (Objetos)
                 const buildComplex = (items) => {
                     if(!items || items.length === 0) return '<p style="color:#bbb;font-size:0.8em;">Sem registos locais.</p>';
                     return items.map(i => {
-                        // Deteta se é objeto (novo) ou string (antigo)
                         const nome = i.nome || i;
                         const img = i.imagem || '';
                         const grupo = i.grupo || '';
-                        
                         return `
                         <div class="species-badge-complex">
                             ${img ? `<img src="${img}" onerror="this.style.display='none'">` : '🔍'}
-                            <div>
-                                <b>${nome}</b>
-                                ${grupo ? `<small>${grupo}</small>` : ''}
-                            </div>
+                            <div><b>${nome}</b>${grupo ? `<small>${grupo}</small>` : ''}</div>
                         </div>`;
                     }).join('');
                 };
 
-                // Injeção nos IDs do teu HTML
                 document.getElementById('group-fauna').innerHTML = 
-                    `<span class="label-mini">Fauna Protegida / Ameaçada</span>` +
-                    `<div class="species-list">` + buildSimple(b.fauna_protegida, 'protected') + buildSimple(b.fauna_ameacada, 'threatened') + `</div>` +
-                    `<span class="label-mini" style="margin-top:20px; display:block;">Biodiversidade Local (Registos Seek)</span>` +
+                    buildSimple('Fauna Protegida / Ameaçada', b.fauna_protegida, 'protected') +
+                    `<span class="label-mini" style="margin-top:20px; display:block;">Biodiversidade Local (iNaturalist)</span>` +
                     `<div class="species-list">` + buildComplex(b.fauna_comum) + `</div>`;
 
                 document.getElementById('group-flora').innerHTML = 
-                    `<span class="label-mini">Flora e Invasoras</span>` +
-                    `<div class="species-list">` + buildSimple(b.flora_protegida, 'protected') + buildSimple(b.flora_invasora, 'invasive') + `</div>`;
+                    buildSimple('Flora e Invasoras', b.flora_protegida, 'protected') + buildSimple('', b.flora_invasora, 'invasive');
+            }
+
+            function renderRelatorios() {
+                document.getElementById('report-grid-bio').innerHTML = relatoriosBio.map(r => `
+                    <div class="report-item">
+                        <h5 style="color: ${r.cor}">${r.titulo}</h5>
+                        <p>${r.texto}</p>
+                        <span class="report-source">Fonte: ${r.fonte}</span>
+                    </div>`).join('');
             }
 
             function renderizarCardsBio() {
                 const lang = localStorage.getItem('selected_lang') || 'pt';
-                const container = document.getElementById('noticias-bio-dinamico');
-                if(!container) return;
-                
-                container.innerHTML = todasNoticias.slice(0, 4).map(n => {
+                document.getElementById('noticias-bio-dinamico').innerHTML = todasNoticias.slice(0, 4).map(n => {
                     const content = n[lang] || n.pt || n;
                     return `<a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-item">
                         <h3>${content.titulo}</h3>
@@ -209,7 +218,18 @@
                     </a>`}).join('');
             }
 
-            // Carregar Sidebar e Iniciar
+            function iniciarCiclosBio() {
+                const imgs = document.querySelectorAll('#bio-globe-cycler img');
+                let cur = 0; setInterval(() => { imgs.forEach(i => i.classList.remove('active')); cur = (cur + 1) % imgs.length; imgs[cur].classList.add('active'); }, 5000);
+
+                const container = document.getElementById('bio-facts-container');
+                if(container) {
+                    container.innerHTML = bioFacts.map((f, i) => `<div class="bio-fact-item ${i === 0 ? 'active' : ''}"><b>${f.titulo}</b> ${f.desc}</div>`).join('');
+                    let factP = 0; setInterval(() => { const items = document.querySelectorAll('.bio-fact-item'); if(items.length) { items.forEach(el => el.classList.remove('active')); factP = (factP + 1) % items.length; items[factP].classList.add('active'); } }, 8000);
+                }
+            }
+
+            // FIX: Caminho relativo ../ para a sidebar
             fetch('../sidebar-content.html').then(r => r.text()).then(html => {
                 document.getElementById('sidebar').innerHTML = html;
                 inicializarPagina();
