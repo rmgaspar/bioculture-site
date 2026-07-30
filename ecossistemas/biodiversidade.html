@@ -6,66 +6,20 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
 		<style>
-            /* --- ESTRUTURA GLOBAL --- */
             body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
 			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
-            #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
+            #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; background: #fff; border-right: 1px solid #f2f2f2 !important; z-index: 10000; }
             #wrapper { padding-left: 18em !important; }
-            .inner { padding: 2.2em 4em 0 4em !important; max-width: 1600px !important; margin: 0 auto; }
-
-            /* HERO SPLIT */
+            .inner { padding: 2.2em 4em !important; max-width: 1600px !important; margin: 0 auto; }
             .hero-split { display: flex; align-items: flex-start; justify-content: space-between; gap: 4em; margin-bottom: 2em; }
-            .hero-text { flex: 1.5; text-align: left; padding-top: 5px; } 
-            .hero-text h1 { font-size: 4em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; line-height: 0.95; margin-bottom: 20px; }
-            .hero-visual { flex: 1; display: flex; justify-content: flex-end; }
-            .hero-globe { position: relative; width: 480px; height: 480px; border-radius: 50%; overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,0.12); background: #1a1a1a; }
-            .hero-globe img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; transition: opacity 3s ease-in-out; opacity: 0; }
-            .hero-globe img.active { opacity: 1; }
-
-            /* DASHBOARD BIODIVERSIDADE */
-            .species-group { margin-bottom: 30px; }
-            .label-mini { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; color: #888; }
-            .species-list { display: flex; flex-wrap: wrap; gap: 10px; }
-            .species-badge { display: inline-flex; align-items: center; gap: 6px; background: #f8f9fa; color: #555; padding: 6px 14px; border-radius: 50px; font-size: 0.75em; font-weight: 700; border: 1px solid #eee; }
-            .species-badge.protected { background: #f0fff4; color: #2e7d32; border-color: #9ae6b4; }
-            .species-badge.threatened { background: #fff5f5; color: #c62828; border-color: #feb2b2; }
-            .species-badge.invasive { background: #fffaf0; color: #dd6b20; border-color: #fbd38d; }
-
-            /* BADGE iNATURALIST COM IMAGEM */
+            .hero-text h1 { font-size: 4em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; line-height: 0.95; }
+            .species-list { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+            .species-badge { display: inline-flex; align-items: center; gap: 6px; background: #f8f9fa; padding: 6px 14px; border-radius: 50px; font-size: 0.75em; font-weight: 700; border: 1px solid #eee; }
             .species-badge-complex { display: inline-flex; align-items: center; gap: 10px; background: #fff; padding: 8px 16px; border-radius: 50px; border: 1px solid #eee; margin-bottom: 10px; }
-            .species-badge-complex img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; background: #f0f0f0; }
-            .species-badge-complex b { font-size: 0.85em; color: #333; display: block; line-height: 1.1; }
-            .species-badge-complex small { font-size: 0.6em; color: #bbb; text-transform: uppercase; display: block; }
-
-            #reg-name { text-transform: none !important; font-variant: normal !important; }
-
-            /* SECÇÕES DE DADOS */
-            .data-row { display: block; padding: 2.5em 0; border-bottom: 1px solid #f2f2f2; }
-            .data-row h4 { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin: 0 0 25px 0; }
-            .report-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; }
-            .report-item { border-top: 1px solid #f9f9f9; padding-top: 20px; }
-            .report-item h5 { font-size: 0.75em; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
-            .report-item p { font-size: 0.95em; line-height: 1.7; color: #666; text-align: justify; }
-            .bio-impact-box { background: #f6fff8; padding: 2.5em 3em; border-radius: 20px; margin: 1em 0; position: relative; overflow: hidden; }
-            .fact-cycler-bio { min-height: 50px; position: relative; }
-            .bio-fact-item { position: absolute; top: 0; opacity: 0; transition: opacity 1s ease; width: 100%; font-size: 1.1em; line-height: 1.5; color: #4a7a56; }
-            .bio-fact-item.active { opacity: 1; position: relative; }
-
-            /* NOTÍCIAS */
-            .news-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; margin-bottom: 4em; }
-            .news-item { text-decoration: none; color: inherit; display: block; padding: 25px; background: #fdfdfd; border: 1px solid #f2f2f2; border-radius: 12px; transition: all 0.3s; }
-            .news-item:hover { transform: translateY(-5px); border-color: #ddd; }
-            .news-item h3 { font-size: 1.15em; font-weight: 700; color: #1a1a1a; margin-bottom: 12px; line-height: 1.3; }
-
-            .page-footer { padding: 4em 0 2em 0; border-top: 1px solid #f2f2f2; opacity: 0.3; text-align: right; }
-
-            @media screen and (max-width: 1280px) {
-                #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
-                #wrapper { padding-left: 0 !important; }
-                .hero-split { flex-direction: column-reverse; }
-                .hero-globe { width: 350px; height: 350px; margin: 0 auto; }
-                .report-grid { grid-template-columns: 1fr; }
-            }
+            .species-badge-complex img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
+            .label-mini { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; color: #bbb; display: block; margin-top: 20px; }
+            #reg-name { text-transform: none !important; color: #1a1a1a; }
+            @media screen and (max-width: 1280px) { #sidebar { position: relative !important; width: 100% !important; } #wrapper { padding-left: 0 !important; } }
 		</style>
 	</head>
 	<body class="is-preload">
@@ -73,98 +27,51 @@
 			<div id="main">
                 <div class="inner">
                     <section>
-                        <!-- 1. HERO & INVENTÁRIO DINÂMICO -->
                         <div class="hero-split">
                             <div class="hero-text">
-                                <span style="font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; display: block; margin-bottom: 15px;">Ecossistemas</span>
+                                <span style="font-size: 0.65em; font-weight: 900; text-transform: uppercase; color: #bbb;">Ecossistemas</span>
                                 <h1>Biodiversidade: A Teia da Vida</h1>
                                 <div id="bio-dashboard" style="display:none; margin-top: 40px;">
                                     <div id="group-fauna"></div>
                                     <div id="group-flora"></div>
-                                    <p style="font-size: 0.7em; color: #bbb; text-transform: uppercase; margin-top: 30px; border-top: 1px solid #f9f9f9; padding-top: 15px;">
-                                        Análise regional: <strong id="reg-name" style="color:#444">...</strong>
+                                    <p style="font-size: 0.7em; color: #bbb; margin-top: 30px; border-top: 1px solid #f9f9f9; padding-top: 15px;">
+                                        Análise regional: <strong id="reg-name">Carregando...</strong>
                                     </p>
                                 </div>
                             </div>
-                            <div class="hero-visual">
-                                <div class="hero-globe" id="bio-globe-cycler">
-                                    <img src="https://services.meteored.com/img/article/sobreiro-e-azinheira-as-rainhas-da-paisagem-florestal-portuguesa-que-importam-preservar-1740150873226_1024.jpg" class="active">
-                                    <img src="https://images.unsplash.com/photo-1514907283155-ea5f4094c70c?q=80&w=2070&auto=format&fit=crop">
-                                </div>
-                            </div>
                         </div>
-
-                        <!-- 2. PANORAMA -->
-                        <div class="data-row">
-                            <h4>Espécies Ameaçadas</h4>
-                            <p style="font-size: 1.15em; line-height: 1.7; color: #555; text-align: justify; max-width: 1000px;">
-                                <strong style="color: #2f855a;">Panorama Nacional:</strong> Portugal enfrenta um declínio severo em espécies estepárias e polinizadores. O ICNF alerta que a fragmentação de habitats está a empurrar a flora endémica para o colapso funcional.<br><br>
-                                <strong style="color: #4299e1;">Contexto Global:</strong> A Lista Vermelha da IUCN (2026) monitoriza agora mais de 160.000 espécies, das quais 28% estão sob ameaça direta.
-                            </p>
-                        </div>
-
-                        <!-- 3. RELATÓRIOS -->
-                        <div class="data-row">
-                            <h4>Relatório de Conservação</h4>
-                            <div id="report-grid-bio" class="report-grid"></div>
-                        </div>
-
-                        <!-- 4. ALERTAS -->
-                        <div class="data-row">
-                            <h4>Alertas</h4>
-                            <div class="bio-impact-box">
-                                <div class="fact-cycler-bio" id="bio-facts-container"></div>
-                            </div>
-                        </div>
-
-                        <!-- 5. NOTÍCIAS -->
-                        <div class="data-row" style="border-bottom: none;">
-                            <h4>Notícias</h4>
-                            <div id="noticias-bio-dinamico" class="news-list"></div>
-                        </div>
-
-                        <footer class="page-footer">
-                            <span style="display: block; font-size: 0.85em; font-weight: 900; color: #333;">bioCultura</span>
-                            <span style="display: block; font-size: 0.5em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Global Regeneration</span>
-                        </footer>
-					</section>
-				</div>
+                        <div id="noticias-bio-dinamico" class="news-list" style="margin-top: 4em;"></div>
+                    </section>
+                </div>
             </div>
 			<div id="sidebar"></div>
 		</div>
 
 		<script src="/assets/js/jquery.min.js"></script>
         <script>
-            let locationsDB = [], todasNoticias = [], visiveisBio = 4;
-
-            const bioFacts = [
-                { titulo: "Extinção em Massa", desc: "Mais de 44.000 espécies estão em risco iminente de extinção global (IUCN 2026)." },
-                { titulo: "Aves em Risco", desc: "O Sisão e a Águia-imperial-ibérica precisam de intervenção urgente." }
-            ];
-
-            const relatoriosBio = [
-                { titulo: "Flora Vascular", texto: "O levantamento nacional identifica pressões extremas de urbanização.", fonte: "ICNF", cor: "#2e7d32" },
-                { titulo: "Vida Marinha", texto: "As pradarias marinhas são vitais para o sequestro de carbono.", fonte: "Oceanário / WWF", cor: "#0288d1" }
-            ];
+            let locationsDB = [], todasNoticias = [];
 
             async function inicializarPagina() {
                 try {
-                    // FIX: Caminho relativo ../ para sair de subpasta
+                    console.log("Tentando carregar JSONs...");
                     const [rLoc, rNews] = await Promise.all([
-                        fetch('../data/freguesias_portugal.json').then(r => r.json()),
-                        fetch('../data/noticias.json').then(r => r.json())
+                        fetch('../data/freguesias_portugal.json').then(r => { if(!r.ok) throw new Error("Falha no freguesias.json"); return r.json(); }),
+                        fetch('../data/noticias.json').then(r => { if(!r.ok) throw new Error("Falha no noticias.json"); return r.json(); })
                     ]);
+                    
                     locationsDB = rLoc;
                     todasNoticias = rNews.filter(n => n.categoria === 'biodiv');
+                    console.log("Dados carregados. Localidades:", locationsDB.length);
 
                     const savedId = localStorage.getItem('biocultura_region');
                     const info = locationsDB.find(i => String(i.id) === String(savedId)) || locationsDB[0];
 
                     renderDashboard(info);
                     renderizarCardsBio();
-                    renderRelatorios();
-                    iniciarCiclosBio();
-                } catch(e) { console.error("Erro no carregamento:", e); }
+                } catch(e) { 
+                    console.error("ERRO CRÍTICO:", e.message);
+                    alert("Erro ao carregar dados. Verifique a consola (F12).");
+                }
             }
 
             function renderDashboard(info) {
@@ -173,70 +80,41 @@
                 document.getElementById('reg-name').innerText = info.titulo + (info.concelho ? ', ' + info.concelho : '');
 
                 const b = info.biomas || {};
-
-                const buildSimple = (title, items, type) => {
+                const buildSimple = (title, items) => {
                     if(!items || items.length === 0) return '';
-                    return `<div class="species-group"><span class="label-mini">${title}</span><div class="species-list">${items.map(i => `<span class="species-badge ${type}">${i}</span>`).join('')}</div></div>`;
+                    return `<span class="label-mini">${title}</span><div class="species-list">${items.map(i => `<span class="species-badge">${i}</span>`).join('')}</div>`;
                 };
 
                 const buildComplex = (items) => {
-                    if(!items || items.length === 0) return '<p style="color:#bbb;font-size:0.8em;">Sem registos locais.</p>';
-                    return items.map(i => {
-                        // FIX: Suporte para String (antigo) ou Objeto (novo do iNaturalist)
-                        const nome = i.nome || i;
-                        const img = i.imagem || '';
-                        const grupo = i.grupo || '';
-                        return `
+                    if(!items || items.length === 0) return '<p>Sem registos locais.</p>';
+                    return items.map(i => `
                         <div class="species-badge-complex">
-                            ${img ? `<img src="${img}" onerror="this.style.display='none'">` : '🔍'}
-                            <div><b>${nome}</b>${grupo ? `<small>${grupo}</small>` : ''}</div>
-                        </div>`;
-                    }).join('');
+                            ${i.imagem ? `<img src="${i.imagem}">` : '🔍'}
+                            <div><b>${i.nome || i}</b><small style="display:block; font-size:0.8em; color:#bbb">${i.grupo || ''}</small></div>
+                        </div>`).join('');
                 };
 
                 document.getElementById('group-fauna').innerHTML = 
-                    buildSimple('Fauna Protegida / Ameaçada', b.fauna_protegida, 'protected') +
-                    `<span class="label-mini" style="margin-top:20px; display:block;">Biodiversidade Local (iNaturalist)</span>` +
-                    `<div class="species-list">` + buildComplex(b.fauna_comum) + `</div>`;
+                    buildSimple('Protegida', b.fauna_protegida) +
+                    `<span class="label-mini">Biodiversidade Local</span><div class="species-list">${buildComplex(b.fauna_comum)}</div>`;
 
-                document.getElementById('group-flora').innerHTML = 
-                    buildSimple('Flora Protegida', b.flora_protegida, 'protected') + buildSimple('', b.flora_invasora, 'invasive');
-            }
-
-            function renderRelatorios() {
-                document.getElementById('report-grid-bio').innerHTML = relatoriosBio.map(r => `
-                    <div class="report-item">
-                        <h5 style="color: ${r.cor}">${r.titulo}</h5>
-                        <p>${r.texto}</p>
-                        <span class="report-source">Fonte: ${r.fonte}</span>
-                    </div>`).join('');
+                document.getElementById('group-flora').innerHTML = buildSimple('Flora', b.flora_protegida);
             }
 
             function renderizarCardsBio() {
                 const lang = localStorage.getItem('selected_lang') || 'pt';
-                document.getElementById('noticias-bio-dinamico').innerHTML = todasNoticias.slice(0, 4).map(n => {
+                const container = document.getElementById('noticias-bio-dinamico');
+                if(!container) return;
+                container.innerHTML = todasNoticias.slice(0, 4).map(n => {
                     const content = n[lang] || n.pt || n;
-                    return `<a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-item">
-                        <h3>${content.titulo}</h3>
-                        <div class="news-meta"><span>${n.data}</span></div>
-                    </a>`}).join('');
-            }
-
-            function iniciarCiclosBio() {
-                const imgs = document.querySelectorAll('#bio-globe-cycler img');
-                let cur = 0; setInterval(() => { imgs.forEach(i => i.classList.remove('active')); cur = (cur + 1) % imgs.length; imgs[cur].classList.add('active'); }, 5000);
-
-                const container = document.getElementById('bio-facts-container');
-                if(container) {
-                    container.innerHTML = bioFacts.map((f, i) => `<div class="bio-fact-item ${i === 0 ? 'active' : ''}"><b>${f.titulo}</b> ${f.desc}</div>`).join('');
-                    let factP = 0; setInterval(() => { const items = document.querySelectorAll('.bio-fact-item'); if(items.length) { items.forEach(el => el.classList.remove('active')); factP = (factP + 1) % items.length; items[factP].classList.add('active'); } }, 8000);
-                }
+                    return `<div class="news-item"><h3>${content.titulo}</h3></div>`
+                }).join('');
             }
 
             fetch('../sidebar-content.html').then(r => r.text()).then(html => {
                 document.getElementById('sidebar').innerHTML = html;
                 inicializarPagina();
-            });
+            }).catch(e => console.error("Erro Sidebar:", e));
         </script>
 	</body>
 </html>
