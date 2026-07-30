@@ -163,22 +163,22 @@
 
             async function inicializarPagina() {
                 try {
-                    // FIX: Caminho absoluto para garantir carregamento em qualquer browser
                     const [rLoc, rNews] = await Promise.all([
-                        fetch('/data/freguesias_portugal.json').then(r => r.json()),
+                        // ALTERADO: Agora lê de bioregioes.json
+                        fetch('/data/bioregioes.json').then(r => r.json()),
                         fetch('/data/noticias.json').then(r => r.json())
                     ]);
+                    
                     locationsDB = rLoc;
                     todasNoticias = rNews.filter(n => n.categoria === 'biodiv');
 
                     const savedId = localStorage.getItem('biocultura_region');
+                    // O restante da lógica permanece igual
                     const info = locationsDB.find(i => String(i.id) === String(savedId)) || locationsDB[0];
 
                     renderDashboard(info);
                     renderizarCardsBio();
-                    renderRelatorios();
-                    iniciarCiclosBio();
-                } catch(e) { console.error("Erro no carregamento de dados:", e); }
+                } catch(e) { console.error("Erro na integração:", e); }
             }
 
             function renderDashboard(info) {
