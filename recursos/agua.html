@@ -3,43 +3,58 @@
 	<head>
 		<title>bioCultura - Observatório da Água</title>
 		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale, user-scalable=no" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
 		<style>
-            /* --- ESTRUTURA GLOBAL --- */
             body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
 			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
             section { min-height: 100vh; display: flex; flex-direction: column; }
+
             #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
             #wrapper { padding-left: 18em !important; }
+
             .inner { padding: 2.2em 4em 0 4em !important; max-width: 1600px !important; margin: 0 auto; width: 100%; }
+
             .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; margin-bottom: 15px; display: block; }
 
-            /* FIX CAPITALIZAÇÃO CONCELHO */
-            #reg-name { text-transform: none !important; font-variant: normal !important; }
-
-            /* HERO SPLIT */
             .hero-split { display: flex; align-items: flex-start; justify-content: space-between; gap: 4em; margin-bottom: 2em; }
-            .hero-text { flex: 1.5; text-align: left; padding-top: 5px; } 
+            .hero-text { flex: 1.5; text-align: left; padding-top: 5px; }
             .hero-text h1 { font-size: 4em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; line-height: 0.95; margin-bottom: 20px; }
+
             .hero-visual { flex: 1; display: flex; justify-content: flex-end; }
-            .hero-globe { position: relative; width: 480px; height: 480px; border-radius: 50%; overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,0.12); background: #1a1a1a; }
+            .hero-globe {
+                position: relative;
+                width: 480px; height: 480px;
+                border-radius: 50%; overflow: hidden;
+                box-shadow: 0 40px 100px rgba(0,0,0,0.12);
+                background: #1a1a1a;
+            }
             .hero-globe img { width: 100%; height: 100%; object-fit: cover; }
 
-            /* DASHBOARD ÁGUA */
+            #reg-name {
+                text-transform: none !important;
+            }
+
             .data-row { display: block; padding: 2.5em 0; border-bottom: 1px solid #f2f2f2; }
-            .data-row h4 { font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin: 0 0 25px 0; display: block; }
-            
-            .gauge-container { margin-bottom: 20px; width: 100%; max-width: 500px; }
-            .gauge-label { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px; }
-            .current-val { font-size: 1.4em; font-weight: 700; color: #1a1a1a; }
+            .data-row h4 {
+                font-size: 0.7em;
+                font-weight: 900;
+                text-transform: uppercase;
+                letter-spacing: 2px;
+                color: #bbb;
+                margin: 0 0 25px 0;
+                display: block;
+            }
+
+            .gauge-container { margin-bottom: 15px; width: 100%; max-width: 500px; }
+            .gauge-label { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 6px; }
+            .current-val { font-size: 1.2em; font-weight: 700; color: #1a1a1a; }
             .unit { font-size: 0.6em; font-weight: 800; color: #bbb; text-transform: uppercase; }
             .gauge-bar { height: 6px; width: 100%; border-radius: 10px; position: relative; background: #eee; }
             .bar-ph { background: linear-gradient(to right, #ffd54f 0%, #81c784 50%, #4fc3f7 100%); }
             .bar-dureza { background: linear-gradient(to right, #4fc3f7 0%, #ffb74d 50%, #ef5350 100%); }
             .gauge-marker { position: absolute; top: -5px; left: 0%; width: 3px; height: 16px; background: #1a1a1a; border-radius: 2px; transition: left 1.5s cubic-bezier(0.4, 0, 0.2, 1); }
 
-            /* IMPACTO & RELATÓRIOS */
             .water-impact-box { background: #f4f9ff; padding: 2.5em 3em; border-radius: 20px; margin: 1.5em 0; position: relative; overflow: hidden; }
             .fact-cycler-water { min-height: 50px; position: relative; }
             .water-fact-item { position: absolute; top: 0; opacity: 0; transition: opacity 1s ease; width: 100%; font-size: 1.1em; line-height: 1.5; color: #5c6bc0; }
@@ -50,11 +65,15 @@
             .report-item { border-top: 1px solid #f9f9f9; padding-top: 20px; }
             .report-item h5 { font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; color: #4fc3f7; margin-bottom: 12px; }
             .report-item p { font-size: 0.95em; line-height: 1.7; color: #666; margin-bottom: 15px; text-align: justify; }
+            .report-source { font-size: 0.65em; font-weight: 800; color: #bbb; text-transform: uppercase; letter-spacing: 1px; display: block; border-top: 1px solid #eee; padding-top: 8px; }
 
-            /* NOTÍCIAS */
             .news-header { font-size: 0.8em; font-weight: 400; text-transform: lowercase; letter-spacing: 3px; color: #bbb; margin-bottom: 2.5em; display: block; margin-top: 4em; }
             .news-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 30px; margin-bottom: 4em; }
-            .news-item { text-decoration: none; color: inherit; display: block; padding: 25px; background: #fdfdfd; border: 1px solid #f2f2f2; border-radius: 12px; transition: all 0.3s; }
+            .news-item {
+                text-decoration: none; color: inherit; display: block;
+                padding: 25px; background: #fdfdfd; border: 1px solid #f2f2f2;
+                border-radius: 12px; transition: all 0.3s;
+            }
             .news-item:hover { transform: translateY(-5px); border-color: #ddd; }
             .news-item h3 { font-size: 1.15em; font-weight: 700; color: #1a1a1a; margin-bottom: 12px; line-height: 1.3; min-height: 2.6em; }
             .news-meta { display: flex; align-items: center; gap: 10px; border-top: 1px solid #f9f9f9; padding-top: 12px; }
@@ -63,16 +82,25 @@
 
             .btn-pagination { background: none !important; border: none !important; color: #bbb !important; font-size: 0.8em; letter-spacing: 3px; cursor: pointer; text-transform: lowercase; }
             .bio-res-item { padding: 12px 18px; font-size: 0.9em; color: #666; cursor: pointer; border-bottom: 1px solid #f9f9f9 !important; }
+
             .page-footer { margin-top: auto; padding: 2em 0 2.5em 0; border-top: 1px solid #f2f2f2; opacity: 0.3; text-align: right; }
 
             @media screen and (max-width: 1280px) {
                 #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
                 #wrapper { padding-left: 0 !important; }
                 .hero-split { flex-direction: column-reverse; }
-                .hero-globe { width: 350px; height: 350px; margin: 0 auto; }
+                .hero-visual { justify-content: center; width: 100%; }
+                .hero-globe { width: 350px; height: 350px; }
                 .report-grid { grid-template-columns: 1fr; }
             }
 		</style>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV0FD8PXC"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-6PV0FD8PXC');
+        </script>
 	</head>
 	<body class="is-preload">
 		<div id="wrapper">
@@ -86,20 +114,25 @@
                                 <p style="font-size: 0.9em; font-style: italic; color: #bbb; margin-bottom: 30px;">Análise regional: <strong id="reg-name" style="color:#888">...</strong></p>
 
                                 <div id="water-dashboard" style="display:none;">
-                                    <h4 style="font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin-bottom: 20px;">Perfil Químico Regional</h4>
-                                    <div class="gauge-container">
-                                        <div class="gauge-label"><span class="current-val" id="label-ph">pH --</span><span class="unit">Escala 0-14</span></div>
-                                        <div class="gauge-bar bar-ph"><div id="marker-ph" class="gauge-marker"></div></div>
-                                    </div>
-                                    <div class="gauge-container">
-                                        <div class="gauge-label"><span class="current-val" id="label-dureza">-- ºf</span><span class="unit">Dureza estimada</span></div>
-                                        <div class="gauge-bar bar-dureza"><div id="marker-dureza" class="gauge-marker"></div></div>
+                                    <h4 style="font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin-bottom: 20px;">Perfil Químico</h4>
+                                    <div class="tech-content">
+                                        <div style="display: flex; gap: 40px; flex-wrap: wrap;">
+                                            <div class="gauge-container">
+                                                <div class="gauge-label"><span class="current-val" id="label-ph">pH --</span><span class="unit">Escala 0-14</span></div>
+                                                <div class="gauge-bar bar-ph"><div id="marker-ph" class="gauge-marker"></div></div>
+                                            </div>
+                                            <div class="gauge-container">
+                                                <div class="gauge-label"><span class="current-val" id="label-dureza">-- ºf</span><span class="unit">Dureza estimada</span></div>
+                                                <div class="gauge-bar bar-dureza"><div id="marker-dureza" class="gauge-marker"></div></div>
+                                            </div>
+                                        </div>
+                                        <p class="tech-detail" id="water-advantages" style="color:#bbb; font-style:italic">A analisar composição mineral...</p>
                                     </div>
                                 </div>
                             </div>
                             <div class="hero-visual">
                                 <div class="hero-globe">
-                                    <img src="https://images.unsplash.com/photo-1470240731273-7821a6eeb6bd?q=80&w=2070&auto=format&fit=crop" alt="Água">
+                                    <img src="https://plus.unsplash.com/premium_photo-1683288081743-5161d099f16e?q=80&w=1035&auto=format&fit=crop" alt="Recursos Hídricos">
                                 </div>
                             </div>
                         </div>
@@ -107,7 +140,7 @@
                         <div class="data-row">
                             <h4>Alerta Hídrico</h4>
                             <div class="tech-content">
-                                <p id="alerta-texto" style="font-size: 1.15em; line-height: 1.7; color: #555; text-align: justify; margin-bottom: 1.5em; max-width: 1000px;">
+                                <p style="font-size: 1.1em; line-height: 1.6; color: #777; margin-bottom: 1em; max-width: 1000px;">
                                     A escassez de água é um desafio multidimensional que afeta ecossistemas e sociedades. A monitorização constante dos níveis hídricos e a compreensão dos novos padrões de consumo são fundamentais para uma gestão regenerativa e resiliente.
                                 </p>
                                 <div class="water-impact-box">
@@ -117,14 +150,17 @@
                         </div>
 
                         <div class="data-row">
-                            <h4>Relatório de Stress Hídrico</h4>
-                            <div id="report-grid-dynamic" class="report-grid"></div>
+                            <h4>Relatório Global</h4>
+                            <div class="tech-content">
+                                <h3 style="margin: 0 0 10px 0; font-weight: 300; font-size: 2em;">Análise Crítica de Stress Hídrico</h3>
+                                <div id="report-grid-dynamic" class="report-grid"></div>
+                            </div>
                         </div>
 
-                        <span class="news-header">notícias</span>
+                        <span class="news-header">noticias</span>
                         <div id="noticias-agua-dinamico" class="news-list"></div>
                         <div style="text-align: center; margin-bottom: 4em;">
-                            <button id="btn-load-more-agua" class="btn-pagination">ver mais</button>
+                            <button id="btn-load-more-agua" class="btn-pagination" style="display:none;">ver mais</button>
                         </div>
 
                         <footer class="page-footer">
@@ -139,15 +175,23 @@
 
 		<script src="/assets/js/jquery.min.js"></script>
         <script>
-            let locationsDB = [], todasNoticias = [], visiveisAgua = 4;
+            let locationsDB = [], noticiasAgua = [], visiveisAgua = 4;
 
             const waterFacts = [
-                { titulo: "Escassez de Verão", desc: "Em Portugal, o índice de escassez hídrica atinge picos de 84% durante o período estival." },
-                { titulo: "Consumo Agrícola", desc: "A agricultura absorve cerca de 70% da água doce captada em território nacional." },
-                { titulo: "Perdas Reais", desc: "Reduzir as perdas nas redes de distribuição é o passo mais urgente para a resiliência hídrica." }
+                { titulo: "Agricultura Global", desc: "70% da água doce do planeta é consumida pela agricultura industrial (FAO)." },
+                { titulo: "Consumo Invisível da IA", desc: "Uma conversa de 20 perguntas com uma IA consome 500ml de água para refrigeração." },
+                { titulo: "Stress Hídrico Portugal", desc: "Portugal é um dos países europeus com maior risco de desertificação a sul do Tejo." }
+            ];
+
+            const relatoriosAgua = [
+                { titulo: "Pontos Críticos em Portugal", texto: "Portugal enfrenta um stress hídrico severo, com o Alentejo e o Algarve em níveis de alerta máximo.", fonte: "Worldometers" },
+                { titulo: "Principais Causas de Consumo", texto: "O setor agrícola continua a ser o maior consumidor, absorvendo cerca de 70% das retiradas globais.", fonte: "FAO" },
+                { titulo: "Problemas Estruturais Globais", texto: "A crise hídrica é agravada pela poluição por nitratos e microplásticos que se infiltram nos lençóis freáticos.", fonte: "UN-Water" },
+                { titulo: "Estratégias de Regeneração", texto: "A solução passa pela transição para a agricultura regenerativa e sistemas de reutilização de águas cinzentas.", fonte: "World Water Council" }
             ];
 
             function calcularDistancia(lat1, lon1, lat2, lon2) {
+                if(!lat1 || !lat2) return 9999;
                 const R = 6371;
                 const dLat = (lat2 - lat1) * Math.PI / 180;
                 const dLon = (lon2 - lon1) * Math.PI / 180;
@@ -155,72 +199,111 @@
                 return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
             }
 
-            async function init() {
+            async function inicializarPagina() {
                 try {
                     const [rLoc, rNews] = await Promise.all([
-                        fetch('../data/freguesias_portugal.json').then(r => r.json()),
-                        fetch('../data/noticias.json').then(r => r.json())
+                        fetch('/data/freguesias_portugal.json').then(r => r.json()),
+                        fetch('/data/noticias.json').then(r => r.json())
                     ]);
                     locationsDB = rLoc;
-                    todasNoticias = rNews;
+                    
+                    // Filtro de notícias por ID técnico 'water' e idioma
+                    const lang = localStorage.getItem('selected_lang') || 'pt';
+                    noticiasAgua = rNews.filter(n => n.categoria === 'water' && n[lang]);
 
                     const savedId = localStorage.getItem('biocultura_region');
                     const info = locationsDB.find(i => String(i.id) === String(savedId)) || locationsDB[0];
 
-                    renderPageData(info);
-                    renderizarNoticias();
+                    renderDashboard(info);
+                    renderizarCardsAgua();
+                    renderRelatorios();
                     iniciarCiclosAgua();
-                } catch (e) { console.error("Erro no carregamento:", e); }
+                    setupLocationLogic();
+                } catch(e) { console.error(e); }
             }
 
-            function renderPageData(info) {
+            function setupLocationLogic() {
+                $(document).off('input', '#loc-search-input').on('input', '#loc-search-input', function() {
+                    const val = $(this).val().toLowerCase(), dropdown = $('#loc-dropdown').empty();
+                    if(val.length < 2) return dropdown.hide();
+                    locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0,8).forEach(m => {
+                        $('<div class="bio-res-item"></div>')
+                            .text(m.titulo + (m.concelho ? ' (' + m.concelho + ')' : ''))
+                            .on('click', () => {
+                                localStorage.setItem('biocultura_region', m.id);
+                                location.reload();
+                            }).appendTo(dropdown);
+                    });
+                    dropdown.show();
+                });
+
+                $(document).off('click', '#btn-gps-trigger').on('click', '#btn-gps-trigger', function() {
+                    navigator.geolocation.getCurrentPosition(pos => {
+                        let closest = locationsDB[0], minD = Infinity;
+                        locationsDB.forEach(c => {
+                            if(!c.lat || c.lat === 0) return;
+                            let d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon);
+                            if(d < minD) { minD = d; closest = c; }
+                        });
+                        localStorage.setItem('biocultura_region', closest.id);
+                        location.reload();
+                    });
+                });
+            }
+
+            function renderDashboard(info) {
                 if(!info) return;
-                const regEl = document.getElementById('reg-name');
-                regEl.innerText = info.titulo + (info.concelho ? ', ' + info.concelho : '');
-                regEl.style.textTransform = "none";
+                document.getElementById('water-dashboard').style.display = 'block';
+                document.getElementById('reg-name').innerText = info.titulo + (info.concelho ? ', ' + info.concelho : '');     
 
-                if(info.agua_data) {
-                    document.getElementById('water-dashboard').style.display = 'block';
-                    const ph = info.agua_data.ph || 7;
-                    const dureza = info.agua_data.dureza || 15;
-                    document.getElementById('label-ph').innerText = `pH ${ph}`;
-                    document.getElementById('marker-ph').style.left = `${(ph / 14) * 100}%`;
-                    document.getElementById('label-dureza').innerText = `${dureza} ºf`;
-                    document.getElementById('marker-dureza').style.left = `${Math.min((dureza / 40) * 100, 100)}%`;
-                }
+                const ph = parseFloat(info.biomas?.ph_solo) || 7.0;
+                const solo = (info.biomas?.solo || '').toLowerCase();
+                const dur = solo.includes('calcário') ? 28 : solo.includes('granítico') ? 7 : 12;
 
-                if(info.alerta_agua) document.getElementById('alerta-texto').innerText = info.alerta_agua;
+                document.getElementById('label-ph').innerText = "pH " + ph.toFixed(1);
+                document.getElementById('label-dureza').innerText = dur + " ºf";
 
-                const reportGrid = document.getElementById('report-grid-dynamic');
-                if(reportGrid && info.relatorios_agua) {
-                    reportGrid.innerHTML = info.relatorios_agua.map(r => `
-                        <div class="report-item">
-                            <h5>${r.titulo}</h5>
-                            <p>${r.texto}</p>
-                        </div>`).join('');
-                }
+                document.getElementById('water-advantages').innerText = ph < 6.5
+                    ? "Água ligeiramente ácida: Ideal para mirtilos e culturas acidófilas."
+                    : ph > 7.5
+                    ? "Água alcalina: Adequada para rega de olival e solos ácidos."
+                    : "Água equilibrada: Excelente para horticultura diversificada.";
+
+                setTimeout(() => {
+                    document.getElementById('marker-ph').style.left = (ph / 14 * 100) + "%";
+                    document.getElementById('marker-dureza').style.left = Math.min(dur / 50 * 100, 100) + "%";
+                }, 300);
             }
 
-            function renderizarNoticias() {
-                const container = document.getElementById('noticias-agua-dinamico');
-                if (!container) return;
-                const lang = localStorage.getItem('selected_lang') || 'pt';
-                const filtradas = todasNoticias.filter(n => n.categoria && (n.categoria.toLowerCase() === 'water' || n.categoria.toLowerCase() === 'água'));
+            function renderRelatorios() {
+                document.getElementById('report-grid-dynamic').innerHTML = relatoriosAgua.map(r => `
+                    <div class="report-item">
+                        <h5>${r.titulo}</h5>
+                        <p>${r.texto}</p>
+                        <span class="report-source">Fonte: ${r.fonte}</span>
+                    </div>`).join('');
+            }
 
-                container.innerHTML = filtradas.map((n, i) => {
-                    const content = n[lang] || n.pt || n;
-                    return `
-                        <a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-item ${i >= visiveisAgua ? 'hidden-card' : ''}">
-                            <h3>${content.titulo}</h3>
-                            <div class="news-meta"><span>${n.data}</span></div>
-                        </a>`;
-                }).join('');
-                document.getElementById('btn-load-more-agua').style.display = filtradas.length > visiveisAgua ? 'inline-block' : 'none';
+            function renderizarCardsAgua() {
+                const container = document.getElementById('noticias-agua-dinamico');
+                const lang = localStorage.getItem('selected_lang') || 'pt';
+                container.innerHTML = noticiasAgua.slice(0, visiveisAgua).map(n => `
+                    <a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-item">
+                        <h3>${n[lang].titulo}</h3>
+                        <div class="news-meta">
+                            <img src="${n.logo}" class="source-logo">
+                            <span>${n.data}</span>
+                        </div>
+                    </a>`).join('');
+                document.getElementById('btn-load-more-agua').style.display = noticiasAgua.length > visiveisAgua ? 'inline-block' : 'none';
             }
 
             function iniciarCiclosAgua() {
                 const container = document.getElementById('water-facts-container');
-                container.innerHTML = waterFacts.map((f, i) => `<div class="water-fact-item ${i === 0 ? 'active' : ''}"><b>${f.titulo}</b> ${f.desc}</div>`).join('');
+                container.innerHTML = waterFacts.map((f, i) => `
+                    <div class="water-fact-item ${i === 0 ? 'active' : ''}">
+                        <b>${f.titulo}</b> ${f.desc}
+                    </div>`).join('');
                 let factP = 0;
                 setInterval(() => {
                     const items = document.querySelectorAll('.water-fact-item');
@@ -231,36 +314,12 @@
                 }, 8000);
             }
 
-            $(document).on('click', '#btn-load-more-agua', () => { visiveisAgua += 4; renderizarNoticias(); });
+            $(document).on('click', '#btn-load-more-agua', () => { visiveisAgua += 4; renderizarCardsAgua(); });
 
-            fetch('../sidebar-content.html').then(r => r.text()).then(html => {
+            fetch('/sidebar-content.html').then(r => r.text()).then(html => {
                 document.getElementById('sidebar').innerHTML = html;
-                $(document).on('click', '#btn-gps-trigger', function() {
-                    navigator.geolocation.getCurrentPosition(pos => {
-                        let closest = locationsDB[0], minD = Infinity;
-                        locationsDB.forEach(c => {
-                            if (!c.lat) return;
-                            const d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon);
-                            if (d < minD) { minD = d; closest = c; }
-                        });
-                        localStorage.setItem('biocultura_region', closest.id);
-                        location.reload();
-                    });
-                });
-                $(document).on('input', '#loc-search-input', function() {
-                    const val = $(this).val().toLowerCase(), dropdown = $('#loc-dropdown').empty();
-                    if(val.length < 2) return dropdown.hide();
-                    locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0,5).forEach(m => {
-                        $('<div class="bio-res-item"></div>').text(m.titulo).on('click', () => {
-                            localStorage.setItem('biocultura_region', m.id);
-                            location.reload();
-                        }).appendTo(dropdown);
-                    });
-                    dropdown.show();
-                });
+                inicializarPagina();
             });
-
-            init();
         </script>
 	</body>
 </html>
