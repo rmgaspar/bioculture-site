@@ -247,13 +247,10 @@
             }
 
             function renderizarNoticias() {
-                const container = document.getElementById('noticias-dinamico'); // Garante que o ID no HTML é este
+                const container = document.getElementById('noticias-solo-dinamico'); // ID correto para solo
                 if(!container) return;
                 const lang = localStorage.getItem('selected_lang') || 'pt';
-                
-                // AJUSTA A CATEGORIA AQUI: 'water', 'air' ou 'soil'
-                const filtradas = todasNoticias.filter(n => n && (n.categoria === 'Solo' || n.categoria === 'Água') && n[lang]);
-
+                const filtradas = todasNoticias.filter(n => n && (n.categoria === 'soil' || n.categoria === 'Solo' || n.categoria === 'miner') && n[lang]);
                 container.innerHTML = filtradas.map(n => `
                     <a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-item">
                         <h3>${n[lang].titulo}</h3>
