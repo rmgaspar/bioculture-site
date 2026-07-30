@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<title>bioCultura - Observatório V3.0</title>
+		<title>bioCultura - Observatório da Biodiversidade</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
@@ -32,10 +32,12 @@
                                 <span style="font-size: 0.65em; font-weight: 900; text-transform: uppercase; color: #bbb;">Ecossistemas</span>
                                 <h1>Biodiversidade: A Teia da Vida</h1>
                                 <div id="bio-dashboard" style="display:none; margin-top: 40px;">
-                                    <div id="group-fauna"></div>
+                                    <div id="group-fauna"></div> <!-- O JS vai injetar tudo aqui -->
                                     <div id="group-flora"></div>
+                                    <p>Análise regional: <strong id="reg-name">...</strong></p>
+                                </div>
                                     <p style="font-size: 0.7em; color: #bbb; margin-top: 30px; border-top: 1px solid #f9f9f9; padding-top: 15px;">
-                                        Análise regional: <strong id="reg-name">A carregar dados iNaturalist...</strong>
+                                        Análise regional: <strong id="reg-name">A carregar dados atualizados...</strong>
                                     </p>
                                 </div>
                             </div>
@@ -53,21 +55,36 @@
 
             async function inicializarPagina() {
                 try {
-                    const v = Date.now(); // Mata a cache do JSON
+                    const v = Date.now();
                     const [rLoc, rNews] = await Promise.all([
-                        fetch(`/data/bioregioes.json?v=${v}`).then(r => r.json()),
-                        fetch(`/data/noticias.json?v=${v}`).then(r => r.json())
+                        // O "/" no início garante que ele procura na raiz de bioculture.net
+                        fetch(`/data/bioregioes.json?v=${v}`).then(r => {
+                            if(!r.ok) throw new Error("Erro 404 no bioregioes.json");
+                            return r.json();
+                        }),
+                        fetch(`/data/noticias.json?v=${v}`).then(r => {
+                            if(!r.ok) throw new Error("Erro 404 no noticias.json");
+                            return r.json();
+                        })
                     ]);
                     
                     locationsDB = rLoc;
                     todasNoticias = rNews.filter(n => n.categoria === 'biodiv');
-
+                    
                     const savedId = localStorage.getItem('biocultura_region');
                     const info = locationsDB.find(i => String(i.id) === String(savedId)) || locationsDB[0];
 
                     renderDashboard(info);
-                } catch(e) { console.error("Erro:", e); }
+                } catch(e) { 
+                    console.error("Erro de carregamento:", e.message);
+                }
             }
+
+            // Corrigir também o fetch da sidebar
+            fetch('/sidebar-content.html').then(r => r.text()).then(html => {
+                document.getElementById('sidebar').innerHTML = html;
+                inicializarPagina();
+            });
 
             function renderDashboard(info) {
                 if(!info) return;
@@ -82,27 +99,35 @@
                 };
 
                 const buildComplex = (items) => {
-                    if(!items || items.length === 0) return '<p style="color:#bbb; font-size:0.8em; margin-top:10px;">Sem registos iNaturalist nesta zona.</p>';
+                    if(!items || items.length === 0) return '<p style="color:#bbb;font-size:0.8em;">Sem registos iNaturalist.</p>';
                     return items.map(i => {
-                        const nome = i.nome || i; 
+                        const nome = i.nome || i; // Se for objeto usa .nome, se for string usa i
                         const img = i.imagem || '';
-                        const grupo = i.grupo || '';
                         return `
-                        <div class="species-badge-complex">
-                            ${img ? `<img src="${img}" onerror="this.style.display='none'">` : '🔍'}
-                            <div>
-                                <b>${nome}</b>
-                                <small style="display:block; font-size:0.7em; color:#bbb; text-transform:uppercase;">${grupo}</small>
-                            </div>
-                        </div>`;
+                            <div class="species-badge-complex">
+                                ${img ? `<img src="${img}" onerror="this.style.display='none'">` : '🔍'}
+                                <div>
+                                    <b>${nome}</b>
+                                    ${i.grupo ? `<small>${i.grupo}</small>` : ''}
+                                </div>
+                            </div>`;
                     }).join('');
                 };
-
                 document.getElementById('group-fauna').innerHTML = 
                     buildSimple('Fauna Protegida / Ameaçada', b.fauna_protegida || b.fauna_ameacada) +
-                    `<span class="label-mini">Biodiversidade Local (Dados Reais Seek)</span><div class="species-list">${buildComplex(b.fauna_comum)}</div>`;
+                    `<span class="label-mini">Biodiversidade Local (iNaturalist)</span><div class="species-list">${buildComplex(b.fauna_comum)}</div>`;
 
                 document.getElementById('group-flora').innerHTML = buildSimple('Flora e Invasoras', b.flora_protegida || b.flora_invasora);
+            }
+
+            function renderizarCardsBio() {
+                const lang = localStorage.getItem('selected_lang') || 'pt';
+                const container = document.getElementById('noticias-bio-dinamico');
+                if(!container) return;
+                container.innerHTML = todasNoticias.slice(0, 4).map(n => {
+                    const content = n[lang] || n.pt || n;
+                    return `<div class="news-item"><h3>${content.titulo}</h3></div>`;
+                }).join('');
             }
 
             fetch('/sidebar-content.html').then(r => r.text()).then(html => {
