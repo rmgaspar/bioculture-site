@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-    <title>bioCultura - Observatório da Biodiversidade</title>
+    <title data-i18n="index.hero_label">bioCultura - Observatório da Biodiversidade</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
     <link rel="stylesheet" href="/assets/css/main.css" />
@@ -19,7 +19,7 @@
 
         .hero-split { display: flex; align-items: flex-start; justify-content: space-between; gap: 4em; margin-bottom: 2em; }
         .hero-text { flex: 1.5; text-align: left; padding-top: 5px; } 
-        .hero-text h1 { font-size: 4em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; line-height: 0.95; margin: 0 0 20px 0; }
+        .hero-text h1 { font-size: 4em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; line-height: 0.95; margin: 0 0 20px 0 !important; }
         
         /* Seletor de Contexto */
         .context-switcher { display: flex; gap: 15px; margin-top: 20px; }
@@ -63,6 +63,14 @@
             .summary-box { grid-template-columns: 1fr; }
         }
     </style>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV0FD8PXC"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-6PV0FD8PXC');
+    </script>
 </head>
 <body class="is-preload">
     <div id="wrapper">
@@ -73,6 +81,10 @@
                         <div class="hero-text">
                             <span class="category-label">Ecossistemas</span>
                             <h1>Biodiversidade: A Teia da Vida</h1>
+                            <div class="context-switcher">
+                                <a href="/observatorio/observatorio-global.html" class="context-inactive" data-i18n="ui.view_global">Visão Global</a>
+                                <a href="/observatorio/biodiversidade.html" class="context-active-green" data-i18n="ui.view_portugal">● Portugal</a>
+                            </div>
                             <p style="font-size: 0.9em; font-style: italic; color: #bbb; margin: 30px 0;">Análise regional: <strong id="reg-name" style="color:#888">...</strong></p>
 
                             <div id="bio-dashboard" style="display:none; margin-top: 40px;">
@@ -151,8 +163,7 @@
         }
 
         function setupSidebarLogic() {
-            // Pesquisa por texto
-            $(document).on('input', '#loc-search-input', function() {
+            $(document).off('input', '#loc-search-input').on('input', '#loc-search-input', function() {
                 const val = $(this).val().toLowerCase(), dropdown = $('#loc-dropdown').empty();
                 if(val.length < 2) return dropdown.hide();
                 window.locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0,8).forEach(m => {
@@ -164,18 +175,19 @@
                 dropdown.show();
             });
 
-            // GPS (Seta)
-            $(document).on('click', '#btn-gps-trigger', function() {
-                navigator.geolocation.getCurrentPosition(pos => {
-                    let closest = window.locationsDB[0], minD = Infinity;
-                    window.locationsDB.forEach(c => {
-                        if(!c.lat || c.lat === 0) return;
-                        const d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon);
-                        if(d < minD) { minD = d; closest = c; }
+            $(document).off('click', '#btn-gps-trigger').on('click', '#btn-gps-trigger', function() {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(pos => {
+                        let closest = window.locationsDB[0], minD = Infinity;
+                        window.locationsDB.forEach(c => {
+                            if(!c.lat || c.lat === 0) return;
+                            const d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon);
+                            if(d < minD) { minD = d; closest = c; }
+                        });
+                        localStorage.setItem('biocultura_region', closest.id);
+                        location.reload();
                     });
-                    localStorage.setItem('biocultura_region', closest.id);
-                    location.reload();
-                });
+                }
             });
         }
 
@@ -193,7 +205,7 @@
                 renderizarNoticiasBio();
                 iniciarCiclosBio();
                 setupSidebarLogic();
-            } catch(e) { console.error(e); }
+            } catch(e) { console.error("Erro no carregamento:", e); }
         }
 
         function renderDashboard(info) {
@@ -207,8 +219,15 @@
                 return `<div class="species-group"><span class="label-mini">${title}</span><div class="species-list">${items.map(i => `<span class="species-badge ${type}">${i}</span>`).join('')}</div></div>`;
             };
 
-            document.getElementById('group-fauna').innerHTML = build('Fauna Ameaçada', b.fauna_ameacada, 'threatened') + build('Fauna Protegida', b.fauna_protegida, 'protected');
-            document.getElementById('group-flora').innerHTML = build('Invasoras', b.flora_invasora, 'invasive') + build('Flora Protegida', b.flora_protegida, 'protected');
+            document.getElementById('group-fauna').innerHTML = 
+                build('Fauna Ameaçada', b.fauna_ameacada, 'threatened') + 
+                build('Fauna Protegida', b.fauna_protegida, 'protected') +
+                build('Fauna Local', b.fauna, '');
+                
+            document.getElementById('group-flora').innerHTML = 
+                build('Invasoras', b.flora_invasora, 'invasive') + 
+                build('Flora Protegida', b.flora_protegida, 'protected') +
+                build('Vegetação Nativa', b.flora, '');
         }
 
         function renderizarNoticiasBio() {
@@ -237,6 +256,10 @@
             document.getElementById('sidebar').innerHTML = html;
             const savedLang = localStorage.getItem('selected_lang') || 'pt';
             applyLanguage(savedLang).then(() => inicializarPagina());
+            
+            document.addEventListener('change', (e) => {
+                if (e.target.id === 'lang-selector') applyLanguage(e.target.value).then(() => renderizarNoticiasBio());
+            });
         });
     </script>
 </body>
