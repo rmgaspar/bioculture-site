@@ -161,10 +161,10 @@
                 { titulo: "Corredores", texto: "Prioridade para o restabelecimento de corredores ecológicos.", fonte: "Wilder Mag", cor: "#f57c00" }
             ];
 
-            async function inicializarPagina() {
+           async function inicializarPagina() {
                 try {
                     const [rLoc, rNews] = await Promise.all([
-                        // ALTERADO: Agora lê de bioregioes.json
+                        // FIX: Carregar do ficheiro mestre atualizado
                         fetch('/data/bioregioes.json').then(r => r.json()),
                         fetch('/data/noticias.json').then(r => r.json())
                     ]);
@@ -173,12 +173,11 @@
                     todasNoticias = rNews.filter(n => n.categoria === 'biodiv');
 
                     const savedId = localStorage.getItem('biocultura_region');
-                    // O restante da lógica permanece igual
                     const info = locationsDB.find(i => String(i.id) === String(savedId)) || locationsDB[0];
 
                     renderDashboard(info);
                     renderizarCardsBio();
-                } catch(e) { console.error("Erro na integração:", e); }
+                } catch(e) { console.error("Erro no carregamento:", e); }
             }
 
             function renderDashboard(info) {
