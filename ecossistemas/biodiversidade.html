@@ -281,23 +281,45 @@
             function renderDashboard(info) {
                 if(!info) return;
                 document.getElementById('bio-dashboard').style.display = 'block';
-
-                const toTitle = s => s.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-                document.getElementById('reg-name').innerText = info.titulo + (info.concelho ? ', ' + toTitle(info.concelho) : '');
+                document.getElementById('reg-name').innerText = info.titulo + (info.concelho ? ', ' + info.concelho : '');
 
                 const b = info.biomas || {};
-                const build = (title, icon, items, type, colorClass) => {
+
+                // Helper para listas simples (strings)
+                const buildSimple = (title, items, type) => {
                     if(!items || items.length === 0) return '';
-                    return `<div class="species-group"><span class="label-mini ${colorClass}">${icon} ${title}</span><div class="species-list">${items.map(i => `<span class="species-badge ${type}">${i}</span>`).join('')}</div></div>`;
+                    return `<div class="species-group"><span class="label-mini">${title}</span><div class="species-list">${items.map(i => `<span class="species-badge ${type}">${i}</span>`).join('')}</div></div>`;
                 };
-                document.getElementById('group-fauna').innerHTML =
-                    build('Aves e Fauna Ameaçada', icons.bird, b.fauna_ameacada, 'threatened', 'c-mamiferos') +
-                    build('Fauna Protegida', icons.mammal, b.fauna_protegida, 'protected', 'c-mamiferos') +
-                    build('Fauna Comum', icons.mammal, b.fauna, '', 'c-comum');
-                document.getElementById('group-flora').innerHTML =
-                    build('Invasoras (Alerta)', icons.plant, b.flora_invasora, 'invasive', 'c-invasoras') +
-                    build('Flora Protegida', icons.plant, b.flora_protegida, 'protected', 'c-nativa') +
-                    build('Vegetação Nativa', icons.plant, b.flora, '', 'c-nativa');
+
+                // NOVO: Helper para a Biodiversidade Local (Objetos com Imagem)
+                const buildComplex = (items) => {
+                    if(!items || items.length === 0) return '';
+                    return `
+                        <div class="species-group">
+                            <span class="label-mini">Biodiversidade Local (iNaturalist)</span>
+                            <div class="species-list">
+                                ${items.map(i => `
+                                    <div class="species-badge" style="display: flex; align-items: center; gap: 8px; background: #fff; border: 1px solid #eee;">
+                                        ${i.imagem ? `<img src="${i.imagem}" style="width:24px; height:24px; border-radius:50%; object-fit:cover;">` : '🔍'}
+                                        <div style="line-height: 1.1;">
+                                            <b style="display:block; font-size: 0.85em; color: #333;">${i.nome}</b>
+                                            <small style="font-size: 0.6em; color: #bbb; text-transform: uppercase;">${i.grupo || ''}</small>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>`;
+                };
+
+                // Injetar no HTML
+                document.getElementById('group-fauna').innerHTML = 
+                    buildSimple('Fauna Ameaçada', b.fauna_ameacada, 'threatened') + 
+                    buildSimple('Fauna Protegida', b.fauna_protegida, 'protected') +
+                    buildComplex(b.fauna_comum); // <--- Aqui entram os novos dados detalhados
+
+                document.getElementById('group-flora').innerHTML = 
+                    buildSimple('Invasoras', b.flora_invasora, 'invasive') + 
+                    buildSimple('Flora Protegida', b.flora_protegida, 'protected');
             }
 
             function renderRelatorios() {
