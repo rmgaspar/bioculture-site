@@ -14,7 +14,7 @@
             .hero-split { display: flex; align-items: flex-start; justify-content: space-between; gap: 4em; margin-bottom: 2em; }
             .hero-text h1 { font-size: 4em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; line-height: 0.95; }
             .species-list { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
-            .species-badge { display: inline-flex; align-items: center; gap: 6px; background: #f8f9fa; padding: 6px 14px; border-radius: 50px; font-size: 0.75em; font-weight: 700; border: 1px solid #eee; }
+            .species-badge { display: inline-flex; align-items: center; gap: 6px; background: #f8f9fa; color: #555; padding: 6px 14px; border-radius: 50px; font-size: 0.75em; font-weight: 700; border: 1px solid #eee; }
             .species-badge-complex { display: inline-flex; align-items: center; gap: 10px; background: #fff; padding: 8px 16px; border-radius: 50px; border: 1px solid #eee; margin-bottom: 10px; }
             .species-badge-complex img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
             .label-mini { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; color: #bbb; display: block; margin-top: 20px; }
@@ -35,7 +35,7 @@
                                     <div id="group-fauna"></div>
                                     <div id="group-flora"></div>
                                     <p style="font-size: 0.7em; color: #bbb; margin-top: 30px; border-top: 1px solid #f9f9f9; padding-top: 15px;">
-                                        Análise regional: <strong id="reg-name">Carregando...</strong>
+                                        Análise regional: <strong id="reg-name">A carregar...</strong>
                                     </p>
                                 </div>
                             </div>
@@ -53,24 +53,25 @@
 
             async function inicializarPagina() {
                 try {
-                    console.log("Tentando carregar JSONs...");
+                    console.log("1. Iniciando fetch dos dados...");
+                    // Usar caminhos absolutos para evitar erros de subpasta
                     const [rLoc, rNews] = await Promise.all([
-                        fetch('../data/freguesias_portugal.json').then(r => { if(!r.ok) throw new Error("Falha no freguesias.json"); return r.json(); }),
-                        fetch('../data/noticias.json').then(r => { if(!r.ok) throw new Error("Falha no noticias.json"); return r.json(); })
+                        fetch('/data/freguesias_portugal.json').then(r => { if(!r.ok) throw new Error("Erro 404 em freguesias"); return r.json(); }),
+                        fetch('/data/noticias.json').then(r => { if(!r.ok) throw new Error("Erro 404 em noticias"); return r.json(); })
                     ]);
                     
                     locationsDB = rLoc;
                     todasNoticias = rNews.filter(n => n.categoria === 'biodiv');
-                    console.log("Dados carregados. Localidades:", locationsDB.length);
+                    console.log("2. Dados carregados. Total freguesias:", locationsDB.length);
 
                     const savedId = localStorage.getItem('biocultura_region');
                     const info = locationsDB.find(i => String(i.id) === String(savedId)) || locationsDB[0];
+                    console.log("3. Região ativa:", info.titulo);
 
                     renderDashboard(info);
                     renderizarCardsBio();
                 } catch(e) { 
-                    console.error("ERRO CRÍTICO:", e.message);
-                    alert("Erro ao carregar dados. Verifique a consola (F12).");
+                    console.error("ERRO CRÍTICO NO JS:", e.message);
                 }
             }
 
@@ -80,25 +81,30 @@
                 document.getElementById('reg-name').innerText = info.titulo + (info.concelho ? ', ' + info.concelho : '');
 
                 const b = info.biomas || {};
+                
                 const buildSimple = (title, items) => {
                     if(!items || items.length === 0) return '';
                     return `<span class="label-mini">${title}</span><div class="species-list">${items.map(i => `<span class="species-badge">${i}</span>`).join('')}</div>`;
                 };
 
                 const buildComplex = (items) => {
-                    if(!items || items.length === 0) return '<p>Sem registos locais.</p>';
-                    return items.map(i => `
+                    if(!items || items.length === 0) return '<p style="color:#bbb; font-size:0.8em;">Sem registos locais iNaturalist.</p>';
+                    return items.map(i => {
+                        const nome = i.nome || i; // Suporta string ou objeto
+                        const img = i.imagem || '';
+                        return `
                         <div class="species-badge-complex">
-                            ${i.imagem ? `<img src="${i.imagem}">` : '🔍'}
-                            <div><b>${i.nome || i}</b><small style="display:block; font-size:0.8em; color:#bbb">${i.grupo || ''}</small></div>
-                        </div>`).join('');
+                            ${img ? `<img src="${img}" onerror="this.style.display='none'">` : '🔍'}
+                            <div><b>${nome}</b><small style="display:block; font-size:0.8em; color:#bbb">${i.grupo || ''}</small></div>
+                        </div>`;
+                    }).join('');
                 };
 
                 document.getElementById('group-fauna').innerHTML = 
-                    buildSimple('Protegida', b.fauna_protegida) +
+                    buildSimple('Fauna Protegida', b.fauna_protegida) +
                     `<span class="label-mini">Biodiversidade Local</span><div class="species-list">${buildComplex(b.fauna_comum)}</div>`;
 
-                document.getElementById('group-flora').innerHTML = buildSimple('Flora', b.flora_protegida);
+                document.getElementById('group-flora').innerHTML = buildSimple('Flora Protegida', b.flora_protegida);
             }
 
             function renderizarCardsBio() {
@@ -107,14 +113,15 @@
                 if(!container) return;
                 container.innerHTML = todasNoticias.slice(0, 4).map(n => {
                     const content = n[lang] || n.pt || n;
-                    return `<div class="news-item"><h3>${content.titulo}</h3></div>`
+                    return `<div class="news-item"><h3>${content.titulo}</h3></div>`;
                 }).join('');
             }
 
-            fetch('../sidebar-content.html').then(r => r.text()).then(html => {
+            // Carregar Sidebar com caminho absoluto
+            fetch('/sidebar-content.html').then(r => r.text()).then(html => {
                 document.getElementById('sidebar').innerHTML = html;
                 inicializarPagina();
-            }).catch(e => console.error("Erro Sidebar:", e));
+            }).catch(e => console.error("Erro ao carregar sidebar:", e));
         </script>
 	</body>
 </html>
