@@ -32,8 +32,10 @@
                                 <span style="font-size: 0.65em; font-weight: 900; text-transform: uppercase; color: #bbb;">Ecossistemas</span>
                                 <h1>Biodiversidade: A Teia da Vida</h1>
                                 <div id="bio-dashboard" style="display:none; margin-top: 40px;">
-                                    <div id="group-fauna"></div>
+                                    <div id="group-fauna"></div> <!-- O JS vai injetar tudo aqui -->
                                     <div id="group-flora"></div>
+                                    <p>Análise regional: <strong id="reg-name">...</strong></p>
+                                </div>
                                     <p style="font-size: 0.7em; color: #bbb; margin-top: 30px; border-top: 1px solid #f9f9f9; padding-top: 15px;">
                                         Análise regional: <strong id="reg-name">A carregar dados atualizados...</strong>
                                     </p>
@@ -86,22 +88,20 @@
                 };
 
                 const buildComplex = (items) => {
-                    if(!items || items.length === 0) return '<p style="color:#bbb; font-size:0.8em; margin-top:10px;">Sem registos iNaturalist nesta zona.</p>';
+                    if(!items || items.length === 0) return '<p style="color:#bbb;font-size:0.8em;">Sem registos iNaturalist.</p>';
                     return items.map(i => {
-                        const nome = i.nome || i; 
+                        const nome = i.nome || i; // Se for objeto usa .nome, se for string usa i
                         const img = i.imagem || '';
-                        const grupo = i.grupo || '';
                         return `
-                        <div class="species-badge-complex">
-                            ${img ? `<img src="${img}" onerror="this.style.display='none'">` : '🔍'}
-                            <div>
-                                <b>${nome}</b>
-                                <small style="display:block; font-size:0.7em; color:#bbb; text-transform:uppercase;">${grupo}</small>
-                            </div>
-                        </div>`;
+                            <div class="species-badge-complex">
+                                ${img ? `<img src="${img}" onerror="this.style.display='none'">` : '🔍'}
+                                <div>
+                                    <b>${nome}</b>
+                                    ${i.grupo ? `<small>${i.grupo}</small>` : ''}
+                                </div>
+                            </div>`;
                     }).join('');
                 };
-
                 document.getElementById('group-fauna').innerHTML = 
                     buildSimple('Fauna Protegida / Ameaçada', b.fauna_protegida || b.fauna_ameacada) +
                     `<span class="label-mini">Biodiversidade Local (iNaturalist)</span><div class="species-list">${buildComplex(b.fauna_comum)}</div>`;
