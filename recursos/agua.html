@@ -171,7 +171,6 @@
 
 		<script src="/assets/js/jquery.min.js"></script>
         <script>
-            // 1. Variáveis Globais
             window.locationsDB = []; 
             let todasNoticias = []; 
 
@@ -183,7 +182,6 @@
                 return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))); 
             }
 
-            // 2. Tradução Dinâmica (Caminho ../ para subir um nível)
             async function applyLanguage(lang) { 
                 if (!lang) lang = localStorage.getItem('selected_lang') || 'pt'; 
                 try { 
@@ -199,48 +197,57 @@
                 } catch (err) { console.error("Erro i18n:", err); } 
             }
 
-            // 3. Inicialização de Dados
             async function inicializarPagina() {
                 try {
+                    // FIX: Caminhos relativos para sair de /recursos/
                     const [rLoc, rNews] = await Promise.all([
                         fetch('../data/freguesias_portugal.json').then(r => r.json()), 
                         fetch('../data/noticias.json').then(r => r.json())
                     ]);
-                    
                     window.locationsDB = rLoc; 
                     todasNoticias = rNews;
-                    
                     const savedId = localStorage.getItem('biocultura_region');
                     const info = window.locationsDB.find(i => String(i.id) === String(savedId)) || window.locationsDB[0];
                     
-                    renderizarNoticiasAgua(); 
-                    // Se tiveres um dashboard de água, chama-o aqui: if(typeof renderDashboard === "function") renderDashboard(info);
-                } catch(e) { console.error("Erro no carregamento:", e); }
+                    // Atualiza Localidade
+                    const regName = document.getElementById('reg-name');
+                    if(regName) regName.innerText = info.titulo + (info.concelho ? ', ' + info.concelho : '');
+                    
+                    renderizarNoticiasDinamicas(); 
+                } catch(e) { console.error("Erro total:", e); }
             }
 
-            // 4. Função que falta: Renderizar Notícias da Água
-            function renderizarNoticiasAgua() {
-                const container = document.getElementById('noticias-agua-dinamico'); // Confirma este ID no teu HTML
-                if(!container) return;
-
-                const lang = localStorage.getItem('selected_lang') || 'pt';
+            function renderizarNoticiasDinamicas() {
+                // Tenta encontrar qualquer container de notícias
+                const container = document.getElementById('noticias-ar-dinamico') || 
+                                document.getElementById('noticias-agua-dinamico') || 
+                                document.getElementById('noticias-solo-dinamico') ||
+                                document.getElementById('noticias-dinamico');
                 
-                // Filtra por categoria 'water' ou 'Água'
-                const filtradas = todasNoticias.filter(n => n && (n.categoria === 'Água' || n.categoria === 'Água') && n[lang]);
+                if(!container) return;
+                const lang = localStorage.getItem('selected_lang') || 'pt';
 
-                container.innerHTML = filtradas.map(n => {
-                    const content = n[lang]; 
-                    return `
-                        <a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-item">
-                            <h3>${content.titulo}</h3>
-                            <div class="news-meta">
-                                <span>${n.data || ''}</span>
-                            </div>
-                        </a>`;
-                }).join('');
+                // Deteta qual a página atual para filtrar
+                const path = window.location.pathname;
+                let cat = 'air';
+                if(path.includes('agua')) cat = 'water';
+                if(path.includes('solo')) cat = 'soil';
+
+                const filtradas = todasNoticias.filter(n => n && (n.categoria === cat) && n[lang]);
+
+                if(filtradas.length === 0) {
+                    container.innerHTML = '<p style="color: #bbb;">Sem notícias recentes.</p>';
+                    return;
+                }
+
+                container.innerHTML = filtradas.map(n => `
+                    <a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-item">
+                        <h3>${n[lang].titulo}</h3>
+                        <div class="news-meta"><span>${n.data}</span></div>
+                    </a>`).join('');
             }
 
-            // 5. Sidebar e GPS (Fix: Delegação de Eventos)
+            // Sidebar e GPS (Delegado)
             fetch('../sidebar-content.html').then(r => r.text()).then(html => {
                 document.getElementById('sidebar').innerHTML = html;
                 
@@ -268,7 +275,7 @@
                             });
                             localStorage.setItem('biocultura_region', closest.id); 
                             location.reload();
-                        }, null, { enableHighAccuracy: true });
+                        });
                     }
                 });
 
