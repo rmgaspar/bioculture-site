@@ -183,7 +183,7 @@
 
             async function init() {
                 try {
-                    // FIX: Caminhos relativos ../ para sair de /recursos/ ou /ecossistemas/
+                    // O ../ é obrigatório para estas páginas encontrarem a pasta data
                     const [rLoc, rNews] = await Promise.all([
                         fetch('../data/freguesias_portugal.json').then(r => r.json()),
                         fetch('../data/noticias.json').then(r => r.json())
@@ -203,12 +203,12 @@
 
             function renderNoticias() {
                 const path = window.location.pathname;
-                let cat = 'air'; // Default
+                let cat = 'air';
                 if (path.includes('agua')) cat = 'water';
                 if (path.includes('solo')) cat = 'soil';
                 if (path.includes('biodiversidade')) cat = 'biodiv';
 
-                // Tenta encontrar qualquer container de notícias disponível
+                // Procura qualquer um dos IDs de container usados
                 const container = document.getElementById('noticias-ar-dinamico') || 
                                 document.getElementById('noticias-agua-dinamico') || 
                                 document.getElementById('noticias-solo-dinamico') ||
@@ -217,7 +217,7 @@
 
                 if (!container) return;
 
-                // Filtra e acede ao objeto 'pt' (mesmo sem tradução ativa, o JSON tem esta estrutura)
+                // Filtra e usa o objeto 'pt' como fonte principal
                 const filtradas = todasNoticias.filter(n => n.categoria === cat);
 
                 container.innerHTML = filtradas.map(n => {
@@ -230,7 +230,7 @@
                 }).join('');
             }
 
-            // Sidebar e GPS (Delegado para funcionar sempre)
+            // Carregamento da Sidebar e GPS
             fetch('../sidebar-content.html').then(r => r.text()).then(html => {
                 document.getElementById('sidebar').innerHTML = html;
 
