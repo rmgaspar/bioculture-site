@@ -1,0 +1,258 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>bioCultura - Ecossistemas e Biomas</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="../assets/css/main.css" />
+    <style>
+        body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
+        section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
+        section { min-height: 100vh; display: flex; flex-direction: column; }
+        #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
+        #wrapper { padding-left: 18em !important; }
+        .inner { padding: 2.2em 4em 0 4em !important; max-width: 1600px !important; margin: 0 auto; width: 100%; }
+
+        .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; margin-bottom: 15px; display: block; line-height: 1; }
+        .hero-split { display: flex; align-items: flex-start; justify-content: space-between; gap: 4em; margin-bottom: 2em; }
+        .hero-text { flex: 1.5; text-align: left; padding-top: 5px; } 
+        .hero-text h1 { font-size: 4em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; line-height: 0.95; margin: 0 0 20px 0; }
+
+        /* Filtros Taxonómicos */
+        .filter-nav { display: flex; flex-wrap: wrap; gap: 10px; margin: 25px 0; border-bottom: 1px solid #f2f2f2; padding-bottom: 15px; }
+        .filter-btn { background: none !important; border: none !important; font-size: 0.75em; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #bbb; cursor: pointer; transition: all 0.3s; padding: 5px 10px; outline: none !important; box-shadow: none !important; }
+        .filter-btn.active { color: #2e7d32; border-bottom: 2px solid #2e7d32; }
+        .filter-btn:hover { color: #2e7d32; }
+
+        .hero-visual { flex: 1; display: flex; justify-content: flex-end; }
+        .hero-globe { position: relative; width: 480px; height: 480px; border-radius: 50%; overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,0.12); background: #1a1a1a; }
+        .hero-globe img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; transition: opacity 2s ease; opacity: 0; }
+        .hero-globe img.active { opacity: 1; }
+
+        /* Grelha de Espécies */
+        .species-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .species-card { background: #fdfdfd; border: 1px solid #f2f2f2; border-radius: 12px; padding: 15px; text-align: center; transition: all 0.3s; }
+        .species-card:hover { transform: translateY(-5px); border-color: #2e7d32; }
+        .species-card img { width: 100%; height: 140px; object-fit: cover; border-radius: 8px; margin-bottom: 12px; background: #eee; }
+        .species-card b { display: block; font-size: 0.9em; color: #1a1a1a; margin-bottom: 4px; }
+        .species-card span { font-size: 0.7em; text-transform: uppercase; color: #bbb; font-weight: 800; letter-spacing: 1px; }
+
+        /* Conteúdo Inferior */
+        .summary-box { background: #f6fff8; padding: 3.5em; margin: 3em 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; border-radius: 15px; border-left: 4px solid #2e7d32; }
+        .summary-item h5 { font-size: 0.75em; font-weight: 900; text-transform: uppercase; margin-bottom: 12px; color: #2e7d32; letter-spacing: 1px; }
+        .summary-item p { font-size: 0.95em; line-height: 1.7; margin: 0; color: #555; text-align: justify; }
+
+        .report-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; margin: 2em 0; }
+        .report-item { border-top: 1px solid #f2f2f2; padding-top: 20px; }
+        .report-item h5 { font-size: 0.8em; font-weight: 900; text-transform: uppercase; color: #1a1a1a; margin-bottom: 10px; }
+        .report-item p { font-size: 0.9em; line-height: 1.6; color: #666; text-align: justify; }
+
+        .bio-impact-box { background: #f6fff8; padding: 2.5em; border-radius: 20px; margin: 2em 0; border-left: 4px solid #2e7d32; position: relative; overflow: hidden; }
+        .fact-cycler-bio { min-height: 40px; position: relative; }
+        .bio-fact-item { position: absolute; top: 0; opacity: 0; transition: opacity 1s ease; width: 100%; font-size: 1.1em; color: #4a7a56; }
+        .bio-fact-item.active { opacity: 1; position: relative; }
+
+        .btn-pagination { background: none !important; border: 1px solid #eee !important; color: #bbb !important; padding: 10px 30px; border-radius: 50px; font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; cursor: pointer; margin: 20px auto; display: block; outline: none !important; box-shadow: none !important; }
+        .btn-pagination:hover { border-color: #2e7d32; color: #2e7d32 !important; }
+
+        .page-footer { padding: 4em 0 2em 0; border-top: 1px solid #f2f2f2; opacity: 0.3; text-align: right; }
+        .bio-res-item { padding: 12px 18px; font-size: 0.9em; color: #666; cursor: pointer; border-bottom: 1px solid #f9f9f9 !important; }
+
+        @media screen and (max-width: 1280px) {
+            #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
+            #wrapper { padding-left: 0 !important; }
+            .hero-split, .summary-box, .report-grid { grid-template-columns: 1fr; }
+            .hero-globe { width: 320px; height: 320px; margin: 0 auto; }
+        }
+    </style>
+</head>
+<body class="is-preload">
+    <div id="wrapper">
+        <div id="main">
+            <div class="inner">
+                <section>
+                    <div class="hero-split">
+                        <div class="hero-text">
+                            <span class="category-label">Ecossistemas Nacionais</span>
+                            <h1>Biomas e Biodiversidade</h1>
+                            <p style="font-size: 0.9em; font-style: italic; color: #bbb; margin: 20px 0;">Localidade: <strong id="reg-name" style="color:#2e7d32">...</strong></p>
+                            
+                            <div class="filter-nav" id="filter-nav">
+                                <button class="filter-btn active" onclick="filterBy('All')">Todos</button>
+                                <button class="filter-btn" onclick="filterBy('Plantae')">Plantas</button>
+                                <button class="filter-btn" onclick="filterBy('Amphibia')">Anfíbios</button>
+                                <button class="filter-btn" onclick="filterBy('Fungi')">Fungos</button>
+                                <button class="filter-btn" onclick="filterBy('Actinopterygii')">Peixe</button>
+                                <button class="filter-btn" onclick="filterBy('Reptilia')">Répteis</button>
+                                <button class="filter-btn" onclick="filterBy('Aves')">Aves</button>
+                                <button class="filter-btn" onclick="filterBy('Insecta')">Insetos</button>
+                                <button class="filter-btn" onclick="filterBy('Mollusca')">Moluscos</button>
+                                <button class="filter-btn" onclick="filterBy('Mammalia')">Mamíferos</button>
+                            </div>
+                        </div>
+                        <div class="hero-visual">
+                            <div class="hero-globe" id="bio-globe-cycler">
+                                <img src="../images/biodiversidade.jpg" class="active">
+                                <img src="../images/biodiversidade1.jpg">
+                                <img src="../images/biodiversidade2.jpg">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="species-grid" class="species-grid"></div>
+                    <button id="btn-load-more" class="btn-pagination" style="display:none;">+ Ver mais espécies</button>
+
+                    <div class="summary-box">
+                        <div class="summary-item">
+                            <h5>Espécies Ameaçadas</h5>
+                            <p id="txt-threatened">A carregar dados...</p>
+                        </div>
+                        <div class="summary-item">
+                            <h5>Relatório de Conservação</h5>
+                            <p id="txt-protected">Análise de estatuto ICNF / Rede Natura 2000.</p>
+                        </div>
+                    </div>
+
+                    <div class="data-row">
+                        <h4>Análise Técnica do Bioma</h4>
+                        <div id="report-grid-bio" class="report-grid"></div>
+                    </div>
+
+                    <div class="data-row">
+                        <h4>Alertas</h4>
+                        <div class="bio-impact-box">
+                            <div class="fact-cycler-bio" id="bio-facts-container"></div>
+                        </div>
+                    </div>
+
+                    <footer class="page-footer">
+                        <span style="display: block; font-size: 0.85em; font-weight: 900; color: #333;">bioCultura</span>
+                        <span style="display: block; font-size: 0.5em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Global Regeneration</span>
+                    </footer>
+                </section>
+            </div>
+        </div>
+        <div id="sidebar"></div>
+    </div>
+
+    <script src="../assets/js/jquery.min.js"></script>
+    <script>
+        window.locationsDB = [];
+        let currentSpeciesList = [];
+        let filteredSpecies = [];
+        let visibleCount = 8;
+        let currentCategory = 'All';
+
+        const bioFacts = [
+            { titulo: "Biodiversidade", desc: "Portugal abriga mais de 35.000 espécies, muitas delas endémicas." },
+            { titulo: "Solo Vivo", desc: "A saúde do bioma depende da microvida do solo. Evite químicos." },
+            { titulo: "Alertas", desc: "A fragmentação do território é a maior ameaça à fauna nacional." }
+        ];
+
+        function calcularDistancia(lat1, lon1, lat2, lon2) {
+            const R = 6371;
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
+            return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+        }
+
+        async function initEcossistemas() {
+            try {
+                const response = await fetch('../data/bioregioes.json');
+                window.locationsDB = await response.json();
+                const savedId = localStorage.getItem('biocultura_region');
+                const info = window.locationsDB.find(i => String(i.id) === String(savedId)) || window.locationsDB[0];
+                renderPageData(info);
+                setupSidebarLogic();
+                iniciarCiclos();
+            } catch(e) { console.error("Falha ao carregar bioregioes.json:", e); }
+        }
+
+        function renderPageData(info) {
+            if(!info) return;
+            document.getElementById('reg-name').innerText = info.titulo;
+            const b = info.biomas || {};
+            
+            document.getElementById('txt-threatened').innerText = (b.fauna_ameacada?.length) ? "Registadas: " + b.fauna_ameacada.join(', ') : "Sem espécies em risco crítico registadas.";
+            document.getElementById('txt-protected').innerText = (b.fauna_protegida?.length) ? "Sob proteção: " + b.fauna_protegida.join(', ') : "Monitorização geral ICNF.";
+
+            document.getElementById('report-grid-bio').innerHTML = `
+                <div class="report-item"><h5>Geologia</h5><p>Solo: ${b.solo || 'N/A'}. pH: ${b.ph_solo || 'N/A'}. Textura: ${b.textura || 'N/A'}.</p></div>
+                <div class="report-item"><h5>Flora</h5><p>Espécies: ${b.flora ? b.flora.join(', ') : 'N/A'}.</p></div>
+            `;
+
+            currentSpeciesList = b.fauna_comum || [];
+            filterBy('All');
+        }
+
+        function filterBy(cat) {
+            currentCategory = cat; visibleCount = 8;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                const btnText = btn.innerText;
+                const match = (cat === 'All' && btnText === 'Todos') || (translateTaxonomyReverse(cat) === btnText);
+                btn.classList.toggle('active', match);
+            });
+            filteredSpecies = cat === 'All' ? currentSpeciesList : currentSpeciesList.filter(s => s.grupo === cat);
+            renderSpeciesGrid();
+        }
+
+        function renderSpeciesGrid() {
+            const grid = document.getElementById('species-grid');
+            const show = filteredSpecies.slice(0, visibleCount);
+            grid.innerHTML = show.length ? show.map(s => `
+                <div class="species-card">
+                    <img src="${s.imagem}" onerror="this.src='../images/placeholder-bio.jpg'">
+                    <b>${s.nome}</b>
+                    <span>${translateTaxonomy(s.grupo)}</span>
+                </div>
+            `).join('') : '<p style="grid-column:1/-1;text-align:center;padding:40px;color:#bbb;">Sem registos nesta categoria para esta região.</p>';
+            
+            const btnLoad = document.getElementById('btn-load-more');
+            if(btnLoad) btnLoad.style.display = filteredSpecies.length > visibleCount ? 'block' : 'none';
+        }
+
+        function translateTaxonomy(g) { const d = { "Amphibia": "Anfíbio", "Insecta": "Inseto", "Reptilia": "Réptil", "Plantae": "Planta", "Mammalia": "Mamífero", "Aves": "Ave", "Mollusca": "Molusco", "Fungi": "Fungo", "Actinopterygii": "Peixe" }; return d[g] || g; }
+        function translateTaxonomyReverse(g) { const d = { "Amphibia": "Anfíbios", "Insecta": "Insetos", "Reptilia": "Répteis", "Plantae": "Plantas", "Mammalia": "Mamíferos", "Aves": "Aves", "Mollusca": "Moluscos", "Fungi": "Fungos", "Actinopterygii": "Peixe" }; for(let k in d) if(d[k] === g) return k; return g; }
+
+        function setupSidebarLogic() {
+            $(document).on('click', '#btn-gps-trigger', function() {
+                navigator.geolocation.getCurrentPosition(pos => {
+                    let closest = window.locationsDB[0], minD = Infinity;
+                    window.locationsDB.forEach(c => {
+                        const d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon);
+                        if(d < minD) { minD = d; closest = c; }
+                    });
+                    localStorage.setItem('biocultura_region', closest.id); location.reload();
+                });
+            });
+            $(document).on('input', '#loc-search-input', function() {
+                const val = $(this).val().toLowerCase(), dropdown = $('#loc-dropdown').empty();
+                if(val.length < 2) return dropdown.hide();
+                window.locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0,8).forEach(m => {
+                    $('<div class="bio-res-item"></div>').text(m.titulo).on('click', () => { localStorage.setItem('biocultura_region', m.id); location.reload(); }).appendTo(dropdown);
+                });
+                dropdown.show();
+            });
+        }
+
+        function iniciarCiclos() {
+            const imgs = document.querySelectorAll('#bio-globe-cycler img');
+            let imgP = 0; if(imgs.length) setInterval(() => { imgs.forEach(i => i.classList.remove('active')); imgP = (imgP + 1) % imgs.length; imgs[imgP].classList.add('active'); }, 6000);
+            const container = document.getElementById('bio-facts-container');
+            if(container) {
+                container.innerHTML = bioFacts.map((f, i) => `<div class="bio-fact-item ${i === 0 ? 'active' : ''}"><b>${f.titulo}:</b> ${f.desc}</div>`).join('');
+                let factP = 0; setInterval(() => { const items = document.querySelectorAll('.bio-fact-item'); if(items.length) { items.forEach(el => el.classList.remove('active')); factP = (factP + 1) % items.length; items[factP].classList.add('active'); } }, 8000);
+            }
+        }
+
+        const btnLoad = document.getElementById('btn-load-more');
+        if(btnLoad) btnLoad.onclick = () => { visibleCount += 8; renderSpeciesGrid(); };
+
+        fetch('../sidebar-content.html').then(r => r.text()).then(html => {
+            document.getElementById('sidebar').innerHTML = html;
+            initEcossistemas();
+        });
+    </script>
+</body>
+</html>
