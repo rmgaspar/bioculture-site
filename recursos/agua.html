@@ -183,7 +183,6 @@
 
             async function init() {
                 try {
-                    // O ../ é obrigatório para estas páginas encontrarem a pasta data
                     const [rLoc, rNews] = await Promise.all([
                         fetch('../data/freguesias_portugal.json').then(r => r.json()),
                         fetch('../data/noticias.json').then(r => r.json())
@@ -197,30 +196,25 @@
                     const regEl = document.getElementById('reg-name');
                     if (regEl) regEl.innerText = info.titulo + (info.concelho ? ', ' + info.concelho : '');
                     
-                    renderNoticias();
-                } catch (e) { console.error("Erro no fetch:", e); }
+                    renderizarNoticiasAgua();
+                } catch (e) { console.error("Erro no carregamento:", e); }
             }
 
-            function renderNoticias() {
-                const path = window.location.pathname;
-                let cat = 'air';
-                if (path.includes('agua')) cat = 'water';
-                if (path.includes('solo')) cat = 'soil';
-                if (path.includes('biodiversidade')) cat = 'biodiv';
-
-                // Procura qualquer um dos IDs de container usados
-                const container = document.getElementById('noticias-ar-dinamico') || 
-                                document.getElementById('noticias-agua-dinamico') || 
-                                document.getElementById('noticias-solo-dinamico') ||
-                                document.getElementById('noticias-bio-dinamico') ||
-                                document.getElementById('noticias-dinamico');
-
+            function renderizarNoticiasAgua() {
+                // Tenta encontrar o contentor específico da água ou o geral
+                const container = document.getElementById('noticias-agua-dinamico') || document.getElementById('noticias-dinamico');
                 if (!container) return;
 
-                // Filtra e usa o objeto 'pt' como fonte principal
-                const filtradas = todasNoticias.filter(n => n.categoria === cat);
+                // Filtra estritamente pela categoria 'water' ou 'Água'
+                const filtradas = todasNoticias.filter(n => n && (n.categoria === 'water' || n.categoria === 'Água'));
+
+                if (filtradas.length === 0) {
+                    container.innerHTML = '<p style="color: #bbb;">Sem notícias recentes sobre recursos hídricos.</p>';
+                    return;
+                }
 
                 container.innerHTML = filtradas.map(n => {
+                    // Acede ao objeto 'pt' porque o teu JSON agora tem essa estrutura
                     const content = n.pt || n; 
                     return `
                         <a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-item">
@@ -230,7 +224,7 @@
                 }).join('');
             }
 
-            // Carregamento da Sidebar e GPS
+            // Sidebar e GPS
             fetch('../sidebar-content.html').then(r => r.text()).then(html => {
                 document.getElementById('sidebar').innerHTML = html;
 
