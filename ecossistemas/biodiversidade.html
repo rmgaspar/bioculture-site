@@ -13,7 +13,7 @@
         #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
         #wrapper { padding-left: 18em !important; }
 
-        /* Alinhamento Milimétrico */
+        /* Alinhamento Milimétrico com o Logótipo */
         .inner { padding: 2.2em 4em 0 4em !important; max-width: 1600px !important; margin: 0 auto; width: 100%; }
         .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; margin-bottom: 15px; display: block; line-height: 1; }
 
@@ -21,6 +21,7 @@
         .hero-text { flex: 1.5; text-align: left; padding-top: 5px; } 
         .hero-text h1 { font-size: 4em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; line-height: 0.95; margin: 0 0 20px 0; }
         
+        /* Seletor de Contexto */
         .context-switcher { display: flex; gap: 15px; margin-top: 20px; }
         .context-switcher a { font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; text-decoration: none !important; border-bottom: none !important; padding-bottom: 5px; }
         .context-active-green { color: #1a1a1a !important; border-bottom: 2px solid #2e7d32 !important; }
@@ -33,7 +34,7 @@
         .hero-globe img.active { opacity: 1; }
 
         /* Bloco de 4 Caixas (Impact Cards) */
-        .summary-box { background: #f6fff8; padding: 3.5em; margin: 2.5em 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; border-radius: 15px; border-left: 4px solid #2e7d32; }
+        .summary-box { background: #f6fff8; padding: 3.5em; margin: 2.5em 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; border-radius: 15px; }
         .summary-item h5 { font-size: 0.7em; font-weight: 900; text-transform: uppercase; margin-bottom: 12px; color: #2e7d32; }
         .summary-item p { font-size: 0.85em; line-height: 1.7; margin: 0; color: #555; text-align: justify; }
 
@@ -45,21 +46,6 @@
         .species-badge.threatened { background: #fff5f5; color: #c62828; border-color: #feb2b2; }
         .species-badge.protected { background: #f0fff4; color: #2e7d32; border-color: #9ae6b4; }
         .species-badge.invasive { background: #fffaf0; color: #dd6b20; border-color: #fbd38d; }
-
-        /* Relatórios e Alertas */
-        .data-row { display: block; padding: 2.5em 0; border-bottom: 1px solid #f2f2f2; }
-        .data-row h4 { font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin: 0 0 25px 0; display: block; }
-        .report-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; margin-top: 10px; }
-        .report-item { border-top: 1px solid #f9f9f9; padding-top: 20px; }
-        .report-item h5 { font-size: 0.75em; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
-        .report-item p { font-size: 0.95em; line-height: 1.7; color: #666; margin-bottom: 15px; text-align: justify; }
-        .report-source { font-size: 0.65em; font-weight: 800; color: #ccc; text-transform: uppercase; display: block; border-top: 1px solid #eee; padding-top: 8px; }
-
-        .bio-impact-box { background: #f6fff8; padding: 2.5em 3em; border-radius: 20px; margin: 1.5em 0; position: relative; overflow: hidden; border-left: 4px solid #2e7d32; }
-        .fact-cycler-bio { min-height: 50px; position: relative; }
-        .bio-fact-item { position: absolute; top: 0; opacity: 0; transition: opacity 1s ease; width: 100%; font-size: 1.1em; line-height: 1.5; color: #4a7a56; }
-        .bio-fact-item.active { opacity: 1; position: relative; }
-        .bio-fact-item b { color: #1b4332; margin-right: 10px; }
 
         .news-header { font-size: 0.8em; font-weight: 400; text-transform: lowercase; letter-spacing: 3px; color: #bbb; margin-bottom: 2.5em; display: block; margin-top: 4em; }
         .news-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 30px; margin-bottom: 4em; }
@@ -74,7 +60,7 @@
             #wrapper { padding-left: 0 !important; }
             .hero-split { flex-direction: column-reverse; }
             .hero-globe { width: 350px; height: 350px; margin: 0 auto; }
-            .summary-box, .report-grid { grid-template-columns: 1fr; }
+            .summary-box { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -87,6 +73,10 @@
                         <div class="hero-text">
                             <span class="category-label">Ecossistemas</span>
                             <h1>Biodiversidade: A Teia da Vida</h1>
+                            <div class="context-switcher">
+                                <a href="/observatorio/observatorio-global.html" class="context-inactive" data-i18n="ui.view_global">Visão Global</a>
+                                <a href="/observatorio/biodiversidade.html" class="context-active-green" data-i18n="ui.view_portugal">● Portugal (Detalhe)</a>
+                            </div>
                             <p style="font-size: 0.9em; font-style: italic; color: #bbb; margin: 30px 0;">Análise regional: <strong id="reg-name" style="color:#888">...</strong></p>
 
                             <div id="bio-dashboard" style="display:none; margin-top: 40px;">
@@ -96,15 +86,13 @@
                         </div>
                         <div class="hero-visual">
                             <div class="hero-globe" id="bio-globe-cycler">
-                                <img src="../images/biodiversidade.jpg" class="active">
-                                <img src="../images/biodiversidade1.jpg">
-                                <img src="../images/biodiversidade2.jpg">
-                                <img src="https://images.unsplash.com/photo-1514907283155-ea5f4094c70c?q=80&w=2070&auto=format&fit=crop" alt="Biodiversidade">
+                                <img src="https://images.unsplash.com/photo-1470240731273-7821a6eeb6bd?q=80&w=2070&auto=format&fit=crop" class="active">
+                                <img src="https://images.unsplash.com/photo-1641959166364-6c9b9898e804?q=80&w=2071&auto=format&fit=crop">
+                                <img src="https://images.unsplash.com/photo-1586400792375-d6b8f82db2e6?q=80&w=2071&auto=format&fit=crop">
                             </div>
                         </div>
                     </div>
 
-                    <!-- Bloco de 4 Caixas Restaurado -->
                     <div class="summary-box">
                         <div class="summary-item">
                             <h5>Espécies Ameaçadas</h5>
@@ -121,23 +109,6 @@
                         <div class="summary-item">
                             <h5>Polinizadores</h5>
                             <p>Proteção de insetos auxiliares essenciais para a viabilidade da agricultura biológica e regenerativa em Portugal.</p>
-                        </div>
-                    </div>
-
-                    <div class="data-row">
-                        <h4>Relatório de Conservação</h4>
-                        <div class="tech-content">
-                            <h3 style="margin: 0 0 10px 0; font-weight: 300; font-size: 2em;">Análise Crítica de Biodiversidade 2026</h3>
-                            <div id="report-grid-bio" class="report-grid"></div>
-                        </div>
-                    </div>
-
-                    <div class="data-row">
-                        <h4>Alertas</h4>
-                        <div class="tech-content">
-                            <div class="bio-impact-box">
-                                <div class="fact-cycler-bio" id="bio-facts-container"></div>
-                            </div>
                         </div>
                     </div>
 
@@ -159,19 +130,6 @@
         window.locationsDB = [];
         let todasNoticias = [];
         let visiveisBio = 6;
-
-        const bioFacts = [
-            { titulo: "Extinção em Massa", desc: "Mais de 44.000 espécies estão em risco iminente de extinção global (IUCN Red List 2026)." },
-            { titulo: "Aves em Risco", desc: "O Sisão e a Águia-imperial-ibérica precisam de intervenção urgente devido à perda de habitat." },
-            { titulo: "Flora Vascular", desc: "10% da flora de Portugal Continental está ameaçada; a conservação é agora vital." }
-        ];
-
-        const relatoriosBio = [
-            { titulo: "Flora Vascular", texto: "O levantamento nacional identifica que a flora endémica enfrenta pressões extremas de urbanização.", fonte: "ICNF", cor: "#2e7d32" },
-            { titulo: "Vida Marinha", texto: "O Oceanário de Lisboa sublinha que as pradarias marinhas são vitais para o sequestro de carbono.", fonte: "Oceanário / WWF", cor: "#0288d1" },
-            { titulo: "Invertebrados", texto: "Bivalves de água doce e polinizadores silvestres são os grupos mais afetados pela poluição química.", fonte: "ICNF - Livro Vermelho", cor: "#8d6e63" },
-            { titulo: "Aves e Corredores", texto: "Em 2026, a prioridade máxima é o restabelecimento de corredores ecológicos para espécies nativas.", fonte: "Wilder Mag", cor: "#f57c00" }
-        ];
 
         async function applyLanguage(lang) {
             if (!lang) lang = localStorage.getItem('selected_lang') || 'pt';
@@ -196,8 +154,9 @@
             return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
         }
 
-        function setupLocationLogic() {
-            $(document).off('input', '#loc-search-input').on('input', '#loc-search-input', function() {
+        function setupSidebarLogic() {
+            // Pesquisa por texto
+            $(document).on('input', '#loc-search-input', function() {
                 const val = $(this).val().toLowerCase(), dropdown = $('#loc-dropdown').empty();
                 if(val.length < 2) return dropdown.hide();
                 window.locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0,8).forEach(m => {
@@ -209,7 +168,8 @@
                 dropdown.show();
             });
 
-            $(document).off('click', '#btn-gps-trigger').on('click', '#btn-gps-trigger', function() {
+            // GPS (Seta)
+            $(document).on('click', '#btn-gps-trigger', function() {
                 navigator.geolocation.getCurrentPosition(pos => {
                     let closest = window.locationsDB[0], minD = Infinity;
                     window.locationsDB.forEach(c => {
@@ -235,10 +195,9 @@
                 
                 renderDashboard(info);
                 renderizarNoticiasBio();
-                renderRelatorios();
                 iniciarCiclosBio();
-                setupLocationLogic();
-            } catch(e) { console.error("Erro no carregamento:", e); }
+                setupSidebarLogic();
+            } catch(e) { console.error(e); }
         }
 
         function renderDashboard(info) {
@@ -256,15 +215,6 @@
             document.getElementById('group-flora').innerHTML = build('Invasoras', b.flora_invasora, 'invasive') + build('Flora Protegida', b.flora_protegida, 'protected');
         }
 
-        function renderRelatorios() {
-            document.getElementById('report-grid-bio').innerHTML = relatoriosBio.map(r => `
-                <div class="report-item">
-                    <h5 style="color: ${r.cor}">${r.titulo}</h5>
-                    <p>${r.texto}</p>
-                    <span class="report-source">Fonte: ${r.fonte}</span>
-                </div>`).join('');
-        }
-
         function renderizarNoticiasBio() {
             const lang = localStorage.getItem('selected_lang') || 'pt';
             const filtradas = todasNoticias.filter(n => n.categoria === 'biodiv' && n[lang]);
@@ -276,29 +226,15 @@
         }
 
         function iniciarCiclosBio() {
-            // Ciclo Globo
             const imgs = document.querySelectorAll('#bio-globe-cycler img');
-            let imgP = 0;
-            setInterval(() => {
-                imgs.forEach(i => i.classList.remove('active'));
-                imgP = (imgP + 1) % imgs.length;
-                imgs[imgP].classList.add('active');
-            }, 5000);
-
-            // Ciclo Factos
-            const container = document.getElementById('bio-facts-container');
-            container.innerHTML = bioFacts.map((f, i) => `
-                <div class="bio-fact-item ${i === 0 ? 'active' : ''}">
-                    <b>${f.titulo}</b> ${f.desc}
-                </div>`).join('');
-            let factP = 0;
-            setInterval(() => {
-                const items = document.querySelectorAll('.bio-fact-item');
-                if(items.length === 0) return;
-                items.forEach(el => el.classList.remove('active'));
-                factP = (factP + 1) % items.length;
-                items[factP].classList.add('active');
-            }, 8000);
+            let cur = 0;
+            if(imgs.length > 0) {
+                setInterval(() => {
+                    imgs.forEach(i => i.classList.remove('active'));
+                    cur = (cur + 1) % imgs.length;
+                    imgs[cur].classList.add('active');
+                }, 5000);
+            }
         }
 
         fetch('/sidebar-content.html').then(r => r.text()).then(html => {
