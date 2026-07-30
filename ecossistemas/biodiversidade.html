@@ -3,7 +3,7 @@
 	<head>
 		<title>bioCultura - Observatório da Biodiversidade</title>
 		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale, user-scalable=no" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="/assets/css/main.css" />
 		<style>
             /* --- ESTRUTURA GLOBAL --- */
@@ -131,40 +131,24 @@
 
 		<script src="/assets/js/jquery.min.js"></script>
         <script>
-            let locationsDB = [], todasNoticias = [], visiveisBio = 4;
-
-            const bioFacts = [
-                { titulo: "Extinção em Massa", desc: "Mais de 44.000 espécies estão em risco iminente de extinção global (IUCN 2026)." },
-                { titulo: "Flora Vascular", desc: "10% da flora de Portugal Continental está ameaçada." }
-            ];
-
-            const relatoriosBio = [
-                { titulo: "Flora Vascular", texto: "O levantamento nacional identifica pressões extremas de urbanização.", fonte: "ICNF", cor: "#2e7d32" },
-                { titulo: "Vida Marinha", texto: "As pradarias marinhas são vitais para o sequestro de carbono.", fonte: "Oceanário / WWF", cor: "#0288d1" }
-            ];
+            let locationsDB = [], todasNoticias = [];
 
             async function inicializarPagina() {
                 try {
-                    console.log("A carregar dados...");
+                    // FIX: Caminho relativo para subir um nível
                     const [rLoc, rNews] = await Promise.all([
                         fetch('../data/freguesias_portugal.json').then(r => r.json()),
                         fetch('../data/noticias.json').then(r => r.json())
                     ]);
                     locationsDB = rLoc;
                     todasNoticias = rNews.filter(n => n.categoria === 'biodiv');
-                    console.log("Dados carregados com sucesso.");
 
                     const savedId = localStorage.getItem('biocultura_region');
                     const info = locationsDB.find(i => String(i.id) === String(savedId)) || locationsDB[0];
 
                     renderDashboard(info);
                     renderizarCardsBio();
-                    renderRelatorios();
-                    iniciarCiclosBio();
-                } catch(e) { 
-                    console.error("FALHA NO CARREGAMENTO:", e);
-                    document.getElementById('reg-name').innerText = "Erro ao carregar dados regionais.";
-                }
+                } catch(e) { console.error("Erro técnico:", e); }
             }
 
             function renderDashboard(info) {
@@ -174,72 +158,61 @@
 
                 const b = info.biomas || {};
 
-                const buildSimple = (title, items, type) => {
+                // Helper para badges simples (strings)
+                const buildSimple = (items, type) => {
                     if(!items || items.length === 0) return '';
-                    return `<div class="species-group"><span class="label-mini">${title}</span><div class="species-list">${items.map(i => `<span class="species-badge ${type}">${i}</span>`).join('')}</div></div>`;
+                    return items.map(i => `<span class="species-badge ${type}">${i}</span>`).join('');
                 };
 
+                // Helper para a Biodiversidade iNaturalist (Objetos)
                 const buildComplex = (items) => {
-                    if(!items || items.length === 0) return '<p style="color:#bbb; font-size:0.8em;">Sem dados locais registados.</p>';
-                    return items.map(i => `
+                    if(!items || items.length === 0) return '<p style="color:#bbb;font-size:0.8em;">Sem registos locais.</p>';
+                    return items.map(i => {
+                        // Deteta se é objeto (novo) ou string (antigo)
+                        const nome = i.nome || i;
+                        const img = i.imagem || '';
+                        const grupo = i.grupo || '';
+                        
+                        return `
                         <div class="species-badge-complex">
-                            ${i.imagem ? `<img src="${i.imagem}" onerror="this.style.display='none'">` : '🔍'}
-                            <div><b>${i.nome}</b><small>${i.grupo || 'Espécie'}</small></div>
-                        </div>`).join('');
+                            ${img ? `<img src="${img}" onerror="this.style.display='none'">` : '🔍'}
+                            <div>
+                                <b>${nome}</b>
+                                ${grupo ? `<small>${grupo}</small>` : ''}
+                            </div>
+                        </div>`;
+                    }).join('');
                 };
 
+                // Injeção nos IDs do teu HTML
                 document.getElementById('group-fauna').innerHTML = 
-                    buildSimple('Fauna Protegida / Ameaçada', b.fauna_protegida, 'protected') +
-                    `<span class="label-mini" style="margin-top:20px; display:block;">Biodiversidade Local (iNaturalist)</span>` +
+                    `<span class="label-mini">Fauna Protegida / Ameaçada</span>` +
+                    `<div class="species-list">` + buildSimple(b.fauna_protegida, 'protected') + buildSimple(b.fauna_ameacada, 'threatened') + `</div>` +
+                    `<span class="label-mini" style="margin-top:20px; display:block;">Biodiversidade Local (Registos Seek)</span>` +
                     `<div class="species-list">` + buildComplex(b.fauna_comum) + `</div>`;
 
                 document.getElementById('group-flora').innerHTML = 
-                    buildSimple('Flora Protegida', b.flora_protegida, 'protected') +
-                    buildSimple('Invasoras', b.flora_invasora, 'invasive');
-            }
-
-            function renderRelatorios() {
-                document.getElementById('report-grid-bio').innerHTML = relatoriosBio.map(r => `
-                    <div class="report-item">
-                        <h5 style="color: ${r.cor}">${r.titulo}</h5>
-                        <p>${r.texto}</p>
-                        <span class="report-source">Fonte: ${r.fonte}</span>
-                    </div>`).join('');
+                    `<span class="label-mini">Flora e Invasoras</span>` +
+                    `<div class="species-list">` + buildSimple(b.flora_protegida, 'protected') + buildSimple(b.flora_invasora, 'invasive') + `</div>`;
             }
 
             function renderizarCardsBio() {
                 const lang = localStorage.getItem('selected_lang') || 'pt';
-                document.getElementById('noticias-bio-dinamico').innerHTML = todasNoticias.map((n, i) => {
+                const container = document.getElementById('noticias-bio-dinamico');
+                if(!container) return;
+                
+                container.innerHTML = todasNoticias.slice(0, 4).map(n => {
                     const content = n[lang] || n.pt || n;
-                    return `
-                    <a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-item" style="${i >= visiveisBio ? 'display:none' : ''}">
+                    return `<a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-item">
                         <h3>${content.titulo}</h3>
                         <div class="news-meta"><span>${n.data}</span></div>
                     </a>`}).join('');
-                document.getElementById('btn-load-more-bio').style.display = todasNoticias.length > visiveisBio ? 'inline-block' : 'none';
             }
 
-            function iniciarCiclosBio() {
-                const imgs = document.querySelectorAll('#bio-globe-cycler img');
-                let cur = 0; setInterval(() => { imgs.forEach(i => i.classList.remove('active')); cur = (cur + 1) % imgs.length; imgs[cur].classList.add('active'); }, 5000);
-
-                const container = document.getElementById('bio-facts-container');
-                container.innerHTML = bioFacts.map((f, i) => `<div class="bio-fact-item ${i === 0 ? 'active' : ''}"><b>${f.titulo}</b> ${f.desc}</div>`).join('');
-                let factP = 0; setInterval(() => { const items = document.querySelectorAll('.bio-fact-item'); if(items.length) { items.forEach(el => el.classList.remove('active')); factP = (factP + 1) % items.length; items[factP].classList.add('active'); } }, 8000);
-            }
-
-            $(document).on('click', '#btn-load-more-bio', () => { visiveisBio += 4; renderizarCardsBio(); });
-
+            // Carregar Sidebar e Iniciar
             fetch('../sidebar-content.html').then(r => r.text()).then(html => {
                 document.getElementById('sidebar').innerHTML = html;
                 inicializarPagina();
-                $(document).on('click', '#btn-gps-trigger', function() {
-                    navigator.geolocation.getCurrentPosition(pos => {
-                        let closest = locationsDB[0], minD = Infinity;
-                        locationsDB.forEach(c => { if(!c.lat || c.lat === 0) return; const d = Math.sqrt(Math.pow(pos.coords.latitude-c.lat,2) + Math.pow(pos.coords.longitude-c.lon,2)); if(d < minD) { minD = d; closest = c; } });
-                        localStorage.setItem('biocultura_region', closest.id); location.reload();
-                    });
-                });
             });
         </script>
 	</body>
