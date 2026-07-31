@@ -1,191 +1,164 @@
 <!DOCTYPE HTML>
 <html>
-	<head>
-		<title>bioCultura - Detalhe da Notícia</title>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-		<link rel="stylesheet" href="../assets/css/main.css" />
-		<style>
-            body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
-			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
-            section { padding-top: 4em !important; min-height: 100vh; }
+<head>
+    <title>bioCultura - Detalhe da Notícia</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="../assets/css/main.css" />
+    <style>
+        body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
+        section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
+        section { padding-top: 4em !important; min-height: 100vh; }
+        #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
+        #wrapper { padding-left: 18em !important; }
 
-            #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
-            #wrapper { padding-left: 18em !important; }
+        .noticia-container { max-width: 900px; margin: 0 auto; width: 100%; padding: 0 2em; }
+        .noticia-cat { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 15px; display: block; color: #bbb; }
+        .noticia-titulo { font-size: 3.2em; font-weight: 900; color: #1a1a1a; letter-spacing: -1.5px; line-height: 1.1; margin: 0 0 25px 0; }
+        .noticia-meta { display: flex; align-items: center; gap: 12px; font-size: 0.85em; color: #888; margin-bottom: 2em; }
+        .source-logo-detail { width: 24px; height: 24px; object-fit: contain; border-radius: 4px; background: #f9f9f9; padding: 2px; }
+        .source-name { color: #1a1a1a; font-weight: 800; }
+        .noticia-hero-img { width: 100%; height: 500px; object-fit: cover; border-radius: 24px; margin-bottom: 3em; background: #f5f5f5; }
 
-            /* ALINHAMENTO GLOBAL UNIFICADO */
-            .noticia-container { max-width: 900px; margin: 0 auto; width: 100%; padding: 0 2em; }
-            
-            .noticia-cat { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 15px; display: block; color: #bbb; }
-            .noticia-titulo { font-size: 3.2em; font-weight: 900; color: #1a1a1a; letter-spacing: -1.5px; line-height: 1.1; margin: 0 0 25px 0; }
-            
-            .noticia-meta { display: flex; align-items: center; gap: 12px; font-size: 0.85em; color: #888; margin-bottom: 2em; }
-            .source-logo-detail { width: 24px; height: 24px; object-fit: contain; border-radius: 4px; background: #f9f9f9; padding: 2px; }
-            .source-name { color: #1a1a1a; font-weight: 800; }
+        .biocultura-box { background: #f8faff; padding: 2.5em; border-radius: 20px; margin-bottom: 3em; border: 1px solid #eef2f7; }
+        .biocultura-label { display: block; font-size: 0.6em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #5c6bc0; margin-bottom: 12px; }
+        .biocultura-text { color: #333; font-size: 1.15em; line-height: 1.7; margin: 0; font-weight: 500; }
 
-            .noticia-hero-img { width: 100%; height: 500px; object-fit: cover; border-radius: 24px; margin-bottom: 3em; background: #f5f5f5; }
+        .noticia-corpo { font-size: 1.15em; line-height: 1.8; color: #444; margin-bottom: 4em; }
+        .noticia-corpo p { margin-bottom: 1.5em; text-align: justify; }
+        .noticia-corpo h3 { font-size: 1.4em; font-weight: 800; color: #1a1a1a; margin: 2em 0 1em 0; }
 
-            /* ANÁLISE BIOCULTURA - IDENTIFICADA */
-            .biocultura-box { background: #f8faff; padding: 2.5em; border-radius: 20px; margin-bottom: 3em; border: 1px solid #eef2f7; }
-            .biocultura-label { display: block; font-size: 0.6em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #5c6bc0; margin-bottom: 12px; }
-            .biocultura-text { color: #333; font-size: 1.15em; line-height: 1.7; margin: 0; font-weight: 500; }
+        .noticia-footer { padding: 2em 0; border-top: 1px solid #f2f2f2; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px; }
+        .footer-link-oficial { font-size: 0.8em; font-weight: 800; text-transform: lowercase; color: #5c6bc0 !important; text-decoration: underline !important; }
 
-            .noticia-corpo { font-size: 1.15em; line-height: 1.8; color: #444; margin-bottom: 4em; }
-            .noticia-corpo p { margin-bottom: 1.5em; text-align: justify; }
-            .noticia-corpo h3 { font-size: 1.4em; font-weight: 800; color: #1a1a1a; margin: 2em 0 1em 0; }
+        @media screen and (max-width: 1280px) {
+            #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
+            #wrapper { padding-left: 0 !important; }
+            .noticia-titulo { font-size: 2.4em; }
+            .noticia-hero-img { height: 300px; }
+        }
+    </style>
+</head>
+<body class="is-preload">
+    <div id="wrapper">
+        <div id="main">
+            <div class="inner">
+                <section id="noticia-content">
+                    <div id="loading" class="noticia-container" style="color: #bbb; font-style: italic;">A carregar notícia...</div>
 
-            /* FOOTER META */
-            .noticia-footer { padding: 2em 0; border-top: 1px solid #f2f2f2; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px; }
-            .footer-link-oficial { font-size: 0.8em; font-weight: 800; text-transform: lowercase; color: #5c6bc0 !important; text-decoration: underline !important; }
-
-            @media screen and (max-width: 1280px) {
-                #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
-                #wrapper { padding-left: 0 !important; }
-                .noticia-titulo { font-size: 2.4em; }
-                .noticia-hero-img { height: 300px; }
-                .noticia-container { padding: 0 1.5em; }
-            }
-		</style>
-	</head>
-	<body class="is-preload">
-		<div id="wrapper">
-			<div id="main">
-                <div class="inner">
-                    <section id="noticia-content">
-                        <div id="loading" class="noticia-container" style="color: #bbb; font-style: italic;">A carregar notícia...</div>
-
-                        <div id="noticia-render" class="noticia-container" style="display:none;">
-                            <!-- Topo -->
-                            <span class="noticia-cat" id="cat">--</span>
-                            <h1 class="noticia-titulo" id="titulo">--</h1>
-                            
-                            <div class="noticia-meta">
-                                <img src="" class="source-logo-detail" id="source-logo" alt="">
-                                <span class="source-name" id="source-name-top">--</span>
-                                <span style="opacity: 0.3;">|</span>
-                                <span class="source-date" id="data">--</span>
-                            </div>
-
-                            <img src="" class="noticia-hero-img" id="imagem">
-
-                            <!-- Análise bioCultura -->
-                            <div class="biocultura-box" id="biocultura-box" style="display:none;">
-                                <span class="biocultura-label">Observatório bioCultura — Análise de Impacto</span>
-                                <p class="biocultura-text" id="biocultura-txt"></p>
-                            </div>
-
-                            <!-- Corpo da Notícia -->
-                            <div class="noticia-corpo" id="corpo"></div>
-
-                            <!-- Rodapé da Notícia -->
-                            <div class="noticia-footer">
-                                <div style="display: flex; align-items: center; gap: 12px;">
-                                    <img src="" class="source-logo-detail" id="footer-logo">
-                                    <span class="source-name" id="footer-source">--</span>
-                                    <span style="opacity: 0.3;">|</span>
-                                    <span class="source-date" id="footer-date">--</span>
-                                </div>
-                                <a id="official-link" href="#" target="_blank" class="footer-link-oficial">ver noticia original</a>
-                            </div>
-
-                            <div style="padding: 3em 0;">
-                                <a href="javascript:history.back()" style="font-size: 0.7em; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: #bbb; text-decoration: none;">← Voltar</a>
-                            </div>
+                    <div id="noticia-render" class="noticia-container" style="display:none;">
+                        <span class="noticia-cat" id="cat">--</span>
+                        <h1 class="noticia-titulo" id="titulo">--</h1>
+                        
+                        <div class="noticia-meta">
+                            <img src="" class="source-logo-detail" id="source-logo" alt="">
+                            <span class="source-name" id="source-name-top">--</span>
+                            <span style="opacity: 0.3;">|</span>
+                            <span class="source-date" id="data">--</span>
                         </div>
-                    </section>
 
-                    <footer style="padding: 4em 0 2em 0; border-top: 1px solid #f2f2f2; opacity: 0.3; text-align: right;">
-                        <span style="display: block; font-size: 0.85em; font-weight: 900; color: #333;">bioCultura</span>
-                        <span style="display: block; font-size: 0.5em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Global Regeneration</span>
-                    </footer>
-                </div>
+                        <img src="" class="noticia-hero-img" id="imagem">
+
+                        <div class="biocultura-box" id="biocultura-box" style="display:none;">
+                            <span class="biocultura-label">Análise bioCultura</span>
+                            <p class="biocultura-text" id="biocultura-txt"></p>
+                        </div>
+
+                        <div class="noticia-corpo" id="corpo"></div>
+
+                        <div class="noticia-footer">
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <img src="" class="source-logo-detail" id="footer-logo">
+                                <span class="source-name" id="footer-source">--</span>
+                                <span style="opacity: 0.3;">|</span>
+                                <span class="source-date" id="footer-date">--</span>
+                            </div>
+                            <a id="official-link" href="#" target="_blank" class="footer-link-oficial">ver noticia original</a>
+                        </div>
+
+                        <div style="padding: 3em 0;">
+                            <a href="javascript:history.back()" style="font-size: 0.7em; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: #bbb; text-decoration: none;">← Voltar</a>
+                        </div>
+                    </div>
+                </section>
+                <footer class="page-footer" style="padding: 4em 0 2em 0; border-top: 1px solid #f2f2f2; opacity: 0.3; text-align: right;">
+                    <span style="display: block; font-size: 0.85em; font-weight: 900; color: #333;">bioCultura</span>
+                    <span style="display: block; font-size: 0.5em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Global Regeneration</span>
+                </footer>
             </div>
-			<div id="sidebar"></div>
-		</div>
+        </div>
+        <div id="sidebar"></div>
+    </div>
 
-		<script src="/assets/js/jquery.min.js"></script>
-            <script>
-            const catColors = { 
-                'water': '#3498db', 'air': '#95a5a6', 'soil': '#e67e22', 
-                'IA': '#7b1fa2', 'miner': '#c62828', 'biodiv': '#2ecc71', 'ethicnrg': '#f1c40f' 
-            };
+    <script src="../assets/js/jquery.min.js"></script>
+    <script>
+        const catColors = { 
+            'water': '#3498db', 'air': '#95a5a6', 'soil': '#e67e22', 
+            'IA': '#7b1fa2', 'miner': '#c62828', 'biodiv': '#2ecc71', 'ethicnrg': '#f1c40f' 
+        };
 
-            async function carregarNoticia() {
-                const urlParams = new URLSearchParams(window.location.search);
-                const noticiaId = urlParams.get('id');
-                
-                // Garante que o idioma é 'pt' por defeito
-                let lang = localStorage.getItem('selected_lang');
-                if (!lang || lang === "undefined" || lang === "null") lang = 'pt';
+        async function carregarNoticia() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const noticiaId = urlParams.get('id');
+            const lang = localStorage.getItem('selected_lang') || 'pt';
 
-                if (!noticiaId) { window.location.href = '/index.html'; return; }
+            if (!noticiaId) { window.location.href = '../index.html'; return; }
 
-                try {
-                    // Fetch com cache buster para forçar atualização no Safari
-                    const response = await fetch('/data/noticias.json?v=' + Date.now());
-                    const noticias = await response.json();
-                    const n = noticias.find(item => item.id === noticiaId);
+            try {
+                // Caminho absoluto para evitar erros de pasta
+                const response = await fetch('/data/noticias.json?v=' + Date.now());
+                const noticias = await response.json();
+                const n = noticias.find(item => item.id === noticiaId);
 
-                    if (n) {
-                        // ACESSO AO CONTEÚDO: n['pt'] ou n['en'], etc.
-                        const content = n[lang] || n['pt'];
+                if (n) {
+                    // Lógica de Extração de Conteúdo (Suporta formato antigo e novo i18n)
+                    const content = n[lang] || n['pt'] || n; 
 
-                        if (!content) {
-                            console.error("Idioma não encontrado no JSON");
-                            return;
-                        }
-
-                        document.getElementById('loading').style.display = 'none';
-                        document.getElementById('noticia-render').style.display = 'block';
-                        
-                        // Título e Corpo (vindo do objeto content)
-                        document.getElementById('titulo').innerText = content.titulo || "Sem título";
-                        document.getElementById('corpo').innerHTML = content.corpo || "";
-                        document.title = (content.titulo || "bioCultura") + " - bioCultura";
-                        
-                        // Análise bioCultura
-                        const bioBox = document.getElementById('biocultura-box');
-                        if (content.resumo_biocultura) {
-                            bioBox.style.display = 'block';
-                            document.getElementById('biocultura-txt').innerHTML = content.resumo_biocultura;
-                        } else {
-                            bioBox.style.display = 'none';
-                        }
-
-                        // Metadados (raiz do objeto n)
-                        document.getElementById('imagem').src = n.imagem || "";
-                        document.getElementById('data').innerText = n.data || "";
-                        document.getElementById('source-name-top').innerText = n.fonte || "";
-                        
-                        const catEl = document.getElementById('cat');
-                        catEl.innerText = n.categoria || "";
-                        if(catColors[n.categoria]) catEl.style.color = catColors[n.categoria];
-
-                        // Logos e Links
-                        let domain = "";
-                        try { domain = new URL(n.url).hostname; } catch(e) { domain = "sapo.pt"; }
-                        const forcedLogo = `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
-                        
-                        document.getElementById('source-logo').src = n.logo || forcedLogo;
-                        document.getElementById('footer-logo').src = n.logo || forcedLogo;
-                        document.getElementById('official-link').href = n.url || "#";
-                        document.getElementById('footer-source').innerText = n.fonte || "";
-                        document.getElementById('footer-date').innerText = n.data || "";
-
-                    } else {
-                        document.getElementById('loading').innerText = "Notícia não encontrada.";
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('noticia-render').style.display = 'block';
+                    
+                    document.getElementById('titulo').innerText = content.titulo || n.titulo;
+                    document.getElementById('corpo').innerHTML = content.corpo || n.corpo || "";
+                    document.title = (content.titulo || n.titulo) + " - bioCultura";
+                    
+                    const bioTxt = content.resumo_biocultura || n.resumo_biocultura || n.resumo;
+                    if (bioTxt) {
+                        document.getElementById('biocultura-box').style.display = 'block';
+                        document.getElementById('biocultura-txt').innerHTML = bioTxt;
                     }
-                } catch (e) { 
-                    console.error("Erro técnico:", e);
-                    document.getElementById('loading').innerText = "Erro ao carregar ficheiro de dados.";
-                }
-            }
 
-            // Carrega sidebar da raiz
-            fetch('/sidebar-content.html').then(r => r.text()).then(html => {
-                document.getElementById('sidebar').innerHTML = html;
-                carregarNoticia();
-            });
-        </script>
-	</body>
+                    document.getElementById('imagem').src = n.imagem || "";
+                    document.getElementById('data').innerText = n.data || "";
+                    document.getElementById('source-name-top').innerText = n.fonte || "";
+                    
+                    const catEl = document.getElementById('cat');
+                    catEl.innerText = n.categoria || "";
+                    if(catColors[n.categoria]) catEl.style.color = catColors[n.categoria];
+
+                    // Logos
+                    let domain = "";
+                    try { domain = new URL(n.url).hostname; } catch(e) { domain = "sapo.pt"; }
+                    const forcedLogo = `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
+                    
+                    document.getElementById('source-logo').src = n.logo || forcedLogo;
+                    document.getElementById('footer-logo').src = n.logo || forcedLogo;
+                    document.getElementById('official-link').href = n.url || "#";
+                    document.getElementById('footer-source').innerText = n.fonte || "";
+                    document.getElementById('footer-date').innerText = n.data || "";
+
+                } else {
+                    document.getElementById('loading').innerText = "Notícia não encontrada.";
+                }
+            } catch (e) { 
+                console.error("Erro:", e);
+                document.getElementById('loading').innerText = "Erro ao carregar dados.";
+            }
+        }
+
+        fetch('/sidebar-content.html').then(r => r.text()).then(html => {
+            document.getElementById('sidebar').innerHTML = html;
+            carregarNoticia();
+        });
+    </script>
+</body>
 </html>
