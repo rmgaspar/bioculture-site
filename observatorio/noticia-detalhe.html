@@ -4,7 +4,7 @@
 		<title>bioCultura - Detalhe da Notícia</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-		<link rel="stylesheet" href="/assets/css/main.css" />
+		<link rel="stylesheet" href="../assets/css/main.css" />
 		<style>
             body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
 			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
@@ -118,33 +118,32 @@
                 if (!noticiaId) { window.location.href = '../index.html'; return; }
 
                 try {
-                    // NOTA: Adicionei ../ para sair da pasta observatorio e encontrar a pasta data
+                    // Usamos ../ para sair da pasta 'observatorio' e entrar em 'data'
                     const response = await fetch('../data/noticias.json?v=' + Date.now());
                     const noticias = await response.json();
                     const n = noticias.find(item => item.id === noticiaId);
 
                     if (n) {
-                        const content = n[lang] || n['pt'] || {};
+                        const content = n[lang] || n['pt'];
 
                         document.getElementById('loading').style.display = 'none';
                         document.getElementById('noticia-render').style.display = 'block';
                         
-                        // Preenchimento forçado para evitar "undefined"
-                        document.getElementById('titulo').innerText = content.titulo || "Título Indisponível";
-                        document.getElementById('corpo').innerHTML = content.corpo || "Conteúdo Indisponível";
-                        document.title = (content.titulo || "bioCultura") + " - bioCultura";
+                        document.getElementById('titulo').innerText = content.titulo;
+                        document.getElementById('corpo').innerHTML = content.corpo;
+                        document.title = content.titulo + " - bioCultura";
                         
                         if (content.resumo_biocultura) {
                             document.getElementById('biocultura-box').style.display = 'block';
                             document.getElementById('biocultura-txt').innerHTML = content.resumo_biocultura;
                         }
 
-                        document.getElementById('imagem').src = n.imagem || "";
-                        document.getElementById('data').innerText = n.data || "";
-                        document.getElementById('source-name-top').innerText = n.fonte || "";
+                        document.getElementById('imagem').src = n.imagem;
+                        document.getElementById('data').innerText = n.data;
+                        document.getElementById('source-name-top').innerText = n.fonte;
                         
                         const catEl = document.getElementById('cat');
-                        catEl.innerText = n.categoria || "";
+                        catEl.innerText = n.categoria;
                         if(catColors[n.categoria]) catEl.style.color = catColors[n.categoria];
 
                         let domain = "";
@@ -154,19 +153,18 @@
                         document.getElementById('source-logo').src = n.logo || forcedLogo;
                         document.getElementById('footer-logo').src = n.logo || forcedLogo;
                         document.getElementById('official-link').href = n.url || "#";
-                        document.getElementById('footer-source').innerText = n.fonte || "";
-                        document.getElementById('footer-date').innerText = n.data || "";
+                        document.getElementById('footer-source').innerText = n.fonte;
+                        document.getElementById('footer-date').innerText = n.data;
 
                     } else {
                         document.getElementById('loading').innerText = "Notícia não encontrada.";
                     }
                 } catch (e) { 
-                    console.error("Erro ao carregar JSON:", e);
+                    console.error("Erro:", e);
                     document.getElementById('loading').innerText = "Erro ao carregar dados.";
                 }
             }
 
-            // Sidebar também precisa de ../ para subir de nível
             fetch('../sidebar-content.html').then(r => r.text()).then(html => {
                 document.getElementById('sidebar').innerHTML = html;
                 carregarNoticia();
