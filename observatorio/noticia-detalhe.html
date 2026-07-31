@@ -115,32 +115,41 @@
                 const noticiaId = urlParams.get('id');
                 let lang = localStorage.getItem('selected_lang') || 'pt';
 
+                console.log("Tentando carregar ID:", noticiaId);
+                console.log("Idioma ativo:", lang);
+
                 if (!noticiaId) { window.location.href = 'index.html'; return; }
 
                 try {
-                    // O parâmetro ?v= forçará o GitHub a entregar o JSON novo
-                    const response = await fetch('data/noticias.json?v=' + Date.now());
+                    // Forçamos o download do JSON ignorando a cache do Safari
+                    const response = await fetch('data/noticias.json?cachebuster=' + Date.now());
                     const noticias = await response.json();
                     const n = noticias.find(item => item.id === noticiaId);
 
                     if (n) {
-                        // Tenta carregar o idioma selecionado, senao usa PT
-                        const content = n[lang] || n['pt'];
+                        console.log("Dados da notícia no JSON:", n);
+
+                        // Tenta aceder ao idioma, se não existir tenta 'pt', se não existir usa objeto vazio
+                        const content = n[lang] || n['pt'] || {};
+
+                        if (Object.keys(content).length === 0) {
+                            console.error("ERRO: Não foi encontrada a chave de idioma 'pt' ou '" + lang + "' no JSON.");
+                        }
 
                         document.getElementById('loading').style.display = 'none';
                         document.getElementById('noticia-render').style.display = 'block';
                         
-                        // Preenchimento obrigatório via objeto 'content'
+                        // Preenchimento com Fallback para evitar a palavra "undefined"
+                        document.getElementById('titulo').innerText = content.titulo || "Título Indisponível";
+                        document.getElementById('corpo').innerHTML = content.corpo || "Conteúdo Indisponível";
                         document.title = (content.titulo || "bioCultura") + " - bioCultura";
-                        document.getElementById('titulo').innerText = content.titulo || "Título indisponível";
-                        document.getElementById('corpo').innerHTML = content.corpo || "Conteúdo indisponível";
                         
                         if (content.resumo_biocultura) {
                             document.getElementById('biocultura-box').style.display = 'block';
                             document.getElementById('biocultura-txt').innerHTML = content.resumo_biocultura;
                         }
 
-                        // Imagem e Metadados (raiz do JSON)
+                        // Imagem e Metadados (raiz do objeto)
                         document.getElementById('imagem').src = n.imagem || "";
                         document.getElementById('data').innerText = n.data || "";
                         document.getElementById('source-name-top').innerText = n.fonte || "";
@@ -161,10 +170,11 @@
                         document.getElementById('footer-date').innerText = n.data || "";
 
                     } else {
+                        console.error("ID não encontrado no ficheiro JSON.");
                         document.getElementById('loading').innerText = "Notícia não encontrada.";
                     }
                 } catch (e) { 
-                    console.error("Erro técnico:", e);
+                    console.error("Erro na leitura do JSON:", e);
                     document.getElementById('loading').innerText = "Erro ao carregar dados.";
                 }
             }
@@ -172,7 +182,7 @@
             fetch('sidebar-content.html').then(r => r.text()).then(html => {
                 document.getElementById('sidebar').innerHTML = html;
                 carregarNoticia();
-            });
+            }).catch(err => console.error("Erro ao carregar sidebar:", err));
         </script>
 	</body>
 </html>
