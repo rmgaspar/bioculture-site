@@ -82,6 +82,8 @@
         .page-footer { margin-top: auto; padding: 4em 0 2em 0; border-top: 1px solid #f2f2f2; opacity: 0.3; text-align: right; }
         .bio-res-item { padding: 12px 18px; font-size: 0.9em; color: #666; cursor: pointer; border-bottom: 1px solid #f9f9f9 !important; }
 
+        .species-badge img { margin-right: 5px; vertical-align: middle; }
+
         @media screen and (max-width: 1280px) {
             #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
             #wrapper { padding-left: 0 !important; }
@@ -248,7 +250,7 @@
             const prefix = window.location.pathname.includes('/ecossistemas/') || window.location.pathname.includes('/energia/') ? '../' : '/';
             
             const [rLoc, rNews] = await Promise.all([
-                fetch(`${prefix}data/freguesias_portugal.json`).then(r => r.json()),
+                fetch(`${prefix}data/bioregioes.json`).then(r => r.json()), // Nome correto do ficheiro otimizado
                 fetch(`${prefix}data/noticias.json`).then(r => r.json())
             ]);
             
@@ -278,6 +280,58 @@
             });
             localStorage.setItem('selected_lang', lang);
         } catch (err) { console.error("Erro i18n:", err); }
+    }
+
+    // 1. NOVA FUNÇÃO PARA CARREGAR BIOMAS (IDs + MASTER)
+    async function renderDashboard(info) {
+        if (!info || !info.id) return;
+
+        try {
+            const prefix = window.location.pathname.includes('/ecossistemas/') ? '../' : '/';
+            
+            // Carrega o Master de Espécies (o dicionário)
+            const resMaster = await fetch(`${prefix}data/especies_master.json`);
+            const master = await resMaster.json();
+
+            document.getElementById('bio-dashboard').style.display = 'block';
+            document.getElementById('reg-name').innerText = info.titulo;
+
+            // Limpa os containers
+            const faunaCont = document.getElementById('group-fauna');
+            const floraCont = document.getElementById('group-flora');
+            faunaCont.innerHTML = '<span class="label-mini">Fauna</span><div class="species-list"></div>';
+            floraCont.innerHTML = '<span class="label-mini">Flora</span><div class="species-list"></div>';
+
+            const faunaList = faunaCont.querySelector('.species-list');
+            const floraList = floraCont.querySelector('.species-list');
+
+            // Mapeia os IDs para os dados reais do Master
+            if (info.biomas && info.biomas.especies_ids) {
+                info.biomas.especies_ids.forEach(id => {
+                    const esp = master[id];
+                    if (!esp) return;
+
+                    const badge = document.createElement('div');
+                    badge.className = 'species-badge';
+                    // Adiciona classes especiais se necessário (ex: protegida)
+                    if (esp.grupo === 'Amphibia' || esp.grupo === 'Mammalia') badge.classList.add('protected');
+                    
+                    badge.innerHTML = `
+                        <img src="${esp.imagem}" style="width:20px; height:20px; border-radius:50%; object-fit:cover;">
+                        ${esp.nome}
+                    `;
+                    
+                    // Separa por grupo (simplificado)
+                    if (esp.grupo === 'Plantae') {
+                        floraList.appendChild(badge);
+                    } else {
+                        faunaList.appendChild(badge);
+                    }
+                });
+            }
+        } catch (e) {
+            console.error("Erro ao renderizar dashboard de biomas:", e);
+        }
     }
 
     // 6. RENDERIZAÇÃO DE NOTÍCIAS (Correção do Undefined)
