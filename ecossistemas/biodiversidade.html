@@ -9,67 +9,77 @@
         body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
         section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
         section { min-height: 100vh; display: flex; flex-direction: column; }
-
-        #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
+        #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
         #wrapper { padding-left: 18em !important; }
-
         .inner { padding: 2.2em 4em 0 4em !important; max-width: 1600px !important; margin: 0 auto; width: 100%; }
-        .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; margin-bottom: 15px; display: block; line-height: 1; }
 
-        /* HERO WRAP LOGIC */
+        /* HERO & WRAP */
         .hero-text { overflow: visible; }
-        .hero-text h1 { font-size: 4em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; line-height: 0.95; margin: 0 0 20px 0; }
+        .hero-text h1 { font-size: 4em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; line-height: 0.95; margin: 0; }
+        .reg-info-top { font-size: 0.9em; font-style: italic; color: #888; margin: 10px 0 40px 0; display: block; }
         
         .hero-visual { 
-            float: right; 
-            margin-left: 40px; 
-            margin-bottom: 20px; 
-            shape-outside: circle(50%); 
-            width: 480px; height: 480px;
+            float: right; margin-left: 40px; margin-bottom: 20px; 
+            shape-outside: circle(50%); width: 480px; height: 480px; 
         }
-        .hero-globe { 
-            width: 100%; height: 100%; 
-            border-radius: 50%; overflow: hidden; 
-            box-shadow: 0 40px 100px rgba(0,0,0,0.12); 
-            background: #1a1a1a;
-        }
+        .hero-globe { width: 100%; height: 100%; border-radius: 50%; overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,0.12); background: #1a1a1a; }
         .hero-globe img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* FILTROS */
-        .filter-bar { display: flex; flex-wrap: wrap; gap: 8px; margin: 30px 0; clear: left; }
+        /* FILTROS (Sem borders) */
+        .filter-bar { display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 30px; }
         .filter-btn { 
-            background: #f9f9f9; border: 1px solid #eee; padding: 5px 14px; 
-            border-radius: 50px; font-size: 0.65em; font-weight: 800; 
-            text-transform: uppercase; cursor: pointer; transition: 0.3s; color: #888;
+            background: none; border: none; padding: 0; font-size: 0.75em; 
+            font-weight: 800; text-transform: uppercase; cursor: pointer; 
+            color: #bbb; transition: 0.3s; letter-spacing: 1px;
         }
-        .filter-btn.active { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
+        .filter-btn.active { color: #1a1a1a; }
+        .filter-btn:hover { color: #888; }
 
-        /* BIOMAS LIST */
-        .species-list { display: flex; flex-wrap: wrap; gap: 10px; }
+        /* AGRUPAMENTO POR FAMÍLIAS */
+        .family-group { margin-bottom: 25px; display: block; clear: left; }
+        .family-title { font-size: 0.6em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; display: block; }
+        
+        /* CORES POR FAMÍLIA */
+        .family-Plantae { color: #7cb342; }
+        .family-Amphibia { color: #00acc1; }
+        .family-Fungi { color: #8e24aa; }
+        .family-Actinopterygii { color: #1e88e5; }
+        .family-Reptilia { color: #f4511e; }
+        .family-Aves { color: #5c6bc0; }
+        .family-Insecta { color: #fb8c00; }
+        .family-Mammalia { color: #6d4c41; }
+        .family-Mollusca { color: #455a64; }
+
+        .species-list { display: flex; flex-wrap: wrap; gap: 8px; }
         .species-badge { 
             display: inline-flex; align-items: center; gap: 8px; 
-            background: #fdfdfd; color: #555; padding: 6px 14px; 
-            border-radius: 50px; font-size: 0.8em; font-weight: 700; 
+            background: #fcfcfc; color: #666; padding: 5px 12px; 
+            border-radius: 50px; font-size: 0.8em; font-weight: 600; 
             border: 1px solid #f2f2f2; cursor: pointer; transition: 0.2s;
         }
-        .species-badge:hover { transform: translateY(-2px); border-color: #5c6bc0; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-        .species-badge img { width: 22px; height: 22px; border-radius: 50%; object-fit: cover; }
+        .species-badge:hover { border-color: #ddd; transform: translateY(-1px); }
+        .species-badge img { width: 18px; height: 18px; border-radius: 50%; object-fit: cover; }
 
-        /* RELATÓRIOS E ALERTAS */
-        .summary-box { background: #f6fff8; padding: 3.5em; margin: 2.5em 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; border-radius: 15px; border-left: 4px solid #2e7d32; clear: both; }
+        /* BOTÃO VER MAIS/MENOS (Sem border) */
+        .btn-toggle-list { background: none; border: none; color: #5c6bc0; font-weight: 800; text-transform: lowercase; letter-spacing: 2px; cursor: pointer; margin-top: 15px; font-size: 0.7em; padding: 0; }
+
+        /* REMOÇÃO DE FRAMES (Borders esquerdas) */
+        .summary-box { background: #f6fff8; padding: 3.5em; margin: 2.5em 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; border-radius: 20px; border-left: none !important; clear: both; }
+        .bio-impact-box { background: #f6fff8; padding: 2.5em 3em; border-radius: 20px; border-left: none !important; min-height: 80px; }
         .data-row { display: block; padding: 2.5em 0; border-bottom: 1px solid #f2f2f2; }
-        .report-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; margin-top: 10px; }
-        .report-item { border-top: 1px solid #f9f9f9; padding-top: 20px; }
-        .bio-impact-box { background: #f6fff8; padding: 2.5em 3em; border-radius: 20px; border-left: 4px solid #2e7d32; min-height: 100px; }
-        .bio-fact-item { display: none; font-size: 1.1em; color: #4a7a56; }
-        .bio-fact-item.active { display: block; }
+        .report-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; }
 
-        .btn-ver-mais { background: none; border: none; color: #5c6bc0; font-weight: 800; text-transform: lowercase; letter-spacing: 2px; cursor: pointer; margin-top: 20px; font-size: 0.75em; }
+        /* NOTÍCIAS (Paridade com outras páginas) */
+        .news-header { font-size: 0.8em; font-weight: 400; text-transform: lowercase; letter-spacing: 3px; color: #bbb; margin-bottom: 2.5em; display: block; margin-top: 4em; }
+        .news-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 30px; margin-bottom: 4em; }
+        .news-item { text-decoration: none; color: inherit; display: block; padding: 25px; background: #fdfdfd; border: 1px solid #f2f2f2; border-radius: 12px; transition: 0.3s; }
+        .news-item:hover { transform: translateY(-5px); border-color: #ddd; }
+        .news-item h3 { font-size: 1.15em; font-weight: 700; color: #1a1a1a; margin-bottom: 12px; line-height: 1.3; min-height: 2.6em; }
+        .news-meta { display: flex; align-items: center; gap: 10px; border-top: 1px solid #f9f9f9; padding-top: 12px; }
+        .news-meta span { font-size: 0.65em; font-weight: 800; color: #bbb; text-transform: uppercase; letter-spacing: 1px; }
 
         @media screen and (max-width: 1280px) {
-            #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
-            #wrapper { padding-left: 0 !important; }
-            .hero-visual { float: none; width: 350px; height: 350px; margin: 0 auto 30px auto; shape-outside: none; }
+            .hero-visual { float: none; width: 320px; height: 320px; margin: 0 auto 30px auto; shape-outside: none; }
             .summary-box, .report-grid { grid-template-columns: 1fr; }
         }
     </style>
@@ -87,6 +97,7 @@
                         </div>
                         <span class="category-label">Ecossistemas</span>
                         <h1>Biodiversidade: A Teia da Vida</h1>
+                        <span class="reg-info-top">Análise regional: <strong id="reg-name" style="color:#444">...</strong></span>
                         
                         <div id="bio-dashboard" style="display:none;">
                             <div class="filter-bar" id="bio-filters">
@@ -101,12 +112,8 @@
                                 <button class="filter-btn" onclick="setFiltro('mamiferos')">Mamíferos</button>
                             </div>
                             
-                            <div class="species-list" id="lista-biomas-dinamica"></div>
-                            <button id="btn-ver-mais-bio" class="btn-ver-mais" onclick="verMais()">ver mais +</button>
-                            
-                            <p style="font-size: 0.9em; font-style: italic; color: #bbb; margin: 40px 0 0 0;">
-                                Análise regional: <strong id="reg-name" style="color:#888">...</strong>
-                            </p>
+                            <div id="lista-biomas-agrupada"></div>
+                            <button id="btn-toggle-bio" class="btn-toggle-list" onclick="toggleLimite()">ver mais +</button>
                         </div>
                     </div>
 
@@ -144,7 +151,7 @@
 
     <script src="/assets/js/jquery.min.js"></script>
     <script>
-    let todasNoticias = [], todasEspeciesRegiao = [], filtroAtual = 'tudo', limiteExibicao = 15;
+    let todasNoticias = [], todasEspeciesRegiao = [], filtroAtual = 'tudo', expandido = false;
 
     const mappingFiltros = {
         'plantas': 'Plantae', 'anfibios': 'Amphibia', 'fungos': 'Fungi',
@@ -159,20 +166,14 @@
                 fetch('/data/noticias.json').then(r => r.json()),
                 fetch('/data/especies_master.json').then(r => r.json())
             ]);
-            
             todasNoticias = rNews;
-            const savedId = localStorage.getItem('biocultura_region');
-            const info = rLoc.find(i => String(i.id) === String(savedId)) || rLoc[0];
+            const info = rLoc.find(i => String(i.id) === String(localStorage.getItem('biocultura_region'))) || rLoc[0];
 
             if (info) {
                 document.getElementById('bio-dashboard').style.display = 'block';
                 document.getElementById('reg-name').innerText = info.titulo;
-                
-                // Recuperar Relatórios e Factos
                 renderRelatorios(info.relatorios || info.extensao_biocultura?.relatorios || []);
                 renderFactos(info.alertas_factos || info.extensao_biocultura?.alertas_factos || []);
-
-                // Preparar Espécies
                 todasEspeciesRegiao = (info.biomas?.especies_ids || []).map(id => ({ id, ...rMaster[id] })).filter(e => e.nome);
                 renderizarBiomas();
             }
@@ -181,28 +182,56 @@
     }
 
     function renderizarBiomas() {
-        const container = document.getElementById('lista-biomas-dinamica');
+        const container = document.getElementById('lista-biomas-agrupada');
         const filtradas = todasEspeciesRegiao.filter(e => filtroAtual === 'tudo' || e.grupo === mappingFiltros[filtroAtual]);
         
-        container.innerHTML = filtradas.slice(0, limiteExibicao).map(esp => `
-            <div class="species-badge" onclick="window.location.href='especie-detalhe.html?id=${esp.id}'">
-                <img src="${esp.imagem || '/assets/img/placeholder.jpg'}">
-                ${esp.nome}
-            </div>
-        `).join('');
+        // Agrupar por família
+        const grupos = {};
+        filtradas.forEach(e => {
+            if (!grupos[e.grupo]) grupos[e.grupo] = [];
+            grupos[e.grupo].push(e);
+        });
 
-        document.getElementById('btn-ver-mais-bio').style.display = filtradas.length > limiteExibicao ? 'block' : 'none';
+        const limite = expandido ? 999 : 12;
+        let count = 0;
+        let html = '';
+
+        for (const [familia, lista] of Object.entries(grupos)) {
+            if (count >= limite) break;
+            const displayList = lista.slice(0, limite - count);
+            if (displayList.length === 0) continue;
+
+            html += `
+                <div class="family-group">
+                    <span class="family-title family-${familia}">${familia}</span>
+                    <div class="species-list">
+                        ${displayList.map(esp => `
+                            <div class="species-badge" onclick="window.location.href='especie-detalhe.html?id=${esp.id}'">
+                                <img src="${esp.imagem || '/assets/img/placeholder.jpg'}">
+                                ${esp.nome}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            count += displayList.length;
+        }
+
+        container.innerHTML = html;
+        const btn = document.getElementById('btn-toggle-bio');
+        btn.innerText = expandido ? 'ver menos -' : 'ver mais +';
+        btn.style.display = filtradas.length > 12 ? 'block' : 'none';
     }
 
     function setFiltro(f) {
         filtroAtual = f;
-        limiteExibicao = 15;
+        expandido = false;
         document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
         event.target.classList.add('active');
         renderizarBiomas();
     }
 
-    function verMais() { limiteExibicao += 15; renderizarBiomas(); }
+    function toggleLimite() { expandido = !expandido; renderizarBiomas(); }
 
     function renderRelatorios(lista) {
         document.getElementById('report-grid-bio').innerHTML = lista.map(r => `
@@ -212,7 +241,8 @@
 
     function renderFactos(lista) {
         const container = document.getElementById('bio-facts-container');
-        container.innerHTML = lista.map((f, i) => `<div class="bio-fact-item ${i===0?'active':''}"><b>Facto</b> ${f}</div>`).join('');
+        if(!lista.length) return container.innerHTML = 'Sem factos registados.';
+        container.innerHTML = lista.map((f, i) => `<div class="bio-fact-item ${i===0?'active':''}"><b>Facto Regional</b> ${f}</div>`).join('');
         let p = 0;
         setInterval(() => {
             const items = container.querySelectorAll('.bio-fact-item');
@@ -225,12 +255,19 @@
 
     function renderizarNoticias() {
         const container = document.getElementById('noticias-bio-dinamico');
+        const lang = localStorage.getItem('selected_lang') || 'pt';
         const filtradas = todasNoticias.filter(n => n.categoria === 'biodiv' || n.categoria === 'Biodiversidade');
-        container.innerHTML = filtradas.map(n => `
+        container.innerHTML = filtradas.map(n => {
+            const content = n[lang] || n['pt'] || n;
+            return `
             <a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-item">
-                <h3>${(n.pt || n).titulo}</h3>
-                <div class="news-meta"><span>${n.data}</span></div>
-            </a>`).join('');
+                <h3>${content.titulo}</h3>
+                <div class="news-meta">
+                    <img src="${n.logo}" style="width:16px; height:16px; opacity:0.5; filter:grayscale(100%)">
+                    <span>${n.data}</span>
+                </div>
+            </a>`;
+        }).join('');
     }
 
     fetch('/sidebar-content.html').then(r => r.text()).then(html => {
