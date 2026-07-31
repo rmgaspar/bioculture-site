@@ -202,25 +202,28 @@
 
             async function inicializarPagina() {
                 try {
+                    const prefix = window.location.pathname.includes('/recursos/') ? '../' : '/';
+                    
+                    // ALTERAÇÃO AQUI: Mudámos de freguesias_portugal.json para bioregioes.json
                     const [rLoc, rNews] = await Promise.all([
                         fetch(`${prefix}data/bioregioes.json`).then(r => r.json()),
                         fetch(`${prefix}data/noticias.json`).then(r => r.json())
                     ]);
-                    locationsDB = rLoc;
                     
-                    // Filtro de notícias por ID técnico 'water' e idioma
-                    const lang = localStorage.getItem('selected_lang') || 'pt';
-                    noticiasAgua = rNews.filter(n => n.categoria === 'water' && n[lang]);
+                    window.locationsDB = rLoc;
+                    todasNoticias = rNews;
 
                     const savedId = localStorage.getItem('biocultura_region');
-                    const info = locationsDB.find(i => String(i.id) === String(savedId)) || locationsDB[0];
-
-                    renderDashboard(info);
-                    renderizarCardsAgua();
-                    renderRelatorios();
-                    iniciarCiclosAgua();
-                    setupLocationLogic();
-                } catch(e) { console.error(e); }
+                    const info = window.locationsDB.find(i => String(i.id) === String(savedId)) || window.locationsDB[0];
+                    
+                    // Esta função é a que preenche os dados que vês em falta no print
+                    if (typeof renderWaterDashboard === "function") renderWaterDashboard(info);
+                    
+                    renderizarNoticias();
+                    setupSidebarLogic();
+                } catch(e) { 
+                    console.error("Erro ao carregar dados:", e); 
+                }
             }
 
             function setupLocationLogic() {
