@@ -305,17 +305,25 @@
         }
 
        function renderizarLista() {
-            const container = document.getElementById('observatorio-dinamico');
+            // Procura o contentor de notícias (funciona para Index e páginas de recursos)
+            const container = document.getElementById('observatorio-dinamico') || 
+                            document.getElementById('noticias-bio-dinamico') ||
+                            document.getElementById('noticias-ar-dinamico') ||
+                            document.getElementById('noticias-agua-dinamico') ||
+                            document.getElementById('noticias-solo-dinamico');
+            
             if(!container) return;
 
-            // Detetar idioma atual
+            // 1. Detetar idioma atual
             const lang = localStorage.getItem('selected_lang') || 'pt';
 
-            // Filtra notícias válidas (que tenham o ID e o conteúdo para a língua selecionada)
-            const noticiasValidas = todasNoticias.filter(n => n && n.id && n[lang]);
+            // 2. Filtrar notícias que têm o conteúdo para a língua (ou fallback para PT)
+            const noticiasValidas = todasNoticias.filter(n => n && n.id && (n[lang] || n['pt']));
 
             container.innerHTML = noticiasValidas.map((n, i) => {
-                const content = n[lang]; // Acede a n.pt ou n.en
+                // Tenta a língua selecionada, se não houver, usa PT como fallback
+                const content = n[lang] || n['pt']; 
+                
                 return `
                     <a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-item ${i >= visiveis ? 'hidden-card' : ''}">
                         <h3>${content.titulo}</h3>
@@ -326,12 +334,9 @@
                     </a>`;
             }).join('');
 
-            // Ajusta visibilidade dos botões
-            const btnMore = document.getElementById('btn-load-more');
-            const btnLess = document.getElementById('btn-show-less');
-            
+            // Ajusta visibilidade dos botões de paginação se existirem
+            const btnMore = document.getElementById('btn-load-more') || document.getElementById('btn-load-more-ar');
             if(btnMore) btnMore.style.display = visiveis < noticiasValidas.length ? 'inline-block' : 'none';
-            if(btnLess) btnLess.style.display = visiveis > 6 ? 'inline-block' : 'none';
         }
 
         function iniciarCiclos() {
