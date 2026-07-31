@@ -250,6 +250,19 @@
             }
         }
 
+        async function carregarBioregioes() {
+            try {
+                // O "?v=" + Date.now() garante que o ficheiro nunca venha da cache
+                const response = await fetch('data/bioregioes.json?v=' + Date.now());
+                const data = await response.json();
+                
+                console.log("Dados carregados:", data);
+                // Resto da tua lógica de renderização...
+            } catch (e) {
+                console.error("Erro ao carregar biomas:", e);
+            }
+        }
+
         document.getElementById('btn-load-more').onclick = () => { visibleCount += 8; renderSpeciesGrid(); };
 
         fetch('../sidebar-content.html').then(r => r.text()).then(html => {
