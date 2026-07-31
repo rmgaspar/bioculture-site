@@ -237,12 +237,11 @@
 
             async function inicializarPagina() {
                 try {
-                    const [rLoc, rAir, rNews] = await Promise.all([
-                        fetch('/data/freguesias_portugal.json').then(r => r.json()),
-                        fetch('/data/qualidade_ar.json').then(r => r.json()),
-                        fetch('/data/noticias.json').then(r => r.json())
-                    ]);
-                    locationsDB = rLoc; airStations = rAir;
+                    const [rLoc, rNews] = await Promise.all([
+                    fetch(`${prefix}data/bioregioes.json`).then(r => r.json()), // O novo ficheiro otimizado
+                    fetch(`${prefix}data/noticias.json`).then(r => r.json())
+                ]);
+                                    locationsDB = rLoc; airStations = rAir;
                     noticiasAr = rNews.filter(n => (n.categoria || "").toLowerCase().includes('ar'));
 
                     const savedId = localStorage.getItem('biocultura_region');
