@@ -114,47 +114,51 @@
                 const urlParams = new URLSearchParams(window.location.search);
                 const noticiaId = urlParams.get('id');
                 
-                // Limpeza de segurança para o idioma
+                // Garante que o idioma é 'pt' por defeito
                 let lang = localStorage.getItem('selected_lang');
                 if (!lang || lang === "undefined" || lang === "null") lang = 'pt';
 
                 if (!noticiaId) { window.location.href = '/index.html'; return; }
 
                 try {
-                    // O uso de /data/... (com barra inicial) funciona sempre no teu domínio bioculture.net
+                    // Fetch com cache buster para forçar atualização no Safari
                     const response = await fetch('/data/noticias.json?v=' + Date.now());
                     const noticias = await response.json();
                     const n = noticias.find(item => item.id === noticiaId);
 
                     if (n) {
-                        // Seleção do conteúdo traduzido
+                        // ACESSO AO CONTEÚDO: n['pt'] ou n['en'], etc.
                         const content = n[lang] || n['pt'];
 
-                        if (!content || !content.titulo) {
-                            console.error("Erro: Estrutura de idioma não encontrada para:", lang);
+                        if (!content) {
+                            console.error("Idioma não encontrado no JSON");
                             return;
                         }
 
                         document.getElementById('loading').style.display = 'none';
                         document.getElementById('noticia-render').style.display = 'block';
                         
-                        // Renderização dos campos traduzidos
-                        document.getElementById('titulo').innerText = content.titulo;
-                        document.getElementById('corpo').innerHTML = content.corpo;
-                        document.title = content.titulo + " - bioCultura";
+                        // Título e Corpo (vindo do objeto content)
+                        document.getElementById('titulo').innerText = content.titulo || "Sem título";
+                        document.getElementById('corpo').innerHTML = content.corpo || "";
+                        document.title = (content.titulo || "bioCultura") + " - bioCultura";
                         
+                        // Análise bioCultura
+                        const bioBox = document.getElementById('biocultura-box');
                         if (content.resumo_biocultura) {
-                            document.getElementById('biocultura-box').style.display = 'block';
+                            bioBox.style.display = 'block';
                             document.getElementById('biocultura-txt').innerHTML = content.resumo_biocultura;
+                        } else {
+                            bioBox.style.display = 'none';
                         }
 
-                        // Campos da raiz do JSON
-                        document.getElementById('imagem').src = n.imagem;
-                        document.getElementById('data').innerText = n.data;
-                        document.getElementById('source-name-top').innerText = n.fonte;
+                        // Metadados (raiz do objeto n)
+                        document.getElementById('imagem').src = n.imagem || "";
+                        document.getElementById('data').innerText = n.data || "";
+                        document.getElementById('source-name-top').innerText = n.fonte || "";
                         
                         const catEl = document.getElementById('cat');
-                        catEl.innerText = n.categoria;
+                        catEl.innerText = n.categoria || "";
                         if(catColors[n.categoria]) catEl.style.color = catColors[n.categoria];
 
                         // Logos e Links
@@ -165,19 +169,19 @@
                         document.getElementById('source-logo').src = n.logo || forcedLogo;
                         document.getElementById('footer-logo').src = n.logo || forcedLogo;
                         document.getElementById('official-link').href = n.url || "#";
-                        document.getElementById('footer-source').innerText = n.fonte;
-                        document.getElementById('footer-date').innerText = n.data;
+                        document.getElementById('footer-source').innerText = n.fonte || "";
+                        document.getElementById('footer-date').innerText = n.data || "";
 
                     } else {
                         document.getElementById('loading').innerText = "Notícia não encontrada.";
                     }
                 } catch (e) { 
                     console.error("Erro técnico:", e);
-                    document.getElementById('loading').innerText = "Erro ao carregar dados.";
+                    document.getElementById('loading').innerText = "Erro ao carregar ficheiro de dados.";
                 }
             }
 
-            // Carregar sidebar a partir da raiz
+            // Carrega sidebar da raiz
             fetch('/sidebar-content.html').then(r => r.text()).then(html => {
                 document.getElementById('sidebar').innerHTML = html;
                 carregarNoticia();
