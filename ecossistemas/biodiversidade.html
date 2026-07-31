@@ -9,11 +9,10 @@
         body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
         section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
         section { min-height: 100vh; display: flex; flex-direction: column; }
-        
         #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
         #wrapper { padding-left: 18em !important; }
         
-        /* Alinhamento de Precisão (Paridade com Planetarium Global) */
+        /* Alinhamento de Precisão - Topo */
         .inner { padding: 2.2em 4em 0 4em !important; max-width: 1600px !important; margin: 0 auto; width: 100%; }
         
         .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; display: block; }
@@ -25,17 +24,26 @@
         .hero-globe { width: 100%; height: 100%; border-radius: 50%; overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,0.12); }
         .hero-globe img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* Filtros Minimalistas */
-        .filter-bar { display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 25px; clear: left; }
+        /* FILTROS (REMOÇÃO TOTAL DE BORDERS E BOXES) */
+        .filter-bar { display: flex; flex-wrap: wrap; gap: 25px; margin-bottom: 20px; clear: left; }
         .filter-btn { 
-            background: none !important; border: none !important; padding: 0 !important; 
-            font-size: 0.65em !important; font-weight: 900 !important; text-transform: uppercase !important; 
-            cursor: pointer; color: #bbb !important; transition: 0.3s; letter-spacing: 2px !important;
+            background: none !important; 
+            border: none !important; 
+            box-shadow: none !important;
+            padding: 0 !important; 
+            font-size: 0.65em !important; 
+            font-weight: 900 !important; 
+            text-transform: uppercase !important; 
+            cursor: pointer; 
+            color: #bbb !important; 
+            transition: 0.3s; 
+            letter-spacing: 2px !important;
+            outline: none !important;
         }
         .filter-btn:hover { color: #888 !important; }
+        
+        /* Cores Ativas (Texto Puro) */
         .filter-btn.active { color: #555 !important; }
-
-        /* Cores Ativas por Família */
         .active-Plantae { color: #7cb342 !important; }
         .active-Amphibia { color: #00acc1 !important; }
         .active-Fungi { color: #8e24aa !important; }
@@ -66,9 +74,23 @@
         }
         .species-badge img { width: 18px; height: 18px; border-radius: 50%; object-fit: cover; }
 
-        .btn-toggle-bio { background: none !important; border: none !important; color: #bbb !important; font-weight: 800; text-transform: lowercase; letter-spacing: 2px; cursor: pointer; margin-top: 10px; font-size: 0.7em; }
+        /* VER MAIS/MENOS (Cinzento e sem border) */
+        .btn-toggle-bio { 
+            background: none !important; 
+            border: none !important; 
+            box-shadow: none !important;
+            color: #bbb !important; 
+            font-weight: 800; 
+            text-transform: lowercase; 
+            letter-spacing: 2px; 
+            cursor: pointer; 
+            margin-top: 10px; 
+            font-size: 0.7em; 
+            padding: 0 !important;
+            outline: none !important;
+        }
 
-        /* Secções de Baixo (Limpeza de Frames) */
+        /* Secções de Baixo */
         .summary-box { background: #f6fff8; padding: 3.5em; margin: 3em 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; border-radius: 15px; clear: both; align-items: start; }
         .summary-item h5 { font-size: 0.75em; font-weight: 900; text-transform: uppercase; margin-bottom: 15px; color: #2e7d32; }
         .summary-item p { font-size: 0.85em; line-height: 1.7; margin: 0; color: #555; text-align: justify; }
@@ -89,13 +111,13 @@
         .news-item h3 { font-size: 1.05em; font-weight: 700; color: #1a1a1a; margin-bottom: 12px; line-height: 1.3; min-height: 2.6em; }
         .news-meta { display: flex; align-items: center; gap: 10px; border-top: 1px solid #f9f9f9; padding-top: 12px; font-size: 0.6em; font-weight: 800; color: #bbb; text-transform: uppercase; }
 
-        /* Rodapé Alinhado */
+        /* Rodapé Alinhado à Direita */
         .page-footer { padding: 5em 0 4em 0; text-align: right; opacity: 0.4; }
         .logo-footer { display: block; font-size: 0.85em; font-weight: 900; color: #333; }
         .sublogo-footer { display: block; font-size: 0.5em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #bbb; }
 
         @media screen and (max-width: 1280px) {
-            .hero-visual { float: none; width: 320px; height: 320px; margin: 0 auto 30px auto; shape-outside: none; }
+            .hero-visual { float: none; width: 350px; height: 350px; margin: 0 auto 30px auto; shape-outside: none; }
             .summary-box { grid-template-columns: 1fr; }
         }
     </style>
@@ -174,6 +196,7 @@
     const bioFactsNacionais = [
         "Portugal tem 28% das espécies de vertebrados sob ameaça direta de extinção (ICNF).",
         "A fragmentação de habitats é a principal causa da perda de biodiversidade em território nacional.",
+        "Mais de 60% dos serviços ecossistémicos na Europa estão em declínio severo.",
         "As zonas húmidas portuguesas albergam 40% das espécies de aves migratórias da rota atlântica.",
         "A regeneração de florestas nativas pode sequestrar até 12 toneladas de CO2 por hectare/ano."
     ];
