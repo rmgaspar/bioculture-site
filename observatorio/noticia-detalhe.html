@@ -105,11 +105,20 @@
 
 		<script src="/assets/js/jquery.min.js"></script>
         <script>
+            const catColors = { 
+                'water': '#3498db', 
+                'air': '#95a5a6', 
+                'soil': '#e67e22', 
+                'IA': '#7b1fa2', 
+                'miner': '#c62828',
+                'biodiv': '#2ecc71',
+                'ethicnrg': '#f1c40f'
+            };
 
             async function carregarNoticia() {
                 const urlParams = new URLSearchParams(window.location.search);
                 const noticiaId = urlParams.get('id');
-                const lang = localStorage.getItem('selected_lang') || 'pt'; // Deteta idioma
+                const lang = localStorage.getItem('selected_lang') || 'pt';
 
                 if (!noticiaId) { window.location.href = '/index.html'; return; }
 
@@ -119,84 +128,45 @@
                     const n = noticias.find(item => item.id === noticiaId);
 
                     if (n) {
-                        // Seleciona o conteúdo traduzido (Fallback para PT se a tradução não existir)
+                        // Seleciona o conteúdo com base no idioma
                         const content = n[lang] || n['pt'];
 
                         document.getElementById('loading').style.display = 'none';
                         document.getElementById('noticia-render').style.display = 'block';
                         document.title = content.titulo + " - bioCultura";
                         
-                        document.getElementById('cat').innerText = n.categoria;
-                        document.getElementById('titulo').innerText = content.titulo;
-                        document.getElementById('source-name-top').innerText = n.fonte;
-                        document.getElementById('data').innerText = n.data;
-                        document.getElementById('imagem').src = n.imagem;
-                        document.getElementById('corpo').innerHTML = content.corpo;
-                        
-                        // Análise bioCultura Traduzida
-                        if (content.resumo_biocultura) {
-                            document.getElementById('biocultura-box').style.display = 'block';
-                            document.getElementById('biocultura-txt').innerHTML = content.resumo_biocultura;
-                        }
-
-                        // Footer
-                        document.getElementById('footer-source').innerText = n.fonte;
-                        document.getElementById('footer-date').innerText = n.data;
-                        document.getElementById('official-link').href = n.url || "#";
-
-                    } else {
-                        document.getElementById('loading').innerText = "Notícia não encontrada / News not found.";
-                    }
-                } catch (e) { console.error(e); }
-            }
-
-            const catColors = { 'Energia': '#f1c40f', 'Biodiversidade': '#2ecc71', 'Água': '#3498db', 'Ar': '#95a5a6', 'Solo': '#e67e22', 'Mineração': '#c62828', 'Transição Ética': '#7b1fa2' };
-
-            async function carregarNoticia() {
-                const urlParams = new URLSearchParams(window.location.search);
-                const noticiaId = urlParams.get('id');
-                if (!noticiaId) { window.location.href = '/index.html'; return; }
-
-                try {
-                    const response = await fetch('/data/noticias.json');
-                    const noticias = await response.json();
-                    const n = noticias.find(item => item.id === noticiaId);
-
-                    if (n) {
-                        document.getElementById('loading').style.display = 'none';
-                        document.getElementById('noticia-render').style.display = 'block';
-                        document.title = n.titulo + " - bioCultura";
-                        
+                        // Categoria e Cor
                         const catEl = document.getElementById('cat');
                         catEl.innerText = n.categoria;
                         if(catColors[n.categoria]) catEl.style.color = catColors[n.categoria];
 
-                        document.getElementById('titulo').innerText = n.titulo;
+                        // Textos Principais
+                        document.getElementById('titulo').innerText = content.titulo;
+                        document.getElementById('corpo').innerHTML = content.corpo;
                         
-                        // FORÇAR LOGOTIPO: Fallback robusto usando API do Google Favicons
+                        // Imagem Principal
+                        document.getElementById('imagem').src = n.imagem;
+                        
+                        // Logos e Fontes (Fallback Google Favicons)
                         let domain = "";
                         try { domain = new URL(n.url).hostname; } catch(e) { domain = "sapo.pt"; }
                         const forcedLogo = `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
                         
-                        // Aplicar logos (Topo e Fundo)
                         const logoTopo = document.getElementById('source-logo');
                         const logoFundo = document.getElementById('footer-logo');
                         logoTopo.src = n.logo || forcedLogo;
                         logoFundo.src = n.logo || forcedLogo;
                         
-                        // Fallback se a imagem do JSON falhar no carregamento
-                        logoTopo.onerror = function() { this.src = forcedLogo; };
-                        logoFundo.onerror = function() { this.src = forcedLogo; };
-
                         document.getElementById('source-name-top').innerText = n.fonte;
                         document.getElementById('data').innerText = n.data;
-                        document.getElementById('imagem').src = n.imagem;
-                        document.getElementById('corpo').innerHTML = n.corpo;
-                        
+
                         // Análise bioCultura
-                        if (n.resumo_biocultura || n.resumo) {
-                            document.getElementById('biocultura-box').style.display = 'block';
-                            document.getElementById('biocultura-txt').innerText = n.resumo_biocultura || n.resumo;
+                        const bioBox = document.getElementById('biocultura-box');
+                        if (content.resumo_biocultura) {
+                            bioBox.style.display = 'block';
+                            document.getElementById('biocultura-txt').innerHTML = content.resumo_biocultura;
+                        } else {
+                            bioBox.style.display = 'none';
                         }
 
                         // Footer
@@ -207,9 +177,13 @@
                     } else {
                         document.getElementById('loading').innerText = "Notícia não encontrada.";
                     }
-                } catch (e) { console.error(e); }
+                } catch (e) { 
+                    console.error("Erro ao carregar notícia:", e);
+                    document.getElementById('loading').innerText = "Erro ao carregar os dados.";
+                }
             }
 
+            // Carregar Sidebar e depois a notícia
             fetch('/sidebar-content.html').then(r => r.text()).then(html => {
                 document.getElementById('sidebar').innerHTML = html;
                 carregarNoticia();
