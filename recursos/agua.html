@@ -13,12 +13,14 @@
             #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
             #wrapper { padding-left: 18em !important; }
 
+            /* Alinhamento de Precisão */
             .inner { padding: 2.2em 4em 0 4em !important; max-width: 1600px !important; margin: 0 auto; width: 100%; }
             .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; margin-bottom: 15px; display: block; }
 
             .hero-split { display: flex; align-items: flex-start; justify-content: space-between; gap: 4em; margin-bottom: 2em; }
             .hero-text { flex: 1.5; text-align: left; padding-top: 5px; }
-            .hero-text h1 { font-size: 4em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; line-height: 0.95; margin-bottom: 20px; }
+            .hero-text h1 { font-size: 3.5em; font-weight: 900; color: #1a1a1a; letter-spacing: -2px; line-height: 1.1; margin: 15px 0 !important; }
+            .reg-info-top { font-size: 0.95em; font-style: italic; color: #888; margin-bottom: 50px; display: block; }
 
             .hero-visual { flex: 1; display: flex; justify-content: flex-end; }
             .hero-globe {
@@ -30,11 +32,10 @@
             }
             .hero-globe img { width: 100%; height: 100%; object-fit: cover; }
 
-            #reg-name { text-transform: none !important; }
-
             .data-row { display: block; padding: 2.5em 0; border-bottom: 1px solid #f2f2f2; }
             .data-row h4 { font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin: 0 0 25px 0; display: block; }
 
+            /* Gauges */
             .gauge-container { margin-bottom: 15px; width: 100%; max-width: 500px; }
             .gauge-label { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 6px; }
             .current-val { font-size: 1.2em; font-weight: 700; color: #1a1a1a; }
@@ -56,18 +57,19 @@
             .report-item p { font-size: 0.95em; line-height: 1.7; color: #666; margin-bottom: 15px; text-align: justify; }
             .report-source { font-size: 0.65em; font-weight: 800; color: #bbb; text-transform: uppercase; letter-spacing: 1px; display: block; border-top: 1px solid #eee; padding-top: 8px; }
 
+            /* Notícias */
             .news-header { font-size: 0.8em; font-weight: 400; text-transform: lowercase; letter-spacing: 3px; color: #bbb; margin-bottom: 2.5em; display: block; margin-top: 4em; }
             .news-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 30px; margin-bottom: 4em; }
             .news-item { text-decoration: none; color: inherit; display: block; padding: 25px; background: #fdfdfd; border: 1px solid #f2f2f2; border-radius: 12px; transition: all 0.3s; }
             .news-item:hover { transform: translateY(-5px); border-color: #ddd; }
             .news-item h3 { font-size: 1.15em; font-weight: 700; color: #1a1a1a; margin-bottom: 12px; line-height: 1.3; min-height: 2.6em; }
             .news-meta { display: flex; align-items: center; gap: 10px; border-top: 1px solid #f9f9f9; padding-top: 12px; }
-            .source-logo { width: 16px; height: 16px; object-fit: contain; filter: grayscale(100%); opacity: 0.6; }
             .news-meta span { font-size: 0.65em; font-weight: 800; color: #bbb; text-transform: uppercase; letter-spacing: 1px; }
 
-            .btn-pagination { background: none !important; border: none !important; color: #bbb !important; font-size: 0.8em; letter-spacing: 3px; cursor: pointer; text-transform: lowercase; }
             .bio-res-item { padding: 12px 18px; font-size: 0.9em; color: #666; cursor: pointer; border-bottom: 1px solid #f9f9f9 !important; }
-            .page-footer { margin-top: auto; padding: 2em 0 2.5em 0; border-top: 1px solid #f2f2f2; opacity: 0.3; text-align: right; }
+            .page-footer { padding: 5em 0 4em 0; text-align: right; opacity: 0.4; }
+            .logo-footer { display: block; font-size: 0.85em; font-weight: 900; color: #333; text-transform: uppercase; letter-spacing: 1px; }
+            .sublogo-footer { display: block; font-size: 0.5em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #bbb; }
 
             @media screen and (max-width: 1280px) {
                 #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
@@ -88,7 +90,7 @@
                             <div class="hero-text">
                                 <span class="category-label">Recursos Vitais</span>
                                 <h1>Água: O Sangue da Terra</h1>
-                                <p style="font-size: 0.9em; font-style: italic; color: #bbb; margin-bottom: 30px;">Análise regional: <strong id="reg-name" style="color:#888">...</strong></p>
+                                <span class="reg-info-top">Análise regional: <strong id="reg-name" style="color:#444">...</strong></span>
 
                                 <div id="water-dashboard" style="display:none;">
                                     <h4 style="font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin-bottom: 20px;">Perfil Químico</h4>
@@ -136,13 +138,10 @@
 
                         <span class="news-header">noticias</span>
                         <div id="noticias-agua-dinamico" class="news-list"></div>
-                        <div style="text-align: center; margin-bottom: 4em;">
-                            <button id="btn-load-more-agua" class="btn-pagination" style="display:none;">ver mais</button>
-                        </div>
 
                         <footer class="page-footer">
-                            <span style="display: block; font-size: 0.85em; font-weight: 900; color: #333;">bioCultura</span>
-                            <span style="display: block; font-size: 0.5em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Global Regeneration</span>
+                            <span class="logo-footer">bioCultura</span>
+                            <span class="sublogo-footer">Global Regeneration</span>
                         </footer>
 					</section>
 				</div>
@@ -152,7 +151,7 @@
 
 		<script src="/assets/js/jquery.min.js"></script>
         <script>
-            let locationsDB = [], noticiasAgua = [], visiveisAgua = 4;
+            let locationsDB = [], todasNoticias = [], visiveisAgua = 4;
 
             const waterFacts = [
                 { titulo: "Agricultura Global", desc: "70% da água doce do planeta é consumida pela agricultura industrial (FAO)." },
@@ -179,14 +178,13 @@
             async function inicializarPagina() {
                 try {
                     const prefix = window.location.pathname.includes('/recursos/') ? '../' : '/';
-                    
                     const [rLoc, rNews] = await Promise.all([
                         fetch(`${prefix}data/bioregioes.json`).then(r => r.json()),
                         fetch(`${prefix}data/noticias.json`).then(r => r.json())
                     ]);
                     
                     locationsDB = rLoc;
-                    noticiasAgua = rNews.filter(n => n.categoria === 'Água' || n.categoria === 'water');
+                    todasNoticias = rNews.filter(n => n.categoria === 'Água' || n.categoria === 'water');
 
                     const savedId = localStorage.getItem('biocultura_region');
                     const info = locationsDB.find(i => String(i.id) === String(savedId)) || locationsDB[0];
@@ -199,9 +197,7 @@
                     renderRelatorios();
                     iniciarCiclosAgua();
                     setupLocationLogic();
-                } catch(e) { 
-                    console.error("Erro ao carregar dados:", e); 
-                }
+                } catch(e) { console.error("Erro ao carregar dados:", e); }
             }
 
             function setupLocationLogic() {
@@ -209,36 +205,38 @@
                     const val = $(this).val().toLowerCase(), dropdown = $('#loc-dropdown').empty();
                     if(val.length < 2) return dropdown.hide();
                     locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0,8).forEach(m => {
-                        $('<div class="bio-res-item"></div>')
-                            .text(m.titulo + (m.concelho ? ' (' + m.concelho + ')' : ''))
-                            .on('click', () => {
-                                localStorage.setItem('biocultura_region', m.id);
-                                location.reload();
-                            }).appendTo(dropdown);
+                        $('<div class="bio-res-item"></div>').text(m.titulo).on('click', () => {
+                            localStorage.setItem('biocultura_region', m.id);
+                            location.reload();
+                        }).appendTo(dropdown);
                     });
                     dropdown.show();
                 });
 
                 $(document).off('click', '#btn-gps-trigger').on('click', '#btn-gps-trigger', function() {
-                    navigator.geolocation.getCurrentPosition(pos => {
-                        let closest = locationsDB[0], minD = Infinity;
-                        locationsDB.forEach(c => {
-                            if(!c.lat || c.lat === 0) return;
-                            let d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon);
-                            if(d < minD) { minD = d; closest = c; }
+                    if (navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition(pos => {
+                            let closest = locationsDB[0], minD = Infinity;
+                            locationsDB.forEach(c => {
+                                if(!c.lat || c.lat === 0) return;
+                                let d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon);
+                                if(d < minD) { minD = d; closest = c; }
+                            });
+                            localStorage.setItem('biocultura_region', closest.id);
+                            location.reload();
                         });
-                        localStorage.setItem('biocultura_region', closest.id);
-                        location.reload();
-                    });
+                    }
                 });
             }
 
             function renderWaterDashboard(info) {
                 if(!info) return;
                 document.getElementById('water-dashboard').style.display = 'block';
-                document.getElementById('reg-name').innerText = info.titulo + (info.concelho ? ', ' + info.concelho : '');     
+                
+                // Formato: Freguesia, CONCELHO
+                const concelhoUpper = (info.concelho || "").toUpperCase();
+                document.getElementById('reg-name').innerText = `${info.titulo}, ${concelhoUpper}`;
 
-                // Ponte de compatibilidade para a nova estrutura de dados
                 const waterData = info.recursos_hidricos || info.extensao_biocultura?.recursos_hidricos || {};
                 const biomaData = info.biomas || {};
 
@@ -273,18 +271,14 @@
             function renderizarCardsAgua() {
                 const container = document.getElementById('noticias-agua-dinamico');
                 const lang = localStorage.getItem('selected_lang') || 'pt';
-                container.innerHTML = noticiasAgua.slice(0, visiveisAgua).map(n => {
+                container.innerHTML = todasNoticias.slice(0, visiveisAgua).map(n => {
                     const content = n[lang] || n['pt'];
                     return `
                     <a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-item">
                         <h3>${content.titulo}</h3>
-                        <div class="news-meta">
-                            <img src="${n.logo}" class="source-logo">
-                            <span>${n.data}</span>
-                        </div>
+                        <div class="news-meta"><span>${n.data}</span></div>
                     </a>`;
                 }).join('');
-                document.getElementById('btn-load-more-agua').style.display = noticiasAgua.length > visiveisAgua ? 'inline-block' : 'none';
             }
 
             function iniciarCiclosAgua() {
@@ -303,8 +297,6 @@
                     items[factP].classList.add('active');
                 }, 8000);
             }
-
-            $(document).on('click', '#btn-load-more-agua', () => { visiveisAgua += 4; renderizarCardsAgua(); });
 
             fetch('/sidebar-content.html').then(r => r.text()).then(html => {
                 document.getElementById('sidebar').innerHTML = html;
