@@ -13,43 +13,7 @@
         #wrapper { padding-left: 18em !important; }
         
         /* Alinhamento de Precisão */
-        .inner { 
-            padding: 2.2em 4em 0 4em !important; 
-            max-width: 1600px !important; 
-            margin-left: 0 !important; /* Garante que encosta à esquerda no Firefox */
-            margin-right: auto !important; 
-            width: 100%;
-            box-sizing: border-box;
-        }
-
-        /* 2. Correção do Wrap e Fluxo de Texto */
-        .hero-text { 
-            display: flow-root; /* Cria um novo contexto de formatação, essencial para o Firefox lidar com o float */
-            width: 100%;
-            overflow: visible;
-        }
-
-        .hero-visual { 
-            float: right; 
-            margin-left: 40px; 
-            margin-bottom: 20px; 
-            width: 480px; 
-            height: 480px;
-            shape-outside: circle(50%);
-            -webkit-shape-outside: circle(50%);
-        }
-
-        /* 4. Garantir que as listas de biomas não "saltam" para baixo */
-        #lista-biomas-agrupada {
-            display: block;
-            width: auto;
-        }
-
-        .family-group { 
-            margin-bottom: 25px; 
-            display: block;
-            /* Removido clear: both para permitir o wrap contínuo no Firefox */
-        }
+        .inner { padding: 2.2em 4em 0 4em !important; max-width: 1600px !important; margin-left: 0 !important; margin-right: auto !important; width: 100%; box-sizing: border-box; }
         
         .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; display: block; }
         .hero-text h1 { font-size: 3.5em; font-weight: 900; color: #1a1a1a; letter-spacing: -2px; line-height: 1.1; margin: 15px 0 !important; }
@@ -79,17 +43,11 @@
         .active-Insecta { color: #fb8c00 !important; }
         .active-Mammalia { color: #6d4c41 !important; }
 
-        /* Listagem */
+        /* Listagem Biomas */
         .family-group { margin-bottom: 25px; display: block; }
         .family-title { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; display: block; }
-        .family-Plantae { color: #7cb342; }
-        .family-Amphibia { color: #00acc1; }
-        .family-Fungi { color: #8e24aa; }
-        .family-Actinopterygii { color: #1e88e5; }
-        .family-Reptilia { color: #f4511e; }
-        .family-Aves { color: #5c6bc0; }
-        .family-Insecta { color: #fb8c00; }
-        .family-Mammalia { color: #6d4c41; }
+        .family-Plantae { color: #7cb342; } .family-Amphibia { color: #00acc1; } .family-Fungi { color: #8e24aa; } .family-Actinopterygii { color: #1e88e5; }
+        .family-Reptilia { color: #f4511e; } .family-Aves { color: #5c6bc0; } .family-Insecta { color: #fb8c00; } .family-Mammalia { color: #6d4c41; }
 
         .species-list { display: flex; flex-wrap: wrap; gap: 8px; }
         .species-badge { 
@@ -98,43 +56,36 @@
             font-weight: 600; border: 1px solid #f2f2f2; cursor: pointer; 
         }
         .species-badge img { width: 18px; height: 18px; border-radius: 50%; object-fit: cover; }
+        .btn-toggle-bio { background: none !important; border: none !important; color: #bbb !important; font-weight: 800; text-transform: lowercase; letter-spacing: 2px; cursor: pointer; margin-top: 10px; font-size: 0.7em; padding: 0 !important; }
 
-        /* Toggle Ver Mais (Sem borders) */
-        .btn-toggle-bio { 
-            background: none !important; border: none !important; box-shadow: none !important;
-            color: #bbb !important; font-weight: 800; text-transform: lowercase; 
-            letter-spacing: 2px; cursor: pointer; margin-top: 10px; font-size: 0.7em; 
-            outline: none !important; padding: 0 !important;
-        }
+        /* DASHBOARD ESTATÍSTICO NACIONAL */
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; margin: 2em 0 4em 0; }
+        .stat-card { padding: 0; border: none; }
+        .stat-val { font-size: 2.8em; font-weight: 900; color: #1a1a1a; display: block; line-height: 1; letter-spacing: -2px; margin-bottom: 10px; }
+        .stat-label { font-size: 0.6em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; display: block; line-height: 1.2; }
+        .stat-sub { font-size: 0.75em; color: #888; margin-top: 8px; line-height: 1.4; display: block; }
 
-        .summary-box { background: #f6fff8; padding: 3.5em; margin: 3em 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; border-radius: 15px; clear: both; align-items: start; }
-        .summary-item h5 { font-size: 0.75em; font-weight: 900; text-transform: uppercase; margin-bottom: 15px; color: #2e7d32; }
-        .summary-item p { font-size: 0.85em; line-height: 1.7; margin: 0; color: #555; text-align: justify; }
-
+        /* ALERTAS E NOTÍCIAS */
         .data-row { display: block; padding: 3em 0; border-bottom: 1px solid #f2f2f2; }
         .data-row h4 { font-size: 0.75em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin-bottom: 25px; }
-
         .bio-impact-box { background: #f6fff8; padding: 3em; border-radius: 20px; }
         .bio-fact-item { display: none; font-size: 1.1em; line-height: 1.5; color: #4a7a56; }
         .bio-fact-item.active { display: block; }
         .bio-fact-item b { color: #1b4332; margin-right: 10px; text-transform: uppercase; font-size: 0.8em; }
 
-        .news-header { font-size: 0.8em; font-weight: 400; text-transform: lowercase; letter-spacing: 3px; color: #bbb; margin-bottom: 2em; display: block; margin-top: 4em; }
-        .news-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 25px; margin-bottom: 4em; }
+        .news-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; margin-bottom: 4em; }
         .news-item { text-decoration: none; color: inherit; display: block; padding: 22px; background: #fdfdfd; border: 1px solid #f2f2f2; border-radius: 10px; transition: 0.3s; }
         .news-item:hover { transform: translateY(-3px); border-color: #ddd; }
-        .news-item h3 { font-size: 1.05em; font-weight: 700; color: #1a1a1a; margin-bottom: 12px; line-height: 1.3; min-height: 2.6em; }
-        .news-meta { display: flex; align-items: center; gap: 10px; border-top: 1px solid #f9f9f9; padding-top: 12px; font-size: 0.6em; font-weight: 800; color: #bbb; text-transform: uppercase; }
+        .news-item h3 { font-size: 1.05em; font-weight: 700; color: #1a1a1a; margin-bottom: 15px; line-height: 1.3; min-height: 3em; }
+        .news-meta { display: flex; align-items: center; gap: 10px; border-top: 1px solid #f9f9f9; padding-top: 15px; font-size: 0.65em; font-weight: 800; color: #bbb; text-transform: uppercase; }
 
         .page-footer { padding: 5em 0 4em 0; text-align: right; opacity: 0.4; }
-        .logo-footer { display: block; font-size: 0.85em; font-weight: 900; color: #333; }
+        .logo-footer { display: block; font-size: 0.85em; font-weight: 900; color: #333; text-transform: uppercase; letter-spacing: 1px; }
         .sublogo-footer { display: block; font-size: 0.5em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #bbb; }
-
-        .bio-res-item { padding: 12px 18px; font-size: 0.9em; color: #666; cursor: pointer; border-bottom: 1px solid #f9f9f9 !important; }
 
         @media screen and (max-width: 1280px) {
             .hero-visual { float: none; width: 350px; height: 350px; margin: 0 auto 30px auto; shape-outside: none; }
-            .summary-box { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: 1fr 1fr; }
         }
     </style>
 </head>
@@ -161,26 +112,40 @@
                                 <button class="filter-btn" onclick="setFiltro('mamiferos', this)">Mamíferos</button>
                                 <button class="filter-btn" onclick="setFiltro('repteis', this)">Répteis</button>
                             </div>
-                            
                             <div id="lista-biomas-agrupada"></div>
                             <button id="btn-toggle-bio" class="btn-toggle-bio" onclick="toggleLimite()">ver mais +</button>
                         </div>
                     </div>
 
-                    <div class="summary-box">
-                        <div class="summary-item"><h5>Espécies Ameaçadas</h5><p>Monitorização de fauna e flora em risco crítico devido à fragmentação de habitats e perda de conectividade ecológica.</p></div>
-                        <div class="summary-item"><h5>Flora Nativa</h5><p>Preservação do banco de sementes autóctone como barreira natural contra a erosão e regulação do microclima.</p></div>
-                        <div class="summary-item"><h5>Invasoras</h5><p>Controlo de espécies exóticas que comprometem a biodiversidade local e o equilíbrio dos sistemas hídricos.</p></div>
-                        <div class="summary-item"><h5>Polinizadores</h5><p>Proteção de insetos auxiliares essenciais para a regeneração dos ecossistemas e produtividade biológica.</p></div>
+                    <!-- NOVO DASHBOARD ESTATÍSTICO NACIONAL -->
+                    <div class="data-row">
+                        <h4>Inventário Biológico Nacional</h4>
+                        <div class="stats-grid" id="national-stats">
+                            <div class="stat-card">
+                                <span class="stat-label">Total Espécies</span>
+                                <span class="stat-val" id="stat-total">--</span>
+                                <span class="stat-sub">Catálogo bioCultura em constante atualização via ICNF/iNat.</span>
+                            </div>
+                            <div class="stat-card">
+                                <span class="stat-label">Fauna Registada</span>
+                                <span class="stat-val" id="stat-fauna">--</span>
+                                <span class="stat-sub">Diversidade de vertebrados e invertebrados monitorizados.</span>
+                            </div>
+                            <div class="stat-card">
+                                <span class="stat-label">Flora e Fungos</span>
+                                <span class="stat-val" id="stat-flora">--</span>
+                                <span class="stat-sub">Plantas vasculares e micologia de ecossistemas nativos.</span>
+                            </div>
+                            <div class="stat-card">
+                                <span class="stat-label">Grupos em Risco</span>
+                                <span class="stat-val" id="stat-risk">28%</span>
+                                <span class="stat-sub">Percentagem estimada de espécies sob pressão antrópica.</span>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="data-row">
-                        <h4>Análise Crítica 2026</h4>
-                        <div id="report-grid-bio" class="report-grid"></div>
-                    </div>
-
-                    <div class="data-row">
-                        <h4>Alertas e Factos</h4>
+                        <h4>Alertas e Factos Nacionais</h4>
                         <div class="bio-impact-box">
                             <div id="bio-facts-container"></div>
                         </div>
@@ -210,17 +175,11 @@
         'insetos': 'Insecta', 'moluscos': 'Mollusca', 'mamiferos': 'Mammalia'
     };
 
-    const analiseNacional = [
-        { titulo: "Fragmentação de Habitats", texto: "Portugal enfrenta um desafio crítico na conectividade entre áreas protegidas, dificultando a migração genética." },
-        { titulo: "Pressão de Invasoras", texto: "A proliferação de espécies exóticas em bacias hidrográficas compromete a estabilidade da flora endémica nacional." },
-        { titulo: "Declínio de Polinizadores", texto: "A rede nacional de observação biológica aponta para uma redução de 15% nos insetos auxiliares em zonas agrícolas." },
-        { titulo: "Estratégia 2030", texto: "A implementação de corredores ecológicos é a prioridade para mitigar os efeitos do aquecimento na fauna ibérica." }
-    ];
-
     const bioFactsNacionais = [
         "Portugal tem 28% das espécies de vertebrados sob ameaça direta de extinção (ICNF).",
         "As zonas húmidas portuguesas albergam 40% das espécies de aves migratórias da rota atlântica.",
         "A regeneração de florestas nativas pode sequestrar até 12 toneladas de CO2 por hectare/ano.",
+        "A fragmentação de habitats é a principal causa da perda de biodiversidade em território nacional.",
         "Mais de 60% dos serviços ecossistémicos na Europa estão em declínio severo."
     ];
 
@@ -242,21 +201,16 @@
             ]);
             locationsDB = rLoc;
             todasNoticias = rNews;
-            const savedId = localStorage.getItem('biocultura_region');
-            const info = locationsDB.find(i => String(i.id) === String(savedId)) || locationsDB[0];
+            
+            // Processar Estatísticas Nacionais
+            renderNationalStats(rMaster);
+
+            const info = locationsDB.find(i => String(i.id) === String(localStorage.getItem('biocultura_region'))) || locationsDB[0];
 
             if (info) {
                 document.getElementById('bio-dashboard').style.display = 'block';
+                document.getElementById('reg-name').innerText = `${info.titulo}, ${(info.concelho || "").toUpperCase()}`;
                 
-                // Formato: Freguesia, CONCELHO
-                const concelhoUpper = (info.concelho || "").toUpperCase();
-                document.getElementById('reg-name').innerText = `${info.titulo}, ${concelhoUpper}`;
-                
-                // Relatórios (Nacional se regional estiver vazio)
-                const relatorios = info.relatorios || info.extensao_biocultura?.relatorios || analiseNacional;
-                renderRelatorios(relatorios);
-                
-                // Factos (Regional + Nacional)
                 const factosRegionais = info.alertas_factos || info.extensao_biocultura?.alertas_factos || [];
                 renderFactos([...factosRegionais, ...bioFactsNacionais]);
 
@@ -268,33 +222,15 @@
         } catch(e) { console.error(e); }
     }
 
-    function setupLocationLogic() {
-        $(document).off('input', '#loc-search-input').on('input', '#loc-search-input', function() {
-            const val = $(this).val().toLowerCase(), dropdown = $('#loc-dropdown').empty();
-            if(val.length < 2) return dropdown.hide();
-            locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0,8).forEach(m => {
-                $('<div class="bio-res-item"></div>').text(m.titulo).on('click', () => {
-                    localStorage.setItem('biocultura_region', m.id);
-                    location.reload();
-                }).appendTo(dropdown);
-            });
-            dropdown.show();
-        });
+    function renderNationalStats(master) {
+        const especies = Object.values(master);
+        const total = especies.length;
+        const flora = especies.filter(e => e.grupo === 'Plantae' || e.grupo === 'Fungi').length;
+        const fauna = total - flora;
 
-        $(document).off('click', '#btn-gps-trigger').on('click', '#btn-gps-trigger', function() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(pos => {
-                    let closest = locationsDB[0], minD = Infinity;
-                    locationsDB.forEach(c => {
-                        if(!c.lat || c.lat === 0) return;
-                        let d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon);
-                        if(d < minD) { minD = d; closest = c; }
-                    });
-                    localStorage.setItem('biocultura_region', closest.id);
-                    location.reload();
-                });
-            }
-        });
+        document.getElementById('stat-total').innerText = total.toLocaleString();
+        document.getElementById('stat-fauna').innerText = fauna.toLocaleString();
+        document.getElementById('stat-flora').innerText = flora.toLocaleString();
     }
 
     function renderizarBiomas() {
@@ -329,10 +265,6 @@
 
     function toggleLimite() { expandido = !expandido; renderizarBiomas(); }
 
-    function renderRelatorios(lista) {
-        document.getElementById('report-grid-bio').innerHTML = lista.map(r => `<div class="report-item"><h5>${r.titulo}</h5><p>${r.descricao || r.texto}</p></div>`).join('');
-    }
-
     function renderFactos(lista) {
         const container = document.getElementById('bio-facts-container');
         container.innerHTML = lista.map((f, i) => `<div class="bio-fact-item ${i===0?'active':''}"><b>Facto bioCultura</b> ${f}</div>`).join('');
@@ -354,6 +286,34 @@
             const content = n[lang] || n['pt'] || n;
             return `<a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-item"><h3>${content.titulo}</h3><div class="news-meta"><span>${n.data}</span></div></a>`;
         }).join('');
+    }
+
+    function setupLocationLogic() {
+        $(document).off('input', '#loc-search-input').on('input', '#loc-search-input', function() {
+            const val = $(this).val().toLowerCase(), dropdown = $('#loc-dropdown').empty();
+            if(val.length < 2) return dropdown.hide();
+            locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0,8).forEach(m => {
+                $('<div class="bio-res-item"></div>').text(m.titulo).on('click', () => {
+                    localStorage.setItem('biocultura_region', m.id);
+                    location.reload();
+                }).appendTo(dropdown);
+            });
+            dropdown.show();
+        });
+        $(document).off('click', '#btn-gps-trigger').on('click', '#btn-gps-trigger', function() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(pos => {
+                    let closest = locationsDB[0], minD = Infinity;
+                    locationsDB.forEach(c => {
+                        if(!c.lat || c.lat === 0) return;
+                        let d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon);
+                        if(d < minD) { minD = d; closest = c; }
+                    });
+                    localStorage.setItem('biocultura_region', closest.id);
+                    location.reload();
+                });
+            }
+        });
     }
 
     fetch('/sidebar-content.html').then(r => r.text()).then(html => {
