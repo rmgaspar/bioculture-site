@@ -91,8 +91,10 @@
 
         /* FOOTER */
         .page-footer { padding: 5em 0 4em 0; text-align: right; opacity: 0.4; }
-        .logo-footer { display: block; font-size: 0.85em; font-weight: 900; color: #333; text-transform: uppercase; letter-spacing: 1px; }
+        .logo-footer { display: block; font-size: 0.85em; font-weight: 900; color: #333; }
         .sublogo-footer { display: block; font-size: 0.5em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #bbb; }
+
+        .bio-res-item { padding: 12px 18px; font-size: 0.9em; color: #666; cursor: pointer; border-bottom: 1px solid #f9f9f9 !important; }
 
         @media screen and (max-width: 1280px) {
             .hero-visual { float: none; width: 350px; height: 350px; margin: 0 auto 30px auto; shape-outside: none; }
@@ -154,7 +156,6 @@
                         </div>
                     </div>
 
-                    <!-- NOVA SECÇÃO: ESPÉCIES DE CONSERVAÇÃO -->
                     <div class="data-row">
                         <h4>Espécies de Conservação Prioritária</h4>
                         <div class="featured-grid">
@@ -214,6 +215,15 @@
         "A fragmentação de habitats é a principal causa da perda de biodiversidade em território nacional.",
         "Mais de 60% dos serviços ecossistémicos na Europa estão em declínio severo."
     ];
+
+    function calcularDistancia(lat1, lon1, lat2, lon2) {
+        if(!lat1 || !lat2) return 9999;
+        const R = 6371;
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLon = (lon2 - lon1) * Math.PI / 180;
+        const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
+        return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+    }
 
     async function inicializarPagina() {
         try {
