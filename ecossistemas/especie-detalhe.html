@@ -9,21 +9,11 @@
         body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
         .detail-container { max-width: 1100px; margin: 4em auto; padding: 0 2em; }
         
-        /* FIX: Layout da Imagem e Info */
-        .hero-especie { 
-            display: flex; 
-            gap: 4em; 
-            align-items: start; 
-            margin-bottom: 3em; 
-        }
-        
+        .hero-especie { display: flex; gap: 4em; align-items: start; margin-bottom: 3em; }
         .img-container { flex: 1; min-width: 400px; }
         .hero-especie img { 
-            width: 100%; 
-            height: 600px; 
-            object-fit: cover; /* Resolve o problema da imagem desformatada */
-            border-radius: 24px; 
-            box-shadow: 0 30px 60px rgba(0,0,0,0.1);
+            width: 100%; height: 600px; object-fit: cover; 
+            border-radius: 24px; box-shadow: 0 30px 60px rgba(0,0,0,0.1);
             background: #f5f5f5;
         }
         
@@ -37,7 +27,7 @@
 
         .sintese-box { 
             background: #f8faff; padding: 3em; border-radius: 24px; 
-            margin-top: 2em; border-left: 6px solid #5c6bc0; 
+            margin-top: 2em; border-left: none !important; /* BORDER REMOVIDO */
         }
         .sintese-box b { display: block; margin-bottom: 15px; font-size: 0.8em; text-transform: uppercase; letter-spacing: 1px; color: #1a237e; }
         .sintese-box p { font-size: 1.2em; line-height: 1.8; color: #333; margin: 0; }
@@ -49,7 +39,6 @@
             .hero-especie { flex-direction: column; }
             .img-container { min-width: 100%; }
             .hero-especie img { height: 400px; }
-            .info-header h1 { font-size: 2.8em; }
         }
     </style>
 </head>
@@ -72,12 +61,14 @@
                 const esp = master[id];
 
                 if (!esp) {
-                    document.getElementById('render-especie').innerHTML = "<p>Espécie não encontrada no inventário.</p>";
+                    document.getElementById('render-especie').innerHTML = "<p>Espécie não encontrada.</p>";
                     return;
                 }
 
-                // Limpeza de taxonomia técnica (se for string de números)
-                const taxLimpa = (esp.taxonomia && esp.taxonomia.includes('/')) ? esp.grupo : (esp.taxonomia || esp.grupo);
+                // Lógica de Taxonomia: Prioriza a completa (do enriquecimento), senão limpa a técnica
+                const taxLimpa = esp.taxonomia_completa ? 
+                                 esp.taxonomia_completa.slice(-3).join(' > ') : 
+                                 (esp.taxonomia && esp.taxonomia.includes('/') ? esp.grupo : (esp.taxonomia || esp.grupo));
 
                 document.getElementById('render-especie').innerHTML = `
                     <div class="hero-especie">
@@ -86,25 +77,24 @@
                         </div>
                         <div class="info-header">
                             <h1>${esp.nome}</h1>
-                            <h2>${esp.nome_cientifico}</h2>
+                            <h2><i>${esp.nome_cientifico || 'Informação pendente'}</i></h2>
                             <div class="data-grid">
                                 <div class="data-item"><b>Grupo</b><p>${esp.grupo}</p></div>
-                                <div class="data-item"><b>Família / Ordem</b><p>${taxLimpa}</p></div>
+                                <div class="data-item"><b>Estatuto de Conservação</b><p>${esp.estatuto || 'Nativa / Residente'}</p></div>
                                 <div class="data-item"><b>Sazonalidade</b><p>${esp.sazonalidade || 'Observada em Portugal'}</p></div>
-                                <div class="data-item"><b>Estatuto</b><p>Residente / Nativa</p></div>
+                                <div class="data-item"><b>Taxonomia</b><p>${taxLimpa}</p></div>
                             </div>
                         </div>
                     </div>
                     <div class="sintese-box">
-                        <b>Observações bioCultura</b>
-                        <p>${esp.sintese || `A espécie <strong>${esp.nome}</strong> (${esp.nome_cientifico}) foi registada no inventário regional. A sua presença é um indicador da saúde do ecossistema local para o grupo ${esp.grupo}.`}</p>
-                        <small style="display:block; margin-top:25px; color:#bbb; font-weight:800; text-transform:uppercase; letter-spacing:1px;">Fonte: iNaturalist Open Data / ICNF</small>
+                        <b>Descrição e Ecologia</b>
+                        <p>${esp.sintese || `A espécie <strong>${esp.nome}</strong> foi registada no inventário regional bioCultura.`}</p>
+                        <small style="display:block; margin-top:25px; color:#bbb; font-weight:800; text-transform:uppercase; letter-spacing:1px;">Fonte: iNaturalist / Wikipedia / ICNF</small>
                     </div>
                 `;
                 document.title = esp.nome + " - bioCultura";
             } catch (e) { 
-                console.error("Erro no detalhe:", e);
-                document.getElementById('render-especie').innerHTML = "<p>Erro ao ligar à base de dados de espécies.</p>";
+                console.error("Erro:", e);
             }
         }
         carregarDetalhe();
