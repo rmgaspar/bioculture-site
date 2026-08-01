@@ -12,7 +12,6 @@
         #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
         #wrapper { padding-left: 18em !important; }
         
-        /* Alinhamento de Precisão */
         .inner { padding: 2.2em 4em 0 4em !important; max-width: 1600px !important; margin-left: 0 !important; margin-right: auto !important; width: 100%; box-sizing: border-box; }
         
         .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; display: block; }
@@ -42,7 +41,11 @@
         /* Alertas & Relatórios */
         .data-row { display: block; padding: 3em 0; border-bottom: 1px solid #f2f2f2; }
         .data-row h4 { font-size: 0.75em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin-bottom: 25px; }
-        .air-impact-box { background: #fffaf4; padding: 3em; border-radius: 20px; }
+        .air-impact-box { background: #fffaf4; padding: 3em; border-radius: 20px; min-height: 80px; position: relative; }
+        .air-fact-item { display: none; font-size: 1.1em; line-height: 1.5; color: #a67c52; }
+        .air-fact-item.active { display: block; }
+        .air-fact-item b { color: #5d4037; margin-right: 10px; text-transform: uppercase; font-size: 0.8em; }
+
         .report-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; }
         .report-item h5 { font-size: 0.7em; font-weight: 900; text-transform: uppercase; color: #ffb74d; margin-bottom: 12px; }
         .report-item p { font-size: 0.95em; line-height: 1.7; color: #666; text-align: justify; }
@@ -52,14 +55,12 @@
         .news-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 25px; margin-bottom: 4em; }
         .news-item { text-decoration: none; color: inherit; display: block; padding: 22px; background: #fdfdfd; border: 1px solid #f2f2f2; border-radius: 10px; transition: 0.3s; }
         .news-item:hover { transform: translateY(-3px); border-color: #ddd; }
-        .news-item h3 { font-size: 1.05em; font-weight: 700; color: #1a1a1a; margin-bottom: 15px; line-height: 1.3; min-height: 3em; }
-        .news-meta { display: flex; align-items: center; gap: 10px; border-top: 1px solid #f9f9f9; padding-top: 15px; font-size: 0.65em; font-weight: 800; color: #bbb; text-transform: uppercase; }
+        .news-item h3 { font-size: 1.05em; font-weight: 700; color: #1a1a1a; margin-bottom: 15px; line-height: 1.3; min-height: 2.6em; }
+        .news-meta { display: flex; align-items: center; gap: 10px; border-top: 1px solid #f9f9f9; padding-top: 12px; font-size: 0.6em; font-weight: 800; color: #bbb; text-transform: uppercase; }
 
-        /* Footer */
         .page-footer { padding: 5em 0 4em 0; text-align: right; opacity: 0.4; }
         .logo-footer { display: block; font-size: 0.85em; font-weight: 900; color: #333; }
         .sublogo-footer { display: block; font-size: 0.5em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #bbb; }
-
         .bio-res-item { padding: 12px 18px; font-size: 0.9em; color: #666; cursor: pointer; border-bottom: 1px solid #f9f9f9 !important; }
 
         @media screen and (max-width: 1280px) {
@@ -139,6 +140,12 @@
     <script>
     let locationsDB = [], todasNoticias = [], visiveisAr = 4;
 
+    const airFactsNacionais = [
+        { titulo: "Aquecimento", desc: "No inverno, a queima de biomassa é responsável por 60% das emissões de PM2.5 em zonas rurais." },
+        { titulo: "Filtros Vivos", desc: "Um hectare de floresta madura absorve até 6 toneladas de CO2/ano e filtra poeiras finas." },
+        { titulo: "Tráfego", desc: "As emissões de NO2 nos centros urbanos excedem os limites da OMS em horas de ponta." }
+    ];
+
     const relatoriosAr = [
         { titulo: "Rede QualAr", texto: "A APA gere a rede nacional que mede poluentes em tempo real. O Ozono troposférico é um desafio crítico.", fonte: "APA" },
         { titulo: "Filtros Vivos", texto: "A regeneração nativa é a forma mais eficaz de criar sumidouros de carbono e reduzir ilhas de calor.", fonte: "ICNF" }
@@ -170,6 +177,7 @@
             if (info) {
                 renderAirDashboard(info);
                 renderRelatorios();
+                iniciarCiclosAr();
             }
             renderizarNoticias();
             setupLocationLogic();
@@ -179,8 +187,6 @@
     function renderAirDashboard(info) {
         if(!info) return;
         document.getElementById('air-dashboard').style.display = 'block';
-        
-        // Formato: Freguesia, CONCELHO
         const concelhoUpper = (info.concelho || "").toUpperCase();
         document.getElementById('reg-name').innerText = `${info.titulo}, ${concelhoUpper}`;
 
@@ -205,8 +211,31 @@
         }, 300);
     }
 
+    function renderRelatorios() {
+        document.getElementById('report-grid-air').innerHTML = relatoriosAr.map(r => `
+            <div class="report-item"><h5>${r.titulo}</h5><p>${r.texto}</p></div>
+        `).join('');
+    }
+
+    function iniciarCiclosAr() {
+        const container = document.getElementById('air-facts-container');
+        if(!container) return;
+        container.innerHTML = airFactsNacionais.map((f, i) => `
+            <div class="air-fact-item ${i === 0 ? 'active' : ''}">
+                <b>${f.titulo}</b> ${f.desc}
+            </div>`).join('');
+        
+        let factP = 0;
+        setInterval(() => {
+            const items = document.querySelectorAll('.air-fact-item');
+            if(items.length === 0) return;
+            items.forEach(el => el.classList.remove('active'));
+            factP = (factP + 1) % items.length;
+            items[factP].classList.add('active');
+        }, 8000);
+    }
+
     function setupLocationLogic() {
-        // GPS - Delegação Global
         $(document).off('click', '#btn-gps-trigger').on('click', '#btn-gps-trigger', function(e) {
             e.preventDefault();
             if (navigator.geolocation) {
@@ -224,7 +253,6 @@
             }
         });
 
-        // Pesquisa Manual
         $(document).off('input', '#loc-search-input').on('input', '#loc-search-input', function() {
             const val = $(this).val().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""), 
                   dropdown = $('#loc-dropdown').empty();
@@ -246,10 +274,6 @@
             const content = n[lang] || n['pt'];
             return `<a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-item"><h3>${content.titulo}</h3><div class="news-meta"><span>${n.data}</span></div></a>`;
         }).join('');
-    }
-
-    function renderRelatorios() {
-        document.getElementById('report-grid-air').innerHTML = relatoriosAr.map(r => `<div class="report-item"><h5>${r.titulo}</h5><p>${r.texto}</p></div>`).join('');
     }
 
     fetch('/sidebar-content.html').then(r => r.text()).then(html => {
