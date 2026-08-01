@@ -12,6 +12,7 @@
         #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
         #wrapper { padding-left: 18em !important; }
         
+        /* Alinhamento de Precisão */
         .inner { padding: 2.2em 4em 0 4em !important; max-width: 1600px !important; margin: 0 auto; width: 100%; }
         
         .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; display: block; }
@@ -30,9 +31,9 @@
             cursor: pointer; color: #bbb !important; transition: 0.3s; letter-spacing: 2px !important;
             box-shadow: none !important; outline: none !important;
         }
-        .filter-btn:hover { color: #888 !important; }
         .filter-btn.active { color: #555 !important; }
-
+        
+        /* Cores Ativas por Família */
         .active-Plantae { color: #7cb342 !important; }
         .active-Amphibia { color: #00acc1 !important; }
         .active-Fungi { color: #8e24aa !important; }
@@ -45,7 +46,6 @@
         /* Listagem */
         .family-group { margin-bottom: 25px; display: block; }
         .family-title { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; display: block; }
-        
         .family-Plantae { color: #7cb342; }
         .family-Amphibia { color: #00acc1; }
         .family-Fungi { color: #8e24aa; }
@@ -63,7 +63,13 @@
         }
         .species-badge img { width: 18px; height: 18px; border-radius: 50%; object-fit: cover; }
 
-        .btn-toggle-bio { background: none !important; border: none !important; color: #bbb !important; font-weight: 800; text-transform: lowercase; letter-spacing: 2px; cursor: pointer; margin-top: 10px; font-size: 0.7em; outline: none !important; }
+        /* Toggle Ver Mais (Sem borders) */
+        .btn-toggle-bio { 
+            background: none !important; border: none !important; box-shadow: none !important;
+            color: #bbb !important; font-weight: 800; text-transform: lowercase; 
+            letter-spacing: 2px; cursor: pointer; margin-top: 10px; font-size: 0.7em; 
+            outline: none !important; padding: 0 !important;
+        }
 
         .summary-box { background: #f6fff8; padding: 3.5em; margin: 3em 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; border-radius: 15px; clear: both; align-items: start; }
         .summary-item h5 { font-size: 0.75em; font-weight: 900; text-transform: uppercase; margin-bottom: 15px; color: #2e7d32; }
@@ -159,7 +165,8 @@
 
     <script src="/assets/js/jquery.min.js"></script>
     <script>
-    let locationsDB = [], todasNoticias = [], todasEspeciesRegiao = [], filtroAtual = 'tudo', expandido = false;
+    let todasNoticias = [], todasEspeciesRegiao = [], filtroAtual = 'tudo', expandido = false;
+    let locationsDB = [];
 
     const mappingFiltros = {
         'plantas': 'Plantae', 'anfibios': 'Amphibia', 'fungos': 'Fungi',
@@ -167,12 +174,18 @@
         'insetos': 'Insecta', 'moluscos': 'Mollusca', 'mamiferos': 'Mammalia'
     };
 
+    const analiseNacional = [
+        { titulo: "Fragmentação de Habitats", texto: "Portugal enfrenta um desafio crítico na conectividade entre áreas protegidas, dificultando a migração genética." },
+        { titulo: "Pressão de Invasoras", texto: "A proliferação de espécies exóticas em bacias hidrográficas compromete a estabilidade da flora endémica nacional." },
+        { titulo: "Declínio de Polinizadores", texto: "A rede nacional de observação biológica aponta para uma redução de 15% nos insetos auxiliares em zonas agrícolas." },
+        { titulo: "Estratégia 2030", texto: "A implementação de corredores ecológicos é a prioridade para mitigar os efeitos do aquecimento na fauna ibérica." }
+    ];
+
     const bioFactsNacionais = [
         "Portugal tem 28% das espécies de vertebrados sob ameaça direta de extinção (ICNF).",
-        "A fragmentação de habitats é a principal causa da perda de biodiversidade em território nacional.",
-        "Mais de 60% dos serviços ecossistémicos na Europa estão em declínio severo.",
         "As zonas húmidas portuguesas albergam 40% das espécies de aves migratórias da rota atlântica.",
-        "A regeneração de florestas nativas pode sequestrar até 12 toneladas de CO2 por hectare/ano."
+        "A regeneração de florestas nativas pode sequestrar até 12 toneladas de CO2 por hectare/ano.",
+        "Mais de 60% dos serviços ecossistémicos na Europa estão em declínio severo."
     ];
 
     function calcularDistancia(lat1, lon1, lat2, lon2) {
@@ -198,15 +211,24 @@
 
             if (info) {
                 document.getElementById('bio-dashboard').style.display = 'block';
-                document.getElementById('reg-name').innerText = info.titulo;
-                renderRelatorios(info.relatorios || info.extensao_biocultura?.relatorios || []);
+                
+                // Formato: Freguesia, CONCELHO
+                const concelhoUpper = (info.concelho || "").toUpperCase();
+                document.getElementById('reg-name').innerText = `${info.titulo}, ${concelhoUpper}`;
+                
+                // Relatórios (Nacional se regional estiver vazio)
+                const relatorios = info.relatorios || info.extensao_biocultura?.relatorios || analiseNacional;
+                renderRelatorios(relatorios);
+                
+                // Factos (Regional + Nacional)
                 const factosRegionais = info.alertas_factos || info.extensao_biocultura?.alertas_factos || [];
                 renderFactos([...factosRegionais, ...bioFactsNacionais]);
+
                 todasEspeciesRegiao = (info.biomas?.especies_ids || []).map(id => ({ id, ...rMaster[id] })).filter(e => e.nome);
                 renderizarBiomas();
             }
             renderizarNoticias();
-            setupLocationLogic(); // ATIVA O GPS E PESQUISA
+            setupLocationLogic();
         } catch(e) { console.error(e); }
     }
 
@@ -272,7 +294,7 @@
     function toggleLimite() { expandido = !expandido; renderizarBiomas(); }
 
     function renderRelatorios(lista) {
-        document.getElementById('report-grid-bio').innerHTML = lista.length ? lista.map(r => `<div class="report-item"><h5>${r.titulo}</h5><p>${r.descricao || r.texto}</p></div>`).join('') : '<p style="color:#bbb; font-style:italic">Análise de impacto em processamento.</p>';
+        document.getElementById('report-grid-bio').innerHTML = lista.map(r => `<div class="report-item"><h5>${r.titulo}</h5><p>${r.descricao || r.texto}</p></div>`).join('');
     }
 
     function renderFactos(lista) {
