@@ -199,164 +199,191 @@
 
     <script src="/assets/js/jquery.min.js"></script>
     <script>
-    let todasNoticias = [], todasEspeciesRegiao = [], filtroAtual = 'tudo', expandido = false;
-    let locationsDB = [];
+       let todasNoticias = [], todasEspeciesRegiao = [], filtroAtual = 'tudo', expandido = false;
+        let locationsDB = []; 
 
-    const mappingFiltros = {
-        'plantas': 'Plantae', 'anfibios': 'Amphibia', 'fungos': 'Fungi',
-        'peixes': 'Actinopterygii', 'repteis': 'Reptilia', 'aves': 'Aves',
-        'insetos': 'Insecta', 'moluscos': 'Mollusca', 'mamiferos': 'Mammalia'
-    };
+        const mappingFiltros = {
+            'plantas': 'Plantae', 'anfibios': 'Amphibia', 'fungos': 'Fungi',
+            'peixes': 'Actinopterygii', 'repteis': 'Reptilia', 'aves': 'Aves',
+            'insetos': 'Insecta', 'moluscos': 'Mollusca', 'mamiferos': 'Mammalia'
+        };
 
-    const bioFactsNacionais = [
-        "Portugal tem 28% das espécies de vertebrados sob ameaça direta de extinção (ICNF).",
-        "As zonas húmidas portuguesas albergam 40% das espécies de aves migratórias da rota atlântica.",
-        "A regeneração de florestas nativas pode sequestrar até 12 toneladas de CO2 por hectare/ano.",
-        "A fragmentação de habitats é a principal causa da perda de biodiversidade em território nacional.",
-        "Mais de 60% dos serviços ecossistémicos na Europa estão em declínio severo."
-    ];
+        const bioFactsNacionais = [
+            "Portugal tem 28% das espécies de vertebrados sob ameaça direta de extinção (ICNF).",
+            "As zonas húmidas portuguesas albergam 40% das espécies de aves migratórias da rota atlântica.",
+            "A regeneração de florestas nativas pode sequestrar até 12 toneladas de CO2 por hectare/ano.",
+            "A fragmentação de habitats é a principal causa da perda de biodiversidade em território nacional.",
+            "Mais de 60% dos serviços ecossistémicos na Europa estão em declínio severo."
+        ];
 
-    function calcularDistancia(lat1, lon1, lat2, lon2) {
-        if(!lat1 || !lat2) return 9999;
-        const R = 6371;
-        const dLat = (lat2 - lat1) * Math.PI / 180;
-        const dLon = (lon2 - lon1) * Math.PI / 180;
-        const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
-        return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
-    }
-
-    async function inicializarPagina() {
-        try {
-            const [rLoc, rNews, rMaster] = await Promise.all([
-                fetch('/data/bioregioes.json').then(r => r.json()),
-                fetch('/data/noticias.json').then(r => r.json()),
-                fetch('/data/especies_master.json').then(r => r.json())
-            ]);
-            locationsDB = rLoc;
-            todasNoticias = rNews;
-            
-            renderNationalStats(rMaster);
-
-            const savedId = localStorage.getItem('biocultura_region');
-            const info = locationsDB.find(i => String(i.id) === String(savedId)) || locationsDB[0];
-
-            if (info) {
-                document.getElementById('bio-dashboard').style.display = 'block';
-                document.getElementById('reg-name').innerText = `${info.titulo}, ${(info.concelho || "").toUpperCase()}`;
-                
-                const factosRegionais = info.alertas_factos || info.extensao_biocultura?.alertas_factos || [];
-                renderFactos([...factosRegionais, ...bioFactsNacionais]);
-
-                todasEspeciesRegiao = (info.biomas?.especies_ids || []).map(id => ({ id, ...rMaster[id] })).filter(e => e.nome);
-                renderizarBiomas();
-            }
-            renderizarNoticias();
-            setupLocationLogic();
-        } catch(e) { console.error(e); }
-    }
-
-    function renderNationalStats(master) {
-        const especies = Object.values(master);
-        const total = especies.length;
-        const flora = especies.filter(e => e.grupo === 'Plantae' || e.grupo === 'Fungi').length;
-        const fauna = total - flora;
-
-        document.getElementById('stat-total').innerText = total.toLocaleString();
-        document.getElementById('stat-fauna').innerText = fauna.toLocaleString();
-        document.getElementById('stat-flora').innerText = flora.toLocaleString();
-    }
-
-    function renderizarBiomas() {
-        const container = document.getElementById('lista-biomas-agrupada');
-        const filtradas = todasEspeciesRegiao.filter(e => filtroAtual === 'tudo' || e.grupo === mappingFiltros[filtroAtual]);
-        const grupos = {};
-        filtradas.forEach(e => { if (!grupos[e.grupo]) grupos[e.grupo] = []; grupos[e.grupo].push(e); });
-
-        const limiteTotal = expandido ? 999 : 16;
-        let count = 0, html = '';
-
-        for (const [familia, lista] of Object.entries(grupos)) {
-            if (count >= limiteTotal) break;
-            const displayList = lista.slice(0, limiteTotal - count);
-            if (displayList.length === 0) continue;
-            html += `<div class="family-group"><span class="family-title family-${familia}">${familia}</span><div class="species-list">${displayList.map(esp => `<div class="species-badge" onclick="window.location.href='especie-detalhe.html?id=${esp.id}'"><img src="${esp.imagem || '/assets/img/placeholder.jpg'}">${esp.nome}</div>`).join('')}</div></div>`;
-            count += displayList.length;
+        // 1. FÓRMULA DE DISTÂNCIA
+        function calcularDistancia(lat1, lon1, lat2, lon2) {
+            if (!lat1 || !lat2) return 9999;
+            const R = 6371;
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
         }
-        container.innerHTML = html;
-        const btn = document.getElementById('btn-toggle-bio');
-        btn.innerText = expandido ? 'ver menos -' : 'ver mais +';
-        btn.style.display = filtradas.length > 16 ? 'block' : 'none';
-    }
 
-    function setFiltro(f, el) {
-        filtroAtual = f; expandido = false;
-        document.querySelectorAll('.filter-btn').forEach(btn => { btn.classList.remove('active'); btn.className = 'filter-btn'; });
-        el.classList.add('active');
-        if(f !== 'tudo') el.classList.add('active-' + mappingFiltros[f]);
-        renderizarBiomas();
-    }
+        // 2. INICIALIZAÇÃO DE DADOS
+        async function inicializarPagina() {
+            try {
+                const [rLoc, rNews, rMaster] = await Promise.all([
+                    fetch('/data/bioregioes.json').then(r => r.json()),
+                    fetch('/data/noticias.json').then(r => r.json()),
+                    fetch('/data/especies_master.json').then(r => r.json())
+                ]);
+                
+                locationsDB = rLoc;
+                todasNoticias = rNews;
+                
+                renderNationalStats(rMaster);
 
-    function toggleLimite() { expandido = !expandido; renderizarBiomas(); }
+                const savedId = localStorage.getItem('biocultura_region');
+                const info = locationsDB.find(i => String(i.id) === String(savedId)) || locationsDB[0];
 
-    function renderFactos(lista) {
-        const container = document.getElementById('bio-facts-container');
-        container.innerHTML = lista.map((f, i) => `<div class="bio-fact-item ${i===0?'active':''}"><b>Facto bioCultura</b> ${f}</div>`).join('');
-        let p = 0;
-        setInterval(() => {
-            const items = container.querySelectorAll('.bio-fact-item');
-            if(!items.length) return;
-            items[p].classList.remove('active');
-            p = (p + 1) % items.length;
-            items[p].classList.add('active');
-        }, 7000);
-    }
+                if (info) {
+                    document.getElementById('bio-dashboard').style.display = 'block';
+                    document.getElementById('reg-name').innerText = `${info.titulo}, ${(info.concelho || "").toUpperCase()}`;
+                    
+                    renderRelatorios(info.relatorios || info.extensao_biocultura?.relatorios || []);
+                    const factosRegionais = info.alertas_factos || info.extensao_biocultura?.alertas_factos || [];
+                    renderFactos([...factosRegionais, ...bioFactsNacionais]);
 
-    function renderizarNoticias() {
-        const container = document.getElementById('noticias-bio-dinamico');
-        const lang = localStorage.getItem('selected_lang') || 'pt';
-        const filtradas = todasNoticias.filter(n => n.categoria === 'biodiv' || n.categoria === 'Biodiversidade');
-        container.innerHTML = filtradas.map(n => {
-            const content = n[lang] || n['pt'] || n;
-            return `<a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-item"><h3>${content.titulo}</h3><div class="news-meta"><span>${n.data}</span></div></a>`;
-        }).join('');
-    }
+                    todasEspeciesRegiao = (info.biomas?.especies_ids || []).map(id => ({ id, ...rMaster[id] })).filter(e => e.nome);
+                    renderizarBiomas();
+                }
+                renderizarNoticias();
+                setupLocationLogic(); // ATIVA O GPS E PESQUISA APÓS CARREGAR DADOS
+            } catch (e) { console.error("Erro bioCultura:", e); }
+        }
 
-    function setupLocationLogic() {
-        $(document).off('input', '#loc-search-input').on('input', '#loc-search-input', function() {
-            const val = $(this).val().toLowerCase(), dropdown = $('#loc-dropdown').empty();
-            if(val.length < 2) return dropdown.hide();
-            locationsDB.filter(i => i.titulo.toLowerCase().includes(val)).slice(0,8).forEach(m => {
-                $('<div class="bio-res-item"></div>').text(m.titulo).on('click', () => {
-                    localStorage.setItem('biocultura_region', m.id);
-                    location.reload();
-                }).appendTo(dropdown);
+        // 3. LÓGICA DE LOCALIZAÇÃO (GPS E PESQUISA)
+        function setupLocationLogic() {
+            // GPS - Delegação Global para garantir que o clique funciona após o fetch da sidebar
+            $(document).off('click', '#btn-gps-trigger').on('click', '#btn-gps-trigger', function(e) {
+                e.preventDefault();
+                console.log("Iniciando Geolocalização...");
+                const btn = $(this);
+                btn.css('opacity', '0.5');
+
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(pos => {
+                        const uLat = pos.coords.latitude;
+                        const uLon = pos.coords.longitude;
+                        let closest = locationsDB[0], minD = Infinity;
+
+                        locationsDB.forEach(c => {
+                            if (!c.lat || c.lat === 0) return;
+                            const d = calcularDistancia(uLat, uLon, c.lat, c.lon);
+                            if (d < minD) { minD = d; closest = c; }
+                        });
+
+                        console.log("Localidade mais próxima encontrada:", closest.titulo);
+                        localStorage.setItem('biocultura_region', closest.id);
+                        location.reload();
+                    }, (err) => {
+                        console.error("Erro no GPS:", err);
+                        btn.css('opacity', '1');
+                        alert("Por favor, autorize a localização no seu navegador.");
+                    }, { enableHighAccuracy: true });
+                } else {
+                    alert("O seu navegador não suporta geolocalização.");
+                }
             });
-            dropdown.show();
-        });
-        $(document).off('click', '#btn-gps-trigger').on('click', '#btn-gps-trigger', function() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(pos => {
-                    const R = 6371;
-                    let closest = locationsDB[0], minD = Infinity;
-                    locationsDB.forEach(c => {
-                        if(!c.lat || c.lat === 0) return;
-                        const dLat = (c.lat - pos.coords.latitude) * Math.PI / 180;
-                        const dLon = (c.lon - pos.coords.longitude) * Math.PI / 180;
-                        const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(pos.coords.latitude * Math.PI / 180) * Math.cos(c.lat * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
-                        const d = R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
-                        if(d < minD) { minD = d; closest = c; }
-                    });
-                    localStorage.setItem('biocultura_region', closest.id);
-                    location.reload();
-                });
-            }
-        });
-    }
 
-    fetch('/sidebar-content.html').then(r => r.text()).then(html => {
-        document.getElementById('sidebar').innerHTML = html;
-        inicializarPagina();
-    });
+            // PESQUISA MANUAL
+            $(document).off('input', '#loc-search-input').on('input', '#loc-search-input', function() {
+                const val = $(this).val().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""), 
+                    dropdown = $('#loc-dropdown').empty();
+                if (val.length < 2) return dropdown.hide();
+                
+                locationsDB.filter(i => i.titulo.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(val))
+                    .slice(0, 8).forEach(m => {
+                        $('<div class="bio-res-item"></div>').text(m.titulo).on('click', () => {
+                            localStorage.setItem('biocultura_region', m.id);
+                            location.reload();
+                        }).appendTo(dropdown);
+                    });
+                dropdown.show();
+            });
+        }
+
+        function renderNationalStats(master) {
+            const especies = Object.values(master);
+            const total = especies.length;
+            const flora = especies.filter(e => e.grupo === 'Plantae' || e.grupo === 'Fungi').length;
+            const fauna = total - flora;
+            document.getElementById('stat-total').innerText = total.toLocaleString();
+            document.getElementById('stat-fauna').innerText = fauna.toLocaleString();
+            document.getElementById('stat-flora').innerText = flora.toLocaleString();
+        }
+
+        function renderizarBiomas() {
+            const container = document.getElementById('lista-biomas-agrupada');
+            const filtradas = todasEspeciesRegiao.filter(e => filtroAtual === 'tudo' || e.grupo === mappingFiltros[filtroAtual]);
+            const grupos = {};
+            filtradas.forEach(e => { if (!grupos[e.grupo]) grupos[e.grupo] = []; grupos[e.grupo].push(e); });
+
+            const limiteTotal = expandido ? 999 : 16;
+            let count = 0, html = '';
+
+            for (const [familia, lista] of Object.entries(grupos)) {
+                if (count >= limiteTotal) break;
+                const displayList = lista.slice(0, limiteTotal - count);
+                if (displayList.length === 0) continue;
+                html += `<div class="family-group"><span class="family-title family-${familia}">${familia}</span><div class="species-list">${displayList.map(esp => `<div class="species-badge" onclick="window.location.href='especie-detalhe.html?id=${esp.id}'"><img src="${esp.imagem || '/assets/img/placeholder.jpg'}">${esp.nome}</div>`).join('')}</div></div>`;
+                count += displayList.length;
+            }
+            container.innerHTML = html;
+            const btn = document.getElementById('btn-toggle-bio');
+            btn.innerText = expandido ? 'ver menos -' : 'ver mais +';
+            btn.style.display = filtradas.length > 16 ? 'block' : 'none';
+        }
+
+        function setFiltro(f, el) {
+            filtroAtual = f; expandido = false;
+            document.querySelectorAll('.filter-btn').forEach(btn => { btn.classList.remove('active'); btn.className = 'filter-btn'; });
+            el.classList.add('active');
+            if (f !== 'tudo') el.classList.add('active-' + mappingFiltros[f]);
+            renderizarBiomas();
+        }
+
+        function toggleLimite() { expandido = !expandido; renderizarBiomas(); }
+
+        function renderRelatorios(lista) {
+            document.getElementById('report-grid-bio').innerHTML = lista.length ? lista.map(r => `<div class="report-item"><h5>${r.titulo}</h5><p>${r.descricao || r.texto}</p></div>`).join('') : '<p style="color:#bbb; font-style:italic">Análise de impacto nacional em vigor.</p>';
+        }
+
+        function renderFactos(lista) {
+            const container = document.getElementById('bio-facts-container');
+            container.innerHTML = lista.map((f, i) => `<div class="bio-fact-item ${i === 0 ? 'active' : ''}"><b>Facto bioCultura</b> ${f}</div>`).join('');
+            let p = 0;
+            setInterval(() => {
+                const items = container.querySelectorAll('.bio-fact-item');
+                if (!items.length) return;
+                items[p].classList.remove('active');
+                p = (p + 1) % items.length;
+                items[p].classList.add('active');
+            }, 7000);
+        }
+
+        function renderizarNoticias() {
+            const container = document.getElementById('noticias-bio-dinamico');
+            const lang = localStorage.getItem('selected_lang') || 'pt';
+            const filtradas = todasNoticias.filter(n => n.categoria === 'biodiv' || n.categoria === 'Biodiversidade');
+            container.innerHTML = filtradas.map(n => {
+                const content = n[lang] || n['pt'] || n;
+                return `<a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-item"><h3>${content.titulo}</h3><div class="news-meta"><span>${n.data}</span></div></a>`;
+            }).join('');
+        }
+
+        // CARREGAMENTO DA SIDEBAR E INÍCIO
+        fetch('/sidebar-content.html').then(r => r.text()).then(html => {
+            document.getElementById('sidebar').innerHTML = html;
+            inicializarPagina();
+        });
     </script>
 </body>
 </html>
