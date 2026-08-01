@@ -13,7 +13,43 @@
         #wrapper { padding-left: 18em !important; }
         
         /* Alinhamento de Precisão */
-        .inner { padding: 2.2em 4em 0 4em !important; max-width: 1600px !important; margin: 0 auto; width: 100%; }
+        .inner { 
+            padding: 2.2em 4em 0 4em !important; 
+            max-width: 1600px !important; 
+            margin-left: 0 !important; /* Garante que encosta à esquerda no Firefox */
+            margin-right: auto !important; 
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* 2. Correção do Wrap e Fluxo de Texto */
+        .hero-text { 
+            display: flow-root; /* Cria um novo contexto de formatação, essencial para o Firefox lidar com o float */
+            width: 100%;
+            overflow: visible;
+        }
+
+        .hero-visual { 
+            float: right; 
+            margin-left: 40px; 
+            margin-bottom: 20px; 
+            width: 480px; 
+            height: 480px;
+            shape-outside: circle(50%);
+            -webkit-shape-outside: circle(50%);
+        }
+
+        /* 4. Garantir que as listas de biomas não "saltam" para baixo */
+        #lista-biomas-agrupada {
+            display: block;
+            width: auto;
+        }
+
+        .family-group { 
+            margin-bottom: 25px; 
+            display: block;
+            /* Removido clear: both para permitir o wrap contínuo no Firefox */
+        }
         
         .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; display: block; }
         .hero-text h1 { font-size: 3.5em; font-weight: 900; color: #1a1a1a; letter-spacing: -2px; line-height: 1.1; margin: 15px 0 !important; }
