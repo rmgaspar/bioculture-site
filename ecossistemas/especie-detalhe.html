@@ -56,21 +56,25 @@
             if (!id) { window.location.href = 'biodiversidade.html'; return; }
 
             try {
-                // Cache buster (?v=...) garante que vais buscar o JSON enriquecido
+                // Cache buster (?v=...) garante que vais buscar o JSON enriquecido e não a versão antiga
                 const res = await fetch('/data/especies_master.json?v=' + Date.now());
                 const master = await res.json();
                 const esp = master[id];
 
                 if (!esp) {
-                    document.getElementById('render-especie').innerHTML = "<p>Espécie não encontrada.</p>";
+                    document.getElementById('render-especie').innerHTML = "<p>Espécie não encontrada no inventário.</p>";
                     return;
                 }
 
+                // Lógica de Taxonomia: Prioriza a completa (do enriquecimento), senão limpa a técnica
                 const taxLimpa = esp.taxonomia_completa ? 
                                  esp.taxonomia_completa.slice(-3).join(' > ') : 
                                  (esp.taxonomia && esp.taxonomia.includes('/') ? esp.grupo : (esp.taxonomia || esp.grupo));
 
-                const desc = esp.sintese || `A espécie <strong>${esp.nome}</strong> faz parte do inventário biológico da região.`;
+                // Fallback robusto para a descrição
+                const descReal = (esp.sintese && esp.sintese.length > 100) 
+                                ? esp.sintese 
+                                : `A espécie <strong>${esp.nome}</strong> (${esp.nome_cientifico}) foi registada no inventário regional bioCultura. Informação detalhada em processamento.`;
 
                 document.getElementById('render-especie').innerHTML = `
                     <div class="hero-especie">
@@ -90,15 +94,18 @@
                     </div>
                     <div class="sintese-box">
                         <b>Descrição e Ecologia (Wikipedia)</b>
-                        <p>${desc}</p>
+                        <p>${descReal}</p>
                         <small style="display:block; margin-top:25px; color:#bbb; font-weight:800; text-transform:uppercase; letter-spacing:1px;">Fonte: Wikipedia / iNaturalist / ICNF</small>
                     </div>
                 `;
                 document.title = esp.nome + " - bioCultura";
             } catch (e) { 
                 console.error("Erro:", e);
+                document.getElementById('render-especie').innerHTML = "<p>Erro ao carregar dados.</p>";
             }
         }
+        
+        // EXECUÇÃO
         carregarDetalhe();
     </script>
 </body>
