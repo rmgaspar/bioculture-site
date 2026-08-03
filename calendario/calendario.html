@@ -41,28 +41,25 @@
         .day-node.current-week { color: #1a1a1a; font-weight: 700; }
         .day-node.weekend { color: #ef5350 !important; }
         .today-num { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; background: #1a1a1a; color: #fff !important; border-radius: 50%; font-size: 0.8em; font-weight: 900; }
-        
-        /* FIX: Icones da Lua no Grid (Pequenos e Proporcionais) */
         .moon-grid-icon { width: 16px !important; height: 16px !important; display: block; margin: 0 auto; }
 
         /* RODAPÉ GLOBO - ALINHAMENTO CONVERGENTE */
         .globe-south { margin-top: auto; margin-bottom: 30px; width: 60%; display: flex; justify-content: center; align-items: center; z-index: 10; gap: 0; }
         .south-col { display: flex; flex-direction: column; flex: 1; }
-        .side-left { align-items: flex-end; text-align: right; padding-right: 15px; }
-        .side-right { align-items: flex-start; text-align: left; padding-left: 15px; }
+        .side-left { align-items: flex-end; text-align: right; padding-right: 12px; }
+        .side-right { align-items: flex-start; text-align: left; padding-left: 12px; }
         
         .v-sep { width: 1px; height: 45px; background: #eee; margin: 0; }
         .meteo-icon-big { font-size: 2.2em; color: #fbc02d; margin-bottom: 4px; }
         .moon-svg-main { width: 36px; height: 36px; display: block; fill: #999; margin-bottom: 4px; }
         
-        /* FIX: Tamanho e alinhamento do texto no Globo */
         .status-label-globe { font-size: 0.85em !important; font-weight: 900; color: #1a1a1a; text-transform: uppercase; letter-spacing: 1px; line-height: 1; }
         .t-min { color: #42a5f5; } .t-max { color: #ef5350; }
 
-        /* CONTEÚDO E BADGES */
+        /* CONTEÚDO */
         .advice-content { font-size: 1.1em; line-height: 1.7; color: #555; text-align: left; margin-top: 20px; }
         .advice-content p { margin-bottom: 25px !important; }
-        .advice-content a { color: #2e7d32; text-decoration: underline; }
+        .advice-content i { color: #2e7d32; text-decoration: underline; cursor: pointer; font-style: italic; }
         
         .species-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 15px; }
         .species-badge { 
@@ -70,8 +67,7 @@
             color: #666; padding: 5px 12px; border-radius: 50px; font-size: 0.8em; 
             font-weight: 600; border: 1px solid #f2f2f2; cursor: pointer; transition: 0.2s;
         }
-        .species-badge:hover { border-color: #2e7d32; transform: translateY(-1px); }
-        .species-badge img { width: 20px; height: 20px; border-radius: 50%; object-fit: cover; background: #eee; }
+        .species-badge img { width: 20px; height: 20px; border-radius: 50%; object-fit: cover; }
 
         .btn-clean { background: none !important; border: none !important; box-shadow: none !important; color: #bbb !important; font-size: 0.7em; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; cursor: pointer; padding: 10px 0; outline: none !important; }
 
@@ -112,7 +108,7 @@
                                 <div class="hero-globe">
                                     <div class="globe-top">
                                         <span class="globe-year">2026</span>
-                                        <span class="globe-weekday" id="globe-weekday">...</span>
+                                        <span class="globe-weekday" id="globe-weekday" style="color:#bbb; font-weight:800; font-size:0.65em; text-transform:uppercase;">...</span>
                                         <span class="globe-day-month" id="globe-day-month">...</span>
                                     </div>
                                     <div class="week-stack" id="week-stack"></div>
@@ -170,21 +166,21 @@
 
     <script src="/assets/js/jquery.min.js"></script>
     <script>
-    let locationsDB = [], horticolasMaster = {}, masterEspecies = {}, infoGlobal = null;
+    let locationsDB = [], pragasDB = [], floraDB = [], horticolasMaster = {}, masterEspecies = {}, infoGlobal = null;
     let expandidoPragas = false, expandidoFlora = false;
 
     const moonIcons = {
         full: '<svg viewBox="0 0 24 24" class="moon-svg-main" style="fill:#f9a825"><circle cx="12" cy="12" r="10"/></svg>',
         new: '<svg viewBox="0 0 24 24" class="moon-svg-main" style="fill:#bbb"><circle cx="12" cy="12" r="10" fill="none" stroke="#bbb" stroke-width="2"/></svg>',
         cres: '<svg viewBox="0 0 24 24" class="moon-svg-main"><path d="M12,2A10,10 0 0,1 12,22A10,10 0 0,0 12,2Z"/></svg>',
-        ming: '<svg viewBox="0 0 24 24" class="moon-svg-main"><path d="M12,2A10,10 0 0,0 12,22A10,10 0 0,1 12,2Z"/></svg>',
+        ming: '<svg viewBox="0 0 24 24" class="moon-svg-main"><path d="M12,2A10,10 0 0,0 22,12A10,10 0 0,1 12,2Z"/></svg>',
         grid_full: '<svg viewBox="0 0 24 24" class="moon-grid-icon" style="fill:#f9a825"><circle cx="12" cy="12" r="10"/></svg>',
         grid_new: '<svg viewBox="0 0 24 24" class="moon-grid-icon" style="fill:#bbb"><circle cx="12" cy="12" r="10" fill="none" stroke="#bbb" stroke-width="2"/></svg>',
         grid_cres: '<svg viewBox="0 0 24 24" class="moon-grid-icon" style="fill:#999"><path d="M12,2A10,10 0 0,1 12,22A10,10 0 0,0 12,2Z"/></svg>',
-        grid_ming: '<svg viewBox="0 0 24 24" class="moon-grid-icon" style="fill:#999"><path d="M12,2A10,10 0 0,0 12,22A10,10 0 0,1 12,2Z"/></svg>'
+        grid_ming: '<svg viewBox="0 0 24 24" class="moon-grid-icon" style="fill:#999"><path d="M12,2A10,10 0 0,0 22,12A10,10 0 0,1 12,2Z"/></svg>'
     };
 
-    const specificMoons = { "2026-07-29": moonIcons.grid_full, "2026-08-06": moonIcons.grid_cres, "2026-08-12": moonIcons.grid_new, "2026-08-20": moonIcons.grid_ming };
+    const specificMoons = { "2026-07-29": moonIcons.grid_full, "2026-08-06": moonIcons.grid_ming, "2026-08-12": moonIcons.grid_new, "2026-08-20": moonIcons.grid_cres };
 
     async function inicializarPagina() {
         try {
