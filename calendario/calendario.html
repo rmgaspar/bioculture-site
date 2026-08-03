@@ -225,7 +225,6 @@
             document.getElementById('report-grid-agri').innerHTML = agriReports.map(r => `<div class="report-item"><h5>${r.t}</h5><p>${r.p}</p></div>`).join('');
             setupLocationLogic();
         } catch(e) { console.error("Crash bioCultura:", e); }
-        await carregarDicas();
     }
 
     function renderGlobe() {
@@ -333,42 +332,7 @@
         document.getElementById('sidebar').innerHTML = html;
         inicializarPagina();
     });
-
-    let todasDicas = [], dicasVisiveis = 3;
-
-async function carregarDicas() {
-    try {
-        const res = await fetch('../data/dicas.json?v=' + Date.now());
-        todasDicas = await res.json();
-        renderizarDicas();
-    } catch(e) { console.error("Erro dicas:", e); }
-}
-
-function renderizarDicas() {
-    const container = document.getElementById('dicas-container');
-    if(!container) return;
-    container.innerHTML = todasDicas.slice(0, dicasVisiveis).map(d => `
-        <div class="info-card-compact" style="cursor:default;">
-            <span style="font-size:0.6em; color:#2e7d32; font-weight:900; text-transform:uppercase;">${d.categoria}</span>
-            <span style="display:block; margin: 5px 0 10px 0; font-weight:800; color:#1a1a1a;">${d.titulo}</span>
-            <p style="font-size:0.85em; line-height:1.5; color:#666; margin-bottom:15px;">${d.resumo}</p>
-            <a href="${d.url_original}" target="_blank" style="font-size:0.65em; font-weight:800; color:#bbb; text-decoration:none; text-transform:uppercase;">Ler na fonte →</a>
-        </div>
-    `).join('');
     
-    if(dicasVisiveis >= todasDicas.length) document.getElementById('btn-mais-dicas').style.display = 'none';
-}
-
-<div class="data-row">
-    <h4>Guia de Bolso: Manutenção Regenerativa</h4>
-    <div id="dicas-container" class="info-grid"></div>
-    <div style="text-align: left; margin-top: 20px;">
-        <button id="btn-mais-dicas" class="btn-clean" onclick="carregarMaisDicas()">+ explorar mais dicas técnicas</button>
-    </div>
-</div>
-
-// ATENÇÃO: Adiciona a chamada carregarDicas() dentro do inicializarPagina()
-
     </script>
 </body>
 </html>
