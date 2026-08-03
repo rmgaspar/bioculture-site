@@ -11,7 +11,7 @@
         section { min-height: 100vh; display: flex; flex-direction: column; }
         #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
         #wrapper { padding-left: 18em !important; }
-        .inner { padding: 2.2em 4em 0 4em !important; max-width: 1600px !important; margin: 0 auto !important; width: 100%; box-sizing: border-box; }
+        .inner { padding: 2.2em 4em 0 4em !important; max-width: 1600px !important; margin: 0 auto; width: 100%; box-sizing: border-box; }
         
         .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; margin-bottom: 15px; display: block; }
         .hero-split { display: flex; align-items: flex-start; justify-content: space-between; gap: 4em; margin-bottom: 2em; }
@@ -19,7 +19,7 @@
         .hero-text h1 { font-size: 4em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; line-height: 0.95; margin: 0 0 15px 0; }
         .reg-info-top { font-size: 0.9em; font-style: italic; color: #888; margin-bottom: 30px; display: block; }
 
-        /* HERO GLOBE (RODINHA) */
+        /* HERO GLOBE (A RODINHA) */
         .hero-visual { flex: 1; display: flex; justify-content: flex-end; }
         .hero-globe {
             position: relative; width: 480px; height: 480px;
@@ -30,12 +30,12 @@
             padding: 40px 0;
         }
 
-        .globe-top { margin-bottom: 30px; display: flex; flex-direction: column; align-items: center; z-index: 10; }
-        .globe-year { font-size: 0.75em; font-weight: 900; color: #2e7d32; letter-spacing: 5px; margin-bottom: 5px; }
-        .globe-weekday { font-size: 0.65em; font-weight: 800; color: #bbb; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 2px; }
+        .globe-top { margin-bottom: auto; display: flex; flex-direction: column; align-items: center; z-index: 10; }
+        .globe-year { font-size: 0.75em; font-weight: 900; color: #2e7d32; letter-spacing: 5px; margin-bottom: 2px; }
+        .globe-weekday { font-size: 0.65em; font-weight: 800; color: #bbb; text-transform: uppercase; letter-spacing: 2px; }
         .globe-day-month { font-size: 1.6em; font-weight: 900; color: #2e7d32; line-height: 1; }
 
-        .week-stack { width: 100%; display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+        .week-stack { position: absolute; top: 52%; transform: translateY(-50%); width: 100%; display: flex; flex-direction: column; gap: 10px; }
         .week-row { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; width: 100%; }
         .day-node { font-size: 0.85em; font-weight: 600; color: #999; display: flex; align-items: center; justify-content: center; height: 32px; }
         .day-node.current-week { color: #1a1a1a; font-weight: 700; }
@@ -43,11 +43,12 @@
         .today-num { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; background: #1a1a1a; color: #fff !important; border-radius: 50%; font-size: 0.8em; font-weight: 900; }
 
         /* RODAPÉ GLOBO - CONVERGENTE */
-        .globe-south { margin-top: auto; width: 60%; display: flex; justify-content: center; align-items: center; z-index: 10; gap: 20px; }
-        .south-col { display: flex; flex-direction: column; align-items: center; gap: 6px; flex: 1; }
-        .v-sep { width: 1px; height: 45px; background: #eee; }
-        .meteo-icon-big { font-size: 2.4em; color: #fbc02d; margin-left: 10px; }
-        .moon-svg-main { width: 40px; height: 40px; display: block; margin-right: 10px; }
+        .globe-south { margin-top: auto; width: 50%; display: flex; justify-content: center; align-items: center; z-index: 10; gap: 10px; }
+        .south-col { display: flex; flex-direction: column; flex: 1; }
+        .v-sep { width: 1px; height: 40px; background: #eee; margin: 0; }
+        
+        .meteo-icon-big { font-size: 2.3em; color: #fbc02d; margin-bottom: 5px; margin-left: 15px; } 
+        .moon-svg-main { width: 38px; height: 38px; display: block; margin-right: 15px; } 
         
         .status-label-globe { font-size: 0.75em; font-weight: 900; color: #1a1a1a; text-transform: uppercase; letter-spacing: 1px; }
         .t-min { color: #42a5f5; } .t-max { color: #ef5350; }
@@ -55,11 +56,16 @@
         /* CONTEÚDO */
         .advice-content { font-size: 1.1em; line-height: 1.7; color: #555; text-align: left; margin-top: 20px; }
         .advice-content p { margin-bottom: 25px !important; }
-        .advice-content i { color: #2e7d32; text-decoration: underline; cursor: pointer; font-style: italic; }
+        .advice-content a { color: #2e7d32; text-decoration: underline; }
         
         .species-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 15px; }
-        .species-badge { display: inline-flex; align-items: center; gap: 8px; background: #fcfcfc; color: #666; padding: 5px 12px; border-radius: 50px; font-size: 0.8em; font-weight: 600; border: 1px solid #f2f2f2; cursor: pointer; transition: 0.2s; }
-        .species-badge img { width: 20px; height: 20px; border-radius: 50%; object-fit: cover; }
+        .species-badge { 
+            display: inline-flex; align-items: center; gap: 8px; background: #fcfcfc; 
+            color: #666; padding: 5px 12px; border-radius: 50px; font-size: 0.8em; 
+            font-weight: 600; border: 1px solid #f2f2f2; cursor: pointer; transition: 0.2s;
+        }
+        .species-badge:hover { border-color: #2e7d32; transform: translateY(-1px); }
+        .species-badge img { width: 20px; height: 20px; border-radius: 50%; object-fit: cover; background: #eee; }
 
         .btn-clean { background: none !important; border: none !important; box-shadow: none !important; color: #bbb !important; font-size: 0.7em; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; cursor: pointer; padding: 10px 0; outline: none !important; }
 
@@ -69,6 +75,8 @@
         .recipe-section { background: #1b4332; color: #fff; padding: 4em; border-radius: 40px; margin: 4em 0; }
         .recipe-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; }
         .recipe-item h4 { color: #fff; font-size: 1.3em; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
+        .recipe-item ul { font-size: 0.9em; padding-left: 20px; color: rgba(255,255,255,0.7); line-height: 1.8; }
+
         .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; }
         .report-item { border-top: 1px solid #f9f9f9; padding-top: 20px; }
         .report-item h5 { font-size: 0.75em; font-weight: 900; text-transform: uppercase; color: #2e7d32; margin-bottom: 12px; }
@@ -105,12 +113,12 @@
                                     </div>
                                     <div class="week-stack" id="week-stack"></div>
                                     <div class="globe-south">
-                                        <div class="south-col">
+                                        <div class="south-col" style="align-items: flex-end; text-align: right;">
                                             <i class="fas fa-sun meteo-icon-big"></i>
                                             <span class="status-label-globe"><span class="t-min">18º</span> / <span class="t-max">29º</span></span>
                                         </div>
                                         <div class="v-sep"></div>
-                                        <div class="south-col">
+                                        <div class="south-col" style="align-items: flex-start; text-align: left;">
                                             <div id="lunar-icon-container"></div>
                                             <span class="status-label-globe" id="moon-phase-name">...</span>
                                         </div>
@@ -163,10 +171,11 @@
 
     const moonIcons = {
         full: '<svg viewBox="0 0 24 24" class="moon-svg-main" style="fill:#f9a825"><circle cx="12" cy="12" r="10"/></svg>',
-        new: '<svg viewBox="0 0 24 24" class="moon-svg-main" style="fill:#bbb"><circle cx="12" cy="12" r="10" fill="none" stroke="#bbb" stroke-width="2"/></svg>',
         cres: '<svg viewBox="0 0 24 24" class="moon-svg-main" style="fill:#999"><path d="M12,2A10,10 0 0,0 22,12A10,10 0 0,0 12,22V2Z"/></svg>',
         ming: '<svg viewBox="0 0 24 24" class="moon-svg-main" style="fill:#999"><path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22V2Z"/></svg>'
     };
+
+    const specificMoons = { "2026-07-29": moonIcons.full, "2026-08-06": moonIcons.cres, "2026-08-20": moonIcons.ming };
 
     async function inicializarPagina() {
         try {
@@ -178,7 +187,7 @@
                 fetch(`${prefix}data/horticolas_master.json?v=` + Date.now()).then(r => r.json())
             ]);
             window.locationsDB = rLoc; pragasDB = rPragas; floraDB = rFlora; horticolasMaster = rHorta;
-            infoGlobal = window.locationsDB.find(i => String(i.id) === String(localStorage.getItem('biocultura_region'))) || window.locationsDB[0];
+            infoGlobal = window.locationsDB.find(i => String(i.id) === String(localStorage.getItem('biocultura_region'))) || locationsDB[0];
             
             if(infoGlobal) document.getElementById('reg-name').innerText = `${infoGlobal.titulo}, ${(infoGlobal.concelho || "").toUpperCase()}`;
             
@@ -211,28 +220,31 @@
             for(let j=0; j<7; j++) {
                 const cur = new Date(monday);
                 cur.setDate(monday.getDate() + (w*7) + j);
+                const dateStr = cur.toISOString().split('T')[0];
                 const isToday = today.toDateString() === cur.toDateString();
                 let cls = `day-node ${w === 0 ? 'current-week' : ''} ${j >= 5 ? 'weekend' : ''}`;
-                let content = isToday ? `<span class="today-num">${cur.getDate()}</span>` : cur.getDate();
+                let content = (isToday) ? `<span class="today-num">${cur.getDate()}</span>` : cur.getDate();
                 row.innerHTML += `<div class="${cls}">${content}</div>`;
             }
             stack.appendChild(row);
         });
         document.getElementById('lunar-icon-container').innerHTML = moonIcons.ming;
+        document.getElementById('moon-phase-name').innerText = "Transição";
         updateState();
     }
 
     function updateState() {
         const advice = document.getElementById('advice-content');
         const solo = (infoGlobal?.biomas?.solo || "").toLowerCase();
-        const ph = parseFloat(infoGlobal?.biomas?.ph_solo || "6.5");
-        let soilText = solo.includes('xistoso') ? 'Em terrenos de rápida drenagem, reforce o <i onclick="window.location.href=\'horticola-detalhe.html?id=mulching\'">mulching</i> para preservar a humidade microbiana.' : "Mantenha a fertilização biológica equilibrada.";
-        if (ph < 6.0) soilText += " Aplique correções orgânicas para equilibrar a acidez natural.";
+        
+        let soilText = solo.includes('xistoso') 
+            ? 'Em terrenos de rápida drenagem, reforce o <a href="horticola-detalhe.html?id=mulching"><i>mulching</i></a> para preservar a humidade microbiana.' 
+            : "Mantenha a fertilização biológica equilibrada.";
 
         advice.innerHTML = `
             <p>${soilText}</p>
-            <p>CICLO ATUAL<br>Deve semear couve-galega e brócolos, e focar na colheita de tomate, pimento e beringela.</p>
-            <p>CLIMA E LUA<br>Humidade estável: vigie o aparecimento de fungos. Sob fase minguante, a recomendação é a manutenção geral e observação.</p>
+            <p><b>CICLO ATUAL</b><br>Deve semear couve-galega e brócolos, e focar na colheita de tomate, pimento e beringela.</p>
+            <p><b>CLIMA E LUA</b><br>Humidade estável: vigie o aparecimento de fungos. Sob fase minguante, a recomendação é a manutenção geral e observação.</p>
         `;
     }
 
@@ -259,7 +271,7 @@
             const item = horticolasMaster[id];
             if(!item) return '';
             return `<div class="species-badge" onclick="window.location.href='horticola-detalhe.html?id=${id}'"><img src="${item.imagem}">${item.nome}</div>`;
-        }).join('') + '<div style="width:100%; margin-top:15px;"><span class="btn-clean" style="font-size:0.6em; color:#ccc;" onclick="recolherSugestoes()">(recolher)</span></div>';
+        }).join('') + '<div style="width:100%; margin-top:15px;"><span class="btn-clean" style="font-size:0.6em; color:#ccc; cursor:pointer;" onclick="recolherSugestoes()">(recolher)</span></div>';
         $(container).slideDown();
         document.getElementById('nota-solo').style.display = 'block';
         document.getElementById('link-sugestoes').style.display = 'none';
@@ -268,7 +280,7 @@
     function recolherSugestoes() { $('#sugestoes-container').slideUp(); $('#nota-solo').hide(); $('#link-sugestoes').show(); }
 
     function setupLocationLogic() {
-        $(document).on('click', '#btn-gps-trigger', function(e) {
+        $(document).off('click', '#btn-gps-trigger').on('click', '#btn-gps-trigger', function(e) {
             e.preventDefault();
             if (navigator.geolocation) {
                 const btn = $(this); btn.css('opacity', '0.5');
@@ -277,10 +289,7 @@
                     let closest = window.locationsDB[0], minD = Infinity;
                     window.locationsDB.forEach(c => {
                         if(!c.lat || c.lat === 0) return;
-                        const dLat = (c.lat - pos.coords.latitude) * Math.PI / 180;
-                        const dLon = (c.lon - pos.coords.longitude) * Math.PI / 180;
-                        const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(pos.coords.latitude * Math.PI / 180) * Math.cos(c.lat * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
-                        const d = R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+                        const d = R * Math.acos(Math.sin(pos.coords.latitude*Math.PI/180)*Math.sin(c.lat*Math.PI/180) + Math.cos(pos.coords.latitude*Math.PI/180)*Math.cos(c.lat*Math.PI/180)*Math.cos((c.lon-pos.coords.longitude)*Math.PI/180));
                         if(d < minD) { minD = d; closest = c; }
                     });
                     localStorage.setItem('biocultura_region', closest.id);
@@ -293,10 +302,7 @@
                   dropdown = $('#loc-dropdown').empty();
             if(val.length < 2) return dropdown.hide();
             window.locationsDB.filter(i => i.titulo.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(val)).slice(0,8).forEach(m => {
-                $('<div class="bio-res-item"></div>').text(m.titulo).on('click', () => {
-                    localStorage.setItem('biocultura_region', m.id);
-                    location.reload();
-                }).appendTo(dropdown);
+                $('<div class="bio-res-item"></div>').text(m.titulo).on('click', () => { localStorage.setItem('biocultura_region', m.id); location.reload(); }).appendTo(dropdown);
             });
             dropdown.show();
         });
