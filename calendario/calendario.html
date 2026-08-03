@@ -1,273 +1,272 @@
 <!DOCTYPE HTML>
 <html>
-	<head>
-		<title>bioCultura - Calendário de Regeneração</title>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-		<link rel="stylesheet" href="/assets/css/main.css" />
-		<style>
-            body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
-			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
-            section { min-height: 100vh; display: flex; flex-direction: column; }
+<head>
+    <title>bioCultura - Calendário de Regeneração</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="/assets/css/main.css" />
+    <style>
+        body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
+        section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
+        section { min-height: 100vh; display: flex; flex-direction: column; }
+        #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
+        #wrapper { padding-left: 18em !important; }
+        .inner { padding: 2.2em 4em 0 4em !important; max-width: 1600px !important; margin: 0 auto; width: 100%; box-sizing: border-box; }
+        
+        .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; margin-bottom: 15px; display: block; }
+        .hero-split { display: flex; align-items: flex-start; justify-content: space-between; gap: 4em; margin-bottom: 2em; }
+        .hero-text { flex: 1.5; text-align: left; padding-top: 5px; } 
+        .hero-text h1 { font-size: 4em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; line-height: 0.95; margin: 0 0 15px 0; }
+        .reg-info-top { font-size: 0.9em; font-style: italic; color: #888; margin-bottom: 30px; display: block; }
 
-            #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
-            #wrapper { padding-left: 18em !important; }
+        /* GLOBO */
+        .hero-visual { flex: 1; display: flex; justify-content: flex-end; }
+        .hero-globe { position: relative; width: 480px; height: 480px; border-radius: 50%; overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,0.05); background: #fdfdfd; display: flex; flex-direction: column; align-items: center; border: 1px solid #f2f2f2; padding: 45px 0; }
+        .globe-year { font-size: 0.75em; font-weight: 900; color: #2e7d32; letter-spacing: 5px; text-transform: uppercase; }
+        .globe-day-month { font-size: 1.5em; font-weight: 900; color: #2e7d32; line-height: 1; }
+        .week-stack { position: absolute; top: 50%; transform: translateY(-50%); width: 100%; display: flex; flex-direction: column; gap: 10px; mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent); }
+        .week-row { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; width: 100%; }
+        .day-node { font-size: 0.85em; font-weight: 600; color: #e5e5e5; }
+        .day-node.current-week { color: #1a1a1a; font-weight: 700; }
+        .today-num { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; background: #1a1a1a; color: #fff !important; border-radius: 50%; font-size: 0.8em; font-weight: 900; }
+        .globe-south { margin-top: auto; width: 38%; display: flex; justify-content: space-between; align-items: center; }
+        .temp-range-label { font-size: 0.75em; font-weight: 800; color: #1a1a1a; }
+        .moon-phase-name { font-size: 0.5em; font-weight: 900; color: #2e7d32; text-transform: uppercase; letter-spacing: 1px; }
 
-            .inner { padding: 2.2em 4em 0 4em !important; max-width: 1600px !important; margin: 0 auto; width: 100%; box-sizing: border-box; }
-            .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; margin-bottom: 15px; display: block; }
+        /* TEXTO E BADGES MINIMALISTAS */
+        .advice-content { font-size: 1.1em; line-height: 1.7; color: #555; text-align: left; margin-top: 20px; }
+        .advice-content p { margin-bottom: 25px !important; }
+        
+        .species-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+        .species-badge { 
+            display: inline-flex; align-items: center; gap: 8px; background: #fcfcfc; 
+            color: #666; padding: 5px 12px; border-radius: 50px; font-size: 0.8em; 
+            font-weight: 600; border: 1px solid #f2f2f2; cursor: pointer; transition: 0.2s;
+        }
+        .species-badge:hover { border-color: #2e7d32; transform: translateY(-1px); }
+        .species-badge img { width: 18px; height: 18px; border-radius: 50%; object-fit: cover; }
 
-            .hero-split { display: flex; align-items: flex-start; justify-content: space-between; gap: 4em; margin-bottom: 2em; }
-            .hero-text { flex: 1.5; text-align: left; padding-top: 5px; } 
-            .hero-text h1 { font-size: 4em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; line-height: 0.95; margin: 0 0 15px 0; }
+        .btn-clean { background: none !important; border: none !important; box-shadow: none !important; color: #bbb !important; font-size: 0.7em; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; cursor: pointer; padding: 10px 0; outline: none !important; }
+        
+        /* SEÇÕES GERAIS */
+        .data-row { display: block; padding: 3.5em 0; border-bottom: 1px solid #f2f2f2; }
+        .data-row h4 { font-size: 0.75em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin-bottom: 25px; }
+        .info-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+        .info-card-compact { background: #fdfdfd; border: 1px solid #f2f2f2; border-radius: 12px; padding: 15px; cursor: pointer; transition: 0.3s; }
+        .info-card-compact img { width: 100%; height: 120px; object-fit: cover; border-radius: 8px; margin-bottom: 12px; }
+        .info-card-compact b { display: block; font-size: 0.9em; color: #c62828; font-style: italic; }
+        .info-card-compact span { display: block; font-size: 0.85em; font-weight: 700; color: #1a1a1a; }
 
-            .hero-visual { flex: 1; display: flex; justify-content: flex-end; }
-            .hero-globe {
-                position: relative; width: 480px; height: 480px;
-                border-radius: 50%; overflow: hidden;
-                box-shadow: 0 40px 100px rgba(0,0,0,0.05);
-                background: #fdfdfd; display: flex; flex-direction: column;
-                align-items: center; border: 1px solid #f2f2f2;
-                padding: 45px 0;
-            }
+        /* RECEITAS */
+        .recipe-section { background: #1b4332; color: #fff; padding: 4em; border-radius: 40px; margin: 4em 0; }
+        .recipe-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; }
+        .recipe-item h4 { color: #fff; font-size: 1.3em; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
+        .recipe-item p { font-size: 1em; color: rgba(255,255,255,0.8); line-height: 1.6; }
+        .recipe-item ul { font-size: 0.9em; padding-left: 20px; color: rgba(255,255,255,0.7); line-height: 1.8; }
 
-            .globe-top { margin-bottom: auto; display: flex; flex-direction: column; align-items: center; gap: 2px; }
-            .globe-year { font-size: 0.75em; font-weight: 900; color: #2e7d32; letter-spacing: 5px; text-transform: uppercase; margin-bottom: 3px; }
-            .globe-weekday { font-size: 0.65em; font-weight: 900; color: #bbb; text-transform: uppercase; letter-spacing: 2px; }
-            .globe-day-month { font-size: 1.5em; font-weight: 900; color: #2e7d32; letter-spacing: -0.5px; line-height: 1; }
+        .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; }
+        .report-item { border-top: 1px solid #f9f9f9; padding-top: 20px; }
+        .report-item h5 { font-size: 0.75em; font-weight: 900; text-transform: uppercase; color: #2e7d32; margin-bottom: 12px; }
+        .report-item p { font-size: 1em; line-height: 1.7; color: #555; text-align: justify; }
 
-            .week-stack { 
-                position: absolute; top: 50%; transform: translateY(-50%);
-                width: 100%; display: flex; flex-direction: column; gap: 10px; 
-                mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent); 
-            }
-            .week-row { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; width: 100%; }
-            .day-node { font-size: 0.85em; font-weight: 600; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 32px; color: #e5e5e5; }
-            .day-node.current-week { color: #1a1a1a; font-weight: 700; }
-            .day-node.weekend-cur  { color: #ef5350 !important; }
-            .today-num { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; background: #1a1a1a; color: #fff !important; border-radius: 50%; font-size: 0.8em; font-weight: 900; }
+        .page-footer { padding: 5em 0 4em 0; text-align: right; opacity: 0.3; }
+        .logo-footer { display: block; font-size: 0.85em; font-weight: 900; color: #333; }
 
-            .globe-south { margin-top: auto; width: 38%; display: flex; justify-content: space-between; align-items: center; z-index: 10; }
-            .south-col { display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; }
-            .v-sep { width: 1px; height: 45px; background: #f2f2f2; margin: 0; }
-            .temp-range-label { font-size: 0.75em; font-weight: 800; color: #1a1a1a; }
-            .moon-phase-name { font-size: 0.5em; font-weight: 900; color: #2e7d32; text-transform: uppercase; letter-spacing: 1px; text-align: center; }
+        @media screen and (max-width: 1280px) { .hero-split, .report-grid, .info-grid { grid-template-columns: 1fr; } .hero-globe { width: 350px; height: 350px; } }
+    </style>
+</head>
+<body class="is-preload">
+    <div id="wrapper">
+        <div id="main">
+            <div class="inner">
+                <section>
+                    <div class="hero-split">
+                        <div class="hero-text">
+                            <span class="category-label">Agricultura bioCultura</span>
+                            <h1>Calendário de Regeneração</h1>
+                            <span class="reg-info-top">Orientação para: <strong id="reg-name" style="color:#2e7d32">...</strong></span>
+                            
+                            <div class="advice-content" id="advice-content"></div>
 
-            /* TEXTO SIMPLIFICADO */
-            .advice-content { font-size: 1.1em; line-height: 1.7; color: #555; text-align: left; margin-top: 10px; }
-            .advice-content p { margin-bottom: 20px !important; }
-            
-            .regional-link { 
-                display: inline-block; margin-top: 15px; font-size: 0.75em; 
-                font-weight: 800; text-transform: uppercase; letter-spacing: 2px; 
-                color: #2e7d32 !important; text-decoration: none; cursor: pointer;
-            }
-            .regional-link:hover { text-decoration: underline; }
-
-            .data-row { display: block; padding: 3.5em 0; border-bottom: 1px solid #f2f2f2; }
-            .data-row h4 { font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin: 0 0 25px 0; }
-
-            .info-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
-            .info-card-compact { background: #fdfdfd; border: 1px solid #f2f2f2; border-radius: 12px; padding: 15px; cursor: pointer; transition: all 0.3s; display: block; text-decoration: none !important; }
-            .info-card-compact:hover { transform: translateY(-5px); border-color: #2e7d32; }
-            .compact-img { width: 100%; height: 120px; object-fit: cover; border-radius: 8px; margin-bottom: 12px; }
-
-            /* BOTÕES SEM BORDER */
-            .btn-clean { background: none !important; border: none !important; box-shadow: none !important; color: #bbb !important; font-size: 0.7em; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; padding: 10px 0; cursor: pointer; outline: none !important; }
-            .btn-clean:hover { color: #2e7d32 !important; }
-
-            .page-footer { margin-top: auto; padding: 2em 0 2.5em 0; border-top: 1px solid #f2f2f2; opacity: 0.3; text-align: right; }
-
-            .tag-reg { cursor: pointer; transition: 0.3s; }
-            .tag-reg:hover { background: #2e7d32; color: #fff; }
-
-            @media screen and (max-width: 1280px) {
-                #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
-                #wrapper { padding-left: 0 !important; }
-                .hero-split { grid-template-columns: 1fr; }
-                .hero-globe { width: 350px; height: 350px; margin: 0 auto; }
-            }
-		</style>
-	</head>
-	<body class="is-preload">
-		<div id="wrapper">
-			<div id="main">
-                <div class="inner">
-                    <section>
-                        <div id="calendar-main-view">
-                            <div class="hero-split">
-                                <div class="hero-text">
-                                    <span class="category-label">Agricultura bioCultura</span>
-                                    <h1>Calendário de Regeneração</h1>
-                                    <p style="font-size: 0.9em; font-style: italic; color: #bbb; margin-bottom: 20px;">Orientação para: <strong id="reg-name" style="color:#2e7d32">...</strong></p>
-                                    
-                                    <div class="advice-content" id="advice-content">
-                                        <!-- Texto dinâmico injetado aqui -->
-                                    </div>
-
-                                    <a class="regional-link" id="link-sugestoes" onclick="mostrarSugestoes()">+ Sugestões de plantio para esta região</a>
-                                    <p id="nota-solo" style="display:none; font-size: 0.75em; color: #bbb; margin-top: 10px; font-style: italic;">
-                                        Nota: As sugestões acima são baseadas no tipo de solo e pH específico da sua zona, cruzados com o catálogo bioCultura.
-                                    </p>
-                                    <div id="sugestoes-container" class="info-grid" style="margin-top: 20px; display: none;"></div>
-                                </div>
-
-                                <div class="hero-visual">
-                                    <div class="hero-globe">
-                                        <div class="globe-top">
-                                            <span class="globe-year" id="globe-year">2026</span>
-                                            <span class="globe-weekday" id="globe-weekday">...</span>
-                                            <span class="globe-day-month" id="globe-day-month">...</span>
-                                        </div>
-                                        <div class="week-stack" id="week-stack"></div>
-                                        <div class="globe-south">
-                                            <div class="south-col">
-                                                <span class="temp-range-label" id="temp-range">--º / --º</span>
-                                            </div>
-                                            <div class="v-sep"></div>
-                                            <div class="south-col">
-                                                <div id="lunar-icon-container"></div>
-                                                <span class="moon-phase-name" id="moon-phase-name">...</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="data-row">
-                                <h4>Sanidade Vegetal: Diagnóstico Bio</h4>
-                                <div id="pragas-container" class="info-grid"></div>
-                                <button class="btn-clean" onclick="toggleGrid('pragas')">+ ver todas as pragas</button>
-                            </div>
+                            <button class="btn-clean" id="link-sugestoes" onclick="mostrarSugestoes()">+ Sugestões de plantio para esta região</button>
+                            <p id="nota-solo" style="display:none; font-size: 0.75em; color: #bbb; margin-top: 15px; font-style: italic;">
+                                Nota: As sugestões acima são baseadas no tipo de solo e pH específico da sua zona, cruzados com o catálogo bioCultura.
+                            </p>
+                            <div id="sugestoes-container" class="species-list" style="display: none;"></div>
                         </div>
 
-                        <footer class="page-footer">
-                            <span style="display: block; font-size: 0.85em; font-weight: 900; color: #333;">bioCultura</span>
-                            <span style="display: block; font-size: 0.5em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Global Regeneration</span>
-                        </footer>
-					</section>
-				</div>
+                        <div class="hero-visual">
+                            <div class="hero-globe">
+                                <div class="globe-top">
+                                    <span class="globe-year" id="globe-year">2026</span>
+                                    <span class="globe-day-month" id="globe-day-month">...</span>
+                                </div>
+                                <div class="week-stack" id="week-stack"></div>
+                                <div class="globe-south">
+                                    <span class="temp-range-label" id="temp-range">--º / --º</span>
+                                    <span class="moon-phase-name" id="moon-phase-name">...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="data-row">
+                        <h4>Sanidade Vegetal: Diagnóstico Bio</h4>
+                        <div id="pragas-container" class="info-grid"></div>
+                        <button class="btn-clean" id="btn-pragas" onclick="toggleGrid('pragas')">+ ver todas as pragas</button>
+                    </div>
+
+                    <div class="data-row">
+                        <h4>Flora Invasora Regional</h4>
+                        <div id="flora-container" class="info-grid"></div>
+                        <button class="btn-clean" id="btn-invasoras" onclick="toggleGrid('flora')">+ ver todas as invasoras</button>
+                    </div>
+
+                    <div class="recipe-section">
+                        <span class="category-label" style="color: rgba(255,255,255,0.5);">Manuais de Preparo</span>
+                        <h2 style="color: #fff; font-size: 2.5em; margin-bottom: 30px;">Soluções Biológicas de Precisão</h2>
+                        <div class="recipe-grid">
+                            <div class="recipe-item"><h4>Calda Bordalesa</h4><p>Fungicida preventivo para Míldio e Antracnose.</p><ul><li>100g de Sulfato de Cobre.</li><li>100g de Cal Hidratada.</li></ul></div>
+                            <div class="recipe-item"><h4>Extrato de Própolis</h4><p>Antibiótico natural para tratar feridas de poda.</p><ul><li>Diluir 10ml em 1L de água.</li><li>Pincelar cortes superiores a 2cm.</li></ul></div>
+                            <div class="recipe-item"><h4>Infusão de Alho</h4><p>Repelente contra afídios e ácaros.</p><ul><li>100g macerados por 24h.</li><li>Ferver 15 min e aplicar frio.</li></ul></div>
+                        </div>
+                    </div>
+
+                    <div class="data-row" style="border-bottom: none;">
+                        <h4>Síntese das Autoridades 2026</h4>
+                        <div id="report-grid-agri" class="report-grid"></div>
+                    </div>
+
+                    <footer class="page-footer">
+                        <span class="logo-footer">bioCultura</span>
+                    </footer>
+                </section>
             </div>
-			<div id="sidebar"></div>
-		</div>
+        </div>
+        <div id="sidebar"></div>
+    </div>
 
-		<script src="/assets/js/jquery.min.js"></script>
-        <script>
-            let locationsDB = [], infoGlobal = null, horticolasMaster = {};
+    <script src="/assets/js/jquery.min.js"></script>
+    <script>
+        let locationsDB = [], pragasDB = [], floraDB = [], horticolasMaster = {};
+        let infoGlobal = null;
 
-            async function inicializarPagina() {
-                try {
-                    const [rLoc, rPragas, rHorta] = await Promise.all([
-                        fetch('/data/bioregioes.json').then(r => r.json()),
-                        fetch('/data/pragas.json').then(r => r.json()),
-                        fetch('/data/horticolas_master.json').then(r => r.json())
-                    ]);
-                    
-                    locationsDB = rLoc;
-                    horticolasMaster = rHorta;
-                    const savedId = localStorage.getItem('biocultura_region');
-                    infoGlobal = locationsDB.find(i => String(i.id) === String(savedId)) || locationsDB[0];
-                    
-                    if(infoGlobal) {
-                        document.getElementById('reg-name').innerText = `${infoGlobal.titulo}, ${(infoGlobal.concelho || "").toUpperCase()}`;
-                    }
-                    
-                    renderGlobe();
-                    renderGrid(rPragas, 'pragas-container', 4);
-                    setupLocationLogic();
-                } catch(e) { console.error(e); }
-            }
+        const agriReports = [
+            { t: "Diretrizes PEPAC 2026", p: "O Plano Estratégico da PAC prioriza o apoio financeiro a explorações que demonstrem aumento da biodiversidade." },
+            { t: "Vigilância Fitossanitária", p: "Alerta para novos focos de Xylella fastidiosa. A recomendação técnica foca-se na eliminação de hospedeiras." }
+        ];
 
-            function updateState(moon, weather = null) {
-                const advice = document.getElementById('advice-content');
-                const solo = (infoGlobal?.biomas?.solo || "").toLowerCase();
-                const ph = parseFloat(infoGlobal?.biomas?.ph_solo || "6.5");
-
-                let soilText = "Mantenha a fertilização biológica equilibrada.";
-                if (solo.includes('xistoso') || solo.includes('granítico')) soilText = "Em terrenos de rápida drenagem, reforce o mulching para preservar a humidade microbiana.";
-                else if (solo.includes('argiloso')) soilText = "Evite a compactação e garanta o arejamento das raízes.";
-                if (ph < 6.0) soilText += " Aplique correções orgânicas para equilibrar a acidez natural.";
-
-                const mesAtual = new Date().toLocaleString('pt-PT', { month: 'long' }).toUpperCase();
-                const phaseKey = moon ? moon.label : 'Transição';
-                const moonAdvice = lunarDetails[phaseKey].do;
-
-                // TEXTO LIMPO E CONTÍNUO
-                advice.innerHTML = `
-                    <p>${soilText}</p>
-                    <p>CICLO ATUAL: ${mesAtual}. Deve semear couve-galega e brócolos, e focar na colheita de tomate, pimento e beringela.</p>
-                    <p>CLIMA E LUA. Humidade estável: vigie o aparecimento de fungos. Sob ${phaseKey.toLowerCase()}, a recomendação é: ${moonAdvice.toLowerCase()}</p>
-                `;
-            }
-
-            function mostrarSugestoes() {
-                const container = document.getElementById('sugestoes-container');
-                const ph = parseFloat(infoGlobal?.biomas?.ph_solo || "6.5");
+        async function inicializarPagina() {
+            try {
+                const [rLoc, rPragas, rFlora, rHorta] = await Promise.all([
+                    fetch('/data/bioregioes.json').then(r => r.json()),
+                    fetch('/data/pragas.json').then(r => r.json()),
+                    fetch('/data/flora_invasora.json').then(r => r.json()),
+                    fetch('/data/horticolas_master.json').then(r => r.json())
+                ]);
+                locationsDB = rLoc; pragasDB = rPragas; floraDB = rFlora; horticolasMaster = rHorta;
                 
-                // Lógica de seleção (podes expandir esta lista)
-                let ids = ph < 6.0 ? ['batata', 'mirtilo', 'castanha', 'morango', 'centeio'] : 
-                        ph > 7.2 ? ['azeitona', 'alfarroba', 'fava', 'grao-de-bico', 'figo'] : 
-                        ['tomate', 'alface', 'cenoura', 'couve-galega', 'maca'];
-
-                container.innerHTML = ids.map(id => {
-                    const item = horticolasMaster[id];
-                    if(!item) return '';
-                    return `
-                        <div class="info-card-compact" onclick="window.location.href='horticola-detalhe.html?id=${id}'">
-                            <img src="${item.imagem}" class="compact-img">
-                            <b>${item.nome}</b>
-                            <span>${item.nome_cientifico}</span>
-                            <p>${item.grupo}</p>
-                        </div>`;
-                }).join('');
-
-                $(container).slideDown();
-                document.getElementById('nota-solo').style.display = 'block';
-                document.getElementById('link-sugestoes').style.display = 'none';
-            }
-
-            function renderGlobe() {
-                const today = new Date();
-                document.getElementById('globe-year').innerText = today.getFullYear();
-                document.getElementById('globe-day-month').innerText = `${today.getDate()} de ${new Date().toLocaleString('pt-PT', {month:'long'})}`;
-                document.getElementById('globe-weekday').innerText = new Date().toLocaleString('pt-PT', {weekday:'long'});
+                const savedId = localStorage.getItem('biocultura_region');
+                infoGlobal = locationsDB.find(i => String(i.id) === String(savedId)) || locationsDB[0];
                 
-                // Simulação de fase lunar para o exemplo
-                document.getElementById('moon-phase-name').innerText = 'Transição';
-                document.getElementById('lunar-icon-container').innerHTML = '<svg viewBox="0 0 24 24" style="width:30px; fill:#bbb;"><circle cx="12" cy="12" r="10" stroke="#eee" fill="none"/></svg>';
-                updateState(null);
-            }
+                if(infoGlobal) {
+                    document.getElementById('reg-name').innerText = `${infoGlobal.titulo}, ${(infoGlobal.concelho || "").toUpperCase()}`;
+                }
+                
+                renderGlobe();
+                renderGrid(pragasDB, 'pragas-container', 4, 'praga');
+                renderGrid(floraDB, 'flora-container', 4, 'flora');
+                document.getElementById('report-grid-agri').innerHTML = agriReports.map(r => `<div class="report-item"><h5>${r.t}</h5><p>${r.p}</p></div>`).join('');
+                setupLocationLogic();
+            } catch(e) { console.error(e); }
+        }
 
-            function renderGrid(data, containerId, limit) {
-                const container = document.getElementById(containerId);
-                container.innerHTML = data.slice(0, limit).map(item => `
-                    <div class="info-card-compact">
-                        <img src="${item.imagem}" class="compact-img">
-                        <b>${item.nome_cientifico}</b>
-                        <span>${item.nome_comum}</span>
-                    </div>`).join('');
-            }
+        function updateState(moon) {
+            const advice = document.getElementById('advice-content');
+            const solo = (infoGlobal?.biomas?.solo || "").toLowerCase();
+            const ph = parseFloat(infoGlobal?.biomas?.ph_solo || "6.5");
 
-            function setupLocationLogic() {
-                $(document).off('click', '#btn-gps-trigger').on('click', '#btn-gps-trigger', function() {
-                    if (navigator.geolocation) {
-                        navigator.geolocation.getCurrentPosition(pos => {
-                            let closest = locationsDB[0], minD = Infinity;
-                            locationsDB.forEach(c => {
-                                if(!c.lat || c.lat === 0) return;
-                                let d = Math.sqrt(Math.pow(pos.coords.latitude - c.lat, 2) + Math.pow(pos.coords.longitude - c.lon, 2));
-                                if(d < minD) { minD = d; closest = c; }
-                            });
-                            localStorage.setItem('biocultura_region', closest.id);
-                            location.reload();
+            let soilText = "Mantenha a fertilização biológica equilibrada.";
+            if (solo.includes('xistoso') || solo.includes('granítico')) soilText = "Em terrenos de rápida drenagem, reforce o mulching para preservar a humidade microbiana.";
+            else if (solo.includes('argiloso')) soilText = "Evite a compactação e garanta o arejamento das raízes.";
+            if (ph < 6.0) soilText += " Aplique correções orgânicas para equilibrar a acidez natural.";
+
+            const mesAtual = new Date().toLocaleString('pt-PT', { month: 'long' }).toUpperCase();
+            const phase = moon ? moon.label : 'Transição';
+            
+            advice.innerHTML = `
+                <p>${soilText}</p>
+                <p>CICLO ATUAL: ${mesAtual}. Deve semear couve-galega e brócolos, e focar na colheita de tomate, pimento e beringela.</p>
+                <p>CLIMA E LUA. Humidade estável: vigie o aparecimento de fungos. Sob ${phase.toLowerCase()}, a recomendação é a manutenção geral e observação.</p>
+            `;
+        }
+
+        function mostrarSugestoes() {
+            const container = document.getElementById('sugestoes-container');
+            const ph = parseFloat(infoGlobal?.biomas?.ph_solo || "6.5");
+            let ids = ph < 6.0 ? ['batata', 'mirtilo', 'castanha', 'morango'] : 
+                      ph > 7.2 ? ['azeitona', 'alfarroba', 'fava', 'grao-de-bico'] : 
+                      ['tomate', 'alface', 'cenoura', 'couve-galega'];
+
+            container.innerHTML = ids.map(id => {
+                const item = horticolasMaster[id];
+                if(!item || !item.imagem) return ''; // SÓ MOSTRA SE TIVER IMAGEM
+                return `
+                    <div class="species-badge" onclick="window.location.href='recursos/horticola-detalhe.html?id=${id}'">
+                        <img src="${item.imagem}">
+                        ${item.nome}
+                    </div>`;
+            }).join('');
+            $(container).slideDown();
+            document.getElementById('nota-solo').style.display = 'block';
+            document.getElementById('link-sugestoes').style.display = 'none';
+        }
+
+        function renderGrid(data, containerId, limit, type) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = data.slice(0, limit).map(item => `
+                <div class="info-card-compact">
+                    <img src="${item.imagem}">
+                    <b>${item.nome_cientifico}</b>
+                    <span>${item.nome_comum}</span>
+                </div>`).join('');
+        }
+
+        function toggleGrid(type) {
+            const db = type === 'pragas' ? pragasDB : floraDB;
+            const containerId = type === 'pragas' ? 'pragas-container' : 'flora-container';
+            renderGrid(db, containerId, 99, type);
+            document.getElementById(type === 'pragas' ? 'btn-pragas' : 'btn-invasoras').style.display = 'none';
+        }
+
+        function renderGlobe() {
+            const today = new Date();
+            document.getElementById('globe-day-month').innerText = `${today.getDate()} de ${today.toLocaleString('pt-PT', {month:'long'})}`;
+            document.getElementById('moon-phase-name').innerText = 'Transição';
+            updateState(null);
+        }
+
+        function setupLocationLogic() {
+            $(document).on('click', '#btn-gps-trigger', function() {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(pos => {
+                        let closest = locationsDB[0], minD = Infinity;
+                        locationsDB.forEach(c => {
+                            if(!c.lat || c.lat === 0) return;
+                            const d = Math.sqrt(Math.pow(pos.coords.latitude - c.lat, 2) + Math.pow(pos.coords.longitude - c.lon, 2));
+                            if(d < minD) { minD = d; closest = c; }
                         });
-                    }
-                });
-            }
-
-            fetch('/sidebar-content.html').then(r => r.text()).then(html => {
-                document.getElementById('sidebar').innerHTML = html;
-                inicializarPagina();
+                        localStorage.setItem('biocultura_region', closest.id);
+                        location.reload();
+                    });
+                }
             });
-        </script>
-	</body>
+        }
+
+        fetch('/sidebar-content.html').then(r => r.text()).then(html => {
+            document.getElementById('sidebar').innerHTML = html;
+            inicializarPagina();
+        });
+    </script>
+</body>
 </html>
