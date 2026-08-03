@@ -42,8 +42,8 @@
         .day-node.weekend { color: #ef5350 !important; }
         .today-num { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; background: #1a1a1a; color: #fff !important; border-radius: 50%; font-size: 0.8em; font-weight: 900; }
         
-        /* FIX: Icones da Lua no Grid (Pequenos) */
-        .moon-grid-icon { width: 14px !important; height: 14px !important; display: block; margin: 0 auto; }
+        /* FIX: Icones da Lua no Grid (Pequenos e Proporcionais) */
+        .moon-grid-icon { width: 16px !important; height: 16px !important; display: block; margin: 0 auto; }
 
         /* RODAPÉ GLOBO - ALINHAMENTO CONVERGENTE */
         .globe-south { margin-top: auto; margin-bottom: 30px; width: 60%; display: flex; justify-content: center; align-items: center; z-index: 10; gap: 0; }
@@ -55,10 +55,11 @@
         .meteo-icon-big { font-size: 2.2em; color: #fbc02d; margin-bottom: 4px; }
         .moon-svg-main { width: 36px; height: 36px; display: block; fill: #999; margin-bottom: 4px; }
         
-        .status-label-globe { font-size: 0.65em !important; font-weight: 900; color: #1a1a1a; text-transform: uppercase; letter-spacing: 1px; line-height: 1; }
+        /* FIX: Tamanho e alinhamento do texto no Globo */
+        .status-label-globe { font-size: 0.85em !important; font-weight: 900; color: #1a1a1a; text-transform: uppercase; letter-spacing: 1px; line-height: 1; }
         .t-min { color: #42a5f5; } .t-max { color: #ef5350; }
 
-        /* CONTEÚDO */
+        /* CONTEÚDO E BADGES */
         .advice-content { font-size: 1.1em; line-height: 1.7; color: #555; text-align: left; margin-top: 20px; }
         .advice-content p { margin-bottom: 25px !important; }
         .advice-content a { color: #2e7d32; text-decoration: underline; }
@@ -176,13 +177,14 @@
         full: '<svg viewBox="0 0 24 24" class="moon-svg-main" style="fill:#f9a825"><circle cx="12" cy="12" r="10"/></svg>',
         new: '<svg viewBox="0 0 24 24" class="moon-svg-main" style="fill:#bbb"><circle cx="12" cy="12" r="10" fill="none" stroke="#bbb" stroke-width="2"/></svg>',
         cres: '<svg viewBox="0 0 24 24" class="moon-svg-main"><path d="M12,2A10,10 0 0,1 12,22A10,10 0 0,0 12,2Z"/></svg>',
-        ming: '<svg viewBox="0 0 24 24" class="moon-svg-main"><path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22V2Z"/></svg>',
+        ming: '<svg viewBox="0 0 24 24" class="moon-svg-main"><path d="M12,2A10,10 0 0,0 12,22A10,10 0 0,1 12,2Z"/></svg>',
         grid_full: '<svg viewBox="0 0 24 24" class="moon-grid-icon" style="fill:#f9a825"><circle cx="12" cy="12" r="10"/></svg>',
+        grid_new: '<svg viewBox="0 0 24 24" class="moon-grid-icon" style="fill:#bbb"><circle cx="12" cy="12" r="10" fill="none" stroke="#bbb" stroke-width="2"/></svg>',
         grid_cres: '<svg viewBox="0 0 24 24" class="moon-grid-icon" style="fill:#999"><path d="M12,2A10,10 0 0,1 12,22A10,10 0 0,0 12,2Z"/></svg>',
-        grid_ming: '<svg viewBox="0 0 24 24" class="moon-grid-icon" style="fill:#999"><path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22V2Z"/></svg>'
+        grid_ming: '<svg viewBox="0 0 24 24" class="moon-grid-icon" style="fill:#999"><path d="M12,2A10,10 0 0,0 12,22A10,10 0 0,1 12,2Z"/></svg>'
     };
 
-    const specificMoons = { "2026-07-29": moonIcons.grid_full, "2026-08-06": moonIcons.grid_cres, "2026-08-12": moonIcons.new, "2026-08-20": moonIcons.grid_ming };
+    const specificMoons = { "2026-07-29": moonIcons.grid_full, "2026-08-06": moonIcons.grid_cres, "2026-08-12": moonIcons.grid_new, "2026-08-20": moonIcons.grid_ming };
 
     async function inicializarPagina() {
         try {
@@ -211,7 +213,7 @@
             ];
             document.getElementById('report-grid-agri').innerHTML = agriReports.map(r => `<div class="report-item"><h5>${r.t}</h5><p>${r.p}</p></div>`).join('');
             setupLocationLogic();
-        } catch(e) { console.error("Erro:", e); }
+        } catch(e) { console.error("Crash bioCultura:", e); }
     }
 
     function renderGlobe() {
