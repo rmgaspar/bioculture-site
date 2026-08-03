@@ -19,7 +19,7 @@
         .hero-text h1 { font-size: 4em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; line-height: 0.95; margin: 0 0 15px 0; }
         .reg-info-top { font-size: 0.9em; font-style: italic; color: #888; margin-bottom: 30px; display: block; }
 
-        /* HERO GLOBE */
+        /* HERO GLOBE (RODINHA) */
         .hero-visual { flex: 1; display: flex; justify-content: flex-end; }
         .hero-globe {
             position: relative; width: 480px; height: 480px;
@@ -29,7 +29,6 @@
             align-items: center; border: 1px solid #f2f2f2;
             padding: 40px 0;
         }
-
         .globe-top { margin-bottom: auto; display: flex; flex-direction: column; align-items: center; z-index: 10; }
         .globe-year { font-size: 0.75em; font-weight: 900; color: #2e7d32; letter-spacing: 5px; margin-bottom: 5px; }
         .globe-weekday { font-size: 0.65em; font-weight: 800; color: #bbb; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 2px; }
@@ -43,8 +42,7 @@
         .today-num { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; background: #1a1a1a; color: #fff !important; border-radius: 50%; font-size: 0.8em; font-weight: 900; }
         .moon-grid-icon { width: 16px !important; height: 16px !important; display: block; margin: 0 auto; }
 
-        /* RODAPÉ GLOBO */
-        .globe-south { margin-top: auto; margin-bottom: 30px; width: 60%; display: flex; justify-content: center; align-items: center; z-index: 10; }
+        .globe-south { margin-top: auto; margin-bottom: 30px; width: 60%; display: flex; justify-content: center; align-items: center; z-index: 10; gap: 0; }
         .south-col { display: flex; flex-direction: column; flex: 1; }
         .side-left { align-items: flex-end; text-align: right; padding-right: 12px; }
         .side-right { align-items: flex-start; text-align: left; padding-left: 12px; }
@@ -54,7 +52,7 @@
         .status-label-globe { font-size: 0.65em !important; font-weight: 900; color: #1a1a1a; text-transform: uppercase; letter-spacing: 1px; line-height: 1; }
         .t-min { color: #42a5f5; } .t-max { color: #ef5350; }
 
-        /* CONTEÚDO */
+        /* CONTEÚDO E BADGES */
         .advice-content { font-size: 1.1em; line-height: 1.7; color: #555; text-align: left; margin-top: 20px; }
         .advice-content p { margin-bottom: 25px !important; }
         .advice-content a { color: #2e7d32; text-decoration: underline; }
@@ -65,22 +63,21 @@
 
         .data-row { display: block; padding: 3.5em 0; border-bottom: 1px solid #f2f2f2; }
         .data-row h4 { font-size: 0.75em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin-bottom: 25px; }
+        
+        .info-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+        .info-card-compact { background: #fdfdfd; border: 1px solid #f2f2f2; border-radius: 12px; padding: 20px; }
+        
         .recipe-section { background: #1b4332; color: #fff; padding: 4em; border-radius: 40px; margin: 4em 0; }
         .recipe-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; }
         .recipe-item h4 { color: #fff; font-size: 1.3em; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
         .recipe-item ul { font-size: 0.9em; padding-left: 20px; color: rgba(255,255,255,0.7); line-height: 1.8; list-style: disc; }
+
         .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; }
         .report-item { border-top: 1px solid #f9f9f9; padding-top: 20px; }
         .report-item h5 { font-size: 0.75em; font-weight: 900; text-transform: uppercase; color: #2e7d32; margin-bottom: 12px; }
         .report-source { font-size: 0.65em; color: #bbb !important; text-transform: uppercase; letter-spacing: 1px; display: block; border-top: 1px solid #f2f2f2; padding-top: 10px; margin-top: 10px; }
 
-       .page-footer { 
-            padding: 4em 0 2em 0; 
-            border-top: 1px solid #f2f2f2; 
-            opacity: 0.3; 
-            text-align: right; 
-        }
-
+        .page-footer { padding: 4em 0 2em 0; border-top: 1px solid #f2f2f2; opacity: 0.3; text-align: right; }
         .logo-footer { display: block; font-size: 0.85em; font-weight: 900; color: #333; }
 
         @media screen and (max-width: 1280px) { .hero-split { flex-direction: column-reverse; } .hero-globe { width: 350px; height: 350px; margin: 0 auto 30px auto; } }
@@ -107,7 +104,7 @@
                                 <div class="hero-globe">
                                     <div class="globe-top">
                                         <span class="globe-year">2026</span>
-                                        <span class="globe-weekday" id="globe-weekday">...</span>
+                                        <span class="globe-weekday" id="globe-weekday" style="color:#bbb; font-weight:800; font-size:0.65em; text-transform:uppercase;">...</span>
                                         <span class="globe-day-month" id="globe-day-month">...</span>
                                     </div>
                                     <div class="week-stack" id="week-stack"></div>
@@ -138,13 +135,12 @@
                             <button class="btn-clean" id="btn-invasoras" onclick="toggleGrid('flora')">+ ver todas as invasoras</button>
                         </div>
 
-                        <!-- DIRETRIZES TÉCNICAS VASTAS -->
                         <div class="data-row">
                             <h4>Conhecimento e Diretrizes Biológicas</h4>
                             <div class="report-grid" style="grid-template-columns: 1fr;">
-                                <div class="report-item"><h5>A Importância Estratégica da Agricultura Biológica</h5><p style="text-align: justify;">A agricultura biológica é um pilar fundamental para a resiliência climática e a proteção da saúde pública. Ao contrário dos sistemas convencionais, este modo de produção protege a qualidade da água, evitando a lixiviação de pesticidas e fertilizantes sintéticos para os aquíferos. A sua importância estende-se à mitigação das alterações climáticas através do sequestro de carbono no solo.</p><span class="report-source">Fonte: Ecocert</span></div>
-                                <div class="report-item"><h5>O Conceito Holístico da Agricultura Biológica</h5><p style="text-align: justify;">O conceito de AB ultrapassa a simples exclusão de químicos; é um sistema de gestão agrícola e de produção alimentar que combina as melhores práticas ambientais com um elevado nível de biodiversidade. Baseia-se na aplicação de normas rigorosas que respeitam os ciclos biológicos naturais.</p><span class="report-source">Fonte: Agrobio</span></div>
-                                <div class="report-item"><h5>Guia Técnico de Boas Práticas Agrícolas</h5><p style="text-align: justify;">A implementação eficaz exige o domínio de técnicas regenerativas. Gestão do Solo: A fertilidade é mantida através da rotação plurianual de culturas. Proteção de Culturas: O controlo de pragas prioriza a prevenção e a promoção de habitats para auxiliares.</p><span class="report-source">Fonte: producaobiologica.pt</span></div>
+                                <div class="report-item"><h5>A Importância Estratégica da Agricultura Biológica</h5><p style="text-align: justify;">A agricultura biológica protege a qualidade da água e promove o sequestro de carbono no solo.</p><span class="report-source">Fonte: Ecocert</span></div>
+                                <div class="report-item"><h5>O Conceito Holístico da Agricultura Biológica</h5><p style="text-align: justify;">Um sistema de produção que combina as melhores práticas ambientais com biodiversidade.</p><span class="report-source">Fonte: Agrobio</span></div>
+                                <div class="report-item"><h5>Guia Técnico de Boas Práticas Agrícolas</h5><p style="text-align: justify;">A implementação eficaz exige o domínio de técnicas regenerativas como a rotação de culturas.</p><span class="report-source">Fonte: producaobiologica.pt</span></div>
                             </div>
                         </div>
 
@@ -171,8 +167,7 @@
                     </div>
 
                     <footer class="page-footer">
-                        <span style="display: block; font-size: 0.85em; font-weight: 900; color: #333;">bioCultura</span>
-                        <span style="display: block; font-size: 0.5em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Global Regeneration</span>
+                        <span class="logo-footer">bioCultura</span>
                     </footer>
                 </section>
             </div>
@@ -182,50 +177,62 @@
 
     <script src="/assets/js/jquery.min.js"></script>
     <script>
-    let locationsDB = [], pragasDB = [], floraDB = [], horticolasMaster = {}, infoGlobal = null;
-    let expandidoPragas = false, expandidoFlora = false;
+    let locationsDB = [], pragasDB = [], floraDB = [], horticolasMaster = {}, masterEspecies = {}, todasDicas = [];
+    let infoGlobal = null, dicasVisiveis = 3, expandidoPragas = false, expandidoFlora = false;
 
     const moonIcons = {
         full: '<svg viewBox="0 0 24 24" class="moon-svg-main" style="fill:#f9a825"><circle cx="12" cy="12" r="10"/></svg>',
-        new: '<svg viewBox="0 0 24 24" class="moon-svg-main" style="fill:#bbb"><circle cx="12" cy="12" r="10" fill="none" stroke="#bbb" stroke-width="2"/></svg>',
-        cres: '<svg viewBox="0 0 24 24" class="moon-svg-main" style="fill:#999"><path d="M12,2A10,10 0 0,1 12,22A10,10 0 0,0 12,2Z"/></svg>',
-        ming: '<svg viewBox="0 0 24 24" class="moon-svg-main" style="fill:#999"><path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22V2Z"/></svg>',
         grid_full: '<svg viewBox="0 0 24 24" class="moon-grid-icon" style="fill:#f9a825"><circle cx="12" cy="12" r="10"/></svg>',
-        grid_new: '<svg viewBox="0 0 24 24" class="moon-grid-icon" style="fill:#bbb"><circle cx="12" cy="12" r="10" fill="none" stroke="#bbb" stroke-width="2"/></svg>',
-        grid_cres: '<svg viewBox="0 0 24 24" class="moon-grid-icon" style="fill:#999"><path d="M12,2A10,10 0 0,1 12,22A10,10 0 0,0 12,2Z"/></svg>',
-        grid_ming: '<svg viewBox="0 0 24 24" class="moon-grid-icon" style="fill:#999"><path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22V2Z"/></svg>'
+        grid_ming: '<svg viewBox="0 0 24 24" class="moon-grid-icon" style="fill:#999"><path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22V2Z"/></svg>',
+        grid_new: '<svg viewBox="0 0 24 24" class="moon-grid-icon" style="fill:#bbb"><circle cx="12" cy="12" r="10" fill="none" stroke="#bbb" stroke-width="2"/></svg>'
     };
 
-    const specificMoons = { "2026-07-29": moonIcons.grid_full, "2026-08-06": moonIcons.grid_ming, "2026-08-12": moonIcons.grid_new, "2026-08-20": moonIcons.grid_cres };
+    const specificMoons = { "2026-07-29": moonIcons.grid_full, "2026-08-06": moonIcons.grid_ming };
 
     async function inicializarPagina() {
         try {
-            const prefix = window.location.pathname.includes('/calendario/') ? '../' : '/';
-            const [rLoc, rPragas, rFlora, rHorta] = await Promise.all([
+            const prefix = '../';
+            const [rLoc, rPragas, rFlora, rHorta, rMaster, rDicas] = await Promise.all([
                 fetch(`${prefix}data/bioregioes.json`).then(r => r.json()),
                 fetch(`${prefix}data/pragas.json`).then(r => r.json()),
                 fetch(`${prefix}data/flora_invasora.json`).then(r => r.json()),
-                fetch(`${prefix}data/horticolas_master.json?v=` + Date.now()).then(r => r.json())
+                fetch(`${prefix}data/horticolas_master.json?v=` + Date.now()).then(r => r.json()),
+                fetch(`${prefix}data/especies_master.json?v=` + Date.now()).then(r => r.json()),
+                fetch(`${prefix}data/dicas.json?v=` + Date.now()).then(r => r.json())
             ]);
-            locationsDB = rLoc; pragasDB = rPragas; floraDB = rFlora; horticolasMaster = rHorta;
-            infoGlobal = locationsDB.find(i => String(i.id) === String(localStorage.getItem('biocultura_region'))) || locationsDB[0];
+            locationsDB = rLoc; pragasDB = rPragas; floraDB = rFlora; horticolasMaster = rHorta; masterEspecies = rMaster; todasDicas = rDicas;
             
+            infoGlobal = locationsDB.find(i => String(i.id) === String(localStorage.getItem('biocultura_region'))) || locationsDB[0];
             if(infoGlobal) document.getElementById('reg-name').innerText = `${infoGlobal.titulo}, ${(infoGlobal.concelho || "").toUpperCase()}`;
             
             renderGlobe();
             renderGrid(pragasDB, 'pragas-container', 8);
             renderGrid(floraDB, 'flora-container', 8);
+            renderizarDicas();
+            setupLocationLogic();
             
             const agriReports = [
                 { t: "Diretrizes PEPAC 2026", p: "O Plano Estratégico da PAC prioriza o apoio financeiro a explorações biológicas." },
-                { t: "Caderno de Campo Digital", p: "O novo sistema eletrónico e-PP é agora obrigatório para beneficiários de ajudas." },
-                { t: "Vigilância Fitossanitária", p: "Alerta para focos de Xylella fastidiosa. Recomendação: eliminação de hospedeiras." },
-                { t: "Rede de Hortas PT", p: "Consociações reduziram a incidência de pragas em 35% sem intervenção química." }
+                { t: "Caderno de Campo Digital", p: "O novo sistema eletrónico e-PP é agora obrigatório para beneficiários de ajudas." }
             ];
             document.getElementById('report-grid-agri').innerHTML = agriReports.map(r => `<div class="report-item"><h5>${r.t}</h5><p>${r.p}</p></div>`).join('');
-            setupLocationLogic();
         } catch(e) { console.error("Crash bioCultura:", e); }
     }
+
+    function renderizarDicas() {
+        const container = document.getElementById('dicas-container');
+        if(!container || !todasDicas.length) return;
+        container.innerHTML = todasDicas.slice(0, dicasVisiveis).map(d => `
+            <div class="info-card-compact" style="cursor:default;">
+                <span style="font-size:0.6em; color:#2e7d32; font-weight:900; text-transform:uppercase;">${d.categoria}</span>
+                <span style="display:block; margin: 5px 0 10px 0; font-weight:800; color:#1a1a1a;">${d.titulo}</span>
+                <p style="font-size:0.85em; line-height:1.5; color:#666; margin-bottom:15px;">${d.resumo}</p>
+                <a href="${d.url_original}" target="_blank" style="font-size:0.65em; font-weight:800; color:#bbb; text-decoration:none; text-transform:uppercase;">Ler na fonte →</a>
+            </div>`).join('');
+        if(dicasVisiveis >= todasDicas.length) document.getElementById('btn-mais-dicas').style.display = 'none';
+    }
+
+    function carregarMaisDicas() { dicasVisiveis += 3; renderizarDicas(); }
 
     function renderGlobe() {
         const stack = document.getElementById('week-stack');
@@ -233,10 +240,8 @@
         const today = new Date();
         document.getElementById('globe-weekday').innerText = today.toLocaleString('pt-PT', {weekday:'long'});
         document.getElementById('globe-day-month').innerText = `${today.getDate()} de ${today.toLocaleString('pt-PT', {month:'long'})}`;
-
         const monday = new Date(today);
         monday.setDate(today.getDate() - today.getDay() + (today.getDay() === 0 ? -6 : 1));
-
         [-1, 0, 1].forEach(w => {
             const row = document.createElement('div');
             row.className = 'week-row';
@@ -251,7 +256,7 @@
             }
             stack.appendChild(row);
         });
-        document.getElementById('lunar-icon-container').innerHTML = moonIcons.ming;
+        document.getElementById('lunar-icon-container').innerHTML = moonIcons.full.replace('moon-grid-icon', 'moon-svg-main');
         document.getElementById('moon-phase-name').innerText = "Transição";
         updateState();
     }
@@ -260,19 +265,15 @@
         const advice = document.getElementById('advice-content');
         const solo = (infoGlobal?.biomas?.solo || "").toLowerCase();
         let soilText = solo.includes('xistoso') ? 'Em terrenos de rápida drenagem, reforce o <a href="horticola-detalhe.html?id=mulching"><i>mulching</i></a> para preservar a humidade microbiana.' : "Mantenha a fertilização biológica equilibrada.";
-        advice.innerHTML = `
-            <p>${soilText}</p>
-            <p><b>CICLO ATUAL</b><br>Deve semear couve-galega e brócolos, e focar na colheita de tomate, pimento e beringela.</p>
-            <p><b>CLIMA E LUA</b><br>Humidade estável: vigie o aparecimento de fungos. Sob fase minguante, a recomendação é a manutenção geral e observação.</p>
-        `;
+        advice.innerHTML = `<p>${soilText}</p><p><b>CICLO ATUAL</b><br>Deve semear couve-galega e brócolos, e colher tomate, pimento e beringela.</p><p><b>CLIMA E LUA</b><br>Humidade estável: vigie o aparecimento de fungos. Sob fase minguante, a recomendação é a manutenção geral e observação.</p>`;
     }
 
     function renderGrid(data, containerId, limit) {
         const container = document.getElementById(containerId);
+        if(!container) return;
         container.innerHTML = data.slice(0, limit).map(item => `
             <div class="species-badge" onclick="window.location.href='../ecossistemas/especie-detalhe.html?id=${item.nome_cientifico.toLowerCase().replace(/ /g,'-')}'">
-                <img src="${item.imagem || '/assets/img/placeholder.jpg'}">
-                ${item.nome_comum}
+                <img src="${item.imagem || '/assets/img/placeholder.jpg'}">${item.nome_comum}
             </div>`).join('');
     }
 
@@ -307,10 +308,7 @@
                     let closest = locationsDB[0], minD = Infinity;
                     locationsDB.forEach(c => {
                         if(!c.lat || c.lat === 0) return;
-                        const dLat = (c.lat - pos.coords.latitude) * Math.PI / 180;
-                        const dLon = (c.lon - pos.coords.longitude) * Math.PI / 180;
-                        const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(pos.coords.latitude * Math.PI / 180) * Math.cos(c.lat * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
-                        const d = R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+                        const d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon);
                         if(d < minD) { minD = d; closest = c; }
                     });
                     localStorage.setItem('biocultura_region', closest.id);
@@ -332,7 +330,6 @@
         document.getElementById('sidebar').innerHTML = html;
         inicializarPagina();
     });
-    
     </script>
 </body>
 </html>
