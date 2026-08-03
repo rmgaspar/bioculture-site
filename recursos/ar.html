@@ -12,9 +12,17 @@
         #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
         #wrapper { padding-left: 18em !important; }
         
-        .inner { padding: 2.2em 4em 0 4em !important; max-width: 1600px !important; margin-left: 0 !important; margin-right: auto !important; width: 100%; box-sizing: border-box; }
+        /* Alinhamento de Precisão - Resolve o corte à esquerda */
+        .inner { 
+            padding: 2.2em 4em 0 4em !important; 
+            max-width: 1600px !important; 
+            margin: 0 auto !important; 
+            width: 100%; 
+            box-sizing: border-box; 
+        }
         
         .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; display: block; }
+        .hero-text { display: flow-root; width: 100%; }
         .hero-text h1 { font-size: 3.5em; font-weight: 900; color: #1a1a1a; letter-spacing: -2px; line-height: 1.1; margin: 15px 0 !important; }
         .reg-info-top { font-size: 0.95em; font-style: italic; color: #888; margin-bottom: 50px; display: block; }
 
@@ -55,11 +63,12 @@
         .news-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 25px; margin-bottom: 4em; }
         .news-item { text-decoration: none; color: inherit; display: block; padding: 22px; background: #fdfdfd; border: 1px solid #f2f2f2; border-radius: 10px; transition: 0.3s; }
         .news-item:hover { transform: translateY(-3px); border-color: #ddd; }
-        .news-item h3 { font-size: 1.05em; font-weight: 700; color: #1a1a1a; margin-bottom: 15px; line-height: 1.3; min-height: 2.6em; }
+        .news-item h3 { font-size: 1.05em; font-weight: 700; color: #1a1a1a; margin-bottom: 15px; line-height: 1.3; min-height: 3em; }
         .news-meta { display: flex; align-items: center; gap: 10px; border-top: 1px solid #f9f9f9; padding-top: 12px; font-size: 0.6em; font-weight: 800; color: #bbb; text-transform: uppercase; }
 
+        /* Footer */
         .page-footer { padding: 5em 0 4em 0; text-align: right; opacity: 0.4; }
-        .logo-footer { display: block; font-size: 0.85em; font-weight: 900; color: #333; }
+        .logo-footer { display: block; font-size: 0.85em; font-weight: 900; color: #333; text-transform: uppercase; letter-spacing: 1px; }
         .sublogo-footer { display: block; font-size: 0.5em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #bbb; }
         .bio-res-item { padding: 12px 18px; font-size: 0.9em; color: #666; cursor: pointer; border-bottom: 1px solid #f9f9f9 !important; }
 
@@ -187,6 +196,8 @@
     function renderAirDashboard(info) {
         if(!info) return;
         document.getElementById('air-dashboard').style.display = 'block';
+        
+        // Formato: Freguesia, CONCELHO
         const concelhoUpper = (info.concelho || "").toUpperCase();
         document.getElementById('reg-name').innerText = `${info.titulo}, ${concelhoUpper}`;
 
@@ -211,31 +222,8 @@
         }, 300);
     }
 
-    function renderRelatorios() {
-        document.getElementById('report-grid-air').innerHTML = relatoriosAr.map(r => `
-            <div class="report-item"><h5>${r.titulo}</h5><p>${r.texto}</p></div>
-        `).join('');
-    }
-
-    function iniciarCiclosAr() {
-        const container = document.getElementById('air-facts-container');
-        if(!container) return;
-        container.innerHTML = airFactsNacionais.map((f, i) => `
-            <div class="air-fact-item ${i === 0 ? 'active' : ''}">
-                <b>${f.titulo}</b> ${f.desc}
-            </div>`).join('');
-        
-        let factP = 0;
-        setInterval(() => {
-            const items = document.querySelectorAll('.air-fact-item');
-            if(items.length === 0) return;
-            items.forEach(el => el.classList.remove('active'));
-            factP = (factP + 1) % items.length;
-            items[factP].classList.add('active');
-        }, 8000);
-    }
-
     function setupLocationLogic() {
+        // GPS - Delegação Global (Garante funcionamento na sidebar dinâmica)
         $(document).off('click', '#btn-gps-trigger').on('click', '#btn-gps-trigger', function(e) {
             e.preventDefault();
             if (navigator.geolocation) {
@@ -249,7 +237,7 @@
                     });
                     localStorage.setItem('biocultura_region', closest.id);
                     location.reload();
-                });
+                }, () => $(this).css('opacity', '1'));
             }
         });
 
@@ -265,6 +253,30 @@
             });
             dropdown.show();
         });
+    }
+
+    function renderRelatorios() {
+        document.getElementById('report-grid-air').innerHTML = relatoriosAr.map(r => `
+            <div class="report-item"><h5>${r.titulo}</h5><p>${r.texto}</p></div>
+        `).join('');
+    }
+
+    function iniciarCiclosAr() {
+        const container = document.getElementById('air-facts-container');
+        if(!container) return;
+        container.innerHTML = airFactsNacionais.map((f, i) => `
+            <div class="air-fact-item ${i === 0 ? 'active' : ''}">
+                <b>Facto bioCultura</b> ${f.desc}
+            </div>`).join('');
+        
+        let factP = 0;
+        setInterval(() => {
+            const items = document.querySelectorAll('.air-fact-item');
+            if(items.length === 0) return;
+            items.forEach(el => el.classList.remove('active'));
+            factP = (factP + 1) % items.length;
+            items[factP].classList.add('active');
+        }, 8000);
     }
 
     function renderizarNoticias() {
