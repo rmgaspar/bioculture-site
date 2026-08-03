@@ -17,28 +17,50 @@
             background: #f5f5f5;
         }
         
-        .info-header { flex: 1.2; padding-top: 1em; }
+        /* Alinhamento da coluna de texto com a altura da imagem */
+        .info-header { 
+            flex: 1.2; 
+            display: flex; 
+            flex-direction: column; 
+            height: 600px; /* Mesma altura da imagem */
+            justify-content: flex-start;
+        }
+        
         .info-header h1 { font-size: 3.8em; font-weight: 900; color: #1a1a1a; margin: 0; line-height: 1; letter-spacing: -2px; }
-        .info-header h2 { font-size: 1.4em; color: #bbb; font-style: italic; margin: 10px 0 2em 0; font-weight: 400; }
+        .info-header h2 { font-size: 1.4em; color: #bbb; font-style: italic; margin: 10px 0 1.5em 0; font-weight: 400; }
         
         .data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; border-top: 1px solid #f2f2f2; padding-top: 2em; }
         .data-item b { display: block; font-size: 0.65em; text-transform: uppercase; letter-spacing: 2px; color: #5c6bc0; margin-bottom: 8px; }
         .data-item p { font-size: 1.1em; color: #444; margin: 0; font-weight: 500; }
 
-        .sintese-box { 
-            background: #f8faff; padding: 3em; border-radius: 24px; 
-            margin-top: 2em; border-left: none !important;
+        /* Link Voltar alinhado à base */
+        .btn-voltar-base { 
+            margin-top: auto; 
+            display: inline-block; 
+            font-size: 0.75em; 
+            font-weight: 800; 
+            text-transform: uppercase; 
+            letter-spacing: 2px; 
+            text-decoration: none; 
+            color: #bbb !important; 
+            transition: 0.3s; 
         }
-        .sintese-box b { display: block; margin-bottom: 15px; font-size: 0.8em; text-transform: uppercase; letter-spacing: 1px; color: #1a237e; }
-        .sintese-box p { font-size: 1.2em; line-height: 1.8; color: #333; margin: 0; text-align: justify; }
+        .btn-voltar-base:hover { color: #1a1a1a !important; }
 
-        .btn-voltar { display: inline-block; margin-top: 3em; font-size: 0.8em; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; text-decoration: none; color: #bbb; transition: 0.3s; }
-        .btn-voltar:hover { color: #1a1a1a; }
+        .tech-section { margin-top: 2.5em; padding-top: 2em; border-top: 1px solid #f2f2f2; }
+        .tech-section h4 { font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin-bottom: 15px; }
+        .tech-box { background: #f8faff; padding: 2.5em; border-radius: 20px; margin-bottom: 1.5em; }
+        .tech-box b { display: block; font-size: 0.8em; color: #1b4332; text-transform: uppercase; margin-bottom: 8px; }
+        .tech-box p { font-size: 1.1em; line-height: 1.7; margin: 0; color: #444; text-align: justify; }
+        
+        .source-footer { font-size: 0.65em; color: #bbb !important; text-transform: uppercase; margin-top: 4em; display: block; letter-spacing: 1px; }
 
         @media screen and (max-width: 980px) {
             .hero-especie { flex-direction: column; }
             .img-container { min-width: 100%; }
             .hero-especie img { height: 400px; }
+            .info-header { height: auto; }
+            .btn-voltar-base { margin-top: 2em; }
         }
     </style>
 </head>
@@ -47,16 +69,15 @@
         <div id="render-especie">
             <p style="color:#bbb; font-style:italic;">A carregar dados da biodiversidade...</p>
         </div>
-        <a href="javascript:history.back()" class="btn-voltar">← Voltar ao Observatório</a>
     </div>
 
+    <script src="/assets/js/jquery.min.js"></script>
     <script>
         async function carregarDetalhe() {
             const id = new URLSearchParams(window.location.search).get('id');
             if (!id) return;
 
             try {
-                // Carrega as 3 fontes com cache buster para garantir dados frescos
                 const [rMaster, rPragas, rFlora] = await Promise.all([
                     fetch('/data/especies_master.json?v=' + Date.now()).then(r => r.json()),
                     fetch('/data/pragas.json?v=' + Date.now()).then(r => r.json()),
@@ -65,42 +86,19 @@
 
                 let esp = null;
 
-                // 1. Procura no Master
                 if (rMaster[id]) {
                     esp = rMaster[id];
-                } 
-                // 2. Procura nas Pragas
-                else {
+                } else {
                     const p = rPragas.find(item => item.nome_cientifico.toLowerCase().replace(/ /g, '-') === id);
                     if (p) {
-                        esp = {
-                            nome: p.nome_comum,
-                            nome_cientifico: p.nome_cientifico,
-                            grupo: "Sanidade Vegetal",
-                            imagem: p.imagem,
-                            sintese: p.sintomas, // Mapeia sintomas para a descrição
-                            prevencao: p.prevencao,
-                            combate: p.combate,
-                            estatuto: "Praga / Doença",
-                            taxonomia: p.nome_cientifico
-                        };
+                        esp = { ...p, nome: p.nome_comum, grupo: "Sanidade Vegetal", sintese: p.sintomas, estatuto: "Praga / Doença" };
                     }
                 }
-                // 3. Procura na Flora Invasora
+
                 if (!esp) {
                     const f = rFlora.find(item => item.nome_cientifico.toLowerCase().replace(/ /g, '-') === id);
                     if (f) {
-                        esp = {
-                            nome: f.nome_comum,
-                            nome_cientifico: f.nome_cientifico,
-                            grupo: "Flora Invasora",
-                            imagem: f.imagem,
-                            sintese: f.impacto, // Mapeia impacto para a descrição
-                            prevencao: f.prevencao,
-                            combate: f.combate,
-                            estatuto: "Espécie Invasora",
-                            taxonomia: f.nome_cientifico
-                        };
+                        esp = { ...f, nome: f.nome_comum, grupo: "Flora Invasora", sintese: f.impacto, estatuto: "Espécie Invasora" };
                     }
                 }
 
@@ -109,31 +107,38 @@
                     return;
                 }
 
-                // Renderização Final
-                const taxLimpa = esp.taxonomia_completa ? esp.taxonomia_completa.slice(-3).join(' > ') : (esp.taxonomia || esp.grupo);
+                const taxLimpa = esp.taxonomia_completa ? esp.taxonomia_completa.slice(-3).join(' > ') : (esp.nome_cientifico || esp.grupo);
+                
+                // Lógica de remoção da Descrição para Flora Invasora
+                const esconderDescricao = esp.grupo === "Flora Invasora";
 
                 document.getElementById('render-especie').innerHTML = `
                     <div class="hero-especie">
                         <div class="img-container">
-                            <img src="${esp.imagem || '/assets/img/placeholder.jpg'}" alt="${esp.nome}">
+                            <img src="${esp.imagem ? esp.imagem.replace('medium', 'large') : '/assets/img/placeholder.jpg'}" alt="${esp.nome}">
                         </div>
                         <div class="info-header">
-                            <h1>${esp.nome}</h1>
-                            <h2><i>${esp.nome_cientifico || ''}</i></h2>
-                            <div class="data-grid">
-                                <div class="data-item"><b>Grupo</b><p>${esp.grupo}</p></div>
-                                <div class="data-item"><b>Estatuto</b><p>${esp.estatuto || 'Nativa'}</p></div>
-                                <div class="data-item"><b>Sazonalidade</b><p>Observada em Portugal</p></div>
-                                <div class="data-item"><b>Taxonomia</b><p>${taxLimpa}</p></div>
+                            <div>
+                                <h1>${esp.nome}</h1>
+                                <h2><i>${esp.nome_cientifico || ''}</i></h2>
+                                <div class="data-grid">
+                                    <div class="data-item"><b>Grupo</b><p>${esp.grupo}</p></div>
+                                    <div class="data-item"><b>Estatuto</b><p>${esp.estatuto || 'Nativa'}</p></div>
+                                    <div class="data-item"><b>Sazonalidade</b><p>Observada em Portugal</p></div>
+                                    <div class="data-item"><b>Taxonomia</b><p>${taxLimpa}</p></div>
+                                </div>
                             </div>
+                            <a href="javascript:history.back()" class="btn-voltar-base">← Voltar ao Observatório</a>
                         </div>
                     </div>
 
                     <div class="tech-section">
-                        <h4>Descrição e Ecologia</h4>
-                        <div class="tech-box">
-                            <p>${esp.sintese || 'Informação técnica em processamento.'}</p>
-                        </div>
+                        ${!esconderDescricao ? `
+                            <h4>Descrição e Ecologia</h4>
+                            <div class="tech-box">
+                                <p>${esp.sintese || 'Informação técnica em processamento.'}</p>
+                            </div>
+                        ` : ''}
                         
                         ${esp.prevencao ? `
                             <h4>Estratégias de Prevenção</h4>
@@ -154,10 +159,7 @@
                     </div>
                 `;
                 document.title = esp.nome + " - bioCultura";
-
-            } catch (e) {
-                console.error("Erro ao carregar detalhe:", e);
-            }
+            } catch (e) { console.error(e); }
         }
         carregarDetalhe();
     </script>
