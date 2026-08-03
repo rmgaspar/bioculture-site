@@ -9,7 +9,7 @@
         body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
         section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
         section { min-height: 100vh; display: flex; flex-direction: column; }
-        #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
+        #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
         #wrapper { padding-left: 18em !important; }
         .inner { padding: 2.2em 4em 0 4em !important; max-width: 1600px !important; margin: 0 auto; width: 100%; box-sizing: border-box; }
         
@@ -19,7 +19,6 @@
         .hero-text h1 { font-size: 4em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; line-height: 0.95; margin: 0 0 15px 0; }
         .reg-info-top { font-size: 0.9em; font-style: italic; color: #888; margin-bottom: 30px; display: block; }
 
-        /* GLOBO */
         .hero-visual { flex: 1; display: flex; justify-content: flex-end; }
         .hero-globe { position: relative; width: 480px; height: 480px; border-radius: 50%; overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,0.05); background: #fdfdfd; display: flex; flex-direction: column; align-items: center; border: 1px solid #f2f2f2; padding: 45px 0; }
         .globe-year { font-size: 0.75em; font-weight: 900; color: #2e7d32; letter-spacing: 5px; text-transform: uppercase; }
@@ -33,31 +32,24 @@
         .temp-range-label { font-size: 0.75em; font-weight: 800; color: #1a1a1a; }
         .moon-phase-name { font-size: 0.5em; font-weight: 900; color: #2e7d32; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* TEXTO E BADGES MINIMALISTAS */
         .advice-content { font-size: 1.1em; line-height: 1.7; color: #555; text-align: left; margin-top: 20px; }
         .advice-content p { margin-bottom: 25px !important; }
         
         .species-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
-        .species-badge { 
-            display: inline-flex; align-items: center; gap: 8px; background: #fcfcfc; 
-            color: #666; padding: 5px 12px; border-radius: 50px; font-size: 0.8em; 
-            font-weight: 600; border: 1px solid #f2f2f2; cursor: pointer; transition: 0.2s;
-        }
+        .species-badge { display: inline-flex; align-items: center; gap: 8px; background: #fcfcfc; color: #666; padding: 5px 12px; border-radius: 50px; font-size: 0.8em; font-weight: 600; border: 1px solid #f2f2f2; cursor: pointer; transition: 0.2s; }
         .species-badge:hover { border-color: #2e7d32; transform: translateY(-1px); }
         .species-badge img { width: 18px; height: 18px; border-radius: 50%; object-fit: cover; }
 
         .btn-clean { background: none !important; border: none !important; box-shadow: none !important; color: #bbb !important; font-size: 0.7em; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; cursor: pointer; padding: 10px 0; outline: none !important; }
         
-        /* SEÇÕES GERAIS */
         .data-row { display: block; padding: 3.5em 0; border-bottom: 1px solid #f2f2f2; }
         .data-row h4 { font-size: 0.75em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin-bottom: 25px; }
         .info-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
-        .info-card-compact { background: #fdfdfd; border: 1px solid #f2f2f2; border-radius: 12px; padding: 15px; cursor: pointer; transition: 0.3s; }
+        .info-card-compact { background: #fdfdfd; border: 1px solid #f2f2f2; border-radius: 12px; padding: 15px; }
         .info-card-compact img { width: 100%; height: 120px; object-fit: cover; border-radius: 8px; margin-bottom: 12px; }
-        .info-card-compact b { display: block; font-size: 0.9em; color: #c62828; font-style: italic; }
+        .info-card-compact b { display: block; font-size: 0.95em; color: #c62828; font-style: italic; }
         .info-card-compact span { display: block; font-size: 0.85em; font-weight: 700; color: #1a1a1a; }
 
-        /* RECEITAS */
         .recipe-section { background: #1b4332; color: #fff; padding: 4em; border-radius: 40px; margin: 4em 0; }
         .recipe-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; }
         .recipe-item h4 { color: #fff; font-size: 1.3em; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
@@ -80,61 +72,61 @@
         <div id="main">
             <div class="inner">
                 <section>
-                    <div class="hero-split">
-                        <div class="hero-text">
-                            <span class="category-label">Agricultura bioCultura</span>
-                            <h1>Calendário de Regeneração</h1>
-                            <span class="reg-info-top">Orientação para: <strong id="reg-name" style="color:#2e7d32">...</strong></span>
-                            
-                            <div class="advice-content" id="advice-content"></div>
+                    <div id="calendar-main-view">
+                        <div class="hero-split">
+                            <div class="hero-text">
+                                <span class="category-label">Agricultura bioCultura</span>
+                                <h1>Calendário de Regeneração</h1>
+                                <span class="reg-info-top">Orientação para: <strong id="reg-name" style="color:#2e7d32">...</strong></span>
+                                
+                                <div class="advice-content" id="advice-content"></div>
 
-                            <button class="btn-clean" id="link-sugestoes" onclick="mostrarSugestoes()">+ Sugestões de plantio para esta região</button>
-                            <p id="nota-solo" style="display:none; font-size: 0.75em; color: #bbb; margin-top: 15px; font-style: italic;">
-                                Nota: As sugestões acima são baseadas no tipo de solo e pH específico da sua zona, cruzados com o catálogo bioCultura.
-                            </p>
-                            <div id="sugestoes-container" class="species-list" style="display: none;"></div>
-                        </div>
+                                <button class="btn-clean" id="link-sugestoes" onclick="mostrarSugestoes()">+ Sugestões de plantio para esta região</button>
+                                <p id="nota-solo" style="display:none; font-size: 0.75em; color: #bbb; margin-top: 15px; font-style: italic;">
+                                    Nota: As sugestões acima são baseadas no tipo de solo e pH específico da sua zona, cruzados com o catálogo bioCultura.
+                                </p>
+                                <div id="sugestoes-container" class="species-list" style="display: none;"></div>
+                            </div>
 
-                        <div class="hero-visual">
-                            <div class="hero-globe">
-                                <div class="globe-top">
-                                    <span class="globe-year" id="globe-year">2026</span>
-                                    <span class="globe-day-month" id="globe-day-month">...</span>
-                                </div>
-                                <div class="week-stack" id="week-stack"></div>
-                                <div class="globe-south">
-                                    <span class="temp-range-label" id="temp-range">--º / --º</span>
-                                    <span class="moon-phase-name" id="moon-phase-name">...</span>
+                            <div class="hero-visual">
+                                <div class="hero-globe">
+                                    <div class="globe-top">
+                                        <span class="globe-year" id="globe-year">2026</span>
+                                        <span class="globe-day-month" id="globe-day-month">...</span>
+                                    </div>
+                                    <div class="week-stack" id="week-stack"></div>
+                                    <div class="globe-south">
+                                        <span class="temp-range-label" id="temp-range">--º / --º</span>
+                                        <span class="moon-phase-name" id="moon-phase-name">...</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="data-row">
-                        <h4>Sanidade Vegetal: Diagnóstico Bio</h4>
-                        <div id="pragas-container" class="info-grid"></div>
-                        <button class="btn-clean" id="btn-pragas" onclick="toggleGrid('pragas')">+ ver todas as pragas</button>
-                    </div>
-
-                    <div class="data-row">
-                        <h4>Flora Invasora Regional</h4>
-                        <div id="flora-container" class="info-grid"></div>
-                        <button class="btn-clean" id="btn-invasoras" onclick="toggleGrid('flora')">+ ver todas as invasoras</button>
-                    </div>
-
-                    <div class="recipe-section">
-                        <span class="category-label" style="color: rgba(255,255,255,0.5);">Manuais de Preparo</span>
-                        <h2 style="color: #fff; font-size: 2.5em; margin-bottom: 30px;">Soluções Biológicas de Precisão</h2>
-                        <div class="recipe-grid">
-                            <div class="recipe-item"><h4>Calda Bordalesa</h4><p>Fungicida preventivo para Míldio e Antracnose.</p><ul><li>100g de Sulfato de Cobre.</li><li>100g de Cal Hidratada.</li></ul></div>
-                            <div class="recipe-item"><h4>Extrato de Própolis</h4><p>Antibiótico natural para tratar feridas de poda.</p><ul><li>Diluir 10ml em 1L de água.</li><li>Pincelar cortes superiores a 2cm.</li></ul></div>
-                            <div class="recipe-item"><h4>Infusão de Alho</h4><p>Repelente contra afídios e ácaros.</p><ul><li>100g macerados por 24h.</li><li>Ferver 15 min e aplicar frio.</li></ul></div>
+                        <div class="data-row">
+                            <h4>Sanidade Vegetal: Diagnóstico Bio</h4>
+                            <div id="pragas-container" class="info-grid"></div>
                         </div>
-                    </div>
 
-                    <div class="data-row" style="border-bottom: none;">
-                        <h4>Síntese das Autoridades 2026</h4>
-                        <div id="report-grid-agri" class="report-grid"></div>
+                        <div class="data-row">
+                            <h4>Flora Invasora Regional</h4>
+                            <div id="flora-container" class="info-grid"></div>
+                        </div>
+
+                        <div class="recipe-section">
+                            <span class="category-label" style="color: rgba(255,255,255,0.5);">Manuais de Preparo</span>
+                            <h2 style="color: #fff; font-size: 2.5em; margin-bottom: 30px;">Soluções Biológicas de Precisão</h2>
+                            <div class="recipe-grid">
+                                <div class="recipe-item"><h4>Calda Bordalesa</h4><p>Fungicida preventivo para Míldio e Antracnose.</p><ul><li>100g de Sulfato de Cobre.</li><li>100g de Cal Hidratada.</li></ul></div>
+                                <div class="recipe-item"><h4>Extrato de Própolis</h4><p>Antibiótico natural para tratar feridas de poda.</p><ul><li>Diluir 10ml em 1L de água.</li><li>Pincelar cortes superiores a 2cm.</li></ul></div>
+                                <div class="recipe-item"><h4>Infusão de Alho</h4><p>Repelente contra afídios e ácaros.</p><ul><li>100g macerados por 24h.</li><li>Ferver 15 min e aplicar frio.</li></ul></div>
+                            </div>
+                        </div>
+
+                        <div class="data-row" style="border-bottom: none;">
+                            <h4>Síntese das Autoridades 2026</h4>
+                            <div id="report-grid-agri" class="report-grid"></div>
+                        </div>
                     </div>
 
                     <footer class="page-footer">
@@ -148,40 +140,47 @@
 
     <script src="/assets/js/jquery.min.js"></script>
     <script>
-        let locationsDB = [], pragasDB = [], floraDB = [], horticolasMaster = {};
-        let infoGlobal = null;
-
-        const agriReports = [
-            { t: "Diretrizes PEPAC 2026", p: "O Plano Estratégico da PAC prioriza o apoio financeiro a explorações que demonstrem aumento da biodiversidade." },
-            { t: "Vigilância Fitossanitária", p: "Alerta para novos focos de Xylella fastidiosa. A recomendação técnica foca-se na eliminação de hospedeiras." }
-        ];
+        window.locationsDB = []; 
+        let pragasDB = [], floraDB = [], horticolasMaster = {}, infoGlobal = null;
 
         async function inicializarPagina() {
             try {
+                // Como o ficheiro está em /calendario/, os dados estão em ../data/
                 const [rLoc, rPragas, rFlora, rHorta] = await Promise.all([
-                    fetch('/data/bioregioes.json').then(r => r.json()),
-                    fetch('/data/pragas.json').then(r => r.json()),
-                    fetch('/data/flora_invasora.json').then(r => r.json()),
-                    fetch('/data/horticolas_master.json').then(r => r.json())
+                    fetch('../data/bioregioes.json').then(r => r.json()),
+                    fetch('../data/pragas.json').then(r => r.json()),
+                    fetch('../data/flora_invasora.json').then(r => r.json()),
+                    fetch('../data/horticolas_master.json').then(r => r.json())
                 ]);
-                locationsDB = rLoc; pragasDB = rPragas; floraDB = rFlora; horticolasMaster = rHorta;
+                
+                window.locationsDB = rLoc;
+                pragasDB = rPragas;
+                floraDB = rFlora;
+                horticolasMaster = rHorta;
                 
                 const savedId = localStorage.getItem('biocultura_region');
-                infoGlobal = locationsDB.find(i => String(i.id) === String(savedId)) || locationsDB[0];
+                infoGlobal = window.locationsDB.find(i => String(i.id) === String(savedId)) || window.locationsDB[0];
                 
                 if(infoGlobal) {
-                    document.getElementById('reg-name').innerText = `${infoGlobal.titulo}, ${(infoGlobal.concelho || "").toUpperCase()}`;
+                    const concelhoUpper = (infoGlobal.concelho || "").toUpperCase();
+                    document.getElementById('reg-name').innerText = `${infoGlobal.titulo}, ${concelhoUpper}`;
                 }
                 
                 renderGlobe();
-                renderGrid(pragasDB, 'pragas-container', 4, 'praga');
-                renderGrid(floraDB, 'flora-container', 4, 'flora');
+                renderGrid(pragasDB, 'pragas-container', 4);
+                renderGrid(floraDB, 'flora-container', 4);
+                
+                const agriReports = [
+                    { t: "Diretrizes PEPAC 2026", p: "O Plano Estratégico da PAC prioriza o apoio financeiro a explorações que demonstrem aumento da biodiversidade." },
+                    { t: "Vigilância Fitossanitária", p: "Alerta para novos focos de Xylella fastidiosa. A recomendação técnica foca-se na eliminação de hospedeiras." }
+                ];
                 document.getElementById('report-grid-agri').innerHTML = agriReports.map(r => `<div class="report-item"><h5>${r.t}</h5><p>${r.p}</p></div>`).join('');
+                
                 setupLocationLogic();
-            } catch(e) { console.error(e); }
+            } catch(e) { console.error("Erro bioCultura:", e); }
         }
 
-        function updateState(moon) {
+        function updateState() {
             const advice = document.getElementById('advice-content');
             const solo = (infoGlobal?.biomas?.solo || "").toLowerCase();
             const ph = parseFloat(infoGlobal?.biomas?.ph_solo || "6.5");
@@ -192,27 +191,27 @@
             if (ph < 6.0) soilText += " Aplique correções orgânicas para equilibrar a acidez natural.";
 
             const mesAtual = new Date().toLocaleString('pt-PT', { month: 'long' }).toUpperCase();
-            const phase = moon ? moon.label : 'Transição';
             
             advice.innerHTML = `
                 <p>${soilText}</p>
                 <p>CICLO ATUAL: ${mesAtual}. Deve semear couve-galega e brócolos, e focar na colheita de tomate, pimento e beringela.</p>
-                <p>CLIMA E LUA. Humidade estável: vigie o aparecimento de fungos. Sob ${phase.toLowerCase()}, a recomendação é a manutenção geral e observação.</p>
+                <p>CLIMA E LUA. Humidade estável: vigie o aparecimento de fungos. Sob transição, a recomendação técnica é a manutenção geral e observação atenta do ecossistema.</p>
             `;
         }
 
         function mostrarSugestoes() {
             const container = document.getElementById('sugestoes-container');
             const ph = parseFloat(infoGlobal?.biomas?.ph_solo || "6.5");
+            
             let ids = ph < 6.0 ? ['batata', 'mirtilo', 'castanha', 'morango'] : 
                       ph > 7.2 ? ['azeitona', 'alfarroba', 'fava', 'grao-de-bico'] : 
                       ['tomate', 'alface', 'cenoura', 'couve-galega'];
 
             container.innerHTML = ids.map(id => {
                 const item = horticolasMaster[id];
-                if(!item || !item.imagem) return ''; // SÓ MOSTRA SE TIVER IMAGEM
+                if(!item || !item.imagem) return '';
                 return `
-                    <div class="species-badge" onclick="window.location.href='recursos/horticola-detalhe.html?id=${id}'">
+                    <div class="species-badge" onclick="window.location.href='horticola-detalhe.html?id=${id}'">
                         <img src="${item.imagem}">
                         ${item.nome}
                     </div>`;
@@ -222,36 +221,29 @@
             document.getElementById('link-sugestoes').style.display = 'none';
         }
 
-        function renderGrid(data, containerId, limit, type) {
+        function renderGrid(data, containerId, limit) {
             const container = document.getElementById(containerId);
             container.innerHTML = data.slice(0, limit).map(item => `
                 <div class="info-card-compact">
-                    <img src="${item.imagem}">
+                    <img src="${item.imagem || '/assets/img/placeholder.jpg'}">
                     <b>${item.nome_cientifico}</b>
                     <span>${item.nome_comum}</span>
                 </div>`).join('');
-        }
-
-        function toggleGrid(type) {
-            const db = type === 'pragas' ? pragasDB : floraDB;
-            const containerId = type === 'pragas' ? 'pragas-container' : 'flora-container';
-            renderGrid(db, containerId, 99, type);
-            document.getElementById(type === 'pragas' ? 'btn-pragas' : 'btn-invasoras').style.display = 'none';
         }
 
         function renderGlobe() {
             const today = new Date();
             document.getElementById('globe-day-month').innerText = `${today.getDate()} de ${today.toLocaleString('pt-PT', {month:'long'})}`;
             document.getElementById('moon-phase-name').innerText = 'Transição';
-            updateState(null);
+            updateState();
         }
 
         function setupLocationLogic() {
             $(document).on('click', '#btn-gps-trigger', function() {
                 if (navigator.geolocation) {
                     navigator.geolocation.getCurrentPosition(pos => {
-                        let closest = locationsDB[0], minD = Infinity;
-                        locationsDB.forEach(c => {
+                        let closest = window.locationsDB[0], minD = Infinity;
+                        window.locationsDB.forEach(c => {
                             if(!c.lat || c.lat === 0) return;
                             const d = Math.sqrt(Math.pow(pos.coords.latitude - c.lat, 2) + Math.pow(pos.coords.longitude - c.lon, 2));
                             if(d < minD) { minD = d; closest = c; }
