@@ -56,7 +56,7 @@
             if (!id) return;
 
             try {
-                // 1. Carrega as 3 fontes de dados em paralelo
+                // Carrega as 3 fontes com cache buster para garantir dados frescos
                 const [rMaster, rPragas, rFlora] = await Promise.all([
                     fetch('/data/especies_master.json?v=' + Date.now()).then(r => r.json()),
                     fetch('/data/pragas.json?v=' + Date.now()).then(r => r.json()),
@@ -65,37 +65,41 @@
 
                 let esp = null;
 
-                // 2. Procura no Master (Objeto)
+                // 1. Procura no Master
                 if (rMaster[id]) {
                     esp = rMaster[id];
                 } 
-                // 3. Procura nas Pragas (Array)
+                // 2. Procura nas Pragas
                 else {
-                    const praga = rPragas.find(p => p.nome_cientifico.toLowerCase().replace(/ /g, '-') === id);
-                    if (praga) {
+                    const p = rPragas.find(item => item.nome_cientifico.toLowerCase().replace(/ /g, '-') === id);
+                    if (p) {
                         esp = {
-                            nome: praga.nome_comum,
-                            nome_cientifico: praga.nome_cientifico,
+                            nome: p.nome_comum,
+                            nome_cientifico: p.nome_cientifico,
                             grupo: "Sanidade Vegetal",
-                            imagem: praga.imagem,
-                            sintese: praga.sintomas,
+                            imagem: p.imagem,
+                            sintese: p.sintomas, // Mapeia sintomas para a descrição
+                            prevencao: p.prevencao,
+                            combate: p.combate,
                             estatuto: "Praga / Doença",
-                            taxonomia: praga.nome_cientifico
+                            taxonomia: p.nome_cientifico
                         };
                     }
                 }
-                // 4. Procura na Flora Invasora (Array)
+                // 3. Procura na Flora Invasora
                 if (!esp) {
-                    const invasora = rFlora.find(f => f.nome_cientifico.toLowerCase().replace(/ /g, '-') === id);
-                    if (invasora) {
+                    const f = rFlora.find(item => item.nome_cientifico.toLowerCase().replace(/ /g, '-') === id);
+                    if (f) {
                         esp = {
-                            nome: invasora.nome_comum,
-                            nome_cientifico: invasora.nome_cientifico,
+                            nome: f.nome_comum,
+                            nome_cientifico: f.nome_cientifico,
                             grupo: "Flora Invasora",
-                            imagem: invasora.imagem,
-                            sintese: invasora.impacto,
+                            imagem: f.imagem,
+                            sintese: f.impacto, // Mapeia impacto para a descrição
+                            prevencao: f.prevencao,
+                            combate: f.combate,
                             estatuto: "Espécie Invasora",
-                            taxonomia: invasora.nome_cientifico
+                            taxonomia: f.nome_cientifico
                         };
                     }
                 }
@@ -105,7 +109,7 @@
                     return;
                 }
 
-                // 5. Renderização (Mantendo o teu layout atualizado)
+                // Renderização Final
                 const taxLimpa = esp.taxonomia_completa ? esp.taxonomia_completa.slice(-3).join(' > ') : (esp.taxonomia || esp.grupo);
 
                 document.getElementById('render-especie').innerHTML = `
@@ -118,16 +122,35 @@
                             <h2><i>${esp.nome_cientifico || ''}</i></h2>
                             <div class="data-grid">
                                 <div class="data-item"><b>Grupo</b><p>${esp.grupo}</p></div>
-                                <div class="data-item"><b>Conservação</b><p>${esp.estatuto || 'Nativa'}</p></div>
+                                <div class="data-item"><b>Estatuto</b><p>${esp.estatuto || 'Nativa'}</p></div>
                                 <div class="data-item"><b>Sazonalidade</b><p>Observada em Portugal</p></div>
                                 <div class="data-item"><b>Taxonomia</b><p>${taxLimpa}</p></div>
                             </div>
                         </div>
                     </div>
-                    <div class="sintese-box">
-                        <b>Descrição e Ecologia</b>
-                        <p style="text-align: justify;">${esp.sintese || 'Informação técnica em processamento.'}</p>
-                        <small style="display:block; margin-top:25px; color:#bbb; font-weight:800; text-transform:uppercase; letter-spacing:1px;">Fonte: bioCultura / ICNF / DGAV</small>
+
+                    <div class="tech-section">
+                        <h4>Descrição e Ecologia</h4>
+                        <div class="tech-box">
+                            <p>${esp.sintese || 'Informação técnica em processamento.'}</p>
+                        </div>
+                        
+                        ${esp.prevencao ? `
+                            <h4>Estratégias de Prevenção</h4>
+                            <div class="tech-box">
+                                <p>${esp.prevencao}</p>
+                            </div>
+                        ` : ''}
+
+                        ${esp.combate ? `
+                            <h4>Métodos de Combate e Controlo</h4>
+                            <div class="tech-box">
+                                <b>Controlo Biológico / Regenerativo</b>
+                                <p>${esp.combate}</p>
+                            </div>
+                        ` : ''}
+                        
+                        <span class="source-footer">FONTE: BIOCULTURA / ICNF / DGAV / WIKIPEDIA</span>
                     </div>
                 `;
                 document.title = esp.nome + " - bioCultura";
