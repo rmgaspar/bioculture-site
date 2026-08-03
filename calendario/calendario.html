@@ -199,36 +199,26 @@
 
     const specificMoons = { "2026-07-29": moonIcons.grid_full, "2026-08-06": moonIcons.grid_ming, "2026-08-12": moonIcons.grid_new, "2026-08-20": moonIcons.grid_cres };
 
-    async function inicializarPagina() {
-        try {
-            const prefix = window.location.pathname.includes('/calendario/') ? '../' : '/';
-            const [rLoc, rHorta, rMaster] = await Promise.all([
-                fetch(`${prefix}data/bioregioes.json`).then(r => r.json()),
-                fetch(`${prefix}data/horticolas_master.json?v=` + Date.now()).then(r => r.json()),
-                fetch(`${prefix}data/especies_master.json?v=` + Date.now()).then(r => r.json())
-            ]);
-            window.locationsDB = rLoc; horticolasMaster = rHorta; masterEspecies = rMaster;
-            infoGlobal = window.locationsDB.find(i => String(i.id) === String(localStorage.getItem('biocultura_region'))) || locationsDB[0];
-            
-            if(infoGlobal) document.getElementById('reg-name').innerText = `${infoGlobal.titulo}, ${(infoGlobal.concelho || "").toUpperCase()}`;
-            
-            renderGlobe();
-            
-            // IDs das Pragas e Invasoras
-            pragasDB = ['aranhico-vermelho', 'escolitideo-dos-pinheiros', 'bichado-da-fruta', 'pedrado', 'esca'];
-            floraDB = ['acacia-de-folhas-estreitas', 'jacinto-de-agua', 'pinheirinha-de-agua', 'acacia-bastarda', 'elodea'];
-            
-            renderGrid(pragasDB, 'pragas-container', 8);
-            renderGrid(floraDB, 'flora-container', 8);
-            
-            const agriReports = [
-                { t: "Diretrizes PEPAC 2026", p: "O Plano Estratégico da PAC prioriza o apoio financeiro a explorações biológicas." },
-                { t: "Vigilância Fitossanitária", p: "Alerta para focos de Xylella fastidiosa. Recomendação técnica: eliminação de hospedeiras." }
-            ];
-            document.getElementById('report-grid-agri').innerHTML = agriReports.map(r => `<div class="report-item"><h5>${r.t}</h5><p>${r.p}</p></div>`).join('');
-            setupLocationLogic();
-        } catch(e) { console.error("Crash bioCultura:", e); }
-    }
+   async function inicializarPagina() {
+    try {
+        const prefix = window.location.pathname.includes('/calendario/') ? '../' : '/';
+        const [rLoc, rPragas, rFlora, rHorta] = await Promise.all([
+            fetch(`${prefix}data/bioregioes.json`).then(r => r.json()),
+            fetch(`${prefix}data/pragas.json`).then(r => r.json()),
+            fetch(`${prefix}data/flora_invasora.json`).then(r => r.json()),
+            fetch(`${prefix}data/horticolas_master.json?v=` + Date.now()).then(r => r.json())
+        ]);
+        window.locationsDB = rLoc; pragasDB = rPragas; floraDB = rFlora; horticolasMaster = rHorta;
+        
+        infoGlobal = window.locationsDB.find(i => String(i.id) === String(localStorage.getItem('biocultura_region'))) || locationsDB[0];
+        if(infoGlobal) document.getElementById('reg-name').innerText = `${infoGlobal.titulo}, ${(infoGlobal.concelho || "").toUpperCase()}`;
+        
+        renderGlobe();
+        renderGrid(pragasDB, 'pragas-container', 8);
+        renderGrid(floraDB, 'flora-container', 8);
+        setupLocationLogic();
+    } catch(e) { console.error("Erro no carregamento:", e); }
+}
 
     function renderGlobe() {
         const stack = document.getElementById('week-stack');
@@ -270,18 +260,26 @@
         `;
     }
 
-    function renderGrid(ids, containerId, limit) {
+   function renderGrid(data, containerId, limit) {
         const container = document.getElementById(containerId);
-        container.innerHTML = ids.slice(0, limit).map(id => {
-            const item = masterEspecies[id];
-            if(!item) return '';
-            return `<div class="species-badge" onclick="window.location.href='../ecossistemas/especie-detalhe.html?id=${id}'"><img src="${item.imagem || '/assets/img/placeholder.jpg'}">${item.nome}</div>`;
-        }).join('');
+        if(!container) return;
+        container.innerHTML = data.slice(0, limit).map(item => `
+            <div class="species-badge" onclick="window.location.href='../ecossistemas/especie-detalhe.html?id=${item.nome_cientifico.toLowerCase().replace(/ /g,'-')}'">
+                <img src="${item.imagem || '/assets/img/placeholder.jpg'}">
+                ${item.nome_comum}
+            </div>`).join('');
     }
 
     function toggleGrid(type) {
-        if(type === 'pragas') { expandidoPragas = !expandidoPragas; renderGrid(pragasDB, 'pragas-container', expandidoPragas ? 99 : 8); document.getElementById('btn-pragas').innerText = expandidoPragas ? '(recolher)' : '+ ver todas as pragas'; }
-        else { expandidoFlora = !expandidoFlora; renderGrid(floraDB, 'flora-container', expandidoFlora ? 99 : 8); document.getElementById('btn-invasoras').innerText = expandidoFlora ? '(recolher)' : '+ ver todas as invasoras'; }
+        if(type === 'pragas') { 
+            expandidoPragas = !expandidoPragas; 
+            renderGrid(pragasDB, 'pragas-container', expandidoPragas ? 99 : 8); 
+            document.getElementById('btn-pragas').innerText = expandidoPragas ? '(recolher)' : '+ ver todas as pragas'; 
+        } else { 
+            expandidoFlora = !expandidoFlora; 
+            renderGrid(floraDB, 'flora-container', expandidoFlora ? 99 : 8); 
+            document.getElementById('btn-invasoras').innerText = expandidoFlora ? '(recolher)' : '+ ver todas as invasoras'; 
+        }
     }
 
     function mostrarSugestoes() {
