@@ -9,7 +9,7 @@
         body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
         section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
         section { min-height: 100vh; display: flex; flex-direction: column; }
-        #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
+        #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
         #wrapper { padding-left: 18em !important; }
         .inner { padding: 2.2em 4em 0 4em !important; max-width: 1600px !important; margin: 0 auto; width: 100%; box-sizing: border-box; }
         
@@ -35,14 +35,17 @@
         .globe-weekday { font-size: 0.65em; font-weight: 900; color: #bbb; text-transform: uppercase; letter-spacing: 2px; }
         .globe-day-month { font-size: 1.5em; font-weight: 900; color: #2e7d32; line-height: 1; }
 
+        /* CALENDÁRIO GRID */
         .week-stack { 
             position: absolute; top: 50%; transform: translateY(-50%);
             width: 100%; display: flex; flex-direction: column; gap: 12px; 
-            mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent); 
+            /* Removido o mask-image (fade) conforme solicitado */
         }
         .week-row { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; width: 100%; }
-        .day-node { font-size: 0.85em; font-weight: 600; color: #e5e5e5; display: flex; align-items: center; justify-content: center; height: 32px; }
+        .day-node { font-size: 0.85em; font-weight: 600; color: #999; display: flex; align-items: center; justify-content: center; height: 32px; }
         .day-node.current-week { color: #1a1a1a; font-weight: 700; }
+        .day-node.weekend { color: #ef5350 !important; } /* Sábado e Domingo a Vermelho */
+        
         .today-num { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; background: #1a1a1a; color: #fff !important; border-radius: 50%; font-size: 0.8em; font-weight: 900; }
 
         /* ALINHAMENTO globe-south */
@@ -50,7 +53,7 @@
         .south-col { display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; }
         .v-sep { width: 1px; height: 40px; background: #eee; margin: 0 10px; }
         .meteo-icon-big { font-size: 1.8em; color: #fbc02d; line-height: 1; }
-        .moon-svg-small { width: 30px; height: 30px; display: block; fill: #2e7d32; }
+        .moon-svg-small { width: 32px; height: 32px; display: block; fill: #f9a825; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1)); } /* Lua mais perceptível */
         .temp-range-label { font-size: 0.75em; font-weight: 800; color: #1a1a1a; }
         .moon-phase-name { font-size: 0.5em; font-weight: 900; color: #2e7d32; text-transform: uppercase; letter-spacing: 1px; text-align: center; }
 
@@ -109,7 +112,8 @@
                                         <div class="v-sep"></div>
                                         <div class="south-col">
                                             <div id="lunar-icon-container">
-                                                <svg viewBox="0 0 24 24" class="moon-svg-small"><circle cx="12" cy="12" r="10" stroke="#eee" fill="none"/></svg>
+                                                <!-- Lua Cheia com cor vibrante para teste -->
+                                                <svg viewBox="0 0 24 24" class="moon-svg-small"><circle cx="12" cy="12" r="10" fill="#f9a825"/></svg>
                                             </div>
                                             <span class="moon-phase-name" id="moon-phase-name">...</span>
                                         </div>
@@ -181,7 +185,11 @@
                     const cur = new Date(monday);
                     cur.setDate(monday.getDate() + (w*7) + j);
                     const isToday = today.toDateString() === cur.toDateString();
-                    const cls = `day-node ${w===0?'current-week':''}`;
+                    
+                    // Lógica de Classes: Atual (preto), Outras (cinzento), Fim de Semana (vermelho)
+                    let cls = `day-node ${w === 0 ? 'current-week' : ''}`;
+                    if (j === 0 || j === 6) cls += ' weekend'; 
+
                     const content = isToday ? `<span class="today-num">${cur.getDate()}</span>` : cur.getDate();
                     row.innerHTML += `<div class="${cls}">${content}</div>`;
                 }
@@ -189,7 +197,8 @@
             });
 
             document.getElementById('temp-range').innerText = "18º / 29º";
-            document.getElementById('moon-phase-name').innerText = 'Transição';
+            document.getElementById('moon-phase-name').innerText = 'Lua Cheia';
+            document.getElementById('lunar-icon-container').innerHTML = '<svg viewBox="0 0 24 24" class="moon-svg-small"><circle cx="12" cy="12" r="10" fill="#f9a825"/></svg>';
             
             updateState();
         }
@@ -209,7 +218,7 @@
             advice.innerHTML = `
                 <p>${soilText}</p>
                 <p>CICLO ATUAL: ${mesAtual}. Deve semear couve-galega e brócolos, e focar na colheita de tomate, pimento e beringela.</p>
-                <p>CLIMA E LUA. Humidade estável: vigie o aparecimento de fungos. Sob transição, a recomendação técnica é a manutenção geral e observação atenta do ecossistema.</p>
+                <p>CLIMA E LUA. Humidade estável: vigie o aparecimento de fungos. Sob lua cheia, a recomendação técnica é a manutenção geral e observação atenta do ecossistema.</p>
             `;
         }
 
