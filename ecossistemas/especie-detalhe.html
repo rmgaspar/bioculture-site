@@ -17,12 +17,11 @@
             background: #f5f5f5;
         }
         
-        /* Alinhamento da coluna de texto com a altura da imagem */
         .info-header { 
             flex: 1.2; 
             display: flex; 
             flex-direction: column; 
-            height: 600px; /* Mesma altura da imagem */
+            height: 600px; 
             justify-content: flex-start;
         }
         
@@ -33,7 +32,6 @@
         .data-item b { display: block; font-size: 0.65em; text-transform: uppercase; letter-spacing: 2px; color: #5c6bc0; margin-bottom: 8px; }
         .data-item p { font-size: 1.1em; color: #444; margin: 0; font-weight: 500; }
 
-        /* Link Voltar alinhado à base */
         .btn-voltar-base { 
             margin-top: auto; 
             display: inline-block; 
@@ -86,15 +84,18 @@
 
                 let esp = null;
 
+                // 1. Procura no Master
                 if (rMaster[id]) {
                     esp = rMaster[id];
                 } else {
+                    // 2. Procura nas Pragas
                     const p = rPragas.find(item => item.nome_cientifico.toLowerCase().replace(/ /g, '-') === id);
                     if (p) {
                         esp = { ...p, nome: p.nome_comum, grupo: "Sanidade Vegetal", sintese: p.sintomas, estatuto: "Praga / Doença" };
                     }
                 }
 
+                // 3. Procura na Flora Invasora
                 if (!esp) {
                     const f = rFlora.find(item => item.nome_cientifico.toLowerCase().replace(/ /g, '-') === id);
                     if (f) {
@@ -107,10 +108,9 @@
                     return;
                 }
 
+                // Lógica de validação de conteúdo real
+                const temSinteseReal = esp.sintese && esp.sintese.length > 60 && !esp.sintese.includes("processamento");
                 const taxLimpa = esp.taxonomia_completa ? esp.taxonomia_completa.slice(-3).join(' > ') : (esp.nome_cientifico || esp.grupo);
-                
-                // Lógica de remoção da Descrição para Flora Invasora
-                const esconderDescricao = esp.grupo === "Flora Invasora";
 
                 document.getElementById('render-especie').innerHTML = `
                     <div class="hero-especie">
@@ -128,26 +128,26 @@
                                     <div class="data-item"><b>Taxonomia</b><p>${taxLimpa}</p></div>
                                 </div>
                             </div>
-                            <a href="javascript:history.back()" class="btn-voltar-base">← Voltar</a>
+                            <a href="javascript:history.back()" class="btn-voltar-base">← Voltar ao Observatório</a>
                         </div>
                     </div>
 
                     <div class="tech-section">
-                        ${!esconderDescricao ? `
+                        ${temSinteseReal ? `
                             <h4>Descrição e Ecologia</h4>
                             <div class="tech-box">
-                                <p>${esp.sintese || 'Informação técnica em processamento.'}</p>
+                                <p>${esp.sintese}</p>
                             </div>
                         ` : ''}
                         
-                        ${esp.prevencao ? `
+                        ${esp.prevencao && esp.prevencao.length > 10 ? `
                             <h4>Estratégias de Prevenção</h4>
                             <div class="tech-box">
                                 <p>${esp.prevencao}</p>
                             </div>
                         ` : ''}
 
-                        ${esp.combate ? `
+                        ${esp.combate && esp.combate.length > 10 ? `
                             <h4>Métodos de Combate e Controlo</h4>
                             <div class="tech-box">
                                 <b>Controlo Biológico / Regenerativo</b>
@@ -159,7 +159,7 @@
                     </div>
                 `;
                 document.title = esp.nome + " - bioCultura";
-            } catch (e) { console.error(e); }
+            } catch (e) { console.error("Erro ao carregar detalhe:", e); }
         }
         carregarDetalhe();
     </script>
