@@ -19,7 +19,7 @@
         .hero-text h1 { font-size: 4em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; line-height: 0.95; margin: 0 0 15px 0; }
         .reg-info-top { font-size: 0.95em; font-style: italic; color: #888; margin-bottom: 50px; display: block; }
 
-        /* HERO GLOBE (A RODINHA) */
+        /* HERO GLOBE */
         .hero-visual { flex: 1; display: flex; justify-content: flex-end; }
         .hero-globe {
             position: relative; width: 480px; height: 480px;
@@ -31,7 +31,7 @@
         }
 
         .globe-top { margin-bottom: auto; display: flex; flex-direction: column; align-items: center; z-index: 10; }
-        .globe-year { font-size: 0.75em; font-weight: 900; color: #2e7d32; letter-spacing: 5px; margin-bottom: 2px; }
+        .globe-year { font-size: 0.75em; font-weight: 900; color: #2e7d32; letter-spacing: 5px; margin-bottom: 5px; }
         .globe-weekday { font-size: 0.65em; font-weight: 800; color: #bbb; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 2px; }
         .globe-day-month { font-size: 1.6em; font-weight: 900; color: #2e7d32; line-height: 1; }
 
@@ -41,18 +41,21 @@
         .day-node.current-week { color: #1a1a1a; font-weight: 700; }
         .day-node.weekend { color: #ef5350 !important; }
         .today-num { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; background: #1a1a1a; color: #fff !important; border-radius: 50%; font-size: 0.8em; font-weight: 900; }
+        
+        /* FIX: Icones da Lua no Grid (Pequenos) */
+        .moon-grid-icon { width: 14px !important; height: 14px !important; display: block; margin: 0 auto; }
 
-        /* RODAPÉ GLOBO - CONVERGENTE COM MARGEM */
-        .globe-south { margin-top: auto; margin-bottom: 35px; width: 60%; display: flex; justify-content: center; align-items: center; z-index: 10; }
-        .south-col { display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; }
-        .side-left { margin-right: 15px; align-items: flex-end; text-align: right; }
-        .side-right { margin-left: 15px; align-items: flex-start; text-align: left; }
+        /* RODAPÉ GLOBO - ALINHAMENTO CONVERGENTE */
+        .globe-south { margin-top: auto; margin-bottom: 30px; width: 60%; display: flex; justify-content: center; align-items: center; z-index: 10; gap: 0; }
+        .south-col { display: flex; flex-direction: column; flex: 1; }
+        .side-left { align-items: flex-end; text-align: right; padding-right: 15px; }
+        .side-right { align-items: flex-start; text-align: left; padding-left: 15px; }
         
         .v-sep { width: 1px; height: 45px; background: #eee; margin: 0; }
-        .meteo-icon-big { font-size: 2.3em; color: #fbc02d; margin-bottom: 2px; }
-        .moon-svg-main { width: 38px; height: 38px; display: block; fill: #999; }
+        .meteo-icon-big { font-size: 2.2em; color: #fbc02d; margin-bottom: 4px; }
+        .moon-svg-main { width: 36px; height: 36px; display: block; fill: #999; margin-bottom: 4px; }
         
-        .status-label-globe { font-size: 0.85em; font-weight: 900; color: #1a1a1a; text-transform: uppercase; letter-spacing: 1px; line-height: 1; }
+        .status-label-globe { font-size: 0.65em !important; font-weight: 900; color: #1a1a1a; text-transform: uppercase; letter-spacing: 1px; line-height: 1; }
         .t-min { color: #42a5f5; } .t-max { color: #ef5350; }
 
         /* CONTEÚDO */
@@ -73,6 +76,13 @@
 
         .data-row { display: block; padding: 3.5em 0; border-bottom: 1px solid #f2f2f2; }
         .data-row h4 { font-size: 0.75em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin-bottom: 25px; }
+
+        .recipe-section { background: #1b4332; color: #fff; padding: 4em; border-radius: 40px; margin: 4em 0; }
+        .recipe-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; }
+        .recipe-item h4 { color: #fff; font-size: 1.3em; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
+        .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; }
+        .report-item { border-top: 1px solid #f9f9f9; padding-top: 20px; }
+        .report-item h5 { font-size: 0.75em; font-weight: 900; text-transform: uppercase; color: #2e7d32; margin-bottom: 12px; }
 
         .page-footer { padding: 5em 0 4em 0; text-align: right; opacity: 0.3; border-top: 1px solid #f2f2f2; }
         .logo-footer { display: block; font-size: 0.85em; font-weight: 900; color: #333; }
@@ -131,6 +141,21 @@
                             <div id="flora-container" class="species-list"></div>
                             <button class="btn-clean" id="btn-invasoras" onclick="toggleGrid('flora')">+ ver todas as invasoras</button>
                         </div>
+
+                        <div class="recipe-section">
+                            <span class="category-label" style="color: rgba(255,255,255,0.5);">Manuais de Preparo</span>
+                            <h2 style="color: #fff; font-size: 2.5em; margin-bottom: 30px;">Soluções Biológicas de Precisão</h2>
+                            <div class="recipe-grid">
+                                <div class="recipe-item"><h4>Calda Bordalesa</h4><p>Fungicida preventivo para Míldio e Antracnose.</p><ul><li>100g de Sulfato de Cobre.</li><li>100g de Cal Hidratada.</li></ul></div>
+                                <div class="recipe-item"><h4>Extrato de Própolis</h4><p>Antibiótico natural para tratar feridas de poda.</p><ul><li>Diluir 10ml em 1L de água.</li><li>Pincelar cortes superiores a 2cm.</li></ul></div>
+                                <div class="recipe-item"><h4>Infusão de Alho</h4><p>Repelente contra afídios e ácaros.</p><ul><li>100g macerados por 24h.</li><li>Ferver 15 min e aplicar frio.</li></ul></div>
+                            </div>
+                        </div>
+
+                        <div class="data-row" style="border-bottom: none;">
+                            <h4>Síntese das Autoridades 2026</h4>
+                            <div id="report-grid-agri" class="report-grid"></div>
+                        </div>
                     </div>
 
                     <footer class="page-footer">
@@ -147,38 +172,46 @@
     let locationsDB = [], horticolasMaster = {}, masterEspecies = {}, infoGlobal = null;
     let expandidoPragas = false, expandidoFlora = false;
 
-    // Lógica Lunar em Arco (C e C Invertido)
     const moonIcons = {
         full: '<svg viewBox="0 0 24 24" class="moon-svg-main" style="fill:#f9a825"><circle cx="12" cy="12" r="10"/></svg>',
         new: '<svg viewBox="0 0 24 24" class="moon-svg-main" style="fill:#bbb"><circle cx="12" cy="12" r="10" fill="none" stroke="#bbb" stroke-width="2"/></svg>',
-        cres: '<svg viewBox="0 0 24 24" class="moon-svg-main"><path d="M12,2A10,10 0 0,1 12,22A10,10 0 0,0 12,2Z"/></svg>', // C-shape
-        ming: '<svg viewBox="0 0 24 24" class="moon-svg-main"><path d="M12,2A10,10 0 0,0 12,22A10,10 0 0,1 12,2Z"/></svg>'  // Reversed C
+        cres: '<svg viewBox="0 0 24 24" class="moon-svg-main"><path d="M12,2A10,10 0 0,1 12,22A10,10 0 0,0 12,2Z"/></svg>',
+        ming: '<svg viewBox="0 0 24 24" class="moon-svg-main"><path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22V2Z"/></svg>',
+        grid_full: '<svg viewBox="0 0 24 24" class="moon-grid-icon" style="fill:#f9a825"><circle cx="12" cy="12" r="10"/></svg>',
+        grid_cres: '<svg viewBox="0 0 24 24" class="moon-grid-icon" style="fill:#999"><path d="M12,2A10,10 0 0,1 12,22A10,10 0 0,0 12,2Z"/></svg>',
+        grid_ming: '<svg viewBox="0 0 24 24" class="moon-grid-icon" style="fill:#999"><path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22V2Z"/></svg>'
     };
 
-    const specificMoons = { "2026-07-29": moonIcons.full, "2026-08-06": moonIcons.cres, "2026-08-12": moonIcons.new, "2026-08-20": moonIcons.ming };
+    const specificMoons = { "2026-07-29": moonIcons.grid_full, "2026-08-06": moonIcons.grid_cres, "2026-08-12": moonIcons.new, "2026-08-20": moonIcons.grid_ming };
 
     async function inicializarPagina() {
         try {
+            const prefix = window.location.pathname.includes('/calendario/') ? '../' : '/';
             const [rLoc, rHorta, rMaster] = await Promise.all([
-                fetch('/data/bioregioes.json').then(r => r.json()),
-                fetch('/data/horticolas_master.json?v=' + Date.now()).then(r => r.json()),
-                fetch('/data/especies_master.json?v=' + Date.now()).then(r => r.json())
+                fetch(`${prefix}data/bioregioes.json`).then(r => r.json()),
+                fetch(`${prefix}data/horticolas_master.json?v=` + Date.now()).then(r => r.json()),
+                fetch(`${prefix}data/especies_master.json?v=` + Date.now()).then(r => r.json())
             ]);
-            locationsDB = rLoc; horticolasMaster = rHorta; masterEspecies = rMaster;
-            infoGlobal = locationsDB.find(i => String(i.id) === String(localStorage.getItem('biocultura_region'))) || locationsDB[0];
+            window.locationsDB = rLoc; horticolasMaster = rHorta; masterEspecies = rMaster;
+            infoGlobal = window.locationsDB.find(i => String(i.id) === String(localStorage.getItem('biocultura_region'))) || locationsDB[0];
             
             if(infoGlobal) document.getElementById('reg-name').innerText = `${infoGlobal.titulo}, ${(infoGlobal.concelho || "").toUpperCase()}`;
             
             renderGlobe();
             
-            // IDs das Pragas e Invasoras injetadas
             const pragasIds = ['aranhico-vermelho', 'escolitideo-dos-pinheiros', 'bichado-da-fruta', 'pedrado', 'esca'];
             const floraIds = ['acacia-de-folhas-estreitas', 'jacinto-de-agua', 'pinheirinha-de-agua', 'acacia-bastarda', 'elodea'];
             
             renderGrid(pragasIds, 'pragas-container', 8);
             renderGrid(floraIds, 'flora-container', 8);
+            
+            const agriReports = [
+                { t: "Diretrizes PEPAC 2026", p: "O Plano Estratégico da PAC prioriza o apoio financeiro a explorações biológicas." },
+                { t: "Vigilância Fitossanitária", p: "Alerta para focos de Xylella fastidiosa. Recomendação técnica: eliminação de hospedeiras." }
+            ];
+            document.getElementById('report-grid-agri').innerHTML = agriReports.map(r => `<div class="report-item"><h5>${r.t}</h5><p>${r.p}</p></div>`).join('');
             setupLocationLogic();
-        } catch(e) { console.error("Crash bioCultura:", e); }
+        } catch(e) { console.error("Erro:", e); }
     }
 
     function renderGlobe() {
@@ -213,7 +246,7 @@
     function updateState() {
         const advice = document.getElementById('advice-content');
         const solo = (infoGlobal?.biomas?.solo || "").toLowerCase();
-        let soilText = solo.includes('xistoso') ? 'Em terrenos de rápida drenagem, reforce o <a href="horticola-detalhe.html?id=mulching"><i>mulching</i></a> para preservar a humidade microbiana.' : "Mantenha a fertilização biológica equilibrada.";
+        let soilText = solo.includes('xistoso') ? 'Em terrenos de rápida drenagem, reforce o <i onclick="window.location.href=\'horticola-detalhe.html?id=mulching\'">mulching</i> para preservar a humidade microbiana.' : "Mantenha a fertilização biológica equilibrada.";
 
         advice.innerHTML = `
             <p>${soilText}</p>
@@ -233,10 +266,10 @@
     }
 
     function toggleGrid(type) {
-        const pragasIdsTotal = ['aranhico-vermelho', 'escolitideo-dos-pinheiros', 'bichado-da-fruta', 'pedrado', 'esca'];
-        const floraIdsTotal = ['acacia-de-folhas-estreitas', 'jacinto-de-agua', 'pinheirinha-de-agua', 'acacia-bastarda', 'elodea'];
-        if(type === 'pragas') { expandidoPragas = !expandidoPragas; renderGrid(pragasIdsTotal, 'pragas-container', expandidoPragas ? 99 : 8); document.getElementById('btn-pragas').innerText = expandidoPragas ? '(recolher)' : '+ ver todas as pragas'; }
-        else { expandidoFlora = !expandidoFlora; renderGrid(floraIdsTotal, 'flora-container', expandidoFlora ? 99 : 8); document.getElementById('btn-invasoras').innerText = expandidoFlora ? '(recolher)' : '+ ver todas as invasoras'; }
+        const pIds = ['aranhico-vermelho', 'escolitideo-dos-pinheiros', 'bichado-da-fruta', 'pedrado', 'esca'];
+        const fIds = ['acacia-de-folhas-estreitas', 'jacinto-de-agua', 'pinheirinha-de-agua', 'acacia-bastarda', 'elodea'];
+        if(type === 'pragas') { expandidoPragas = !expandidoPragas; renderGrid(pIds, 'pragas-container', expandidoPragas ? 99 : 8); document.getElementById('btn-pragas').innerText = expandidoPragas ? '(recolher)' : '+ ver todas as pragas'; }
+        else { expandidoFlora = !expandidoFlora; renderGrid(fIds, 'flora-container', expandidoFlora ? 99 : 8); document.getElementById('btn-invasoras').innerText = expandidoFlora ? '(recolher)' : '+ ver todas as invasoras'; }
     }
 
     function mostrarSugestoes() {
@@ -259,10 +292,11 @@
         $(document).off('click', '#btn-gps-trigger').on('click', '#btn-gps-trigger', function(e) {
             e.preventDefault();
             if (navigator.geolocation) {
+                const btn = $(this); btn.css('opacity', '0.5');
                 navigator.geolocation.getCurrentPosition(pos => {
                     const R = 6371;
-                    let closest = locationsDB[0], minD = Infinity;
-                    locationsDB.forEach(c => {
+                    let closest = window.locationsDB[0], minD = Infinity;
+                    window.locationsDB.forEach(c => {
                         if(!c.lat || c.lat === 0) return;
                         const dLat = (c.lat - pos.coords.latitude) * Math.PI / 180;
                         const dLon = (c.lon - pos.coords.longitude) * Math.PI / 180;
@@ -276,10 +310,9 @@
             }
         });
         $(document).on('input', '#loc-search-input', function() {
-            const val = $(this).val().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""), 
-                  dropdown = $('#loc-dropdown').empty();
+            const val = $(this).val().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""), dropdown = $('#loc-dropdown').empty();
             if(val.length < 2) return dropdown.hide();
-            locationsDB.filter(i => i.titulo.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(val)).slice(0,8).forEach(m => {
+            window.locationsDB.filter(i => i.titulo.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(val)).slice(0,8).forEach(m => {
                 $('<div class="bio-res-item"></div>').text(m.titulo).on('click', () => { localStorage.setItem('biocultura_region', m.id); location.reload(); }).appendTo(dropdown);
             });
             dropdown.show();
