@@ -107,6 +107,25 @@
 
         .logo-footer { display: block; font-size: 0.85em; font-weight: 900; color: #333; }
 
+        .inline-badge { 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 6px; 
+            background: #f9f9f9; 
+            padding: 2px 10px; 
+            border-radius: 50px; 
+            border: 1px solid #eee; 
+            cursor: pointer; 
+            font-size: 0.9em; 
+            margin: 0 2px; 
+            vertical-align: middle; 
+            transition: 0.3s;
+        }
+        .inline-badge:hover { border-color: #2e7d32; background: #f1f8e9; }
+        .inline-badge img { width: 16px; height: 16px; border-radius: 50%; object-fit: cover; }
+        .advice-topic { margin-bottom: 1.8em; }
+        .advice-topic b { display: block; font-size: 0.7em; text-transform: uppercase; letter-spacing: 1.5px; color: #2e7d32; margin-bottom: 4px; }
+
         @media screen and (max-width: 1280px) { .hero-split { flex-direction: column-reverse; } .hero-globe { width: 350px; height: 350px; margin: 0 auto 30px auto; } }
     </style>
 </head>
@@ -331,14 +350,43 @@
         updateState();
     }
 
-    function updateState() {
+        function updateState(moon) {
         const advice = document.getElementById('advice-content');
         const solo = (infoGlobal?.biomas?.solo || "").toLowerCase();
-        let soilText = solo.includes('xistoso') ? 'Em terrenos de rápida drenagem, reforce o <a href="horticola-detalhe.html?id=mulching"><i>mulching</i></a> para preservar a humidade microbiana.' : "Mantenha a fertilização biológica equilibrada.";
+        const ph = parseFloat(infoGlobal?.biomas?.ph_solo || "6.5");
+        const phaseKey = moon ? moon.label : 'Transição';
+
+        // Helper para criar badges no meio do texto
+        const createBadge = (id) => {
+            const item = horticolasMaster[id];
+            if (!item) return `<b>${id}</b>`;
+            return `<span class="inline-badge" onclick="window.location.href='horticola-detalhe.html?id=${id}'"><img src="${item.imagem}">${item.nome}</span>`;
+        };
+
+        // Definição do texto de Terreno
+        let soilText = solo.includes('xistoso') 
+            ? `Em terrenos de rápida drenagem, reforce o <a href="horticola-detalhe.html?id=mulching"><i>mulching</i></a> para preservar a humidade microbiana.` 
+            : "Mantenha a fertilização biológica equilibrada e a cobertura de solo ativa.";
+        if (ph < 6.0) soilText += " Aplique correções orgânicas para equilibrar a acidez.";
+
+        // Montagem dos Tópicos
         advice.innerHTML = `
-            <p>${soilText}</p>
-            <p><b>CICLO ATUAL</b><br>Deve semear couve-galega e brócolos, e focar na colheita de tomate, pimento e beringela.</p>
-            <p><b>CLIMA E LUA</b><br>Humidade estável: vigie o aparecimento de fungos. Sob fase minguante, a recomendação é a manutenção geral e observação.</p>
+            <div class="advice-topic">
+                <b>Terreno</b>
+                <p>${soilText}</p>
+            </div>
+            <div class="advice-topic">
+                <b>Sementeiras e Plantio</b>
+                <p>Sob a influência da fase ${phaseKey.toLowerCase()}, é o momento ideal para semear ${createBadge('couve-galega')} e ${createBadge('brocolos')}. Garanta que o solo mantém a temperatura estável.</p>
+            </div>
+            <div class="advice-topic">
+                <b>Manutenção e Poda</b>
+                <p>Com o clima atual, priorize a rega ao final do dia para evitar a evaporação. Esta lua favorece a manutenção geral e pequenas podas de limpeza em arbustos.</p>
+            </div>
+            <div class="advice-topic">
+                <b>Colheita e Prevenção</b>
+                <p>Vigie o aparecimento de fungos devido à humidade estável. Inicie a colheita de ${createBadge('tomate')}, ${createBadge('pimento')} e ${createBadge('beringela')} para estimular a produção contínua.</p>
+            </div>
         `;
     }
 
@@ -365,14 +413,24 @@
     }
 
     function mostrarSugestoes() {
-        const container = document.getElementById('sugestoes-container');
+       const container = document.getElementById('sugestoes-container');
         const ph = parseFloat(infoGlobal?.biomas?.ph_solo || "6.5");
-        let ids = ph < 6.0 ? ['batata', 'mirtilo', 'castanha', 'morango'] : ph > 7.2 ? ['azeitona', 'alfarroba', 'fava', 'grao-de-bico'] : ['tomate', 'alface', 'cenoura', 'couve-galega'];
+        
+        let ids = ph < 6.0 ? ['batata', 'mirtilo', 'castanha', 'morango'] : 
+                ph > 7.2 ? ['azeitona', 'alfarroba', 'fava', 'grao-de-bico'] : 
+                ['tomate', 'alface', 'cenoura', 'couve-galega'];
+
         container.innerHTML = ids.map(id => {
             const item = horticolasMaster[id];
             if(!item) return '';
             return `<div class="species-badge" onclick="window.location.href='horticola-detalhe.html?id=${id}'"><img src="${item.imagem}">${item.nome}</div>`;
-        }).join('') + '<div style="width:100%; margin-top:15px;"><span class="btn-clean" style="font-size:0.6em; color:#ccc; cursor:pointer;" onclick="recolherSugestoes()">(recolher)</span></div>';
+        }).join('');
+
+        // Adiciona o link recolher apenas se houver muitos itens (ex: > 6)
+        if (ids.length > 6) {
+            container.innerHTML += `<div style="width:100%; margin-top:15px;"><span class="btn-clean" style="font-size:0.6em; color:#ccc; cursor:pointer;" onclick="recolherSugestoes()">(recolher)</span></div>`;
+        }
+
         $(container).slideDown();
         document.getElementById('nota-solo').style.display = 'block';
         document.getElementById('link-sugestoes').style.display = 'none';
