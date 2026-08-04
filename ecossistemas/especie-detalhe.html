@@ -7,30 +7,42 @@
     <link rel="stylesheet" href="/assets/css/main.css" />
     <style>
         body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
-        .detail-container { max-width: 1100px; margin: 4em auto; padding: 0 2em; }
+        section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
+        section { min-height: 100vh; display: flex; flex-direction: column; }
+        #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
+        #wrapper { padding-left: 18em !important; }
         
-        .hero-especie { display: flex; gap: 4em; align-items: start; margin-bottom: 3em; }
-        .img-container { flex: 1; min-width: 400px; }
-        .hero-especie img { 
-            width: 100%; height: 600px; object-fit: cover; 
-            border-radius: 24px; box-shadow: 0 30px 60px rgba(0,0,0,0.1);
-            background: #f5f5f5;
-        }
+        /* Alinhamento de Precisão bioCultura */
+        .inner { padding: 2.2em 4em 0 4em !important; max-width: 1600px !important; margin: 0 auto; width: 100%; box-sizing: border-box; }
         
-        .info-header { 
-            flex: 1.2; 
+        .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; margin-bottom: 15px; display: block; }
+        
+        .hero-split { display: flex; align-items: flex-start; justify-content: space-between; gap: 4em; margin-bottom: 2em; }
+        .hero-text { 
+            flex: 1.5; 
+            text-align: left; 
             display: flex; 
             flex-direction: column; 
-            height: 600px; 
-            justify-content: flex-start;
+            height: 480px; /* Alinhado com a altura da rodinha */
+        } 
+        .hero-text h1 { font-size: 4em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; line-height: 0.95; margin: 0 0 10px 0; }
+        .hero-text h2 { font-size: 1.4em; color: #bbb; font-style: italic; margin-bottom: 2em; font-weight: 400; }
+
+        /* A RODINHA (HERO GLOBE) - PARIDADE TOTAL */
+        .hero-visual { flex: 1; display: flex; justify-content: flex-end; }
+        .hero-globe {
+            position: relative; 
+            width: 480px; height: 480px;
+            border-radius: 50%; overflow: hidden;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.12);
+            background: #1a1a1a;
         }
-        
-        .info-header h1 { font-size: 3.8em; font-weight: 900; color: #1a1a1a; margin: 0; line-height: 1; letter-spacing: -2px; }
-        .info-header h2 { font-size: 1.4em; color: #bbb; font-style: italic; margin: 10px 0 1.5em 0; font-weight: 400; }
-        
+        .hero-globe img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* GRELHA TÉCNICA */
         .data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; border-top: 1px solid #f2f2f2; padding-top: 2em; }
         .data-item b { display: block; font-size: 0.65em; text-transform: uppercase; letter-spacing: 2px; color: #5c6bc0; margin-bottom: 8px; }
-        .data-item p { font-size: 1.1em; color: #444; margin: 0; font-weight: 500; }
+        .data-item p { font-size: 1.1em; color: #444; margin: 0; font-weight: 600; }
 
         .btn-voltar-base { 
             margin-top: auto; 
@@ -53,31 +65,37 @@
         
         .source-footer { font-size: 0.65em; color: #bbb !important; text-transform: uppercase; margin-top: 4em; display: block; letter-spacing: 1px; }
 
-        @media screen and (max-width: 980px) {
-            .hero-especie { flex-direction: column; }
-            .img-container { min-width: 100%; }
-            .hero-especie img { height: 400px; }
-            .info-header { height: auto; }
+        /* RODAPÉ OFICIAL */
+        .page-footer { padding: 5em 0 4em 0; border-top: 1px solid #f2f2f2; opacity: 0.3; text-align: right; margin-top: auto; }
+        .logo-footer { display: block; font-size: 0.85em; font-weight: 900; color: #333; }
+
+        @media screen and (max-width: 1280px) {
+            .hero-split { flex-direction: column-reverse; align-items: center; }
+            .hero-visual { justify-content: center; margin-bottom: 2em; }
+            .hero-globe { width: 350px; height: 350px; }
+            .hero-text { height: auto; text-align: center; }
             .btn-voltar-base { margin-top: 2em; }
         }
-
-        .page-footer { padding: 5em 0 4em 0; text-align: right; opacity: 0.4; border-top: 1px solid #f2f2f2; margin-top: 4em; }
-        .logo-footer { display: block; font-size: 0.85em; font-weight: 900; color: #333; text-transform: uppercase; letter-spacing: 1px; }
-        .sublogo-footer { display: block; font-size: 0.5em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #bbb; }
-
     </style>
 </head>
 <body>
-    <div class="detail-container">
-        <div id="render-especie">
-            <p style="color:#bbb; font-style:italic;">A carregar dados da biodiversidade...</p>
-        </div>
-    </div>
+    <div id="wrapper">
+        <div id="main">
+            <div class="inner">
+                <section>
+                    <div id="render-especie">
+                        <p style="color:#bbb; font-style:italic; padding-top: 2em;">A carregar dados da biodiversidade...</p>
+                    </div>
 
-    <footer class="page-footer">
-        <span class="logo-footer">bioCultura</span>
-        <span class="sublogo-footer">Global Regeneration</span>
-    </footer>
+                    <footer class="page-footer">
+                        <span class="logo-footer">bioCultura</span>
+                        <span style="display: block; font-size: 0.5em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Global Regeneration</span>
+                    </footer>
+                </section>
+            </div>
+        </div>
+        <div id="sidebar"></div>
+    </div>
 
     <script src="/assets/js/jquery.min.js"></script>
     <script>
@@ -94,18 +112,15 @@
 
                 let esp = null;
 
-                // 1. Procura no Master
                 if (rMaster[id]) {
                     esp = rMaster[id];
                 } else {
-                    // 2. Procura nas Pragas
                     const p = rPragas.find(item => item.nome_cientifico.toLowerCase().replace(/ /g, '-') === id);
                     if (p) {
                         esp = { ...p, nome: p.nome_comum, grupo: "Sanidade Vegetal", sintese: p.sintomas, estatuto: "Praga / Doença" };
                     }
                 }
 
-                // 3. Procura na Flora Invasora
                 if (!esp) {
                     const f = rFlora.find(item => item.nome_cientifico.toLowerCase().replace(/ /g, '-') === id);
                     if (f) {
@@ -118,27 +133,29 @@
                     return;
                 }
 
-                // Lógica de validação de conteúdo real
-                const temSinteseReal = esp.sintese && esp.sintese.length > 60 && !esp.sintese.includes("processamento");
                 const taxLimpa = esp.taxonomia_completa ? esp.taxonomia_completa.slice(-3).join(' > ') : (esp.nome_cientifico || esp.grupo);
+                const temSinteseReal = esp.sintese && esp.sintese.length > 60 && !esp.sintese.includes("processamento");
 
                 document.getElementById('render-especie').innerHTML = `
-                    <div class="hero-especie">
-                        <div class="img-container">
-                            <img src="${esp.imagem ? esp.imagem.replace('medium', 'large') : '/assets/img/placeholder.jpg'}" alt="${esp.nome}">
-                        </div>
-                        <div class="info-header">
-                            <div>
-                                <h1>${esp.nome}</h1>
-                                <h2><i>${esp.nome_cientifico || ''}</i></h2>
-                                <div class="data-grid">
-                                    <div class="data-item"><b>Grupo</b><p>${esp.grupo}</p></div>
-                                    <div class="data-item"><b>Estatuto</b><p>${esp.estatuto || 'Nativa'}</p></div>
-                                    <div class="data-item"><b>Sazonalidade</b><p>Observada em Portugal</p></div>
-                                    <div class="data-item"><b>Taxonomia</b><p>${taxLimpa}</p></div>
-                                </div>
+                    <div class="hero-split">
+                        <div class="hero-text">
+                            <span class="category-label">Inventário Biológico bioCultura</span>
+                            <h1>${esp.nome}</h1>
+                            <h2><i>${esp.nome_cientifico || ''}</i></h2>
+                            
+                            <div class="data-grid">
+                                <div class="data-item"><b>Grupo</b><p>${esp.grupo}</p></div>
+                                <div class="data-item"><b>Estatuto</b><p>${esp.estatuto || 'Nativa'}</p></div>
+                                <div class="data-item"><b>Sazonalidade</b><p>Observada em Portugal</p></div>
+                                <div class="data-item"><b>Taxonomia</b><p>${taxLimpa}</p></div>
                             </div>
-                            <a href="javascript:history.back()" class="btn-voltar-base">← Voltar ao Observatório</a>
+                            
+                            <a href="javascript:history.back()" class="btn-voltar-base">← VOLTAR</a>
+                        </div>
+                        <div class="hero-visual">
+                            <div class="hero-globe">
+                                <img src="${esp.imagem ? esp.imagem.replace('medium', 'large') : '/assets/img/placeholder.jpg'}" alt="${esp.nome}">
+                            </div>
                         </div>
                     </div>
 
@@ -150,14 +167,14 @@
                             </div>
                         ` : ''}
                         
-                        ${esp.prevencao && esp.prevencao.length > 10 ? `
+                        ${esp.prevencao ? `
                             <h4>Estratégias de Prevenção</h4>
                             <div class="tech-box">
                                 <p>${esp.prevencao}</p>
                             </div>
                         ` : ''}
 
-                        ${esp.combate && esp.combate.length > 10 ? `
+                        ${esp.combate ? `
                             <h4>Métodos de Combate e Controlo</h4>
                             <div class="tech-box">
                                 <b>Controlo Biológico / Regenerativo</b>
@@ -169,9 +186,15 @@
                     </div>
                 `;
                 document.title = esp.nome + " - bioCultura";
-            } catch (e) { console.error("Erro ao carregar detalhe:", e); }
+            } catch (e) {
+                console.error("Erro ao carregar detalhe:", e);
+            }
         }
-        carregarDetalhe();
+
+        fetch('/sidebar-content.html').then(r => r.text()).then(html => {
+            document.getElementById('sidebar').innerHTML = html;
+            carregarDetalhe();
+        });
     </script>
 </body>
 </html>
