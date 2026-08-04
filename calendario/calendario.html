@@ -351,44 +351,71 @@
     }
 
         function updateState(moon) {
-        const advice = document.getElementById('advice-content');
-        const solo = (infoGlobal?.biomas?.solo || "").toLowerCase();
-        const ph = parseFloat(infoGlobal?.biomas?.ph_solo || "6.5");
-        const phaseKey = moon ? moon.label : 'Transição';
+            const advice = document.getElementById('advice-content');
+            const solo = (infoGlobal?.biomas?.solo || "").toLowerCase();
+            const ph = parseFloat(infoGlobal?.biomas?.ph_solo || "6.5");
+            const phaseKey = moon ? moon.label : 'Transição';
 
-        // Helper para criar badges no meio do texto
-        const createBadge = (id) => {
-            const item = horticolasMaster[id];
-            if (!item) return `<b>${id}</b>`;
-            return `<span class="inline-badge" onclick="window.location.href='horticola-detalhe.html?id=${id}'"><img src="${item.imagem}">${item.nome}</span>`;
-        };
+            // Helper para criar badges minimalistas (Crops e Técnicas)
+            const createBadge = (id) => {
+                const item = horticolasMaster[id];
+                if (!item) return `<b>${id}</b>`;
+                return `<span class="inline-badge" onclick="window.location.href='horticola-detalhe.html?id=${id}'"><img src="${item.imagem}">${item.nome}</span>`;
+            };
 
-        // Definição do texto de Terreno
-        let soilText = solo.includes('xistoso') 
-            ? `Em terrenos de rápida drenagem, reforce o <a href="horticola-detalhe.html?id=mulching"><i>mulching</i></a> para preservar a humidade microbiana.` 
-            : "Mantenha a fertilização biológica equilibrada e a cobertura de solo ativa.";
-        if (ph < 6.0) soilText += " Aplique correções orgânicas para equilibrar a acidez.";
+            let soilText = solo.includes('xistoso') 
+                ? `Em terrenos de rápida drenagem, reforce o ${createBadge('mulching')} para preservar a humidade microbiana.` 
+                : `Mantenha a fertilização biológica equilibrada e utilize ${createBadge('mulching')} para proteção térmica.`;
+            
+            if (ph < 6.0) soilText += " Aplique correções orgânicas para equilibrar a acidez.";
 
-        // Montagem dos Tópicos
-        advice.innerHTML = `
-            <div class="advice-topic">
-                <b>Terreno</b>
-                <p>${soilText}</p>
-            </div>
-            <div class="advice-topic">
-                <b>Sementeiras e Plantio</b>
-                <p>Sob a influência da fase ${phaseKey.toLowerCase()}, é o momento ideal para semear ${createBadge('couve-galega')} e ${createBadge('brocolos')}. Garanta que o solo mantém a temperatura estável.</p>
-            </div>
-            <div class="advice-topic">
-                <b>Manutenção e Poda</b>
-                <p>Com o clima atual, priorize a rega ao final do dia para evitar a evaporação. Esta lua favorece a manutenção geral e pequenas podas de limpeza em arbustos.</p>
-            </div>
-            <div class="advice-topic">
-                <b>Colheita e Prevenção</b>
-                <p>Vigie o aparecimento de fungos devido à humidade estável. Inicie a colheita de ${createBadge('tomate')}, ${createBadge('pimento')} e ${createBadge('beringela')} para estimular a produção contínua.</p>
-            </div>
-        `;
-    }
+            advice.innerHTML = `
+                <div class="advice-topic">
+                    <b>Terreno e Regeneração</b>
+                    <p>${soilText}</p>
+                </div>
+                <div class="advice-topic">
+                    <b>Sementeiras e Plantio</b>
+                    <p>Sob a influência da fase ${phaseKey.toLowerCase()}, recomenda-se semear ${createBadge('couve-galega')} e ${createBadge('brocolos')}.</p>
+                </div>
+                <div class="advice-topic">
+                    <b>Manutenção e Poda</b>
+                    <p>Priorize a rega ao final do dia. Esta fase favorece a manutenção geral e pequenas podas de limpeza.</p>
+                </div>
+                <div class="advice-topic">
+                    <b>Colheita e Prevenção</b>
+                    <p>Vigie fungos. Inicie a colheita de ${createBadge('tomate')}, ${createBadge('pimento')} e ${createBadge('beringela')} para estimular a produção.</p>
+                </div>
+            `;
+
+            // Dispara as sugestões regionais automaticamente
+            mostrarSugestoes();
+        }
+
+        function mostrarSugestoes() {
+            const container = document.getElementById('sugestoes-container');
+            const notaEl = document.getElementById('nota-solo');
+            const ph = parseFloat(infoGlobal?.biomas?.ph_solo || "6.5");
+            const regiaoNome = infoGlobal?.titulo || "sua zona";
+
+            // Atualiza a nota dinâmica
+            notaEl.innerHTML = `Nota: As sugestões abaixo são baseadas no tipo de solo e pH específico para <b>${regiaoNome}</b>, cruzados com o catálogo bioCultura.`;
+            
+            // Lógica de seleção por pH
+            let ids = ph < 6.0 ? ['batata', 'mirtilo', 'castanha', 'morango'] : 
+                    ph > 7.2 ? ['azeitona', 'alfarroba', 'fava', 'grao-de-bico'] : 
+                    ['tomate', 'alface', 'cenoura', 'couve-galega'];
+
+            container.innerHTML = ids.map(id => {
+                const item = horticolasMaster[id];
+                if(!item) return '';
+                return `
+                    <div class="species-badge" onclick="window.location.href='horticola-detalhe.html?id=${id}'">
+                        <img src="${item.imagem}">
+                        ${item.nome}
+                    </div>`;
+            }).join('');
+        }
 
    function renderGrid(data, containerId, limit) {
         const container = document.getElementById(containerId);
