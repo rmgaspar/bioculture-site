@@ -1,256 +1,163 @@
 <!DOCTYPE HTML>
-<html>
+<html lang="pt">
 <head>
     <title>bioCultura - Vetores de Pressão Global</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
     <link rel="stylesheet" href="/assets/css/main.css" />
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV0FD8PXC"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-6PV0FD8PXC');
-    </script>
     <style>
         body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
         section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
         #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
         #wrapper { padding-left: 18em !important; }
-        .inner { padding: 2.2em 4em 0 4em !important; max-width: 1600px !important; margin: 0 auto; width: 100%; }
-        .header-left { text-align: left; margin-bottom: 2em; }
+        .inner { padding: 2.2em 4em 0 !important; max-width: 1600px !important; margin: 0 auto; width: 100%; }
+        .header-left { margin-bottom: 2em; }
         .header-left h1 { font-size: 2.5em; font-weight: 900; color: #1a1a1a; letter-spacing: -1.5px; line-height: 1.1; margin: 10px 0 !important; }
-        .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; display: block; }
-
+        .category-label { font-size: .65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; display: block; }
         .context-switcher { display: flex; gap: 15px; margin-top: 20px; }
-        .context-switcher a { font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; text-decoration: none; padding-bottom: 5px; }
+        .context-switcher a { font-size: .7em; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; text-decoration: none; padding-bottom: 5px; }
         .context-active { color: #c62828; border-bottom: 2px solid #c62828; }
-        .context-inactive { color: #bbb; transition: color 0.3s; }
+        .context-inactive { color: #bbb; }
         .context-inactive:hover { color: #c62828; }
-
-        .map-container { background: #000; border-radius: 15px; height: 500px; margin: 2em 0; overflow: hidden; position: relative; border: 1px solid #eee; }
+        .map-container { background: #000; border-radius: 15px; height: 460px; margin: 2em 0; overflow: hidden; position: relative; border: 1px solid #eee; }
         .map-mask-bottom { position: absolute; bottom: 0; left: 0; width: 100%; height: 55px; background: #000; z-index: 10; }
-        .map-note { position: absolute; bottom: 15px; left: 25px; color: rgba(255,255,255,0.5); font-size: 0.65em; text-transform: uppercase; letter-spacing: 1px; z-index: 20; pointer-events: none; text-align: left; }
-
-        .summary-box { background: #fdf4f4; padding: 3.5em; margin-bottom: 2.5em; display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; border-radius: 15px; }
-        .summary-item h5 { font-size: 0.7em; font-weight: 900; text-transform: uppercase; margin-bottom: 12px; color: #c62828; }
-        .summary-item p { font-size: 0.85em; line-height: 1.7; margin: 0; color: #7f1d1d; text-align: justify; }
-
-        .correlation-summary { background: #fff; border: 1px solid #f2f2f2; padding: 4em; border-radius: 15px; margin-bottom: 3.5em; }
-        .correlation-summary h4 { font-size: 0.8em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #1a1a1a; margin-bottom: 2em; display: flex; align-items: center; gap: 15px; }
-        .correlation-summary h4::before { content: ''; width: 30px; height: 3px; background: #c62828; display: inline-block; }
-        .correlation-summary p { font-size: 1em; line-height: 1.9; color: #444; text-align: justify; }
-
-        .report-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; margin-top: 20px; }
-        .chart-box { background: #fdfdfd; border: 1px solid #f2f2f2; padding: 1.5em; border-radius: 12px; height: auto; min-height: 400px; display: flex; flex-direction: column; }
-        .chart-box h5 { font-size: 0.65em; font-weight: 800; text-transform: uppercase; color: #888; margin-bottom: 12px; }
-        .chart-container { flex-grow: 1; height: 200px; position: relative; }
-        
-        .chart-explanation { font-size: 0.75em; line-height: 1.5; color: #666; margin-top: 15px; text-align: justify; border-top: 1px solid #f9f9f9; padding-top: 10px; min-height: 4.5em; }
-        .chart-source-subtle { font-size: 0.55em; font-weight: 700; color: #ccc; text-transform: uppercase; margin-top: 8px; display: block; }
-
-        .page-footer { padding: 5em 0 4em 0; text-align: right; opacity: 0.4; }
-        .logo-footer { display: block; font-size: 0.85em; font-weight: 900; color: #333; }
-        .sublogo-footer { display: block; font-size: 0.5em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #bbb; }
-
-        @media screen and (max-width: 1400px) { .report-grid { grid-template-columns: repeat(2, 1fr); } }
-        @media screen and (max-width: 1280px) { #wrapper { padding-left: 0 !important; } .report-grid, .summary-box { grid-template-columns: 1fr; } }
+        .map-note { position: absolute; bottom: 15px; left: 25px; color: rgba(255,255,255,.6); font-size: .65em; text-transform: uppercase; letter-spacing: 1px; z-index: 20; }
+        .overview { background: #fdf4f4; padding: 2.5em; border-radius: 15px; margin-bottom: 2em; }
+        .overview h2 { margin: 0 0 12px; color: #c62828; font-size: .85em; text-transform: uppercase; letter-spacing: 1px; }
+        .overview p { margin: 0; color: #6f3030; line-height: 1.75; }
+        .summary-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; margin: 2em 0 3em; }
+        .summary-card { background: #fff; border: 1px solid #eee; border-radius: 12px; padding: 1.4em; }
+        .summary-card h3 { font-size: .65em; text-transform: uppercase; color: #888; margin: 0 0 10px; }
+        .summary-value { display: block; font-size: 1.55em; line-height: 1.1; font-weight: 900; color: #c62828; }
+        .summary-card p { font-size: .72em; line-height: 1.5; color: #666; margin: 9px 0 0; }
+        .section-heading { margin: 3.8em 0 1.4em; }
+        .section-heading h2 { margin: 0 0 8px; font-size: 1.45em; color: #1a1a1a; }
+        .section-heading p { margin: 0; color: #777; font-size: .86em; }
+        .chart-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+        .chart-box { background: #fdfdfd; border: 1px solid #eee; padding: 1.5em; border-radius: 12px; min-height: 380px; display: flex; flex-direction: column; }
+        .chart-box h3 { font-size: .72em; text-transform: uppercase; color: #555; margin: 0 0 5px; }
+        .chart-meta { font-size: .62em; color: #999; margin-bottom: 12px; }
+        .chart-container { flex-grow: 1; height: 220px; position: relative; }
+        .chart-box p { font-size: .74em; line-height: 1.55; color: #666; border-top: 1px solid #eee; padding-top: 10px; margin: 12px 0 0; }
+        .source-link { font-size: .58em; font-weight: 800; color: #c62828; text-transform: uppercase; text-decoration: none; margin-top: 8px; }
+        .vector-grid, .nexus-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+        .vector-card, .nexus-card { background: #fff; border: 1px solid #eee; border-radius: 12px; padding: 1.5em; }
+        .vector-card h3, .nexus-card h3 { font-size: .88em; color: #222; margin: 0 0 10px; }
+        .vector-card p, .nexus-card p { font-size: .76em; color: #666; line-height: 1.6; margin: 7px 0; }
+        .vector-card strong { color: #333; }
+        .nexus-card details { margin-top: 12px; border-top: 1px solid #eee; padding-top: 9px; }
+        .nexus-card summary { cursor: pointer; color: #c62828; font-size: .65em; font-weight: 900; text-transform: uppercase; }
+        .reading-box { margin-top: 2.5em; padding: 2em; border-left: 4px solid #c62828; background: #fdf7f7; border-radius: 0 12px 12px 0; }
+        .reading-box h3 { font-size: .8em; text-transform: uppercase; margin: 0 0 12px; }
+        .reading-box ul { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px 25px; margin: 0; padding-left: 1.2em; }
+        .reading-box li { font-size: .76em; line-height: 1.5; color: #666; }
+        .data-error { padding: 2em; background: #fff4f4; color: #8a3030; border-radius: 12px; }
+        .page-footer { padding: 5em 0 4em; text-align: right; opacity: .4; }
+        .logo-footer { display: block; font-size: .85em; font-weight: 900; color: #333; }
+        .sublogo-footer { display: block; font-size: .5em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #bbb; }
+        @media screen and (max-width: 1400px) { .summary-grid { grid-template-columns: repeat(3, 1fr); } .chart-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media screen and (max-width: 1280px) { #sidebar { position: relative !important; width: 100% !important; height: auto !important; } #wrapper { padding-left: 0 !important; } }
+        @media screen and (max-width: 900px) { .chart-grid, .vector-grid, .nexus-grid { grid-template-columns: 1fr; } }
+        @media screen and (max-width: 736px) { .inner { padding: 1.5em !important; } .summary-grid, .reading-box ul { grid-template-columns: 1fr; } .map-container { height: 340px; } }
     </style>
 </head>
 <body class="is-preload">
     <div id="wrapper">
-        <div id="main">
-            <div class="inner">
-                <section>
-                    <div class="header-left">
-                        <span class="category-label" data-i18n="pressure.subtitle">Pressure Vector Observatory</span>
-                        <h1 id="page-title" data-i18n="pressure.title">Vetores de Pressão Planetária</h1>
-                        
-                        <div class="context-switcher">
-                            <a href="/observatorio/vetores-pressao-global.html" class="context-active" data-i18n="pressure.view_global">● Visão Global</a>
-                            <a href="/observatorio/vetores-pressao.html" class="context-inactive" data-i18n="pressure.view_portugal">Portugal</a>
-                        </div>
-                    </div>
-
-                    <div class="map-container">
-                        <iframe src="https://earth.nullschool.net/#current/chem/surface/level/overlay=cosc/equirectangular=0,0,180" width="100%" height="100%" frameborder="0"></iframe>
-                        <div class="map-mask-bottom"></div>
-                        <div class="map-note" data-i18n="pressure.map_note">Monitorização de Fontes Industriais e CO</div>
-                    </div>
-
-                    <div class="summary-box">
-                        <div class="summary-item">
-                            <h5 data-i18n="pressure.summary_minerals">Mineração Crítica</h5>
-                            <p data-i18n="pressure.summary_minerals_text">Produção de minerais para tecnologia cresceu 450%. Impacto severo em aquíferos.</p>
-                        </div>
-                        <div class="summary-item">
-                            <h5 data-i18n="pressure.summary_ia">Custo da IA</h5>
-                            <p data-i18n="pressure.summary_ia_text">Data Centers exigirão 1.8 biliões de litros de água/ano em 2030.</p>
-                        </div>
-                        <div class="summary-item">
-                            <h5 data-i18n="pressure.summary_soil">Fragmentação Solo</h5>
-                            <p data-i18n="pressure.summary_soil_text">55 Mha convertidos para infraestruturas industriais de grande escala.</p>
-                        </div>
-                        <div class="summary-item">
-                            <h5 data-i18n="pressure.summary_heat">Ilhas Térmicas</h5>
-                            <p data-i18n="pressure.summary_heat_text">Diferencial de 12ºC em zonas industriais, alterando microclimas locais.</p>
-                        </div>
-                    </div>
-
-                    <div class="correlation-summary">
-                        <h4 data-i18n="pressure.correlation_header">Análise Multidimensional de Pressão</h4>
-                        <div id="correlation-text">Carregando análise...</div>
-                    </div>
-
-                    <div class="report-grid">
-                        <!-- 1. Mineração -->
-                        <div class="chart-box">
-                            <h5 data-i18n="pressure.charts.mining">Produção Mineral Global</h5>
-                            <div class="chart-container"><canvas id="chartMineracao"></canvas></div>
-                            <p class="chart-explanation" id="exp_chartMineracao"></p>
-                            <span class="chart-source-subtle">Fonte: World Mining Data</span>
-                        </div>
-                        <!-- 2. Data Centers -->
-                        <div class="chart-box">
-                            <h5 data-i18n="pressure.charts.dc_cap">Capacidade Data Centers</h5>
-                            <div class="chart-container"><canvas id="chartDatacenters"></canvas></div>
-                            <p class="chart-explanation" id="exp_chartDatacenters"></p>
-                            <span class="chart-source-subtle">Fonte: DataCenterMap</span>
-                        </div>
-                        <!-- 3. Solo Industrial -->
-                        <div class="chart-box">
-                            <h5 data-i18n="pressure.charts.soil_ind">Ocupação Solo Industrial</h5>
-                            <div class="chart-container"><canvas id="chartSolo"></canvas></div>
-                            <p class="chart-explanation" id="exp_chartSolo"></p>
-                            <span class="chart-source-subtle">Fonte: FAO / GFW</span>
-                        </div>
-                        <!-- 4. Água DC -->
-                        <div class="chart-box">
-                            <h5 data-i18n="pressure.charts.water_dc">Consumo Hídrico DC</h5>
-                            <div class="chart-container"><canvas id="chartAgua"></canvas></div>
-                            <p class="chart-explanation" id="exp_chartAgua"></p>
-                            <span class="chart-source-subtle">Fonte: UN Water</span>
-                        </div>
-                        <!-- 5. Metais Críticos -->
-                        <div class="chart-box">
-                            <h5 data-i18n="pressure.charts.metals">Metais Críticos</h5>
-                            <div class="chart-container"><canvas id="chartMetais"></canvas></div>
-                            <p class="chart-explanation" id="exp_chartMetais"></p>
-                            <span class="chart-source-subtle">Fonte: USGS</span>
-                        </div>
-                        <!-- 6. Desmatamento Infra -->
-                        <div class="chart-box">
-                            <h5 data-i18n="pressure.charts.defor">Desmatamento Infra</h5>
-                            <div class="chart-container"><canvas id="chartDesmatInd"></canvas></div>
-                            <p class="chart-explanation" id="exp_chartDesmatInd"></p>
-                            <span class="chart-source-subtle">Fonte: FAO</span>
-                        </div>
-                        <!-- 7. E-Waste -->
-                        <div class="chart-box">
-                            <h5 data-i18n="pressure.charts.ewaste">Geração E-Waste</h5>
-                            <div class="chart-container"><canvas id="chartEWaste"></canvas></div>
-                            <p class="chart-explanation" id="exp_chartEWaste"></p>
-                            <span class="chart-source-subtle">Fonte: Global E-waste Monitor</span>
-                        </div>
-                        <!-- 8. Ilhas Calor -->
-                        <div class="chart-box">
-                            <h5 data-i18n="pressure.charts.thermal">Anomalia Térmica Local</h5>
-                            <div class="chart-container"><canvas id="chartCalor"></canvas></div>
-                            <p class="chart-explanation" id="exp_chartCalor"></p>
-                            <span class="chart-source-subtle">Fonte: NOAA</span>
-                        </div>
-                        <!-- 9. CO2 Infra -->
-                        <div class="chart-box">
-                            <h5 data-i18n="pressure.charts.co2_infra">Carbono Incorporado</h5>
-                            <div class="chart-container"><canvas id="chartCO2Infra"></canvas></div>
-                            <p class="chart-explanation" id="exp_chartCO2Infra"></p>
-                            <span class="chart-source-subtle">Fonte: IPCC</span>
-                        </div>
-                    </div>
-
-                    <footer class="page-footer">
-                        <span class="logo-footer">bioCultura</span>
-                        <span class="sublogo-footer">Global Regeneration</span>
-                    </footer>
-                </section>
+        <div id="main"><div class="inner"><section>
+            <div class="header-left">
+                <span class="category-label">Observatório de Pressão Ambiental</span>
+                <h1 id="page-title">Vetores de Pressão Planetária</h1>
+                <div class="context-switcher">
+                    <a href="/observatorio/vetores-pressao-global.html" class="context-active">● Visão Global</a>
+                    <a href="/observatorio/vetores-pressao.html" class="context-inactive">Portugal</a>
+                </div>
             </div>
-        </div>
+            <div class="map-container">
+                <iframe title="Mapa global interativo de monóxido de carbono" src="https://earth.nullschool.net/#current/chem/surface/level/overlay=cosc/equirectangular=0,0,180" width="100%" height="100%" frameborder="0"></iframe>
+                <div class="map-mask-bottom"></div><div class="map-note">Mapa interativo · concentração superficial de monóxido de carbono</div>
+            </div>
+            <div class="overview"><h2>O retrato global em poucas palavras</h2><p id="overview-text">A carregar os indicadores...</p></div>
+            <div class="summary-grid" id="summary-grid" aria-live="polite"></div>
+            <div class="section-heading"><h2>Comparações sustentadas pelos dados</h2><p>Não desenhamos falsas curvas anuais quando existem apenas médias de períodos ou poucos pontos.</p></div>
+            <div class="chart-grid" id="chart-grid"></div>
+            <div class="section-heading"><h2>Principais vetores de pressão</h2><p>De onde nasce a pressão, quais os impactos e que respostas ajudam a reduzi-la.</p></div>
+            <div class="vector-grid" id="vector-grid"></div>
+            <div class="reading-box"><h3>Como interpretar estes dados</h3><ul><li>Valores observados, estimativas e projeções são identificados separadamente.</li><li>Uma média mundial pode ocultar impactos locais muito graves.</li><li>Produção e consumo podem ocorrer em regiões diferentes devido ao comércio.</li><li>Eletricidade, água e uso do solo não devem ser convertidos entre si com fatores universais.</li></ul></div>
+            <div class="section-heading"><h2>Como as pressões se relacionam</h2><p>Explicações simples dos mecanismos; o detalhe adicional fica recolhido.</p></div>
+            <div class="nexus-grid" id="nexus-grid"></div>
+            <footer class="page-footer"><span class="logo-footer">bioCultura</span><span class="sublogo-footer">Global Regeneration</span></footer>
+        </section></div></div>
         <div id="sidebar"></div>
     </div>
-
     <script src="/assets/js/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        async function applyLanguage(lang) {
-            if (!lang) lang = localStorage.getItem('selected_lang') || 'pt';
-            try {
-                const response = await fetch(`/assets/lang/${lang}.json`);
-                if (!response.ok) return;
-                const t = await response.json();
+        const colors = ['#c62828', '#2e7d32', '#607d8b'];
+        const escapeHtml = value => String(value ?? '').replace(/[&<>'"]/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[char]));
+        const format = (value, digits = 1) => new Intl.NumberFormat('pt-PT', { maximumFractionDigits: digits }).format(value);
+        const getSource = (data, id) => data.fontes.find(item => item.id === id);
+        const highlight = (data, id) => data.destaques.find(item => item.id === id);
 
-                // 1. Traduz elementos estáticos
-                document.querySelectorAll('[data-i18n]').forEach(el => {
-                    const key = el.getAttribute('data-i18n');
-                    const text = key.split('.').reduce((obj, i) => (obj ? obj[i] : null), t);
-                    if (text) el.innerHTML = text;
-                });
-
-                // 2. Traduz Conteúdo Dinâmico (Análise e Explicações)
-                if (t.dynamic_pressure) {
-                    const corrText = document.getElementById('correlation-text');
-                    if (corrText) corrText.innerHTML = t.dynamic_pressure.correlation_text;
-                    
-                    const charts = ['Mineracao', 'Datacenters', 'Solo', 'Agua', 'Metais', 'DesmatInd', 'EWaste', 'Calor', 'CO2Infra'];
-                    charts.forEach(id => {
-                        const expEl = document.getElementById(`exp_chart${id}`);
-                        const key = `exp_chart${id}`;
-                        if (expEl && t.dynamic_pressure[key]) {
-                            expEl.innerText = t.dynamic_pressure[key];
-                        }
-                    });
-                }
-
-                const selector = document.getElementById('lang-selector');
-                if (selector) selector.value = lang;
-                localStorage.setItem('selected_lang', lang);
-            } catch (err) { console.error("Erro i18n:", err); }
+        function renderSummary(data) {
+            const material = highlight(data, 'materiais');
+            const climate = highlight(data, 'clima_2025');
+            const air = highlight(data, 'ar');
+            const ewaste = highlight(data, 'ewaste');
+            const dc = highlight(data, 'datacenters');
+            const cards = [
+                ['Extração de materiais', `${format(material.valor)} mil milhões t`, material.leitura],
+                ['Aquecimento global', `+${format(climate.valor, 2)} °C`, `${climate.ano}, comparado com 1850–1900`],
+                ['Poluição do ar', `${format(air.valor)} milhões`, 'de mortes prematuras atribuídas por ano'],
+                ['Resíduos eletrónicos', `${format(ewaste.valor, 0)} milhões t`, `${ewaste.ano}; só 22,3% teve reciclagem documentada`],
+                ['Centros de dados', `${dc.intervalo[0]}–${dc.intervalo[1]} TWh`, `${dc.ano}; eletricidade global estimada, sem criptomoedas`]
+            ];
+            document.getElementById('summary-grid').innerHTML = cards.map(([title, value, text]) => `<article class="summary-card"><h3>${escapeHtml(title)}</h3><span class="summary-value">${escapeHtml(value)}</span><p>${escapeHtml(text)}</p></article>`).join('');
+            document.getElementById('overview-text').textContent = 'A pressão ambiental não vem de uma única atividade. Energia, alimentação, transportes, construção e consumo exigem materiais, ocupam território e produzem emissões e resíduos. As soluções também precisam de ser integradas: uma tecnologia pode reduzir combustíveis fósseis e, ao mesmo tempo, aumentar a procura de minerais, eletricidade, água ou solo.';
         }
 
-        async function loadPressao() {
-            try {
-                const res = await fetch('/data/vetores_pressao_global.json');
-                const data = await res.json();
-                const ind = data.indicadores;
-
-                const opt = { 
-                    responsive: true, 
-                    maintainAspectRatio: false, 
-                    plugins: { legend: { display: false } }, 
-                    scales: { x: { grid: { display: false }, ticks: { font: { size: 8 } } }, y: { ticks: { font: { size: 8 } } } } 
-                };
-
-                new Chart(document.getElementById('chartMineracao'), { type: 'line', data: { labels: ind.labels, datasets: [{ data: ind.producao_mineral, borderColor: '#795548', tension: 0.4 }] }, options: opt });
-                new Chart(document.getElementById('chartDatacenters'), { type: 'line', data: { labels: ind.labels, datasets: [{ data: ind.capacidade_dc_gw, borderColor: '#5c6bc0', tension: 0.4 }] }, options: opt });
-                new Chart(document.getElementById('chartSolo'), { type: 'line', data: { labels: ind.labels, datasets: [{ data: ind.solo_industrial_mha, borderColor: '#66bb6a', tension: 0.4 }] }, options: opt });
-                new Chart(document.getElementById('chartAgua'), { type: 'bar', data: { labels: ind.labels, datasets: [{ data: ind.consumo_agua_dc, backgroundColor: '#42a5f5' }] }, options: opt });
-                new Chart(document.getElementById('chartMetais'), { type: 'line', data: { labels: ind.labels, datasets: [{ data: ind.metais_criticos, borderColor: '#ffa726', tension: 0.4 }] }, options: opt });
-                new Chart(document.getElementById('chartDesmatInd'), { type: 'line', data: { labels: ind.labels, datasets: [{ data: ind.desmatamento_infra, borderColor: '#ef5350', tension: 0.4 }] }, options: opt });
-                new Chart(document.getElementById('chartEWaste'), { type: 'bar', data: { labels: ind.labels, datasets: [{ data: ind.residuos_e, backgroundColor: '#78909c' }] }, options: opt });
-                new Chart(document.getElementById('chartCalor'), { type: 'line', data: { labels: ind.labels, datasets: [{ data: ind.temp_dc_delta, borderColor: '#c62828', tension: 0.4 }] }, options: opt });
-                new Chart(document.getElementById('chartCO2Infra'), { type: 'line', data: { labels: ind.labels, datasets: [{ data: ind.co2_construcao, borderColor: '#444', tension: 0.4 }] }, options: opt });
-
-            } catch (err) { console.error(err); }
+        function makeBarChart(canvas, labels, datasets, unit) {
+            new Chart(canvas, { type: 'bar', data: { labels, datasets }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: datasets.length > 1 }, tooltip: { callbacks: { label: context => `${context.dataset.label ? context.dataset.label + ': ' : ''}${format(context.parsed.y)} ${unit}` } } }, scales: { x: { grid: { display: false }, ticks: { font: { size: 9 } } }, y: { beginAtZero: true, ticks: { font: { size: 9 }, callback: value => format(value) } } } } });
         }
 
-        fetch('/sidebar-content.html').then(r => r.text()).then(html => {
-            document.getElementById('sidebar').innerHTML = html;
-            const savedLang = localStorage.getItem('selected_lang') || 'pt';
-            applyLanguage(savedLang).then(() => loadPressao());
-            document.addEventListener('change', (e) => {
-                if (e.target.id === 'lang-selector') applyLanguage(e.target.value);
-            });
-        });
+        function renderCharts(data) {
+            const sea = data.series.subida_nivel_mar;
+            const forest = data.series.floresta_global;
+            const waste = data.series.residuos_eletronicos;
+            const cards = [
+                [sea.titulo, sea.natureza, 'A taxa média quase duplicou entre os dois períodos. São médias, não valores de cada ano.', sea.fonte_id],
+                ['Perda líquida de área florestal', forest.natureza, 'A perda líquida anual abrandou, mas continuou negativa. Não equivale à desflorestação bruta.', forest.fonte_id],
+                [waste.titulo, waste.natureza, 'O valor de 2030 é uma projeção e aparece visualmente separado dos valores anteriores.', waste.fonte_id]
+            ];
+            document.getElementById('chart-grid').innerHTML = cards.map((item, index) => { const link = getSource(data, item[3]); return `<article class="chart-box"><h3>${escapeHtml(item[0])}</h3><div class="chart-meta">${escapeHtml(item[1])}</div><div class="chart-container"><canvas id="pressure-chart-${index}"></canvas></div><p>${escapeHtml(item[2])}</p><a class="source-link" href="${escapeHtml(link.url)}" target="_blank" rel="noopener noreferrer">Fonte: ${escapeHtml(link.entidade)} ↗</a></article>`; }).join('');
+            makeBarChart(document.getElementById('pressure-chart-0'), sea.dados.map(item => item.periodo), [{ data: sea.dados.map(item => item.valor), backgroundColor: colors[0] }], sea.unidade);
+            makeBarChart(document.getElementById('pressure-chart-1'), forest.mudanca_liquida.map(item => item.periodo), [{ data: forest.mudanca_liquida.map(item => Math.abs(item.valor)), backgroundColor: colors[1] }], 'milhões ha/ano perdidos');
+            makeBarChart(document.getElementById('pressure-chart-2'), ['2010', '2022', '2030'], [{ label: 'Estimado', data: [waste.dados[0].valor_aproximado, waste.dados[1].valor, null], backgroundColor: colors[2] }, { label: 'Projeção', data: [null, null, waste.projecoes[0].valor], backgroundColor: '#ef9a9a' }], waste.unidade);
+        }
+
+        function renderVectors(data) {
+            const selected = new Set(['clima', 'biodiversidade', 'extracao', 'agua', 'alimentacao', 'digital', 'plasticos', 'oceanos']);
+            document.getElementById('vector-grid').innerHTML = data.vetores.filter(item => selected.has(item.id)).map(item => `<article class="vector-card"><h3>${escapeHtml(item.titulo)}</h3><p><strong>Principais causas:</strong> ${escapeHtml(item.pressao.slice(0, 3).join(', '))}.</p><p><strong>Resposta:</strong> ${escapeHtml(item.respostas.slice(0, 3).join(', '))}.</p></article>`).join('');
+        }
+
+        function renderNexuses(data) {
+            document.getElementById('nexus-grid').innerHTML = data.nexos.map(item => `<article class="nexus-card"><h3>${escapeHtml(item.titulo)}</h3><p>${escapeHtml(item.mecanismo)}</p><details><summary>Nota importante</summary><p>${escapeHtml(item.cautela)}</p></details></article>`).join('');
+        }
+
+        async function loadData() {
+            try {
+                const response = await fetch('/data/vetores_pressao_global.json?v=' + Date.now());
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const data = await response.json();
+                if (!data.destaques || !data.series || !data.vetores) throw new Error('O ficheiro não contém dados utilizáveis.');
+                document.getElementById('page-title').textContent = data.metadados?.titulo || 'Vetores de Pressão Planetária';
+                renderSummary(data); renderCharts(data); renderVectors(data); renderNexuses(data);
+            } catch (error) {
+                console.error('Erro ao carregar os vetores globais:', error);
+                document.getElementById('summary-grid').innerHTML = `<div class="data-error"><strong>Não foi possível carregar os indicadores.</strong><br>${escapeHtml(error.message)}</div>`;
+            }
+        }
+        fetch('/sidebar-content.html').then(response => response.text()).then(html => { document.getElementById('sidebar').innerHTML = html; }).catch(() => {});
+        loadData();
     </script>
 </body>
 </html>
