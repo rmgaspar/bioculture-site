@@ -158,7 +158,11 @@
                     
                     locationsDB = rLoc;
                     allDigital = rDigital;
-                    noticiasDigital = rNews.filter(n => (n.categoria || "").toLowerCase().includes('solo') || (n.titulo || "").toLowerCase().includes('ia') || (n.titulo || "").toLowerCase().includes('dados'));
+                    noticiasDigital = rNews.filter(n => {
+                        const titulo = ((n.pt || {}).titulo || n.titulo || "").toLowerCase();
+                        const categoria = (n.categoria_id || n.categoria || "").toLowerCase();
+                        return categoria.includes('digital') || titulo.includes('ia') || titulo.includes('dados') || titulo.includes('data center');
+                    });
                     
                     const savedId = localStorage.getItem('biocultura_region');
                     const info = savedId ? locationsDB.find(i => i.id === savedId) : null;

@@ -218,7 +218,9 @@
                     window.mineracaoDB = rMineracao;
                     noticiasMining = rNews.filter(n => {
                         const keywords = ['mineracao', 'litio', 'mina', 'extrativismo', 'geologia'];
-                        const text = ((n.categoria || "") + (n.titulo || "")).toLowerCase();
+                        const titulo = ((n.pt || {}).titulo || n.titulo || "");
+                        const text = ((n.categoria_id || n.categoria || "") + " " + titulo)
+                            .normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
                         return keywords.some(k => text.includes(k));
                     });
                     

@@ -105,8 +105,11 @@
 
             try {
                 // Cache busting para garantir dados frescos
-                const response = await fetch('/data/noticias.json?v=' + Date.now());
-                const noticias = await response.json();
+                const [ativas, arquivo] = await Promise.all([
+                    fetch('/data/noticias.json?v=' + Date.now()).then(r => r.json()),
+                    fetch('/data/noticias_arquivo.json?v=' + Date.now()).then(r => r.ok ? r.json() : [])
+                ]);
+                const noticias = [...ativas, ...arquivo];
                 
                 // Encontrar a notícia pelo ID
                 const n = noticias.find(item => item.id === noticiaId);
