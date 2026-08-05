@@ -422,7 +422,10 @@
         if(!container) return;
         container.innerHTML = data.slice(0, limit).map(item => `
             <div class="species-badge" onclick="window.location.href='../ecossistemas/especie-detalhe.html?id=${item.nome_cientifico.toLowerCase().replace(/ /g,'-')}'">
-                <img src="${item.imagem || '/assets/img/placeholder.jpg'}">
+                <img src="${item.imagem || '/images/pragas-placeholder.svg'}"
+                     alt="${item.nome_comum || 'Praga agrícola'}"
+                     loading="lazy"
+                     onerror="this.onerror=null;this.src='/images/pragas-placeholder.svg'">
                 ${item.nome_comum}
             </div>`).join('');
     }
