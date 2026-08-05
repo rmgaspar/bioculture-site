@@ -1,303 +1,52 @@
 <!DOCTYPE HTML>
-<html>
+<html lang="pt">
 <head>
-    <title>bioCultura - Observatório do Ar</title>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-    <link rel="stylesheet" href="/assets/css/main.css" />
-    <style>
-        body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
-        section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
-        section { min-height: 100vh; display: flex; flex-direction: column; }
-        #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
-        #wrapper { padding-left: 18em !important; }
-        
-        /* Alinhamento de Precisão - Resolve o corte à esquerda */
-        .inner { 
-            padding: 2.2em 4em 0 4em !important; 
-            max-width: 1600px !important; 
-            margin: 0 auto !important; 
-            width: 100%; 
-            box-sizing: border-box; 
-        }
-        
-        .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; display: block; }
-        .hero-text { display: flow-root; width: 100%; }
-        .hero-text h1 { font-size: 3.5em; font-weight: 900; color: #1a1a1a; letter-spacing: -2px; line-height: 1.1; margin: 15px 0 !important; }
-        .reg-info-top { font-size: 0.95em; font-style: italic; color: #888; margin-bottom: 50px; display: block; }
-
-        .hero-visual { float: right; margin-left: 40px; margin-bottom: 20px; shape-outside: circle(50%); width: 480px; height: 480px; }
-        .hero-globe { width: 100%; height: 100%; border-radius: 50%; overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,0.12); }
-        .hero-globe img { width: 100%; height: 100%; object-fit: cover; }
-
-        /* AQI & Pollutants */
-        .aqi-container { margin-bottom: 20px; width: 100%; max-width: 500px; }
-        .aqi-label { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px; }
-        .aqi-val { font-size: 1.4em; font-weight: 700; color: #1a1a1a; }
-        .aqi-status { font-size: 0.6em; font-weight: 800; color: #bbb; text-transform: uppercase; letter-spacing: 1px; }
-        .aqi-bar { height: 6px; width: 100%; border-radius: 10px; position: relative; background: linear-gradient(to right, #81c784 0%, #ffd54f 25%, #ffb74d 50%, #ef5350 75%, #b71c1c 100%); }
-        .aqi-marker { position: absolute; top: -5px; left: 0%; width: 3px; height: 16px; background: #1a1a1a; border-radius: 2px; transition: left 1.5s cubic-bezier(0.4, 0, 0.2, 1); }
-
-        .pollutant-mini-grid { display: flex; gap: 15px; margin-top: 15px; flex-wrap: wrap; }
-        .pollutant-tag { background: #f9f9f9; padding: 5px 12px; border-radius: 4px; border: 1px solid #eee; font-size: 0.7em; font-weight: 700; color: #666; }
-        .pollutant-tag span { color: #bbb; font-weight: 400; margin-right: 5px; }
-
-        .temp-anomaly-box { display: flex; align-items: center; gap: 15px; margin-top: 20px; padding: 15px; background: #fdfdfd; border: 1px solid #f2f2f2; border-radius: 8px; width: fit-content; }
-        .temp-val { font-size: 1.5em; font-weight: 900; color: #1a1a1a; }
-        .temp-label { font-size: 0.65em; font-weight: 800; color: #bbb; text-transform: uppercase; line-height: 1.2; }
-
-        /* Alertas & Relatórios */
-        .data-row { display: block; padding: 3em 0; border-bottom: 1px solid #f2f2f2; }
-        .data-row h4 { font-size: 0.75em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin-bottom: 25px; }
-        .air-impact-box { background: #fffaf4; padding: 3em; border-radius: 20px; min-height: 80px; position: relative; }
-        .air-fact-item { display: none; font-size: 1.1em; line-height: 1.5; color: #a67c52; }
-        .air-fact-item.active { display: block; }
-        .air-fact-item b { color: #5d4037; margin-right: 10px; text-transform: uppercase; font-size: 0.8em; }
-
-        .report-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; }
-        .report-item h5 { font-size: 0.7em; font-weight: 900; text-transform: uppercase; color: #ffb74d; margin-bottom: 12px; }
-        .report-item p { font-size: 0.95em; line-height: 1.7; color: #666; text-align: justify; }
-
-        /* Notícias */
-        .news-header { font-size: 0.8em; font-weight: 400; text-transform: lowercase; letter-spacing: 3px; color: #bbb; margin-bottom: 2em; display: block; margin-top: 4em; }
-        .news-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 25px; margin-bottom: 4em; }
-        .news-item { text-decoration: none; color: inherit; display: block; padding: 22px; background: #fdfdfd; border: 1px solid #f2f2f2; border-radius: 10px; transition: 0.3s; }
-        .news-item:hover { transform: translateY(-3px); border-color: #ddd; }
-        .news-item h3 { font-size: 1.05em; font-weight: 700; color: #1a1a1a; margin-bottom: 15px; line-height: 1.3; min-height: 3em; }
-        .news-meta { display: flex; align-items: center; gap: 10px; border-top: 1px solid #f9f9f9; padding-top: 12px; font-size: 0.6em; font-weight: 800; color: #bbb; text-transform: uppercase; }
-
-        /* Footer */
-        .page-footer { 
-            padding: 4em 0 2em 0; 
-            border-top: 1px solid #f2f2f2; 
-            opacity: 0.3; 
-            text-align: right; 
-        }
-
-        .logo-footer { display: block; font-size: 0.85em; font-weight: 900; color: #333; text-transform: uppercase; letter-spacing: 1px; }
-        .sublogo-footer { display: block; font-size: 0.5em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #bbb; }
-        .bio-res-item { padding: 12px 18px; font-size: 0.9em; color: #666; cursor: pointer; border-bottom: 1px solid #f9f9f9 !important; }
-
-        @media screen and (max-width: 1280px) {
-            .hero-visual { float: none; width: 350px; height: 350px; margin: 0 auto 30px auto; shape-outside: none; }
-            .report-grid { grid-template-columns: 1fr; }
-        }
-    </style>
+  <title>bioCultura — Ar, recurso vital</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+  <link rel="stylesheet" href="/assets/css/main.css" />
+  <style>
+    :root{--ink:#263637;--muted:#718080;--air:#698c91;--blue:#dfeff1;--mist:#f2f6f5;--warm:#f6f1e9;--line:#e8eeee}
+    body,input,select,textarea{font-family:'Source Sans Pro',sans-serif!important;color:var(--ink)}section,#header,hr,.major{border:none!important;box-shadow:none!important;padding:0!important}section{min-height:100vh;display:flex;flex-direction:column}
+    #sidebar{position:fixed!important;top:0;left:0;height:100vh!important;width:18em!important;overflow:hidden!important;z-index:10000;background:#fff;border-right:1px solid #f2f2f2!important}#wrapper{padding-left:18em!important}.inner{padding:2.2em 4em 0!important;max-width:1600px!important;margin:0 auto;width:100%;box-sizing:border-box}
+    .eyebrow{font-size:.65em;font-weight:900;text-transform:uppercase;letter-spacing:4px;color:#9daaaa;display:block;margin-bottom:16px}.hero{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(280px,.7fr);gap:5em;align-items:start;padding-bottom:3.7em!important}.hero h1{font-size:3.7em;letter-spacing:-2.5px;line-height:1.02;margin:.15em 0 .35em;color:#1e3031}.lead{font-size:1.17em;line-height:1.75;color:var(--muted);max-width:760px}
+    .air-orbit{width:min(28vw,390px);aspect-ratio:1;border-radius:50%;position:relative;margin:0 auto;background:linear-gradient(150deg,#dceef0 2%,#f7fbfa 43%,#aac7ca 44%,#769ca1 67%,#385e64 100%);overflow:hidden;box-shadow:0 30px 80px rgba(50,84,89,.18)}.air-orbit:before,.air-orbit:after{content:"";position:absolute;border-radius:50%;border:1px solid rgba(255,255,255,.76);width:120%;height:38%;left:-15%;transform:rotate(-14deg)}.air-orbit:before{top:20%}.air-orbit:after{top:47%;left:-2%;width:92%}.seed{position:absolute;width:10px;height:21px;border-radius:90% 10% 90% 10%;background:#fff;box-shadow:65px 35px 0 -2px rgba(255,255,255,.8),-50px 65px 0 -3px rgba(255,255,255,.7);top:32%;left:55%;transform:rotate(35deg)}
+    .section-block{border-top:1px solid var(--line);padding:3.2em 0!important}.section-head{display:grid;grid-template-columns:180px minmax(0,800px);gap:2em;margin-bottom:2em}.section-head h2{font-size:2em;letter-spacing:-.6px;margin:0;color:var(--ink)}.section-head p{margin:0;color:var(--muted);line-height:1.7}.metric-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.2em}.metric{padding:1.6em;border-radius:16px;background:var(--mist);min-height:190px}.metric:nth-child(2n){background:var(--warm)}.metric h3{font-size:.7em;text-transform:uppercase;letter-spacing:1.5px;color:#7c8d8e;margin:0}.metric strong{font-size:2.15em;line-height:1.05;color:var(--air);display:block;margin:.25em 0 .45em}.metric p{font-size:.86em;line-height:1.55;color:var(--muted);margin:0}.source{display:block;font-size:.65em;color:#9ca7a7;margin-top:1.1em}
+    .local-card{display:grid;grid-template-columns:1fr .85fr;gap:2em;background:#29494d;color:#fff;padding:2.3em;border-radius:20px}.local-card h3{color:#fff;font-size:1.7em;margin:0 0 .4em}.local-card p{color:#cedddd;line-height:1.65}.honesty{border-left:2px solid #9bc3c7;padding-left:1em;font-size:.85em}.local-values{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:rgba(255,255,255,.12)}.local-value{background:#29494d;padding:1.2em}.local-value small{display:block;text-transform:uppercase;letter-spacing:1px;color:#a9c5c7}.local-value b{color:#fff}
+    .pollutants,.episodes,.news-list{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2em}.pollutant,.episode,.news-item{border:1px solid var(--line);border-radius:14px;padding:1.5em;background:#fff}.pollutant h3,.episode h3,.news-item h3{font-size:1.08em;line-height:1.4;color:var(--ink);margin:.25em 0 .6em}.pollutant p,.episode p{font-size:.9em;line-height:1.6;color:var(--muted);margin:0}.symbol{font-size:.68em;font-weight:900;letter-spacing:1.5px;color:var(--air);text-transform:uppercase}.small-list{font-size:.84em;line-height:1.55;color:var(--muted);padding-left:1.1em;margin:.9em 0 0}.ecosystem{background:linear-gradient(120deg,#edf4ef,#f6f4ea);border-radius:20px;padding:2em;display:grid;grid-template-columns:repeat(3,1fr);gap:2em}.ecosystem article{padding-right:1em}.ecosystem b{display:block;color:#567b68;margin-bottom:.45em}.ecosystem p{font-size:.9em;line-height:1.6;color:var(--muted);margin:0}
+    .qualar{display:flex;align-items:center;justify-content:space-between;gap:2em;border:1px solid var(--line);border-radius:16px;padding:1.8em}.qualar p{margin:0;color:var(--muted);line-height:1.6}.button-link{display:inline-block;white-space:nowrap;text-decoration:none;background:#315e64;color:#fff!important;border-radius:8px;padding:.8em 1.2em;font-size:.78em;font-weight:800;letter-spacing:.4px}.news-item{text-decoration:none;color:inherit;transition:.25s}.news-item:hover{transform:translateY(-3px);border-color:#b7d0d2}.news-item span{font-size:.7em;color:#99a5a5}.empty{font-style:italic;color:#99a5a5}.page-footer{padding:4em 0 2em;border-top:1px solid var(--line);opacity:.4;text-align:right;margin-top:auto}.page-footer strong{display:block}.page-footer span{font-size:.55em;text-transform:uppercase;letter-spacing:1px}
+    @media(max-width:1280px){#sidebar{position:relative!important;width:100%!important;height:auto!important}#wrapper{padding-left:0!important}.hero{grid-template-columns:1fr}.air-orbit{width:320px}.metric-grid{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:760px){.inner{padding:1.7em 1.4em 0!important}.hero h1{font-size:2.55em}.hero{gap:2.5em}.air-orbit{width:235px}.section-head,.local-card,.ecosystem{grid-template-columns:1fr}.section-head{gap:.7em}.metric-grid,.pollutants,.episodes,.news-list{grid-template-columns:1fr}.local-values{grid-template-columns:1fr 1fr}.qualar{align-items:flex-start;flex-direction:column}}
+  </style>
 </head>
-<body class="is-preload">
-    <div id="wrapper">
-        <div id="main">
-            <div class="inner">
-                <section>
-                    <div class="hero-text">
-                        <div class="hero-visual">
-                            <div class="hero-globe"><img src="https://plus.unsplash.com/premium_photo-1668241683623-5f94424a9fe8?q=80&w=987&auto=format&fit=crop" alt="Qualidade do Ar"></div>
-                        </div>
-                        <span class="category-label">Recursos Vitais</span>
-                        <h1>Ar: O Sopro da Vida</h1>
-                        <span class="reg-info-top">Análise regional: <strong id="reg-name" style="color:#444">...</strong></span>
+<body class="is-preload"><div id="wrapper"><div id="main"><div class="inner"><section>
+  <div class="hero"><div><span class="eyebrow">Recursos vitais</span><h1>Ar.<br>O vínculo invisível.</h1><p class="lead">Respiramos milhares de vezes por dia, mas raramente vemos o que o ar transporta. Partículas, gases, pólen, fumo e poeiras atravessam cidades, campos e florestas. Proteger o ar é proteger simultaneamente a saúde humana, as culturas e a biodiversidade.</p></div><div class="air-orbit" aria-label="Representação abstrata do movimento do ar"><i class="seed"></i></div></div>
 
-                        <div id="air-dashboard" style="display:none;">
-                            <h4 style="font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin-bottom: 20px;">Monitorização Atmosférica</h4>
-                            <div class="tech-content">
-                                <div class="aqi-container">
-                                    <div class="aqi-label">
-                                        <span class="aqi-val" id="label-aqi">AQI --</span>
-                                        <span class="aqi-status" id="status-aqi">A analisar...</span>
-                                    </div>
-                                    <div class="aqi-bar"><div id="marker-aqi" class="aqi-marker"></div></div>
-                                </div>
-                                <div class="pollutant-mini-grid">
-                                    <div class="pollutant-tag"><span>PM2.5</span> <b id="val-pm25">--</b></div>
-                                    <div class="pollutant-tag"><span>PM10</span> <b id="val-pm10">--</b></div>
-                                    <div class="pollutant-tag"><span>NO2</span> <b id="val-no2">--</b></div>
-                                    <div class="pollutant-tag"><span>O3</span> <b id="val-o3">--</b></div>
-                                </div>
-                                <div class="temp-anomaly-box">
-                                    <div class="temp-val" id="air-temp">--ºC</div>
-                                    <div class="temp-label">Temperatura do Ar<br><span style="color:#ef6c00; font-size: 0.9em;" id="temp-anomaly">Anomalia: --ºC</span></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+  <div class="section-block"><div class="section-head"><span class="eyebrow">Portugal · 2024</span><div><h2>O retrato nacional, sem esconder diferenças locais</h2><p>A classe dominante foi “Bom”, mas uma média nacional não representa uma rua com tráfego, uma zona industrial ou um episódio de incêndio. Estes valores são históricos — não são medições em tempo real.</p></div></div><div class="metric-grid" id="metrics"></div></div>
 
-                    <div class="data-row">
-                        <h4>Alerta de Poluição</h4>
-                        <div class="tech-content">
-                            <p style="font-size: 1.15em; line-height: 1.7; color: #555; text-align: justify; max-width: 1000px;">
-                                <strong>Contexto Nacional:</strong> Portugal mantém uma qualidade do ar globalmente "Boa", mas enfrenta picos críticos de NO2 em áreas metropolitanas e de O3 no interior durante o verão.
-                            </p>
-                            <div class="air-impact-box">
-                                <div id="air-facts-container"></div>
-                            </div>
-                        </div>
-                    </div>
+  <div class="section-block"><div class="section-head"><span class="eyebrow">A tua região</span><div><h2>Contexto territorial, não uma estação fictícia</h2><p>A região selecionada ajuda a enquadrar o território. Sem uma estação oficial, hora, poluente e período de média, não é correto atribuir-lhe um índice de qualidade do ar.</p></div></div><div class="local-card"><div><h3 id="local-name">A carregar região…</h3><p>O vento e a topografia podem deslocar poluição a grandes distâncias. Por isso, a estação mais próxima nem sempre é a mais representativa.</p><p class="honesty">AQI, PM2,5, PM10, NO₂ e O₃ locais: <strong>—</strong><br>Consulte a plataforma QualAr para medições oficiais atuais.</p></div><div class="local-values"><div class="local-value"><small>Índice local</small><b>—</b></div><div class="local-value"><small>Hora da medição</small><b>—</b></div><div class="local-value"><small>Estação oficial</small><b>—</b></div><div class="local-value"><small>Localização</small><b>Opcional</b></div></div></div></div>
 
-                    <div class="data-row">
-                        <h4>Relatório de Qualidade</h4>
-                        <div id="report-grid-air" class="report-grid"></div>
-                    </div>
+  <div class="section-block"><div class="section-head"><span class="eyebrow">O que respiramos</span><div><h2>Conhecer o poluente muda a resposta</h2><p>“Qualidade do ar” não é um único valor. Cada poluente tem fontes, comportamento e períodos de avaliação diferentes.</p></div></div><div class="pollutants" id="pollutants"></div></div>
 
-                    <span class="news-header">notícias</span>
-                    <div id="noticias-ar-dinamico" class="news-list"></div>
+  <div class="section-block"><div class="section-head"><span class="eyebrow">Biodiversidade</span><div><h2>O ar também deixa marcas nos ecossistemas</h2><p>Alguns poluentes afetam diretamente folhas, solos e comunidades vegetais, mesmo longe dos centros urbanos.</p></div></div><div class="ecosystem"><article><b>Ozono troposférico</b><p>Pode reduzir fotossíntese, produtividade agrícola e crescimento florestal. Forma-se na atmosfera e pode atingir zonas rurais.</p></article><article><b>Amoníaco</b><p>Associado sobretudo à pecuária e fertilização. A deposição de azoto favorece eutrofização, acidificação e alteração da vegetação.</p></article><article><b>Partículas</b><p>Incêndios, tráfego, obras e poeiras naturais elevam PM10 e PM2,5. A origem deve ser identificada sem ocultar a exposição total.</p></article></div></div>
 
-                    <footer class="page-footer">
-                        <span style="display: block; font-size: 0.85em; font-weight: 900; color: #333;">bioCultura</span>
-                        <span style="display: block; font-size: 0.5em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Global Regeneration</span>
-                    </footer>
-                </section>
-            </div>
-        </div>
-        <div id="sidebar"></div>
-    </div>
+  <div class="section-block"><div class="section-head"><span class="eyebrow">Episódios</span><div><h2>Quando o ar muda, como agir</h2><p>Orientações simples para situações frequentes. Avisos da Proteção Civil, autoridades de saúde e QualAr têm sempre prioridade.</p></div></div><div class="episodes" id="episodes"></div></div>
 
-    <script src="/assets/js/jquery.min.js"></script>
-    <script>
-    let locationsDB = [], todasNoticias = [], visiveisAr = 4;
+  <div class="section-block"><div class="section-head"><span class="eyebrow">Dados atuais</span><div><h2>Consultar antes de concluir</h2><p>Uma leitura responsável identifica estação, data e hora, unidade, período de média e estado de validação. O índice global corresponde ao pior poluente considerado, não à média de todos.</p></div></div><div class="qualar"><p><strong>Precisa de saber como está o ar agora?</strong><br>Abra o mapa oficial, escolha a estação adequada e confirme o poluente que determinou o índice.</p><a class="button-link" href="https://qualar.apambiente.pt/" target="_blank" rel="noopener">Abrir QualAr — APA</a></div></div>
 
-    const airFactsNacionais = [
-        { titulo: "Aquecimento", desc: "No inverno, a queima de biomassa é responsável por 60% das emissões de PM2.5 em zonas rurais." },
-        { titulo: "Filtros Vivos", desc: "Um hectare de floresta madura absorve até 6 toneladas de CO2/ano e filtra poeiras finas." },
-        { titulo: "Tráfego", desc: "As emissões de NO2 nos centros urbanos excedem os limites da OMS em horas de ponta." }
-    ];
-
-    const relatoriosAr = [
-        { titulo: "Rede QualAr", texto: "A APA gere a rede nacional que mede poluentes em tempo real. O Ozono troposférico é um desafio crítico.", fonte: "APA" },
-        { titulo: "Filtros Vivos", texto: "A regeneração nativa é a forma mais eficaz de criar sumidouros de carbono e reduzir ilhas de calor.", fonte: "ICNF" }
-    ];
-
-    function calcularDistancia(lat1, lon1, lat2, lon2) {
-        if(!lat1 || !lat2) return 9999;
-        const R = 6371;
-        const dLat = (lat2 - lat1) * Math.PI / 180;
-        const dLon = (lon2 - lon1) * Math.PI / 180;
-        const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
-        return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
-    }
-
-    async function inicializarPagina() {
-        try {
-            const prefix = window.location.pathname.includes('/recursos/') ? '../' : '/';
-            const [rLoc, rNews] = await Promise.all([
-                fetch(`${prefix}data/bioregioes.json`).then(r => r.json()),
-                fetch(`${prefix}data/noticias.json`).then(r => r.json())
-            ]);
-            
-            locationsDB = rLoc;
-            todasNoticias = rNews.filter(n => (n.categoria || "").toLowerCase().includes('ar') || n.categoria === 'air');
-
-            const savedId = localStorage.getItem('biocultura_region');
-            const info = locationsDB.find(i => String(i.id) === String(savedId)) || locationsDB[0];
-
-            if (info) {
-                renderAirDashboard(info);
-                renderRelatorios();
-                iniciarCiclosAr();
-            }
-            renderizarNoticias();
-            setupLocationLogic();
-        } catch(e) { console.error("Erro no carregamento:", e); }
-    }
-
-    function renderAirDashboard(info) {
-        if(!info) return;
-        document.getElementById('air-dashboard').style.display = 'block';
-        
-        // Formato: Freguesia, CONCELHO
-        const concelhoUpper = (info.concelho || "").toUpperCase();
-        document.getElementById('reg-name').innerText = `${info.titulo}, ${concelhoUpper}`;
-
-        const arData = info.extensao_biocultura?.monitorizacao_ar || info.atmosfera || {};
-        
-        document.getElementById('val-pm25').innerText = (arData.pm25 || "12") + " µg/m³";
-        document.getElementById('val-pm10').innerText = (arData.pm10 || "--") + " µg/m³";
-        document.getElementById('val-no2').innerText = (arData.no2 || "--") + " µg/m³";
-        document.getElementById('val-o3').innerText = (arData.o3 || "--") + " µg/m³";
-
-        const status = arData.indice || "Bom";
-        let aqiVal = status === "Mau" ? 75 : status === "Médio" ? 45 : 20;
-
-        document.getElementById('label-aqi').innerText = "Índice: " + status;
-        document.getElementById('status-aqi').innerText = "Estação: " + (arData.estacao_proxima || "Rede Nacional");
-        document.getElementById('air-temp').innerText = (info.atmosfera?.temp_media_ar ? info.atmosfera.temp_media_ar[new Date().getMonth()] : 22) + "ºC";
-        document.getElementById('temp-anomaly').innerText = "Anomalia: " + (info.atmosfera?.anomalia_pre_industrial || "+1.2°C");
-
-        setTimeout(() => {
-            const marker = document.getElementById('marker-aqi');
-            if(marker) marker.style.left = aqiVal + "%";
-        }, 300);
-    }
-
-    function setupLocationLogic() {
-        // GPS - Delegação Global (Garante funcionamento na sidebar dinâmica)
-        $(document).off('click', '#btn-gps-trigger').on('click', '#btn-gps-trigger', function(e) {
-            e.preventDefault();
-            if (navigator.geolocation) {
-                $(this).css('opacity', '0.5');
-                navigator.geolocation.getCurrentPosition(pos => {
-                    let closest = locationsDB[0], minD = Infinity;
-                    locationsDB.forEach(c => {
-                        if(!c.lat || c.lat === 0) return;
-                        let d = calcularDistancia(pos.coords.latitude, pos.coords.longitude, c.lat, c.lon);
-                        if(d < minD) { minD = d; closest = c; }
-                    });
-                    localStorage.setItem('biocultura_region', closest.id);
-                    location.reload();
-                }, () => $(this).css('opacity', '1'));
-            }
-        });
-
-        $(document).off('input', '#loc-search-input').on('input', '#loc-search-input', function() {
-            const val = $(this).val().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""), 
-                  dropdown = $('#loc-dropdown').empty();
-            if(val.length < 2) return dropdown.hide();
-            locationsDB.filter(i => i.titulo.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(val)).slice(0,8).forEach(m => {
-                $('<div class="bio-res-item"></div>').text(m.titulo).on('click', () => {
-                    localStorage.setItem('biocultura_region', m.id);
-                    location.reload();
-                }).appendTo(dropdown);
-            });
-            dropdown.show();
-        });
-    }
-
-    function renderRelatorios() {
-        document.getElementById('report-grid-air').innerHTML = relatoriosAr.map(r => `
-            <div class="report-item"><h5>${r.titulo}</h5><p>${r.texto}</p></div>
-        `).join('');
-    }
-
-    function iniciarCiclosAr() {
-        const container = document.getElementById('air-facts-container');
-        if(!container) return;
-        container.innerHTML = airFactsNacionais.map((f, i) => `
-            <div class="air-fact-item ${i === 0 ? 'active' : ''}">
-                <b>Facto bioCultura</b> ${f.desc}
-            </div>`).join('');
-        
-        let factP = 0;
-        setInterval(() => {
-            const items = document.querySelectorAll('.air-fact-item');
-            if(items.length === 0) return;
-            items.forEach(el => el.classList.remove('active'));
-            factP = (factP + 1) % items.length;
-            items[factP].classList.add('active');
-        }, 8000);
-    }
-
-    function renderizarNoticias() {
-        const container = document.getElementById('noticias-ar-dinamico');
-        const lang = localStorage.getItem('selected_lang') || 'pt';
-        container.innerHTML = todasNoticias.slice(0, visiveisAr).map(n => {
-            const content = n[lang] || n['pt'];
-            return `<a href="/observatorio/noticia-detalhe.html?id=${n.id}" class="news-item"><h3>${content.titulo}</h3><div class="news-meta"><span>${n.data}</span></div></a>`;
-        }).join('');
-    }
-
-    fetch('/sidebar-content.html').then(r => r.text()).then(html => {
-        document.getElementById('sidebar').innerHTML = html;
-        inicializarPagina();
-    });
-    </script>
-</body>
-</html>
+  <div class="section-block"><div class="section-head"><span class="eyebrow">Atualidade</span><div><h2>Notícias sobre o ar</h2><p>São apresentadas apenas notícias relacionadas com qualidade do ar, emissões, fumo, poeiras ou saúde respiratória.</p></div></div><div class="news-list" id="news"></div></div>
+  <footer class="page-footer"><strong>bioCultura</strong><span>Global Regeneration</span></footer>
+</section></div></div><div id="sidebar"></div></div>
+<script src="/assets/js/jquery.min.js"></script>
+<script>
+const el=id=>document.getElementById(id), safe=v=>v===undefined||v===null||v===''?'—':String(v);
+function sourceName(v){const s=v?.fonte||v?.fontes;if(Array.isArray(s))return s.map(x=>x.nome).filter(Boolean).join(' · ');return typeof s==='string'?s:(s?.nome||'Fonte indicada no conjunto de dados')}
+function metric(title,value,text,source){return `<article class="metric"><h3>${title}</h3><strong>${value}</strong><p>${text}</p><span class="source">${source}</span></article>`}
+function renderMetrics(data){const s=data.estado_nacional_2024||{},o=s.ozono||{},n=s.no2||{};el('metrics').innerHTML=[metric('Classe dominante',safe(s.classe_dominante_iqar),'Resultado agregado nacional do índice QualAr. Não representa todos os locais.',sourceName(s)),metric('Dias Fraco ou Mau',safe(s.dias_fraco_ou_mau_percent)+'%','Percentagem nacional de dias nestas classes durante 2024.',sourceName(s)),metric('Ozono · informação',safe(o.ocorrencias_limiar_informacao),'Ocorrências do limiar de informação; não houve ocorrências do limiar de alerta.',sourceName(s)),metric('NO₂ · excedências anuais',safe(n.excedencias_anuais?.length),'Aglomerações acima da referência anual indicada no conjunto de dados.',sourceName(s))].join('')}
+function renderLocal(locations){const saved=localStorage.getItem('biocultura_region');const info=locations.find(x=>String(x.id)===String(saved))||locations[0];if(info)el('local-name').textContent=[info.titulo,info.concelho].filter(Boolean).join(', ')}
+function renderPollutants(data){const ids=['pm25','pm10','no2','o3','so2','nh3'];const labels={pm25:'PM2,5',pm10:'PM10',no2:'NO₂',o3:'O₃',so2:'SO₂',nh3:'NH₃'};el('pollutants').innerHTML=ids.map(id=>{const p=data.poluentes?.[id]||{};const effects=[...(p.efeitos_saude||[]),...(p.efeitos_ecossistemas||[])].slice(0,2);return `<article class="pollutant"><span class="symbol">${labels[id]}</span><h3>${safe(p.nome)}</h3><p>${safe(p.comportamento||p.origem_principal?.slice(0,2).join(' · '))}</p>${effects.length?`<ul class="small-list">${effects.map(x=>`<li>${x}</li>`).join('')}</ul>`:''}</article>`}).join('')}
+function renderEpisodes(data){const ids=['incendios','poeira-saariana','ozono-calor','vulcanismo-acores','polen'];const selected=ids.map(id=>data.episodios_especiais?.find(x=>x.id===id)).filter(Boolean);el('episodes').innerHTML=selected.map(x=>`<article class="episode"><span class="symbol">${(x.poluentes||[]).join(' · ')||'Biológico'}</span><h3>${x.titulo}</h3><ul class="small-list">${(x.orientacao||[]).slice(0,4).map(y=>`<li>${y}</li>`).join('')}</ul>${x.nota?`<p>${x.nota}</p>`:''}</article>`).join('')}
+function renderNews(items){const selected=items.filter(n=>{const c=n.pt||n;return /qualidade do ar|poluiç|emiss|atmosf|pm2|pm10|ozono|fumo|incênd|poeira|respirat/i.test([n.categoria,n.categoria_id,c.categoria,c.titulo,c.resumo].filter(Boolean).join(' '))}).slice(0,6);el('news').innerHTML=selected.map(n=>{const c=n.pt||n;return `<a class="news-item" href="/observatorio/noticia-detalhe.html?id=${encodeURIComponent(n.id)}"><span>${safe(n.data)}</span><h3>${safe(c.titulo)}</h3><span>${safe(n.fonte)}</span></a>`}).join('')||'<p class="empty">Sem notícias desta categoria neste momento.</p>'}
+async function start(){try{const [air,loc,news]=await Promise.all(['qualidade_ar','bioregioes','noticias'].map(f=>fetch(`/data/${f}.json`).then(r=>{if(!r.ok)throw Error(f);return r.json()})));renderMetrics(air);renderLocal(loc);renderPollutants(air);renderEpisodes(air);renderNews(news)}catch(e){console.error('Não foi possível carregar os dados do ar:',e)}}
+fetch('/sidebar-content.html').then(r=>r.text()).then(html=>{el('sidebar').innerHTML=html;start()}).catch(()=>start());
+</script></body></html>
