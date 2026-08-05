@@ -61,7 +61,7 @@
         .context-card { border: 1px solid #eee; border-radius: 12px; padding: 1.5em; background: #fff; }
         .context-card h3 { font-size: 0.82em; color: #1a1a1a; margin: 0 0 10px; text-transform: uppercase; }
         .context-card p { font-size: 0.78em; line-height: 1.65; color: #666; margin-bottom: 12px; text-align: left; }
-        .context-status { display: inline-block; font-size: 0.58em; text-transform: uppercase; font-weight: 900; color: #a15c00; background: #fff4df; border-radius: 20px; padding: 5px 9px; margin-bottom: 12px; }
+        .context-status { display: inline-block; font-size: 0.58em; text-transform: uppercase; font-weight: 900; color: #2e7d32; background: #edf7ee; border-radius: 20px; padding: 5px 9px; margin-bottom: 12px; }
         .context-source { font-size: 0.62em; font-weight: 800; color: #2e7d32; text-decoration: none; }
 
         .method-box { margin-top: 2.5em; padding: 2em; border-left: 4px solid #2e7d32; background: #f7faf8; border-radius: 0 12px 12px 0; }
@@ -72,8 +72,11 @@
         .report-summary-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
         .report-card { background: #f9f9f9; border-radius: 12px; padding: 1.7em; }
         .report-card h3 { font-size: 0.9em; margin-bottom: 12px; color: #1a1a1a; }
-        .report-card p { margin: 7px 0; font-size: 0.76em; line-height: 1.55; color: #555; }
+        .report-card p { margin: 7px 0; font-size: 0.82em; line-height: 1.65; color: #555; }
         .report-card strong { color: #222; }
+        .report-card details { margin-top: 14px; border-top: 1px solid #e8e8e8; padding-top: 10px; }
+        .report-card summary { cursor: pointer; font-size: 0.68em; font-weight: 900; color: #2e7d32; text-transform: uppercase; }
+        .report-card details p { font-size: 0.72em; color: #777; }
 
         .data-error { padding: 2em; border-radius: 12px; background: #fff4f4; color: #8a3030; }
 
@@ -122,30 +125,30 @@
                     <div class="summary-box" id="summary-grid" aria-live="polite"></div>
 
                     <div class="correlation-summary">
-                        <h4 data-i18n="ui.correlation_header">Análise de Correlação Multidimensional</h4>
-                        <div id="correlation-text">Carregando análise...</div>
+                        <h4>O retrato global em poucas palavras</h4>
+                        <div id="correlation-text">A carregar os dados...</div>
                     </div>
 
                     <div class="section-heading">
-                        <h2>Séries observadas</h2>
-                        <p>Curvas com unidade, período, origem e cautelas metodológicas explícitas.</p>
+                        <h2>Evolução dos principais indicadores</h2>
+                        <p>Passe o cursor sobre cada gráfico para consultar os valores por ano.</p>
                     </div>
                     <div class="report-grid" id="charts-grid"></div>
 
                     <div class="section-heading">
-                        <h2>Indicadores que exigem contexto</h2>
-                        <p>Temas importantes que não devem ser reduzidos a uma curva global artificial.</p>
+                        <h2>Outros dados relevantes</h2>
+                        <p>Apenas apresentamos aqui temas para os quais existem valores concretos e comparáveis.</p>
                     </div>
                     <div class="context-grid" id="context-grid"></div>
 
                     <div class="method-box">
-                        <h3>Princípios de leitura</h3>
+                        <h3>Como interpretar estes dados</h3>
                         <ul class="method-list" id="principles-list"></ul>
                     </div>
 
                     <div class="section-heading">
-                        <h2>Leitura integrada</h2>
-                        <p>Conclusões, evidência utilizada e limites de interpretação.</p>
+                        <h2>O que estes dados mostram</h2>
+                        <p>Conclusões simples; o detalhe técnico fica disponível para quem quiser aprofundar.</p>
                     </div>
                     <div class="report-summary-grid" id="reports-grid"></div>
 
@@ -276,34 +279,48 @@
         }
 
         function renderContext(context) {
-            const labels = {
-                glaciares: 'Glaciares', incendios: 'Incêndios', precipitacao: 'Precipitação',
-                erosao_costeira: 'Erosão costeira', temperatura_solo: 'Temperatura do solo',
-                biodiversidade: 'Biodiversidade', sismos: 'Sismos'
-            };
-            document.getElementById('context-grid').innerHTML = Object.entries(context).map(([id, item]) => `
+            const entries = Object.entries(context).filter(([, item]) => item.valores && Object.keys(item.valores).length);
+            const grid = document.getElementById('context-grid');
+            grid.innerHTML = entries.map(([id, item]) => `
                 <article class="context-card">
-                    <h3>${escapeHtml(labels[id] || id.replaceAll('_', ' '))}</h3>
-                    <span class="context-status">${escapeHtml(item.periodo)}</span>
-                    <p><strong>${escapeHtml(item.estado)}</strong></p>
-                    <p>${escapeHtml(item.mensagem)}</p>
+                    <h3>${id === 'erosao_costeira' ? 'Erosão das praias arenosas' : escapeHtml(id.replaceAll('_', ' '))}</h3>
+                    <span class="context-status">Dados medidos · ${escapeHtml(item.periodo)}</span>
+                    ${id === 'erosao_costeira' ? `<p><strong>24% das praias analisadas estavam em erosão superior a 0,5 metros por ano.</strong></p><p>Na mesma avaliação, 28% avançavam e 48% permaneciam estáveis. O comportamento varia de costa para costa.</p>` : `<p>${escapeHtml(item.mensagem)}</p>`}
                     <a class="context-source" href="${escapeHtml(item.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(item.fonte)} ↗</a>
                 </article>`).join('');
         }
 
-        function renderPrinciples(principles) {
-            document.getElementById('principles-list').innerHTML = principles
-                .map(item => `<li>${escapeHtml(item)}</li>`).join('');
+        function renderPrinciples() {
+            const principles = [
+                'Compare valores apenas quando usam a mesma unidade e o mesmo período de referência.',
+                'Uma subida ou descida num único ano não representa, por si só, uma tendência.',
+                'Os valores globais escondem diferenças importantes entre países e regiões.',
+                'As ligações das fontes permitem consultar a metodologia e os dados originais.'
+            ];
+            document.getElementById('principles-list').innerHTML = principles.map(item => `<li>${escapeHtml(item)}</li>`).join('');
         }
 
         function renderReports(reports) {
-            document.getElementById('reports-grid').innerHTML = reports.map(report => `
+            const usefulReports = reports.filter(report => report.titulo !== 'Solo e água');
+            document.getElementById('reports-grid').innerHTML = usefulReports.map(report => `
                 <article class="report-card">
                     <h3>${escapeHtml(report.titulo)}</h3>
-                    <p><strong>Conclusão:</strong> ${escapeHtml(report.conclusao)}</p>
-                    <p><strong>Evidência:</strong> ${escapeHtml(report.evidencia)}</p>
-                    <p><strong>Cautela:</strong> ${escapeHtml(report.cautela)}</p>
+                    <p>${escapeHtml(report.conclusao)}</p>
+                    <details>
+                        <summary>Ver fonte e nota técnica</summary>
+                        <p><strong>Fonte:</strong> ${escapeHtml(report.evidencia)}</p>
+                        <p><strong>Importante:</strong> ${escapeHtml(report.cautela)}</p>
+                    </details>
                 </article>`).join('');
+        }
+
+        function renderOverview(data) {
+            const series = data.series_temporais;
+            const temp = latest(series.temperatura_global);
+            const co2 = latest(series.co2_mauna_loa);
+            const sea = latest(series.nivel_medio_mar_satelite);
+            const ice = percentageChange(series.gelo_marinho_artico_minimo);
+            document.getElementById('correlation-text').innerHTML = `<p>Os indicadores apontam na mesma direção: o planeta está mais quente e a atmosfera contém mais gases com efeito de estufa. No último valor disponível, a temperatura global atingiu <strong>${temp.value >= 0 ? '+' : ''}${formatNumber(temp.value, 2)} °C</strong> face à média de 1951–1980 e o CO₂ chegou a <strong>${formatNumber(co2.value, 1)} ppm</strong>. Desde 1993, o nível médio do mar subiu cerca de <strong>${formatNumber(sea.value, 0)} mm</strong>; na seleção apresentada, o mínimo de gelo marinho do Ártico diminuiu <strong>${formatNumber(Math.abs(ice), 1)}%</strong>.</p>`;
         }
 
         async function loadGlobal() {
@@ -316,11 +333,11 @@
                     throw new Error('O ficheiro não contém séries temporais utilizáveis.');
                 }
                 document.getElementById('page-title').innerText = data.titulo || 'Relatório de Impacto Planetário';
-                document.getElementById('correlation-text').innerHTML = data.sumario_correlacao || '';
+                renderOverview(data);
                 renderSummary(data);
                 renderCharts(data.series_temporais);
                 renderContext(data.indicadores_contextuais || {});
-                renderPrinciples(data.principios || []);
+                renderPrinciples();
                 renderReports(data.relatorios || []);
             } catch (err) {
                 console.error('Erro ao carregar o observatório global:', err);
