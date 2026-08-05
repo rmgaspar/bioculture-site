@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html>
+<html lang="pt">
 <head>
     <title>bioCultura - Observatório da Terra Portugal</title>
     <meta charset="utf-8" />
@@ -8,88 +8,60 @@
     <style>
         body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
         section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
-        
         #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
         #wrapper { padding-left: 18em !important; }
-        
-       /* Alinhamento Milimétrico (2.2em para alinhar com o topo do logo) */
-        .inner { 
-            padding: 2.2em 4em 0 4em !important; 
-            max-width: 1600px !important; 
-            margin: 0 auto; 
-            width: 100%; 
-        }
-
+        .inner { padding: 2.2em 4em 0 4em !important; max-width: 1600px !important; margin: 0 auto; width: 100%; }
         .header-left { text-align: left; margin-bottom: 2em; margin-top: 0 !important; }
-
-        .header-left h1 { 
-            font-size: 2.5em; 
-            font-weight: 900; 
-            color: #1a1a1a; 
-            letter-spacing: -1.5px; 
-            line-height: 1.1; 
-            margin: 10px 0 !important; 
-        }
+        .header-left h1 { font-size: 2.5em; font-weight: 900; color: #1a1a1a; letter-spacing: -1.5px; line-height: 1.1; margin: 10px 0 !important; }
         .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; display: block; }
-
-       /* Seletor de Contexto Limpo */
         .context-switcher { display: flex; gap: 15px; margin-top: 20px; }
+        .context-switcher a { font-size: 0.7em; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; text-decoration: none !important; border-bottom: none !important; padding-bottom: 5px; }
+        .context-active-green { color: #1a1a1a !important; border-bottom: 2px solid #2e7d32 !important; }
+        .context-inactive { color: #bbb !important; transition: color 0.3s; }
+        .context-inactive:hover { color: #2e7d32 !important; }
 
-        .context-switcher a { 
-            font-size: 0.7em; 
-            font-weight: 900; 
-            text-transform: uppercase; 
-            letter-spacing: 1px; 
-            text-decoration: none !important; 
-            border-bottom: none !important; /* Remove a linha pontilhada do tema */
-            padding-bottom: 5px; 
-        }
+        .overview { background: #f4f9f5; padding: 2.2em; border-radius: 15px; margin: 1.5em 0 2em; }
+        .overview h2 { margin: 0 0 12px; font-size: 1em; text-transform: uppercase; letter-spacing: 1px; color: #2e7d32; }
+        .overview p { margin: 0; line-height: 1.75; color: #45634a; font-size: 1em; }
+        .scope-note { display: block; margin-top: 12px; color: #738577; font-size: .7em; }
 
-        .context-active-green { 
-            color: #1a1a1a !important; 
-            border-bottom: 2px solid #2e7d32 !important; 
-        }
+        .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin: 2em 0 3em; }
+        .summary-card { border: 1px solid #eee; border-radius: 12px; padding: 1.5em; background: #fff; }
+        .summary-card h3 { font-size: .68em; text-transform: uppercase; margin: 0 0 12px; color: #777; }
+        .summary-value { display: block; font-size: 1.8em; font-weight: 900; color: #1a1a1a; line-height: 1.1; }
+        .summary-card p { margin: 10px 0 0; font-size: .75em; line-height: 1.55; color: #666; }
 
-        .context-inactive { 
-            color: #bbb !important; 
-            transition: color 0.3s; 
-        }
+        .section-heading { margin: 3.5em 0 1.4em; }
+        .section-heading h2 { margin: 0 0 8px; font-size: 1.45em; color: #1a1a1a; }
+        .section-heading p { margin: 0; color: #777; font-size: .86em; }
+        .chart-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+        .chart-box { background: #fdfdfd; border: 1px solid #f2f2f2; padding: 1.5em; border-radius: 12px; min-height: 390px; display: flex; flex-direction: column; }
+        .chart-box h3 { font-size: .75em; font-weight: 900; text-transform: uppercase; color: #555; margin: 0 0 5px; }
+        .chart-meta { font-size: .62em; color: #999; margin-bottom: 14px; }
+        .chart-container { flex-grow: 1; height: 235px; position: relative; }
+        .chart-explanation { font-size: .76em; line-height: 1.55; color: #666; margin: 15px 0 0; border-top: 1px solid #eee; padding-top: 11px; }
+        .source-link { font-size: .6em; font-weight: 800; color: #2e7d32; text-transform: uppercase; margin-top: 8px; text-decoration: none; }
 
-        .context-inactive:hover { 
-            color: #2e7d32 !important; 
-        }
+        .territory-grid, .conclusion-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+        .territory-card, .conclusion-card { border: 1px solid #eee; border-radius: 12px; padding: 1.5em; background: #fff; }
+        .territory-card h3, .conclusion-card h3 { font-size: .85em; margin: 0 0 10px; color: #222; }
+        .territory-value { font-size: 1.45em; font-weight: 900; color: #2e7d32; display: block; margin-bottom: 8px; }
+        .territory-card p, .conclusion-card p { font-size: .78em; line-height: 1.65; color: #666; margin: 7px 0; }
+        .conclusion-card details { margin-top: 12px; border-top: 1px solid #eee; padding-top: 9px; }
+        .conclusion-card summary { cursor: pointer; color: #2e7d32; font-size: .66em; font-weight: 900; text-transform: uppercase; }
+        .conclusion-card details p { font-size: .7em; color: #777; }
+        .reading-box { margin-top: 2.5em; padding: 2em; border-left: 4px solid #2e7d32; background: #f7faf8; border-radius: 0 12px 12px 0; }
+        .reading-box h3 { font-size: .8em; text-transform: uppercase; margin: 0 0 12px; }
+        .reading-box ul { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px 25px; margin: 0; padding-left: 1.2em; }
+        .reading-box li { font-size: .76em; line-height: 1.5; color: #666; }
+        .data-error { padding: 2em; background: #fff4f4; color: #8a3030; border-radius: 12px; }
+        .page-footer { padding: 5em 0 4em; text-align: right; opacity: .4; }
+        .logo-footer { display: block; font-size: .85em; font-weight: 900; color: #333; }
+        .sublogo-footer { display: block; font-size: .5em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #bbb; }
 
-        .bio-impact-box { background: #f4f9ff; padding: 2.2em; border-radius: 15px; margin: 1.5em 0; border: none; }
-        .bio-impact-box p { margin: 0; line-height: 1.6; color: #5c6bc0; font-size: 1.05em; }
-
-        /* Grid de Gráficos */
-        .report-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 25px; margin-top: 20px; }
-        .chart-box { background: #fdfdfd; border: 1px solid #f2f2f2; padding: 1.5em; border-radius: 12px; display: flex; flex-direction: column; min-height: 420px; }
-        .chart-box h5 { font-size: 0.7em; font-weight: 800; text-transform: uppercase; color: #888; margin-bottom: 15px; }
-        .chart-container { flex-grow: 1; height: 220px; position: relative; }
-        
-        /* Legendas e Fontes */
-        .chart-explanation { font-size: 0.8em; line-height: 1.6; color: #666; margin-top: 15px; text-align: justify; border-top: 1px solid #f9f9f9; padding-top: 12px; min-height: 4em; }
-        .chart-source-subtle { font-size: 0.6em; font-weight: 700; color: #ccc; text-transform: uppercase; margin-top: 8px; display: block; letter-spacing: 0.5px; }
-
-        .leg-red { color: #ef5350; font-weight: 900; } 
-        .leg-blue { color: #4fc3f7; font-weight: 900; }
-        .leg-orange { color: #ffa726; font-weight: 900; }
-
-        .analysis-section { margin-top: 4em; padding: 4em; background: #fdfdfd; border-radius: 15px; border: 1px solid #f2f2f2; margin-bottom: 4em; }
-        .analysis-section h3 { font-size: 1.3em; font-weight: 900; margin-bottom: 1.5em; text-transform: uppercase; letter-spacing: 1px; color: #333; }
-        .analysis-section p { font-size: 1em; line-height: 1.8; text-align: justify; color: #555; margin-bottom: 1.5em; }
-
-        .page-footer { padding: 4em 0 4em 0; text-align: right; opacity: 0.4; }
-        .logo-footer { display: block; font-size: 0.85em; font-weight: 900; color: #333; }
-        .sublogo-footer { display: block; font-size: 0.5em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #bbb; }
-
-        @media screen and (max-width: 1280px) {
-            #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
-            #wrapper { padding-left: 0 !important; }
-            .report-grid { grid-template-columns: 1fr; }
-            .inner { padding: 2em !important; }
-        }
+        @media screen and (max-width: 1280px) { #sidebar { position: relative !important; width: 100% !important; height: auto !important; } #wrapper { padding-left: 0 !important; } .summary-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media screen and (max-width: 900px) { .chart-grid, .territory-grid, .conclusion-grid { grid-template-columns: 1fr; } }
+        @media screen and (max-width: 736px) { .inner { padding: 1.5em !important; } .summary-grid, .reading-box ul { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body class="is-preload">
@@ -98,60 +70,49 @@
             <div class="inner">
                 <section>
                     <div class="header-left">
-                        <span class="category-label">Observatório Planetário</span>
-                        <h1 id="page-title">Recursos Vitais: Portugal</h1>
+                        <span class="category-label">Observatório Ambiental</span>
+                        <h1 id="page-title">Portugal em dados</h1>
                         <div class="context-switcher">
-                            <a href="/observatorio/observatorio-global.html" class="context-inactive" data-i18n="ui.view_global">● Visão Global</a>
-                            <a href="/observatorio/observatorio-terra.html" class="context-active-green" data-i18n="ui.view_portugal">Portugal</a>
+                            <a href="/observatorio/observatorio-global.html" class="context-inactive">● Visão Global</a>
+                            <a href="/observatorio/observatorio-terra.html" class="context-active-green">Portugal</a>
                         </div>
                     </div>
 
-                    <div class="bio-impact-box">
-                        <p>Portugal enfrenta um ponto de inflexão em 2025: a quebra de 10,7% no rendimento agrícola e o aumento da severidade dos incêndios (270,7k ha) contrastam com a expansão da agricultura biológica (35,7% da SAU). Este relatório monitoriza a urgência da regeneração nacional.</p>
+                    <div class="overview">
+                        <h2>O retrato nacional em poucas palavras</h2>
+                        <p id="overview-text">A carregar os indicadores...</p>
+                        <span class="scope-note">Os dados apresentados referem-se a Portugal ou ao Continente, conforme indicado. Açores e Madeira não são misturados com o Continente quando não existe uma série comparável.</span>
                     </div>
 
-                    <div class="report-grid">
-                        <!-- 1. Atmosfera -->
-                        <div class="chart-box">
-                            <h5><span class="leg-blue">Veículos</span> vs <span class="leg-red">Temperatura</span></h5>
-                            <div class="chart-container">
-                                <canvas id="chartAtmosfera"></canvas>
-                            </div>
-                            <p class="chart-explanation">O aumento da frota automóvel correlaciona-se com a subida da temperatura média urbana, intensificando o efeito de ilha de calor.</p>
-                            <span class="chart-source-subtle">Fonte: IMTT / IPMA</span>
-                        </div>
+                    <div class="summary-grid" id="summary-grid" aria-live="polite"></div>
 
-                        <!-- 2. Economia -->
-                        <div class="chart-box">
-                            <h5>Rendimento Agrícola (%)</h5>
-                            <div class="chart-container"><canvas id="chartEcon"></canvas></div>
-                            <p class="chart-explanation">A quebra acentuada no rendimento agrícola em 2025 reflete a vulnerabilidade extrema do setor às secas prolongadas e à redução de subsídios diretos.</p>
-                            <span class="chart-source-subtle">Fonte: INE (CEA 2025)</span>
-                        </div>
+                    <div class="section-heading">
+                        <h2>Evolução dos principais indicadores</h2>
+                        <p>São apresentados como gráficos apenas os conjuntos com pontos suficientes para uma leitura útil.</p>
+                    </div>
+                    <div class="chart-grid" id="chart-grid"></div>
 
-                        <!-- 3. Biosfera -->
-                        <div class="chart-box">
-                            <h5><span class="leg-orange">Área Ardida</span> vs Gado</h5>
-                            <div class="chart-container"><canvas id="chartSolo"></canvas></div>
-                            <p class="chart-explanation">O aumento da área ardida compromete a regeneração natural do solo e a viabilidade da pastorícia tradicional em regime extensivo.</p>
-                            <span class="chart-source-subtle">Fonte: ICNF / INE</span>
-                        </div>
+                    <div class="section-heading">
+                        <h2>Território e riscos</h2>
+                        <p>Valores concretos sobre desertificação, costa e inundação.</p>
+                    </div>
+                    <div class="territory-grid" id="territory-grid"></div>
 
-                        <!-- 4. Floresta -->
-                        <div class="chart-box">
-                            <h5>Stock de Madeira (m3)</h5>
-                            <div class="chart-container"><canvas id="chartFloresta"></canvas></div>
-                            <p class="chart-explanation">O stock de madeira nacional apresenta um declínio contínuo, indicando que o ritmo de extração industrial supera largamente o crescimento líquido anual.</p>
-                            <span class="chart-source-subtle">Fonte: INE (Contas da Floresta)</span>
-                        </div>
+                    <div class="reading-box">
+                        <h3>Como interpretar estes dados</h3>
+                        <ul>
+                            <li>Área ardida varia muito entre anos e não equivale a desflorestação.</li>
+                            <li>Menos explorações agrícolas não significa necessariamente menos área cultivada.</li>
+                            <li>Matrículas anuais e veículos em circulação são indicadores diferentes.</li>
+                            <li>Valores provisórios podem mudar quando forem publicados os totais definitivos.</li>
+                        </ul>
                     </div>
 
-                    <div class="analysis-section">
-                        <h3>Análise Técnica de Impacto (Atualização 2025)</h3>
-                        <p><b>Resiliência Climática e Agrícola:</b> O ano de 2025 marca uma quebra severa no rendimento agrícola (-10,7%), impulsionada pela redução de subsídios e condições climáticas extremas. O verão de 2024/2025 foi o mais quente e seco em 94 anos, o que se refletiu na quebra de produção de cereais como o trigo (-25,5%).</p>
-                        <p><b>Degradação do Ativo Florestal:</b> As Contas da Floresta revelam que o stock de madeira nacional encolheu 10% desde 2015. Este declínio é herança direta dos incêndios de 2017 e da pressão industrial, onde 87% do crescimento líquido da madeira é removido anualmente. O risco estrutural é crítico.</p>
-                        <p><b>Pressão Pecuária e Marinha:</b> A produção de carne continua a crescer (+3,1% em 2025), aumentando a pegada de metano. No mar, embora as capturas totais tenham subido ligeiramente, as capturas em águas nacionais caíram 2,4%, sinalizando a exaustão dos pesqueiros locais.</p>
+                    <div class="section-heading">
+                        <h2>O que estes dados mostram</h2>
+                        <p>Conclusões diretas, com uma explicação adicional disponível em cada tema.</p>
                     </div>
+                    <div class="conclusion-grid" id="conclusion-grid"></div>
 
                     <footer class="page-footer">
                         <span class="logo-footer">bioCultura</span>
@@ -166,78 +127,106 @@
     <script src="/assets/js/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        async function carregarDados() {
-            try {
-                const res = await fetch('/data/observatorio_terra.json');
-                const data = await res.json();
+        const palette = ['#ef5350', '#2e7d32', '#42a5f5', '#ffa726'];
+        const escapeHtml = value => String(value ?? '').replace(/[&<>'"]/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[char]));
+        const formatNumber = (value, digits = 0) => new Intl.NumberFormat('pt-PT', { maximumFractionDigits: digits }).format(value);
+        const entries = series => Object.entries(series.valores).map(([year, value]) => ({ year, value })).filter(point => typeof point.value === 'number');
+        const source = series => series.fontes?.[0] || null;
 
-                const commonOptions = {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        x: { grid: { display: false }, ticks: { font: { size: 9 } } },
-                        y: { ticks: { font: { size: 9 } } }
-                    }
-                };
-
-                // 1. Atmosfera (Corrigido o ID de 'chartAtmosferas' para 'chartAtmosfera')
-                new Chart(document.getElementById('chartAtmosfera'), {
-                    type: 'line',
-                    data: {
-                        labels: [2004, 2017, 2024, 2025],
-                        datasets: [
-                            { label: 'Veículos', data: [200000, 220000, 209700, 215000], borderColor: '#4fc3f7', yAxisID: 'y', tension: 0.4 },
-                            { label: 'Temp', data: [15.2, 16.3, 16.4, 16.6], borderColor: '#ef5350', yAxisID: 'y1', tension: 0.4 }
-                        ]
-                    },
-                    options: { 
-                        ...commonOptions, 
-                        scales: { 
-                            y: { position: 'left', ticks: { font: { size: 9 } } }, 
-                            y1: { position: 'right', grid: { drawOnChartArea: false }, ticks: { font: { size: 9 } } } 
-                        } 
-                    }
-                });
-
-                // 2. Economia Agrícola
-                new Chart(document.getElementById('chartEcon'), {
-                    type: 'bar',
-                    data: {
-                        labels: [2023, 2024, 2025],
-                        datasets: [{ data: [17.3, 15.2, -10.7], backgroundColor: ['#81c784', '#81c784', '#ef5350'] }]
-                    },
-                    options: commonOptions
-                });
-
-                // 3. Solo (Área Ardida)
-                new Chart(document.getElementById('chartSolo'), {
-                    type: 'line',
-                    data: {
-                        labels: [2017, 2023, 2024, 2025],
-                        datasets: [{ data: [442412, 34415, 137700, 270700], borderColor: '#ffa726', fill: true, backgroundColor: 'rgba(255, 167, 38, 0.1)', tension: 0.4 }]
-                    },
-                    options: commonOptions
-                });
-
-                // 4. Floresta (Stock)
-                new Chart(document.getElementById('chartFloresta'), {
-                    type: 'line',
-                    data: {
-                        labels: [2015, 2018, 2021, 2023],
-                        datasets: [{ data: [188.8, 175.4, 172.1, 169.9], borderColor: '#795548', tension: 0.4 }]
-                    },
-                    options: commonOptions
-                });
-
-            } catch (err) { console.error("Erro bioCultura:", err); }
+        function renderSummary(data) {
+            const burned = entries(data.series_temporais.area_ardida_continente).at(-1);
+            const temp = entries(data.series_temporais.temperatura_media_anual_continente).at(-1);
+            const desert = data.indicadores_territoriais.suscetibilidade_desertificacao;
+            const coast = data.indicadores_territoriais.erosao_costeira;
+            const cards = [
+                ['Temperatura média', `${formatNumber(temp.value, 2)} °C`, `${temp.year} · Portugal continental`],
+                ['Área ardida', `${formatNumber(burned.value)} ha`, `${burned.year} · valor provisório no Continente`],
+                ['Desertificação', `${desert.valor}%`, 'do território continental suscetível'],
+                ['Costa em erosão', `${coast.costa_baixa_arenosa_em_erosao_percent}%`, 'da costa baixa e arenosa continental']
+            ];
+            document.getElementById('summary-grid').innerHTML = cards.map(([title, value, note]) => `<article class="summary-card"><h3>${escapeHtml(title)}</h3><span class="summary-value">${escapeHtml(value)}</span><p>${escapeHtml(note)}</p></article>`).join('');
+            document.getElementById('overview-text').innerHTML = `Os dados disponíveis mostram três pressões claras: incêndios rurais muito variáveis e severos em alguns anos, mais de metade do Continente suscetível à desertificação e uma parte significativa da costa arenosa em erosão. Ao mesmo tempo, Portugal tem hoje menos explorações agrícolas, embora a superfície utilizada tenha diminuído muito menos — sinal de concentração da atividade em unidades maiores.`;
         }
 
-        // Inicialização
-        fetch('/sidebar-content.html').then(r => r.text()).then(html => {
-            document.getElementById('sidebar').innerHTML = html;
-            carregarDados();
-        });
+        function addChart(canvas, series, index, type = 'line') {
+            const points = entries(series);
+            new Chart(canvas, {
+                type,
+                data: {
+                    labels: points.map(point => point.year),
+                    datasets: [{
+                        data: points.map(point => point.value),
+                        borderColor: palette[index % palette.length],
+                        backgroundColor: type === 'bar' ? `${palette[index % palette.length]}bb` : `${palette[index % palette.length]}18`,
+                        borderWidth: 2.5, pointRadius: 3, pointHoverRadius: 6,
+                        fill: type === 'line', tension: .2
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    interaction: { intersect: false, mode: 'index' },
+                    plugins: { legend: { display: false }, tooltip: { callbacks: { label: context => `${formatNumber(context.parsed.y, 1)} ${series.unidade}` } } },
+                    scales: {
+                        x: { grid: { display: false }, ticks: { font: { size: 9 }, autoSkip: true, maxTicksLimit: 9 } },
+                        y: { beginAtZero: type === 'bar', ticks: { font: { size: 9 }, callback: value => formatNumber(value) } }
+                    }
+                }
+            });
+        }
+
+        function renderCharts(data) {
+            const selected = [
+                ['area_ardida_continente', 'bar', 'Os totais mudam fortemente de ano para ano. 2017 foi excecional e 2025 ainda é provisório.'],
+                ['exploracoes_agricolas', 'line', 'O número de explorações diminuiu bastante desde 1989; este indicador deve ser lido juntamente com a área agrícola.'],
+                ['superficie_agricola_utilizada', 'line', 'A área utilizada variou menos do que o número de explorações, sugerindo unidades agrícolas de maior dimensão média.'],
+                ['parque_veiculos_motorizados', 'line', 'O parque motorizado aumentou no período mais recente disponível e representa pressão sobre energia, emissões e espaço urbano.']
+            ];
+            const grid = document.getElementById('chart-grid');
+            grid.innerHTML = selected.map(([id, type, explanation], index) => {
+                const series = data.series_temporais[id];
+                const link = source(series);
+                return `<article class="chart-box"><h3>${escapeHtml(series.titulo)}</h3><div class="chart-meta">${escapeHtml(series.ambito)} · ${escapeHtml(series.unidade)}</div><div class="chart-container"><canvas id="pt-chart-${index}"></canvas></div><p class="chart-explanation">${escapeHtml(explanation)}</p>${link ? `<a class="source-link" href="${escapeHtml(link.url)}" target="_blank" rel="noopener noreferrer">Fonte: ${escapeHtml(link.nome)} ↗</a>` : ''}</article>`;
+            }).join('');
+            selected.forEach(([id, type], index) => addChart(document.getElementById(`pt-chart-${index}`), data.series_temporais[id], index, type));
+        }
+
+        function renderTerritory(data) {
+            const indicators = data.indicadores_territoriais;
+            const desert = indicators.suscetibilidade_desertificacao;
+            const coast = indicators.erosao_costeira;
+            const flood = indicators.areas_risco_inundacao;
+            const cards = [
+                ['Suscetibilidade à desertificação', `${desert.valor}% do Continente`, desert.descricao, desert.fontes[0]],
+                ['Erosão costeira', `≈ ${formatNumber(coast.extensao_em_erosao_aproximada_km)} km`, `${formatNumber(coast.perda_area_1958_2023_ha)} hectares de área costeira perdidos entre 1958 e 2023.`, coast.fontes[0]],
+                ['Risco de inundação', `${flood.valor} áreas identificadas`, `Áreas de risco potencial significativo no ciclo ${flood.periodo}.`, flood.fontes[0]]
+            ];
+            document.getElementById('territory-grid').innerHTML = cards.map(([title, value, text, link]) => `<article class="territory-card"><h3>${escapeHtml(title)}</h3><span class="territory-value">${escapeHtml(value)}</span><p>${escapeHtml(text)}</p><a class="source-link" href="${escapeHtml(link.url)}" target="_blank" rel="noopener noreferrer">Fonte: ${escapeHtml(link.nome)} ↗</a></article>`).join('');
+        }
+
+        function renderConclusions(data) {
+            const allowed = new Set(['fogo', 'solo', 'mobilidade', 'litoral']);
+            document.getElementById('conclusion-grid').innerHTML = data.relatorios.filter(report => allowed.has(report.id)).map(report => `<article class="conclusion-card"><h3>${escapeHtml(report.titulo)}</h3><p>${escapeHtml(report.resumo.split('. ')[0] + '.')}</p><details><summary>Compreender melhor</summary><p>${escapeHtml(report.resumo)}</p></details></article>`).join('');
+        }
+
+        async function loadObservatory() {
+            try {
+                const response = await fetch('/data/observatorio_terra.json?v=' + Date.now());
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const data = await response.json();
+                if (!data.series_temporais || !data.indicadores_territoriais) throw new Error('O ficheiro não contém indicadores utilizáveis.');
+                document.getElementById('page-title').textContent = data.metadados?.titulo || 'Portugal em dados';
+                renderSummary(data);
+                renderCharts(data);
+                renderTerritory(data);
+                renderConclusions(data);
+            } catch (error) {
+                console.error('Erro ao carregar o Observatório de Portugal:', error);
+                document.getElementById('summary-grid').innerHTML = `<div class="data-error"><strong>Não foi possível carregar os indicadores.</strong><br>${escapeHtml(error.message)}</div>`;
+            }
+        }
+
+        fetch('/sidebar-content.html').then(response => response.text()).then(html => { document.getElementById('sidebar').innerHTML = html; }).catch(() => {});
+        loadObservatory();
     </script>
 </body>
 </html>
