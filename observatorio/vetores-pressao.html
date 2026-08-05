@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html>
+<html lang="pt">
 <head>
     <title>bioCultura - Vetores de Pressão Portugal</title>
     <meta charset="utf-8" />
@@ -8,237 +8,143 @@
     <style>
         body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
         section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
-        
         #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
         #wrapper { padding-left: 18em !important; }
-        
-       /* Alinhamento Milimétrico com o Logótipo (Igual às outras páginas) */
-        .inner { 
-            padding: 2.2em 4em 0 4em !important; 
-            max-width: 1600px !important; 
-            margin: 0 auto; 
-            width: 100%; 
-        }
-
-        .header-left { text-align: left; margin-bottom: 2em; margin-top: 0 !important; }
-
-        .header-left h1 { 
-            font-size: 2.5em; 
-            font-weight: 900; 
-            color: #1a1a1a; 
-            letter-spacing: -1.5px; 
-            line-height: 1.1; 
-            margin: 10px 0 !important; /* Força a margem padrão das outras páginas */
-        }
-
-        .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; display: block; }
-
-       /* Seletor de Contexto Limpo (Sem bordas pontilhadas do main.css) */
+        .inner { padding: 2.2em 4em 0 !important; max-width: 1600px !important; margin: 0 auto; width: 100%; }
+        .header-left { margin-bottom: 2em; }
+        .header-left h1 { font-size: 2.5em; font-weight: 900; color: #1a1a1a; letter-spacing: -1.5px; line-height: 1.1; margin: 10px 0 !important; }
+        .category-label { font-size: .65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; display: block; }
         .context-switcher { display: flex; gap: 15px; margin-top: 20px; }
-
-        .context-switcher a { 
-            font-size: 0.7em; 
-            font-weight: 900; 
-            text-transform: uppercase; 
-            letter-spacing: 1px; 
-            text-decoration: none !important; 
-            border-bottom: none !important; /* Remove a linha pontilhada do main.css */
-            padding-bottom: 5px; 
-        }
-
-        .context-active-red { 
-            color: #1a1a1a !important; 
-            border-bottom: 2px solid #c62828 !important; 
-        }
-
-        .context-inactive { 
-            color: #bbb !important; 
-            transition: color 0.3s; 
-        }
-
-        .context-inactive:hover { 
-            color: #c62828 !important; 
-        }
-
-        .bio-impact-box { background: #fff4f4; padding: 2.2em; border-radius: 15px; margin: 1.5em 0; border: none; }
-        .bio-impact-box p { margin: 0; line-height: 1.6; color: #c62828; font-size: 1.05em; }
-
-        /* Grid de Gráficos */
-        .report-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 25px; margin-top: 20px; }
-        .chart-box { background: #fdfdfd; border: 1px solid #f2f2f2; padding: 1.5em; border-radius: 12px; display: flex; flex-direction: column; min-height: 420px; }
-        .chart-box h5 { font-size: 0.7em; font-weight: 800; text-transform: uppercase; color: #888; margin-bottom: 15px; }
-        .chart-container { flex-grow: 1; height: 220px; position: relative; }
-        
-        /* Legendas e Fontes */
-        .chart-explanation { font-size: 0.8em; line-height: 1.6; color: #666; margin-top: 15px; text-align: justify; border-top: 1px solid #f9f9f9; padding-top: 12px; min-height: 4em; }
-        .chart-source-subtle { font-size: 0.6em; font-weight: 700; color: #ccc; text-transform: uppercase; margin-top: 8px; display: block; letter-spacing: 0.5px; }
-
-        .leg-red { color: #ef5350; font-weight: 900; } 
-        .leg-green { color: #4caf50; font-weight: 900; }
-
-        .analysis-section { margin-top: 4em; padding: 4em; background: #fdfdfd; border-radius: 15px; border: 1px solid #f2f2f2; margin-bottom: 4em; }
-        .analysis-section h3 { font-size: 1.3em; font-weight: 900; margin-bottom: 1.5em; text-transform: uppercase; letter-spacing: 1px; color: #333; }
-        .analysis-section p { font-size: 1em; line-height: 1.8; text-align: justify; color: #555; margin-bottom: 1.5em; }
-
-        .page-footer { padding: 4em 0 4em 0; text-align: right; opacity: 0.4; }
-        .logo-footer { display: block; font-size: 0.85em; font-weight: 900; color: #333; }
-        .sublogo-footer { display: block; font-size: 0.5em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #bbb; }
-
-        @media screen and (max-width: 1280px) {
-            #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
-            #wrapper { padding-left: 0 !important; }
-            .report-grid { grid-template-columns: 1fr; }
-            .inner { padding: 2em !important; }
-        }
+        .context-switcher a { font-size: .7em; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; text-decoration: none !important; border-bottom: none !important; padding-bottom: 5px; }
+        .context-active-red { color: #1a1a1a !important; border-bottom: 2px solid #c62828 !important; }
+        .context-inactive { color: #bbb !important; }
+        .context-inactive:hover { color: #c62828 !important; }
+        .overview { background: #fff4f4; padding: 2.3em; border-radius: 15px; margin: 1.5em 0 2em; }
+        .overview h2 { margin: 0 0 12px; font-size: .85em; text-transform: uppercase; color: #c62828; letter-spacing: 1px; }
+        .overview p { margin: 0; color: #7f3030; line-height: 1.75; }
+        .summary-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; margin: 2em 0 3em; }
+        .summary-card { border: 1px solid #eee; border-radius: 12px; padding: 1.4em; background: #fff; }
+        .summary-card h3 { font-size: .64em; text-transform: uppercase; color: #888; margin: 0 0 10px; }
+        .summary-value { display: block; color: #c62828; font-size: 1.55em; font-weight: 900; line-height: 1.1; }
+        .summary-card p { font-size: .72em; line-height: 1.5; color: #666; margin: 9px 0 0; }
+        .section-heading { margin: 3.7em 0 1.4em; }
+        .section-heading h2 { margin: 0 0 8px; font-size: 1.45em; color: #1a1a1a; }
+        .section-heading p { margin: 0; color: #777; font-size: .86em; }
+        .chart-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+        .chart-box { background: #fdfdfd; border: 1px solid #eee; padding: 1.5em; border-radius: 12px; min-height: 390px; display: flex; flex-direction: column; }
+        .chart-box h3 { font-size: .74em; text-transform: uppercase; color: #555; margin: 0 0 5px; }
+        .chart-meta { font-size: .62em; color: #999; margin-bottom: 12px; }
+        .chart-container { flex-grow: 1; height: 235px; position: relative; }
+        .chart-box p { font-size: .76em; line-height: 1.55; color: #666; border-top: 1px solid #eee; padding-top: 10px; margin: 12px 0 0; }
+        .source-link { font-size: .58em; font-weight: 800; color: #c62828; text-transform: uppercase; text-decoration: none; margin-top: 8px; }
+        .territory-grid, .analysis-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+        .territory-card, .analysis-card { background: #fff; border: 1px solid #eee; border-radius: 12px; padding: 1.5em; }
+        .territory-card h3, .analysis-card h3 { font-size: .86em; color: #222; margin: 0 0 10px; }
+        .territory-card p, .analysis-card p { font-size: .77em; color: #666; line-height: 1.62; margin: 7px 0; }
+        .territory-value { display: block; font-size: 1.4em; font-weight: 900; color: #c62828; margin-bottom: 8px; }
+        .analysis-card details { margin-top: 11px; border-top: 1px solid #eee; padding-top: 9px; }
+        .analysis-card summary { cursor: pointer; color: #c62828; font-size: .65em; font-weight: 900; text-transform: uppercase; }
+        .reading-box { margin-top: 2.5em; padding: 2em; border-left: 4px solid #c62828; background: #fdf7f7; border-radius: 0 12px 12px 0; }
+        .reading-box h3 { font-size: .8em; text-transform: uppercase; margin: 0 0 12px; }
+        .reading-box ul { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px 25px; margin: 0; padding-left: 1.2em; }
+        .reading-box li { font-size: .76em; line-height: 1.5; color: #666; }
+        .data-error { padding: 2em; background: #fff4f4; color: #8a3030; border-radius: 12px; }
+        .page-footer { padding: 5em 0 4em; text-align: right; opacity: .4; }
+        .logo-footer { display: block; font-size: .85em; font-weight: 900; color: #333; }
+        .sublogo-footer { display: block; font-size: .5em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #bbb; }
+        @media screen and (max-width: 1400px) { .summary-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media screen and (max-width: 1280px) { #sidebar { position: relative !important; width: 100% !important; height: auto !important; } #wrapper { padding-left: 0 !important; } }
+        @media screen and (max-width: 900px) { .chart-grid, .territory-grid, .analysis-grid { grid-template-columns: 1fr; } }
+        @media screen and (max-width: 736px) { .inner { padding: 1.5em !important; } .summary-grid, .reading-box ul { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body class="is-preload">
     <div id="wrapper">
-        <div id="main">
-            <div class="inner">
-                <section>
-                    <div class="header-left">
-                        <span class="category-label">Observatório de Impacto</span>
-                        <h1 id="page-title">Vetores de Pressão: Portugal</h1>
-                        <div class="context-switcher">
-                            <a href="/observatorio/vetores-pressao-global.html" class="context-inactive">● Visão Global</a>
-                            <a href="/observatorio/vetores-pressao.html" class="context-active-red">Portugal</a>
-                        </div>
-                    </div>
-
-                    <div class="bio-impact-box">
-                        <p id="page-summary">Análise da evolução estrutural dos setores extrativo e energético em Portugal. Monitorização do nexo entre a descarbonização e a pressão sobre os recursos geológicos e hídricos nacionais.</p>
-                    </div>
-
-                    <div class="report-grid">
-                        <!-- 1. Mix Energético -->
-                        <div class="chart-box">
-                            <h5><span class="leg-green">Renováveis</span> vs <span class="leg-red">Dependência</span> (%)</h5>
-                            <div class="chart-container"><canvas id="chartEnergia"></canvas></div>
-                            <p class="chart-explanation">A subida das renováveis reduz a dependência externa, mas a escala das infraestruturas exige uma gestão ética do solo para evitar a fragmentação de habitats.</p>
-                            <span class="chart-source-subtle">Fonte: DGEG / Pordata</span>
-                        </div>
-
-                        <!-- 2. Minerais Estratégicos -->
-                        <div class="chart-box">
-                            <h5>Distribuição de Minerais Estratégicos</h5>
-                            <div class="chart-container"><canvas id="chartMinerais"></canvas></div>
-                            <p class="chart-explanation">Foco crescente em Lítio e metais básicos essenciais para a transição digital, concentrando a pressão extrativa no Norte e Centro de Portugal.</p>
-                            <span class="chart-source-subtle">Fonte: LNEG (Geoportal)</span>
-                        </div>
-
-                        <!-- 3. Concessões Ativas -->
-                        <div class="chart-box">
-                            <h5>Concessões Ativas (Série Histórica)</h5>
-                            <div class="chart-container"><canvas id="chartConcessoes"></canvas></div>
-                            <p class="chart-explanation">O aumento das concessões ativas reflete a industrialização do mundo rural, impactando diretamente aquíferos e comunidades locais.</p>
-                            <span class="chart-source-subtle">Fonte: DGEG / Recursos Geológicos</span>
-                        </div>
-
-                        <!-- 4. Intensidade Extrativa -->
-                        <div class="chart-box">
-                            <h5>Índice de Intensidade Extrativa</h5>
-                            <div class="chart-container"><canvas id="chartIntensidade"></canvas></div>
-                            <p class="chart-explanation">Este índice correlaciona o volume de extração com o consumo de recursos hídricos industriais, assinalando zonas de stress ambiental severo.</p>
-                            <span class="chart-source-subtle">Fonte: INE / LNEG</span>
-                        </div>
-                    </div>
-
-                    <div class="analysis-section" id="analysis-content">
-                        <h3>Relatório Técnico de Pressão (Portugal 2026)</h3>
-                        <!-- Populado via JS -->
-                    </div>
-
-                    <footer class="page-footer">
-                        <span class="logo-footer">bioCultura</span>
-                        <span class="sublogo-footer">Global Regeneration</span>
-                    </footer>
-                </section>
+        <div id="main"><div class="inner"><section>
+            <div class="header-left">
+                <span class="category-label">Observatório de Pressão Ambiental</span>
+                <h1 id="page-title">Vetores de Pressão: Portugal</h1>
+                <div class="context-switcher"><a href="/observatorio/vetores-pressao-global.html" class="context-inactive">● Visão Global</a><a href="/observatorio/vetores-pressao.html" class="context-active-red">Portugal</a></div>
             </div>
-        </div>
+            <div class="overview"><h2>O retrato nacional em poucas palavras</h2><p id="overview-text">A carregar os indicadores...</p></div>
+            <div class="summary-grid" id="summary-grid" aria-live="polite"></div>
+            <div class="section-heading"><h2>Evolução energética e áreas propostas</h2><p>Os gráficos distinguem indicadores diferentes e não transformam propostas territoriais em projetos aprovados.</p></div>
+            <div class="chart-grid" id="chart-grid"></div>
+            <div class="section-heading"><h2>Continente, Açores e Madeira</h2><p>Os sistemas insulares são apresentados separadamente porque têm realidades energéticas próprias.</p></div>
+            <div class="territory-grid" id="territory-grid"></div>
+            <div class="reading-box"><h3>Como interpretar estes dados</h3><ul><li>Uma área proposta como ZAER não é uma licença nem um projeto aprovado.</li><li>As áreas solar e eólica podem sobrepor-se e não devem ser somadas.</li><li>Um contrato mineiro não significa necessariamente uma mina em produção.</li><li>Benefícios climáticos nacionais não anulam impactos locais sobre água, solo e biodiversidade.</li></ul></div>
+            <div class="section-heading"><h2>O que estes dados mostram</h2><p>Conclusões claras, com contexto adicional disponível para aprofundamento.</p></div>
+            <div class="analysis-grid" id="analysis-grid"></div>
+            <footer class="page-footer"><span class="logo-footer">bioCultura</span><span class="sublogo-footer">Global Regeneration</span></footer>
+        </section></div></div>
         <div id="sidebar"></div>
     </div>
-
     <script src="/assets/js/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        async function carregarDados() {
-            try {
-                const res = await fetch('/data/pressao_vetores.json');
-                const data = await res.json();
+        const escapeHtml = value => String(value ?? '').replace(/[&<>'"]/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[char]));
+        const format = (value, digits = 1) => new Intl.NumberFormat('pt-PT', { maximumFractionDigits: digits }).format(value);
 
-                const opt = {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        x: { grid: { display: false }, ticks: { font: { size: 9 } } },
-                        y: { ticks: { font: { size: 9 } } }
-                    }
-                };
-
-                // 1. Gráfico Energia
-                new Chart(document.getElementById('chartEnergia'), {
-                    type: 'line',
-                    data: {
-                        labels: data.estatisticas.energia_renovavel.labels,
-                        datasets: [
-                            { label: 'Renovável', data: data.estatisticas.energia_renovavel.dados, borderColor: '#4caf50', tension: 0.4 },
-                            { label: 'Dependência', data: data.estatisticas.dependencia_energetica.dados, borderColor: '#ef5350', tension: 0.4 }
-                        ]
-                    },
-                    options: opt
-                });
-
-                // 2. Gráfico Minerais (Doughnut)
-                new Chart(document.getElementById('chartMinerais'), {
-                    type: 'doughnut',
-                    data: {
-                        labels: ['Cobre', 'Lítio', 'Volfrâmio', 'Estanho', 'Outros'],
-                        datasets: [{
-                            data: [45, 25, 15, 10, 5],
-                            backgroundColor: ['#5c6bc0', '#ffa726', '#795548', '#26a69a', '#bdbdbd']
-                        }]
-                    },
-                    options: { ...opt, plugins: { legend: { display: true, position: 'right', labels: { boxWidth: 10, font: { size: 9 } } } } }
-                });
-
-                // 3. Gráfico Concessões
-                new Chart(document.getElementById('chartConcessoes'), {
-                    type: 'bar',
-                    data: {
-                        labels: data.estatisticas.concessoes_ativas.labels,
-                        datasets: [{ data: data.estatisticas.concessoes_ativas.dados, backgroundColor: '#795548' }]
-                    },
-                    options: opt
-                });
-
-                // 4. Gráfico Intensidade
-                new Chart(document.getElementById('chartIntensidade'), {
-                    type: 'line',
-                    data: {
-                        labels: [2004, 2010, 2015, 2020, 2024],
-                        datasets: [{ data: [100, 115, 122, 135, 148], borderColor: '#ffa726', fill: true, backgroundColor: 'rgba(255,167,38,0.05)', tension: 0.4 }]
-                    },
-                    options: opt
-                });
-
-                // Análise Técnica
-                const analysisDiv = document.getElementById('analysis-content');
-                data.analise.forEach(item => {
-                    const p = document.createElement('p');
-                    p.innerHTML = `<b>${item.topico}:</b> ${item.texto}`;
-                    analysisDiv.appendChild(p);
-                });
-
-            } catch (err) { console.error("Erro ao carregar dados:", err); }
+        function renderSummary(data) {
+            const renewable = data.estatisticas.energia_renovavel;
+            const dependency = data.estatisticas.dependencia_energetica;
+            const solar = data.zaer.areas_propícias_proposta.solar_fotovoltaica;
+            const wind = data.zaer.areas_propícias_proposta.eolica_onshore;
+            const contracts = data.estatisticas.concessoes_ativas;
+            const cards = [
+                ['Eletricidade renovável', `${format(renewable.dados.at(-1))}%`, `${renewable.labels.at(-1)} · produção bruta nacional`],
+                ['Dependência energética', `${format(dependency.dados.at(-1))}%`, `${dependency.labels.at(-1)} · energia importada`],
+                ['Área proposta para solar', `${format(solar.valor, 0)} ha`, 'área potencialmente propícia, não aprovada'],
+                ['Área proposta para eólica', `${format(wind.valor, 0)} ha`, 'área potencialmente propícia, não aprovada'],
+                ['Contratos mineiros', `${contracts.dados[0]}`, 'registos na tabela pública; não são minas ativas']
+            ];
+            document.getElementById('summary-grid').innerHTML = cards.map(([title, value, note]) => `<article class="summary-card"><h3>${escapeHtml(title)}</h3><span class="summary-value">${escapeHtml(value)}</span><p>${escapeHtml(note)}</p></article>`).join('');
+            document.getElementById('overview-text').textContent = data.resumo;
         }
 
-        // Inicialização
-        fetch('/sidebar-content.html').then(r => r.text()).then(html => {
-            document.getElementById('sidebar').innerHTML = html;
-            carregarDados();
-        });
+        function renderCharts(data) {
+            const renewable = data.estatisticas.energia_renovavel;
+            const dependency = data.estatisticas.dependencia_energetica;
+            const solar = data.zaer.areas_propícias_proposta.solar_fotovoltaica;
+            const wind = data.zaer.areas_propícias_proposta.eolica_onshore;
+            document.getElementById('chart-grid').innerHTML = `
+                <article class="chart-box"><h3>Renováveis e dependência energética</h3><div class="chart-meta">Portugal · percentagem · 2004–2024</div><div class="chart-container"><canvas id="chart-energy"></canvas></div><p>As duas linhas usam a mesma escala, mas medem realidades diferentes: produção elétrica renovável e dependência de energia importada.</p><a class="source-link" href="${escapeHtml(renewable.fontes[0].url)}" target="_blank" rel="noopener noreferrer">Fonte: ${escapeHtml(renewable.fontes[0].nome)} ↗</a></article>
+                <article class="chart-box"><h3>Áreas potencialmente propícias para ZAER</h3><div class="chart-meta">Portugal continental · hectares · proposta de 2026</div><div class="chart-container"><canvas id="chart-zaer"></canvas></div><p>As áreas podem sobrepor-se. Não representam ocupação efetiva, licenças concedidas nem projetos aprovados.</p><a class="source-link" href="${escapeHtml(data.zaer.fontes[0].url)}" target="_blank" rel="noopener noreferrer">Fonte: ${escapeHtml(data.zaer.fontes[0].nome)} ↗</a></article>`;
+            new Chart(document.getElementById('chart-energy'), { type: 'line', data: { labels: renewable.labels, datasets: [{ label: 'Eletricidade renovável', data: renewable.dados, borderColor: '#4caf50', backgroundColor: '#4caf5018', tension: .2, pointRadius: 4 }, { label: 'Dependência energética', data: dependency.dados, borderColor: '#c62828', backgroundColor: '#c6282818', tension: .2, pointRadius: 4 }] }, options: { responsive: true, maintainAspectRatio: false, interaction: { intersect: false, mode: 'index' }, plugins: { legend: { display: true, labels: { boxWidth: 12, font: { size: 10 } } }, tooltip: { callbacks: { label: context => `${context.dataset.label}: ${format(context.parsed.y)}%` } } }, scales: { x: { grid: { display: false } }, y: { beginAtZero: true, max: 100, ticks: { callback: value => `${value}%` } } } } });
+            new Chart(document.getElementById('chart-zaer'), { type: 'bar', data: { labels: ['Solar fotovoltaica', 'Eólica terrestre'], datasets: [{ data: [solar.valor, wind.valor], backgroundColor: ['#ffa726', '#607d8b'] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: context => `${format(context.parsed.y, 0)} ha` } } }, scales: { x: { grid: { display: false } }, y: { beginAtZero: true, ticks: { callback: value => format(value, 0) } } } } });
+        }
+
+        function renderTerritories(data) {
+            const continent = data.territorio.continente;
+            const azores = data.territorio.acores;
+            const madeira = data.territorio.madeira;
+            const cards = [
+                ['Continente', 'PSZAER 2026', `${continent.zaer} ${continent.mineracao}`, data.zaer.fontes[0]],
+                ['Açores', `≈ ${format(azores.energia.quota_renovavel_aproximada, 0)}% renovável`, `Sistema insular; a geotermia representa aproximadamente ${format(azores.energia.geotermia_aproximada, 0)}%.`, azores.fontes[0]],
+                ['Madeira', `${format(madeira.energia_2024.renovavel_sem_rsu_percent)}% renovável`, `Em 2024, a produção térmica representou ${format(madeira.energia_2024.termica_percent)}% da eletricidade regional.`, madeira.fontes[0]]
+            ];
+            document.getElementById('territory-grid').innerHTML = cards.map(([title, value, text, link]) => `<article class="territory-card"><h3>${escapeHtml(title)}</h3><span class="territory-value">${escapeHtml(value)}</span><p>${escapeHtml(text)}</p><a class="source-link" href="${escapeHtml(link.url)}" target="_blank" rel="noopener noreferrer">Fonte: ${escapeHtml(link.nome)} ↗</a></article>`).join('');
+        }
+
+        function renderAnalysis(data) {
+            document.getElementById('analysis-grid').innerHTML = data.analise.map(item => { const sentences = item.texto.split('. '); return `<article class="analysis-card"><h3>${escapeHtml(item.topico)}</h3><p>${escapeHtml(sentences[0] + '.')}</p><details><summary>Compreender melhor</summary><p>${escapeHtml(item.texto)}</p></details></article>`; }).join('');
+        }
+
+        async function loadData() {
+            try {
+                const response = await fetch('/data/pressao_vetores.json?v=' + Date.now());
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const data = await response.json();
+                if (!data.estatisticas || !data.zaer || !data.territorio) throw new Error('O ficheiro não contém dados utilizáveis.');
+                document.getElementById('page-title').textContent = data.titulo || 'Vetores de Pressão: Portugal';
+                renderSummary(data); renderCharts(data); renderTerritories(data); renderAnalysis(data);
+            } catch (error) {
+                console.error('Erro ao carregar os vetores nacionais:', error);
+                document.getElementById('summary-grid').innerHTML = `<div class="data-error"><strong>Não foi possível carregar os indicadores.</strong><br>${escapeHtml(error.message)}</div>`;
+            }
+        }
+        fetch('/sidebar-content.html').then(response => response.text()).then(html => { document.getElementById('sidebar').innerHTML = html; }).catch(() => {});
+        loadData();
     </script>
 </body>
 </html>
