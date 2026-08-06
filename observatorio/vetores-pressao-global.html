@@ -19,9 +19,8 @@
         .context-active { color: #c62828; border-bottom: 2px solid #c62828; }
         .context-inactive { color: #bbb; }
         .context-inactive:hover { color: #c62828; }
-        .map-container { background: #000; border-radius: 15px; height: 460px; margin: 2em 0; overflow: hidden; position: relative; border: 1px solid #eee; }
-        .map-mask-bottom { position: absolute; bottom: 0; left: 0; width: 100%; height: 55px; background: #000; z-index: 10; }
-        .map-note { position: absolute; bottom: 15px; left: 25px; color: rgba(255,255,255,.6); font-size: .65em; text-transform: uppercase; letter-spacing: 1px; z-index: 20; }
+        .observatory-hero { display: grid; grid-template-columns: minmax(0, 1fr) minmax(270px, 390px); gap: 4em; align-items: start; margin-bottom: 2.8em; }
+        .observatory-visual { width: 100%; max-width: 390px; aspect-ratio: 1; border-radius: 50%; justify-self: center; overflow: hidden; box-sizing: border-box; background: #eee9df url('/images/pressoes-globais.webp') center/cover no-repeat; box-shadow: 0 30px 80px rgba(72,55,45,.2); }
         .overview { background: #fdf4f4; padding: 2.5em; border-radius: 15px; margin-bottom: 2em; }
         .overview h2 { margin: 0 0 12px; color: #c62828; font-size: .85em; text-transform: uppercase; letter-spacing: 1px; }
         .overview p { margin: 0; color: #6f3030; line-height: 1.75; }
@@ -56,26 +55,22 @@
         .logo-footer { display: block; font-size: .85em; font-weight: 900; color: #333; }
         .sublogo-footer { display: block; font-size: .5em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #bbb; }
         @media screen and (max-width: 1400px) { .summary-grid { grid-template-columns: repeat(3, 1fr); } .chart-grid { grid-template-columns: repeat(2, 1fr); } }
-        @media screen and (max-width: 1280px) { #sidebar { position: relative !important; width: 100% !important; height: auto !important; } #wrapper { padding-left: 0 !important; } }
+        @media screen and (max-width: 1280px) { #sidebar { position: relative !important; width: 100% !important; height: auto !important; } #wrapper { padding-left: 0 !important; } .observatory-hero { grid-template-columns: 1fr; } .observatory-visual { max-width: 330px; } }
         @media screen and (max-width: 900px) { .chart-grid, .vector-grid, .nexus-grid { grid-template-columns: 1fr; } }
-        @media screen and (max-width: 736px) { .inner { padding: 1.5em !important; } .summary-grid, .reading-box ul { grid-template-columns: 1fr; } .map-container { height: 340px; } }
+        @media screen and (max-width: 736px) { .inner { padding: 1.5em !important; } .observatory-hero { gap: 2em; } .observatory-visual { max-width: 260px; } .summary-grid, .reading-box ul { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body class="is-preload">
     <div id="wrapper">
         <div id="main"><div class="inner"><section>
-            <div class="header-left">
+            <div class="observatory-hero"><div class="header-left">
                 <span class="category-label">Observatório de Pressão Ambiental</span>
                 <h1 id="page-title">Vetores de Pressão Planetária</h1>
                 <div class="context-switcher">
                     <a href="/observatorio/vetores-pressao-global.html" class="context-active">● Visão Global</a>
                     <a href="/observatorio/vetores-pressao.html" class="context-inactive">Portugal</a>
                 </div>
-            </div>
-            <div class="map-container">
-                <iframe title="Mapa global interativo de monóxido de carbono" src="https://earth.nullschool.net/#current/chem/surface/level/overlay=cosc/equirectangular=0,0,180" width="100%" height="100%" frameborder="0"></iframe>
-                <div class="map-mask-bottom"></div><div class="map-note">Mapa interativo · concentração superficial de monóxido de carbono</div>
-            </div>
+            </div><div class="observatory-visual" role="img" aria-label="Paisagem abstrata que relaciona extração, indústria, agricultura, energia, infraestrutura digital, transportes, água e habitats"></div></div>
             <div class="overview"><h2>O retrato global em poucas palavras</h2><p id="overview-text">A carregar os indicadores...</p></div>
             <div class="summary-grid" id="summary-grid" aria-live="polite"></div>
             <div class="section-heading"><h2>Comparações sustentadas pelos dados</h2><p>Não desenhamos falsas curvas anuais quando existem apenas médias de períodos ou poucos pontos.</p></div>

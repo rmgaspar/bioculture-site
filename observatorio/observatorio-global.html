@@ -25,10 +25,8 @@
         .context-inactive { color: #bbb; transition: color 0.3s; }
         .context-inactive:hover { color: #2e7d32; }
 
-        /* Mapa e Nota Interativa */
-        .map-container { background: #000; border-radius: 15px; height: 500px; margin: 2em 0; overflow: hidden; position: relative; border: 1px solid #eee; }
-        .map-mask-bottom { position: absolute; bottom: 0; left: 0; width: 100%; height: 55px; background: #000; z-index: 10; }
-        .map-note { position: absolute; bottom: 15px; left: 25px; color: rgba(255,255,255,0.5); font-size: 0.65em; text-transform: uppercase; letter-spacing: 1px; z-index: 20; pointer-events: none; text-align: left; }
+        .observatory-hero { display: grid; grid-template-columns: minmax(0, 1fr) minmax(270px, 390px); gap: 4em; align-items: start; margin-bottom: 2.8em; }
+        .observatory-visual { width: 100%; max-width: 390px; aspect-ratio: 1; border-radius: 50%; justify-self: center; overflow: hidden; box-sizing: border-box; background: #eef2ea url('/images/observatorio-global.webp') center/cover no-repeat; box-shadow: 0 30px 80px rgba(45,65,51,.18); }
 
         /* Banner de Sumário */
         .summary-box { background: #f9f9f9; padding: 2.5em; margin-bottom: 2.5em; display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px; border-radius: 15px; }
@@ -89,8 +87,8 @@
         .sublogo-footer { display: block; font-size: 0.5em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #bbb; }
 
         @media screen and (max-width: 1400px) { .context-grid { grid-template-columns: repeat(2, 1fr); } }
-        @media screen and (max-width: 1280px) { #wrapper { padding-left: 0 !important; } .summary-box { grid-template-columns: repeat(2, 1fr); } }
-        @media screen and (max-width: 736px) { .inner { padding: 1.5em !important; } .map-container { height: 350px; } .report-grid, .summary-box, .context-grid, .report-summary-grid, .method-list { grid-template-columns: 1fr; } .correlation-summary { padding: 2em; } }
+        @media screen and (max-width: 1280px) { #wrapper { padding-left: 0 !important; } .observatory-hero { grid-template-columns: 1fr; } .observatory-visual { max-width: 330px; } .summary-box { grid-template-columns: repeat(2, 1fr); } }
+        @media screen and (max-width: 736px) { .inner { padding: 1.5em !important; } .observatory-hero { gap: 2em; } .observatory-visual { max-width: 260px; } .report-grid, .summary-box, .context-grid, .report-summary-grid, .method-list { grid-template-columns: 1fr; } .correlation-summary { padding: 2em; } }
     </style>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV0FD8PXC"></script>
@@ -106,7 +104,7 @@
         <div id="main">
             <div class="inner">
                 <section>
-                    <div class="header-left">
+                    <div class="observatory-hero"><div class="header-left">
                         <span class="category-label" data-i18n="ui.observatory">Planetarium Global Assistant</span>
                         <h1 id="page-title" data-i18n="global.title">Relatório de Impacto Planetário</h1>
                         
@@ -114,13 +112,7 @@
                             <a href="/observatorio/observatorio-global.html" class="context-active" data-i18n="ui.view_global">● Visão Global</a>
                             <a href="/observatorio/observatorio-terra.html" class="context-inactive" data-i18n="ui.view_portugal">Portugal</a>
                         </div>
-                    </div>
-
-                    <div class="map-container">
-                        <iframe src="https://earth.nullschool.net/#current/wind/surface/level/overlay=temp/equirectangular=0,0,180" width="100%" height="100%" frameborder="0"></iframe>
-                        <div class="map-mask-bottom"></div>
-                        <div class="map-note" data-i18n="ui.map_note">Mapa Interativo: Clique e arraste para explorar dados térmicos globais</div>
-                    </div>
+                    </div><div class="observatory-visual" role="img" aria-label="Paisagem abstrata que relaciona atmosfera, aquecimento, gelo, oceanos, floresta, biodiversidade e solo vivo"></div></div>
 
                     <div class="summary-box" id="summary-grid" aria-live="polite"></div>
 
