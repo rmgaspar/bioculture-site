@@ -1,128 +1,282 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html>
-<head>
-    <title>bioCultura - Ficha Técnica Hortícola</title>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-    <link rel="stylesheet" href="/assets/css/main.css" />
-    <style>
-        body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
-        section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
-        section { min-height: 100vh; display: flex; flex-direction: column; }
-        #sidebar { position: fixed !important; top: 0; left: 0; height: 100vh !important; width: 18em !important; overflow: hidden !important; z-index: 10000; background: #fff; border-right: 1px solid #f2f2f2 !important; }
-        #wrapper { padding-left: 18em !important; }
-        
-        /* Alinhamento de Precisão bioCultura */
-        .inner { padding: 2.2em 4em 0 4em !important; max-width: 1600px !important; margin: 0 auto; width: 100%; box-sizing: border-box; }
-        
-        .category-label { font-size: 0.65em; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; color: #bbb; margin-bottom: 15px; display: block; }
-        
-        .hero-split { display: flex; align-items: flex-start; justify-content: space-between; gap: 4em; margin-bottom: 2em; }
-        .hero-text { 
-            flex: 1.5; 
-            text-align: left; 
-            display: flex; 
-            flex-direction: column; 
-            height: 480px; /* Alinhado com a altura da rodinha */
-        } 
-        .hero-text h1 { font-size: 4em; font-weight: 900; color: #1a1a1a; letter-spacing: -2.5px; line-height: 0.95; margin: 0 0 10px 0; }
-        .hero-text h2 { font-size: 1.4em; color: #bbb; font-style: italic; margin-bottom: 2em; font-weight: 400; }
+    <head>
+        <title>bioCultura - Ficha Técnica Hortícola</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+        <link rel="stylesheet" href="/assets/css/main.css" />
+        <style>
+            body, input, select, textarea {
+                font-family: "Source Sans Pro", sans-serif !important;
+                color: #444;
+            }
+            section, #header, hr, .major {
+                border: none !important;
+                box-shadow: none !important;
+                padding: 0 !important;
+            }
+            section {
+                min-height: 100vh;
+                display: flex;
+                flex-direction: column;
+            }
+            #sidebar {
+                position: fixed !important;
+                top: 0;
+                left: 0;
+                height: 100vh !important;
+                width: 18em !important;
+                overflow: hidden !important;
+                z-index: 10000;
+                background: #fff;
+                border-right: 1px solid #f2f2f2 !important;
+            }
+            #wrapper {
+                padding-left: 18em !important;
+            }
 
-        /* A RODINHA (HERO GLOBE) - PARIDADE TOTAL */
-        .hero-visual { flex: 1; display: flex; justify-content: flex-end; }
-        .hero-globe {
-            position: relative; 
-            width: 480px; height: 480px;
-            border-radius: 50%; overflow: hidden;
-            box-shadow: 0 40px 100px rgba(0,0,0,0.12);
-            background: #1a1a1a;
-        }
-        .hero-globe img { width: 100%; height: 100%; object-fit: cover; }
+            /* Alinhamento de Precisão bioCultura */
+            .inner {
+                padding: 2.2em 4em 0 4em !important;
+                max-width: 1600px !important;
+                margin: 0 auto;
+                width: 100%;
+                box-sizing: border-box;
+            }
 
-        /* GRELHA TÉCNICA */
-        .data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; border-top: 1px solid #f2f2f2; padding-top: 2em; }
-        .data-item b { display: block; font-size: 0.65em; text-transform: uppercase; letter-spacing: 2px; color: #2e7d32; margin-bottom: 8px; }
-        .data-item p { font-size: 1.1em; color: #444; margin: 0; font-weight: 600; }
+            .category-label {
+                font-size: 0.65em;
+                font-weight: 900;
+                text-transform: uppercase;
+                letter-spacing: 4px;
+                color: #bbb;
+                margin-bottom: 15px;
+                display: block;
+            }
 
-        .btn-voltar-base { 
-            margin-top: auto; 
-            display: inline-block; 
-            font-size: 0.75em; 
-            font-weight: 800; 
-            text-transform: uppercase; 
-            letter-spacing: 2px; 
-            text-decoration: none; 
-            color: #bbb !important; 
-            transition: 0.3s; 
-        }
-        .btn-voltar-base:hover { color: #1a1a1a !important; }
+            .hero-split {
+                display: flex;
+                align-items: flex-start;
+                justify-content: space-between;
+                gap: 4em;
+                margin-bottom: 2em;
+            }
+            .hero-text {
+                flex: 1.5;
+                text-align: left;
+                display: flex;
+                flex-direction: column;
+                height: 480px; /* Alinhado com a altura da rodinha */
+            }
+            .hero-text h1 {
+                font-size: 4em;
+                font-weight: 900;
+                color: #1a1a1a;
+                letter-spacing: -2.5px;
+                line-height: 0.95;
+                margin: 0 0 10px 0;
+            }
+            .hero-text h2 {
+                font-size: 1.4em;
+                color: #bbb;
+                font-style: italic;
+                margin-bottom: 2em;
+                font-weight: 400;
+            }
 
-        .sintese-box { background: #f6fff8; padding: 3em; border-radius: 24px; margin-top: 2em; }
-        .sintese-box b { display: block; margin-bottom: 15px; font-size: 0.8em; text-transform: uppercase; color: #1b4332; letter-spacing: 1px; }
-        .sintese-box p { font-size: 1.15em; line-height: 1.8; text-align: justify; color: #444; margin: 0; }
-        
-        .source-footer { font-size: 0.65em; color: #bbb !important; text-transform: uppercase; margin-top: 4em; display: block; letter-spacing: 1px; }
+            /* A RODINHA (HERO GLOBE) - PARIDADE TOTAL */
+            .hero-visual {
+                flex: 1;
+                display: flex;
+                justify-content: flex-end;
+            }
+            .hero-globe {
+                position: relative;
+                width: 480px;
+                height: 480px;
+                border-radius: 50%;
+                overflow: hidden;
+                box-shadow: 0 40px 100px rgba(0, 0, 0, 0.12);
+                background: #1a1a1a;
+            }
+            .hero-globe img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
 
-        /* RODAPÉ OFICIAL */
-        .page-footer { padding: 4em 0 2em 0; border-top: 1px solid #f2f2f2; opacity: 0.3; text-align: right; margin-top: auto; }
-        .logo-footer { display: block; font-size: 0.85em; font-weight: 900; color: #333; }
+            /* GRELHA TÉCNICA */
+            .data-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 30px;
+                border-top: 1px solid #f2f2f2;
+                padding-top: 2em;
+            }
+            .data-item b {
+                display: block;
+                font-size: 0.65em;
+                text-transform: uppercase;
+                letter-spacing: 2px;
+                color: #2e7d32;
+                margin-bottom: 8px;
+            }
+            .data-item p {
+                font-size: 1.1em;
+                color: #444;
+                margin: 0;
+                font-weight: 600;
+            }
 
-        @media screen and (max-width: 1280px) {
-            .hero-split { flex-direction: column-reverse; align-items: center; }
-            .hero-visual { justify-content: center; margin-bottom: 2em; }
-            .hero-globe { width: 350px; height: 350px; }
-            .hero-text { height: auto; text-align: center; }
-            .btn-voltar-base { margin-top: 2em; }
-        }
-    </style>
-</head>
-<body class="is-preload">
-    <div id="wrapper">
-        <div id="main">
-            <div class="inner">
-                <section>
-                    <div id="render-horta">
-                        <p style="color:#bbb; font-style:italic; padding-top: 2em;">A carregar ficha técnica...</p>
-                    </div>
+            .btn-voltar-base {
+                margin-top: auto;
+                display: inline-block;
+                font-size: 0.75em;
+                font-weight: 800;
+                text-transform: uppercase;
+                letter-spacing: 2px;
+                text-decoration: none;
+                color: #bbb !important;
+                transition: 0.3s;
+            }
+            .btn-voltar-base:hover {
+                color: #1a1a1a !important;
+            }
 
-                    <footer class="page-footer">
-                        <span class="logo-footer">bioCultura</span>
-                        <span style="display: block; font-size: 0.5em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Global Regeneration</span>
-                    </footer>
-                </section>
+            .sintese-box {
+                background: #f6fff8;
+                padding: 3em;
+                border-radius: 24px;
+                margin-top: 2em;
+            }
+            .sintese-box b {
+                display: block;
+                margin-bottom: 15px;
+                font-size: 0.8em;
+                text-transform: uppercase;
+                color: #1b4332;
+                letter-spacing: 1px;
+            }
+            .sintese-box p {
+                font-size: 1.15em;
+                line-height: 1.8;
+                text-align: justify;
+                color: #444;
+                margin: 0;
+            }
+
+            .source-footer {
+                font-size: 0.65em;
+                color: #bbb !important;
+                text-transform: uppercase;
+                margin-top: 4em;
+                display: block;
+                letter-spacing: 1px;
+            }
+
+            /* RODAPÉ OFICIAL */
+            .page-footer {
+                padding: 4em 0 2em 0;
+                border-top: 1px solid #f2f2f2;
+                opacity: 0.3;
+                text-align: right;
+                margin-top: auto;
+            }
+            .logo-footer {
+                display: block;
+                font-size: 0.85em;
+                font-weight: 900;
+                color: #333;
+            }
+
+            @media screen and (max-width: 1280px) {
+                .hero-split {
+                    flex-direction: column-reverse;
+                    align-items: center;
+                }
+                .hero-visual {
+                    justify-content: center;
+                    margin-bottom: 2em;
+                }
+                .hero-globe {
+                    width: 350px;
+                    height: 350px;
+                }
+                .hero-text {
+                    height: auto;
+                    text-align: center;
+                }
+                .btn-voltar-base {
+                    margin-top: 2em;
+                }
+            }
+        </style>
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV0FD8PXC"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag("js", new Date());
+            gtag("config", "G-6PV0FD8PXC");
+        </script>
+    </head>
+    <body class="is-preload">
+        <div id="wrapper">
+            <div id="main">
+                <div class="inner">
+                    <section>
+                        <div id="render-horta">
+                            <p style="color: #bbb; font-style: italic; padding-top: 2em">A carregar ficha técnica...</p>
+                        </div>
+
+                        <footer class="page-footer">
+                            <span class="logo-footer">bioCultura</span>
+                            <span
+                                style="display: block; font-size: 0.5em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px"
+                            >Global Regeneration</span>
+                        </footer>
+                    </section>
+                </div>
             </div>
+            <div id="sidebar"></div>
         </div>
-        <div id="sidebar"></div>
-    </div>
 
-    <script src="/assets/js/jquery.min.js"></script>
-    <script>
-        async function carregar() {
-            const id = new URLSearchParams(window.location.search).get('id');
-            if (!id) { window.location.href = 'calendario.html'; return; }
-
-            try {
-                const res = await fetch('/data/horticolas_master.json?v=' + Date.now());
-                const master = await res.json();
-                const item = master[id];
-
-                if(!item) {
-                    document.getElementById('render-horta').innerHTML = "<p>Produto não encontrado.</p>";
+        <script src="/assets/js/jquery.min.js"></script>
+        <script>
+            async function carregar() {
+                const id = new URLSearchParams(window.location.search).get("id");
+                if (!id) {
+                    window.location.href = "calendario.html";
                     return;
                 }
 
-                document.getElementById('render-horta').innerHTML = `
+                try {
+                    const res = await fetch("/data/horticolas_master.json?v=" + Date.now());
+                    const master = await res.json();
+                    const item = master[id];
+
+                    if (!item) {
+                        document.getElementById("render-horta").innerHTML =
+                            "<p>Produto não encontrado.</p>";
+                        return;
+                    }
+
+                    document.getElementById("render-horta").innerHTML = `
                     <div class="hero-split">
                         <div class="hero-text">
                             <span class="category-label">Ficha Técnica bioCultura</span>
                             <h1>${item.nome}</h1>
-                            <h2>${item.nome_cientifico || ''}</h2>
+                            <h2>${item.nome_cientifico || ""}</h2>
                             
                             <div class="data-grid">
                                 <div class="data-item"><b>Categoria</b><p>${item.grupo}</p></div>
                                 <div class="data-item"><b>Terreno Ideal</b><p>Rico em matéria orgânica</p></div>
                                 <div class="data-item"><b>Irrigação</b><p>Regular / Gota-a-gota</p></div>
-                                <div class="data-item"><b>Fonte</b><p>${item.fonte || 'Wikipedia'}</p></div>
+                                <div class="data-item"><b>Fonte</b><p>${
+                        item.fonte || "Wikipedia"
+                    }</p></div>
                             </div>
                             
                             <a href="javascript:history.back()" class="btn-voltar-base">← VOLTAR</a>
@@ -139,16 +293,16 @@
                     </div>
                     <span class="source-footer">FONTE: BIOCULTURA / WIKIPEDIA</span>
                 `;
-                document.title = item.nome + " - bioCultura";
-            } catch (e) {
-                console.error("Erro ao carregar detalhe:", e);
+                    document.title = item.nome + " - bioCultura";
+                } catch (e) {
+                    console.error("Erro ao carregar detalhe:", e);
+                }
             }
-        }
 
-        fetch('/sidebar-content.html').then(r => r.text()).then(html => {
-            document.getElementById('sidebar').innerHTML = html;
-            carregar();
-        });
-    </script>
-</body>
+            fetch("/sidebar-content.html").then((r) => r.text()).then((html) => {
+                document.getElementById("sidebar").innerHTML = html;
+                carregar();
+            });
+        </script>
+    </body>
 </html>

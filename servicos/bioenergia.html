@@ -1,21 +1,34 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html>
-	<head>
-		<title>bioCultura - Estudos e Soluções</title>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-		<link rel="stylesheet" href="/assets/css/main.css" />
-		<style>
+    <head>
+        <title>bioCultura - Estudos e Soluções</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+        <link rel="stylesheet" href="/assets/css/main.css" />
+        <style>
             /* --- ESTRUTURA GLOBAL & TIPOGRAFIA --- */
-            body, input, select, textarea { font-family: 'Source Sans Pro', sans-serif !important; color: #444; }
-            
-			section, #header, hr, .major { border: none !important; box-shadow: none !important; padding: 0 !important; }
-            section { padding-top: 4em !important; min-height: 100vh; display: flex; flex-direction: column; }
+            body, input, select, textarea {
+                font-family: "Source Sans Pro", sans-serif !important;
+                color: #444;
+            }
+
+            section, #header, hr, .major {
+                border: none !important;
+                box-shadow: none !important;
+                padding: 0 !important;
+            }
+            section {
+                padding-top: 4em !important;
+                min-height: 100vh;
+                display: flex;
+                flex-direction: column;
+            }
 
             /* SIDEBAR FIXA */
             #sidebar {
                 position: fixed !important;
-                top: 0; left: 0;
+                top: 0;
+                left: 0;
                 height: 100vh !important;
                 width: 18em !important;
                 overflow: hidden !important;
@@ -23,126 +36,238 @@
                 background: #fff;
                 border-right: 1px solid #f2f2f2 !important;
             }
-            #wrapper { padding-left: 18em !important; }
+            #wrapper {
+                padding-left: 18em !important;
+            }
 
             /* CABEÇALHOS CINZENTOS */
-            .category-label { 
-                font-size: 0.65em; font-weight: 900; text-transform: uppercase; 
-                letter-spacing: 3px; color: #bbb; margin-bottom: 10px; display: block; 
+            .category-label {
+                font-size: 0.65em;
+                font-weight: 900;
+                text-transform: uppercase;
+                letter-spacing: 3px;
+                color: #bbb;
+                margin-bottom: 10px;
+                display: block;
             }
-            .card-title { 
-                font-size: 0.7em; font-weight: 900; text-transform: uppercase; 
-                letter-spacing: 2px; color: #bbb; margin-bottom: 2em; text-align: center; 
+            .card-title {
+                font-size: 0.7em;
+                font-weight: 900;
+                text-transform: uppercase;
+                letter-spacing: 2px;
+                color: #bbb;
+                margin-bottom: 2em;
+                text-align: center;
             }
 
             /* PORTFOLIO GRID */
-            .portfolio-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; margin-bottom: 4em; }
-            .project-card { 
-                background: #fff; border-radius: 35px; padding: 3em; 
-                border: 1px solid #f8f8f8; box-shadow: 0 15px 45px rgba(0,0,0,0.03);
-                transition: all 0.4s ease; display: flex; flex-direction: column;
+            .portfolio-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+                gap: 30px;
+                margin-bottom: 4em;
             }
-            .project-card:hover { transform: translateY(-10px); border-color: #2e7d32; }
-            
-            .project-card i { font-size: 2.2em; color: #bbb; margin-bottom: 1em; }
-            .project-card h3 { font-size: 1.3em; color: #1a1a1a; margin-bottom: 0.8em; font-weight: 700; }
-            .project-card p { font-size: 0.9em; color: #666; line-height: 1.6; margin-bottom: 2em; }
-            
-            /* SMART HINT DISCRETO */
-            .smart-hint { 
-                font-size: 0.75em; background: #f9fbf9; padding: 15px; border-radius: 12px; 
-                color: #2e7d32; border-left: 3px solid #81c784; font-style: italic; margin-bottom: 20px;
+            .project-card {
+                background: #fff;
+                border-radius: 35px;
+                padding: 3em;
+                border: 1px solid #f8f8f8;
+                box-shadow: 0 15px 45px rgba(0, 0, 0, 0.03);
+                transition: all 0.4s ease;
+                display: flex;
+                flex-direction: column;
+            }
+            .project-card:hover {
+                transform: translateY(-10px);
+                border-color: #2e7d32;
             }
 
-            .btn-order { 
-                background: #555; color: #fff !important; text-align: center; 
-                padding: 14px; border-radius: 12px; text-decoration: none; 
-                font-weight: 700; font-size: 0.75em; text-transform: uppercase;
-                margin-top: auto; transition: all 0.3s ease; border: none !important;
+            .project-card i {
+                font-size: 2.2em;
+                color: #bbb;
+                margin-bottom: 1em;
             }
-            .btn-order:hover { background: #1b5e20; }
+            .project-card h3 {
+                font-size: 1.3em;
+                color: #1a1a1a;
+                margin-bottom: 0.8em;
+                font-weight: 700;
+            }
+            .project-card p {
+                font-size: 0.9em;
+                color: #666;
+                line-height: 1.6;
+                margin-bottom: 2em;
+            }
+
+            /* SMART HINT DISCRETO */
+            .smart-hint {
+                font-size: 0.75em;
+                background: #f9fbf9;
+                padding: 15px;
+                border-radius: 12px;
+                color: #2e7d32;
+                border-left: 3px solid #81c784;
+                font-style: italic;
+                margin-bottom: 20px;
+            }
+
+            .btn-order {
+                background: #555;
+                color: #fff !important;
+                text-align: center;
+                padding: 14px;
+                border-radius: 12px;
+                text-decoration: none;
+                font-weight: 700;
+                font-size: 0.75em;
+                text-transform: uppercase;
+                margin-top: auto;
+                transition: all 0.3s ease;
+                border: none !important;
+            }
+            .btn-order:hover {
+                background: #1b5e20;
+            }
 
             /* NOTA DE TRANSPARÊNCIA */
-            .trust-box { 
-                background: #fdfaf5; border: 1px solid #f5ede4; padding: 4em; 
-                border-radius: 45px; text-align: center; margin: 2em 0 6em 0;
+            .trust-box {
+                background: #fdfaf5;
+                border: 1px solid #f5ede4;
+                padding: 4em;
+                border-radius: 45px;
+                text-align: center;
+                margin: 2em 0 6em 0;
             }
-            .trust-box h3 { color: #a67c52; font-size: 1.5em; font-weight: 300; margin-bottom: 1em; }
-            .trust-box p { max-width: 700px; margin: 0 auto; font-size: 0.9em; color: #8d6e63; line-height: 1.6; }
+            .trust-box h3 {
+                color: #a67c52;
+                font-size: 1.5em;
+                font-weight: 300;
+                margin-bottom: 1em;
+            }
+            .trust-box p {
+                max-width: 700px;
+                margin: 0 auto;
+                font-size: 0.9em;
+                color: #8d6e63;
+                line-height: 1.6;
+            }
 
             /* RODAPÉ */
-            .page-footer { margin-top: auto; padding: 2em 0; }
+            .page-footer {
+                margin-top: auto;
+                padding: 2em 0;
+            }
 
             @media screen and (max-width: 1280px) {
-                #sidebar { position: relative !important; width: 100% !important; height: auto !important; }
-                #wrapper { padding-left: 0 !important; }
+                #sidebar {
+                    position: relative !important;
+                    width: 100% !important;
+                    height: auto !important;
+                }
+                #wrapper {
+                    padding-left: 0 !important;
+                }
             }
-		</style>
-	</head>
-	<body class="is-preload">
-		<div id="wrapper">
-			<div id="main">
+        </style>
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV0FD8PXC"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag("js", new Date());
+            gtag("config", "G-6PV0FD8PXC");
+        </script>
+    </head>
+    <body class="is-preload">
+        <div id="wrapper">
+            <div id="main">
                 <div class="inner">
-					<header id="header" style="height: 0; margin: 0; padding: 0; overflow: hidden;"></header>
-					
+                    <header id="header" style="height: 0; margin: 0; padding: 0; overflow: hidden"></header>
+
                     <section>
-                        <div style="text-align: center; margin-bottom: 5em;">
+                        <div style="text-align: center; margin-bottom: 5em">
                             <span class="category-label">Engenharia & Soluções</span>
-                            <h1 style="font-size: 3.5em; font-weight: 300; color: #1a1a1a; letter-spacing: -2px;">Estudos de Autonomia</h1>
-                            <p style="font-style: italic; color: #999; max-width: 700px; margin: 0 auto;">Apoiamos a sua transição para um estilo de vida resiliente. Projetos técnicos à medida, fundamentados na isenção e no respeito pelo território.</p>
+                            <h1 style="font-size: 3.5em; font-weight: 300; color: #1a1a1a; letter-spacing: -2px">
+                                Estudos de Autonomia
+                            </h1>
+                            <p style="font-style: italic; color: #999; max-width: 700px; margin: 0 auto">
+                                Apoiamos a sua transição para um estilo de vida resiliente. Projetos técnicos à medida,
+                                fundamentados na isenção e no respeito pelo território.
+                            </p>
                         </div>
 
                         <div class="portfolio-grid">
-                            
                             <!-- ESTUDO HÍDRICO -->
                             <div class="project-card">
                                 <i class="fas fa-microscope"></i>
                                 <h3>Viabilidade Hídrica</h3>
-                                <p>Análise do potencial de recolha pluvial e desenho de sistemas de fitodepuração (biofossas) adaptados à geologia do seu terreno.</p>
+                                <p>
+                                    Análise do potencial de recolha pluvial e desenho de sistemas de fitodepuração
+                                    (biofossas) adaptados à geologia do seu terreno.
+                                </p>
                                 <div class="smart-hint">Focado na regeneração do seu aquífero local.</div>
-                                <a href="/contactos.html?servico=hidrico" class="btn-order">Solicitar Estudo Individual</a>
+                                <a href="/contactos.html?servico=hidrico" class="btn-order"
+                                >Solicitar Estudo Individual</a>
                             </div>
 
                             <!-- ESTUDO ENERGÉTICO -->
                             <div class="project-card">
                                 <i class="fas fa-solar-panel"></i>
                                 <h3>Dimensionamento Ético</h3>
-                                <p>Estudo de micro-geração solar ou eólica para autoconsumo. Garantimos que a sua energia é limpa na origem e no destino.</p>
+                                <p>
+                                    Estudo de micro-geração solar ou eólica para autoconsumo. Garantimos que a sua
+                                    energia é limpa na origem e no destino.
+                                </p>
                                 <div class="smart-hint">Independência sem o custo ambiental industrial.</div>
-                                <a href="/contactos.html?servico=energia" class="btn-order">Solicitar Estudo Individual</a>
+                                <a href="/contactos.html?servico=energia" class="btn-order"
+                                >Solicitar Estudo Individual</a>
                             </div>
 
                             <!-- ESTUDO REGENERATIVO -->
                             <div class="project-card">
                                 <i class="fas fa-seedling"></i>
                                 <h3>Diagnóstico Regenerativo</h3>
-                                <p>Plano de intervenção para recuperação de solos degradados e promoção da biodiversidade local (fauna e flora).</p>
+                                <p>
+                                    Plano de intervenção para recuperação de solos degradados e promoção da
+                                    biodiversidade local (fauna e flora).
+                                </p>
                                 <div class="smart-hint">Transforme o seu terreno num ecossistema vivo.</div>
                                 <a href="/contactos.html?servico=solo" class="btn-order">Solicitar Estudo Individual</a>
                             </div>
-
                         </div>
-
 
                         <!-- RODAPÉ COM LOGÓTIPO -->
                         <div class="page-footer">
-                            <div style="display: flex; align-items: center; justify-content: flex-end; gap: 8px; opacity: 0.3;">
-                                <span style="font-size: 0.8em; font-weight: 900; color: #333;">bioCultura</span>
-                                <svg width="18" height="18" viewBox="0 0 100 100"><path d="M50 5 L89 27.5 L89 72.5 L50 95 L11 72.5 L11 27.5 Z" fill="#333" /><path d="M50 20 C50 20 75 45 75 70 C75 85 65 85 50 85 C35 85 25 85 25 70 C25 45 50 20 50 20Z" fill="#fff" /></svg>
+                            <div
+                                style="display: flex; align-items: center; justify-content: flex-end; gap: 8px; opacity: 0.3"
+                            >
+                                <span style="font-size: 0.8em; font-weight: 900; color: #333">bioCultura</span>
+                                <svg width="18" height="18" viewBox="0 0 100 100">
+                                    <path d="M50 5 L89 27.5 L89 72.5 L50 95 L11 72.5 L11 27.5 Z" fill="#333" />
+                                    <path
+                                        d="M50 20 C50 20 75 45 75 70 C75 85 65 85 50 85 C35 85 25 85 25 70 C25 45 50 20 50 20Z"
+                                        fill="#fff"
+                                    />
+                                </svg>
                             </div>
                         </div>
-					</section>
-				</div>
+                    </section>
+                </div>
             </div>
-			<div id="sidebar"></div>
-		</div>
+            <div id="sidebar"></div>
+        </div>
 
-		<script src="/assets/js/jquery.min.js"></script>
+        <script src="/assets/js/jquery.min.js"></script>
         <script>
-            fetch('/sidebar-content.html').then(r => r.text()).then(html => {
-                document.getElementById('sidebar').innerHTML = html;
-                var s = document.createElement('script'); s.src = '/assets/js/main.js'; document.body.appendChild(s);
+            fetch("/sidebar-content.html").then((r) => r.text()).then((html) => {
+                document.getElementById("sidebar").innerHTML = html;
+                var s = document.createElement("script");
+                s.src = "/assets/js/main.js";
+                document.body.appendChild(s);
             });
         </script>
-	</body>
+    </body>
 </html>

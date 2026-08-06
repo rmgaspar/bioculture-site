@@ -1,32 +1,822 @@
-<!DOCTYPE HTML><html lang="pt"><head><title>bioCultura — Pecuária Industrial</title><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"/><link rel="stylesheet" href="/assets/css/main.css"/><style>
-:root{--ink:#303833;--muted:#737d76;--earth:#8a6549;--green:#637b63;--rust:#a65f43;--pale:#f1f3ed;--sand:#f6f0e7;--line:#e8e9e3}body,input,select,textarea{font-family:'Source Sans Pro',sans-serif!important;color:var(--ink)}section,#header,hr,.major{border:0!important;box-shadow:none!important;padding:0!important}section{min-height:100vh;display:flex;flex-direction:column}#sidebar{position:fixed!important;inset:0 auto 0 0;height:100vh!important;width:18em!important;overflow:hidden!important;z-index:10000;background:#fff;border-right:1px solid #f2f2f2!important}#wrapper{padding-left:18em!important}.inner{padding:2.2em 4em 0!important;max-width:1600px!important;margin:auto;width:100%;box-sizing:border-box}.eyebrow{display:block;font-size:.65em;font-weight:900;text-transform:uppercase;letter-spacing:4px;color:#9ba39d;margin-bottom:16px}
-.hero{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(270px,.75fr);gap:5em;align-items:start;padding-bottom:3.8em!important}.hero h1{font-size:3.75em;letter-spacing:-2.5px;line-height:1.02;margin:.15em 0 .35em;color:var(--ink)}.lead{font-size:1.17em;line-height:1.75;color:var(--muted);max-width:830px}.field-mark{width:100%;max-width:400px;aspect-ratio:1;border-radius:50%;margin:0;justify-self:center;position:relative;overflow:hidden;box-sizing:border-box;background:#e8dfcd url('/images/pecuaria-escala.webp') center/cover no-repeat;box-shadow:0 30px 80px rgba(70,80,62,.2)}
-.block{border-top:1px solid var(--line);padding:3.2em 0!important}.head{display:grid;grid-template-columns:180px minmax(0,860px);gap:2em;margin-bottom:2em}.head h2{font-size:2em;letter-spacing:-.6px;margin:0;color:var(--ink)}.head p{margin:0;color:var(--muted);line-height:1.7}.principles,.stats,.chain,.monitor,.news{display:grid;gap:1em}.principles{grid-template-columns:repeat(4,1fr)}.tile{padding:1.4em;border-radius:14px;background:var(--pale)}.tile:nth-child(even){background:var(--sand)}.tile b{display:block;color:var(--earth);margin-bottom:.4em}.tile p,.measure p{font-size:.87em;line-height:1.58;color:var(--muted);margin:0}.stats{grid-template-columns:repeat(4,1fr)}.stat{padding:1.45em;border:1px solid var(--line);border-radius:14px}.stat small{display:block;text-transform:uppercase;letter-spacing:1.1px;color:#929b94}.stat strong{display:block;font-size:2.1em;line-height:1;color:var(--earth);margin:.3em 0}.stat span{font-size:.79em;color:var(--muted)}
-.local{background:#465648;color:#fff;padding:2em;border-radius:18px}.local h3{color:#fff;margin:0 0 .3em}.local>p{color:#dbe3dc}.nearest{display:grid;grid-template-columns:repeat(3,1fr);gap:.8em;margin-top:1.2em}.near{padding:1em;border-radius:10px;background:rgba(255,255,255,.08)}.near small{display:block;color:#bdcabe;text-transform:uppercase;letter-spacing:1px}.near b{display:block;color:#fff;margin:.3em 0}.near span{font-size:.78em;color:#d7e0d8}.note{font-size:.78em!important;color:#bdcabe!important;margin-top:1em!important}
-.filters{display:flex;gap:.55em;flex-wrap:wrap;margin-bottom:1.2em}.filter{border:1px solid var(--line)!important;border-radius:99px!important;background:#fff!important;box-shadow:none!important;color:#78817a!important;font-size:.68em!important;padding:.65em 1em!important;height:auto!important;line-height:1.2!important}.filter.active{background:var(--earth)!important;color:#fff!important;border-color:var(--earth)!important}.cases{display:grid;grid-template-columns:repeat(2,1fr);gap:1em}.case{border:1px solid var(--line);border-radius:14px;padding:1.45em}.case small{font-size:.65em;text-transform:uppercase;letter-spacing:1px;color:var(--rust)}.case h3{font-size:1.08em;margin:.35em 0;color:var(--ink)}.case p{font-size:.86em;line-height:1.58;color:var(--muted);margin:.4em 0}.case details{margin-top:.8em}.case summary{cursor:pointer;color:var(--earth);font-size:.78em;font-weight:700}.details{display:grid;grid-template-columns:1fr 1fr;gap:.6em;margin-top:.8em}.datum{background:var(--pale);padding:.8em;border-radius:8px}.datum b{display:block;font-size:.67em;text-transform:uppercase;color:#69766b}.datum span,.datum li{font-size:.79em;line-height:1.45;color:var(--muted)}.datum ul{margin:.3em 0 0;padding-left:1.1em}.sources a{display:block;font-size:.72em;color:var(--earth);overflow-wrap:anywhere;margin-top:.4em}
-.chain{grid-template-columns:repeat(4,1fr)}.chain article{padding:1.4em;border-left:3px solid var(--green);background:#fafaf8}.chain small,.measure small{font-size:.65em;text-transform:uppercase;letter-spacing:1px;color:var(--rust)}.chain h3,.measure h3,.news h3{font-size:1.03em;margin:.3em 0 .5em;color:var(--ink)}.chain p{font-size:.86em;line-height:1.58;color:var(--muted);margin:0}.monitor{grid-template-columns:repeat(3,1fr)}.measure{padding:1.4em;border:1px solid var(--line);border-radius:14px}.news{grid-template-columns:repeat(3,1fr)}.news a{text-decoration:none;color:inherit;padding:1.35em;border:1px solid var(--line);border-radius:14px}.news span{font-size:.68em;color:#929b94}.chapters{display:flex;gap:.8em;flex-wrap:wrap}.chapters a{text-decoration:none;color:var(--ink);border:1px solid var(--line);padding:.6em 1em;border-radius:99px;font-size:.8em}.empty{color:#99a099;font-style:italic}.footer{padding:4em 0 2em;border-top:1px solid var(--line);opacity:.4;text-align:right;margin-top:auto}.footer strong{display:block}.footer span{font-size:.55em;text-transform:uppercase;letter-spacing:1px}
-@media(max-width:1280px){#sidebar{position:relative!important;width:100%!important;height:auto!important}#wrapper{padding-left:0!important}.hero{grid-template-columns:1fr}.field-mark{width:320px}.principles,.stats{grid-template-columns:repeat(2,1fr)}}@media(max-width:760px){.inner{padding:1.7em 1.4em 0!important}.hero h1{font-size:2.55em}.hero{gap:2.5em}.field-mark{width:235px}.head{grid-template-columns:1fr;gap:.7em}.principles,.stats,.nearest,.cases,.details,.chain,.monitor,.news{grid-template-columns:1fr}}
-</style></head><body class="is-preload"><div id="wrapper"><div id="main"><div class="inner"><section>
-<div class="hero"><div><span class="eyebrow">Vetores de pressão</span><h1>Pecuária.<br>Quando a escala pesa.</h1><p class="lead">Criar animais faz parte da história rural. O problema muda de natureza quando muitos animais, alimento, água e efluentes se concentram no mesmo lugar. Este observatório acompanha instalações documentadas e mostra o que deve ser medido — sem confundir risco potencial com dano comprovado.</p></div><div class="field-mark" role="img" aria-label="Paisagem abstrata sobre escala pecuária, alimento, água, efluentes, solo e biodiversidade"></div></div>
-<div class="block"><div class="head"><span class="eyebrow">Ler o sistema</span><div><h2>Não é apenas o edifício</h2><p>O impacto percorre uma cadeia: produção de alimento, alojamento, consumo de recursos, gestão de efluentes, transporte e destino final.</p></div></div><div class="principles"><article class="tile"><b>Água</b><p>Abeberamento, lavagem e refrigeração podem pressionar captações. Importa conhecer origem, volume e sazonalidade.</p></article><article class="tile"><b>Solo e nutrientes</b><p>Estrume e chorume são recursos quando aplicados à dose certa; em excesso tornam-se fontes de azoto, fósforo e sais.</p></article><article class="tile"><b>Ar e clima</b><p>Amoníaco, odores, metano e partículas variam com espécie, dieta, alojamento, armazenamento e aplicação no solo.</p></article><article class="tile"><b>Vida e território</b><p>Bem-estar animal, tráfego, ruído, linhas de água, habitações e habitats precisam de avaliação local.</p></article></div></div>
-<div class="block"><div class="head"><span class="eyebrow">Inventário</span><div><h2>Casos documentados em Portugal</h2><p>Este conjunto é uma amostra de processos de AIA e inspeção ambiental, não um cadastro completo de explorações. A presença no inventário não demonstra incumprimento.</p></div></div><div class="stats" id="stats"></div></div>
-<div class="block"><div class="head"><span class="eyebrow">Perto de ti</span><div><h2>Proximidade para orientar a pesquisa</h2><p>A localização aproxima o debate do território, mas a distância, por si só, não mede contaminação, odor, emissões ou risco.</p></div></div><div class="local"><h3 id="local-name">A carregar região…</h3><p id="local-copy">A ordenar os registos com coordenadas disponíveis.</p><div class="nearest" id="nearest"></div><p class="note">As 20 coordenadas representam aproximadamente o centro do concelho, não a entrada nem o perímetro da instalação.</p></div></div>
-<div class="block"><div class="head"><span class="eyebrow">Instalações</span><div><h2>Ler cada caso com o seu contexto</h2><p>Capacidade, enquadramento, pressões, proximidades e medidas surgem apenas quando documentados. O símbolo “—” assinala informação não disponível.</p></div></div><div class="filters" id="filters"></div><div class="cases" id="cases"></div></div>
-<div class="block"><div class="head"><span class="eyebrow">Cadeia</span><div><h2>Onde nasce a pressão</h2><p>Uma avaliação séria ultrapassa a instalação e acompanha fluxos materiais antes e depois da produção.</p></div></div><div class="chain"><article><small>Antes</small><h3>Alimento animal</h3><p>Origem da soja e cereais, uso do solo, fertilização, transporte e dependência externa.</p></article><article><small>Durante</small><h3>Alojamento</h3><p>Densidade, ventilação, água, energia, saúde, mortalidade e comportamento natural.</p></article><article><small>Saída</small><h3>Efluentes</h3><p>Quantidade, estanquidade, tratamento, nutrientes, área disponível e calendário de aplicação.</p></article><article><small>Depois</small><h3>Distribuição</h3><p>Matadouro, frio, transporte, desperdício e relação entre produção e consumo efetivo.</p></article></div></div>
-<div class="block"><div class="head"><span class="eyebrow">Monitorizar</span><div><h2>Dados que permitem agir</h2><p>Licenças e médias nacionais não substituem séries públicas por instalação e por bacia hidrográfica.</p></div></div><div class="monitor"><article class="measure"><small>Água e solo</small><h3>Volume e nutrientes</h3><p>Captação mensal, armazenamento, azoto e fósforo por hectare, análises de solo e águas a montante e jusante.</p></article><article class="measure"><small>Atmosfera</small><h3>NH₃, CH₄ e odor</h3><p>Emissões medidas ou calculadas com método explícito, reclamações, vento e medidas de redução verificadas.</p></article><article class="measure"><small>Animais</small><h3>Bem-estar observável</h3><p>Densidade, lesões, mortalidade, antibióticos, acesso ao exterior e resultados de auditorias independentes.</p></article></div></div>
-<div class="block"><div class="head"><span class="eyebrow">Alternativa</span><div><h2>Menos concentração, mais território vivo</h2><p>Reduzir dependência de alimento importado, ajustar efetivos à terra disponível, integrar culturas e animais, proteger linhas de água e apoiar dietas equilibradas diminui pressão sem apagar a cultura rural.</p></div></div><nav class="chapters"><a href="digital.html">← Impacto digital</a><a href="energia.html">Energia consciente</a><a href="transicao-etica.html">Renováveis e território</a><a href="mineracao.html">Mineração</a></nav></div>
-<div class="block"><div class="head"><span class="eyebrow">Atualidade</span><div><h2>Notícias sobre pecuária e território</h2><p>Conteúdos relacionados com explorações intensivas, efluentes, emissões, água, saúde e bem-estar animal.</p></div></div><div class="news" id="news"></div></div>
-<footer class="footer"><strong>bioCultura</strong><span>Global Regeneration</span></footer></section></div></div><div id="sidebar"></div></div>
-<script src="/assets/js/jquery.min.js"></script><script>
-const el=id=>document.getElementById(id),esc=v=>String(v??'—').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])),valid=v=>v!==undefined&&v!==null&&v!==''&&v!=='-';let records=[],kind='Todos';
-function distance(a,b){const r=Math.PI/180,R=6371,dLat=(+b.lat-+a.lat)*r,dLon=(+b.lon-+a.lon)*r,q=Math.sin(dLat/2)**2+Math.cos(+a.lat*r)*Math.cos(+b.lat*r)*Math.sin(dLon/2)**2;return R*2*Math.atan2(Math.sqrt(q),Math.sqrt(1-q))}
-function family(x){return /suín|suin/i.test(x.tipo||'')?'Suínos':/bovin/i.test(x.tipo||'')?'Bovinos':/ave|frango|peru|poedeira|capoeira/i.test(x.tipo||'')?'Aves':'Outros'}
-function renderStats(){const families=['Suínos','Aves','Bovinos'];el('stats').innerHTML=[['Casos',records.length,'processos documentados acompanhados'],...families.map(f=>[f,records.filter(x=>family(x)===f).length,'registos desta tipologia'])].map(x=>`<article class="stat"><small>${x[0]}</small><strong>${x[1]}</strong><span>${x[2]}</span></article>`).join('')}
-function renderLocal(locations){const saved=localStorage.getItem('biocultura_region'),info=locations.find(x=>String(x.id)===String(saved))||locations.find(x=>Number(x.lat)&&Number(x.lon));if(!info)return;el('local-name').textContent=[info.titulo,info.concelho].filter(Boolean).join(', ');if(!Number(info.lat)||!Number(info.lon)){el('local-copy').textContent='Sem coordenadas utilizáveis para esta região.';return}const near=records.filter(x=>Number(x.lat)&&Number(x.lon)).map(x=>({...x,dist:distance(info,x)})).sort((a,b)=>a.dist-b.dist).slice(0,3);el('local-copy').textContent='Três registos mais próximos dentro desta amostra.';el('nearest').innerHTML=near.map(x=>`<article class="near"><small>${esc(family(x))}</small><b>${esc(x.nome)}</b><span>cerca de ${Math.round(x.dist)} km · ${esc(x.concelho)}</span></article>`).join('')}
-function list(v){if(!valid(v))return '—';return Array.isArray(v)?`<ul>${v.map(i=>`<li>${esc(i)}</li>`).join('')}</ul>`:esc(v)}
-function detail(x){const cells=[['Capacidade documentada',x.capacidade_documentada],['Enquadramento',x.enquadramento],['Água',x.recursos_hidricos],['Solo',x.solo],['Ar',x.ar],['Proximidades sensíveis',x.proximidades_sensiveis],['Pressões potenciais',x.pressoes_ambientais_potenciais],['Medidas prioritárias',x.medidas_prioritarias],['Indicadores a monitorizar',x.indicadores_monitorizar],['Bem-estar documentado',x.bem_estar]];return `<details><summary>Ver contexto, medidas e fontes</summary><div class="details">${cells.map(([k,v])=>`<div class="datum"><b>${k}</b><span>${list(v)}</span></div>`).join('')}</div><div class="sources">${(x.fontes||[]).map((u,i)=>`<a href="${esc(u)}" target="_blank" rel="noopener">Fonte ${i+1}</a>`).join('')}</div></details>`}
-function renderCases(){const items=kind==='Todos'?records:records.filter(x=>family(x)===kind);el('cases').innerHTML=items.map(x=>`<article class="case"><small>${esc(family(x))} · ${esc(x.ano_referencia)}</small><h3>${esc(x.nome)}</h3><p><strong>${esc(x.concelho)}, ${esc(x.distrito)}</strong> · ${esc(x.status)}</p><p>${esc(x.detalhe)}</p><p>Localização: ${esc(x.precisao_localizacao)}</p>${detail(x)}</article>`).join('')||'<p class="empty">—</p>'}
-function filters(){const names=['Todos','Suínos','Aves','Bovinos'];el('filters').innerHTML=names.map((x,i)=>`<button type="button" class="filter ${i?'':'active'}" data-kind="${x}">${x}</button>`).join('');el('filters').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;kind=b.dataset.kind;document.querySelectorAll('.filter').forEach(x=>x.classList.toggle('active',x===b));renderCases()})}
-function renderNews(items){const chosen=items.filter(n=>{const c=n.pt||n;return /pecu|suin|aviário|aviario|bovin|efluente|estrume|chorume|bem-estar animal/i.test([n.categoria,n.categoria_id,c.titulo,c.resumo].filter(Boolean).join(' '))}).slice(0,6);el('news').innerHTML=chosen.map(n=>{const c=n.pt||n;return `<a href="/observatorio/noticia-detalhe.html?id=${encodeURIComponent(n.id)}"><span>${esc(n.data)}</span><h3>${esc(c.titulo)}</h3><span>${esc(n.fonte)}</span></a>`}).join('')||'<p class="empty">Sem notícias desta categoria neste momento.</p>'}
-async function start(){try{const [livestock,locations,news]=await Promise.all(['pecuaria_industrial','bioregioes','noticias'].map(f=>fetch(`/data/${f}.json`).then(r=>{if(!r.ok)throw Error(f);return r.json()})));records=livestock;renderStats();renderLocal(locations);filters();renderCases();renderNews(news)}catch(e){console.error('Não foi possível carregar os dados de pecuária:',e)}}fetch('/sidebar-content.html').then(r=>r.text()).then(h=>{el('sidebar').innerHTML=h;start()}).catch(()=>start());
-</script></body></html>
+<!DOCTYPE html>
+<html lang="pt">
+    <head>
+        <title>bioCultura — Pecuária Industrial</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
+        <link rel="stylesheet" href="/assets/css/main.css" />
+        <style>
+            :root {
+                --ink: #303833;
+                --muted: #737d76;
+                --earth: #8a6549;
+                --green: #637b63;
+                --rust: #a65f43;
+                --pale: #f1f3ed;
+                --sand: #f6f0e7;
+                --line: #e8e9e3;
+            }
+            body, input, select, textarea {
+                font-family: "Source Sans Pro", sans-serif !important;
+                color: var(--ink);
+            }
+            section, #header, hr, .major {
+                border: 0 !important;
+                box-shadow: none !important;
+                padding: 0 !important;
+            }
+            section {
+                min-height: 100vh;
+                display: flex;
+                flex-direction: column;
+            }
+            #sidebar {
+                position: fixed !important;
+                inset: 0 auto 0 0;
+                height: 100vh !important;
+                width: 18em !important;
+                overflow: hidden !important;
+                z-index: 10000;
+                background: #fff;
+                border-right: 1px solid #f2f2f2 !important;
+            }
+            #wrapper {
+                padding-left: 18em !important;
+            }
+            .inner {
+                padding: 2.2em 4em 0 !important;
+                max-width: 1600px !important;
+                margin: auto;
+                width: 100%;
+                box-sizing: border-box;
+            }
+            .eyebrow {
+                display: block;
+                font-size: 0.65em;
+                font-weight: 900;
+                text-transform: uppercase;
+                letter-spacing: 4px;
+                color: #9ba39d;
+                margin-bottom: 16px;
+            }
+            .hero {
+                display: grid;
+                grid-template-columns: minmax(0, 1.25fr) minmax(270px, 0.75fr);
+                gap: 5em;
+                align-items: start;
+                padding-bottom: 3.8em !important;
+            }
+            .hero h1 {
+                font-size: 3.75em;
+                letter-spacing: -2.5px;
+                line-height: 1.02;
+                margin: 0.15em 0 0.35em;
+                color: var(--ink);
+            }
+            .lead {
+                font-size: 1.17em;
+                line-height: 1.75;
+                color: var(--muted);
+                max-width: 830px;
+            }
+            .field-mark {
+                width: 100%;
+                max-width: 400px;
+                aspect-ratio: 1;
+                border-radius: 50%;
+                margin: 0;
+                justify-self: center;
+                position: relative;
+                overflow: hidden;
+                box-sizing: border-box;
+                background: #e8dfcd url("/images/pecuaria-escala.webp") center/cover no-repeat;
+                box-shadow: 0 30px 80px rgba(70, 80, 62, 0.2);
+            }
+            .block {
+                border-top: 1px solid var(--line);
+                padding: 3.2em 0 !important;
+            }
+            .head {
+                display: grid;
+                grid-template-columns: 180px minmax(0, 860px);
+                gap: 2em;
+                margin-bottom: 2em;
+            }
+            .head h2 {
+                font-size: 2em;
+                letter-spacing: -0.6px;
+                margin: 0;
+                color: var(--ink);
+            }
+            .head p {
+                margin: 0;
+                color: var(--muted);
+                line-height: 1.7;
+            }
+            .principles, .stats, .chain, .monitor, .news {
+                display: grid;
+                gap: 1em;
+            }
+            .principles {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            .tile {
+                padding: 1.4em;
+                border-radius: 14px;
+                background: var(--pale);
+            }
+            .tile:nth-child(even) {
+                background: var(--sand);
+            }
+            .tile b {
+                display: block;
+                color: var(--earth);
+                margin-bottom: 0.4em;
+            }
+            .tile p, .measure p {
+                font-size: 0.87em;
+                line-height: 1.58;
+                color: var(--muted);
+                margin: 0;
+            }
+            .stats {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            .stat {
+                padding: 1.45em;
+                border: 1px solid var(--line);
+                border-radius: 14px;
+            }
+            .stat small {
+                display: block;
+                text-transform: uppercase;
+                letter-spacing: 1.1px;
+                color: #929b94;
+            }
+            .stat strong {
+                display: block;
+                font-size: 2.1em;
+                line-height: 1;
+                color: var(--earth);
+                margin: 0.3em 0;
+            }
+            .stat span {
+                font-size: 0.79em;
+                color: var(--muted);
+            }
+            .local {
+                background: #465648;
+                color: #fff;
+                padding: 2em;
+                border-radius: 18px;
+            }
+            .local h3 {
+                color: #fff;
+                margin: 0 0 0.3em;
+            }
+            .local > p {
+                color: #dbe3dc;
+            }
+            .nearest {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 0.8em;
+                margin-top: 1.2em;
+            }
+            .near {
+                padding: 1em;
+                border-radius: 10px;
+                background: rgba(255, 255, 255, 0.08);
+            }
+            .near small {
+                display: block;
+                color: #bdcabe;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+            }
+            .near b {
+                display: block;
+                color: #fff;
+                margin: 0.3em 0;
+            }
+            .near span {
+                font-size: 0.78em;
+                color: #d7e0d8;
+            }
+            .note {
+                font-size: 0.78em !important;
+                color: #bdcabe !important;
+                margin-top: 1em !important;
+            }
+            .filters {
+                display: flex;
+                gap: 0.55em;
+                flex-wrap: wrap;
+                margin-bottom: 1.2em;
+            }
+            .filter {
+                border: 1px solid var(--line) !important;
+                border-radius: 99px !important;
+                background: #fff !important;
+                box-shadow: none !important;
+                color: #78817a !important;
+                font-size: 0.68em !important;
+                padding: 0.65em 1em !important;
+                height: auto !important;
+                line-height: 1.2 !important;
+            }
+            .filter.active {
+                background: var(--earth) !important;
+                color: #fff !important;
+                border-color: var(--earth) !important;
+            }
+            .cases {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1em;
+            }
+            .case {
+                border: 1px solid var(--line);
+                border-radius: 14px;
+                padding: 1.45em;
+            }
+            .case small {
+                font-size: 0.65em;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                color: var(--rust);
+            }
+            .case h3 {
+                font-size: 1.08em;
+                margin: 0.35em 0;
+                color: var(--ink);
+            }
+            .case p {
+                font-size: 0.86em;
+                line-height: 1.58;
+                color: var(--muted);
+                margin: 0.4em 0;
+            }
+            .case details {
+                margin-top: 0.8em;
+            }
+            .case summary {
+                cursor: pointer;
+                color: var(--earth);
+                font-size: 0.78em;
+                font-weight: 700;
+            }
+            .details {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 0.6em;
+                margin-top: 0.8em;
+            }
+            .datum {
+                background: var(--pale);
+                padding: 0.8em;
+                border-radius: 8px;
+            }
+            .datum b {
+                display: block;
+                font-size: 0.67em;
+                text-transform: uppercase;
+                color: #69766b;
+            }
+            .datum span, .datum li {
+                font-size: 0.79em;
+                line-height: 1.45;
+                color: var(--muted);
+            }
+            .datum ul {
+                margin: 0.3em 0 0;
+                padding-left: 1.1em;
+            }
+            .sources a {
+                display: block;
+                font-size: 0.72em;
+                color: var(--earth);
+                overflow-wrap: anywhere;
+                margin-top: 0.4em;
+            }
+            .chain {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            .chain article {
+                padding: 1.4em;
+                border-left: 3px solid var(--green);
+                background: #fafaf8;
+            }
+            .chain small, .measure small {
+                font-size: 0.65em;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                color: var(--rust);
+            }
+            .chain h3, .measure h3, .news h3 {
+                font-size: 1.03em;
+                margin: 0.3em 0 0.5em;
+                color: var(--ink);
+            }
+            .chain p {
+                font-size: 0.86em;
+                line-height: 1.58;
+                color: var(--muted);
+                margin: 0;
+            }
+            .monitor {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            .measure {
+                padding: 1.4em;
+                border: 1px solid var(--line);
+                border-radius: 14px;
+            }
+            .news {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            .news a {
+                text-decoration: none;
+                color: inherit;
+                padding: 1.35em;
+                border: 1px solid var(--line);
+                border-radius: 14px;
+            }
+            .news span {
+                font-size: 0.68em;
+                color: #929b94;
+            }
+            .chapters {
+                display: flex;
+                gap: 0.8em;
+                flex-wrap: wrap;
+            }
+            .chapters a {
+                text-decoration: none;
+                color: var(--ink);
+                border: 1px solid var(--line);
+                padding: 0.6em 1em;
+                border-radius: 99px;
+                font-size: 0.8em;
+            }
+            .empty {
+                color: #99a099;
+                font-style: italic;
+            }
+            .footer {
+                padding: 4em 0 2em;
+                border-top: 1px solid var(--line);
+                opacity: 0.4;
+                text-align: right;
+                margin-top: auto;
+            }
+            .footer strong {
+                display: block;
+            }
+            .footer span {
+                font-size: 0.55em;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+            }
+            @media (max-width: 1280px) {
+                #sidebar {
+                    position: relative !important;
+                    width: 100% !important;
+                    height: auto !important;
+                }
+                #wrapper {
+                    padding-left: 0 !important;
+                }
+                .hero {
+                    grid-template-columns: 1fr;
+                }
+                .field-mark {
+                    width: 320px;
+                }
+                .principles, .stats {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+            }
+            @media (max-width: 760px) {
+                .inner {
+                    padding: 1.7em 1.4em 0 !important;
+                }
+                .hero h1 {
+                    font-size: 2.55em;
+                }
+                .hero {
+                    gap: 2.5em;
+                }
+                .field-mark {
+                    width: 235px;
+                }
+                .head {
+                    grid-template-columns: 1fr;
+                    gap: 0.7em;
+                }
+                .principles, .stats, .nearest, .cases, .details, .chain, .monitor, .news {
+                    grid-template-columns: 1fr;
+                }
+            }
+        </style>
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV0FD8PXC"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag("js", new Date());
+            gtag("config", "G-6PV0FD8PXC");
+        </script>
+    </head>
+    <body class="is-preload">
+        <div id="wrapper">
+            <div id="main">
+                <div class="inner">
+                    <section>
+                        <div class="hero">
+                            <div>
+                                <span class="eyebrow">Vetores de pressão</span><h1>
+                                    Pecuária.<br>Quando a escala pesa.
+                                </h1>
+                                <p class="lead">
+                                    Criar animais faz parte da história rural. O problema muda de natureza quando muitos
+                                    animais, alimento, água e efluentes se concentram no mesmo lugar. Este observatório
+                                    acompanha instalações documentadas e mostra o que deve ser medido — sem confundir
+                                    risco potencial com dano comprovado.
+                                </p>
+                            </div>
+                            <div
+                                class="field-mark"
+                                role="img"
+                                aria-label="Paisagem abstrata sobre escala pecuária, alimento, água, efluentes, solo e biodiversidade"
+                            >
+                            </div>
+                        </div>
+                        <div class="block">
+                            <div class="head">
+                                <span class="eyebrow">Ler o sistema</span><div>
+                                    <h2>Não é apenas o edifício</h2>
+                                    <p>
+                                        O impacto percorre uma cadeia: produção de alimento, alojamento, consumo de
+                                        recursos, gestão de efluentes, transporte e destino final.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="principles">
+                                <article class="tile">
+                                    <b>Água</b><p>
+                                        Abeberamento, lavagem e refrigeração podem pressionar captações. Importa
+                                        conhecer origem, volume e sazonalidade.
+                                    </p>
+                                </article>
+                                <article class="tile">
+                                    <b>Solo e nutrientes</b><p>
+                                        Estrume e chorume são recursos quando aplicados à dose certa; em excesso
+                                        tornam-se fontes de azoto, fósforo e sais.
+                                    </p>
+                                </article>
+                                <article class="tile">
+                                    <b>Ar e clima</b><p>
+                                        Amoníaco, odores, metano e partículas variam com espécie, dieta, alojamento,
+                                        armazenamento e aplicação no solo.
+                                    </p>
+                                </article>
+                                <article class="tile">
+                                    <b>Vida e território</b><p>
+                                        Bem-estar animal, tráfego, ruído, linhas de água, habitações e habitats precisam
+                                        de avaliação local.
+                                    </p>
+                                </article>
+                            </div>
+                        </div>
+                        <div class="block">
+                            <div class="head">
+                                <span class="eyebrow">Inventário</span><div>
+                                    <h2>Casos documentados em Portugal</h2>
+                                    <p>
+                                        Este conjunto é uma amostra de processos de AIA e inspeção ambiental, não um
+                                        cadastro completo de explorações. A presença no inventário não demonstra
+                                        incumprimento.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="stats" id="stats"></div>
+                        </div>
+                        <div class="block">
+                            <div class="head">
+                                <span class="eyebrow">Perto de ti</span><div>
+                                    <h2>Proximidade para orientar a pesquisa</h2>
+                                    <p>
+                                        A localização aproxima o debate do território, mas a distância, por si só, não
+                                        mede contaminação, odor, emissões ou risco.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="local">
+                                <h3 id="local-name">A carregar região…</h3>
+                                <p id="local-copy">A ordenar os registos com coordenadas disponíveis.</p>
+                                <div class="nearest" id="nearest"></div>
+                                <p class="note">
+                                    As 20 coordenadas representam aproximadamente o centro do concelho, não a entrada
+                                    nem o perímetro da instalação.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="block">
+                            <div class="head">
+                                <span class="eyebrow">Instalações</span><div>
+                                    <h2>Ler cada caso com o seu contexto</h2>
+                                    <p>
+                                        Capacidade, enquadramento, pressões, proximidades e medidas surgem apenas quando
+                                        documentados. O símbolo “—” assinala informação não disponível.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="filters" id="filters"></div>
+                            <div class="cases" id="cases"></div>
+                        </div>
+                        <div class="block">
+                            <div class="head">
+                                <span class="eyebrow">Cadeia</span><div>
+                                    <h2>Onde nasce a pressão</h2>
+                                    <p>
+                                        Uma avaliação séria ultrapassa a instalação e acompanha fluxos materiais antes e
+                                        depois da produção.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="chain">
+                                <article>
+                                    <small>Antes</small><h3>Alimento animal</h3>
+                                    <p>
+                                        Origem da soja e cereais, uso do solo, fertilização, transporte e dependência
+                                        externa.
+                                    </p>
+                                </article>
+                                <article>
+                                    <small>Durante</small><h3>Alojamento</h3>
+                                    <p>
+                                        Densidade, ventilação, água, energia, saúde, mortalidade e comportamento
+                                        natural.
+                                    </p>
+                                </article>
+                                <article>
+                                    <small>Saída</small><h3>Efluentes</h3>
+                                    <p>
+                                        Quantidade, estanquidade, tratamento, nutrientes, área disponível e calendário
+                                        de aplicação.
+                                    </p>
+                                </article>
+                                <article>
+                                    <small>Depois</small><h3>Distribuição</h3>
+                                    <p>
+                                        Matadouro, frio, transporte, desperdício e relação entre produção e consumo
+                                        efetivo.
+                                    </p>
+                                </article>
+                            </div>
+                        </div>
+                        <div class="block">
+                            <div class="head">
+                                <span class="eyebrow">Monitorizar</span><div>
+                                    <h2>Dados que permitem agir</h2>
+                                    <p>
+                                        Licenças e médias nacionais não substituem séries públicas por instalação e por
+                                        bacia hidrográfica.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="monitor">
+                                <article class="measure">
+                                    <small>Água e solo</small><h3>Volume e nutrientes</h3>
+                                    <p>
+                                        Captação mensal, armazenamento, azoto e fósforo por hectare, análises de solo e
+                                        águas a montante e jusante.
+                                    </p>
+                                </article>
+                                <article class="measure">
+                                    <small>Atmosfera</small><h3>NH₃, CH₄ e odor</h3>
+                                    <p>
+                                        Emissões medidas ou calculadas com método explícito, reclamações, vento e
+                                        medidas de redução verificadas.
+                                    </p>
+                                </article>
+                                <article class="measure">
+                                    <small>Animais</small><h3>Bem-estar observável</h3>
+                                    <p>
+                                        Densidade, lesões, mortalidade, antibióticos, acesso ao exterior e resultados de
+                                        auditorias independentes.
+                                    </p>
+                                </article>
+                            </div>
+                        </div>
+                        <div class="block">
+                            <div class="head">
+                                <span class="eyebrow">Alternativa</span><div>
+                                    <h2>Menos concentração, mais território vivo</h2>
+                                    <p>
+                                        Reduzir dependência de alimento importado, ajustar efetivos à terra disponível,
+                                        integrar culturas e animais, proteger linhas de água e apoiar dietas
+                                        equilibradas diminui pressão sem apagar a cultura rural.
+                                    </p>
+                                </div>
+                            </div>
+                            <nav class="chapters">
+                                <a href="digital.html">← Impacto digital</a><a href="energia.html"
+                                >Energia consciente</a><a href="transicao-etica.html">Renováveis e território</a><a
+                                    href="mineracao.html"
+                                >Mineração</a>
+                            </nav>
+                        </div>
+                        <div class="block">
+                            <div class="head">
+                                <span class="eyebrow">Atualidade</span><div>
+                                    <h2>Notícias sobre pecuária e território</h2>
+                                    <p>
+                                        Conteúdos relacionados com explorações intensivas, efluentes, emissões, água,
+                                        saúde e bem-estar animal.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="news" id="news"></div>
+                        </div>
+                        <footer class="footer"><strong>bioCultura</strong><span>Global Regeneration</span></footer>
+                    </section>
+                </div>
+            </div>
+            <div id="sidebar"></div>
+        </div>
+        <script src="/assets/js/jquery.min.js"></script>
+        <script>
+            const el = (id) => document.getElementById(id),
+                esc = (v) =>
+                    String(v ?? "—").replace(
+                        /[&<>'"]/g,
+                        (c) => ({
+                            "&": "&amp;",
+                            "<": "&lt;",
+                            ">": "&gt;",
+                            "'": "&#39;",
+                            '"': "&quot;",
+                        }[c]),
+                    ),
+                valid = (v) => v !== undefined && v !== null && v !== "" && v !== "-";
+            let records = [], kind = "Todos";
+            function distance(a, b) {
+                const r = Math.PI / 180,
+                    R = 6371,
+                    dLat = (+b.lat - +a.lat) * r,
+                    dLon = (+b.lon - +a.lon) * r,
+                    q = Math.sin(dLat / 2) ** 2 +
+                        Math.cos(+a.lat * r) * Math.cos(+b.lat * r) * Math.sin(dLon / 2) ** 2;
+                return R * 2 * Math.atan2(Math.sqrt(q), Math.sqrt(1 - q));
+            }
+            function family(x) {
+                return /suín|suin/i.test(x.tipo || "")
+                    ? "Suínos"
+                    : /bovin/i.test(x.tipo || "")
+                    ? "Bovinos"
+                    : /ave|frango|peru|poedeira|capoeira/i.test(x.tipo || "")
+                    ? "Aves"
+                    : "Outros";
+            }
+            function renderStats() {
+                const families = ["Suínos", "Aves", "Bovinos"];
+                el("stats").innerHTML = [
+                    ["Casos", records.length, "processos documentados acompanhados"],
+                    ...families.map((f) => [
+                        f,
+                        records.filter((x) => family(x) === f).length,
+                        "registos desta tipologia",
+                    ]),
+                ].map((x) =>
+                    `<article class="stat"><small>${x[0]}</small><strong>${x[1]}</strong><span>${
+                        x[2]
+                    }</span></article>`
+                ).join("");
+            }
+            function renderLocal(locations) {
+                const saved = localStorage.getItem("biocultura_region"),
+                    info = locations.find((x) => String(x.id) === String(saved)) ||
+                        locations.find((x) => Number(x.lat) && Number(x.lon));
+                if (!info) return;
+                el("local-name").textContent = [info.titulo, info.concelho].filter(Boolean).join(", ");
+                if (!Number(info.lat) || !Number(info.lon)) {
+                    el("local-copy").textContent = "Sem coordenadas utilizáveis para esta região.";
+                    return;
+                }
+                const near = records.filter((x) => Number(x.lat) && Number(x.lon)).map((x) => ({
+                    ...x,
+                    dist: distance(info, x),
+                })).sort((a, b) => a.dist - b.dist).slice(0, 3);
+                el("local-copy").textContent = "Três registos mais próximos dentro desta amostra.";
+                el("nearest").innerHTML = near.map((x) =>
+                    `<article class="near"><small>${esc(family(x))}</small><b>${
+                        esc(x.nome)
+                    }</b><span>cerca de ${Math.round(x.dist)} km · ${esc(x.concelho)}</span></article>`
+                ).join("");
+            }
+            function list(v) {
+                if (!valid(v)) return "—";
+                return Array.isArray(v)
+                    ? `<ul>${v.map((i) => `<li>${esc(i)}</li>`).join("")}</ul>`
+                    : esc(v);
+            }
+            function detail(x) {
+                const cells = [
+                    ["Capacidade documentada", x.capacidade_documentada],
+                    ["Enquadramento", x.enquadramento],
+                    ["Água", x.recursos_hidricos],
+                    ["Solo", x.solo],
+                    ["Ar", x.ar],
+                    ["Proximidades sensíveis", x.proximidades_sensiveis],
+                    ["Pressões potenciais", x.pressoes_ambientais_potenciais],
+                    ["Medidas prioritárias", x.medidas_prioritarias],
+                    ["Indicadores a monitorizar", x.indicadores_monitorizar],
+                    ["Bem-estar documentado", x.bem_estar],
+                ];
+                return `<details><summary>Ver contexto, medidas e fontes</summary><div class="details">${
+                    cells.map(([k, v]) => `<div class="datum"><b>${k}</b><span>${list(v)}</span></div>`)
+                        .join("")
+                }</div><div class="sources">${
+                    (x.fontes || []).map((u, i) =>
+                        `<a href="${esc(u)}" target="_blank" rel="noopener">Fonte ${i + 1}</a>`
+                    ).join("")
+                }</div></details>`;
+            }
+            function renderCases() {
+                const items = kind === "Todos" ? records : records.filter((x) => family(x) === kind);
+                el("cases").innerHTML =
+                    items.map((x) =>
+                        `<article class="case"><small>${esc(family(x))} · ${
+                            esc(x.ano_referencia)
+                        }</small><h3>${esc(x.nome)}</h3><p><strong>${esc(x.concelho)}, ${
+                            esc(x.distrito)
+                        }</strong> · ${esc(x.status)}</p><p>${esc(x.detalhe)}</p><p>Localização: ${
+                            esc(x.precisao_localizacao)
+                        }</p>${detail(x)}</article>`
+                    ).join("") || '<p class="empty">—</p>';
+            }
+            function filters() {
+                const names = ["Todos", "Suínos", "Aves", "Bovinos"];
+                el("filters").innerHTML = names.map((x, i) =>
+                    `<button type="button" class="filter ${
+                        i ? "" : "active"
+                    }" data-kind="${x}">${x}</button>`
+                ).join("");
+                el("filters").addEventListener("click", (e) => {
+                    const b = e.target.closest("button");
+                    if (!b) return;
+                    kind = b.dataset.kind;
+                    document.querySelectorAll(".filter").forEach((x) =>
+                        x.classList.toggle("active", x === b)
+                    );
+                    renderCases();
+                });
+            }
+            function renderNews(items) {
+                const chosen = items.filter((n) => {
+                    const c = n.pt || n;
+                    return /pecu|suin|aviário|aviario|bovin|efluente|estrume|chorume|bem-estar animal/i
+                        .test(
+                            [n.categoria, n.categoria_id, c.titulo, c.resumo].filter(Boolean).join(" "),
+                        );
+                }).slice(0, 6);
+                el("news").innerHTML = chosen.map((n) => {
+                    const c = n.pt || n;
+                    return `<a href="/observatorio/noticia-detalhe.html?id=${
+                        encodeURIComponent(n.id)
+                    }"><span>${esc(n.data)}</span><h3>${esc(c.titulo)}</h3><span>${
+                        esc(n.fonte)
+                    }</span></a>`;
+                }).join("") || '<p class="empty">Sem notícias desta categoria neste momento.</p>';
+            }
+            async function start() {
+                try {
+                    const [livestock, locations, news] = await Promise.all(
+                        ["pecuaria_industrial", "bioregioes", "noticias"].map((f) =>
+                            fetch(`/data/${f}.json`).then((r) => {
+                                if (!r.ok) throw Error(f);
+                                return r.json();
+                            })
+                        ),
+                    );
+                    records = livestock;
+                    renderStats();
+                    renderLocal(locations);
+                    filters();
+                    renderCases();
+                    renderNews(news);
+                } catch (e) {
+                    console.error("Não foi possível carregar os dados de pecuária:", e);
+                }
+            }
+            fetch("/sidebar-content.html").then((r) => r.text()).then((h) => {
+                el("sidebar").innerHTML = h;
+                start();
+            }).catch(() => start());
+        </script>
+    </body>
+</html>
