@@ -47,17 +47,19 @@
         .section-heading{margin:4em 0 1.4em}
         .section-heading h2{margin:0 0 8px;color:var(--ink);font-size:1.55em}
         .section-heading p{margin:0;color:#777;font-size:.88em;max-width:850px;line-height:1.65}
-        .action-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-        .action-card{border:1px solid var(--line);border-radius:14px;padding:1.5em;background:#fff}
+        .action-grid{display:grid;grid-template-columns:1fr;gap:16px}
+        .action-card{border:1px solid var(--line);border-radius:18px;padding:1.75em 2em 2em;background:#fff}
+        .action-card:nth-child(2){background:#fcfdfb}.action-card:nth-child(3){background:#fffdf9}
+        .action-card-head{display:grid;grid-template-columns:minmax(180px,.32fr) minmax(0,1fr);gap:2em;align-items:end;padding-bottom:1.15em;margin-bottom:1em;border-bottom:1px solid var(--line)}
         .action-label{font-size:.62em;color:var(--green);font-weight:900;text-transform:uppercase;letter-spacing:1px}
-        .action-card h3{font-size:1.05em;color:#222;margin:8px 0 5px}
-        .action-card>p{font-size:.75em;color:#777;line-height:1.55;margin:0 0 12px}
-        .crop-list{display:grid;gap:8px}
-        .crop-link{display:grid;grid-template-columns:36px 1fr;gap:10px;align-items:center;padding:8px;border-radius:9px;background:#fafafa;text-decoration:none!important;border:0!important;color:inherit}
-        .crop-link:hover{background:var(--green-soft)}
-        .crop-link img{width:36px;height:36px;border-radius:50%;object-fit:cover;background:#eee}
-        .crop-link strong{display:block;font-size:.75em;color:#333}
-        .crop-link span{display:block;font-size:.61em;color:#999;margin-top:2px}
+        .action-card h3{font-size:1.18em;color:#222;margin:7px 0 0}
+        .action-card-head>p{font-size:.78em;color:#777;line-height:1.6;margin:0;max-width:780px}
+        .crop-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 12px}
+        .crop-link{display:grid;grid-template-columns:48px minmax(0,1fr);gap:13px;align-items:center;padding:12px 14px;border-radius:12px;background:var(--green-soft);text-decoration:none!important;border:1px solid #e8efe8!important;color:inherit;transition:transform .18s ease,background .18s ease,border-color .18s ease}
+        .crop-link:hover{background:#edf5ed;border-color:#d6e4d7!important;transform:translateY(-1px)}
+        .crop-link img{width:48px;height:48px;border-radius:50%;object-fit:cover;background:#e6ece6}
+        .crop-link strong{display:block;font-size:.84em;color:#273c2a;line-height:1.25}
+        .crop-link span{display:block;font-size:.65em;color:#768279;margin-top:3px;line-height:1.35}
         .empty{padding:1.5em;background:#fafafa;border-radius:10px;color:#888;font-size:.75em;line-height:1.5}
 
         .week-plan{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
@@ -90,8 +92,8 @@
         .btn-clean{background:none!important;border:0!important;box-shadow:none!important;padding:10px 0!important;color:#999!important;font-size:.67em!important;font-weight:900!important;text-transform:uppercase;letter-spacing:1px;cursor:pointer}
         .page-footer{margin-top:auto;padding:4em 0 2.5em;border-top:1px solid #f2f2f2;opacity:.3;text-align:right}
         @media screen and (max-width:1280px){#sidebar{position:relative!important;width:100%!important;height:auto!important}#wrapper{padding-left:0!important}.hero{grid-template-columns:1fr}.calendar-panel{max-width:620px}.week-plan{grid-template-columns:repeat(2,1fr)}}
-        @media screen and (max-width:900px){.action-grid,.practice-grid,.watch-grid,.principle-grid{grid-template-columns:1fr 1fr}.local-profile{grid-template-columns:1fr 1fr}}
-        @media screen and (max-width:736px){.inner{padding:1.5em!important}.hero h1{letter-spacing:-2px}.calendar-panel{padding:1.3em}.calendar-day{min-height:40px}.action-grid,.practice-grid,.watch-grid,.principle-grid,.week-plan,.local-profile{grid-template-columns:1fr}.principles{padding:2em}.calendar-foot{flex-direction:column;gap:8px}}
+        @media screen and (max-width:900px){.practice-grid,.watch-grid,.principle-grid{grid-template-columns:1fr 1fr}.local-profile{grid-template-columns:1fr 1fr}.action-card-head{grid-template-columns:1fr;gap:.55em;align-items:start}}
+        @media screen and (max-width:736px){.inner{padding:1.5em!important}.hero h1{letter-spacing:-2px}.calendar-panel{padding:1.3em}.calendar-day{min-height:40px}.action-grid,.practice-grid,.watch-grid,.principle-grid,.week-plan,.local-profile,.crop-list{grid-template-columns:1fr}.action-card{padding:1.4em}.principles{padding:2em}.calendar-foot{flex-direction:column;gap:8px}}
     </style>
 </head>
 <body class="is-preload">
@@ -205,7 +207,7 @@
         function renderActions(){
             const month=viewedDate.getMonth(),groups=[['Semear','sementeira','Sementeiras cuja janela inclui este mês.'],['Plantar ou transplantar','plantacao_ou_transplante','Instalações indicadas para o período selecionado.'],['Colher','colheita','Culturas com colheita provável neste mês.']];
             document.getElementById('action-intro').textContent=`Sugestões para ${months[month]}, cruzadas com o pH local sempre que o catálogo contém um intervalo comparável.`;
-            document.getElementById('action-grid').innerHTML=groups.map(([title,field,note])=>`<article class="action-card"><span class="action-label">${escapeHtml(months[month])}</span><h3>${title}</h3><p>${note}</p><div class="crop-list">${cropMarkup(cropsFor(field,month),field)}</div></article>`).join('');
+            document.getElementById('action-grid').innerHTML=groups.map(([title,field,note])=>`<article class="action-card"><div class="action-card-head"><div><span class="action-label">${escapeHtml(months[month])}</span><h3>${title}</h3></div><p>${note}</p></div><div class="crop-list">${cropMarkup(cropsFor(field,month),field)}</div></article>`).join('');
         }
 
         function renderWeekPlan(){
