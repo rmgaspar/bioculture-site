@@ -261,11 +261,22 @@
                 height: 170px;
                 background: var(--pale);
                 position: relative;
+                display: grid;
+                place-items: center;
+                color: #91a096;
+                font-size: 3em;
+                font-weight: 900;
+            }
+            .species-image:before {
+                content: attr(data-initial);
             }
             .species-image img {
                 width: 100%;
                 height: 100%;
                 object-fit: cover;
+                position: relative;
+                z-index: 1;
+                background: var(--pale);
             }
             .species-image:after {
                 content: "";
@@ -630,11 +641,11 @@
             function card(x) {
                 return `<a class="species-card" href="especie-detalhe.html?id=${
                     encodeURIComponent(x.id)
-                }"><div class="species-image">${
+                }"><div class="species-image" data-initial="${esc(String(x.nome || "?").charAt(0))}">${
                     valid(x.imagem)
                         ? `<img src="${esc(x.imagem)}" alt="${
                             esc(x.nome)
-                        }" loading="lazy" onerror="this.style.display='none'">`
+                        }" loading="lazy" onerror="this.remove()">`
                         : ""
                 }</div><div class="species-body"><small>${esc(x.grupo)}</small><h3>${
                     esc(x.nome)

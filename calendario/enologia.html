@@ -323,6 +323,16 @@
                 font-weight: 900;
                 text-transform: uppercase;
             }
+            .pest-detail-link {
+                display: inline-block;
+                margin-top: 14px;
+                color: var(--wine) !important;
+                font-size: 0.65em;
+                font-weight: 900;
+                text-transform: uppercase;
+                text-decoration: none;
+                letter-spacing: 0.5px;
+            }
             .practice-card ol {
                 padding-left: 1.2em;
                 margin: 10px 0 0;
@@ -877,7 +887,9 @@
                         escapeHtml(item.prevencao)
                     }</p><p><strong>Auxiliares:</strong> ${
                         escapeHtml((item.aliados_naturais || []).join(", ") || "-")
-                    }.</p></details></article>`
+                    }.</p></details><a class="pest-detail-link" href="/ecossistemas/especie-detalhe.html?id=${
+                        encodeURIComponent(item.id)
+                    }">Ver ficha completa →</a></article>`
                 ).join("");
                 const button = document.getElementById("toggle-pests");
                 button.style.display = all.length > 6 ? "inline-block" : "none";
