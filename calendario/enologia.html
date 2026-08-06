@@ -20,13 +20,7 @@
         .hero-copy { font-size: 1.05em; line-height: 1.75; color: #555; max-width: 760px; margin-bottom: 20px; }
         .region-line { display: inline-flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: .73em; text-transform: uppercase; letter-spacing: 1px; font-weight: 800; color: #999; }
         .region-line strong { color: var(--wine); }
-        .grape-stage { min-height: 390px; border-radius: 50%; background: radial-gradient(circle at 42% 35%, #fff 0, #fbf7f8 42%, #f1e6e9 100%); display: grid; place-items: center; position: relative; overflow: hidden; }
-        .grape-stage::after { content: 'SOLO · CLIMA · VIDA'; position: absolute; bottom: 44px; color: #b59ba3; font-size: .62em; font-weight: 900; letter-spacing: 3px; }
-        .grape-mark { width: 190px; height: 245px; position: relative; transform: rotate(-4deg); }
-        .grape { position: absolute; width: 54px; height: 54px; border-radius: 50%; background: linear-gradient(145deg, #8f3651, #541125); box-shadow: inset 8px 8px 15px rgba(255,255,255,.11), 0 8px 18px rgba(83,17,37,.13); }
-        .g1 { left: 68px; top: 48px; } .g2 { left: 35px; top: 79px; } .g3 { left: 100px; top: 79px; } .g4 { left: 67px; top: 111px; } .g5 { left: 35px; top: 143px; } .g6 { left: 100px; top: 143px; } .g7 { left: 68px; top: 176px; }
-        .grape-leaf { position: absolute; width: 85px; height: 55px; left: 92px; top: 4px; background: #4d8a50; border-radius: 80% 10% 80% 15%; transform: rotate(-18deg); }
-        .grape-stem { position: absolute; width: 7px; height: 58px; left: 89px; top: 7px; border-radius: 8px; background: #71884b; transform: rotate(18deg); }
+        .grape-stage { width: min(30vw, 430px); aspect-ratio: 1; border-radius: 50%; margin: 0 auto; background: #f4eee4 url('/images/enologia-terroir-abstrato.webp') center / cover no-repeat; position: relative; overflow: hidden; box-shadow: 0 30px 80px rgba(72, 52, 42, .16); }
         .stat-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: 0 0 4em; }
         .stat { padding: 1.25em 1.4em; border: 1px solid #eee; border-radius: 12px; background: #fff; }
         .stat strong { display: block; font-size: 1.45em; color: var(--wine); }
@@ -87,7 +81,7 @@
         .empty-state { padding: 2em; color: #888; background: #fafafa; border-radius: 12px; }
         .page-footer { margin-top: auto; padding: 4em 0 2.5em; border-top: 1px solid #f2f2f2; opacity: .3; text-align: right; }
         @media screen and (max-width: 1280px) { #sidebar { position: relative !important; width: 100% !important; height: auto !important; } #wrapper { padding-left: 0 !important; } }
-        @media screen and (max-width: 980px) { .hero, .detail-hero { grid-template-columns: 1fr; } .grape-stage { min-height: 320px; } .pillars-grid, .practice-grid, .pest-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media screen and (max-width: 980px) { .hero, .detail-hero { grid-template-columns: 1fr; } .grape-stage { width: min(72vw, 360px); } .pillars-grid, .practice-grid, .pest-grid { grid-template-columns: repeat(2, 1fr); } }
         @media screen and (max-width: 736px) { .inner { padding: 1.5em !important; } .hero h1 { letter-spacing: -2px; } .stat-strip, .atlas-tools, .pillars-grid, .practice-grid, .pest-grid, .profile-grid, .detail-columns { grid-template-columns: 1fr; } .regional-head { align-items: start; flex-direction: column; } }
     </style>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV0FD8PXC"></script>
@@ -103,9 +97,9 @@
                         <span class="category-label">Cultura da Vinha · Modo Biológico</span>
                         <h1>Vinha viva,<em>vinho com lugar.</em></h1>
                         <p class="hero-copy">Uma vinha saudável começa no solo, cresce com diversidade e amadurece com equilíbrio. Explore castas, terroirs e práticas que protegem a água, acolhem auxiliares naturais e reduzem intervenções — porque o carácter do vinho também nasce da paisagem que o sustenta.</p>
-                        <span class="region-line">Contexto local: <strong id="reg-name">Portugal</strong> · região vitícola: <strong id="wine-region">a identificar</strong></span>
+                        <span class="region-line">Contexto local: <strong id="reg-name">Portugal</strong> · referência vitícola próxima: <strong id="wine-region">a identificar</strong></span>
                     </div>
-                    <div class="grape-stage" aria-label="Cacho de uvas minimalista"><div class="grape-mark" aria-hidden="true"><span class="grape-stem"></span><span class="grape-leaf"></span><span class="grape g1"></span><span class="grape g2"></span><span class="grape g3"></span><span class="grape g4"></span><span class="grape g5"></span><span class="grape g6"></span><span class="grape g7"></span></div></div>
+                    <div class="grape-stage" role="img" aria-label="Paisagem abstrata de vinha viva, biodiversidade e camadas do solo"></div>
                 </div>
                 <div class="stat-strip" id="stat-strip"></div>
 
@@ -146,10 +140,11 @@
     <script src="/assets/js/jquery.min.js"></script>
     <script>
         let locationsDB=[],castasDB=[],pragasDB=[],dicasDB=[],noticiasEno=[];
-        let currentRegion='Lisboa',showAllRegional=false,showAllPests=false,visibleNews=4;
+        let currentRegion='Portugal',showAllRegional=false,showAllPests=false,visibleNews=4;
         const regionOrder=['Vinhos Verdes','Trás-os-Montes','Douro','Dão','Bairrada','Beira Interior','Lisboa','Tejo','Península de Setúbal','Alentejo','Algarve','Madeira','Açores'];
-        const regiaoVinhoMap={'minho':'Vinhos Verdes','douro litoral':'Vinhos Verdes','trás-os-montes':'Trás-os-Montes','beira alta':'Dão','beira litoral':'Bairrada','beira baixa':'Beira Interior','estremadura':'Lisboa','ribatejo':'Tejo','alentejo':'Alentejo','algarve':'Algarve','madeira':'Madeira','açores':'Açores'};
-        const regionIntros={'Vinhos Verdes':'Influência atlântica, humidade e solos frequentemente graníticos favorecem castas de elevada frescura.','Douro':'Encostas, calor e solos xistosos exigem gestão rigorosa da água e proteção contra erosão.','Dão':'Altitude, abrigo montanhoso e solos graníticos favorecem maturação equilibrada e acidez.','Bairrada':'A influência atlântica e os solos argilo-calcários sustentam vinhos frescos e estruturados.','Lisboa':'A proximidade do Atlântico cria diversidade de microclimas, vento e maturações moderadas.','Alentejo':'Calor e secura tornam essenciais a cobertura do solo, sombra e utilização eficiente da água.','Madeira':'Solos vulcânicos, relevo e humidade criam contrastes fortes em pequenas distâncias.','Açores':'Solos vulcânicos, vento e salinidade atlântica moldam uma viticultura insular singular.'};
+        const concelhoVinhoMap={'mação':'Beira Interior'};
+        const regiaoVinhoMap={'minho':'Vinhos Verdes','douro litoral':'Vinhos Verdes','trás-os-montes':'Trás-os-Montes','beira alta':'Dão','beira litoral':'Bairrada','beira baixa':'Beira Interior','centro':'Beira Interior','estremadura':'Lisboa','ribatejo':'Tejo','oeste-e-vale-do-tejo':'Tejo','alentejo':'Alentejo','algarve':'Algarve','madeira':'Madeira','acores':'Açores','açores':'Açores'};
+        const regionIntros={'Vinhos Verdes':'Influência atlântica, humidade e solos frequentemente graníticos favorecem castas de elevada frescura.','Douro':'Encostas, calor e solos xistosos exigem gestão rigorosa da água e proteção contra erosão.','Dão':'Altitude, abrigo montanhoso e solos graníticos favorecem maturação equilibrada e acidez.','Bairrada':'A influência atlântica e os solos argilo-calcários sustentam vinhos frescos e estruturados.','Beira Interior':'Altitude, amplitude térmica e solos graníticos ou xistosos marcam a viticultura do interior; a realidade de cada parcela deve ser confirmada localmente.','Lisboa':'A proximidade do Atlântico cria diversidade de microclimas, vento e maturações moderadas.','Tejo':'A influência do Tejo, os terraços fluviais e as zonas mais secas criam condições vitícolas diversas.','Alentejo':'Calor e secura tornam essenciais a cobertura do solo, sombra e utilização eficiente da água.','Madeira':'Solos vulcânicos, relevo e humidade criam contrastes fortes em pequenas distâncias.','Açores':'Solos vulcânicos, vento e salinidade atlântica moldam uma viticultura insular singular.','Portugal':'Selecione uma localidade para apresentar o contexto vitícola mais próximo.'};
         const practiceIds=['adubo-verde','composto-superficie','rega-gota-a-gota','sebe-viva','poda-seletiva','solo-sempre-com-raiz'];
         const escapeHtml=value=>String(value??'').replace(/[&<>'"]/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
         const titleCase=value=>String(value||'').split(' ').map(word=>word.charAt(0).toUpperCase()+word.slice(1)).join(' ');
@@ -168,7 +163,9 @@
 
         function renderRegion(info){
             const location=info?(info.titulo+(info.concelho?', '+titleCase(info.concelho):'')):'Portugal';
-            currentRegion=info?.regiao_vinho||regiaoVinhoMap[String(info?.regiao||'').toLowerCase()]||'Lisboa';
+            const concelho=String(info?.concelho||'').toLowerCase();
+            const regiao=String(info?.regiao||'').toLowerCase();
+            currentRegion=info?.regiao_vinho||concelhoVinhoMap[concelho]||regiaoVinhoMap[regiao]||'Portugal';
             document.getElementById('reg-name').textContent=location;
             document.getElementById('wine-region').textContent=currentRegion;
             document.getElementById('region-description').textContent=regionIntros[currentRegion]||`Património vitícola de ${currentRegion}, moldado pelo solo, clima e práticas locais.`;
@@ -224,11 +221,11 @@
 
         async function init(){
             try{
-                const responses=await Promise.all(['/data/freguesias_portugal.json','/data/castas.json','/data/pragas.json','/data/dicas.json','/data/noticias.json'].map(url=>fetch(url).then(r=>{if(!r.ok)throw new Error(url);return r.json();})));
+                const responses=await Promise.all(['/data/bioregioes.json','/data/castas.json','/data/pragas.json','/data/dicas.json','/data/noticias.json'].map(url=>fetch(url,{cache:'no-cache'}).then(r=>{if(!r.ok)throw new Error(url);return r.json();})));
                 [locationsDB,castasDB,pragasDB,dicasDB]=responses;noticiasEno=responses[4].filter(n=>`${n.categoria||''} ${n.titulo||''}`.toLowerCase().match(/enologia|vinho|vinha|viticultura/));
                 const origins=[...new Set(castasDB.map(c=>c.origem).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'pt'));
                 document.getElementById('origin-filter').insertAdjacentHTML('beforeend',origins.map(origin=>`<option value="${escapeHtml(origin)}">${escapeHtml(origin)}</option>`).join(''));
-                const saved=localStorage.getItem('biocultura_region');const info=locationsDB.find(item=>item.id===saved)||locationsDB.find(item=>item.lat!==0)||locationsDB[0];
+                const saved=localStorage.getItem('biocultura_region');const info=locationsDB.find(item=>String(item.id)===String(saved))||null;
                 renderStats();renderRegion(info);renderAtlas();renderPractices();renderPests();renderNews();setupLocationLogic();
                 document.getElementById('show-region-all').onclick=()=>{showAllRegional=!showAllRegional;renderRegion(info);};
                 document.getElementById('toggle-pests').onclick=()=>{showAllPests=!showAllPests;renderPests();};
