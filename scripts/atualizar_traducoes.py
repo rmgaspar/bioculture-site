@@ -79,6 +79,7 @@ def translate_batch(token, language, batch, model):
             "Authorization": f"Bearer {token}",
             "Content-Type": "application/json",
             "Accept": "application/vnd.github+json",
+            "X-GitHub-Api-Version": "2026-03-10",
         },
     )
     with urllib.request.urlopen(request, timeout=120) as response:
@@ -96,7 +97,7 @@ def main():
     parser.add_argument("--language", choices=LANGUAGES, required=True)
     parser.add_argument("--max-items", type=int, default=1500)
     parser.add_argument("--batch-size", type=int, default=40)
-    parser.add_argument("--model", default="openai/gpt-4.1-mini")
+    parser.add_argument("--model", default="openai/gpt-4.1")
     args = parser.parse_args()
     token = os.environ.get("GITHUB_TOKEN")
     if not token:
