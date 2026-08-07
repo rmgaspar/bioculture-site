@@ -1167,8 +1167,8 @@
                         `<a class="crop-link" href="/calendario/horticola-detalhe.html?id=${
                             encodeURIComponent(id)
                         }"><img src="${
-                            escapeHtml(item.imagem || "/images/pragas-placeholder.svg")
-                        }" alt="" loading="lazy" onerror="this.onerror=null;this.src='/images/pragas-placeholder.svg'"><span><strong>${
+                            escapeHtml(item.imagem && item.imagem !== "-" ? item.imagem : "/images/cultura-placeholder.svg")
+                        }" alt="" loading="lazy" onerror="this.onerror=null;this.src='/images/cultura-placeholder.svg'"><span><strong>${
                             escapeHtml(item.nome)
                         }</strong><span>${
                             escapeHtml(item[field] || item.categoria || "")
@@ -1231,8 +1231,8 @@
                 } fichas completas no catálogo`;
                 document.getElementById("catalog-grid").innerHTML = entries.slice(0, catalogLimit).map(([id, item]) =>
                     `<a class="catalog-card" href="/calendario/horticola-detalhe.html?id=${encodeURIComponent(id)}"><img src="${
-                        escapeHtml(item.imagem || "/images/pragas-placeholder.svg")
-                    }" alt="${escapeHtml(item.nome || "Cultura")}" loading="lazy" onerror="this.onerror=null;this.src='/images/pragas-placeholder.svg'"><div class="catalog-card-body"><small>${
+                        escapeHtml(item.imagem && item.imagem !== "-" ? item.imagem : "/images/cultura-placeholder.svg")
+                    }" alt="${escapeHtml(item.nome || "Cultura")}" loading="lazy" onerror="this.onerror=null;this.src='/images/cultura-placeholder.svg'"><div class="catalog-card-body"><small>${
                         escapeHtml(item.categoria || catalogKind(item))
                     }</small><h3>${escapeHtml(item.nome || id)}</h3><p>${
                         escapeHtml(item.nome_cientifico || item.ciclo || "Consultar ficha de cultivo")
