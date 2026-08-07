@@ -41,23 +41,18 @@ jobs:
       - name: Preparar o tradutor
         run: python -m pip install --disable-pip-version-check beautifulsoup4
 
-      - name: Traduzir apenas textos ainda em falta
+      - name: Traduzir para inglês apenas os textos ainda em falta
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           MAX_ITEMS: ${{ inputs.max_items || '1500' }}
         shell: bash
         run: |
-          for lang in en es fr de; do
-            python scripts/atualizar_traducoes.py --language "$lang" --max-items "$MAX_ITEMS" --batch-size 80
-          done
+          python scripts/atualizar_traducoes.py --language en --max-items "$MAX_ITEMS" --batch-size 80
 
       - name: Validar os catálogos
         shell: bash
         run: |
           python -m json.tool assets/lang/auto/en.json >/dev/null
-          python -m json.tool assets/lang/auto/es.json >/dev/null
-          python -m json.tool assets/lang/auto/fr.json >/dev/null
-          python -m json.tool assets/lang/auto/de.json >/dev/null
 
       - name: Criar ou atualizar proposta
         env:
@@ -70,13 +65,13 @@ jobs:
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add assets/lang/auto
-          git commit -m "Atualizar traduções multilingues"
+          git add assets/lang/auto/en.json
+          git commit -m "Atualizar tradução inglesa"
           git push --force-with-lease origin automatizacao/traducoes
           if ! gh pr view automatizacao/traducoes >/dev/null 2>&1; then
             gh pr create \
               --base main \
               --head automatizacao/traducoes \
-              --title "Traduções bioCultura para revisão" \
-              --body "Traduções incrementais para inglês, espanhol, francês e alemão. Reveja a proposta antes de integrar; nada é publicado automaticamente."
+              --title "Tradução inglesa bioCultura para revisão" \
+              --body "Tradução incremental exclusivamente para inglês. Reveja a proposta antes de integrar; nada é publicado automaticamente."
           fi

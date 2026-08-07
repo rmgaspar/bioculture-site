@@ -10,7 +10,7 @@ from pathlib import Path
 from bs4 import BeautifulSoup, Comment
 
 ROOT = Path(__file__).resolve().parents[1]
-LANGUAGES = {"en": "English", "es": "Spanish", "fr": "French", "de": "German"}
+LANGUAGES = {"en": "English"}
 NATIONAL_PAGES = {"observatorio/observatorio-terra.html", "observatorio/vetores-pressao.html"}
 IGNORED_HTML = {"generic.html", "elements.html", "sidebar.html", "observario.html", "suporte.html", "servicos/bioenergia.html"}
 IGNORED_KEYS = {

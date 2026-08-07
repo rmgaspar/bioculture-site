@@ -1,8 +1,10 @@
 (function () {
     "use strict";
 
-    const supported = new Set(["en", "es", "fr", "de"]);
-    const lang = localStorage.getItem("selected_lang") || "pt";
+    const supported = new Set(["en"]);
+    const stored = localStorage.getItem("selected_lang") || "pt";
+    const lang = supported.has(stored) ? stored : "pt";
+    if (stored !== lang) localStorage.setItem("selected_lang", lang);
     if (!supported.has(lang)) return;
 
     let dictionary = null;
