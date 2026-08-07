@@ -4,6 +4,7 @@ import json
 import os
 import re
 import time
+import urllib.error
 import urllib.request
 from pathlib import Path
 
@@ -63,6 +64,48 @@ def collect_editorial():
     return sorted(strings)
 
 
+def github_request(url, token, data=None):
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "Content-Type": "application/json",
+        "Accept": "application/vnd.github+json",
+        "X-GitHub-Api-Version": "2026-03-10",
+    }
+    request = urllib.request.Request(url, data=data, headers=headers)
+    try:
+        return urllib.request.urlopen(request, timeout=120)
+    except urllib.error.HTTPError as error:
+        detail = error.read().decode("utf-8", errors="replace")
+        raise RuntimeError(f"GitHub Models devolveu HTTP {error.code}: {detail}") from error
+
+
+def choose_model(token):
+    url = "https://models.github.ai/catalog/models?api-version=2026-03-10"
+    with github_request(url, token) as response:
+        catalog = json.loads(response.read())
+    available = {item.get("id") for item in catalog}
+    preferred = (
+        "openai/gpt-5-mini",
+        "openai/gpt-5",
+        "openai/gpt-4.1",
+        "openai/gpt-4o-mini",
+        "openai/gpt-4o",
+    )
+    for model in preferred:
+        if model in available:
+            print(f"Modelo selecionado automaticamente: {model}")
+            return model
+    compatible = [
+        item.get("id") for item in catalog
+        if item.get("id") and "text" in item.get("supported_input_modalities", ["text"])
+        and "text" in item.get("supported_output_modalities", ["text"])
+    ]
+    if not compatible:
+        raise RuntimeError("A conta não apresenta nenhum modelo de texto disponível no GitHub Models.")
+    print(f"Modelo selecionado automaticamente: {compatible[0]}")
+    return compatible[0]
+
+
 def translate_batch(token, language, batch, model):
     items = [{"id": str(i), "text": text} for i, text in enumerate(batch)]
     prompt = (
@@ -72,17 +115,8 @@ def translate_batch(token, language, batch, model):
         + json.dumps(items, ensure_ascii=False)
     )
     payload = json.dumps({"model": model, "temperature": 0.1, "messages": [{"role": "user", "content": prompt}]}).encode()
-    request = urllib.request.Request(
-        "https://models.github.ai/inference/chat/completions",
-        data=payload,
-        headers={
-            "Authorization": f"Bearer {token}",
-            "Content-Type": "application/json",
-            "Accept": "application/vnd.github+json",
-            "X-GitHub-Api-Version": "2026-03-10",
-        },
-    )
-    with urllib.request.urlopen(request, timeout=120) as response:
+    url = "https://models.github.ai/inference/chat/completions?api-version=2026-03-10"
+    with github_request(url, token, payload) as response:
         content = json.loads(response.read())["choices"][0]["message"]["content"].strip()
     content = re.sub(r"^```(?:json)?\s*|\s*```$", "", content)
     translated = json.loads(content)
@@ -97,11 +131,13 @@ def main():
     parser.add_argument("--language", choices=LANGUAGES, required=True)
     parser.add_argument("--max-items", type=int, default=1500)
     parser.add_argument("--batch-size", type=int, default=40)
-    parser.add_argument("--model", default="openai/gpt-4.1")
+    parser.add_argument("--model", default="auto")
     args = parser.parse_args()
     token = os.environ.get("GITHUB_TOKEN")
     if not token:
         raise SystemExit("GITHUB_TOKEN is required")
+    if args.model == "auto":
+        args.model = choose_model(token)
     target = ROOT / "assets" / "lang" / "auto" / f"{args.language}.json"
     target.parent.mkdir(parents=True, exist_ok=True)
     catalog = json.loads(target.read_text(encoding="utf-8")) if target.exists() else {}
