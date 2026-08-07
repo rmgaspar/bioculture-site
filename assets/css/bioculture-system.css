@@ -1,0 +1,115 @@
+/* bioCulture — sistema visual comum v1 */
+:root {
+  --bio-content-max: 1600px;
+  --bio-gutter: clamp(1.4rem, 3.35vw, 4rem);
+  --bio-top: clamp(2rem, 3.2vw, 3.1rem);
+  --bio-bottom: clamp(2.5rem, 5vw, 5rem);
+  --bio-title: clamp(3.45rem, 5.45vw, 6rem);
+  --bio-title-detail: clamp(2.75rem, 4.25vw, 4.7rem);
+  --bio-circle: 390px;
+  --bio-ink: #213329;
+  --bio-muted: #68756d;
+  --bio-line: #e4e9e4;
+  --bio-accent: #55705a;
+  --bio-accent-deep: #29483a;
+  --bio-soft: #edf3ec;
+  --bio-soft-2: #f6f1e7;
+  --bio-soft-3: #edf3f5;
+  --bio-soft-4: #f5ece8;
+  --bio-success: #347345;
+  --bio-info: #39758b;
+  --bio-warning: #a66d17;
+  --bio-danger: #a34135;
+}
+
+html[data-bio-theme="water"] { --bio-accent:#397b91; --bio-accent-deep:#24586b; --bio-soft:#eaf4f7; --bio-soft-2:#eef6f2; --bio-soft-3:#f4f0e7; --bio-soft-4:#edf1f7; }
+html[data-bio-theme="air"] { --bio-accent:#648aa0; --bio-accent-deep:#3d677b; --bio-soft:#edf5f7; --bio-soft-2:#f3f6ed; --bio-soft-3:#eef1f6; --bio-soft-4:#f7f1e9; }
+html[data-bio-theme="soil"] { --bio-accent:#8b6849; --bio-accent-deep:#654a35; --bio-soft:#f3ede5; --bio-soft-2:#edf3e9; --bio-soft-3:#f6f2e8; --bio-soft-4:#eee9e6; }
+html[data-bio-theme="life"] { --bio-accent:#47744f; --bio-accent-deep:#28583a; --bio-soft:#ebf3ea; --bio-soft-2:#f5f0e4; --bio-soft-3:#eaf3f2; --bio-soft-4:#f4ece7; }
+html[data-bio-theme="calendar"] { --bio-accent:#33813b; --bio-accent-deep:#205e2a; --bio-soft:#eaf4e9; --bio-soft-2:#f7f1df; --bio-soft-3:#edf4f1; --bio-soft-4:#f6ebe4; }
+html[data-bio-theme="vine"] { --bio-accent:#7a1832; --bio-accent-deep:#591124; --bio-soft:#f8edf0; --bio-soft-2:#f3eee2; --bio-soft-3:#edf3ec; --bio-soft-4:#f4e9e2; }
+html[data-bio-theme="energy"] { --bio-accent:#7f762d; --bio-accent-deep:#5c5723; --bio-soft:#f4f2df; --bio-soft-2:#eaf2e8; --bio-soft-3:#edf3f5; --bio-soft-4:#f6eee3; }
+html[data-bio-theme="pressure"] { --bio-accent:#a04435; --bio-accent-deep:#743025; --bio-soft:#f8ece8; --bio-soft-2:#f4eee2; --bio-soft-3:#eaf1f1; --bio-soft-4:#f1ece7; }
+html[data-bio-theme="digital"] { --bio-accent:#466f79; --bio-accent-deep:#31545d; --bio-soft:#e8f1f2; --bio-soft-2:#edf0f5; --bio-soft-3:#f3efe6; --bio-soft-4:#edf3ec; }
+html[data-bio-theme="editorial"] { --bio-accent:#5d725e; --bio-accent-deep:#344d3a; --bio-soft:#edf3ec; --bio-soft-2:#f5f0e7; --bio-soft-3:#edf2f4; --bio-soft-4:#f4ece8; }
+
+/* Uma única grelha: impede saltos ao navegar entre páginas. */
+body:not(.bio-legacy) #main > .inner {
+  width: 100% !important;
+  max-width: var(--bio-content-max) !important;
+  margin-inline: auto !important;
+  padding: var(--bio-top) var(--bio-gutter) 0 !important;
+  box-sizing: border-box !important;
+}
+body:not(.bio-legacy) #main > .inner > section:last-child,
+body:not(.bio-legacy) #main > .inner > footer:last-child { margin-bottom: var(--bio-bottom) !important; }
+
+/* Escala editorial comum, baseada no Calendário e na Vinha Viva. */
+body.bio-landing .hero h1,
+body.bio-landing .observatory-hero h1,
+body.bio-landing .hero-split h1 {
+  font-size: var(--bio-title) !important;
+  line-height: .92 !important;
+  letter-spacing: -.045em !important;
+  margin-top: 0 !important;
+  text-wrap: balance;
+}
+body.bio-detail .hero h1,
+body.bio-detail .detail-hero h1,
+body.bio-detail .hero-split h1 { font-size: var(--bio-title-detail) !important; line-height:.96 !important; letter-spacing:-.035em !important; }
+body.bio-landing .hero h1 em,
+body.bio-landing .observatory-hero h1 em,
+body.bio-landing .hero-split h1 em { color: var(--bio-accent) !important; }
+body .category-label, body .eyebrow, body .overline { color: color-mix(in srgb, var(--bio-accent) 72%, #8d9690) !important; }
+
+/* Círculos de abertura: rigorosamente a mesma caixa e ancoragem. */
+body.bio-landing :is(.hero-image,.water-orbit,.air-orbit,.soil-orbit,.life-orbit,.energy-orbit,.territory-orbit,.ore-orbit,.digital-orbit,.field-mark,.living-mark,.grape-stage,.observatory-visual) {
+  width: min(100%, var(--bio-circle)) !important;
+  max-width: var(--bio-circle) !important;
+  height: auto !important;
+  aspect-ratio: 1 / 1 !important;
+  border-radius: 50% !important;
+  margin: 0 !important;
+  justify-self: center !important;
+  align-self: start !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+  box-shadow: 0 28px 72px color-mix(in srgb, var(--bio-accent-deep) 18%, transparent) !important;
+}
+body.bio-standard-hero .hero,
+body.bio-standard-hero .observatory-hero {
+  grid-template-columns: minmax(0, 1.35fr) minmax(300px, 390px) !important;
+  column-gap: clamp(3rem, 6vw, 6.5rem) !important;
+  row-gap: 2.5rem !important;
+  align-items: start !important;
+  min-height: 0 !important;
+  padding-bottom: clamp(3rem, 5vw, 4.5rem) !important;
+}
+
+/* Cor funcional, subtil e consistente para conjuntos de informação. */
+body :is(.metric-grid,.stats,.principles,.summary-box,.report-grid,.reading-grid,.rules,.chapters,.pollutants,.threats,.practices,.layers,.transparency) > * { border-color: color-mix(in srgb, var(--bio-accent) 18%, var(--bio-line)) !important; }
+body :is(.metric-grid,.stats,.principles,.summary-box,.report-grid,.reading-grid,.rules,.chapters,.pollutants,.threats,.practices,.layers,.transparency) > :nth-child(4n+1) { background-color: var(--bio-soft) !important; }
+body :is(.metric-grid,.stats,.principles,.summary-box,.report-grid,.reading-grid,.rules,.chapters,.pollutants,.threats,.practices,.layers,.transparency) > :nth-child(4n+2) { background-color: var(--bio-soft-2) !important; }
+body :is(.metric-grid,.stats,.principles,.summary-box,.report-grid,.reading-grid,.rules,.chapters,.pollutants,.threats,.practices,.layers,.transparency) > :nth-child(4n+3) { background-color: var(--bio-soft-3) !important; }
+body :is(.metric-grid,.stats,.principles,.summary-box,.report-grid,.reading-grid,.rules,.chapters,.pollutants,.threats,.practices,.layers,.transparency) > :nth-child(4n+4) { background-color: var(--bio-soft-4) !important; }
+body :is(.alert,.warning,.danger,[class*="alert-"]) { border-left:4px solid var(--bio-danger) !important; background:#fbefec !important; color:#6f2e27 !important; }
+body :is(.notice,.info,[class*="info-"]) { border-left:4px solid var(--bio-info) !important; background:#edf6f8 !important; color:#285868 !important; }
+
+/* Marca única no menu e nos rodapés. */
+.bio-brand-logo { display:block; width:100%; height:auto; }
+.bio-brand { width: 205px !important; max-width: calc(100% - 8px); padding:0 !important; }
+.bio-footer-brand { display:inline-block; width:220px; max-width:72%; text-decoration:none; }
+.bio-footer-brand img { display:block; width:100%; height:auto; }
+.page-footer, footer.footer { min-height:96px; display:flex !important; align-items:center !important; justify-content:flex-start !important; border-top:1px solid var(--bio-line) !important; padding:1.5rem 0 !important; margin-top:clamp(3rem,6vw,6rem) !important; }
+.bio-sidebar > footer { color:#89958d !important; letter-spacing:.12em; }
+
+@media (max-width: 1100px) {
+  :root { --bio-circle: 330px; }
+  body.bio-standard-hero .hero, body.bio-standard-hero .observatory-hero { grid-template-columns:1fr !important; }
+  body.bio-landing :is(.hero-image,.water-orbit,.air-orbit,.soil-orbit,.life-orbit,.energy-orbit,.territory-orbit,.ore-orbit,.digital-orbit,.field-mark,.living-mark,.grape-stage,.observatory-visual) { justify-self:start !important; }
+}
+@media (max-width: 760px) {
+  :root { --bio-top:1.7rem; --bio-gutter:1.35rem; --bio-circle:240px; --bio-title:clamp(2.65rem,13vw,4rem); --bio-title-detail:clamp(2.35rem,11vw,3.5rem); }
+  body.bio-landing .hero h1, body.bio-landing .observatory-hero h1, body.bio-landing .hero-split h1 { letter-spacing:-.035em !important; }
+  .bio-footer-brand { width:180px; }
+}
