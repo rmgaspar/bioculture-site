@@ -26,6 +26,8 @@ jobs:
       - name: Recuperar propostas ainda não aprovadas
         shell: bash
         run: |
+          git config user.name "bioCultura Notícias"
+          git config user.email "actions@users.noreply.github.com"
           git fetch origin automatizacao/noticias:refs/remotes/origin/automatizacao/noticias || true
           if git show-ref --verify --quiet refs/remotes/origin/automatizacao/noticias; then
             git checkout -B automatizacao/noticias origin/automatizacao/noticias
