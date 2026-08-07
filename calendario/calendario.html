@@ -377,6 +377,161 @@
                 line-height: 1.5;
             }
 
+            .location-guide {
+                margin-top: 1.15em;
+                padding: 1.15em 1.25em;
+                border: 1px solid #dfe9df;
+                border-radius: 16px;
+                background: linear-gradient(135deg, #f7faf6, #fff);
+                display: grid;
+                grid-template-columns: minmax(0, 1fr) 230px;
+                gap: 18px;
+                align-items: center;
+            }
+            .location-guide h3 {
+                margin: 0 0 7px;
+                color: #294d2d;
+                font-size: .9em;
+            }
+            .location-guide p {
+                margin: 0;
+                color: #667168;
+                font-size: .7em;
+                line-height: 1.55;
+            }
+            .location-demo {
+                padding: 11px;
+                border-radius: 12px;
+                background: #fff;
+                box-shadow: 0 8px 24px rgba(44, 76, 48, .08);
+            }
+            .location-demo-label {
+                display: block;
+                margin-bottom: 7px;
+                color: #96a097;
+                font-size: .52em;
+                font-weight: 900;
+                letter-spacing: 1.2px;
+                text-transform: uppercase;
+            }
+            .location-demo-input {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                min-height: 38px;
+                padding: 0 11px;
+                border: 1px solid #e1e7e1;
+                border-radius: 9px;
+                background: #f8faf8;
+                color: #8a918b;
+                font-size: .62em;
+            }
+            .location-demo-input b {
+                color: var(--green);
+                font-size: 1.2em;
+            }
+            .location-guide button {
+                margin-top: 10px;
+                padding: 0 !important;
+                border: 0 !important;
+                background: transparent !important;
+                color: var(--green) !important;
+                font-size: .62em !important;
+                font-weight: 900 !important;
+                box-shadow: none !important;
+            }
+            .cycle-note {
+                display: none;
+                margin-top: 12px;
+                padding: 12px 15px;
+                border-left: 3px solid #d8aa2f;
+                border-radius: 0 10px 10px 0;
+                background: #fffaf0;
+                color: #77683f;
+                font-size: .72em;
+                line-height: 1.55;
+            }
+            .cycle-note.visible { display: block; }
+            .catalog-toolbar {
+                display: grid;
+                grid-template-columns: minmax(220px, 1fr) 230px;
+                gap: 12px;
+                margin-bottom: 18px;
+            }
+            .catalog-toolbar input, .catalog-toolbar select {
+                width: 100%;
+                height: 48px;
+                box-sizing: border-box;
+                border: 1px solid var(--line);
+                border-radius: 12px;
+                padding: 0 15px;
+                background: #fff;
+                color: #444;
+                font: inherit;
+                font-size: .76em;
+                outline: none;
+            }
+            .catalog-toolbar input:focus, .catalog-toolbar select:focus {
+                border-color: #9bb29e;
+                box-shadow: 0 0 0 3px rgba(64, 120, 69, .08);
+            }
+            .catalog-summary {
+                margin: -6px 0 18px;
+                color: #8b948d;
+                font-size: .68em;
+            }
+            .catalog-grid {
+                display: grid;
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+                gap: 14px;
+            }
+            .catalog-card {
+                overflow: hidden;
+                border: 1px solid var(--line) !important;
+                border-radius: 15px;
+                background: #fff;
+                color: inherit;
+                text-decoration: none !important;
+                transition: transform .18s ease, box-shadow .18s ease;
+            }
+            .catalog-card:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 12px 30px rgba(37, 63, 40, .09);
+            }
+            .catalog-card img {
+                display: block;
+                width: 100%;
+                aspect-ratio: 4 / 3;
+                object-fit: cover;
+                background: var(--green-soft);
+            }
+            .catalog-card-body { padding: 14px; }
+            .catalog-card small {
+                display: block;
+                color: var(--green);
+                font-size: .54em;
+                font-weight: 900;
+                letter-spacing: .8px;
+                text-transform: uppercase;
+            }
+            .catalog-card h3 {
+                margin: 6px 0 4px;
+                color: #27372a;
+                font-size: .9em;
+                line-height: 1.25;
+            }
+            .catalog-card p {
+                margin: 0;
+                color: #7a827b;
+                font-size: .64em;
+                line-height: 1.45;
+            }
+            .catalog-more {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+            }
+
             .week-plan {
                 display: grid;
                 grid-template-columns: repeat(4, 1fr);
@@ -598,12 +753,13 @@
                 .action-grid {
                     grid-template-columns: 1fr;
                 }
-                .practice-grid, .watch-grid, .principle-grid {
+                .practice-grid, .watch-grid, .principle-grid, .catalog-grid {
                     grid-template-columns: 1fr 1fr;
                 }
                 .local-profile {
                     grid-template-columns: 1fr 1fr;
                 }
+                .location-guide { grid-template-columns: 1fr; }
             }
             @media screen and (max-width: 736px) {
                 .inner {
@@ -624,6 +780,8 @@
                 .action-card {
                     padding: 1.4em;
                 }
+                .catalog-grid { grid-template-columns: 1fr; }
+                .location-demo { max-width: none; }
                 .principles {
                     padding: 2em;
                 }
@@ -665,6 +823,17 @@
                                     <strong id="selected-month-label">—</strong>
                                 </div>
                                 <div class="local-profile" id="local-profile"></div>
+                                <aside class="location-guide" aria-label="Como escolher a localização">
+                                    <div>
+                                        <h3>Afine as sugestões ao seu território</h3>
+                                        <p>Na base do menu lateral, pesquise a localidade ou autorize o GPS. O calendário volta a cruzar as culturas com o solo e o pH indicativos da zona escolhida.</p>
+                                        <button type="button" id="guide-location-button">Escolher localização no menu →</button>
+                                    </div>
+                                    <div class="location-demo" aria-hidden="true">
+                                        <span class="location-demo-label">O teu território</span>
+                                        <div class="location-demo-input"><b>⌖</b><span>Procurar localidade…</span></div>
+                                    </div>
+                                </aside>
                             </div>
                             <aside class="calendar-panel" aria-label="Calendário mensal">
                                 <div class="calendar-head">
@@ -688,7 +857,7 @@
                         </div>
 
                         <nav class="section-nav" aria-label="Secções do calendário">
-                            <a href="#acoes">Agora no terreno</a><a href="#semana">Plano da semana</a><a
+                            <a href="#acoes">Agora no terreno</a><a href="#catalogo">Catálogo</a><a href="#semana">Plano da semana</a><a
                                 href="#praticas"
                             >Técnicas</a><a href="#vigilancia">Vigilância</a><a href="#principios">Princípios</a>
                         </nav>
@@ -696,8 +865,27 @@
                         <div id="acoes" class="section-heading">
                             <h2>Agora no terreno</h2>
                             <p id="action-intro">Culturas cuja janela indicada no catálogo inclui o mês selecionado.</p>
+                            <div class="cycle-note" id="cycle-note"></div>
                         </div>
                         <div class="action-grid" id="action-grid"></div>
+
+                        <div id="catalogo" class="section-heading">
+                            <h2>Catálogo de cultivo</h2>
+                            <p>Hortícolas, aromáticas, pequenos frutos e árvores de fruto reunidos numa pesquisa única. Abra cada ficha para consultar origem, solo, pH, água, calendário, manutenção e prevenção biológica.</p>
+                        </div>
+                        <div class="catalog-toolbar">
+                            <input id="catalog-search" type="search" placeholder="Procurar por nome comum ou científico…" aria-label="Pesquisar catálogo">
+                            <select id="catalog-filter" aria-label="Filtrar catálogo">
+                                <option value="all">Todas as culturas</option>
+                                <option value="horticolas">Hortícolas</option>
+                                <option value="fruteiras">Árvores e plantas de fruto</option>
+                                <option value="aromaticas">Aromáticas</option>
+                                <option value="perenes">Culturas perenes</option>
+                            </select>
+                        </div>
+                        <p class="catalog-summary" id="catalog-summary"></p>
+                        <div class="catalog-grid" id="catalog-grid"></div>
+                        <div class="catalog-more"><button class="btn-clean" id="catalog-more">Ver mais culturas</button></div>
 
                         <div id="semana" class="section-heading">
                             <h2>Plano simples para esta semana</h2>
@@ -823,7 +1011,7 @@
                 dicasDB = [],
                 horticolasDB = {},
                 infoGlobal = null;
-            let viewedDate = new Date(), showMorePests = false;
+            let viewedDate = new Date(), showMorePests = false, catalogLimit = 12;
             const months = [
                 "janeiro",
                 "fevereiro",
@@ -1006,6 +1194,53 @@
                         cropMarkup(cropsFor(field, month), field)
                     }</div></article>`
                 ).join("");
+                const sowing = new Map(cropsFor("sementeira", month).map(([id, item]) => [normalize(item.nome || id), item.nome || id]));
+                const harvesting = new Set(cropsFor("colheita", month).map(([id, item]) => normalize(item.nome || id)));
+                const overlap = [...sowing].filter(([key]) => harvesting.has(key)).map(([, name]) => name);
+                const note = document.getElementById("cycle-note");
+                if (overlap.length) {
+                    note.innerHTML = `<strong>Porque aparece a mesma cultura em fases diferentes?</strong> ${
+                        escapeHtml(overlap.slice(0, 4).join(", "))
+                    } ${overlap.length > 4 ? "e outras" : ""} podem ser semeadas e colhidas neste mês. Em geral, colhe-se uma geração já desenvolvida enquanto se inicia outra, ou usam-se variedades e datas escalonadas. Confirme sempre a variedade, a temperatura do solo e o microclima.`;
+                    note.classList.add("visible");
+                } else {
+                    note.textContent = "";
+                    note.classList.remove("visible");
+                }
+            }
+
+            function catalogKind(item) {
+                const value = normalize(item.categoria || "");
+                if (value.includes("aromatica")) return "aromaticas";
+                if (/fruteira|citrino|pequeno fruto|casca rija|trepadeira frutifera/.test(value)) return "fruteiras";
+                return "horticolas";
+            }
+
+            function renderCatalog(reset = false) {
+                if (reset) catalogLimit = 12;
+                const query = normalize(document.getElementById("catalog-search")?.value),
+                    filter = document.getElementById("catalog-filter")?.value || "all";
+                const entries = Object.entries(horticolasDB).filter(([id, item]) => {
+                    const haystack = normalize(`${id} ${item.nome || ""} ${item.nome_cientifico || ""} ${item.categoria || ""}`);
+                    const kind = catalogKind(item);
+                    const filterMatch = filter === "all" || filter === kind || filter === "perenes" && normalize(item.ciclo).includes("perene");
+                    return filterMatch && (!query || haystack.includes(query));
+                }).sort((a, b) => String(a[1].nome || a[0]).localeCompare(String(b[1].nome || b[0]), "pt"));
+                document.getElementById("catalog-summary").textContent = `${format(entries.length)} culturas encontradas · ${
+                    format(Object.keys(horticolasDB).length)
+                } fichas completas no catálogo`;
+                document.getElementById("catalog-grid").innerHTML = entries.slice(0, catalogLimit).map(([id, item]) =>
+                    `<a class="catalog-card" href="/calendario/horticola-detalhe.html?id=${encodeURIComponent(id)}"><img src="${
+                        escapeHtml(item.imagem || "/images/pragas-placeholder.svg")
+                    }" alt="${escapeHtml(item.nome || "Cultura")}" loading="lazy" onerror="this.onerror=null;this.src='/images/pragas-placeholder.svg'"><div class="catalog-card-body"><small>${
+                        escapeHtml(item.categoria || catalogKind(item))
+                    }</small><h3>${escapeHtml(item.nome || id)}</h3><p>${
+                        escapeHtml(item.nome_cientifico || item.ciclo || "Consultar ficha de cultivo")
+                    }</p></div></a>`
+                ).join("") || '<div class="empty">Não foram encontradas culturas com estes critérios.</div>';
+                const more = document.getElementById("catalog-more");
+                more.hidden = entries.length <= catalogLimit;
+                more.onclick = () => { catalogLimit += 12; renderCatalog(); };
             }
 
             function renderWeekPlan() {
@@ -1279,8 +1514,19 @@
                         locationsDB[0];
                     renderLocalProfile();
                     renderCalendar();
+                    renderCatalog();
                     renderFlora();
                     setupLocationLogic();
+                    document.getElementById("catalog-search").addEventListener("input", () => renderCatalog(true));
+                    document.getElementById("catalog-filter").addEventListener("change", () => renderCatalog(true));
+                    document.getElementById("guide-location-button").onclick = () => {
+                        const input = document.getElementById("loc-search-input");
+                        if (input) {
+                            input.focus();
+                            input.style.boxShadow = "0 0 0 3px rgba(64,120,69,.2)";
+                            setTimeout(() => input.style.boxShadow = "", 1800);
+                        }
+                    };
                     document.getElementById("prev-month").onclick = () => {
                         viewedDate = new Date(viewedDate.getFullYear(), viewedDate.getMonth() - 1, 1);
                         renderCalendar();
