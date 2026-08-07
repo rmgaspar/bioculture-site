@@ -207,18 +207,44 @@
             }
             .castas-grid {
                 display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(245px, 1fr));
-                gap: 16px;
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                gap: 18px;
+            }
+            #regional-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
             }
             .casta-card {
+                display: grid;
+                grid-template-columns: 78px minmax(0, 1fr);
+                gap: 16px;
+                align-items: start;
+                min-height: 142px;
+                box-sizing: border-box;
                 background: #fff;
                 border: 1px solid #eee;
-                border-radius: 12px;
-                padding: 18px;
+                border-radius: 16px;
+                padding: 16px;
                 cursor: pointer;
                 transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
                 text-align: left;
             }
+            .vine-vignette {
+                width: 78px;
+                height: 78px;
+                border-radius: 50%;
+                display: grid;
+                place-items: center;
+                background: linear-gradient(145deg, #f2eee5, #e7eddf);
+                overflow: hidden;
+            }
+            .vine-vignette svg { width: 68px; height: 68px; }
+            .vine-vignette .leaf { fill: #718367; }
+            .vine-vignette .stem { stroke: #69745d; }
+            .vine-vignette .berry { fill: #71182f; }
+            .vine-vignette.branco .berry { fill: #d9b931; }
+            .vine-vignette.precoce { background: linear-gradient(145deg, #f5f0dc, #e7eedf); }
+            .vine-vignette.tardia { background: linear-gradient(145deg, #eee8e4, #e3e9df); }
+            .casta-content { min-width: 0; }
             .casta-card:hover, .casta-card:focus {
                 transform: translateY(-3px);
                 border-color: var(--wine);
@@ -265,6 +291,40 @@
                 flex-wrap: wrap;
                 gap: 6px;
                 margin-top: 13px;
+            }
+            .quick-filters {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+                margin: 0 0 18px;
+            }
+            .quick-filter {
+                border: 1px solid #e8e8e8 !important;
+                border-radius: 999px !important;
+                padding: 8px 12px !important;
+                background: #fff !important;
+                color: #777 !important;
+                font-size: .62em !important;
+                font-weight: 900 !important;
+                letter-spacing: .5px;
+                text-transform: uppercase;
+                box-shadow: none !important;
+            }
+            .quick-filter.active {
+                border-color: var(--wine) !important;
+                background: var(--wine-soft) !important;
+                color: var(--wine) !important;
+            }
+            .atlas-more {
+                display: flex;
+                justify-content: center;
+                margin-top: 24px;
+            }
+            .atlas-note {
+                margin: 12px 0 0;
+                color: #9a8d91;
+                font-size: .65em;
+                line-height: 1.5;
             }
             .tag {
                 font-size: 0.57em;
@@ -499,7 +559,7 @@
                     width: 100%;
                     max-width: 360px;
                 }
-                .pillars-grid, .practice-grid, .pest-grid {
+                .pillars-grid, .practice-grid, .pest-grid, .castas-grid, #regional-grid {
                     grid-template-columns: repeat(2, 1fr);
                 }
             }
@@ -523,6 +583,9 @@
                     align-items: start;
                     flex-direction: column;
                 }
+                .castas-grid, #regional-grid { grid-template-columns: 1fr; }
+                .casta-card { grid-template-columns: 70px minmax(0, 1fr); min-height: 0; }
+                .vine-vignette { width: 70px; height: 70px; }
             }
         </style>
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV0FD8PXC"></script>
@@ -637,8 +700,16 @@
                                     <option value="">Todas as origens</option>
                                 </select>
                             </div>
+                            <div class="quick-filters" id="quick-filters" aria-label="Filtros rápidos">
+                                <button class="quick-filter active" data-quick="">Todas</button>
+                                <button class="quick-filter" data-quick="autoctone">Autóctones</button>
+                                <button class="quick-filter" data-quick="precoce">Precoces</button>
+                                <button class="quick-filter" data-quick="tardia">Tardias</button>
+                            </div>
                             <div class="result-count" id="result-count"></div>
                             <div class="castas-grid" id="atlas-grid"></div>
+                            <div class="atlas-more"><button class="btn-clean" id="atlas-more">Ver mais castas</button></div>
+                            <p class="atlas-note">As vinhetas são elementos editoriais para distinguir cor e ciclo; não substituem a identificação botânica da folha, do bago ou do cacho.</p>
 
                             <div class="section-heading">
                                 <h2>Práticas biológicas para a vinha</h2>
@@ -693,7 +764,9 @@
             let currentRegion = "Portugal",
                 showAllRegional = false,
                 showAllPests = false,
-                visibleNews = 4;
+                visibleNews = 4,
+                atlasLimit = 12,
+                atlasQuickFilter = "";
             const regionOrder = [
                 "Vinhos Verdes",
                 "Trás-os-Montes",
@@ -775,23 +848,26 @@
                     word.charAt(0).toUpperCase() + word.slice(1)
                 ).join(" ");
 
+            function vineVignette(c) {
+                const cls = `${c.cor === "Branco" ? "branco" : "tinto"} ${
+                    String(c.maturacao || "").toLowerCase().includes("precoce") ? "precoce" : "tardia"
+                }`;
+                return `<span class="vine-vignette ${cls}" aria-hidden="true"><svg viewBox="0 0 80 80"><path class="leaf" d="M39 8c5 8 8 13 17 13-2 5-2 9 3 14-7 0-11 3-13 10-4-5-8-7-14-5 2-7 0-11-5-15 8-1 10-7 12-17 3 8 1 15-5 22 8-2 14 0 19 6-1-8 2-14 8-19-1 10 3 16 10 21-8 0-13 4-16 11-3-7-8-10-15-10 4-6 4-11 0-17 8 0 13-4 17-10Z" opacity=".92"/><path class="stem" d="M41 31c-2 11-1 18 4 24" fill="none" stroke-width="2" stroke-linecap="round"/><g class="berry"><circle cx="43" cy="53" r="5"/><circle cx="52" cy="53" r="5"/><circle cx="39" cy="61" r="5"/><circle cx="48" cy="62" r="5"/><circle cx="44" cy="70" r="5"/></g></svg></span>`;
+            }
+
             function grapeCard(c) {
-                const soil = c.tecnico?.solo || "-", climate = c.tecnico?.clima || "-";
+                const soil = c.tecnico?.solo || "-";
                 return `<article class="casta-card" tabindex="0" role="button" data-casta="${
                     escapeHtml(c.id)
-                }" aria-label="Abrir ficha de ${
+                }" aria-label="Abrir ficha de ${escapeHtml(c.nome)}">${vineVignette(c)}<div class="casta-content"><div class="casta-top"><span class="casta-name">${
                     escapeHtml(c.nome)
-                }"><div class="casta-top"><span class="casta-name">${
-                    escapeHtml(c.nome)
-                }</span><span class="color-dot ${
-                    c.cor === "Branco" ? "branco" : ""
-                }"></span></div><span class="casta-origin">${escapeHtml(c.origem || "-")} · ${
-                    escapeHtml(c.cor || "-")
-                }</span><p><strong>Solo:</strong> ${
+                }</span><span class="color-dot ${c.cor === "Branco" ? "branco" : ""}"></span></div><span class="casta-origin">${
+                    escapeHtml(c.origem || "-")
+                } · ${escapeHtml(c.cor || "-")}</span><p><strong>Solo:</strong> ${
                     escapeHtml(soil)
                 }</p><div class="card-tags"><span class="tag">${
                     escapeHtml(c.maturacao || "-")
-                }</span><span class="tag">${escapeHtml(c.vigor || "-")}</span></div></article>`;
+                }</span><span class="tag">${escapeHtml(c.vigor || "-")}</span></div></div></article>`;
             }
 
             function renderStats() {
@@ -833,22 +909,29 @@
                 button.textContent = showAllRegional ? "Recolher" : `Ver todas (${regional.length})`;
             }
 
-            function renderAtlas() {
+            function renderAtlas(reset = false) {
+                if (reset) atlasLimit = 12;
                 const query = document.getElementById("casta-search").value.trim().toLowerCase();
                 const color = document.getElementById("color-filter").value;
                 const origin = document.getElementById("origin-filter").value;
-                const filtered = castasDB.filter((c) =>
-                    (!query ||
+                const filtered = castasDB.filter((c) => {
+                    const quick = !atlasQuickFilter ||
+                        atlasQuickFilter === "autoctone" && c.autoctone ||
+                        atlasQuickFilter === "precoce" && String(c.maturacao || "").toLowerCase().includes("precoce") ||
+                        atlasQuickFilter === "tardia" && String(c.maturacao || "").toLowerCase().includes("tardia");
+                    return quick && (!query ||
                         [c.nome, c.origem, c.tipo_vinho, ...(c.regioes || []), ...(c.aromas || [])]
                             .join(" ").toLowerCase().includes(query)) &&
-                    (!color || c.cor === color) && (!origin || c.origem === origin)
-                );
+                        (!color || c.cor === color) && (!origin || c.origem === origin);
+                });
                 document.getElementById("result-count").textContent = `${filtered.length} ${
                     filtered.length === 1 ? "casta encontrada" : "castas encontradas"
-                }`;
+                } · a mostrar ${Math.min(filtered.length, atlasLimit)}`;
                 document.getElementById("atlas-grid").innerHTML = filtered.length
-                    ? filtered.map(grapeCard).join("")
+                    ? filtered.slice(0, atlasLimit).map(grapeCard).join("")
                     : '<div class="empty-state">Nenhuma casta corresponde aos filtros selecionados.</div>';
+                const more = document.getElementById("atlas-more");
+                more.style.display = filtered.length > atlasLimit ? "inline-block" : "none";
             }
 
             function renderPractices() {
@@ -1067,9 +1150,20 @@
                     ["casta-search", "color-filter", "origin-filter"].forEach((id) =>
                         document.getElementById(id).addEventListener(
                             id === "casta-search" ? "input" : "change",
-                            renderAtlas,
+                            () => renderAtlas(true),
                         )
                     );
+                    document.getElementById("atlas-more").onclick = () => {
+                        atlasLimit += 12;
+                        renderAtlas();
+                    };
+                    document.querySelectorAll(".quick-filter").forEach((button) => {
+                        button.onclick = () => {
+                            atlasQuickFilter = button.dataset.quick;
+                            document.querySelectorAll(".quick-filter").forEach((item) => item.classList.toggle("active", item === button));
+                            renderAtlas(true);
+                        };
+                    });
                     document.addEventListener("click", (event) => {
                         const card = event.target.closest("[data-casta]");
                         if (card) showDetail(card.dataset.casta);
