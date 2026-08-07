@@ -7,7 +7,7 @@
 
     <div class="bio-language">
         <label for="lang-selector" data-i18n="sidebar.lang_label">Idioma</label>
-        <select id="lang-selector" onchange="window.BioCultureShell&&BioCultureShell.setLanguage(this.value)">
+        <select id="lang-selector" onchange="localStorage.setItem('selected_lang',this.value);window.BioCultureShell?BioCultureShell.setLanguage(this.value):location.reload()">
             <option value="pt">Português</option>
             <option value="en">English</option>
         </select>
@@ -85,7 +85,7 @@
     class="bio-shell-loader"
     alt=""
     src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="
-    onload="import('/assets/js/biocultura-shell.js?v=5').then(m=>m.init()).catch(console.error)"
+    onload="const l=localStorage.getItem('selected_lang')==='en'?'en':'pt';const s=document.getElementById('lang-selector');if(s)s.value=l;import('/assets/js/biocultura-shell.js?v=6').then(m=>m.init()).catch(console.error)"
 />
 
 <style>

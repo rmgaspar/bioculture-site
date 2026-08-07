@@ -18,7 +18,7 @@
     async function loadDictionary() {
         if (dictionary) return dictionary;
         if (!loading) {
-            loading = originalFetch(`/assets/lang/auto/${lang}.json?v=1`, { cache: "no-cache" })
+            loading = originalFetch(`/assets/lang/auto/${lang}.json?v=2`, { cache: "no-cache" })
                 .then((response) => response.ok ? response.json() : {})
                 .catch(() => ({}));
         }
