@@ -238,10 +238,12 @@
                 overflow: hidden;
             }
             .vine-vignette svg { width: 68px; height: 68px; }
-            .vine-vignette .leaf { fill: #718367; }
-            .vine-vignette .stem { stroke: #69745d; }
-            .vine-vignette .berry { fill: #71182f; }
-            .vine-vignette.branco .berry { fill: #d9b931; }
+            .vine-vignette .leaf { fill: #71866d; }
+            .vine-vignette .leaf-soft { fill: #96a58a; }
+            .vine-vignette .stem { stroke: #6e6047; }
+            .vine-vignette .root { stroke: #9a8265; }
+            .vine-vignette .accent { fill: #71182f; }
+            .vine-vignette.branco .accent { fill: #d7b936; }
             .vine-vignette.precoce { background: linear-gradient(145deg, #f5f0dc, #e7eedf); }
             .vine-vignette.tardia { background: linear-gradient(145deg, #eee8e4, #e3e9df); }
             .casta-content { min-width: 0; }
@@ -299,14 +301,21 @@
                 margin: 0 0 18px;
             }
             .quick-filter {
+                display: inline-flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                min-height: 38px !important;
+                box-sizing: border-box;
                 border: 1px solid #e8e8e8 !important;
                 border-radius: 999px !important;
-                padding: 8px 12px !important;
+                padding: 0 15px !important;
                 background: #fff !important;
                 color: #777 !important;
                 font-size: .62em !important;
                 font-weight: 900 !important;
+                line-height: 1 !important;
                 letter-spacing: .5px;
+                text-align: center !important;
                 text-transform: uppercase;
                 box-shadow: none !important;
             }
@@ -709,7 +718,7 @@
                             <div class="result-count" id="result-count"></div>
                             <div class="castas-grid" id="atlas-grid"></div>
                             <div class="atlas-more"><button class="btn-clean" id="atlas-more">Ver mais castas</button></div>
-                            <p class="atlas-note">As vinhetas são elementos editoriais para distinguir cor e ciclo; não substituem a identificação botânica da folha, do bago ou do cacho.</p>
+                            <p class="atlas-note">As vinhetas representam a videira viva — copa, tronco e raízes. A cor é apenas um sinal editorial e não substitui a identificação botânica da casta.</p>
 
                             <div class="section-heading">
                                 <h2>Práticas biológicas para a vinha</h2>
@@ -852,7 +861,7 @@
                 const cls = `${c.cor === "Branco" ? "branco" : "tinto"} ${
                     String(c.maturacao || "").toLowerCase().includes("precoce") ? "precoce" : "tardia"
                 }`;
-                return `<span class="vine-vignette ${cls}" aria-hidden="true"><svg viewBox="0 0 80 80"><path class="leaf" d="M39 8c5 8 8 13 17 13-2 5-2 9 3 14-7 0-11 3-13 10-4-5-8-7-14-5 2-7 0-11-5-15 8-1 10-7 12-17 3 8 1 15-5 22 8-2 14 0 19 6-1-8 2-14 8-19-1 10 3 16 10 21-8 0-13 4-16 11-3-7-8-10-15-10 4-6 4-11 0-17 8 0 13-4 17-10Z" opacity=".92"/><path class="stem" d="M41 31c-2 11-1 18 4 24" fill="none" stroke-width="2" stroke-linecap="round"/><g class="berry"><circle cx="43" cy="53" r="5"/><circle cx="52" cy="53" r="5"/><circle cx="39" cy="61" r="5"/><circle cx="48" cy="62" r="5"/><circle cx="44" cy="70" r="5"/></g></svg></span>`;
+                return `<span class="vine-vignette ${cls}" aria-hidden="true"><svg viewBox="0 0 80 80"><path class="root" d="M40 55c-1 7-8 10-13 15m14-14c4 6 2 10 1 16m1-17c5 6 10 8 14 14m-15-12c-5 3-8 7-9 13m10-13c4 4 5 9 5 15" fill="none" stroke-width="1.8" stroke-linecap="round" opacity=".8"/><path class="stem" d="M41 57c-2-12 1-21 2-31m-2 17c-7-5-12-10-14-17m15 9c7-4 11-9 13-15" fill="none" stroke-width="3" stroke-linecap="round"/><path class="leaf" d="M26 30c-8-2-13-8-13-16 8-1 15 3 18 10 1 4-1 6-5 6Z"/><path class="leaf-soft" d="M54 24c2-8 8-13 16-13 1 8-3 15-10 18-4 1-6-1-6-5Z"/><path class="leaf" d="M42 29c-6-5-8-12-4-20 8 3 12 10 10 18-1 4-3 5-6 2Z"/><path class="stem" d="M42 42c8-2 13 0 17 6" fill="none" stroke-width="1.6" stroke-linecap="round"/><circle class="accent" cx="60" cy="49" r="3.5"/><path d="M17 55c14 3 31 3 47 0" fill="none" stroke="#c7b99f" stroke-width="1.4" stroke-linecap="round" opacity=".75"/></svg></span>`;
             }
 
             function grapeCard(c) {
