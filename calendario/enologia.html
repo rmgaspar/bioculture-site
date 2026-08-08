@@ -858,24 +858,16 @@
                 ).join(" ");
 
             function vineVignette(c) {
-                const cls = `${c.cor === "Branco" ? "branco" : "tinto"} ${
+                const isBranco = c.cor === "Branco";
+                const cls = `${isBranco ? "branco" : "tinto"} ${
                     String(c.maturacao || "").toLowerCase().includes("precoce") ? "precoce" : "tardia"
                 }`;
-               function vineVignette(c) {
-    const isBranco = c.cor === "Branco";
-    const cls = `${isBranco ? "branco" : "tinto"} ${
-        String(c.maturacao || "").toLowerCase().includes("precoce") ? "precoce" : "tardia"
-    }`;
 
-    const img = isBranco
-        ? "/images/videira-branca.jpg"
-        : "/images/videira-tinta.jpg";
+                const img = isBranco
+                    ? "/images/videira-branca.jpg"
+                    : "/images/videira-tinta.jpg";
 
-    return `<span class="vine-vignette ${cls}" aria-hidden="true">
-        <img src="${img}" alt="" loading="lazy" />
-    </span>`;
-}
-
+                return `<span class="vine-vignette ${cls}" aria-hidden="true"><img src="${img}" alt="" loading="lazy" /></span>`;
             }
 
             function grapeCard(c) {
