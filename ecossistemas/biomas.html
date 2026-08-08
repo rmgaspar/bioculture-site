@@ -1,152 +1,195 @@
 <!doctype html>
-<html>
-  <body style="display:flex; gap:20px; padding:20px; background:#fff; align-items:flex-start;">
-    <div id="a"></div>
+<html lang="pt">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Videira — recorte em ícone</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 24px;
+        background: #fff;
+        font-family: system-ui, sans-serif;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(240px, 1fr));
+        gap: 20px;
+        align-items: start;
+      }
+      .card {
+        border: 1px solid #e8ece8;
+        border-radius: 18px;
+        background: #fafaf7;
+        padding: 14px;
+      }
+      .label {
+        display: block;
+        margin: 0 0 10px;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+        color: #7a827b;
+      }
+      .preview {
+        width: 100%;
+        aspect-ratio: 1;
+        border-radius: 18px;
+        overflow: hidden;
+        background: #f4f1e8;
+      }
+      img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+      .code {
+        margin-top: 10px;
+        width: 100%;
+        min-height: 180px;
+        padding: 12px;
+        border: 1px solid #e4e8e4;
+        border-radius: 12px;
+        background: #fff;
+        color: #334;
+        font-size: 12px;
+        line-height: 1.5;
+        box-sizing: border-box;
+      }
+      .small {
+        font-size: 12px;
+        color: #7a827b;
+        line-height: 1.45;
+        margin-top: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="grid">
+      <div class="card">
+        <span class="label">Opção 1 — ícone recortado</span>
+        <div class="preview">
+          <img id="preview1" alt="Videira recortada para ícone" />
+        </div>
+        <div class="small">Versão comprimida, limpa e centrada, para favicon/ícone.</div>
+      </div>
+
+      <div class="card">
+        <span class="label">SVG pronto para guardar</span>
+        <textarea class="code" id="svgCode" readonly></textarea>
+        <div class="small">Guarda como <strong>videira-icon.svg</strong> e usa no site.</div>
+      </div>
+    </div>
 
     <script>
-      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" fill="none" role="img" aria-label="Videira editorial inspirada na imagem de referência">
-        <defs>
-          <radialGradient id="bg" cx="0.5" cy="0.35" r="0.85">
-            <stop offset="0%" stop-color="#F7F0E3"/>
-            <stop offset="100%" stop-color="#EFE4D1"/>
-          </radialGradient>
-          <linearGradient id="soil" x1="0" y1="1" x2="0" y2="0">
-            <stop offset="0%" stop-color="#5B1E25"/>
-            <stop offset="45%" stop-color="#7C3C27"/>
-            <stop offset="100%" stop-color="#C99A70"/>
-          </linearGradient>
-          <linearGradient id="vine" x1="0" y1="1" x2="0" y2="0">
-            <stop offset="0%" stop-color="#2B2012"/>
-            <stop offset="100%" stop-color="#6A5638"/>
-          </linearGradient>
-          <linearGradient id="leafA" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stop-color="#A38F4D"/>
-            <stop offset="100%" stop-color="#7D6C39"/>
-          </linearGradient>
-          <linearGradient id="leafB" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stop-color="#BDC3A1"/>
-            <stop offset="100%" stop-color="#8F9A76"/>
-          </linearGradient>
-          <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
-            <feGaussianBlur stdDeviation="1.2"/>
-          </filter>
-        </defs>
+      const iconSvg = `
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" fill="none" role="img" aria-label="Videira minimalista">
+  <defs>
+    <radialGradient id="bg" cx="0.5" cy="0.34" r="0.85">
+      <stop offset="0%" stop-color="#F7F1E6"/>
+      <stop offset="100%" stop-color="#EFE5D5"/>
+    </radialGradient>
+    <linearGradient id="soil" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0%" stop-color="#5D1F27"/>
+      <stop offset="45%" stop-color="#7E3D29"/>
+      <stop offset="100%" stop-color="#C9986D"/>
+    </linearGradient>
+    <linearGradient id="vine" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0%" stop-color="#2B2014"/>
+      <stop offset="100%" stop-color="#6B5637"/>
+    </linearGradient>
+    <linearGradient id="leafA" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#A28E4A"/>
+      <stop offset="100%" stop-color="#7F6C38"/>
+    </linearGradient>
+    <linearGradient id="leafB" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#C1C8A6"/>
+      <stop offset="100%" stop-color="#9BA67A"/>
+    </linearGradient>
+  </defs>
 
-        <rect width="512" height="512" rx="256" fill="url(#bg)"/>
-        <circle cx="256" cy="256" r="232" fill="none" stroke="#FFFFFF" stroke-width="7" opacity="0.95"/>
+  <rect width="512" height="512" rx="256" fill="url(#bg)"/>
+  <circle cx="256" cy="256" r="230" fill="none" stroke="#FFFFFF" stroke-width="7"/>
 
-        <!-- distant landscape -->
-        <path d="M86 225C138 184 193 166 251 171C320 177 373 205 448 182V312H86V225Z" fill="#E8DFC9" opacity="0.96"/>
-        <path d="M72 279C126 246 184 235 250 239C324 244 377 272 450 244V320H72V279Z" fill="#DCCFB3" opacity="0.62"/>
-        <ellipse cx="342" cy="147" rx="20" ry="20" fill="#F0B56B" opacity="0.95"/>
-        <path d="M374 160C384 149 397 145 410 147C422 149 432 156 438 165" stroke="#E4D7C4" stroke-width="10" stroke-linecap="round" opacity="0.95"/>
+  <!-- sky / hills -->
+  <path d="M84 223C137 184 194 167 252 171C321 176 374 204 448 182V315H84V223Z" fill="#E8DFC9" opacity=".96"/>
+  <path d="M70 279C127 245 186 234 252 238C325 243 379 270 451 244V322H70V279Z" fill="#DCCFB3" opacity=".64"/>
+  <ellipse cx="342" cy="147" rx="19" ry="19" fill="#F0B56B" opacity=".95"/>
 
-        <!-- vine trunk -->
-        <path d="M170 316C176 274 190 241 214 210C227 194 236 171 238 145" stroke="url(#vine)" stroke-width="9" stroke-linecap="round"/>
-        <path d="M210 214C195 198 183 181 177 162" stroke="url(#vine)" stroke-width="7" stroke-linecap="round"/>
-        <path d="M221 197C238 186 253 172 265 155" stroke="url(#vine)" stroke-width="7" stroke-linecap="round"/>
-        <path d="M236 166C232 153 232 140 236 125" stroke="url(#vine)" stroke-width="5.5" stroke-linecap="round"/>
-        <path d="M251 145C255 126 265 111 281 100" stroke="url(#vine)" stroke-width="5.5" stroke-linecap="round"/>
+  <!-- vine -->
+  <path d="M171 318C177 274 190 240 214 209C227 194 237 170 239 143" stroke="url(#vine)" stroke-width="9" stroke-linecap="round"/>
+  <path d="M211 212C196 196 184 179 178 160" stroke="url(#vine)" stroke-width="7" stroke-linecap="round"/>
+  <path d="M222 196C238 185 253 171 265 154" stroke="url(#vine)" stroke-width="7" stroke-linecap="round"/>
+  <path d="M236 166C232 153 232 140 236 125" stroke="url(#vine)" stroke-width="5.5" stroke-linecap="round"/>
 
-        <!-- curls -->
-        <path d="M292 88C302 84 311 87 314 95C317 104 310 111 302 111C294 111 288 105 289 98C290 88 301 79 315 77" stroke="url(#vine)" stroke-width="4" stroke-linecap="round"/>
-        <path d="M285 136C293 133 300 136 303 143C306 151 301 158 294 158C286 158 281 152 282 145C283 137 291 130 304 128" stroke="url(#vine)" stroke-width="3.8" stroke-linecap="round"/>
-        <path d="M324 176C332 173 340 176 343 183C346 190 341 196 334 196C327 196 322 191 323 185C324 177 332 171 344 169" stroke="url(#vine)" stroke-width="3.8" stroke-linecap="round"/>
+  <!-- curls -->
+  <path d="M292 88C302 84 311 87 314 95C317 104 310 111 302 111C294 111 288 105 289 98C290 88 301 79 315 77" stroke="url(#vine)" stroke-width="4" stroke-linecap="round"/>
+  <path d="M285 136C293 133 300 136 303 143C306 151 301 158 294 158C286 158 281 152 282 145C283 137 291 130 304 128" stroke="url(#vine)" stroke-width="3.8" stroke-linecap="round"/>
 
-        <!-- leaves -->
-        <path d="M165 185C138 170 122 149 121 125C144 116 171 123 188 143C194 157 190 174 165 185Z" fill="url(#leafA)"/>
-        <path d="M192 168C181 139 189 113 212 96C235 109 245 136 235 161C222 172 207 174 192 168Z" fill="url(#leafA)"/>
-        <path d="M226 168C226 139 241 118 266 109C285 126 289 154 274 174C256 179 238 176 226 168Z" fill="url(#leafA)"/>
-        <path d="M118 259C108 244 107 228 114 214C130 215 144 226 149 242C147 252 138 260 118 259Z" fill="#A9B692" opacity="0.9"/>
-        <path d="M356 194C346 181 345 166 353 153C369 153 382 162 388 176C386 186 377 194 356 194Z" fill="url(#leafB)" opacity="0.9"/>
-        <path d="M246 188C235 174 236 158 245 145C260 145 273 154 279 168C277 178 267 186 246 188Z" fill="#BFC7A5" opacity="0.75"/>
+  <!-- leaves -->
+  <path d="M166 184C139 170 123 149 121 126C145 116 171 123 188 143C194 157 190 174 166 184Z" fill="url(#leafA)"/>
+  <path d="M193 167C181 139 190 113 212 96C235 109 245 136 235 161C222 172 208 174 193 167Z" fill="url(#leafA)"/>
+  <path d="M227 167C226 139 241 118 266 109C285 126 289 154 274 174C256 179 239 176 227 167Z" fill="url(#leafA)"/>
+  <path d="M357 194C347 181 346 166 354 153C370 153 382 162 388 176C386 186 377 194 357 194Z" fill="url(#leafB)" opacity=".92"/>
 
-        <!-- leaf veins -->
-        <g stroke="#E7DFC5" stroke-width="1.6" stroke-linecap="round" opacity="0.75">
-          <path d="M164 184L176 169"/>
-          <path d="M164 184L173 180"/>
-          <path d="M164 184L159 170"/>
-          <path d="M191 168L205 154"/>
-          <path d="M191 168L197 159"/>
-          <path d="M191 168L188 153"/>
-          <path d="M226 168L241 154"/>
-          <path d="M226 168L237 162"/>
-          <path d="M226 168L225 154"/>
-          <path d="M356 194L369 181"/>
-          <path d="M356 194L364 187"/>
-          <path d="M356 194L355 181"/>
-          <path d="M246 188L257 173"/>
-          <path d="M246 188L251 180"/>
-          <path d="M246 188L246 174"/>
-        </g>
+  <!-- leaf veins -->
+  <g stroke="#E7DFC5" stroke-width="1.6" stroke-linecap="round" opacity=".75">
+    <path d="M166 184L176 169"/>
+    <path d="M166 184L174 180"/>
+    <path d="M166 184L160 170"/>
+    <path d="M193 167L205 154"/>
+    <path d="M193 167L198 159"/>
+    <path d="M193 167L189 153"/>
+    <path d="M227 167L241 154"/>
+    <path d="M227 167L237 162"/>
+    <path d="M227 167L226 154"/>
+    <path d="M357 194L369 181"/>
+    <path d="M357 194L365 187"/>
+    <path d="M357 194L356 181"/>
+  </g>
 
-        <!-- branch twigs -->
-        <path d="M210 214C205 225 202 235 201 246" stroke="url(#vine)" stroke-width="4.5" stroke-linecap="round" opacity="0.95"/>
-        <path d="M221 197C216 208 214 217 214 228" stroke="url(#vine)" stroke-width="4.5" stroke-linecap="round" opacity="0.95"/>
-        <path d="M236 166C229 173 225 181 223 190" stroke="url(#vine)" stroke-width="3.8" stroke-linecap="round" opacity="0.95"/>
+  <!-- fruit -->
+  <circle cx="286" cy="252" r="16" fill="#7F1735"/>
+  <circle cx="307" cy="264" r="16" fill="#922848"/>
+  <circle cx="295" cy="286" r="16" fill="#6F1832"/>
+  <circle cx="271" cy="276" r="16" fill="#A12C4B"/>
+  <circle cx="316" cy="287" r="16" fill="#7D1C39"/>
+  <circle cx="286" cy="308" r="16" fill="#8E2846"/>
+  <circle cx="260" cy="296" r="16" fill="#6E1832"/>
+  <path d="M286 252C281 240 276 228 275 216" stroke="#66543A" stroke-width="4" stroke-linecap="round"/>
+  <path d="M307 264C315 253 319 241 321 229" stroke="#66543A" stroke-width="4" stroke-linecap="round"/>
 
-        <!-- fruit cluster -->
-        <g>
-          <circle cx="287" cy="252" r="16" fill="#7F1735"/>
-          <circle cx="307" cy="264" r="16" fill="#922848"/>
-          <circle cx="295" cy="286" r="16" fill="#6F1832"/>
-          <circle cx="271" cy="276" r="16" fill="#A12C4B"/>
-          <circle cx="316" cy="287" r="16" fill="#7D1C39"/>
-          <circle cx="286" cy="308" r="16" fill="#8E2846"/>
-          <circle cx="260" cy="296" r="16" fill="#6E1832"/>
-          <path d="M287 252C281 240 276 228 275 216" stroke="#66543A" stroke-width="4" stroke-linecap="round"/>
-          <path d="M307 264C315 253 319 241 321 229" stroke="#66543A" stroke-width="4" stroke-linecap="round"/>
-        </g>
+  <!-- soil -->
+  <path d="M62 338C104 329 136 330 168 336C202 343 230 341 258 333C294 323 327 321 360 329C392 336 423 339 450 333V494H62V338Z" fill="url(#soil)"/>
+  <path d="M62 371C106 362 142 363 174 371C209 380 246 378 281 369C316 359 351 357 385 365C409 370 430 372 450 369V494H62V371Z" fill="#8A5139" opacity=".68"/>
 
-        <!-- soil cutaway -->
-        <path d="M62 338C104 329 136 330 168 336C202 343 230 341 258 333C294 323 327 321 360 329C392 336 423 339 450 333V494H62V338Z" fill="url(#soil)"/>
-        <path d="M62 371C106 362 142 363 174 371C209 380 246 378 281 369C316 359 351 357 385 365C409 370 430 372 450 369V494H62V371Z" fill="#8A5139" opacity="0.68"/>
+  <!-- roots -->
+  <path d="M171 318C149 332 132 348 123 367" stroke="url(#soil)" stroke-width="7" stroke-linecap="round"/>
+  <path d="M173 318C171 339 164 355 151 372" stroke="url(#soil)" stroke-width="5" stroke-linecap="round"/>
+  <path d="M174 318C190 333 203 349 212 369" stroke="url(#soil)" stroke-width="5" stroke-linecap="round"/>
+  <path d="M174 318C194 325 209 337 221 352" stroke="url(#soil)" stroke-width="4.5" stroke-linecap="round"/>
 
-        <!-- roots -->
-        <path d="M170 316C148 330 131 347 122 366" stroke="url(#soil)" stroke-width="7" stroke-linecap="round"/>
-        <path d="M172 317C170 338 163 355 150 372" stroke="url(#soil)" stroke-width="5" stroke-linecap="round"/>
-        <path d="M173 317C189 332 202 348 211 369" stroke="url(#soil)" stroke-width="5" stroke-linecap="round"/>
-        <path d="M174 317C194 324 209 336 221 352" stroke="url(#soil)" stroke-width="4.5" stroke-linecap="round"/>
+  <!-- stones -->
+  <g opacity=".45">
+    <circle cx="106" cy="388" r="5" fill="#F0D8BE"/>
+    <circle cx="132" cy="399" r="7" fill="#F5E7D5"/>
+    <circle cx="159" cy="385" r="4" fill="#E8BF95"/>
+    <circle cx="189" cy="403" r="6" fill="#F5E6D4"/>
+    <circle cx="222" cy="395" r="5" fill="#E9C39A"/>
+    <circle cx="248" cy="407" r="8" fill="#F5E8D9"/>
+    <circle cx="281" cy="390" r="5" fill="#E2B993"/>
+    <circle cx="312" cy="400" r="7" fill="#F3DECB"/>
+    <circle cx="346" cy="387" r="4" fill="#E6C09A"/>
+    <circle cx="376" cy="404" r="6" fill="#F6E8D7"/>
+    <circle cx="405" cy="392" r="5" fill="#E8C59D"/>
+  </g>
+</svg>`.trim();
 
-        <!-- root web -->
-        <g opacity="0.75" stroke="#F2DDC5" stroke-width="1.8" stroke-linecap="round">
-          <path d="M110 400C140 392 166 392 190 400"/>
-          <path d="M188 426C215 418 242 418 270 426"/>
-          <path d="M280 402C308 394 336 394 364 403"/>
-          <path d="M142 444C168 436 193 436 219 444"/>
-        </g>
-
-        <!-- scattered stones -->
-        <g opacity="0.45">
-          <circle cx="106" cy="388" r="5" fill="#F0D8BE"/>
-          <circle cx="132" cy="399" r="7" fill="#F5E7D5"/>
-          <circle cx="159" cy="385" r="4" fill="#E8BF95"/>
-          <circle cx="189" cy="403" r="6" fill="#F5E6D4"/>
-          <circle cx="222" cy="395" r="5" fill="#E9C39A"/>
-          <circle cx="248" cy="407" r="8" fill="#F5E8D9"/>
-          <circle cx="281" cy="390" r="5" fill="#E2B993"/>
-          <circle cx="312" cy="400" r="7" fill="#F3DECB"/>
-          <circle cx="346" cy="387" r="4" fill="#E6C09A"/>
-          <circle cx="376" cy="404" r="6" fill="#F6E8D7"/>
-          <circle cx="405" cy="392" r="5" fill="#E8C59D"/>
-        </g>
-
-        <!-- subtle texture dots -->
-        <g opacity="0.12" fill="#FFFFFF" filter="url(#soft)">
-          <circle cx="94" cy="356" r="2"/>
-          <circle cx="124" cy="345" r="2"/>
-          <circle cx="152" cy="355" r="1.8"/>
-          <circle cx="184" cy="352" r="2"/>
-          <circle cx="220" cy="346" r="1.8"/>
-          <circle cx="256" cy="350" r="2"/>
-          <circle cx="294" cy="346" r="1.8"/>
-          <circle cx="330" cy="350" r="2"/>
-          <circle cx="364" cy="347" r="1.8"/>
-          <circle cx="398" cy="352" r="2"/>
-        </g>
-      </svg>`;
-
-      document.getElementById("a").innerHTML = svg;
+      document.getElementById("svgCode").value = iconSvg;
+      document.getElementById("preview1").src =
+        "data:image/svg+xml;charset=utf-8," + encodeURIComponent(iconSvg);
     </script>
   </body>
 </html>
