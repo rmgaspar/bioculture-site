@@ -491,9 +491,12 @@
                             </p>
                             <nav class="actions" aria-label="Começar a explorar">
                                 <a class="action primary" href="/observatorio/observatorio-global.html"
-                                >Ver o planeta</a><a class="action" href="/ecossistemas/biodiversidade.html"
-                                >Descobrir biodiversidade</a><a class="action" href="/calendario/calendario.html"
-                                >Cuidar e cultivar</a>
+                                >Ver o planeta</a
+                                ><a class="action" href="/ecossistemas/biodiversidade.html"
+                                >Descobrir biodiversidade</a
+                                ><a class="action" href="/calendario/calendario.html"
+                                >Cuidar e cultivar</a
+                                >
                             </nav>
                         </div>
                         <div
@@ -519,17 +522,20 @@
                                     Observar</small><h3>Ver o que está a mudar</h3><p>
                                     Clima, oceanos, atmosfera, gelo, incêndios e outros sinais organizados ao longo do
                                     tempo.
-                                </p><b>Explorar →</b></a><a
+                                </p><b>Explorar →</b></a
+                            ><a
                                 class="step"
                                 href="/observatorio/vetores-pressao.html"
                             ><small>02 · Compreender</small><h3>Ligar causas e território</h3><p>
                                     Energia, mineração, digitalização, pecuária e decisões que exercem pressão sobre
                                     sistemas vivos.
-                                </p><b>Investigar →</b></a><a class="step" href="/calendario/calendario.html"><small>03
+                                </p><b>Investigar →</b></a
+                            ><a class="step" href="/calendario/calendario.html"><small>03
                                     · Regenerar</small><h3>Passar ao cuidado diário</h3><p>
                                     Solo vivo, água, biodiversidade, sementeiras e práticas biológicas adaptadas ao
                                     ciclo do ano.
-                                </p><b>Começar →</b></a>
+                                </p><b>Começar →</b></a
+                            >
                         </div>
                     </section>
                     <section class="block">
@@ -556,55 +562,8 @@
                                 </p>
                             </div>
                         </div>
-                        <div class="atlas">
-                            <a class="portal" href="/recursos/agua.html">
-                                <span class="portal-mark">${getPortalMarkImage("Recursos vitais")}</span>
-                                <div>
-                                    <h3>Recursos vitais</h3>
-                                    <p>Água, ar e solo: como funcionam, o que os pressiona e como os podemos proteger.</p>
-                                    <span>Abrir recursos vitais →</span>
-                                </div>
-                            </a>
-                            <a class="portal" href="/ecossistemas/biodiversidade.html">
-                                <span class="portal-mark">${getPortalMarkImage("Biodiversidade")}</span>
-                                <div>
-                                    <h3>Biodiversidade</h3>
-                                    <p>Espécies, habitats, sazonalidade, estatuto, relações ecológicas e vida próxima.</p>
-                                    <span>Abrir biodiversidade →</span>
-                                </div>
-                            </a>
-                            <a class="portal" href="/observatorio/observatorio-terra.html">
-                                <span class="portal-mark">${getPortalMarkImage("Portugal em mudança")}</span>
-                                <div>
-                                    <h3>Portugal em mudança</h3>
-                                    <p>Séries nacionais para ler clima, território, produção, mobilidade e transformação social.</p>
-                                    <span>Abrir observatório nacional →</span>
-                                </div>
-                            </a>
-                            <a class="portal" href="/energia/energia.html">
-                                <span class="portal-mark">${getPortalMarkImage("Energia e pressão")}</span>
-                                <div>
-                                    <h3>Energia e pressão</h3>
-                                    <p>Uso consciente e impactos territoriais das infraestruturas que sustentam a vida moderna.</p>
-                                    <span>Abrir energia →</span>
-                                </div>
-                            </a>
-                            <a class="portal" href="/calendario/calendario.html">
-                                <span class="portal-mark">${getPortalMarkImage("Calendário de regeneração")}</span>
-                                <div>
-                                    <h3>Calendário de regeneração</h3>
-                                    <p>O que observar, semear, plantar e cuidar em cada fase do ano, sem pesticidas.</p>
-                                    <span>Abrir calendário →</span>
-                                </div>
-                            </a>
-                            <a class="portal" href="/calendario/enologia.html">
-                                <span class="portal-mark">${getPortalMarkImage("Vinha viva")}</span>
-                                <div>
-                                    <h3>Vinha viva</h3>
-                                    <p>Castas, solo, clima, biodiversidade e práticas biológicas para uma viticultura com identidade.</p>
-                                    <span>Abrir vinha viva →</span>
-                                </div>
-                            </a>
+                        <div class="atlas" id="atlas-container">
+                            <!-- O conteúdo do atlas será injetado aqui pelo JavaScript -->
                         </div>
                     </section>
                     <section class="block">
@@ -665,7 +624,7 @@
             const el = (id) => document.getElementById(id),
                 esc = (v) =>
                     String(v ?? "—").replace(
-                        /[&<>'"]/g,
+                        /[&<>'""]/g,
                         (c) => ({
                             "&": "&amp;",
                             "<": "&lt;",
@@ -759,6 +718,62 @@
                 return `<img src="${src}" alt="${title}" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;">`;
             }
 
+            const atlasHtmlContent = `
+                <a class="portal" href="/recursos/agua.html">
+                    <span class="portal-mark">${getPortalMarkImage("Recursos vitais")}</span>
+                    <div>
+                        <h3>Recursos vitais</h3>
+                        <p>Água, ar e solo: como funcionam, o que os pressiona e como os podemos proteger.</p>
+                        <span>Abrir recursos vitais →</span>
+                    </div>
+                </a>
+
+                <a class="portal" href="/ecossistemas/biodiversidade.html">
+                    <span class="portal-mark">${getPortalMarkImage("Biodiversidade")}</span>
+                    <div>
+                        <h3>Biodiversidade</h3>
+                        <p>Espécies, habitats, sazonalidade, estatuto, relações ecológicas e vida próxima.</p>
+                        <span>Abrir biodiversidade →</span>
+                    </div>
+                </a>
+
+                <a class="portal" href="/observatorio/observatorio-terra.html">
+                    <span class="portal-mark">${getPortalMarkImage("Portugal em mudança")}</span>
+                    <div>
+                        <h3>Portugal em mudança</h3>
+                        <p>Séries nacionais para ler clima, território, produção, mobilidade e transformação social.</p>
+                        <span>Abrir observatório nacional →</span>
+                    </div>
+                </a>
+
+                <a class="portal" href="/energia/energia.html">
+                    <span class="portal-mark">${getPortalMarkImage("Energia e pressão")}</span>
+                    <div>
+                        <h3>Energia e pressão</h3>
+                        <p>Uso consciente e impactos territoriais das infraestruturas que sustentam a vida moderna.</p>
+                        <span>Abrir energia →</span>
+                    </div>
+                </a>
+
+                <a class="portal" href="/calendario/calendario.html">
+                    <span class="portal-mark">${getPortalMarkImage("Calendário de regeneração")}</span>
+                    <div>
+                        <h3>Calendário de regeneração</h3>
+                        <p>O que observar, semear, plantar e cuidar em cada fase do ano, sem pesticidas.</p>
+                        <span>Abrir calendário →</span>
+                    </div>
+                </a>
+
+                <a class="portal" href="/calendario/enologia.html">
+                    <span class="portal-mark">${getPortalMarkImage("Vinha viva")}</span>
+                    <div>
+                        <h3>Vinha viva</h3>
+                        <p>Castas, solo, clima, biodiversidade e práticas biológicas para uma viticultura com identidade.</p>
+                        <span>Abrir vinha viva →</span>
+                    </div>
+                </a>
+            `;
+
             async function start() {
                 try {
                     const names = [
@@ -778,6 +793,7 @@
                     showPulse(data[0], data[1], data[2], data[3]);
                     showToday(data[4], data[0]);
                     showNews(data[5]);
+                    el("atlas-container").innerHTML = atlasHtmlContent; // Injeta o conteúdo do atlas aqui
                 } catch (e) {
                     console.error("Não foi possível carregar a entrada do observatório:", e);
                     el("pulse").innerHTML = '<p class="empty">—</p>';
