@@ -1,191 +1,1800 @@
-<!DOCTYPE HTML>
-<!--
-	Editorial by HTML5 UP
-	html5up.net | @ajlkn
-	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
--->
-<html>
-	<head>
-		<title>bioCultura - Calendário Hortícola</title>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-		<link rel="stylesheet" href="assets/css/main.css" />
-		<style>
-			/* 1. LIMPEZA TOTAL E ALINHAMENTO AO TOPO */
-			section, #header, .major, hr, article { border: none !important; box-shadow: none !important; }
-			
-			/* 2. MENU TOGGLE: FOLHA VERDE */
-			#header .toggle {
-				background: none !important;
-				box-shadow: none !important;
-				top: 2em !important; 
-				left: 2em !important;
-                border: none !important;
-			}
-			#header .toggle:before {
-				content: '\f06c' !important; 
-				font-family: "Font Awesome 5 Free";
-				font-weight: 900;
-				color: #2e7d32 !important;
-				font-size: 1.6em !important;
-			}
-            #header .toggle:after { display: none !important; }
+<!DOCTYPE html>
+<html lang="pt">
+    <head>
+        <title>bioCultura - Calendário de Regeneração</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+        <link rel="stylesheet" href="/assets/css/main.css" />
+       <style>
+    :root {
+        --green: #2e7d32;
+        --green-dark: #1b4332;
+        --green-soft: #f4f8f4;
+        --ink: #1a1a1a;
+        --muted: #737373;
+        --line: #ededed;
+        --warm: #c98b38;
+    }
+    body, input, select, textarea {
+        font-family: "Source Sans Pro", sans-serif !important;
+        color: #444;
+    }
+    section, #header, hr, .major {
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+    }
+    section {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+    #sidebar {
+        position: fixed !important;
+        top: 0;
+        left: 0;
+        height: 100vh !important;
+        width: 18em !important;
+        overflow: hidden !important;
+        z-index: 10000;
+        background: #fff;
+        border-right: 1px solid #f2f2f2 !important;
+    }
+    #wrapper {
+        padding-left: 18em !important;
+    }
+    .inner {
+        padding: 2.2em 4em 0 !important;
+        max-width: 1600px !important;
+        margin: 0 auto;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    .category-label {
+        display: block;
+        font-size: 0.65em;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 4px;
+        color: #bbb;
+        margin-bottom: 14px;
+    }
+    .hero {
+        display: grid;
+        grid-template-columns: minmax(0, 1.2fr) minmax(390px, 0.8fr);
+        gap: 4em;
+        align-items: start;
+        margin-bottom: 3em;
+    }
+    .hero h1 {
+        font-size: clamp(3.5em, 6vw, 6em);
+        font-weight: 900;
+        color: var(--ink);
+        letter-spacing: -4px;
+        line-height: 0.9;
+        margin: 0 0 25px;
+    }
+    .hero h1 em {
+        display: block;
+        color: var(--green);
+        font-style: normal;
+    }
+    .hero-intro {
+        font-size: 1.02em;
+        line-height: 1.75;
+        color: #555;
+        max-width: 720px;
+        margin-bottom: 18px;
+    }
+    .location-line {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+        font-size: 0.72em;
+        color: #999;
+        text-transform: uppercase;
+        font-weight: 800;
+        letter-spacing: 1px;
+    }
+    .location-line strong {
+        color: var(--green);
+    }
+    .local-profile {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin-top: 25px;
+        max-width: 720px;
+    }
+    .profile-chip {
+        background: var(--green-soft);
+        border-radius: 10px;
+        padding: 12px 14px;
+    }
+    .profile-chip span {
+        display: block;
+        font-size: 0.58em;
+        color: #819184;
+        text-transform: uppercase;
+        font-weight: 900;
+    }
+    .profile-chip strong {
+        display: block;
+        font-size: 0.78em;
+        color: #355d39;
+        margin-top: 4px;
+    }
 
-			/* Margem idêntica à da sidebar para o título */
-			section { padding-top: 2.5em !important; }
-            h1 { color: #2e7d32 !important; margin-bottom: 1.2em !important; font-size: 3em !important; letter-spacing: -1px; }
+    .calendar-panel {
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 24px;
+        padding: 2em;
+        box-shadow: 0 28px 70px rgba(30, 60, 35, 0.07);
+    }
+    .calendar-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    .calendar-title span {
+        display: block;
+        font-size: 0.62em;
+        color: #999;
+        text-transform: uppercase;
+        font-weight: 900;
+        letter-spacing: 2px;
+    }
+    .calendar-title strong {
+        display: block;
+        font-size: 1.35em;
+        color: var(--ink);
+        margin-top: 3px;
+        text-transform: capitalize;
+    }
+    .month-nav {
+        display: flex;
+        gap: 6px;
+    }
+    .month-nav button {
+        width: 34px;
+        height: 34px;
+        padding: 0 !important;
+        border: 1px solid var(--line) !important;
+        border-radius: 50% !important;
+        background: #fff !important;
+        color: #777 !important;
+        box-shadow: none !important;
+        line-height: 1 !important;
+    }
+    .calendar-weekdays, .calendar-days {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 6px;
+    }
+    .calendar-weekdays span {
+        text-align: center;
+        font-size: 0.58em;
+        color: #aaa;
+        text-transform: uppercase;
+        font-weight: 900;
+        padding-bottom: 8px;
+    }
+    .calendar-day {
+        min-height: 48px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        font-size: 0.78em;
+        color: #666;
+        background: #fafafa;
+    }
+    .calendar-day.outside {
+        background: transparent;
+        color: #ccc;
+    }
+    .calendar-day.today {
+        background: var(--ink);
+        color: #fff;
+        font-weight: 900;
+    }
+    .moon-dot {
+        position: absolute;
+        right: 5px;
+        top: 5px;
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        border: 1px solid #999;
+    }
+    .moon-dot.full {
+        background: #e4b43c;
+        border-color: #e4b43c;
+    }
+    .moon-dot.new {
+        background: #777;
+        border-color: #777;
+    }
+    .moon-dot.quarter {
+        background: linear-gradient(90deg, #777 50%, transparent 50%);
+    }
+    .calendar-foot {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        border-top: 1px solid var(--line);
+        padding-top: 16px;
+        margin-top: 16px;
+        font-size: 0.67em;
+        color: #888;
+        line-height: 1.45;
+    }
+    .calendar-foot strong {
+        color: var(--green);
+    }
 
-			/* 3. GRELHA DOS 12 MESES (ESTILO GALERIA) */
-			.month-grid { 
-                display: grid; 
-                grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); 
-                gap: 1.5em; 
-                margin-top: 0; 
-            }
+    .section-nav {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        background: rgba(255, 255, 255, 0.94);
+        backdrop-filter: blur(10px);
+        border-top: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+        display: flex;
+        gap: 24px;
+        overflow: auto;
+        padding: 13px 0;
+        margin-bottom: 3em;
+    }
+    .section-nav a {
+        white-space: nowrap;
+        border: 0 !important;
+        text-decoration: none !important;
+        color: #999;
+        font-size: 0.65em;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    .section-nav a:hover {
+        color: var(--green);
+    }
+    .section-heading {
+        margin: 4em 0 1.4em;
+    }
+    .section-heading h2 {
+        margin: 0 0 8px;
+        color: var(--ink);
+        font-size: 1.55em;
+    }
+    .section-heading p {
+        margin: 0;
+        color: #777;
+        font-size: 0.88em;
+        max-width: 850px;
+        line-height: 1.65;
+    }
 
-			.month-card { 
-                position: relative !important;
-                background: #f4f4f4; 
-                border-radius: 20px !important; 
-                overflow: hidden !important; 
-                text-decoration: none !important; 
-                transition: transform 0.3s ease, box-shadow 0.3s ease; 
-                height: 240px !important;
-                display: block !important;
-                border: none !important;
-            }
+    /* Estilos para a grelha de ações (Semear, Plantar, Colher) */
+    .action-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+    }
+    .action-card {
+        position: relative;
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 1.45em;
+        min-width: 0;
+        background: #fff;
+    }
+    .action-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+    }
+    .action-card:nth-child(1) {
+        background: linear-gradient(135deg, #f6fbf3, #edf8ea);
+        border-color: #dfe9da;
+    }
+    .action-card:nth-child(1)::before {
+        background: #7fb46a;
+    }
+    .action-card:nth-child(2) {
+        background: linear-gradient(135deg, #f7faf8, #edf5ef);
+        border-color: #d9e6dc;
+    }
+    .action-card:nth-child(2)::before {
+        background: #6fae8f;
+    }
+    .action-card:nth-child(3) {
+        background: linear-gradient(135deg, #fff7ef, #fdf0df);
+        border-color: #ead9c3;
+    }
+    .action-card:nth-child(3)::before {
+        background: #d39a45;
+    }
+    .action-label {
+        font-size: 0.62em;
+        color: var(--green);
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    .action-card h3 {
+        font-size: 1.18em;
+        color: #222;
+        margin: 7px 0 0;
+    }
+    .action-card-head > p {
+        font-size: 0.76em;
+        color: #777;
+        line-height: 1.55;
+        margin: 8px 0 0;
+        max-width: 390px;
+    }
+    .crop-list {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 9px;
+    }
+    .crop-link {
+        display: grid;
+        grid-template-columns: 52px minmax(0, 1fr);
+        gap: 11px;
+        align-items: center;
+        padding: 11px;
+        border-radius: 12px;
+        background: var(--green-soft);
+        text-decoration: none !important;
+        border: 1px solid #e8efe8 !important;
+        color: inherit;
+        transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+        min-width: 0;
+    }
+    .crop-link:hover {
+        background: #edf5ed;
+        border-color: #d6e4d7 !important;
+        transform: translateY(-1px);
+    }
+    .crop-link img {
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        object-fit: cover;
+        background: #e6ece6;
+    }
+    .crop-link strong {
+        display: block;
+        font-size: 0.82em;
+        color: #273c2a;
+        line-height: 1.2;
+        overflow-wrap: anywhere;
+    }
+    .crop-link span {
+        display: block;
+        font-size: 0.61em;
+        color: #768279;
+        margin-top: 3px;
+        line-height: 1.3;
+        overflow-wrap: anywhere;
+    }
+    .empty {
+        padding: 1.5em;
+        background: #fafafa;
+        border-radius: 10px;
+        color: #888;
+        font-size: 0.75em;
+        line-height: 1.5;
+    }
 
-			.month-card:hover { 
-                transform: translateY(-8px); 
-                box-shadow: 0 15px 30px rgba(46, 125, 50, 0.2) !important;
-            }
+    .location-guide {
+        margin-top: 1.15em;
+        padding: 1.15em 1.25em;
+        border: 1px solid #dfe9df;
+        border-radius: 16px;
+        background: linear-gradient(135deg, #f7faf6, #fff);
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 230px;
+        gap: 18px;
+        align-items: center;
+    }
+    .location-guide h3 {
+        margin: 0 0 7px;
+        color: #294d2d;
+        font-size: .9em;
+    }
+    .location-guide p {
+        margin: 0;
+        color: #667168;
+        font-size: .7em;
+        line-height: 1.55;
+    }
+    .location-demo {
+        padding: 11px;
+        border-radius: 12px;
+        background: #fff;
+        box-shadow: 0 8px 24px rgba(44, 76, 48, .08);
+    }
+    .location-demo-label {
+        display: block;
+        margin-bottom: 7px;
+        color: #96a097;
+        font-size: .52em;
+        font-weight: 900;
+        letter-spacing: 1.2px;
+        text-transform: uppercase;
+    }
+    .location-demo-input {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-height: 38px;
+        padding: 0 11px;
+        border: 1px solid #e1e7e1;
+        border-radius: 9px;
+        background: #f8faf8;
+        color: #8a918b;
+        font-size: .62em;
+    }
+    .location-demo-input b {
+        color: var(--green);
+        font-size: 1.2em;
+    }
+    .location-guide button {
+        margin-top: 10px;
+        padding: 0 !important;
+        border: 0 !important;
+        background: transparent !important;
+        color: var(--green) !important;
+        font-size: .62em !important;
+        font-weight: 900 !important;
+        box-shadow: none !important;
+    }
+    .cycle-note {
+        display: none;
+        margin-top: 12px;
+        padding: 12px 15px;
+        border-left: 3px solid #d8aa2f;
+        border-radius: 0 10px 10px 0;
+        background: #fffaf0;
+        color: #77683f;
+        font-size: .72em;
+        line-height: 1.55;
+    }
+    .cycle-note.visible { display: block; }
+    .catalog-toolbar {
+        display: grid;
+        grid-template-columns: minmax(220px, 1fr) 230px;
+        gap: 12px;
+        margin-bottom: 18px;
+    }
+    .catalog-toolbar input, .catalog-toolbar select {
+        width: 100%;
+        height: 48px;
+        box-sizing: border-box;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 0 15px;
+        background: #fff;
+        color: #444;
+        font: inherit;
+        font-size: .76em;
+        outline: none;
+    }
+    .catalog-toolbar input:focus, .catalog-toolbar select:focus {
+        border-color: #9bb29e;
+        box-shadow: 0 0 0 3px rgba(64, 120, 69, .08);
+    }
+    .catalog-summary {
+        margin: -6px 0 18px;
+        color: #8b948d;
+        font-size: .68em;
+    }
+    .catalog-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 14px;
+    }
+    .catalog-card {
+        overflow: hidden;
+        border: 1px solid var(--line) !important;
+        border-radius: 15px;
+        background: #fff;
+        color: inherit;
+        text-decoration: none !important;
+        transition: transform .18s ease, box-shadow .18s ease;
+    }
+    .catalog-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 30px rgba(37, 63, 40, .09);
+    }
+    .catalog-card img {
+        display: block;
+        width: 100%;
+        aspect-ratio: 4 / 3;
+        object-fit: cover;
+        background: var(--green-soft);
+    }
+    .catalog-card-body { padding: 14px; }
+    .catalog-card small {
+        display: block;
+        color: var(--green);
+        font-size: .54em;
+        font-weight: 900;
+        letter-spacing: .8px;
+        text-transform: uppercase;
+    }
+    .catalog-card h3 {
+        margin: 6px 0 4px;
+        color: #27372a;
+        font-size: .9em;
+        line-height: 1.25;
+    }
+    .catalog-card p {
+        margin: 0;
+        color: #7a827b;
+        font-size: .64em;
+        line-height: 1.45;
+    }
+    .catalog-more {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
 
-			.month-card img { 
-                width: 100%; 
-                height: 100%; 
-                object-fit: cover; 
-                display: block;
-                transition: filter 0.4s ease;
-            }
+    /* Estilos para o Plano da Semana */
+    .week-plan {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 14px;
+    }
+    .week-task {
+        position: relative;
+        overflow: hidden;
+        border-radius: 12px;
+        padding: 1.35em;
+        border: 1px solid transparent;
+        background: #fff;
+    }
+    .week-task::before {
+        content: "";
+        position: absolute;
+        inset: 0 auto auto 0;
+        width: 100%;
+        height: 4px;
+    }
+    .week-task:nth-child(1) {
+        background: linear-gradient(135deg, #f4fbf2, #eaf7e6);
+        border-color: #d8e8d2;
+    }
+    .week-task:nth-child(1)::before {
+        background: #7fb46a;
+    }
+    .week-task:nth-child(2) {
+        background: linear-gradient(135deg, #f3faf7, #e7f4ef);
+        border-color: #d1e5dc;
+    }
+    .week-task:nth-child(2)::before {
+        background: #6fae8f;
+    }
+    .week-task:nth-child(3) {
+        background: linear-gradient(135deg, #fff8ef, #fcefdc);
+        border-color: #ead9c3;
+    }
+    .week-task:nth-child(3)::before {
+        background: #d39a45;
+    }
+    .week-task:nth-child(4) {
+        background: linear-gradient(135deg, #f7f6ff, #ece9fb);
+        border-color: #d8d3ec;
+    }
+    .week-task:nth-child(4)::before {
+        background: #8a7cc9;
+    }
+    .task-number {
+        font-size: 0.6em;
+        color: #7d987f;
+        font-weight: 900;
+        letter-spacing: 1px;
+    }
+    .week-task h3 {
+        font-size: 0.84em;
+        color: #223a24;
+        margin: 8px 0;
+    }
+    .week-task p {
+        font-size: 0.72em;
+        color: #5f7662;
+        line-height: 1.5;
+        margin: 0;
+    }
 
-            /* Overlay escuro subtil para o texto ler-se melhor */
-            .month-card::after {
-                content: '';
-                position: absolute;
-                bottom: 0; left: 0; right: 0;
-                height: 40%;
-                background: linear-gradient(to top, rgba(0,0,0,0.5), transparent);
-                transition: opacity 0.3s ease;
-            }
+    /* Estilos para as Técnicas Biológicas em Destaque */
+    #practice-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 18px;
+    }
+    .practice-card {
+        position: relative;
+        overflow: hidden;
+        border: 1px solid var(--line); /* Cor de border padrão, será sobrescrita inline */
+        border-radius: 13px;
+        padding: 1.5em;
+        background: #fff; /* Cor de fundo padrão, será sobrescrita inline */
+    }
+    /* Linha superior colorida (agora controlada por JS inline) */
+    .practice-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: var(--green); /* Cor de acento padrão, será sobrescrita inline */
+    }
+    /* Wrapper da imagem lateral (dentro do details) */
+    .practice-card .practice-image-wrap {
+        margin-bottom: 12px; /* Espaçamento da imagem */
+    }
+    /* Imagem lateral dentro do details */
+    .practice-card .practice-inline-image {
+        width: 92px;
+        height: 92px;
+        object-fit: cover;
+        border-radius: 12px;
+        display: block;
+        background: #eee;
+    }
+    /* Metadados da prática (categoria · nível) */
+    .practice-card .practice-meta {
+        display: block;
+        font-size: 0.61em;
+        font-weight: 900;
+        text-transform: uppercase;
+        margin-bottom: 10px;
+    }
+    /* Título da prática */
+    .practice-card h3 {
+        font-size: 0.88em;
+        margin: 0 0 8px;
+    }
+    /* Resumo da prática */
+    .practice-card p {
+        font-size: 0.75em;
+        color: #666;
+        line-height: 1.6;
+        margin: 0;
+    }
+    /* Bloco dos passos (com imagem lateral e lista) */
+    .practice-card .practice-steps {
+        display: grid;
+        grid-template-columns: 92px minmax(0, 1fr);
+        gap: 14px;
+        align-items: start;
+        margin-top: 10px;
+    }
+    /* Lista de passos */
+    .practice-card ol {
+        padding-left: 1.2em;
+        margin: 0;
+    }
+    /* Itens da lista de passos */
+    .practice-card li {
+        font-size: 0.7em;
+        color: #666;
+        line-height: 1.45;
+        margin-bottom: 5px;
+    }
+    /* Detalhes da expansão */
+    .practice-card details {
+        margin-top: 12px;
+        border-top: 1px solid var(--line);
+        padding-top: 9px;
+    }
+    /* Sumário da expansão */
+    .practice-card summary {
+        cursor: pointer;
+        color: var(--green);
+        font-size: 0.64em;
+        font-weight: 900;
+        text-transform: uppercase;
+    }
+    /* Link "Ver detalhes" */
+    .practice-card .watch-detail {
+        display: inline-block;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        font-size: 0.65em;
+        font-weight: 900;
+        text-transform: uppercase;
+        text-decoration: none;
+        letter-spacing: 0.5px;
+        color: inherit !important;
+    }
 
-            .month-card:hover img { filter: brightness(0.8); }
+    /* Estilos para Vigilância (Pragas e Flora) */
+    #pest-grid, #flora-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr); /* Ajustar conforme o layout desejado */
+        gap: 18px;
+    }
+    .watch-card {
+        border: 1px solid var(--line);
+        border-radius: 13px;
+        padding: 1.5em;
+        background: #fff;
+    }
+    .watch-card h3 {
+        font-size: 0.88em;
+        color: #222;
+        margin: 0 0 8px;
+    }
+    .watch-image {
+        width: 52px;
+        height: 52px;
+        object-fit: cover;
+        border-radius: 50%;
+        margin-bottom: 12px;
+        background: #eee;
+    }
+    .watch-kind {
+        display: inline-block;
+        padding: 4px 7px;
+        border-radius: 20px;
+        background: #f4f4f4;
+        color: #888;
+        font-size: 0.56em;
+        text-transform: uppercase;
+        font-weight: 900;
+        margin-bottom: 8px;
+    }
+    .watch-meta {
+        display: block;
+        font-size: 0.61em;
+        color: var(--green);
+        font-weight: 900;
+        text-transform: uppercase;
+        margin-bottom: 10px;
+    }
+    .watch-card p {
+        font-size: 0.75em;
+        color: #666;
+        line-height: 1.6;
+        margin: 0;
+    }
+    .watch-card details {
+        margin-top: 12px;
+        border-top: 1px solid var(--line);
+        padding-top: 9px;
+    }
+    .watch-card summary {
+        cursor: pointer;
+        color: var(--green);
+        font-size: 0.64em;
+        font-weight: 900;
+        text-transform: uppercase;
+    }
+    .watch-detail {
+        display: inline-block;
+        margin-top: 14px;
+        color: var(--green) !important;
+        font-size: 0.65em;
+        font-weight: 900;
+        text-transform: uppercase;
+        text-decoration: none;
+        letter-spacing: 0.5px;
+    }
+    
+    .safe-box {
+        margin-top: 2em;
+        padding: 1.6em;
+        border-left: 4px solid var(--green);
+        background: var(--green-soft);
+        border-radius: 0 12px 12px 0;
+        font-size: 0.78em;
+        line-height: 1.6;
+        color: #58705a;
+    }
 
-            /* Nome do mês minimalista sobre a imagem */
-			.month-card h3 { 
-                position: absolute !important;
-                bottom: 20px !important;
-                left: 0;
-                right: 0;
-                text-align: center !important; 
-                margin: 0 !important; 
-                color: #ffffff !important; 
-                letter-spacing: 3px !important; 
-                text-transform: uppercase !important; 
-                font-size: 0.85em !important; 
-                font-weight: 700 !important;
-                z-index: 10;
-                pointer-events: none;
-            }
-		</style>
-	</head>
-	<body class="is-preload">
-		<div id="wrapper">
-			<div id="main">
-				<div class="inner">
+    /* Estilos para a secção de Princípios */
+    .principles {
+        background: var(--green-dark);
+        color: #fff;
+        border-radius: 28px;
+        padding: 3em;
+        margin: 4em 0;
+    }
+    .principles .category-label {
+        color: rgba(255, 255, 255, 0.5);
+    }
+    .principles h2 {
+        color: #fff;
+        font-size: 2em;
+        margin-bottom: 25px;
+    }
+    .principle-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 25px;
+    }
+    .principle h3 {
+        font-size: 0.88em;
+        color: #fff;
+        margin-bottom: 8px;
+    }
+    .principle p {
+        font-size: 0.75em;
+        color: rgba(255, 255, 255, 0.68);
+        line-height: 1.6;
+        margin: 0;
+    }
+    .moon-note {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 18px;
+        align-items: center;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 1.5em;
+        margin-top: 2em;
+    }
+    .moon-large {
+        width: 54px;
+        height: 54px;
+        border-radius: 50%;
+        background: linear-gradient(90deg, #777 50%, #eee 50%);
+        box-shadow: inset 0 0 0 1px #ddd;
+    }
+    .moon-note h3 {
+        font-size: 0.82em;
+        margin: 0 0 5px;
+        color: #333;
+    }
+    .moon-note p {
+        font-size: 0.72em;
+        line-height: 1.55;
+        color: #777;
+        margin: 0;
+    }
+    .btn-clean {
+        background: none !important;
+        border: 0 !important;
+        box-shadow: none !important;
+        padding: 10px 0 !important;
+        color: #999 !important;
+        font-size: 0.67em !important;
+        font-weight: 900 !important;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        cursor: pointer;
+    }
+    .footer {
+        padding: 4em 0 2em;
+        border-top: 1px solid var(--line);
+        opacity: 0.4;
+        text-align: right;
+    }
 
-					<header id="header" style="height: 0; margin: 0; padding: 0; overflow: hidden;"></header>
+    .footer-wordmark {
+        display: flex;
+        justify-content: flex-end;
+    }
 
-					<section>
-						<header class="main">
-							<h1>Calendário Hortícola</h1>
-						</header>
+    .bio-wordmark {
+        display: inline-block;
+        text-align: center;
+        line-height: 1;
+        font-family: "Georgia", "Times New Roman", serif;
+    }
 
-						<div class="month-grid">
-							<a href="01-janeiro.html" class="month-card">
-								<img src="https://images.unsplash.com/photo-1607240204413-e51a4afa6f12?q=80&w=1987&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Janeiro" />
-								<h3>Janeiro</h3>
-							</a>
-							<a href="02-fevereiro.html" class="month-card">
-								<img src="https://images.unsplash.com/photo-1779622520933-79b2926a97dd?auto=format&fit=crop&w=800&q=80" alt="Fevereiro" />
-								<h3>Fevereiro</h3>
-							</a>
-							<a href="03-marco.html" class="month-card">
-								<img src="https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?w=800&q=80" alt="Março" />
-								<h3>Março</h3>
-							</a>
-							<a href="04-abril.html" class="month-card">
-								<img src="https://images.unsplash.com/photo-1560493676-04071c5f467b?w=800&q=80" alt="Abril" />
-								<h3>Abril</h3>
-							</a>
-							<a href="05-maio.html" class="month-card">
-								<img src="https://plus.unsplash.com/premium_photo-1661962692059-55d5a4319814?q=80&w=1674&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Maio" />
-								<h3>Maio</h3>
-							</a>
-							<a href="06-junho.html" class="month-card">
-								<img src="https://images.unsplash.com/photo-1589923188900-85dae523342b?w=800&q=80" alt="Junho" />
-								<h3>Junho</h3>
-							</a>
-							<a href="07-julho.html" class="month-card">
-								<img src="https://images.unsplash.com/photo-1580733101505-0950b0d24a73?q=80&w=2531&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Julho" />
-								<h3>Julho</h3>
-							</a>
-							<a href="08-agosto.html" class="month-card">
-								<img src="https://images.unsplash.com/photo-1753172433718-d0c2a99443d8?w=800&q=80" alt="Agosto" />
-								<h3>Agosto</h3>
-							</a>
-							<a href="09-setembro.html" class="month-card">
-								<img src="https://images.unsplash.com/photo-1605673349837-1d83a7740e30?q=80&w=3270&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Setembro" />
-								<h3>Setembro</h3>
-							</a>
-							<a href="10-outubro.html" class="month-card">
-								<img src="https://images.unsplash.com/photo-1633443429820-e67b0a355812?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Outubro" />
-								<h3>Outubro</h3>
-							</a>
-							<a href="11-novembro.html" class="month-card">
-								<img src="https://images.unsplash.com/photo-1585034368427-5471b6805907?q=80&w=2073&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Novembro" />
-								<h3>Novembro</h3>
-							</a>
-							<a href="12-dezembro.html" class="month-card">
-								<img src="https://plus.unsplash.com/premium_photo-1661811860830-ba25d94af541?q=80&w=3005&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Dezembro" />
-								<h3>Dezembro</h3>
-							</a>
-						</div>
-					</section>
+    .bio-wordmark strong {
+        display: block;
+        font-size: 1.15em;
+        font-weight: 400;
+        letter-spacing: -0.4px;
+        color: #81966e;
+        line-height: 1;
+        font-family: inherit;
+    }
 
-				</div>
-			</div>
-			<div id="sidebar"></div>
-		</div>
+    .bio-wordmark small {
+        display: block;
+        margin-top: 2px;
+        font-size: 0.43em;
+        font-weight: 700;
+        letter-spacing: 1.8px;
+        text-transform: uppercase;
+        color: #a66f50;
+        line-height: 1;
+        font-family: inherit;
+    }
 
-		<!-- Scripts -->
-		<script src="assets/js/jquery.min.js"></script>
-        <script src="assets/js/browser.min.js"></script>
-        <script src="assets/js/breakpoints.min.js"></script>
-        <script src="assets/js/util.js"></script>
-        <!-- main.js REMOVIDO DAQUI E PASSADO PARA DENTRO DO FETCH -->
-        
+    /* Media Queries */
+    @media screen and (max-width: 1280px) {
+        #sidebar {
+            position: relative !important;
+            width: 100% !important;
+            height: auto !important;
+        }
+        #wrapper {
+            padding-left: 0 !important;
+        }
+        .hero {
+            grid-template-columns: 1fr;
+        }
+        .calendar-panel {
+            max-width: 620px;
+        }
+        .week-plan {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    @media screen and (max-width: 900px) {
+        .action-grid {
+            grid-template-columns: 1fr;
+        }
+        #practice-grid, #pest-grid, #flora-grid, .principle-grid, .catalog-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+        .local-profile {
+            grid-template-columns: 1fr 1fr;
+        }
+        .location-guide { grid-template-columns: 1fr; }
+    }
+    @media screen and (max-width: 736px) {
+        .inner {
+            padding: 1.5em !important;
+        }
+        .hero h1 {
+            letter-spacing: -2px;
+        }
+        .calendar-panel {
+            padding: 1.3em;
+        }
+        .calendar-day {
+            min-height: 40px;
+        }
+        .action-grid, #practice-grid, #pest-grid, #flora-grid, .principle-grid, .week-plan, .local-profile, .crop-list, .catalog-grid {
+            grid-template-columns: 1fr;
+        }
+        .action-card {
+            padding: 1.4em;
+        }
+        .location-demo { max-width: none; }
+        .principles {
+            padding: 2em;
+        }
+        .calendar-foot {
+            flex-direction: column;
+            gap: 8px;
+        }
+    }
+</style>
+
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV0FD8PXC"></script>
         <script>
-            fetch('sidebar-content.html')
-                .then(response => response.text())
-                .then(data => {
-                    document.getElementById('sidebar').innerHTML = data;
-                    
-                    // REINICIALIZAÇÃO CRÍTICA DO MENU
-                    // Criamos o elemento script apenas depois de o menu estar no DOM
-                    var script = document.createElement('script');
-                    script.src = 'assets/js/main.js';
-                    document.body.appendChild(script);
-                });
+            window.dataLayer = window.dataLayer || [];
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag("js", new Date());
+            gtag("config", "G-6PV0FD8PXC");
         </script>
-	</body>
+            <script src="/assets/js/biocultura-i18n-runtime.js?v=2"></script>
+    </head>
+    <body class="is-preload">
+        <div id="wrapper">
+            <div id="main">
+                <div class="inner">
+                    <section>
+                        <div class="hero">
+                            <div>
+                                <span class="category-label">Agricultura bioCultura</span>
+                                <h1>Calendário de<em>Regeneração.</em></h1>
+                                <p class="hero-intro">
+                                    Um calendário agrícola vivo para decidir o que semear, plantar, colher e observar em
+                                    cada mês. As sugestões cruzam o ciclo das culturas com o solo da região selecionada
+                                    — sem substituir a observação do terreno, o clima local ou a experiência de quem
+                                    cultiva.
+                                </p>
+                                <div class="location-line">
+                                    Orientação para <strong id="reg-name">a sua região</strong> · mês selecionado
+                                    <strong id="selected-month-label">—</strong>
+                                </div>
+                                <div class="local-profile" id="local-profile"></div>
+                                <aside class="location-guide" aria-label="Como escolher a localização">
+                                    <div>
+                                        <h3>Afine as sugestões ao seu território</h3>
+                                        <p>Na base do menu lateral, pesquise a localidade ou autorize o GPS. O calendário volta a cruzar as culturas com o solo e o pH indicativos da zona escolhida.</p>
+                                        <button type="button" id="guide-location-button">Escolher localização no menu →</button>
+                                    </div>
+                                    <div class="location-demo" aria-hidden="true">
+                                        <span class="location-demo-label">O teu território</span>
+                                        <div class="location-demo-input"><b>⌖</b><span>Procurar localidade…</span></div>
+                                    </div>
+                                </aside>
+                            </div>
+                            <aside class="calendar-panel" aria-label="Calendário mensal">
+                                <div class="calendar-head">
+                                    <div class="calendar-title">
+                                        <span>Calendário agrícola</span><strong id="calendar-title">—</strong>
+                                    </div>
+                                    <div class="month-nav">
+                                        <button id="prev-month" aria-label="Mês anterior">‹</button>
+                                        <button id="next-month" aria-label="Mês seguinte">›</button>
+                                    </div>
+                                </div>
+                                <div class="calendar-weekdays">
+                                    <span>Seg</span><span>Ter</span><span>Qua</span><span>Qui</span><span
+                                    >Sex</span><span>Sáb</span><span>Dom</span>
+                                </div>
+                                <div class="calendar-days" id="calendar-days"></div>
+                                <div class="calendar-foot">
+                                    <span id="season-label"></span><span id="moon-label"></span>
+                                </div>
+                            </aside>
+                        </div>
+
+                        <nav class="section-nav" aria-label="Secções do calendário">
+                            <a href="#acoes">Agora no terreno</a><a href="#catalogo">Catálogo</a><a href="#semana">Plano da semana</a><a
+                                href="#praticas"
+                            >Técnicas</a><a href="#vigilancia">Vigilância</a><a href="#principios">Princípios</a>
+                        </nav>
+
+                        <div id="acoes" class="section-heading">
+                            <h2>Agora no terreno</h2>
+                            <p id="action-intro">Culturas cuja janela indicada no catálogo inclui o mês selecionado.</p>
+                            <div class="cycle-note" id="cycle-note"></div>
+                        </div>
+                        <div class="action-grid" id="action-grid"></div>
+
+                        <div id="catalogo" class="section-heading">
+                            <h2>Catálogo de cultivo</h2>
+                            <p>Hortícolas, aromáticas, pequenos frutos e árvores de fruto reunidos numa pesquisa única. Abra cada ficha para consultar origem, solo, pH, água, calendário, manutenção e prevenção biológica.</p>
+                        </div>
+                        <div class="catalog-toolbar">
+                            <input id="catalog-search" type="search" placeholder="Procurar por nome comum ou científico…" aria-label="Pesquisar catálogo">
+                            <select id="catalog-filter" aria-label="Filtrar catálogo">
+                                <option value="all">Todas as culturas</option>
+                                <option value="horticolas">Hortícolas</option>
+                                <option value="fruteiras">Árvores e plantas de fruto</option>
+                                <option value="aromaticas">Aromáticas</option>
+                                <option value="perenes">Culturas perenes</option>
+                            </select>
+                        </div>
+                        <p class="catalog-summary" id="catalog-summary"></p>
+                        <div class="catalog-grid" id="catalog-grid"></div>
+                        <div class="catalog-more"><button class="btn-clean" id="catalog-more">Ver mais culturas</button></div>
+
+                        <div id="semana" class="section-heading">
+                            <h2>Plano simples para esta semana</h2>
+                            <p>
+                                Quatro prioridades ajustadas à estação, pensadas para organizar o trabalho sem
+                                sobrecarregar o ecossistema.
+                            </p>
+                        </div>
+                        <div class="week-plan" id="week-plan"></div>
+
+                        <div id="praticas" class="section-heading">
+                            <h2>Técnicas biológicas em destaque</h2>
+                            <p>
+                                Processos completos do guia bioCultura: quando aplicar, como executar e o que observar
+                                depois.
+                            </p>
+                        </div>
+                        <div class="practice-grid" id="practice-grid"></div>
+
+                        <div id="vigilancia" class="section-heading">
+                            <h2>Vigilância local</h2>
+                            <p>
+                                Pragas sazonais e flora invasora associada à região. Identifique antes de intervir e
+                                preserve sempre a fauna auxiliar.
+                            </p>
+                        </div>
+                        <div class="watch-grid" id="pest-grid"></div>
+                        <div style="margin-top: 16px">
+                            <button class="btn-clean" id="toggle-pests">Ver mais pragas sazonais</button>
+                        </div>
+                        <div class="section-heading" style="margin-top: 2.5em">
+                            <h2 style="font-size: 1.1em">Flora invasora registada na região</h2>
+                            <p>
+                                Priorize focos pequenos, evite dispersar sementes ou fragmentos e confirme a
+                                identificação.
+                            </p>
+                        </div>
+                        <div class="watch-grid" id="flora-grid"></div>
+                        <div class="safe-box">
+                            <strong>Sem soluções agressivas:</strong> esta página não recomenda pesticidas de largo
+                            espectro, herbicidas, sal, lixívia, gasóleo, fogo ou receitas caseiras indiscriminadas. A
+                            sequência é sempre observar, identificar, prevenir, intervir de forma seletiva e voltar a
+                            avaliar.
+                        </div>
+
+                        <div id="principios" class="principles">
+                            <span class="category-label">A bússola bioCultura</span><h2>
+                                Cultivar o sistema, não apenas a cultura.
+                            </h2>
+                            <div class="principle-grid">
+                                <article class="principle">
+                                    <h3>Solo sempre protegido</h3>
+                                    <p>
+                                        Raízes vivas, matéria orgânica madura e cobertura adaptada reduzem erosão e
+                                        alimentam a rede do solo.
+                                    </p>
+                                </article>
+                                <article class="principle">
+                                    <h3>Água orientada pela necessidade</h3>
+                                    <p>
+                                        Regar a zona radicular após verificar humidade; reparar fugas e ajustar ao clima
+                                        e à fase da planta.
+                                    </p>
+                                </article>
+                                <article class="principle">
+                                    <h3>Diversidade funcional</h3>
+                                    <p>
+                                        Flores, sebes, charcos e zonas não cortadas criam alimento e abrigo para
+                                        polinizadores e predadores naturais.
+                                    </p>
+                                </article>
+                                <article class="principle">
+                                    <h3>Diagnóstico antes da ação</h3>
+                                    <p>
+                                        Sintomas semelhantes podem resultar de pragas, doenças, falta de água,
+                                        carências, escaldão ou dano mecânico.
+                                    </p>
+                                </article>
+                                <article class="principle">
+                                    <h3>Intervenção mínima</h3>
+                                    <p>
+                                        Começar por medidas culturais, físicas e localizadas, protegendo organismos que
+                                        já equilibram o sistema.
+                                    </p>
+                                </article>
+                                <article class="principle">
+                                    <h3>Registar para aprender</h3>
+                                    <p>
+                                        Datas, chuva, rega, ocorrências e resultados transformam observações dispersas
+                                        em conhecimento da parcela.
+                                    </p>
+                                </article>
+                            </div>
+                            <div class="moon-note">
+                                <div class="moon-large" aria-hidden="true"></div>
+                                <div>
+                                    <h3>Sobre as fases da Lua</h3>
+                                    <p>
+                                        A fase lunar é apresentada como referência astronómica e cultural. As
+                                        recomendações agrícolas desta página baseiam-se no mês, ciclo das culturas, solo
+                                        e estação; não atribuímos à Lua efeitos agronómicos que os dados não demonstram.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                       <footer class="footer footer-wordmark">
+                        <div class="bio-wordmark">
+                            <strong>bioCulture</strong>
+                            <small>GLOBAL REGENERATION</small>
+                        </div>
+                    </footer>
+                    </section>
+                </div>
+            </div>
+            <div id="sidebar"></div>
+        </div>
+        <script src="/assets/js/jquery.min.js"></script>
+           <script>
+    let locationsDB = [],
+        pragasDB = [],
+        floraDB = [],
+        dicasDB = [],
+        horticolasDB = {},
+        infoGlobal = null;
+    let viewedDate = new Date(), showMorePests = false, catalogLimit = 12;
+    const months = [
+        "janeiro",
+        "fevereiro",
+        "março",
+        "abril",
+        "maio",
+        "junho",
+        "julho",
+        "agosto",
+        "setembro",
+        "outubro",
+        "novembro",
+        "dezembro",
+    ];
+    const normalize = (value) =>
+        String(value || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    const escapeHtml = (value) =>
+        String(value ?? "").replace(
+            /[&<>'"]/g,
+            (char) => ({
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                "'": "&#39;",
+                '"': "&quot;",
+            }[char]),
+        );
+    const format = (value) => new Intl.NumberFormat("pt-PT").format(value);
+
+    // --- Início do bloco de cores e renderização de práticas ---
+    const practiceColors = {
+        "Mulching orgânico": {
+            bg1: "#f6ede3",
+            bg2: "#efe2d0",
+            accent: "#9a6a3a",
+        },
+        "Rega profunda orientada pelas raízes": {
+            bg1: "#eef6ff",
+            bg2: "#dfefff",
+            accent: "#3c7bb5",
+        },
+        "Compostagem aeróbia em pilha": {
+            bg1: "#f4efe7",
+            bg2: "#e8dfcf",
+            accent: "#a06a2c",
+        },
+        "Sementeira direta": {
+            bg1: "#eef8ea",
+            bg2: "#e2f1db",
+            accent: "#6e9f52",
+        },
+        // Adiciona aqui mais técnicas se quiseres cores específicas para elas
+    };
+
+    function practiceTone(title) {
+        return (
+            practiceColors[title] || {
+                bg1: "#f7faf8", // Cor padrão suave
+                bg2: "#edf5ef",
+                accent: "#5f8f73", // Cor de acento padrão (verde)
+            }
+        );
+    }
+
+    function renderPractices() {
+        const selected = practiceIdsFor(viewedDate.getMonth())
+            .map((id) => dicasDB.find((item) => item.id === id))
+            .filter(Boolean);
+
+        document.getElementById("practice-grid").innerHTML = selected
+            .map((item) => {
+                const tone = practiceTone(item.titulo);
+                const practiceImage = item.imagem?.src
+                    ? `<img class="practice-inline-image" src="${escapeHtml(item.imagem.src)}" alt="${escapeHtml(item.imagem.alt || item.titulo)}" loading="lazy" onerror="this.onerror=null;this.remove()">`
+                    : "";
+
+                return `
+                    <article class="practice-card" style="border-color: ${tone.accent}22;">
+                        <span class="practice-meta" style="color: ${tone.accent};">${escapeHtml(item.categoria)} · ${escapeHtml(item.nivel)}</span>
+                        <h3 style="color: ${tone.accent};">${escapeHtml(item.titulo)}</h3>
+                        <p>${escapeHtml(item.resumo)}</p>
+
+                        <details>
+                            <summary>Passos essenciais</summary>
+                            <div class="practice-steps">
+                                ${practiceImage ? `<div class="practice-side-image">${practiceImage}</div>` : ""}
+                                <ol>
+                                    ${(item.passos || []).map((step) => `<li>${escapeHtml(step)}</li>`).join("")}
+                                </ol>
+                            </div>
+                        </details>
+                    </article>
+                `;
+            })
+            .join("");
+    }
+    // --- Fim do bloco de cores e renderização de práticas ---
+
+
+    function seasonFor(month) {
+        if ([11, 0, 1].includes(month)) {
+            return [
+                "Inverno",
+                "Planear, proteger o solo e aproveitar os períodos adequados para plantações lenhosas.",
+            ];
+        }
+        if ([2, 3, 4].includes(month)) {
+            return [
+                "Primavera",
+                "Época de crescimento rápido: semear por etapas, vigiar jovens plantas e favorecer polinizadores.",
+            ];
+        }
+        if ([5, 6, 7].includes(month)) {
+            return [
+                "Verão",
+                "Gerir água, sombra e cobertura; colher com frequência e observar sinais de stress.",
+            ];
+        }
+        return [
+            "Outono",
+            "Colher, guardar sementes, iniciar coberturas e preparar o solo sem o deixar exposto.",
+        ];
+    }
+
+    function moonInfo(date) {
+        const known = Date.UTC(2000, 0, 6, 18, 14), cycle = 29.53058867;
+        let age = ((date.getTime() - known) / 86400000) % cycle;
+        if (age < 0) age += cycle;
+        if (age < 1.85 || age > 27.68) return { name: "Lua nova", cls: "new" };
+        if (age < 5.54) return { name: "Crescente inicial", cls: "" };
+        if (age < 9.23) return { name: "Quarto crescente", cls: "quarter" };
+        if (age < 12.92) return { name: "Crescente gibosa", cls: "" };
+        if (age < 16.61) return { name: "Lua cheia", cls: "full" };
+        if (age < 20.30) return { name: "Minguante gibosa", cls: "" };
+        if (age < 23.99) return { name: "Quarto minguante", cls: "quarter" };
+        return { name: "Minguante final", cls: "" };
+    }
+
+    function renderCalendar() {
+        const year = viewedDate.getFullYear(),
+            month = viewedDate.getMonth(),
+            today = new Date();
+        document.getElementById("calendar-title").textContent = `${months[month]} ${year}`;
+        document.getElementById("selected-month-label").textContent = months[month];
+        const first = new Date(year, month, 1),
+            last = new Date(year, month + 1, 0),
+            start = (first.getDay() + 6) % 7;
+        const cells = [];
+        for (let i = 0; i < 42; i++) {
+            const day = i - start + 1,
+                date = new Date(year, month, day),
+                outside = date.getMonth() !== month,
+                isToday = date.toDateString() === today.toDateString(),
+                moon = moonInfo(date);
+            const marker = ["new", "full", "quarter"].includes(moon.cls)
+                ? `<span class="moon-dot ${moon.cls}" title="${escapeHtml(moon.name)}"></span>`
+                : "";
+            cells.push(
+                `<div class="calendar-day ${outside ? "outside" : ""} ${
+                    isToday ? "today" : ""
+                }">${date.getDate()}${marker}</div>`,
+            );
+        }
+        document.getElementById("calendar-days").innerHTML = cells.join("");
+        const [season, note] = seasonFor(month),
+            selectedMoon = moonInfo(
+                new Date(year, month, Math.min(today.getDate(), last.getDate())),
+            );
+        document.getElementById("season-label").innerHTML =
+            `<strong>${season}</strong> · ${note}`;
+        document.getElementById("moon-label").innerHTML =
+            `Referência lunar: <strong>${selectedMoon.name}</strong>`;
+        renderActions();
+        renderWeekPlan();
+        renderPractices();
+        renderPests();
+    }
+
+    function periodMatches(text, month) {
+        const source = normalize(text).replace(/[–—]/g, "-");
+        if (!source) return false;
+        if (/todo o ano|durante todo o ano|sempre/.test(source)) return true;
+        const normalizedMonths = months.map(normalize);
+        return source.split(/\s+e\s+|;/).some((segment) => {
+            const found = normalizedMonths.map((name, index) =>
+                segment.includes(name) ? index : -1
+            ).filter((index) => index >= 0);
+            if (!found.length) return false;
+            if (found.includes(month)) return true;
+            if (found.length >= 2) {
+                const start = found[0], end = found.at(-1);
+                return start <= end
+                    ? month >= start && month <= end
+                    : month >= start || month <= end;
+            }
+            return false;
+        });
+    }
+
+    function phMatches(item) {
+        const local = parseFloat(infoGlobal?.biomas?.ph_solo);
+        if (!Number.isFinite(local)) return true;
+        const nums =
+            String(item.ph_solo || "").replace(",", ".").match(/\d+(?:\.\d+)?/g)?.map(Number) ||
+            [];
+        return nums.length < 2 || local >= nums[0] - .3 && local <= nums[1] + .3;
+    }
+
+    function cropsFor(field, month) {
+        const matching = Object.entries(horticolasDB).filter(([, item]) =>
+            periodMatches(item[field], month)
+        ).sort((a, b) => Number(phMatches(b[1])) - Number(phMatches(a[1])));
+        const unique = new Map();
+        matching.forEach((entry) => {
+            const key = normalize(entry[1].nome || entry[0]);
+            if (key && !unique.has(key)) unique.set(key, entry);
+        });
+        return [...unique.values()].slice(0, 6);
+    }
+    function cropMarkup(entries, field) {
+        return entries.length
+            ? entries.map(([id, item]) =>
+                `<a class="crop-link" href="/calendario/horticola-detalhe.html?id=${
+                    encodeURIComponent(id)
+                }"><img src="${
+                    escapeHtml(item.imagem && item.imagem !== "-" ? item.imagem : "/images/cultura-placeholder.svg")
+                }" alt="" loading="lazy" onerror="this.onerror=null;this.src='/images/cultura-placeholder.svg'"><span><strong>${
+                    escapeHtml(item.nome)
+                }</strong><span>${
+                    escapeHtml(item[field] || item.categoria || "")
+                }</span></span></a>`
+            ).join("")
+            : `<div class="empty">Não existem entradas suficientemente claras para este mês. Consulte as condições locais antes de decidir.</div>`;
+    }
+
+    function renderActions() {
+        const month = viewedDate.getMonth(),
+            groups = [["Semear", "sementeira", "Sementeiras cuja janela inclui este mês."], [
+                "Plantar ou transplantar",
+                "plantacao_ou_transplante",
+                "Instalações indicadas para o período selecionado.",
+            ], ["Colher", "colheita", "Culturas com colheita provável neste mês."]];
+        document.getElementById("action-intro").textContent = `Sugestões para ${
+            months[month]
+        }, cruzadas com o pH local sempre que o catálogo contém um intervalo comparável.`;
+        document.getElementById("action-grid").innerHTML = groups.map(([title, field, note]) =>
+            `<article class="action-card"><div class="action-card-head"><div><span class="action-label">${
+                escapeHtml(months[month])
+            }</span><h3>${title}</h3></div><p>${note}</p></div><div class="crop-list">${
+                cropMarkup(cropsFor(field, month), field)
+            }</div></article>`
+        ).join("");
+        const sowing = new Map(cropsFor("sementeira", month).map(([id, item]) => [normalize(item.nome || id), item.nome || id]));
+        const harvesting = new Set(cropsFor("colheita", month).map(([id, item]) => normalize(item.nome || id)));
+        const overlap = [...sowing].filter(([key]) => harvesting.has(key)).map(([, name]) => name);
+        const note = document.getElementById("cycle-note");
+        if (overlap.length) {
+            note.innerHTML = `<strong>Porque aparece a mesma cultura em fases diferentes?</strong> ${
+                escapeHtml(overlap.slice(0, 4).join(", "))
+            } ${overlap.length > 4 ? "e outras" : ""} podem ser semeadas e colhidas neste mês. Em geral, colhe-se uma geração já desenvolvida enquanto se inicia outra, ou usam-se variedades e datas escalonadas. Confirme sempre a variedade, a temperatura do solo e o microclima.`;
+            note.classList.add("visible");
+        } else {
+            note.textContent = "";
+            note.classList.remove("visible");
+        }
+    }
+
+    function catalogKind(item) {
+        const value = normalize(item.categoria || "");
+        if (value.includes("aromatica")) return "aromaticas";
+        if (/fruteira|citrino|pequeno fruto|casca rija|trepadeira frutifera/.test(value)) return "fruteiras";
+        return "horticolas";
+    }
+
+    function renderCatalog(reset = false) {
+        if (reset) catalogLimit = 12;
+        const query = normalize(document.getElementById("catalog-search")?.value),
+            filter = document.getElementById("catalog-filter")?.value || "all";
+        const entries = Object.entries(horticolasDB).filter(([id, item]) => {
+            const haystack = normalize(`${id} ${item.nome || ""} ${item.nome_cientifico || ""} ${item.categoria || ""}`);
+            const kind = catalogKind(item);
+            const filterMatch = filter === "all" || filter === kind || filter === "perenes" && normalize(item.ciclo).includes("perene");
+            return filterMatch && (!query || haystack.includes(query));
+        }).sort((a, b) => String(a[1].nome || a[0]).localeCompare(String(b[1].nome || b[0]), "pt"));
+        document.getElementById("catalog-summary").textContent = `${format(entries.length)} culturas encontradas · ${
+            format(Object.keys(horticolasDB).length)
+        } fichas completas no catálogo`;
+        document.getElementById("catalog-grid").innerHTML = entries.slice(0, catalogLimit).map(([id, item]) =>
+            `<a class="catalog-card" href="/calendario/horticola-detalhe.html?id=${encodeURIComponent(id)}"><img src="${
+                escapeHtml(item.imagem && item.imagem !== "-" ? item.imagem : "/images/cultura-placeholder.svg")
+            }" alt="${escapeHtml(item.nome || "Cultura")}" loading="lazy" onerror="this.onerror=null;this.src='/images/cultura-placeholder.svg'"></div><div class="catalog-card-body"><small>${
+                escapeHtml(item.categoria || catalogKind(item))
+            }</small><h3>${escapeHtml(item.nome || id)}</h3><p>${
+                escapeHtml(item.nome_cientifico || item.ciclo || "Consultar ficha de cultivo")
+            }</p></div></a>`
+        ).join("") || `<div class="empty">Não foram encontradas culturas com estes critérios.</div>`;
+        const more = document.getElementById("catalog-more");
+        more.hidden = entries.length <= catalogLimit;
+        more.onclick = () => { catalogLimit += 12; renderCatalog(); };
+    }
+
+    function renderWeekPlan() {
+        const month = viewedDate.getMonth(), [season] = seasonFor(month);
+        const seasonal = {
+            Inverno: [
+                ["Observar o solo", "Evite trabalhar solo saturado e proteja zonas nuas."],
+                [
+                    "Planear rotações",
+                    "Reveja famílias, necessidades e registos da campanha anterior.",
+                ],
+                [
+                    "Criar habitat",
+                    "Instale sebes ou abrigos sem perturbar refúgios existentes.",
+                ],
+                [
+                    "Rever ferramentas",
+                    "Limpe e repare ferramentas antes da época de crescimento.",
+                ],
+            ],
+            Primavera: [
+                ["Semear por etapas", "Evite concentrar toda a produção numa única data."],
+                [
+                    "Proteger plantas jovens",
+                    "Use barreiras físicas apenas quando existe risco identificado.",
+                ],
+                ["Acolher auxiliares", "Mantenha flores e água rasa com saída segura."],
+                ["Verificar rega", "Teste linhas e emissores antes do calor."],
+            ],
+            Verão: [
+                [
+                    "Verificar humidade",
+                    "Observe a zona radicular antes de regar profundamente.",
+                ],
+                ["Cobrir o solo", "Reponha cobertura sem a encostar aos caules."],
+                ["Colher regularmente", "Retire frutos maduros e observe sinais de doença."],
+                ["Criar sombra seletiva", "Proteja culturas sensíveis sem impedir ventilação."],
+            ],
+            Outono: [
+                [
+                    "Guardar sementes",
+                    "Escolha plantas saudáveis e deixe maturar completamente.",
+                ],
+                ["Semear coberturas", "Mantenha raízes vivas entre culturas."],
+                [
+                    "Compostar materiais",
+                    "Equilibre materiais secos e verdes sem enterrar resíduos.",
+                ],
+                ["Preparar infiltração", "Abrande escorrência antes da época mais chuvosa."],
+            ],
+        };
+        document.getElementById("week-plan").innerHTML = seasonal[season].map((
+            [title, text],
+            index,
+        ) => `<article class="week-task"><span class="task-number">0${
+            index + 1
+        }</span><h3>${title}</h3><p>${text}</p></article>`).join("");
+    }
+
+    function practiceIdsFor(month) {
+        if ([11, 0, 1].includes(month)) {
+            return [
+                "rotacao-culturas",
+                "teste-germinacao",
+                "sebe-viva",
+                "abrigo-insetos",
+                "higiene-ferramentas",
+                "composto-frio",
+            ];
+        }
+        if ([2, 3, 4].includes(month)) {
+            return [
+                "sementeira-direta",
+                "sementeira-sucessiva",
+                "consociacao",
+                "corredor-floral",
+                "monitorizacao-pragas",
+                "rega-gota-a-gota",
+            ];
+        }
+        if ([5, 6, 7].includes(month)) {
+            return [
+                "mulching-organico",
+                "rega-profunda",
+                "olla",
+                "guardar-sementes",
+                "faixa-nao-cortada",
+                "registos-horta",
+            ];
+        }
+        return [
+            "adubo-verde",
+            "solo-sempre-com-raiz",
+            "folhas-molde",
+            "captacao-chuva",
+            "composto-superficie",
+            "zonas-tampao",
+        ];
+    }
+
+    function seasonalPests(month) {
+        const [season] = seasonFor(month),
+            keywords = {
+                Inverno: ["inverno", "todo o ano", "protegidas"],
+                Primavera: ["primavera", "tempo ameno", "rebentos"],
+                Verão: ["verao", "tempo quente", "calor", "seco"],
+                Outono: ["outono", "humidade", "chuva"],
+            }[season].map(normalize);
+        return pragasDB.filter((item) => {
+            const text = normalize(`${item.sazonalidade_portugal || ""} ${item.quando || ""}`);
+            return keywords.some((key) => text.includes(key)) || periodMatches(text, month);
+        });
+    }
+    function renderPests() {
+        const all = seasonalPests(viewedDate.getMonth()),
+            visible = (all.length ? all : pragasDB).slice(0, showMorePests ? 12 : 6);
+        document.getElementById("pest-grid").innerHTML = visible.map((item) =>
+            `<article class="watch-card"><img class="watch-image" src="${
+                escapeHtml(item.imagem || "/images/pragas-placeholder.svg")
+            }" alt="${
+                escapeHtml(item.nome_comum)
+            }" loading="lazy" onerror="this.onerror=null;this.src='/images/pragas-placeholder.svg'"><span>Praga ou doença</span><h3>${
+                escapeHtml(item.nome_comum)
+            }</h3><span>${
+                escapeHtml(item.sazonalidade_portugal || "Observação regular")
+            }</span><p>${
+                escapeHtml(item.sintomas)
+            }</p><details><summary>Prevenção</summary><p>${
+                escapeHtml(item.prevencao)
+            }</p></details><a class="watch-detail" href="/ecossistemas/especie-detalhe.html?id=${
+                encodeURIComponent(item.id)
+            }">Ver ficha completa →</a></article>`
+        ).join("");
+        const button = document.getElementById("toggle-pests");
+        button.style.display = (all.length || pragasDB.length) > 6 ? "inline-block" : "none";
+        button.textContent = showMorePests ? "Recolher" : "Ver mais pragas sazonais";
+    }
+
+    function renderFlora() {
+        const names = infoGlobal?.biomas?.flora_invasora || [];
+        const local = names.map((name) => {
+            const n = normalize(name);
+            return floraDB.find((item) =>
+                n.includes(normalize(item.nome_comum)) ||
+                n.includes(normalize(item.nome_cientifico)) ||
+                normalize(item.nome_comum).includes(n.split(" (")[0])
+            );
+        }).filter(Boolean);
+        const unique = [...new Map(local.map((item) => [item.id, item])).values()];
+        document.getElementById("flora-grid").innerHTML = unique.length
+            ? unique.slice(0, 6).map((item) =>
+                `<article class="watch-card"><img class="watch-image" src="${
+                    escapeHtml(item.imagem || "/images/pragas-placeholder.svg")
+                }" alt="${
+                    escapeHtml(item.nome_comum)
+                }" loading="lazy" onerror="this.onerror=null;this.src='/images/pragas-placeholder.svg'"><span>Flora invasora</span><h3>${
+                    escapeHtml(item.nome_comum)
+                }</h3><span>${escapeHtml(item.nome_cientifico)}</span><p>${
+                    escapeHtml(item.impacto)
+                }</p><details><summary>Prevenção e controlo</summary><p>${
+                    escapeHtml(item.prevencao)
+                }</p><p>${escapeHtml(item.combate)}</p></details></article>`
+            ).join("")
+            : `<div class="empty">O perfil regional não contém espécies invasoras que possam ser ligadas de forma segura ao inventário atual.</div>`;
+    }
+
+    function renderLocalProfile() {
+        const bio = infoGlobal?.biomas || {};
+        document.getElementById("reg-name").textContent = infoGlobal
+            ? `${infoGlobal.titulo}${
+                infoGlobal.concelho ? ", " + infoGlobal.concelho.toUpperCase() : ""
+            }`
+            : "Portugal";
+        document.getElementById("local-profile").innerHTML = [["Solo", bio.solo || "-"], [
+            "pH indicativo",
+            bio.ph_solo || "-",
+        ], ["Textura", bio.textura || "-"]].map(([label, value]) =>
+            `<div class="profile-chip"><span>${label}</span><strong>${
+                escapeHtml(value)
+            }</strong></div>`
+        ).join("");
+    }
+
+    function setupLocationLogic() {
+        $(document).off("click", "#btn-gps-trigger").on(
+            "click",
+            "#btn-gps-trigger",
+            function (event) {
+                event.preventDefault();
+                if (!navigator.geolocation) return;
+                const button = $(this).css("opacity", ".5");
+                navigator.geolocation.getCurrentPosition((position) => {
+                    let closest = locationsDB[0], distance = Infinity;
+                    locationsDB.forEach((item) => {
+                        if (!item.lat || !item.lon) return;
+                        const dLat = (item.lat - position.coords.latitude) * Math.PI / 180,
+                            dLon = (item.lon - position.coords.longitude) * Math.PI / 180,
+                            a = Math.sin(dLat / 2) ** 2 +
+                                Math.cos(position.coords.latitude * Math.PI / 180) *
+                                    Math.cos(item.lat * Math.PI / 180) *
+                                    Math.sin(dLon / 2) ** 2,
+                            d = 6371 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                        if (d < distance) {
+                            distance = d;
+                            closest = item;
+                        }
+                    });
+                    if (closest) {
+                        localStorage.setItem("biocultura_region", closest.id);
+                        location.reload();
+                    }
+                }, () => button.css("opacity", "1"));
+            },
+        );
+        $(document).off("input", "#loc-search-input").on(
+            "input",
+            "#loc-search-input",
+            function () {
+                const value = normalize($(this).val()), dropdown = $("#loc-dropdown").empty();
+                if (value.length < 2) return dropdown.hide();
+                locationsDB.filter((item) => normalize(item.titulo).includes(value)).slice(0, 8)
+                    .forEach((item) =>
+                        $('<div class="bio-res-item"></div>').text(
+                            item.titulo + (item.concelho ? " (" + item.concelho + ")" : ""),
+                        ).on("click", () => {
+                            localStorage.setItem("biocultura_region", item.id);
+                            location.reload();
+                        }).appendTo(dropdown)
+                    );
+                dropdown.show();
+            },
+        );
+    }
+
+    async function init() {
+        try {
+            const urls = [
+                "/data/bioregioes.json",
+                "/data/pragas.json",
+                "/data/flora_invasora.json",
+                "/data/horticolas_master.json",
+                "/data/dicas.json",
+            ];
+            const data = await Promise.all(
+                urls.map((url) =>
+                    fetch(url + "?v=" + Date.now()).then((response) => {
+                        if (!response.ok) throw new Error(url);
+                        return response.json();
+                    })
+                ),
+            );
+            [locationsDB, pragasDB, floraDB, horticolasDB, dicasDB] = data;
+            const saved = localStorage.getItem("biocultura_region");
+            infoGlobal = locationsDB.find((item) => String(item.id) === String(saved)) ||
+                locationsDB[0];
+            renderLocalProfile();
+            renderCalendar();
+            renderCatalog();
+            renderFlora();
+            setupLocationLogic();
+            document.getElementById("catalog-search").addEventListener("input", () => renderCatalog(true));
+            document.getElementById("catalog-filter").addEventListener("change", () => renderCatalog(true));
+            document.getElementById("guide-location-button").onclick = () => {
+                const input = document.getElementById("loc-search-input");
+                if (input) {
+                    input.focus();
+                    input.style.boxShadow = "0 0 0 3px rgba(64,120,69,.2)";
+                    setTimeout(() => input.style.boxShadow = "", 1800);
+                }
+            };
+            document.getElementById("prev-month").onclick = () => {
+                viewedDate = new Date(viewedDate.getFullYear(), viewedDate.getMonth() - 1, 1);
+                renderCalendar();
+            };
+            document.getElementById("next-month").onclick = () => {
+                viewedDate = new Date(viewedDate.getFullYear(), viewedDate.getMonth() + 1, 1);
+                renderCalendar();
+            };
+            document.getElementById("toggle-pests").onclick = () => {
+                showMorePests = !showMorePests;
+                renderPests();
+            };
+        } catch (error) {
+            console.error("Erro ao carregar o calendário:", error);
+            document.getElementById("action-grid").innerHTML =
+                `<div class="empty">Não foi possível carregar os dados do calendário.</div>`;
+        }
+    }
+    fetch("/sidebar-content.html").then((response) => response.text()).then((html) => {
+        document.getElementById("sidebar").innerHTML = html;
+        init();
+    }).catch(() => init());
+</script>
+    </body>
 </html>
