@@ -646,29 +646,6 @@
                 background: #fff;
             }
 
-            .practice-card::before {
-                content: "";
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                height: 4px;
-                background: var(--green);
-            }
-
-            .practice-card .practice-image-wrap {
-                margin-bottom: 12px;
-            }
-
-            .practice-card .practice-image {
-                width: 64px;
-                height: 64px;
-                border-radius: 14px;
-                object-fit: cover;
-                display: block;
-                background: #eee;
-            }
-
             .practice-card .practice-meta {
                 display: block;
                 font-size: 0.61em;
@@ -689,18 +666,6 @@
                 margin: 0;
             }
 
-            .practice-card .watch-detail {
-                display: inline-block;
-                margin-top: 10px;
-                margin-bottom: 10px;
-                font-size: 0.65em;
-                font-weight: 900;
-                text-transform: uppercase;
-                text-decoration: none;
-                letter-spacing: 0.5px;
-                color: inherit !important;
-            }
-
             .practice-card details {
                 margin-top: 12px;
                 border-top: 1px solid var(--line);
@@ -715,9 +680,30 @@
                 text-transform: uppercase;
             }
 
+            .practice-card .practice-steps {
+                display: grid;
+                grid-template-columns: 92px minmax(0, 1fr);
+                gap: 14px;
+                align-items: start;
+                margin-top: 10px;
+            }
+
+            .practice-card .practice-side-image {
+                width: 92px;
+            }
+
+            .practice-card .practice-inline-image {
+                width: 92px;
+                height: 92px;
+                object-fit: cover;
+                border-radius: 12px;
+                display: block;
+                background: #eee;
+            }
+
             .practice-card ol {
                 padding-left: 1.2em;
-                margin: 10px 0 0;
+                margin: 0;
             }
 
             .practice-card li {
@@ -1508,21 +1494,23 @@
                     .map((item) => {
                         const tone = practiceTone(item.titulo);
                         const image = item.imagem?.src
-                            ? `<img class="practice-image" src="${escapeHtml(item.imagem.src)}" alt="${escapeHtml(item.imagem.alt || item.titulo)}" loading="lazy" onerror="this.onerror=null;this.src='/images/pragas-placeholder.svg'">`
+                            ? `<img class="practice-inline-image" src="${escapeHtml(item.imagem.src)}" alt="${escapeHtml(item.imagem.alt || item.titulo)}" loading="lazy" onerror="this.onerror=null;this.remove()">`
                             : "";
 
                         return `
-                            <article class="practice-card" style="background: linear-gradient(135deg, ${tone.bg1}, ${tone.bg2}); border-color: ${tone.accent}22;">
-                                ${image ? `<div class="practice-image-wrap">${image}</div>` : ""}
+                            <article class="practice-card" style="border-color: ${tone.accent}22;">
                                 <span class="practice-meta" style="color: ${tone.accent};">${escapeHtml(item.categoria)} · ${escapeHtml(item.nivel)}</span>
                                 <h3 style="color: ${tone.accent};">${escapeHtml(item.titulo)}</h3>
                                 <p>${escapeHtml(item.resumo)}</p>
-                                <a class="watch-detail" href="/calendario/dica-detalhe.html?id=${encodeURIComponent(item.id)}">Ver detalhes →</a>
+
                                 <details>
                                     <summary>Passos essenciais</summary>
-                                    <ol>
-                                        ${(item.passos || []).map((step) => `<li>${escapeHtml(step)}</li>`).join("")}
-                                    </ol>
+                                    <div class="practice-steps">
+                                        ${image ? `<div class="practice-side-image">${image}</div>` : ""}
+                                        <ol>
+                                            ${(item.passos || []).map((step) => `<li>${escapeHtml(step)}</li>`).join("")}
+                                        </ol>
+                                    </div>
                                 </details>
                             </article>
                         `;
