@@ -644,19 +644,6 @@
                 height: 4px;
                 /* A cor de fundo será definida inline no JS */
             }
-            /* Wrapper da imagem lateral (dentro do details) */
-            .practice-card .practice-image-wrap {
-                margin-bottom: 12px;
-            }
-            /* Imagem lateral dentro do details */
-            .practice-card .practice-inline-image {
-                width: 92px;
-                height: 92px;
-                object-fit: cover;
-                border-radius: 12px;
-                display: block;
-                background: #eee;
-            }
             /* Metadados da prática (categoria · nível) */
             .practice-card .practice-meta {
                 display: block;
@@ -692,20 +679,20 @@
                 display: flex; /* Para alinhar texto e botão */
                 justify-content: space-between;
                 align-items: center;
-                color: var(--green); /* Cor padrão, será sobrescrita inline */
+                color: #777; /* Cor cinzenta para o texto "Processo" e botão "Ver Imagem" */
+                line-height: 1.2; /* Para evitar quebras de linha estranhas */
             }
-            /* Seta do details */
+            /* Seta de expandir/colapsar (ao lado de "Processo") */
             .practice-card summary::before {
-                content: "▼ ";
+                content: "▶ "; /* Seta para expandir */
                 display: inline-block;
                 transition: transform 0.2s;
-                margin-right: 5px; /* Espaço entre a seta e o texto "Processo" */
+                margin-right: 5px;
+                color: #777; /* Seta cinzenta */
+                transform: rotate(0deg); /* Estado inicial para "fechado" */
             }
             .practice-card details[open] summary::before {
-                transform: rotate(0deg);
-            }
-            .practice-card details:not([open]) summary::before {
-                transform: rotate(-90deg);
+                transform: rotate(90deg); /* Gira a seta quando aberto */
             }
             /* Conteúdo interno dos detalhes (lista de passos ou imagem) */
             .practice-card .practice-content {
@@ -739,14 +726,26 @@
                 border: 0 !important;
                 box-shadow: none !important;
                 padding: 0 !important;
-                font-size: 0.6em !important;
-                font-weight: 700 !important;
+                font-family: "Source Sans Pro", sans-serif !important; /* Mesma fonte da body */
+                font-size: 1em !important; /* Mesma fonte da summary */
+                font-weight: 900 !important;
                 text-transform: uppercase;
                 letter-spacing: 0.5px;
-                color: var(--green) !important; /* Cor padrão, será sobrescrita inline */
+                color: #777 !important; /* Cor cinzenta */
                 cursor: pointer;
-                margin-left: 10px;
+                margin-left: auto; /* Alinha à direita */
+                display: flex; /* Para colocar a seta ao lado */
+                align-items: center;
+                gap: 5px; /* Espaço entre o texto e a seta do botão */
             }
+            /* Seta do botão "Ver Imagem" */
+            .practice-card .btn-toggle-image::before {
+                content: "▶"; /* Seta para o botão */
+                display: inline-block;
+                color: #777; /* Seta cinzenta */
+                font-size: 0.8em; /* Ajusta o tamanho da seta */
+            }
+
 
             /* Estilos para Vigilância (Pragas e Flora) */
             #pest-grid, #flora-grid {
@@ -1229,18 +1228,8 @@
                     infoGlobal = null;
                 let viewedDate = new Date(), showMorePests = false, catalogLimit = 12;
                 const months = [
-                    "janeiro",
-                    "fevereiro",
-                    "março",
-                    "abril",
-                    "maio",
-                    "junho",
-                    "julho",
-                    "agosto",
-                    "setembro",
-                    "outubro",
-                    "novembro",
-                    "dezembro",
+                    "janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho",
+                    "agosto", "setembro", "outubro", "novembro", "dezembro",
                 ];
                 const normalize = (value) =>
                     String(value || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
@@ -1248,11 +1237,7 @@
                     String(value ?? "").replace(
                         /[&<>'"]/g,
                         (char) => ({
-                            "&": "&amp;",
-                            "<": "&lt;",
-                            ">": "&gt;",
-                            "'": "&#39;",
-                            '"': "&quot;",
+                            "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;",
                         }[char]),
                     );
                 const format = (value) => new Intl.NumberFormat("pt-PT").format(value);
@@ -1325,7 +1310,9 @@
                     "Faixas tampão junto à água": {
                         bg1: "#eef9fb", bg2: "#dcf0f5", accent: "#459ab3", // Azul água (similar a charco)
                     },
-                    // Adiciona mais conforme as técnicas do dicasDB
+                    "Irrigação por olla": { // Adicionado para a técnica da imagem
+                        bg1: "#eef9e7", bg2: "#e2f2db", accent: "#6e9f52", // Verde suave
+                    }
                 };
 
                 function practiceTone(title) {
@@ -1346,10 +1333,8 @@
                     document.getElementById("practice-grid").innerHTML = selected
                         .map((item) => {
                             const tone = practiceTone(item.titulo);
-                            const hasImage = !!item.imagem?.src; // Verifica se a imagem existe
-                            const practiceImageHtml = hasImage
-                                ? `<div class="practice-image-display" style="display: none;"><img src="${escapeHtml(item.imagem.src)}" alt="${escapeHtml(item.imagem.alt || item.titulo)}" loading="lazy" onerror="this.onerror=null;this.remove()"></div>`
-                                : "";
+                            const hasImage = !!item.imagem?.src;
+                            const processImageSrc = item.imagem?.src || "/images/placeholder.svg"; // Fallback placeholder if no image
 
                             return `
                                 <article class="practice-card" style="background: linear-gradient(135deg, ${tone.bg1}, ${tone.bg2}); border-color: ${tone.accent};">
@@ -1357,9 +1342,9 @@
                                     <h3 style="color: ${tone.accent};">${escapeHtml(item.titulo)}</h3>
                                     <p>${escapeHtml(item.resumo)}</p>
 
-                                    <details>
-                                        <summary>
-                                            Processo
+                                    <details class="practice-details">
+                                        <summary style="color: #777;"> <!-- Cor cinzenta para o texto "Processo" -->
+                                            <span class="summary-process-text">Processo</span>
                                             ${hasImage ? `<button type="button" class="btn-toggle-image">Ver Imagem</button>` : ''}
                                         </summary>
                                         <div class="practice-content">
@@ -1368,7 +1353,7 @@
                                                     ${(item.passos || []).map((step) => `<li>${escapeHtml(step)}</li>`).join("")}
                                                 </ol>
                                             </div>
-                                            ${practiceImageHtml}
+                                            ${hasImage ? `<div class="practice-image-display" style="display: none;"><img src="${escapeHtml(processImageSrc)}" alt="${escapeHtml(item.imagem.alt || item.titulo)}" loading="lazy"></div>` : ""}
                                         </div>
                                     </details>
                                 </article>
@@ -1380,322 +1365,50 @@
                     document.querySelectorAll('.btn-toggle-image').forEach(button => {
                         button.addEventListener('click', (event) => {
                             event.stopPropagation(); // Previne que o <details> se feche/abra ao clicar no botão
-                            const detailsElement = event.target.closest('details');
+                            const detailsElement = event.target.closest('.practice-details');
                             if (detailsElement) {
                                 const stepsList = detailsElement.querySelector('.practice-steps-list');
                                 const imageDisplay = detailsElement.querySelector('.practice-image-display');
+                                const summaryProcessText = detailsElement.querySelector('.summary-process-text');
 
-                                if (stepsList && imageDisplay) {
+                                if (stepsList && imageDisplay && summaryProcessText) {
                                     const isShowingSteps = stepsList.style.display !== 'none';
 
                                     stepsList.style.display = isShowingSteps ? 'none' : 'block';
                                     imageDisplay.style.display = isShowingSteps ? 'block' : 'none';
 
-                                    // Altera o texto do botão
-                                    event.target.textContent = isShowingSteps ? 'Ver Processo' : 'Ver Imagem';
+                                    // Altera o texto do botão e a visibilidade do texto "Processo"
+                                    if (isShowingSteps) {
+                                        button.textContent = 'Ver Processo';
+                                        summaryProcessText.style.display = 'none'; // Esconde "Processo"
+                                    } else {
+                                        button.textContent = 'Ver Imagem';
+                                        summaryProcessText.style.display = 'inline-block'; // Mostra "Processo"
+                                    }
                                 }
                             }
                         });
                     });
+
+                    // Garante o estado inicial (mostrar passos, esconder imagem)
+                    document.querySelectorAll('.practice-details').forEach(detailsElement => {
+                        const hasImage = !!detailsElement.querySelector('.practice-image-display img');
+                        if (hasImage) {
+                            const stepsList = detailsElement.querySelector('.practice-steps-list');
+                            const imageDisplay = detailsElement.querySelector('.practice-image-display');
+                            const toggleButton = detailsElement.querySelector('.btn-toggle-image');
+                            const summaryProcessText = detailsElement.querySelector('.summary-process-text');
+
+                            if (stepsList && imageDisplay && toggleButton && summaryProcessText) {
+                                stepsList.style.display = 'block'; // Começa mostrando os passos
+                                imageDisplay.style.display = 'none'; // Esconde a imagem
+                                toggleButton.textContent = 'Ver Imagem'; // Texto inicial do botão
+                                summaryProcessText.style.display = 'inline-block'; // Mostra "Processo"
+                            }
+                        }
+                    });
                 }
                 // --- Fim do bloco de cores e renderização de práticas ---
-
-                function seasonFor(month) {
-                    if ([11, 0, 1].includes(month)) {
-                        return [
-                            "Inverno",
-                            "Planear, proteger o solo e aproveitar os períodos adequados para plantações lenhosas.",
-                        ];
-                    }
-                    if ([2, 3, 4].includes(month)) {
-                        return [
-                            "Primavera",
-                            "Época de crescimento rápido: semear por etapas, vigiar jovens plantas e favorecer polinizadores.",
-                        ];
-                    }
-                    if ([5, 6, 7].includes(month)) {
-                        return [
-                            "Verão",
-                            "Gerir água, sombra e cobertura; colher com frequência e observar sinais de stress.",
-                        ];
-                    }
-                    return [
-                        "Outono",
-                        "Colher, guardar sementes, iniciar coberturas e preparar o solo sem o deixar exposto.",
-                    ];
-                }
-
-                function moonInfo(date) {
-                    const known = Date.UTC(2000, 0, 6, 18, 14), cycle = 29.53058867;
-                    let age = ((date.getTime() - known) / 86400000) % cycle;
-                    if (age < 0) age += cycle;
-                    if (age < 1.85 || age > 27.68) return { name: "Lua nova", cls: "new" };
-                    if (age < 5.54) return { name: "Crescente inicial", cls: "" };
-                    if (age < 9.23) return { name: "Quarto crescente", cls: "quarter" };
-                    if (age < 12.92) return { name: "Crescente gibosa", cls: "" };
-                    if (age < 16.61) return { name: "Lua cheia", cls: "full" };
-                    if (age < 20.30) return { name: "Minguante gibosa", cls: "" };
-                    if (age < 23.99) return { name: "Quarto minguante", cls: "quarter" };
-                    return { name: "Minguante final", cls: "" };
-                }
-
-                function renderCalendar() {
-                    const year = viewedDate.getFullYear(),
-                        month = viewedDate.getMonth(),
-                        today = new Date();
-                    document.getElementById("calendar-title").textContent = `${months[month]} ${year}`;
-                    document.getElementById("selected-month-label").textContent = months[month];
-                    const first = new Date(year, month, 1),
-                        last = new Date(year, month + 1, 0),
-                        start = (first.getDay() + 6) % 7;
-                    const cells = [];
-                    for (let i = 0; i < 42; i++) {
-                        const day = i - start + 1,
-                            date = new Date(year, month, day),
-                            outside = date.getMonth() !== month,
-                            isToday = date.toDateString() === today.toDateString(),
-                            moon = moonInfo(date);
-                        const marker = ["new", "full", "quarter"].includes(moon.cls)
-                            ? `<span class="moon-dot ${moon.cls}" title="${escapeHtml(moon.name)}"></span>`
-                            : "";
-                        cells.push(
-                            `<div class="calendar-day ${outside ? "outside" : ""} ${
-                                isToday ? "today" : ""
-                            }">${date.getDate()}${marker}</div>`,
-                        );
-                    }
-                    document.getElementById("calendar-days").innerHTML = cells.join("");
-                    const [season, note] = seasonFor(month),
-                        selectedMoon = moonInfo(
-                            new Date(year, month, Math.min(today.getDate(), last.getDate())),
-                        );
-                    document.getElementById("season-label").innerHTML =
-                        `<strong>${season}</strong> · ${note}`;
-                    document.getElementById("moon-label").innerHTML =
-                        `Referência lunar: <strong>${selectedMoon.name}</strong>`;
-                    renderActions();
-                    renderWeekPlan();
-                    renderPractices();
-                    renderPests();
-                }
-
-                function periodMatches(text, month) {
-                    const source = normalize(text).replace(/[–—]/g, "-");
-                    if (!source) return false;
-                    if (/todo o ano|durante todo o ano|sempre/.test(source)) return true;
-                    const normalizedMonths = months.map(normalize);
-                    return source.split(/\s+e\s+|;/).some((segment) => {
-                        const found = normalizedMonths.map((name, index) =>
-                            segment.includes(name) ? index : -1
-                        ).filter((index) => index >= 0);
-                        if (!found.length) return false;
-                        if (found.includes(month)) return true;
-                        if (found.length >= 2) {
-                            const start = found[0], end = found.at(-1);
-                            return start <= end
-                                ? month >= start && month <= end
-                                : month >= start || month <= end;
-                        }
-                        return false;
-                    });
-                }
-
-                function phMatches(item) {
-                    const local = parseFloat(infoGlobal?.biomas?.ph_solo);
-                    if (!Number.isFinite(local)) return true;
-                    const nums =
-                        String(item.ph_solo || "").replace(",", ".").match(/\d+(?:\.\d+)?/g)?.map(Number) ||
-                        [];
-                    return nums.length < 2 || local >= nums[0] - .3 && local <= nums[1] + .3;
-                }
-
-                function cropsFor(field, month) {
-                    const matching = Object.entries(horticolasDB).filter(([, item]) =>
-                        periodMatches(item[field], month)
-                    ).sort((a, b) => Number(phMatches(b[1])) - Number(phMatches(a[1])));
-                    const unique = new Map();
-                    matching.forEach((entry) => {
-                        const key = normalize(entry[1].nome || entry[0]);
-                        if (key && !unique.has(key)) unique.set(key, entry);
-                    });
-                    return [...unique.values()].slice(0, 6);
-                }
-                function cropMarkup(entries, field) {
-                    return entries.length
-                        ? entries.map(([id, item]) =>
-                            `<a class="crop-link" href="/calendario/horticola-detalhe.html?id=${
-                                encodeURIComponent(id)
-                            }"><img src="${
-                                escapeHtml(item.imagem && item.imagem !== "-" ? item.imagem : "/images/cultura-placeholder.svg")
-                            }" alt="" loading="lazy" onerror="this.onerror=null;this.src='/images/cultura-placeholder.svg'"><span><strong>${
-                                escapeHtml(item.nome)
-                            }</strong><span>${
-                                escapeHtml(item[field] || item.categoria || "")
-                            }</span></span></a>`
-                        ).join("")
-                        : `<div class="empty">Não existem entradas suficientemente claras para este mês. Consulte as condições locais antes de decidir.</div>`;
-                }
-
-                function renderActions() {
-                    const month = viewedDate.getMonth(),
-                        groups = [["Semear", "sementeira", "Sementeiras cuja janela inclui este mês."], [
-                            "Plantar ou transplantar",
-                            "plantacao_ou_transplante",
-                            "Instalações indicadas para o período selecionado.",
-                        ], ["Colher", "colheita", "Culturas com colheita provável neste mês."]];
-                    document.getElementById("action-intro").textContent = `Sugestões para ${
-                        months[month]
-                    }, cruzadas com o pH local sempre que o catálogo contém um intervalo comparável.`;
-                    document.getElementById("action-grid").innerHTML = groups.map(([title, field, note]) =>
-                        `<article class="action-card"><div class="action-card-head"><div><span class="action-label">${
-                            escapeHtml(months[month])
-                        }</span><h3>${title}</h3></div><p>${note}</p></div><div class="crop-list">${
-                            cropMarkup(cropsFor(field, month), field)
-                        }</div></article>`
-                    ).join("");
-                    const sowing = new Map(cropsFor("sementeira", month).map(([id, item]) => [normalize(item.nome || id), item.nome || id]));
-                    const harvesting = new Set(cropsFor("colheita", month).map(([id, item]) => normalize(item.nome || id)));
-                    const overlap = [...sowing].filter(([key]) => harvesting.has(key)).map(([, name]) => name);
-                    const note = document.getElementById("cycle-note");
-                    if (overlap.length) {
-                        note.innerHTML = `<strong>Porque aparece a mesma cultura em fases diferentes?</strong> ${
-                            escapeHtml(overlap.slice(0, 4).join(", "))
-                        } ${overlap.length > 4 ? "e outras" : ""} podem ser semeadas e colhidas neste mês. Em geral, colhe-se uma geração já desenvolvida enquanto se inicia outra, ou usam-se variedades e datas escalonadas. Confirme sempre a variedade, a temperatura do solo e o microclima.`;
-                        note.classList.add("visible");
-                    } else {
-                        note.textContent = "";
-                        note.classList.remove("visible");
-                    }
-                }
-
-                function catalogKind(item) {
-                    const value = normalize(item.categoria || "");
-                    if (value.includes("aromatica")) return "aromaticas";
-                    if (/fruteira|citrino|pequeno fruto|casca rija|trepadeira frutifera/.test(value)) return "fruteiras";
-                    return "horticolas";
-                }
-
-                function renderCatalog(reset = false) {
-                    if (reset) catalogLimit = 12;
-                    const query = normalize(document.getElementById("catalog-search")?.value),
-                        filter = document.getElementById("catalog-filter")?.value || "all";
-                    const entries = Object.entries(horticolasDB).filter(([id, item]) => {
-                        const haystack = normalize(`${id} ${item.nome || ""} ${item.nome_cientifico || ""} ${item.categoria || ""}`);
-                        const kind = catalogKind(item);
-                        const filterMatch = filter === "all" || filter === kind || filter === "perenes" && normalize(item.ciclo).includes("perene");
-                        return filterMatch && (!query || haystack.includes(query));
-                    }).sort((a, b) => String(a[1].nome || a[0]).localeCompare(String(b[1].nome || b[0]), "pt"));
-                    document.getElementById("catalog-summary").textContent = `${format(entries.length)} culturas encontradas · ${
-                        format(Object.keys(horticolasDB).length)
-                    } fichas completas no catálogo`;
-                    document.getElementById("catalog-grid").innerHTML = entries.slice(0, catalogLimit).map(([id, item]) =>
-                        `<a class="catalog-card" href="/calendario/horticola-detalhe.html?id=${encodeURIComponent(id)}"><img src="${
-                            escapeHtml(item.imagem && item.imagem !== "-" ? item.imagem : "/images/cultura-placeholder.svg")
-                        }" alt="${escapeHtml(item.nome || "Cultura")}" loading="lazy" onerror="this.onerror=null;this.src='/images/cultura-placeholder.svg'"></div><div class="catalog-card-body"><small>${
-                            escapeHtml(item.categoria || catalogKind(item))
-                        }</small><h3>${escapeHtml(item.nome || id)}</h3><p>${
-                            escapeHtml(item.nome_cientifico || item.ciclo || "Consultar ficha de cultivo")
-                        }</p></div></a>`
-                    ).join("") || `<div class="empty">Não foram encontradas culturas com estes critérios.</div>`;
-                    const more = document.getElementById("catalog-more");
-                    more.hidden = entries.length <= catalogLimit;
-                    more.onclick = () => { catalogLimit += 12; renderCatalog(); };
-                }
-
-                function renderWeekPlan() {
-                    const month = viewedDate.getMonth(), [season] = seasonFor(month);
-                    const seasonal = {
-                        Inverno: [
-                            ["Observar o solo", "Evite trabalhar solo saturado e proteja zonas nuas."],
-                            [
-                                "Planear rotações",
-                                "Reveja famílias, necessidades e registos da campanha anterior.",
-                            ],
-                            [
-                                "Criar habitat",
-                                "Instale sebes ou abrigos sem perturbar refúgios existentes.",
-                            ],
-                            ["Rever ferramentas", "Limpe e repare ferramentas antes da época de crescimento."],
-                        ],
-                        Primavera: [
-                            ["Semear por etapas", "Evite concentrar toda a produção numa única data."],
-                            [
-                                "Proteger plantas jovens",
-                                "Use barreiras físicas apenas quando existe risco identificado.",
-                            ],
-                            ["Acolher auxiliares", "Mantenha flores e água rasa com saída segura."],
-                            ["Verificar rega", "Teste linhas e emissores antes do calor."],
-                        ],
-                        Verão: [
-                            [
-                                "Verificar humidade",
-                                "Observe a zona radicular antes de regar profundamente.",
-                            ],
-                            ["Cobrir o solo", "Reponha cobertura sem a encostar aos caules."],
-                            ["Colher regularmente", "Retire frutos maduros e observe sinais de doença."],
-                            ["Criar sombra seletiva", "Proteja culturas sensíveis sem impedir ventilação."],
-                        ],
-                        Outono: [
-                            [
-                                "Guardar sementes",
-                                "Escolha plantas saudáveis e deixe maturar completamente.",
-                            ],
-                            ["Semear coberturas", "Mantenha raízes vivas entre culturas."],
-                            [
-                                "Compostar materiais",
-                                "Equilibre materiais secos e verdes sem enterrar resíduos.",
-                            ],
-                            ["Preparar infiltração", "Abrande escorrência antes da época mais chuvosa."],
-                        ],
-                    };
-                    document.getElementById("week-plan").innerHTML = seasonal[season].map((
-                        [title, text],
-                        index,
-                    ) => `<article class="week-task"><span class="task-number">0${
-                        index + 1
-                    }</span><h3>${title}</h3><p>${text}</p></article>`).join("");
-                }
-
-                function practiceIdsFor(month) {
-                    if ([11, 0, 1].includes(month)) {
-                        return [
-                            "rotacao-culturas",
-                            "teste-germinacao",
-                            "sebe-viva",
-                            "abrigo-insetos",
-                            "higiene-ferramentas",
-                            "composto-frio",
-                        ];
-                    }
-                    if ([2, 3, 4].includes(month)) {
-                        return [
-                            "sementeira-direta",
-                            "sementeira-sucessiva",
-                            "consociacao",
-                            "corredor-floral",
-                            "monitorizacao-pragas",
-                            "rega-gota-a-gota",
-                        ];
-                    }
-                    if ([5, 6, 7].includes(month)) {
-                        return [
-                            "mulching-organico",
-                            "rega-profunda",
-                            "olla",
-                            "guardar-sementes",
-                            "faixa-nao-cortada",
-                            "registos-horta",
-                        ];
-                    }
-                    return [
-                        "adubo-verde",
-                        "solo-sempre-com-raiz",
-                        "folhas-molde",
-                        "captacao-chuva",
-                        "composto-superficie",
-                        "zonas-tampao",
-                    ];
-                }
 
                 function seasonalPests(month) {
                     const [season] = seasonFor(month),
