@@ -197,17 +197,23 @@ async function locate() {
     navigator.geolocation.getCurrentPosition(
         async (position) => {
             try {
-                const data = (await regions()).filter(
-                    (x) => Number(x.lat) && Number(x.lon)
-                );
+                const data = (await regions()).filter((x) => {
+                    const lat = Number(x.latitude ?? x.lat);
+                    const lon = Number(x.longitude ?? x.lon);
+                    return Number.isFinite(lat) && Number.isFinite(lon);
+                });
+
                 const point = position.coords;
                 const nearest = data.reduce(
                     (a, b) => (!a || distance(point, b) < distance(point, a) ? b : a),
                     null
                 );
 
-                if (nearest) choose(nearest);
-                else status("—");
+                if (nearest) {
+                    choose(nearest);
+                } else {
+                    status(state.lang === "pt" ? "Sem correspondência exata." : "No exact match.");
+                }
             } catch (e) {
                 status(
                     state.lang === "pt"
