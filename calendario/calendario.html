@@ -629,12 +629,12 @@
             .practice-card {
                 position: relative;
                 overflow: hidden;
-                border: 1px solid var(--line); /* Cor de border padrão, será sobrescrita inline */
                 border-radius: 13px;
                 padding: 1.5em;
-                background: #fff; /* Cor de fundo padrão, será sobrescrita inline */
+                background: #fff;
+                /* A cor da border e background será definida inline no JS */
             }
-            /* Linha superior colorida (agora controlada por JS inline) */
+            /* Linha superior colorida (controlada por JS inline) */
             .practice-card::before {
                 content: "";
                 position: absolute;
@@ -642,11 +642,11 @@
                 left: 0;
                 right: 0;
                 height: 4px;
-                background: var(--green); /* Cor de acento padrão, será sobrescrita inline */
+                /* A cor de fundo será definida inline no JS */
             }
             /* Wrapper da imagem lateral (dentro do details) */
             .practice-card .practice-image-wrap {
-                margin-bottom: 12px; /* Espaçamento da imagem */
+                margin-bottom: 12px;
             }
             /* Imagem lateral dentro do details */
             .practice-card .practice-inline-image {
@@ -677,26 +677,6 @@
                 line-height: 1.6;
                 margin: 0;
             }
-            /* Bloco dos passos (com imagem lateral e lista) */
-            .practice-card .practice-steps {
-                display: grid;
-                grid-template-columns: 92px minmax(0, 1fr);
-                gap: 14px;
-                align-items: start;
-                margin-top: 10px;
-            }
-            /* Lista de passos */
-            .practice-card ol {
-                padding-left: 1.2em;
-                margin: 0;
-            }
-            /* Itens da lista de passos */
-            .practice-card li {
-                font-size: 0.7em;
-                color: #666;
-                line-height: 1.45;
-                margin-bottom: 5px;
-            }
             /* Detalhes da expansão */
             .practice-card details {
                 margin-top: 12px;
@@ -706,22 +686,66 @@
             /* Sumário da expansão */
             .practice-card summary {
                 cursor: pointer;
-                color: var(--green);
                 font-size: 0.64em;
                 font-weight: 900;
                 text-transform: uppercase;
+                display: flex; /* Para alinhar texto e botão */
+                justify-content: space-between;
+                align-items: center;
+                color: var(--green); /* Cor padrão, será sobrescrita inline */
             }
-            /* Link "Ver detalhes" */
-            .practice-card .watch-detail {
+            /* Seta do details */
+            .practice-card summary::before {
+                content: "▼ ";
                 display: inline-block;
+                transition: transform 0.2s;
+                margin-right: 5px; /* Espaço entre a seta e o texto "Processo" */
+            }
+            .practice-card details[open] summary::before {
+                transform: rotate(0deg);
+            }
+            .practice-card details:not([open]) summary::before {
+                transform: rotate(-90deg);
+            }
+            /* Conteúdo interno dos detalhes (lista de passos ou imagem) */
+            .practice-card .practice-content {
                 margin-top: 10px;
-                margin-bottom: 10px;
-                font-size: 0.65em;
-                font-weight: 900;
+            }
+            /* Lista de passos */
+            .practice-card .practice-steps-list ol {
+                padding-left: 0; /* Alinha a lista à esquerda */
+                margin: 0;
+            }
+            .practice-card .practice-steps-list li {
+                font-size: 0.7em;
+                color: #666;
+                line-height: 1.45;
+                margin-bottom: 5px;
+                margin-left: 1.2em; /* Indentação para os itens da lista */
+            }
+            /* Imagem do processo */
+            .practice-card .practice-image-display img {
+                width: 100%;
+                height: auto;
+                max-height: 200px; /* Limitar a altura da imagem para não ficar muito grande */
+                object-fit: contain; /* Ajusta a imagem sem cortar, mostrando a totalidade */
+                border-radius: 8px;
+                display: block;
+                background: #eee;
+            }
+            /* Botão "Ver Imagem" / "Ver Processo" */
+            .practice-card .btn-toggle-image {
+                background: none !important;
+                border: 0 !important;
+                box-shadow: none !important;
+                padding: 0 !important;
+                font-size: 0.6em !important;
+                font-weight: 700 !important;
                 text-transform: uppercase;
-                text-decoration: none;
                 letter-spacing: 0.5px;
-                color: inherit !important;
+                color: var(--green) !important; /* Cor padrão, será sobrescrita inline */
+                cursor: pointer;
+                margin-left: 10px;
             }
 
             /* Estilos para Vigilância (Pragas e Flora) */
@@ -1236,30 +1260,72 @@
                 // --- Início do bloco de cores e renderização de práticas ---
                 const practiceColors = {
                     "Mulching orgânico": {
-                        bg1: "#f6ede3",
-                        bg2: "#efe2d0",
-                        accent: "#9a6a3a",
+                        bg1: "#f6ede3", bg2: "#efe2d0", accent: "#9a6a3a", // Castanho para Solo e Cobertura
                     },
                     "Rega profunda orientada pelas raízes": {
-                        bg1: "#eef6ff",
-                        bg2: "#dfefff",
-                        accent: "#3c7bb5",
+                        bg1: "#eef6ff", bg2: "#dfefff", accent: "#3c7bb5", // Azul para Água e Irrigação
                     },
                     "Compostagem aeróbia em pilha": {
-                        bg1: "#f4efe7",
-                        bg2: "#e8dfcf",
-                        accent: "#a06a2c",
+                        bg1: "#f4efe7", bg2: "#e8dfcf", accent: "#a06a2c", // Castanho para Compostagem
                     },
                     "Sementeira direta": {
-                        bg1: "#eef8ea",
-                        bg2: "#e2f1db",
-                        accent: "#6e9f52",
+                        bg1: "#eef8ea", bg2: "#e2f1db", accent: "#6e9f52", // Verde para Sementeiras
                     },
-                    // Adiciona aqui mais técnicas se quiseres cores específicas para elas
-                    // Exemplo:
-                    // "Outra técnica": {
-                    //     bg1: "#f0f8ff", bg2: "#e0f2ff", accent: "#4a90e2"
-                    // }
+                    "Canteiro sem cava": {
+                        bg1: "#f6f3ed", bg2: "#f0ead8", accent: "#b5873c", // Mais um tom de terra
+                    },
+                    "Vermicompostagem": {
+                        bg1: "#fdf8f4", bg2: "#faeddd", accent: "#c27d42", // Tom avermelhado para minhocas
+                    },
+                    "Húmus de folhas": {
+                        bg1: "#f5f7f3", bg2: "#e9edeb", accent: "#7a8a7c", // Cinza esverdeado
+                    },
+                    "Rotação por famílias e funções": {
+                        bg1: "#e8f2e9", bg2: "#d9e6dc", accent: "#4d8a56", // Verde mais escuro
+                    },
+                    "Adubação verde e culturas de cobertura": {
+                        bg1: "#eaf8eb", bg2: "#d9f0db", accent: "#529a5a", // Verde ainda mais vivo
+                    },
+                    "Consociação e policultura": {
+                        bg1: "#f0fdf0", bg2: "#e0fbe0", accent: "#3aa044", // Verde vibrante
+                    },
+                    "Corredor floral nativo": {
+                        bg1: "#fbf3ff", bg2: "#f1e3ff", accent: "#9b60d3", // Roxo suave para flores
+                    },
+                    "Sebe biodiversa": {
+                        bg1: "#eef7ee", bg2: "#dcece0", accent: "#60a870", // Verde floresta
+                    },
+                    "Pequeno charco para biodiversidade": {
+                        bg1: "#eef9fb", bg2: "#dcf0f5", accent: "#459ab3", // Azul água
+                    },
+                    "Abrigos naturais para insetos": {
+                        bg1: "#fcfcf2", bg2: "#f5f5e2", accent: "#b0a03a", // Amarelo/ocre
+                    },
+                    "Monitorização antes de intervir": {
+                        bg1: "#f7f7f7", bg2: "#ededed", accent: "#7a7a7a", // Cinza neutro
+                    },
+                    "Teste de germinação": {
+                        bg1: "#fff8f0", bg2: "#fcecd9", accent: "#d39a45", // Laranja/Castanho claro
+                    },
+                    "Sementeiras sucessivas": {
+                        bg1: "#f0fdf0", bg2: "#e0fbe0", accent: "#3aa044", // Verde vibrante (similar a consociação)
+                    },
+                    "Guardar sementes de polinização aberta": {
+                        bg1: "#fcf6f0", bg2: "#f8e9dc", accent: "#c27d42", // Castanho avermelhado
+                    },
+                    "Higiene seletiva de ferramentas": {
+                        bg1: "#eef7f7", bg2: "#dcebf0", accent: "#60a8b3", // Azul esverdeado
+                    },
+                    "Solo sempre com raiz": {
+                        bg1: "#f6ede3", bg2: "#efe2d0", accent: "#9a6a3a", // Castanho (similar a mulching)
+                    },
+                    "Diagnóstico simples antes de corrigir": {
+                        bg1: "#fdfdf0", bg2: "#fbfbe0", accent: "#b0a03a", // Amarelo claro
+                    },
+                    "Faixas tampão junto à água": {
+                        bg1: "#eef9fb", bg2: "#dcf0f5", accent: "#459ab3", // Azul água (similar a charco)
+                    },
+                    // Adiciona mais conforme as técnicas do dicasDB
                 };
 
                 function practiceTone(title) {
@@ -1280,32 +1346,59 @@
                     document.getElementById("practice-grid").innerHTML = selected
                         .map((item) => {
                             const tone = practiceTone(item.titulo);
-                            const practiceImage = item.imagem?.src
-                                ? `<img class="practice-inline-image" src="${escapeHtml(item.imagem.src)}" alt="${escapeHtml(item.imagem.alt || item.titulo)}" loading="lazy" onerror="this.onerror=null;this.remove()">`
+                            const hasImage = !!item.imagem?.src; // Verifica se a imagem existe
+                            const practiceImageHtml = hasImage
+                                ? `<div class="practice-image-display" style="display: none;"><img src="${escapeHtml(item.imagem.src)}" alt="${escapeHtml(item.imagem.alt || item.titulo)}" loading="lazy" onerror="this.onerror=null;this.remove()"></div>`
                                 : "";
 
                             return `
-                                <article class="practice-card" style="background: linear-gradient(135deg, ${tone.bg1}, ${tone.bg2}); border-color: ${tone.accent}22;">
+                                <article class="practice-card" style="background: linear-gradient(135deg, ${tone.bg1}, ${tone.bg2}); border-color: ${tone.accent};">
                                     <span class="practice-meta" style="color: ${tone.accent};">${escapeHtml(item.categoria)} · ${escapeHtml(item.nivel)}</span>
                                     <h3 style="color: ${tone.accent};">${escapeHtml(item.titulo)}</h3>
                                     <p>${escapeHtml(item.resumo)}</p>
 
                                     <details>
-                                        <summary>Processo</summary> <!-- Alterado de "Passos essenciais" para "Processo" -->
-                                        <div class="practice-steps">
-                                            ${practiceImage ? `<div class="practice-side-image">${practiceImage}</div>` : ""}
-                                            <ol>
-                                                ${(item.passos || []).map((step) => `<li>${escapeHtml(step)}</li>`).join("")}
-                                            </ol>
+                                        <summary>
+                                            Processo
+                                            ${hasImage ? `<button type="button" class="btn-toggle-image">Ver Imagem</button>` : ''}
+                                        </summary>
+                                        <div class="practice-content">
+                                            <div class="practice-steps-list">
+                                                <ol>
+                                                    ${(item.passos || []).map((step) => `<li>${escapeHtml(step)}</li>`).join("")}
+                                                </ol>
+                                            </div>
+                                            ${practiceImageHtml}
                                         </div>
                                     </details>
                                 </article>
                             `;
                         })
                         .join("");
+
+                    // Adiciona os event listeners para os botões "Ver Imagem" / "Ver Processo"
+                    document.querySelectorAll('.btn-toggle-image').forEach(button => {
+                        button.addEventListener('click', (event) => {
+                            event.stopPropagation(); // Previne que o <details> se feche/abra ao clicar no botão
+                            const detailsElement = event.target.closest('details');
+                            if (detailsElement) {
+                                const stepsList = detailsElement.querySelector('.practice-steps-list');
+                                const imageDisplay = detailsElement.querySelector('.practice-image-display');
+
+                                if (stepsList && imageDisplay) {
+                                    const isShowingSteps = stepsList.style.display !== 'none';
+
+                                    stepsList.style.display = isShowingSteps ? 'none' : 'block';
+                                    imageDisplay.style.display = isShowingSteps ? 'block' : 'none';
+
+                                    // Altera o texto do botão
+                                    event.target.textContent = isShowingSteps ? 'Ver Processo' : 'Ver Imagem';
+                                }
+                            }
+                        });
+                    });
                 }
                 // --- Fim do bloco de cores e renderização de práticas ---
-
 
                 function seasonFor(month) {
                     if ([11, 0, 1].includes(month)) {
