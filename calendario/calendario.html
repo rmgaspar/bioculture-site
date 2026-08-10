@@ -681,29 +681,17 @@
         align-items: center;
         color: #777; /* Cor cinzenta para o texto "Processo" e botão "Ver Imagem" */
         line-height: 1.2; /* Para evitar quebras de linha estranhas */
-        padding-left: 0; /* Remove padding padrão do summary */
     }
     /* Seta de expandir/colapsar (ao lado de "Processo") */
-    .practice-card .summary-process-text {
-        display: flex; /* Para alinhar a seta com o texto "Processo" */
-        align-items: center;
-        gap: 5px; /* Espaço entre a seta e o texto "Processo" */
-        color: #777; /* Cor cinzenta para o texto "Processo" */
-        font-family: inherit; /* Garante que usa a mesma fonte do body/summary */
-        font-size: 1em; /* Herda o font-size do summary (0.64em) */
-        font-weight: inherit; /* Herda o font-weight do summary (900) */
-        text-transform: inherit; /* Herda o text-transform do summary */
-        letter-spacing: inherit; /* Herda o letter-spacing do summary */
-    }
-    .practice-card .summary-process-text::before {
+    .practice-card summary::before {
         content: "▶"; /* Seta para expandir */
         display: inline-block;
         transition: transform 0.2s;
+        margin-right: 5px;
         color: #777; /* Seta cinzenta */
-        font-size: 0.8em; /* Ajusta o tamanho da seta em relação ao texto "Processo" */
         transform: rotate(0deg); /* Estado inicial para "fechado" */
     }
-    .practice-card details[open] .summary-process-text::before {
+    .practice-card details[open] summary::before {
         transform: rotate(90deg); /* Gira a seta quando aberto */
     }
     /* Conteúdo interno dos detalhes (lista de passos ou imagem) */
@@ -714,7 +702,6 @@
     .practice-card .practice-steps-list ol {
         padding-left: 0; /* Alinha a lista à esquerda */
         margin: 0;
-        list-style-position: inside; /* Garante que os números da lista ficam dentro do padding */
     }
     .practice-card .practice-steps-list li {
         font-size: 0.7em;
@@ -724,17 +711,13 @@
         margin-left: 1.2em; /* Indentação para os itens da lista */
     }
     /* Imagem do processo */
-    .practice-card .practice-image-display {
-        text-align: center; /* Centraliza a imagem se for mais pequena que o bloco */
-    }
     .practice-card .practice-image-display img {
-        width: auto; /* Ajusta a largura automaticamente */
+        width: 100%;
         height: auto;
-        max-width: 100%; /* Garante que a imagem não transborda */
         max-height: 200px; /* Limitar a altura da imagem para não ficar muito grande */
         object-fit: contain; /* Ajusta a imagem sem cortar, mostrando a totalidade */
         border-radius: 8px;
-        display: inline-block; /* Para que text-align: center funcione */
+        display: block;
         background: #eee;
     }
     /* Botão "Ver Imagem" / "Ver Processo" */
@@ -743,13 +726,14 @@
         border: 0 !important;
         box-shadow: none !important;
         padding: 0 !important;
-        font-family: inherit !important; /* Mesma fonte da body */
-        font-size: 1em !important; /* Herda o tamanho da summary (0.64em) */
-        font-weight: inherit !important; /* Herda o font-weight do summary (900) */
-        text-transform: inherit; /* Herda o text-transform do summary */
-        letter-spacing: inherit; /* Herda o letter-spacing do summary */
+        font-family: "Source Sans Pro", sans-serif !important; /* Mesma fonte da body */
+        font-size: 1em !important; /* Mesma fonte da summary */
+        font-weight: 900 !important;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
         color: #777 !important; /* Cor cinzenta */
         cursor: pointer;
+        margin-left: auto; /* Alinha à direita */
         display: flex; /* Para colocar a seta ao lado */
         align-items: center;
         gap: 5px; /* Espaço entre o texto e a seta do botão */
@@ -760,7 +744,6 @@
         display: inline-block;
         color: #777; /* Seta cinzenta */
         font-size: 0.8em; /* Ajusta o tamanho da seta */
-        transform: rotate(0deg); /* Seta sempre para a direita */
     }
 
 
@@ -1023,6 +1006,7 @@
     }
 </style>
 
+
         <!-- Google tag (gtag.js) -->
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV0FD8PXC"></script>
         <script>
@@ -1237,583 +1221,674 @@
         </div>
         <script src="/assets/js/jquery.min.js"></script>
             <script>
-    let locationsDB = [],
-        pragasDB = [],
-        floraDB = [],
-        dicasDB = [],
-        horticolasDB = {},
-        infoGlobal = null;
-    let viewedDate = new Date(), showMorePests = false, catalogLimit = 12;
-    const months = [
-        "janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho",
-        "agosto", "setembro", "outubro", "novembro", "dezembro",
-    ];
-    const normalize = (value) =>
-        String(value || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-    const escapeHtml = (value) =>
-        String(value ?? "").replace(
-            /[&<>'"]/g,
-            (char) => ({
-                "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;",
-            }[char]),
-        );
-    const format = (value) => new Intl.NumberFormat("pt-PT").format(value);
-
-    // --- Início do bloco de cores e renderização de práticas ---
-    const practiceColors = {
-        "Mulching orgânico": {
-            bg1: "#f6ede3", bg2: "#efe2d0", accent: "#9a6a3a", // Castanho para Solo e Cobertura
-        },
-        "Rega profunda orientada pelas raízes": {
-            bg1: "#eef6ff", bg2: "#dfefff", accent: "#3c7bb5", // Azul para Água e Irrigação
-        },
-        "Compostagem aeróbia em pilha": {
-            bg1: "#f4efe7", bg2: "#e8dfcf", accent: "#a06a2c", // Castanho para Compostagem
-        },
-        "Sementeira direta": {
-            bg1: "#eef8ea", bg2: "#e2f1db", accent: "#6e9f52", // Verde para Sementeiras
-        },
-        "Canteiro sem cava": {
-            bg1: "#f6f3ed", bg2: "#f0ead8", accent: "#b5873c", // Mais um tom de terra
-        },
-        "Vermicompostagem": {
-            bg1: "#fdf8f4", bg2: "#faeddd", accent: "#c27d42", // Tom avermelhado para minhocas
-        },
-        "Húmus de folhas": {
-            bg1: "#f5f7f3", bg2: "#e9edeb", accent: "#7a8a7c", // Cinza esverdeado
-        },
-        "Rotação por famílias e funções": {
-            bg1: "#e8f2e9", bg2: "#d9e6dc", accent: "#4d8a56", // Verde mais escuro
-        },
-        "Adubação verde e culturas de cobertura": {
-            bg1: "#eaf8eb", bg2: "#d9f0db", accent: "#529a5a", // Verde ainda mais vivo
-        },
-        "Consociação e policultura": {
-            bg1: "#f0fdf0", bg2: "#e0fbe0", accent: "#3aa044", // Verde vibrante
-        },
-        "Corredor floral nativo": {
-            bg1: "#fbf3ff", bg2: "#f1e3ff", accent: "#9b60d3", // Roxo suave para flores
-        },
-        "Sebe biodiversa": {
-            bg1: "#eef7ee", bg2: "#dcece0", accent: "#60a870", // Verde floresta
-        },
-        "Pequeno charco para biodiversidade": {
-            bg1: "#eef9fb", bg2: "#dcf0f5", accent: "#459ab3", // Azul água
-        },
-        "Abrigos naturais para insetos": {
-            bg1: "#fcfcf2", bg2: "#f5f5e2", accent: "#b0a03a", // Amarelo/ocre
-        },
-        "Monitorização antes de intervir": {
-            bg1: "#f7f7f7", bg2: "#ededed", accent: "#7a7a7a", // Cinza neutro
-        },
-        "Teste de germinação": {
-            bg1: "#fff8f0", bg2: "#fcecd9", accent: "#d39a45", // Laranja/Castanho claro
-        },
-        "Sementeiras sucessivas": {
-            bg1: "#f0fdf0", bg2: "#e0fbe0", accent: "#3aa044", // Verde vibrante (similar a consociação)
-        },
-        "Guardar sementes de polinização aberta": {
-            bg1: "#fcf6f0", bg2: "#f8e9dc", accent: "#c27d42", // Castanho avermelhado
-        },
-        "Higiene seletiva de ferramentas": {
-            bg1: "#eef7f7", bg2: "#dcebf0", accent: "#60a8b3", // Azul esverdeado
-        },
-        "Solo sempre com raiz": {
-            bg1: "#f6ede3", bg2: "#efe2d0", accent: "#9a6a3a", // Castanho (similar a mulching)
-        },
-        "Diagnóstico simples antes de corrigir": {
-            bg1: "#fdfdf0", bg2: "#fbfbe0", accent: "#b0a03a", // Amarelo claro
-        },
-        "Faixas tampão junto à água": {
-            bg1: "#eef9fb", bg2: "#dcf0f5", accent: "#459ab3", // Azul água (similar a charco)
-        },
-        "Irrigação por olla": {
-            bg1: "#eef9e7", bg2: "#e2f2db", accent: "#6e9f52", // Verde suave
-        },
-        "Compostar materiais": { // Para o Week Plan
-            bg1: "#f4efe7", bg2: "#e8dfcf", accent: "#a06a2c",
-        },
-        "Rever ferramentas": { // Para o Week Plan
-            bg1: "#f7f6ff", bg2: "#ece9fb", accent: "#8a7cc9",
-        },
-        "Observar o solo": { // Para o Week Plan
-            bg1: "#f4fbf2", bg2: "#eaf7e6", accent: "#7fb46a",
-        },
-        "Planear rotações": { // Para o Week Plan
-            bg1: "#f3faf7", bg2: "#e7f4ef", accent: "#6fae8f",
-        },
-        "Verificar humidade": { // Para o Week Plan
-            bg1: "#f4fbf2", bg2: "#eaf7e6", accent: "#7fb46a",
-        },
-        "Cobrir o solo": { // Para o Week Plan
-            bg1: "#f3faf7", bg2: "#e7f4ef", accent: "#6fae8f",
-        },
-        "Colher regularmente": { // Para o Week Plan
-            bg1: "#fff8ef", bg2: "#fcefdc", accent: "#d39a45",
-        },
-        "Criar sombra seletiva": { // Para o Week Plan
-            bg1: "#f7f6ff", bg2: "#ece9fb", accent: "#8a7cc9",
-        },
-        "Guardar sementes": { // Para o Week Plan
-            bg1: "#fcf6f0", bg2: "#f8e9dc", accent: "#c27d42",
-        },
-        "Semear coberturas": { // Para o Week Plan
-            bg1: "#eaf8eb", bg2: "#d9f0db", accent: "#529a5a",
-        },
-        "Preparar infiltração": { // Para o Week Plan
-            bg1: "#eef9fb", bg2: "#dcf0f5", accent: "#459ab3",
-        },
-        "Proteger plantas jovens": { // Para o Week Plan
-            bg1: "#f3faf7", bg2: "#e7f4ef", accent: "#6fae8f",
-        },
-        "Acolher auxiliares": { // Para o Week Plan
-            bg1: "#f0fdf0", bg2: "#e0fbe0", accent: "#3aa044",
-        },
-        "Verificar rega": { // Para o Week Plan
-            bg1: "#eef6ff", bg2: "#dfefff", accent: "#3c7bb5",
-        },
-        "Semear por etapas": { // Para o Week Plan
-            bg1: "#e8f2e9", bg2: "#d9e6dc", accent: "#4d8a56",
-        }
-    };
-
-    function practiceTone(title) {
-        return (
-            practiceColors[title] || {
-                bg1: "#f7faf8", // Cor padrão suave
-                bg2: "#edf5ef",
-                accent: "#5f8f73", // Cor de acento padrão (verde)
-            }
-        );
-    }
-
-    function renderPractices() {
-        const selected = practiceIdsFor(viewedDate.getMonth())
-            .map((id) => dicasDB.find((item) => item.id === id))
-            .filter(Boolean);
-
-        document.getElementById("practice-grid").innerHTML = selected
-            .map((item) => {
-                const tone = practiceTone(item.titulo);
-                const hasImage = !!item.imagem?.src;
-                const processImageSrc = item.imagem?.src || "/images/placeholder.svg"; // Fallback placeholder if no image
-
-                return `
-                    <article class="practice-card" style="background: linear-gradient(135deg, ${tone.bg1}, ${tone.bg2}); border-color: ${tone.accent};">
-                        <span class="practice-meta" style="color: ${tone.accent};">${escapeHtml(item.categoria)} · ${escapeHtml(item.nivel)}</span>
-                        <h3 style="color: ${tone.accent};">${escapeHtml(item.titulo)}</h3>
-                        <p>${escapeHtml(item.resumo)}</p>
-
-                        <details class="practice-details">
-                            <summary class="practice-summary-header">
-                                <span class="summary-process-text">Processo</span>
-                                ${hasImage ? `<button type="button" class="btn-toggle-image">Ver Imagem</button>` : ''}
-                            </summary>
-                            <div class="practice-content">
-                                <div class="practice-steps-list">
-                                    <ol>
-                                        ${(item.passos || []).map((step) => `<li>${escapeHtml(step)}</li>`).join("")}
-                                    </ol>
-                                </div>
-                                ${hasImage ? `<div class="practice-image-display" style="display: none;"><img src="${escapeHtml(processImageSrc)}" alt="${escapeHtml(item.imagem.alt || item.titulo)}" loading="lazy"></div>` : ""}
-                            </div>
-                        </details>
-                    </article>
-                `;
-            })
-            .join("");
-
-        // Adiciona os event listeners para os botões "Ver Imagem" / "Ver Processo"
-        document.querySelectorAll('.btn-toggle-image').forEach(button => {
-            button.addEventListener('click', (event) => {
-                event.stopPropagation(); // Previne que o <details> se feche/abra ao clicar no botão
-                const detailsElement = event.target.closest('.practice-details');
-                if (detailsElement) {
-                    const stepsList = detailsElement.querySelector('.practice-steps-list');
-                    const imageDisplay = detailsElement.querySelector('.practice-image-display');
-                    
-                    if (stepsList && imageDisplay) {
-                        const isShowingSteps = stepsList.style.display !== 'none';
-
-                        stepsList.style.display = isShowingSteps ? 'none' : 'block';
-                        imageDisplay.style.display = isShowingSteps ? 'block' : 'none';
-
-                        // Altera o texto do botão
-                        button.textContent = isShowingSteps ? 'Ver Processo' : 'Ver Imagem';
-                        
-                        // Garante que o details está aberto ao clicar no botão
-                        detailsElement.open = true;
-                    }
-                }
-            });
-        });
-
-        // Garante o estado inicial (mostrar passos, esconder imagem)
-        document.querySelectorAll('.practice-details').forEach(detailsElement => {
-            const hasImage = !!detailsElement.querySelector('.practice-image-display img');
-            if (hasImage) {
-                const stepsList = detailsElement.querySelector('.practice-steps-list');
-                const imageDisplay = detailsElement.querySelector('.practice-image-display');
-                const toggleButton = detailsElement.querySelector('.btn-toggle-image');
-
-                if (stepsList && imageDisplay && toggleButton) {
-                    stepsList.style.display = 'block'; // Começa mostrando os passos
-                    imageDisplay.style.display = 'none'; // Esconde a imagem
-                    toggleButton.textContent = 'Ver Imagem'; // Texto inicial do botão
-                }
-            }
-        });
-    }
-    // --- Fim do bloco de cores e renderização de práticas ---
-
-    function seasonalPests(month) {
-        const [season] = seasonFor(month),
-            keywords = {
-                "Inverno": ["inverno", "todo o ano", "protegidas"],
-                "Primavera": ["primavera", "tempo ameno", "rebentos"],
-                "Verão": ["verao", "tempo quente", "calor", "seco"],
-                "Outono": ["outono", "humidade", "chuva"],
-            }[season].map(normalize);
-        return pragasDB.filter((item) => {
-            const text = normalize(`${item.sazonalidade_portugal || ""} ${item.quando || ""}`);
-            return keywords.some((key) => text.includes(key)) || periodMatches(text, month);
-        });
-    }
-    function renderPests() {
-        const all = seasonalPests(viewedDate.getMonth()),
-            visible = (all.length ? all : pragasDB).slice(0, showMorePests ? 12 : 6);
-        document.getElementById("pest-grid").innerHTML = visible.map((item) =>
-            `<article class="watch-card"><img class="watch-image" src="${
-                escapeHtml(item.imagem || "/images/pragas-placeholder.svg")
-            }" alt="${
-                escapeHtml(item.nome_comum)
-            }" loading="lazy" onerror="this.onerror=null;this.src='/images/pragas-placeholder.svg'"><span>Praga ou doença</span><h3>${
-                escapeHtml(item.nome_comum)
-            }</h3><span>${
-                escapeHtml(item.sazonalidade_portugal || "Observação regular")
-            }</span><p>${
-                escapeHtml(item.sintomas)
-            }</p><details><summary>Prevenção</summary><p>${
-                escapeHtml(item.prevencao)
-            }</p></details><a class="watch-detail" href="/ecossistemas/especie-detalhe.html?id=${
-                encodeURIComponent(item.id)
-            }">Ver ficha completa →</a></article>`
-        ).join("");
-        const button = document.getElementById("toggle-pests");
-        button.style.display = (all.length || pragasDB.length) > 6 ? "inline-block" : "none";
-        button.textContent = showMorePests ? "Recolher" : "Ver mais pragas sazonais";
-    }
-
-    function renderFlora() {
-        const names = infoGlobal?.biomas?.flora_invasora || [];
-        const local = names.map((name) => {
-            const n = normalize(name);
-            return floraDB.find((item) =>
-                n.includes(normalize(item.nome_comum)) ||
-                n.includes(normalize(item.nome_cientifico)) ||
-                normalize(item.nome_comum).includes(n.split(" (")[0])
-            );
-        }).filter(Boolean);
-        const unique = [...new Map(local.map((item) => [item.id, item])).values()];
-        document.getElementById("flora-grid").innerHTML = unique.length
-            ? unique.slice(0, 6).map((item) =>
-                `<article class="watch-card"><img class="watch-image" src="${
-                    escapeHtml(item.imagem || "/images/pragas-placeholder.svg")
-                }" alt="${
-                    escapeHtml(item.nome_comum)
-                }" loading="lazy" onerror="this.onerror=null;this.src='/images/pragas-placeholder.svg'"><span>Flora invasora</span><h3>${
-                    escapeHtml(item.nome_comum)
-                }</h3><span>${escapeHtml(item.nome_cientifico)}</span><p>${
-                    escapeHtml(item.impacto)
-                }</p><details><summary>Prevenção e controlo</summary><p>${
-                    escapeHtml(item.prevencao)
-                }</p><p>${escapeHtml(item.combate)}</p></details></article>`
-            ).join("")
-            : `<div class="empty">O perfil regional não contém espécies invasoras que possam ser ligadas de forma segura ao inventário atual.</div>`;
-    }
-
-    function renderLocalProfile() {
-        const bio = infoGlobal?.biomas || {};
-        document.getElementById("reg-name").textContent = infoGlobal
-            ? `${infoGlobal.titulo}${
-                infoGlobal.concelho ? ", " + infoGlobal.concelho.toUpperCase() : ""
-            }`
-            : "Portugal";
-        document.getElementById("local-profile").innerHTML = [["Solo", bio.solo || "-"], [
-            "pH indicativo",
-            bio.ph_solo || "-",
-        ], ["Textura", bio.textura || "-"]].map(([label, value]) =>
-            `<div class="profile-chip"><span>${label}</span><strong>${
-                escapeHtml(value)
-            }</strong></div>`
-        ).join("");
-    }
-
-    function setupLocationLogic() {
-        // Vanilla JS implementation to replace jQuery for consistency and to remove location.reload()
-        const gpsButton = document.getElementById("btn-gps-trigger");
-        if (gpsButton) {
-            gpsButton.onclick = async (event) => {
-                event.preventDefault();
-                if (!navigator.geolocation || !window.isSecureContext) {
-                    status(
-                        state.lang === "pt"
-                            ? "A localização exige uma ligação segura e autorização do navegador."
-                            : "Location requires a secure connection and browser permission."
+                let locationsDB = [],
+                    pragasDB = [],
+                    floraDB = [],
+                    dicasDB = [],
+                    horticolasDB = {},
+                    infoGlobal = null;
+                let viewedDate = new Date(), showMorePests = false, catalogLimit = 12;
+                const months = [
+                    "janeiro",
+                    "fevereiro",
+                    "março",
+                    "abril",
+                    "maio",
+                    "junho",
+                    "julho",
+                    "agosto",
+                    "setembro",
+                    "outubro",
+                    "novembro",
+                    "dezembro",
+                ];
+                const normalize = (value) =>
+                    String(value || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+                const escapeHtml = (value) =>
+                    String(value ?? "").replace(
+                        /[&<>'"]/g,
+                        (char) => ({
+                            "&": "&amp;",
+                            "<": "&lt;",
+                            ">": "&gt;",
+                            "'": "&#39;",
+                            '"': "&quot;",
+                        }[char]),
                     );
-                    return;
+                const format = (value) => new Intl.NumberFormat("pt-PT").format(value);
+
+                // --- Início do bloco de cores e renderização de práticas ---
+                const practiceColors = {
+                    "Mulching orgânico": {
+                        bg1: "#f6ede3", bg2: "#efe2d0", accent: "#9a6a3a", // Castanho para Solo e Cobertura
+                    },
+                    "Rega profunda orientada pelas raízes": {
+                        bg1: "#eef6ff", bg2: "#dfefff", accent: "#3c7bb5", // Azul para Água e Irrigação
+                    },
+                    "Compostagem aeróbia em pilha": {
+                        bg1: "#f4efe7", bg2: "#e8dfcf", accent: "#a06a2c", // Castanho para Compostagem
+                    },
+                    "Sementeira direta": {
+                        bg1: "#eef8ea", bg2: "#e2f1db", accent: "#6e9f52", // Verde para Sementeiras
+                    },
+                    "Canteiro sem cava": {
+                        bg1: "#f6f3ed", bg2: "#f0ead8", accent: "#b5873c", // Mais um tom de terra
+                    },
+                    "Vermicompostagem": {
+                        bg1: "#fdf8f4", bg2: "#faeddd", accent: "#c27d42", // Tom avermelhado para minhocas
+                    },
+                    "Húmus de folhas": {
+                        bg1: "#f5f7f3", bg2: "#e9edeb", accent: "#7a8a7c", // Cinza esverdeado
+                    },
+                    "Rotação por famílias e funções": {
+                        bg1: "#e8f2e9", bg2: "#d9e6dc", accent: "#4d8a56", // Verde mais escuro
+                    },
+                    "Adubação verde e culturas de cobertura": {
+                        bg1: "#eaf8eb", bg2: "#d9f0db", accent: "#529a5a", // Verde ainda mais vivo
+                    },
+                    "Consociação e policultura": {
+                        bg1: "#f0fdf0", bg2: "#e0fbe0", accent: "#3aa044", // Verde vibrante
+                    },
+                    "Corredor floral nativo": {
+                        bg1: "#fbf3ff", bg2: "#f1e3ff", accent: "#9b60d3", // Roxo suave para flores
+                    },
+                    "Sebe biodiversa": {
+                        bg1: "#eef7ee", bg2: "#dcece0", accent: "#60a870", // Verde floresta
+                    },
+                    "Pequeno charco para biodiversidade": {
+                        bg1: "#eef9fb", bg2: "#dcf0f5", accent: "#459ab3", // Azul água
+                    },
+                    "Abrigos naturais para insetos": {
+                        bg1: "#fcfcf2", bg2: "#f5f5e2", accent: "#b0a03a", // Amarelo/ocre
+                    },
+                    "Monitorização antes de intervir": {
+                        bg1: "#f7f7f7", bg2: "#ededed", accent: "#7a7a7a", // Cinza neutro
+                    },
+                    "Teste de germinação": {
+                        bg1: "#fff8f0", bg2: "#fcecd9", accent: "#d39a45", // Laranja/Castanho claro
+                    },
+                    "Sementeiras sucessivas": {
+                        bg1: "#f0fdf0", bg2: "#e0fbe0", accent: "#3aa044", // Verde vibrante (similar a consociação)
+                    },
+                    "Guardar sementes de polinização aberta": {
+                        bg1: "#fcf6f0", bg2: "#f8e9dc", accent: "#c27d42", // Castanho avermelhado
+                    },
+                    "Higiene seletiva de ferramentas": {
+                        bg1: "#eef7f7", bg2: "#dcebf0", accent: "#60a8b3", // Azul esverdeado
+                    },
+                    "Solo sempre com raiz": {
+                        bg1: "#f6ede3", bg2: "#efe2d0", accent: "#9a6a3a", // Castanho (similar a mulching)
+                    },
+                    "Diagnóstico simples antes de corrigir": {
+                        bg1: "#fdfdf0", bg2: "#fbfbe0", accent: "#b0a03a", // Amarelo claro
+                    },
+                    "Faixas tampão junto à água": {
+                        bg1: "#eef9fb", bg2: "#dcf0f5", accent: "#459ab3", // Azul água (similar a charco)
+                    },
+                    // Adiciona mais conforme as técnicas do dicasDB
+                };
+
+                function practiceTone(title) {
+                    return (
+                        practiceColors[title] || {
+                            bg1: "#f7faf8", // Cor padrão suave
+                            bg2: "#edf5ef",
+                            accent: "#5f8f73", // Cor de acento padrão (verde)
+                        }
+                    );
                 }
-                status(
-                    state.lang === "pt"
-                        ? "A obter uma localização atual…"
-                        : "Getting a current location…"
-                );
-                gpsButton.style.opacity = ".5"; // Simulate jQuery's .css("opacity", ".5")
 
-                navigator.geolocation.getCurrentPosition(
-                    async (position) => {
-                        try {
-                            const data = (await regions()).filter((x) => {
-                                const lat = Number(x.latitude ?? x.lat); // Flexibilidade para 'latitude' ou 'lat'
-                                const lon = Number(x.longitude ?? x.lon); // Flexibilidade para 'longitude' ou 'lon'
-                                return Number.isFinite(lat) && Number.isFinite(lon);
-                            });
-                            const point = position.coords;
-                            const nearest = data.reduce(
-                                (a, b) => (!a || distance(point, b) < distance(point, a) ? b : a),
-                                null
-                            );
+                function renderPractices() {
+                    const selected = practiceIdsFor(viewedDate.getMonth())
+                        .map((id) => dicasDB.find((item) => item.id === id))
+                        .filter(Boolean);
 
-                            if (nearest) {
-                                choose(nearest); // Chama choose, que agora não recarrega a página
-                            } else {
-                                status(state.lang === "pt" ? "Sem correspondência exata." : "No exact match.");
+                    document.getElementById("practice-grid").innerHTML = selected
+                        .map((item) => {
+                            const tone = practiceTone(item.titulo);
+                            const hasImage = !!item.imagem?.src; // Verifica se a imagem existe
+                            const practiceImageHtml = hasImage
+                                ? `<div class="practice-image-display" style="display: none;"><img src="${escapeHtml(item.imagem.src)}" alt="${escapeHtml(item.imagem.alt || item.titulo)}" loading="lazy" onerror="this.onerror=null;this.remove()"></div>`
+                                : "";
+
+                            return `
+                                <article class="practice-card" style="background: linear-gradient(135deg, ${tone.bg1}, ${tone.bg2}); border-color: ${tone.accent};">
+                                    <span class="practice-meta" style="color: ${tone.accent};">${escapeHtml(item.categoria)} · ${escapeHtml(item.nivel)}</span>
+                                    <h3 style="color: ${tone.accent};">${escapeHtml(item.titulo)}</h3>
+                                    <p>${escapeHtml(item.resumo)}</p>
+
+                                    <details>
+                                        <summary>
+                                            Processo
+                                            ${hasImage ? `<button type="button" class="btn-toggle-image">Ver Imagem</button>` : ''}
+                                        </summary>
+                                        <div class="practice-content">
+                                            <div class="practice-steps-list">
+                                                <ol>
+                                                    ${(item.passos || []).map((step) => `<li>${escapeHtml(step)}</li>`).join("")}
+                                                </ol>
+                                            </div>
+                                            ${practiceImageHtml}
+                                        </div>
+                                    </details>
+                                </article>
+                            `;
+                        })
+                        .join("");
+
+                    // Adiciona os event listeners para os botões "Ver Imagem" / "Ver Processo"
+                    document.querySelectorAll('.btn-toggle-image').forEach(button => {
+                        button.addEventListener('click', (event) => {
+                            event.stopPropagation(); // Previne que o <details> se feche/abra ao clicar no botão
+                            const detailsElement = event.target.closest('details');
+                            if (detailsElement) {
+                                const stepsList = detailsElement.querySelector('.practice-steps-list');
+                                const imageDisplay = detailsElement.querySelector('.practice-image-display');
+
+                                if (stepsList && imageDisplay) {
+                                    const isShowingSteps = stepsList.style.display !== 'none';
+
+                                    stepsList.style.display = isShowingSteps ? 'none' : 'block';
+                                    imageDisplay.style.display = isShowingSteps ? 'block' : 'none';
+
+                                    // Altera o texto do botão
+                                    event.target.textContent = isShowingSteps ? 'Ver Processo' : 'Ver Imagem';
+                                }
                             }
-                        } catch (e) {
-                            status(
-                                state.lang === "pt"
-                                    ? "Não foi possível consultar as localidades."
-                                    : "Locations could not be loaded."
-                            );
-                        } finally {
-                            gpsButton.style.opacity = "1"; // Reset opacity
-                        }
-                    },
-                    (error) => {
-                        status(
-                            state.lang === "pt"
-                                ? error.code === 1
-                                    ? "Autorize a localização nas definições deste site."
-                                    : "Não foi possível obter uma localização atual."
-                                : "A current location could not be obtained."
-                        );
-                        gpsButton.style.opacity = "1"; // Reset opacity
-                    },
-                    { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
-                );
-            };
-        }
-
-        const searchInput = document.getElementById("loc-search-input");
-        if (searchInput) {
-            searchInput.oninput = () => {
-                const query = normalize(searchInput.value);
-                const dropdown = document.getElementById("loc-dropdown");
-                if (dropdown) dropdown.style.display = "none"; // Sempre esconde o dropdown
-
-                if (query.length < 2) {
-                    status(""); // Limpa o status se a query for muito curta
-                    return;
+                        });
+                    });
                 }
-                
-                // Debounce para evitar muitas pesquisas
-                clearTimeout(window.searchTimer);
-                window.searchTimer = setTimeout(async () => {
-                    try {
-                        const data = await regions();
-                        const found = data.filter(x =>
-                            clean([x.titulo, x.concelho, x.distrito].filter(Boolean).join(' ')).includes(query)
-                        ).slice(0, 1); // Pega apenas o melhor resultado
+                // --- Fim do bloco de cores e renderização de práticas ---
 
-                        if (found.length > 0) {
-                            choose(found[0]); // Seleciona o primeiro item encontrado
-                        } else {
-                            status(state.lang === "pt" ? "Localidade não encontrada." : "No location found.");
-                        }
-                    } catch (e) {
-                        status(state.lang === "pt" ? "Não foi possível carregar as localidades." : "Locations could not be loaded.");
+                function seasonFor(month) {
+                    if ([11, 0, 1].includes(month)) {
+                        return [
+                            "Inverno",
+                            "Planear, proteger o solo e aproveitar os períodos adequados para plantações lenhosas.",
+                        ];
                     }
-                }, 180); // Tempo de debounce
-            };
-        }
-
-        // Remove o event listener global para fechar o dropdown ao clicar fora,
-        // já que o dropdown não será mais exibido.
-        // Se houver um listener global para fechar dropdowns, ele deve ser ajustado lá.
-    }
-
-    // Função choose atualizada para não recarregar, e para atualizar as partes relevantes da UI
-    function choose(item) {
-        localStorage.setItem("biocultura_region", String(item.id));
-        const input = document.getElementById("loc-search-input");
-        if (input) input.value = item.titulo;
-
-        document.dispatchEvent(
-            new CustomEvent("biocultura:region-change", {
-                detail: item,
-            })
-        );
-        status(
-            state.lang === "pt"
-                ? `Localização definida: ${item.titulo}`
-                : `Location set: ${item.titulo}`
-        );
-
-        // Re-renderiza as secções relevantes após a mudança de localização
-        renderLocalProfile();
-        renderCalendar();
-        renderCatalog();
-        renderFlora();
-        // Não é necessário recarregar a página.
-    }
-
-    // Função distance (mantida do código anterior, com flexibilidade para lat/lon)
-    function distance(a, b) {
-        const lat1 = Number(a.latitude ?? a.lat);
-        const lon1 = Number(a.longitude ?? a.lon);
-        const lat2 = Number(b.latitude ?? b.lat);
-        const lon2 = Number(b.longitude ?? b.lon);
-
-        if (
-            !Number.isFinite(lat1) ||
-            !Number.isFinite(lon1) ||
-            !Number.isFinite(lat2) ||
-            !Number.isFinite(lon2)
-        ) {
-            return Infinity;
-        }
-
-        const r = Math.PI / 180;
-        const R = 6371;
-        const dLat = (lat2 - lat1) * r;
-        const dLon = (lon2 - lon1) * r;
-
-        const q =
-            Math.sin(dLat / 2) ** 2 +
-            Math.cos(lat1 * r) *
-                Math.cos(lat2 * r) *
-                Math.sin(dLon / 2) ** 2;
-
-        return R * 2 * Math.atan2(Math.sqrt(q), Math.sqrt(1 - q));
-    }
-
-
-    async function init() {
-        try {
-            const urls = [
-                "/data/bioregioes.json",
-                "/data/pragas.json",
-                "/data/flora_invasora.json",
-                "/data/horticolas_master.json",
-                "/data/dicas.json",
-            ];
-            const data = await Promise.all(
-                urls.map((url) =>
-                    fetch(url + "?v=" + Date.now()).then((response) => {
-                        if (!response.ok) {
-                            console.error(`Failed to load data from: ${url}`, response);
-                            throw new Error(`Failed to load data for ${url.split('/').pop()}`);
-                        }
-                        return response.json();
-                    })
-                ),
-            );
-            [locationsDB, pragasDB, floraDB, horticolasDB, dicasDB] = data;
-            const saved = localStorage.getItem("biocultura_region");
-            infoGlobal = locationsDB.find((item) => String(item.id) === String(saved)) ||
-                locationsDB[0];
-            
-            // Ensure infoGlobal is set before rendering functions that depend on it
-            if (!infoGlobal) {
-                console.warn("No location data found, defaulting to generic rendering.");
-                // Potentially set a default infoGlobal structure if needed by other functions
-                infoGlobal = {
-                    titulo: "Portugal",
-                    concelho: "",
-                    regiao: "",
-                    biomas: { ph_solo: 7 } // Default pH if no region is selected
-                };
-            }
-
-            renderLocalProfile();
-            renderCalendar();
-            renderCatalog();
-            renderFlora();
-            setupLocationLogic(); // This relies on jQuery, must be loaded
-            
-            // Add event listeners for catalog search/filter
-            const catalogSearch = document.getElementById("catalog-search");
-            if (catalogSearch) catalogSearch.addEventListener("input", () => renderCatalog(true));
-            const catalogFilter = document.getElementById("catalog-filter");
-            if (catalogFilter) catalogFilter.addEventListener("change", () => renderCatalog(true));
-
-            // Add event listeners for guide location button
-            const guideLocationButton = document.getElementById("guide-location-button");
-            if (guideLocationButton) {
-                guideLocationButton.onclick = () => {
-                    const input = document.getElementById("loc-search-input");
-                    if (input) {
-                        input.focus();
-                        input.style.boxShadow = "0 0 0 3px rgba(64,120,69,.2)";
-                        setTimeout(() => input.style.boxShadow = "", 1800);
+                    if ([2, 3, 4].includes(month)) {
+                        return [
+                            "Primavera",
+                            "Época de crescimento rápido: semear por etapas, vigiar jovens plantas e favorecer polinizadores.",
+                        ];
                     }
-                };
-            }
+                    if ([5, 6, 7].includes(month)) {
+                        return [
+                            "Verão",
+                            "Gerir água, sombra e cobertura; colher com frequência e observar sinais de stress.",
+                        ];
+                    }
+                    return [
+                        "Outono",
+                        "Colher, guardar sementes, iniciar coberturas e preparar o solo sem o deixar exposto.",
+                    ];
+                }
 
-            // Add event listeners for month navigation
-            const prevMonthButton = document.getElementById("prev-month");
-            if (prevMonthButton) {
-                prevMonthButton.onclick = () => {
-                    viewedDate = new Date(viewedDate.getFullYear(), viewedDate.getMonth() - 1, 1);
-                    renderCalendar();
-                };
-            }
-            const nextMonthButton = document.getElementById("next-month");
-            if (nextMonthButton) {
-                nextMonthButton.onclick = () => {
-                    viewedDate = new Date(viewedDate.getFullYear(), viewedDate.getMonth() + 1, 1);
-                    renderCalendar();
-                };
-            }
+                function moonInfo(date) {
+                    const known = Date.UTC(2000, 0, 6, 18, 14), cycle = 29.53058867;
+                    let age = ((date.getTime() - known) / 86400000) % cycle;
+                    if (age < 0) age += cycle;
+                    if (age < 1.85 || age > 27.68) return { name: "Lua nova", cls: "new" };
+                    if (age < 5.54) return { name: "Crescente inicial", cls: "" };
+                    if (age < 9.23) return { name: "Quarto crescente", cls: "quarter" };
+                    if (age < 12.92) return { name: "Crescente gibosa", cls: "" };
+                    if (age < 16.61) return { name: "Lua cheia", cls: "full" };
+                    if (age < 20.30) return { name: "Minguante gibosa", cls: "" };
+                    if (age < 23.99) return { name: "Quarto minguante", cls: "quarter" };
+                    return { name: "Minguante final", cls: "" };
+                }
 
-            // Add event listener for toggle pests button
-            const togglePestsButton = document.getElementById("toggle-pests");
-            if (togglePestsButton) {
-                togglePestsButton.onclick = () => {
-                    showMorePests = !showMorePests;
+                function renderCalendar() {
+                    const year = viewedDate.getFullYear(),
+                        month = viewedDate.getMonth(),
+                        today = new Date();
+                    document.getElementById("calendar-title").textContent = `${months[month]} ${year}`;
+                    document.getElementById("selected-month-label").textContent = months[month];
+                    const first = new Date(year, month, 1),
+                        last = new Date(year, month + 1, 0),
+                        start = (first.getDay() + 6) % 7;
+                    const cells = [];
+                    for (let i = 0; i < 42; i++) {
+                        const day = i - start + 1,
+                            date = new Date(year, month, day),
+                            outside = date.getMonth() !== month,
+                            isToday = date.toDateString() === today.toDateString(),
+                            moon = moonInfo(date);
+                        const marker = ["new", "full", "quarter"].includes(moon.cls)
+                            ? `<span class="moon-dot ${moon.cls}" title="${escapeHtml(moon.name)}"></span>`
+                            : "";
+                        cells.push(
+                            `<div class="calendar-day ${outside ? "outside" : ""} ${
+                                isToday ? "today" : ""
+                            }">${date.getDate()}${marker}</div>`,
+                        );
+                    }
+                    document.getElementById("calendar-days").innerHTML = cells.join("");
+                    const [season, note] = seasonFor(month),
+                        selectedMoon = moonInfo(
+                            new Date(year, month, Math.min(today.getDate(), last.getDate())),
+                        );
+                    document.getElementById("season-label").innerHTML =
+                        `<strong>${season}</strong> · ${note}`;
+                    document.getElementById("moon-label").innerHTML =
+                        `Referência lunar: <strong>${selectedMoon.name}</strong>`;
+                    renderActions();
+                    renderWeekPlan();
+                    renderPractices();
                     renderPests();
-                };
-            }
+                }
 
-        } catch (error) {
-            console.error("Erro crítico ao carregar o calendário:", error);
-            const actionGrid = document.getElementById("action-grid");
-            if (actionGrid) {
-                actionGrid.innerHTML = `<div class="empty">Não foi possível carregar os dados do calendário: ${error.message || error}. Por favor, tente novamente mais tarde.</div>`;
-            } else {
-                console.error("Elemento #action-grid não encontrado para exibir a mensagem de erro.");
-            }
-        }
-    }
-    fetch("/sidebar-content.html").then((response) => response.text()).then((html) => {
-        document.getElementById("sidebar").innerHTML = html;
-        // Inicia o calendário e a lógica da página principal APÓS o sidebar ser carregado
-        init(); 
-    }).catch(() => {
-        console.error("Failed to load sidebar content, initiating main page logic anyway.");
-        init(); // If sidebar fails, try to initiate main page logic anyway
-    });
-</script>
+                function periodMatches(text, month) {
+                    const source = normalize(text).replace(/[–—]/g, "-");
+                    if (!source) return false;
+                    if (/todo o ano|durante todo o ano|sempre/.test(source)) return true;
+                    const normalizedMonths = months.map(normalize);
+                    return source.split(/\s+e\s+|;/).some((segment) => {
+                        const found = normalizedMonths.map((name, index) =>
+                            segment.includes(name) ? index : -1
+                        ).filter((index) => index >= 0);
+                        if (!found.length) return false;
+                        if (found.includes(month)) return true;
+                        if (found.length >= 2) {
+                            const start = found[0], end = found.at(-1);
+                            return start <= end
+                                ? month >= start && month <= end
+                                : month >= start || month <= end;
+                        }
+                        return false;
+                    });
+                }
 
+                function phMatches(item) {
+                    const local = parseFloat(infoGlobal?.biomas?.ph_solo);
+                    if (!Number.isFinite(local)) return true;
+                    const nums =
+                        String(item.ph_solo || "").replace(",", ".").match(/\d+(?:\.\d+)?/g)?.map(Number) ||
+                        [];
+                    return nums.length < 2 || local >= nums[0] - .3 && local <= nums[1] + .3;
+                }
+
+                function cropsFor(field, month) {
+                    const matching = Object.entries(horticolasDB).filter(([, item]) =>
+                        periodMatches(item[field], month)
+                    ).sort((a, b) => Number(phMatches(b[1])) - Number(phMatches(a[1])));
+                    const unique = new Map();
+                    matching.forEach((entry) => {
+                        const key = normalize(entry[1].nome || entry[0]);
+                        if (key && !unique.has(key)) unique.set(key, entry);
+                    });
+                    return [...unique.values()].slice(0, 6);
+                }
+                function cropMarkup(entries, field) {
+                    return entries.length
+                        ? entries.map(([id, item]) =>
+                            `<a class="crop-link" href="/calendario/horticola-detalhe.html?id=${
+                                encodeURIComponent(id)
+                            }"><img src="${
+                                escapeHtml(item.imagem && item.imagem !== "-" ? item.imagem : "/images/cultura-placeholder.svg")
+                            }" alt="" loading="lazy" onerror="this.onerror=null;this.src='/images/cultura-placeholder.svg'"><span><strong>${
+                                escapeHtml(item.nome)
+                            }</strong><span>${
+                                escapeHtml(item[field] || item.categoria || "")
+                            }</span></span></a>`
+                        ).join("")
+                        : `<div class="empty">Não existem entradas suficientemente claras para este mês. Consulte as condições locais antes de decidir.</div>`;
+                }
+
+                function renderActions() {
+                    const month = viewedDate.getMonth(),
+                        groups = [["Semear", "sementeira", "Sementeiras cuja janela inclui este mês."], [
+                            "Plantar ou transplantar",
+                            "plantacao_ou_transplante",
+                            "Instalações indicadas para o período selecionado.",
+                        ], ["Colher", "colheita", "Culturas com colheita provável neste mês."]];
+                    document.getElementById("action-intro").textContent = `Sugestões para ${
+                        months[month]
+                    }, cruzadas com o pH local sempre que o catálogo contém um intervalo comparável.`;
+                    document.getElementById("action-grid").innerHTML = groups.map(([title, field, note]) =>
+                        `<article class="action-card"><div class="action-card-head"><div><span class="action-label">${
+                            escapeHtml(months[month])
+                        }</span><h3>${title}</h3></div><p>${note}</p></div><div class="crop-list">${
+                            cropMarkup(cropsFor(field, month), field)
+                        }</div></article>`
+                    ).join("");
+                    const sowing = new Map(cropsFor("sementeira", month).map(([id, item]) => [normalize(item.nome || id), item.nome || id]));
+                    const harvesting = new Set(cropsFor("colheita", month).map(([id, item]) => normalize(item.nome || id)));
+                    const overlap = [...sowing].filter(([key]) => harvesting.has(key)).map(([, name]) => name);
+                    const note = document.getElementById("cycle-note");
+                    if (overlap.length) {
+                        note.innerHTML = `<strong>Porque aparece a mesma cultura em fases diferentes?</strong> ${
+                            escapeHtml(overlap.slice(0, 4).join(", "))
+                        } ${overlap.length > 4 ? "e outras" : ""} podem ser semeadas e colhidas neste mês. Em geral, colhe-se uma geração já desenvolvida enquanto se inicia outra, ou usam-se variedades e datas escalonadas. Confirme sempre a variedade, a temperatura do solo e o microclima.`;
+                        note.classList.add("visible");
+                    } else {
+                        note.textContent = "";
+                        note.classList.remove("visible");
+                    }
+                }
+
+                function catalogKind(item) {
+                    const value = normalize(item.categoria || "");
+                    if (value.includes("aromatica")) return "aromaticas";
+                    if (/fruteira|citrino|pequeno fruto|casca rija|trepadeira frutifera/.test(value)) return "fruteiras";
+                    return "horticolas";
+                }
+
+                function renderCatalog(reset = false) {
+                    if (reset) catalogLimit = 12;
+                    const query = normalize(document.getElementById("catalog-search")?.value),
+                        filter = document.getElementById("catalog-filter")?.value || "all";
+                    const entries = Object.entries(horticolasDB).filter(([id, item]) => {
+                        const haystack = normalize(`${id} ${item.nome || ""} ${item.nome_cientifico || ""} ${item.categoria || ""}`);
+                        const kind = catalogKind(item);
+                        const filterMatch = filter === "all" || filter === kind || filter === "perenes" && normalize(item.ciclo).includes("perene");
+                        return filterMatch && (!query || haystack.includes(query));
+                    }).sort((a, b) => String(a[1].nome || a[0]).localeCompare(String(b[1].nome || b[0]), "pt"));
+                    document.getElementById("catalog-summary").textContent = `${format(entries.length)} culturas encontradas · ${
+                        format(Object.keys(horticolasDB).length)
+                    } fichas completas no catálogo`;
+                    document.getElementById("catalog-grid").innerHTML = entries.slice(0, catalogLimit).map(([id, item]) =>
+                        `<a class="catalog-card" href="/calendario/horticola-detalhe.html?id=${encodeURIComponent(id)}"><img src="${
+                            escapeHtml(item.imagem && item.imagem !== "-" ? item.imagem : "/images/cultura-placeholder.svg")
+                        }" alt="${escapeHtml(item.nome || "Cultura")}" loading="lazy" onerror="this.onerror=null;this.src='/images/cultura-placeholder.svg'"></div><div class="catalog-card-body"><small>${
+                            escapeHtml(item.categoria || catalogKind(item))
+                        }</small><h3>${escapeHtml(item.nome || id)}</h3><p>${
+                            escapeHtml(item.nome_cientifico || item.ciclo || "Consultar ficha de cultivo")
+                        }</p></div></a>`
+                    ).join("") || `<div class="empty">Não foram encontradas culturas com estes critérios.</div>`;
+                    const more = document.getElementById("catalog-more");
+                    more.hidden = entries.length <= catalogLimit;
+                    more.onclick = () => { catalogLimit += 12; renderCatalog(); };
+                }
+
+                function renderWeekPlan() {
+                    const month = viewedDate.getMonth(), [season] = seasonFor(month);
+                    const seasonal = {
+                        Inverno: [
+                            ["Observar o solo", "Evite trabalhar solo saturado e proteja zonas nuas."],
+                            [
+                                "Planear rotações",
+                                "Reveja famílias, necessidades e registos da campanha anterior.",
+                            ],
+                            [
+                                "Criar habitat",
+                                "Instale sebes ou abrigos sem perturbar refúgios existentes.",
+                            ],
+                            ["Rever ferramentas", "Limpe e repare ferramentas antes da época de crescimento."],
+                        ],
+                        Primavera: [
+                            ["Semear por etapas", "Evite concentrar toda a produção numa única data."],
+                            [
+                                "Proteger plantas jovens",
+                                "Use barreiras físicas apenas quando existe risco identificado.",
+                            ],
+                            ["Acolher auxiliares", "Mantenha flores e água rasa com saída segura."],
+                            ["Verificar rega", "Teste linhas e emissores antes do calor."],
+                        ],
+                        Verão: [
+                            [
+                                "Verificar humidade",
+                                "Observe a zona radicular antes de regar profundamente.",
+                            ],
+                            ["Cobrir o solo", "Reponha cobertura sem a encostar aos caules."],
+                            ["Colher regularmente", "Retire frutos maduros e observe sinais de doença."],
+                            ["Criar sombra seletiva", "Proteja culturas sensíveis sem impedir ventilação."],
+                        ],
+                        Outono: [
+                            [
+                                "Guardar sementes",
+                                "Escolha plantas saudáveis e deixe maturar completamente.",
+                            ],
+                            ["Semear coberturas", "Mantenha raízes vivas entre culturas."],
+                            [
+                                "Compostar materiais",
+                                "Equilibre materiais secos e verdes sem enterrar resíduos.",
+                            ],
+                            ["Preparar infiltração", "Abrande escorrência antes da época mais chuvosa."],
+                        ],
+                    };
+                    document.getElementById("week-plan").innerHTML = seasonal[season].map((
+                        [title, text],
+                        index,
+                    ) => `<article class="week-task"><span class="task-number">0${
+                        index + 1
+                    }</span><h3>${title}</h3><p>${text}</p></article>`).join("");
+                }
+
+                function practiceIdsFor(month) {
+                    if ([11, 0, 1].includes(month)) {
+                        return [
+                            "rotacao-culturas",
+                            "teste-germinacao",
+                            "sebe-viva",
+                            "abrigo-insetos",
+                            "higiene-ferramentas",
+                            "composto-frio",
+                        ];
+                    }
+                    if ([2, 3, 4].includes(month)) {
+                        return [
+                            "sementeira-direta",
+                            "sementeira-sucessiva",
+                            "consociacao",
+                            "corredor-floral",
+                            "monitorizacao-pragas",
+                            "rega-gota-a-gota",
+                        ];
+                    }
+                    if ([5, 6, 7].includes(month)) {
+                        return [
+                            "mulching-organico",
+                            "rega-profunda",
+                            "olla",
+                            "guardar-sementes",
+                            "faixa-nao-cortada",
+                            "registos-horta",
+                        ];
+                    }
+                    return [
+                        "adubo-verde",
+                        "solo-sempre-com-raiz",
+                        "folhas-molde",
+                        "captacao-chuva",
+                        "composto-superficie",
+                        "zonas-tampao",
+                    ];
+                }
+
+                function seasonalPests(month) {
+                    const [season] = seasonFor(month),
+                        keywords = {
+                            Inverno: ["inverno", "todo o ano", "protegidas"],
+                            Primavera: ["primavera", "tempo ameno", "rebentos"],
+                            Verão: ["verao", "tempo quente", "calor", "seco"],
+                            Outono: ["outono", "humidade", "chuva"],
+                        }[season].map(normalize);
+                    return pragasDB.filter((item) => {
+                        const text = normalize(`${item.sazonalidade_portugal || ""} ${item.quando || ""}`);
+                        return keywords.some((key) => text.includes(key)) || periodMatches(text, month);
+                    });
+                }
+                function renderPests() {
+                    const all = seasonalPests(viewedDate.getMonth()),
+                        visible = (all.length ? all : pragasDB).slice(0, showMorePests ? 12 : 6);
+                    document.getElementById("pest-grid").innerHTML = visible.map((item) =>
+                        `<article class="watch-card"><img class="watch-image" src="${
+                            escapeHtml(item.imagem || "/images/pragas-placeholder.svg")
+                        }" alt="${
+                            escapeHtml(item.nome_comum)
+                        }" loading="lazy" onerror="this.onerror=null;this.src='/images/pragas-placeholder.svg'"><span>Praga ou doença</span><h3>${
+                            escapeHtml(item.nome_comum)
+                        }</h3><span>${
+                            escapeHtml(item.sazonalidade_portugal || "Observação regular")
+                        }</span><p>${
+                            escapeHtml(item.sintomas)
+                        }</p><details><summary>Prevenção</summary><p>${
+                            escapeHtml(item.prevencao)
+                        }</p></details><a class="watch-detail" href="/ecossistemas/especie-detalhe.html?id=${
+                            encodeURIComponent(item.id)
+                        }">Ver ficha completa →</a></article>`
+                    ).join("");
+                    const button = document.getElementById("toggle-pests");
+                    button.style.display = (all.length || pragasDB.length) > 6 ? "inline-block" : "none";
+                    button.textContent = showMorePests ? "Recolher" : "Ver mais pragas sazonais";
+                }
+
+                function renderFlora() {
+                    const names = infoGlobal?.biomas?.flora_invasora || [];
+                    const local = names.map((name) => {
+                        const n = normalize(name);
+                        return floraDB.find((item) =>
+                            n.includes(normalize(item.nome_comum)) ||
+                            n.includes(normalize(item.nome_cientifico)) ||
+                            normalize(item.nome_comum).includes(n.split(" (")[0])
+                        );
+                    }).filter(Boolean);
+                    const unique = [...new Map(local.map((item) => [item.id, item])).values()];
+                    document.getElementById("flora-grid").innerHTML = unique.length
+                        ? unique.slice(0, 6).map((item) =>
+                            `<article class="watch-card"><img class="watch-image" src="${
+                                escapeHtml(item.imagem || "/images/pragas-placeholder.svg")
+                            }" alt="${
+                                escapeHtml(item.nome_comum)
+                            }" loading="lazy" onerror="this.onerror=null;this.src='/images/pragas-placeholder.svg'"><span>Flora invasora</span><h3>${
+                                escapeHtml(item.nome_comum)
+                            }</h3><span>${escapeHtml(item.nome_cientifico)}</span><p>${
+                                escapeHtml(item.impacto)
+                            }</p><details><summary>Prevenção e controlo</summary><p>${
+                                escapeHtml(item.prevencao)
+                            }</p><p>${escapeHtml(item.combate)}</p></details></article>`
+                        ).join("")
+                        : `<div class="empty">O perfil regional não contém espécies invasoras que possam ser ligadas de forma segura ao inventário atual.</div>`;
+                }
+
+                function renderLocalProfile() {
+                    const bio = infoGlobal?.biomas || {};
+                    document.getElementById("reg-name").textContent = infoGlobal
+                        ? `${infoGlobal.titulo}${
+                            infoGlobal.concelho ? ", " + infoGlobal.concelho.toUpperCase() : ""
+                        }`
+                        : "Portugal";
+                    document.getElementById("local-profile").innerHTML = [["Solo", bio.solo || "-"], [
+                        "pH indicativo",
+                        bio.ph_solo || "-",
+                    ], ["Textura", bio.textura || "-"]].map(([label, value]) =>
+                        `<div class="profile-chip"><span>${label}</span><strong>${
+                            escapeHtml(value)
+                        }</strong></div>`
+                    ).join("");
+                }
+
+                function setupLocationLogic() {
+                    $(document).off("click", "#btn-gps-trigger").on(
+                        "click",
+                        "#btn-gps-trigger",
+                        function (event) {
+                            event.preventDefault();
+                            if (!navigator.geolocation) return;
+                            const button = $(this).css("opacity", ".5");
+                            navigator.geolocation.getCurrentPosition((position) => {
+                                let closest = locationsDB[0], distance = Infinity;
+                                locationsDB.forEach((item) => {
+                                    if (!item.lat || !item.lon) return;
+                                    const dLat = (item.lat - position.coords.latitude) * Math.PI / 180,
+                                        dLon = (item.lon - position.coords.longitude) * Math.PI / 180,
+                                        a = Math.sin(dLat / 2) ** 2 +
+                                            Math.cos(position.coords.latitude * Math.PI / 180) *
+                                                Math.cos(item.lat * Math.PI / 180) *
+                                                Math.sin(dLon / 2) ** 2,
+                                        d = 6371 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                                    if (d < distance) {
+                                        distance = d;
+                                        closest = item;
+                                    }
+                                });
+                                if (closest) {
+                                    localStorage.setItem("biocultura_region", closest.id);
+                                    location.reload();
+                                }
+                            }, () => button.css("opacity", "1"));
+                        },
+                    );
+                    $(document).off("input", "#loc-search-input").on(
+                        "input",
+                        "#loc-search-input",
+                        function () {
+                            const value = normalize($(this).val()), dropdown = $("#loc-dropdown").empty();
+                            if (value.length < 2) return dropdown.hide();
+                            locationsDB.filter((item) => normalize(item.titulo).includes(value)).slice(0, 8)
+                                .forEach((item) =>
+                                    $('<div class="bio-res-item"></div>').text(
+                                        item.titulo + (item.concelho ? " (" + item.concelho + ")" : ""),
+                                    ).on("click", () => {
+                                        localStorage.setItem("biocultura_region", item.id);
+                                        location.reload();
+                                    }).appendTo(dropdown)
+                                );
+                            dropdown.show();
+                        },
+                    );
+                }
+
+                async function init() {
+                    try {
+                        const urls = [
+                            "/data/bioregioes.json",
+                            "/data/pragas.json",
+                            "/data/flora_invasora.json",
+                            "/data/horticolas_master.json",
+                            "/data/dicas.json",
+                        ];
+                        const data = await Promise.all(
+                            urls.map((url) =>
+                                fetch(url + "?v=" + Date.now()).then((response) => {
+                                    if (!response.ok) throw new Error(url);
+                                    return response.json();
+                                })
+                            ),
+                        );
+                        [locationsDB, pragasDB, floraDB, horticolasDB, dicasDB] = data;
+                        const saved = localStorage.getItem("biocultura_region");
+                        infoGlobal = locationsDB.find((item) => String(item.id) === String(saved)) ||
+                            locationsDB[0];
+                        renderLocalProfile();
+                        renderCalendar();
+                        renderCatalog();
+                        renderFlora();
+                        setupLocationLogic();
+                        document.getElementById("catalog-search").addEventListener("input", () => renderCatalog(true));
+                        document.getElementById("catalog-filter").addEventListener("change", () => renderCatalog(true));
+                        document.getElementById("guide-location-button").onclick = () => {
+                            const input = document.getElementById("loc-search-input");
+                            if (input) {
+                                input.focus();
+                                input.style.boxShadow = "0 0 0 3px rgba(64,120,69,.2)";
+                                setTimeout(() => input.style.boxShadow = "", 1800);
+                            }
+                        };
+                        document.getElementById("prev-month").onclick = () => {
+                            viewedDate = new Date(viewedDate.getFullYear(), viewedDate.getMonth() - 1, 1);
+                            renderCalendar();
+                        };
+                        document.getElementById("next-month").onclick = () => {
+                            viewedDate = new Date(viewedDate.getFullYear(), viewedDate.getMonth() + 1, 1);
+                            renderCalendar();
+                        };
+                        document.getElementById("toggle-pests").onclick = () => {
+                            showMorePests = !showMorePests;
+                            renderPests();
+                        };
+                    } catch (error) {
+                        console.error("Erro ao carregar o calendário:", error);
+                        document.getElementById("action-grid").innerHTML =
+                            `<div class="empty">Não foi possível carregar os dados do calendário.</div>`;
+                    }
+                }
+                fetch("/sidebar-content.html").then((response) => response.text()).then((html) => {
+                    document.getElementById("sidebar").innerHTML = html;
+                    init();
+                }).catch(() => init());
+            </script>
     </body>
 </html>
