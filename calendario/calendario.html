@@ -637,22 +637,96 @@
                 margin: 0;
             }
 
-            .practice-grid, .watch-grid {
-                display: grid;
-                grid-template-columns: repeat(3, 1fr);
-                gap: 18px;
-            }
-            .practice-card, .watch-card {
+            .practice-card {
+                position: relative;
+                overflow: hidden;
                 border: 1px solid var(--line);
                 border-radius: 13px;
                 padding: 1.5em;
                 background: #fff;
             }
-            .practice-card h3, .watch-card h3 {
+
+            .practice-card::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 4px;
+                background: var(--green);
+            }
+
+            .practice-card .practice-image-wrap {
+                margin-bottom: 12px;
+            }
+
+            .practice-card .practice-image {
+                width: 64px;
+                height: 64px;
+                border-radius: 14px;
+                object-fit: cover;
+                display: block;
+                background: #eee;
+            }
+
+            .practice-card .practice-meta {
+                display: block;
+                font-size: 0.61em;
+                font-weight: 900;
+                text-transform: uppercase;
+                margin-bottom: 10px;
+            }
+
+            .practice-card h3 {
                 font-size: 0.88em;
-                color: #222;
                 margin: 0 0 8px;
             }
+
+            .practice-card p {
+                font-size: 0.75em;
+                color: #666;
+                line-height: 1.6;
+                margin: 0;
+            }
+
+            .practice-card .watch-detail {
+                display: inline-block;
+                margin-top: 10px;
+                margin-bottom: 10px;
+                font-size: 0.65em;
+                font-weight: 900;
+                text-transform: uppercase;
+                text-decoration: none;
+                letter-spacing: 0.5px;
+                color: inherit !important;
+            }
+
+            .practice-card details {
+                margin-top: 12px;
+                border-top: 1px solid var(--line);
+                padding-top: 9px;
+            }
+
+            .practice-card summary {
+                cursor: pointer;
+                color: var(--green);
+                font-size: 0.64em;
+                font-weight: 900;
+                text-transform: uppercase;
+            }
+
+            .practice-card ol {
+                padding-left: 1.2em;
+                margin: 10px 0 0;
+            }
+
+            .practice-card li {
+                font-size: 0.7em;
+                color: #666;
+                line-height: 1.45;
+                margin-bottom: 5px;
+            }
+           
             .practice-meta, .watch-meta {
                 display: block;
                 font-size: 0.61em;
@@ -661,24 +735,7 @@
                 text-transform: uppercase;
                 margin-bottom: 10px;
             }
-            .practice-card p, .watch-card p {
-                font-size: 0.75em;
-                color: #666;
-                line-height: 1.6;
-                margin: 0;
-            }
-            .practice-card details, .watch-card details {
-                margin-top: 12px;
-                border-top: 1px solid var(--line);
-                padding-top: 9px;
-            }
-            .practice-card summary, .watch-card summary {
-                cursor: pointer;
-                color: var(--green);
-                font-size: 0.64em;
-                font-weight: 900;
-                text-transform: uppercase;
-            }
+            
             .watch-detail {
                 display: inline-block;
                 margin-top: 14px;
@@ -689,16 +746,7 @@
                 text-decoration: none;
                 letter-spacing: 0.5px;
             }
-            .practice-card ol {
-                padding-left: 1.2em;
-                margin: 10px 0 0;
-            }
-            .practice-card li {
-                font-size: 0.7em;
-                color: #666;
-                line-height: 1.45;
-                margin-bottom: 5px;
-            }
+           
             .watch-image {
                 width: 52px;
                 height: 52px;
@@ -1452,20 +1500,34 @@
                 ];
             }
             function renderPractices() {
-                const selected = practiceIdsFor(viewedDate.getMonth()).map((id) =>
-                    dicasDB.find((item) => item.id === id)
-                ).filter(Boolean);
-                document.getElementById("practice-grid").innerHTML = selected.map((item) =>
-                    `<article class="practice-card"><h3>${
-                        escapeHtml(item.titulo)
-                    }</h3><span class="practice-meta">${escapeHtml(item.categoria)} · ${
-                        escapeHtml(item.nivel)
-                    }</span><p>${
-                        escapeHtml(item.resumo)
-                    }</p><details><summary>Passos essenciais</summary><ol>${
-                        (item.passos || []).map((step) => `<li>${escapeHtml(step)}</li>`).join("")
-                    }</ol></details></article>`
-                ).join("");
+                const selected = practiceIdsFor(viewedDate.getMonth())
+                    .map((id) => dicasDB.find((item) => item.id === id))
+                    .filter(Boolean);
+
+                document.getElementById("practice-grid").innerHTML = selected
+                    .map((item) => {
+                        const tone = practiceTone(item.titulo);
+                        const image = item.imagem?.src
+                            ? `<img class="practice-image" src="${escapeHtml(item.imagem.src)}" alt="${escapeHtml(item.imagem.alt || item.titulo)}" loading="lazy" onerror="this.onerror=null;this.src='/images/pragas-placeholder.svg'">`
+                            : "";
+
+                        return `
+                            <article class="practice-card" style="background: linear-gradient(135deg, ${tone.bg1}, ${tone.bg2}); border-color: ${tone.accent}22;">
+                                ${image ? `<div class="practice-image-wrap">${image}</div>` : ""}
+                                <span class="practice-meta" style="color: ${tone.accent};">${escapeHtml(item.categoria)} · ${escapeHtml(item.nivel)}</span>
+                                <h3 style="color: ${tone.accent};">${escapeHtml(item.titulo)}</h3>
+                                <p>${escapeHtml(item.resumo)}</p>
+                                <a class="watch-detail" href="/calendario/dica-detalhe.html?id=${encodeURIComponent(item.id)}">Ver detalhes →</a>
+                                <details>
+                                    <summary>Passos essenciais</summary>
+                                    <ol>
+                                        ${(item.passos || []).map((step) => `<li>${escapeHtml(step)}</li>`).join("")}
+                                    </ol>
+                                </details>
+                            </article>
+                        `;
+                    })
+                    .join("");
             }
 
             function seasonalPests(month) {
@@ -1660,6 +1722,73 @@
                 document.getElementById("sidebar").innerHTML = html;
                 init();
             }).catch(() => init());
+
+            const practiceColors = {
+                "Mulching orgânico": {
+                    bg1: "#f6ede3",
+                    bg2: "#efe2d0",
+                    accent: "#9a6a3a",
+                },
+                "Rega profunda orientada pelas raízes": {
+                    bg1: "#eef6ff",
+                    bg2: "#dfefff",
+                    accent: "#3c7bb5",
+                },
+                "Compostagem aeróbia em pilha": {
+                    bg1: "#f4efe7",
+                    bg2: "#e8dfcf",
+                    accent: "#a06a2c",
+                },
+                "Sementeira direta": {
+                    bg1: "#eef8ea",
+                    bg2: "#e2f1db",
+                    accent: "#6e9f52",
+                },
+            };
+
+            function practiceTone(title) {
+                return (
+                    practiceColors[title] || {
+                        bg1: "#f7faf8",
+                        bg2: "#edf5ef",
+                        accent: "#5f8f73",
+                    }
+                );
+            }
+
+            function renderPractices() {
+                const selected = practiceIdsFor(viewedDate.getMonth())
+                    .map((id) => dicasDB.find((item) => item.id === id))
+                    .filter(Boolean);
+
+                document.getElementById("practice-grid").innerHTML = selected
+                    .map((item) => {
+                        const tone = practiceTone(item.titulo);
+                        const image = item.imagem?.src
+                            ? `<img class="practice-image" src="${escapeHtml(item.imagem.src)}" alt="${escapeHtml(item.imagem.alt || item.titulo)}" loading="lazy" onerror="this.onerror=null;this.src='/images/pragas-placeholder.svg'">`
+                            : "";
+
+                        return `
+                            <article class="practice-card" style="background: linear-gradient(135deg, ${tone.bg1}, ${tone.bg2}); border-color: ${tone.accent}22;">
+                                ${image ? `<div class="practice-image-wrap">${image}</div>` : ""}
+                                <span class="practice-meta" style="color: ${tone.accent};">${escapeHtml(item.categoria)} · ${escapeHtml(item.nivel)}</span>
+                                <h3 style="color: ${tone.accent};">${escapeHtml(item.titulo)}</h3>
+                                <p>${escapeHtml(item.resumo)}</p>
+                                <a class="watch-detail" href="/calendario/dica-detalhe.html?id=${encodeURIComponent(item.id)}">
+                                    Ver detalhes →
+                                </a>
+                                <details>
+                                    <summary>Passos essenciais</summary>
+                                    <ol>
+                                        ${(item.passos || []).map((step) => `<li>${escapeHtml(step)}</li>`).join("")}
+                                    </ol>
+                                </details>
+                            </article>
+                        `;
+                    })
+                    .join("");
+            }
+
         </script>
     </body>
 </html>
