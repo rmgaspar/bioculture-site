@@ -1,23 +1,80 @@
 <!DOCTYPE html>
-<html data-bio-theme="life">
+<html>
     <head>
         <title>bioCulture - Suporte Técnico</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
         <link rel="stylesheet" href="assets/css/main.css" />
-
+        <style>
+            section, .features, article, hr, .major, #header, .image.main, .major h2, header#header {
+                border: none !important;
+                box-shadow: none !important;
+                padding: 0 !important;
+            }
+            #header .toggle {
+                background: none !important;
+                box-shadow: none !important;
+                top: 3.5em !important;
+                left: 2em !important;
+                text-decoration: none !important;
+            }
+            #header .toggle:before {
+                content: "\f06c" !important;
+                font-family: "Font Awesome 5 Free" !important;
+                font-weight: 900;
+                color: #2e7d32 !important;
+                font-size: 1.6em !important;
+            }
+            #header .toggle:after {
+                display: none !important;
+            }
+            section {
+                padding-top: 10em !important;
+                margin-bottom: 4em !important;
+            }
+            header.main h1 {
+                line-height: 1.1;
+                margin-bottom: 1em !important;
+                color: #2e7d32 !important;
+            }
+            .image.main img {
+                width: 100% !important;
+                height: 350px !important;
+                object-fit: cover !important;
+                border-radius: 4px;
+            }
+            h2, h3 {
+                color: #2e7d32 !important;
+                margin-top: 2em !important;
+            }
+            .formula {
+                background: #f9f9f9;
+                padding: 1.5em;
+                border-radius: 8px;
+                font-family: monospace;
+                margin: 1em 0;
+                border-left: 4px solid #2e7d32 !important;
+            }
+            .footer-signature-right {
+                text-align: right;
+                padding: 6em 0 2em 0;
+                opacity: 0.9;
+            }
+        </style>
         <!-- Google tag (gtag.js) -->
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV0FD8PXC"></script>
-        <script defer src="/assets/js/bioculture-analytics.js?v=2"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag("js", new Date());
+            gtag("config", "G-6PV0FD8PXC");
+        </script>
         <link rel="stylesheet" href="/assets/css/bioculture-system.css?v=1">
     <script src="/assets/js/biocultura-i18n-runtime.js?v=2"></script>
-
-        <link rel="stylesheet" href="/assets/css/pages/suporte.css?v=2">
-        <link rel="stylesheet" href="/assets/css/bioculture-system.css?v=2">
-        <link rel="stylesheet" href="/assets/css/bioculture-sidebar.css?v=2">
-        <link rel="stylesheet" href="/assets/css/bioculture-sidebar.css?v=2">
-    </head>
-    <body class="is-preload bio-legacy bio-standard bio-landing">
+</head>
+    <body class="is-preload bio-legacy">
         <div id="wrapper">
             <div id="main">
                 <div class="inner">
@@ -125,7 +182,13 @@
             <div id="sidebar"></div>
         </div>
         <script src="assets/js/jquery.min.js"></script>
-        <script src="/assets/js/bioculture-app.js?v=2"></script>
-        <script src="/assets/js/pages/suporte-1.js?v=2"></script>
+        <script>
+            fetch("sidebar-content.html").then((response) => response.text()).then((data) => {
+                document.getElementById("sidebar").innerHTML = data;
+                var script = document.createElement("script");
+                script.src = "assets/js/main.js";
+                document.body.appendChild(script);
+            });
+        </script>
     </body>
 </html>

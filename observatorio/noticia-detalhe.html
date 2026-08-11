@@ -1,22 +1,466 @@
 <!DOCTYPE html>
-<html data-bio-theme="editorial">
+<html>
     <head>
-        <title>bioCulture - Detalhe da Notícia</title>
+        <title>bioCultura - Detalhe da Notícia</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
         <link rel="stylesheet" href="../assets/css/main.css" />
+        <style>
+            body, input, select, textarea {
+                font-family: "Source Sans Pro", sans-serif !important;
+                color: #444;
+            }
+            section, #header, hr, .major {
+                border: none !important;
+                box-shadow: none !important;
+                padding: 0 !important;
+            }
+            section {
+                padding-top: 4em !important;
+                min-height: 100vh;
+            }
+            #sidebar {
+                position: fixed !important;
+                top: 0;
+                left: 0;
+                height: 100vh !important;
+                width: 18em !important;
+                overflow: hidden !important;
+                z-index: 10000;
+                background: #fff;
+                border-right: 1px solid #f2f2f2 !important;
+            }
+            #wrapper {
+                padding-left: 18em !important;
+            }
 
+            .noticia-container {
+                max-width: 900px;
+                margin: 0 auto;
+                width: 100%;
+                padding: 0 2em;
+            }
+            .noticia-cat {
+                font-size: 0.65em;
+                font-weight: 900;
+                text-transform: uppercase;
+                letter-spacing: 3px;
+                margin-bottom: 15px;
+                display: block;
+                color: #bbb;
+            }
+            .noticia-titulo {
+                font-size: 3.2em;
+                font-weight: 900;
+                color: #1a1a1a;
+                letter-spacing: -1.5px;
+                line-height: 1.1;
+                margin: 0 0 25px 0;
+            }
+            .noticia-meta {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                font-size: 0.85em;
+                color: #888;
+                margin-bottom: 2em;
+            }
+            .source-logo-detail {
+                width: 24px;
+                height: 24px;
+                object-fit: contain;
+                border-radius: 4px;
+                background: #f9f9f9;
+                padding: 2px;
+            }
+            .source-name {
+                color: #1a1a1a;
+                font-weight: 800;
+            }
+            .noticia-hero-img {
+                width: 100%;
+                height: 500px;
+                object-fit: cover;
+                border-radius: 24px;
+                margin-bottom: 3em;
+                background: #f5f5f5;
+            }
+
+            .biocultura-box {
+                background: #f8faff;
+                padding: 2.5em;
+                border-radius: 20px;
+                margin-bottom: 3em;
+                border: 1px solid #eef2f7;
+            }
+            .biocultura-label {
+                display: block;
+                font-size: 0.6em;
+                font-weight: 900;
+                text-transform: uppercase;
+                letter-spacing: 2px;
+                color: #5c6bc0;
+                margin-bottom: 12px;
+            }
+            .biocultura-text {
+                color: #333;
+                font-size: 1.15em;
+                line-height: 1.7;
+                margin: 0;
+                font-weight: 500;
+            }
+
+            .noticia-corpo {
+                font-size: 1.15em;
+                line-height: 1.8;
+                color: #444;
+                margin-bottom: 4em;
+            }
+            .noticia-corpo p {
+                margin-bottom: 1.5em;
+                text-align: justify;
+            }
+            .noticia-corpo h3 {
+                font-size: 1.4em;
+                font-weight: 800;
+                color: #1a1a1a;
+                margin: 2em 0 1em 0;
+            }
+
+            .noticia-footer {
+                padding: 2em 0;
+                border-top: 1px solid #f2f2f2;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                flex-wrap: wrap;
+                gap: 20px;
+            }
+            .footer-link-oficial {
+                font-size: 0.8em;
+                font-weight: 800;
+                text-transform: lowercase;
+                color: #5c6bc0 !important;
+                text-decoration: underline !important;
+            }
+
+            .footer {
+                padding: 4em 5em 2em;
+                border-top: 1px solid var(--line);
+                opacity: 0.4;
+                text-align: right;
+                box-sizing: border-box;
+            }
+
+            .footer-wordmark {
+                display: flex;
+                justify-content: flex-end;
+            }
+
+            .bio-wordmark {
+                display: inline-block;
+                text-align: center;
+                line-height: 1;
+                font-family: "Georgia", "Times New Roman", serif;
+            }
+
+            .bio-wordmark strong {
+                display: block;
+                font-size: 1.15em;
+                font-weight: 400;
+                letter-spacing: -0.4px;
+                color: #81966e;
+                line-height: 1;
+                font-family: inherit;
+            }
+
+            .bio-wordmark small {
+                display: block;
+                margin-top: 2px;
+                font-size: 0.43em;
+                font-weight: 700;
+                letter-spacing: 1.8px;
+                text-transform: uppercase;
+                color: #a66f50;
+                line-height: 1;
+                font-family: inherit;
+            }
+
+            @media screen and (max-width: 1280px) {
+                #sidebar {
+                    position: relative !important;
+                    width: 100% !important;
+                    height: auto !important;
+                }
+                #wrapper {
+                    padding-left: 0 !important;
+                }
+                .noticia-titulo {
+                    font-size: 2.4em;
+                }
+                .noticia-hero-img {
+                    height: 300px;
+                }
+            }
+
+            /* Leitura editorial bioCultura */
+            :root {
+                --news-accent: #58745f;
+                --news-ink: #1d2922;
+                --news-muted: #68736c;
+                --news-line: #e4e9e5;
+                --news-pale: #f1f5f1;
+                --news-sand: #f7f3ea;
+            }
+            section#noticia-content {
+                min-height: 100vh;
+                padding: 2.2em 0 0 !important;
+            }
+            .noticia-container {
+                max-width: 1180px;
+                padding: 0 4em;
+                box-sizing: border-box;
+            }
+            .article-back {
+                display: inline-flex;
+                align-items: center;
+                margin-bottom: 2.4em;
+                border-bottom: 0 !important;
+                color: #98a29b !important;
+                font-size: 0.66em;
+                font-weight: 900;
+                letter-spacing: 2px;
+                text-decoration: none;
+                text-transform: uppercase;
+            }
+            .article-back:hover {
+                color: var(--news-accent) !important;
+            }
+            .article-header {
+                max-width: 980px;
+            }
+            .noticia-cat {
+                margin-bottom: 1.2em;
+                color: var(--news-accent);
+                letter-spacing: 3.5px;
+            }
+            .noticia-titulo {
+                max-width: 950px;
+                margin-bottom: 0.55em;
+                color: var(--news-ink);
+                font-family: Georgia, "Times New Roman", serif;
+                font-size: clamp(2.6em, 5.2vw, 4.8em);
+                font-weight: 700;
+                letter-spacing: -2.5px;
+                line-height: 1.02;
+            }
+            .noticia-meta {
+                flex-wrap: wrap;
+                margin-bottom: 2.4em;
+                color: var(--news-muted);
+            }
+            .source-logo-detail {
+                border: 1px solid var(--news-line);
+                background: #fff;
+            }
+            .source-logo-detail[hidden] {
+                display: none;
+            }
+            .source-name {
+                color: var(--news-ink);
+            }
+            .hero-figure {
+                margin: 0 0 3.2em;
+            }
+            .noticia-hero-img {
+                display: block;
+                width: 100%;
+                height: auto;
+                aspect-ratio: 16 / 9;
+                margin: 0;
+                border-radius: 22px;
+                background: linear-gradient(135deg, #edf2ed, #f7f3ea);
+                object-fit: cover;
+            }
+            .noticia-hero-img[hidden] {
+                display: none;
+            }
+            .image-caption {
+                display: flex;
+                justify-content: space-between;
+                gap: 1em;
+                padding: 0.85em 0 0;
+                color: #949d97;
+                font-size: 0.72em;
+                line-height: 1.5;
+            }
+            .reading-layout {
+                display: grid;
+                grid-template-columns: minmax(0, 760px) minmax(220px, 1fr);
+                gap: 4em;
+                align-items: start;
+            }
+            .article-main {
+                min-width: 0;
+            }
+            .biocultura-box {
+                position: relative;
+                margin: 0 0 3em;
+                padding: 2.2em 2.3em;
+                border: 0;
+                border-left: 4px solid var(--news-accent);
+                border-radius: 0 18px 18px 0;
+                background: var(--news-pale);
+            }
+            .biocultura-label {
+                color: var(--news-accent);
+            }
+            .biocultura-text {
+                color: #34463a;
+                font-family: Georgia, "Times New Roman", serif;
+                font-size: 1.16em;
+                line-height: 1.7;
+            }
+            .noticia-corpo {
+                margin-bottom: 2.5em;
+                color: #39423d;
+                font-family: Georgia, "Times New Roman", serif;
+                font-size: 1.16em;
+                line-height: 1.85;
+            }
+            .noticia-corpo p {
+                margin-bottom: 1.45em;
+                text-align: left;
+            }
+            .noticia-corpo h2, .noticia-corpo h3 {
+                color: var(--news-ink);
+                font-family: "Source Sans Pro", sans-serif;
+                font-weight: 900;
+                letter-spacing: -0.4px;
+                line-height: 1.2;
+            }
+            .noticia-corpo h3 {
+                margin: 2.2em 0 0.7em;
+            }
+            .source-card {
+                position: sticky;
+                top: 2.2em;
+                padding: 1.6em;
+                border: 1px solid var(--news-line);
+                border-radius: 16px;
+                background: #fff;
+            }
+            .source-card-label {
+                display: block;
+                margin-bottom: 1em;
+                color: #99a29c;
+                font-size: 0.62em;
+                font-weight: 900;
+                letter-spacing: 2px;
+                text-transform: uppercase;
+            }
+            .source-card p {
+                margin: 0.8em 0 1.2em;
+                color: var(--news-muted);
+                font-size: 0.82em;
+                line-height: 1.55;
+            }
+            .source-card .footer-link-oficial {
+                display: inline-flex;
+                padding: 0.7em 1em;
+                border: 1px solid var(--news-accent);
+                border-radius: 999px;
+                color: var(--news-accent) !important;
+                text-decoration: none !important;
+            }
+            .noticia-footer {
+                margin-top: 1em;
+                border-color: var(--news-line);
+            }
+           .page-footer {
+                margin-top: auto;
+                padding: 4em 0 2em;
+                border-top: 1px solid var(--line);
+                opacity: 0.4;
+                text-align: right;
+            }
+
+            .page-footer strong,
+            .page-footer span {
+                display: block;
+            }
+
+            .page-footer strong {
+                color: var(--news-ink);
+                font-size: 0.85em;
+            }
+
+            .page-footer span {
+                color: #9aa29c;
+                font-size: 0.62em;
+                font-weight: 800;
+                letter-spacing: 1.5px;
+                text-transform: uppercase;
+            }
+            .error-state {
+                padding: 3em;
+                border-radius: 18px;
+                background: var(--news-pale);
+                color: var(--news-muted);
+                text-align: center;
+            }
+            @media screen and (max-width: 980px) {
+                .reading-layout {
+                    grid-template-columns: 1fr;
+                    gap: 1em;
+                }
+                .source-card {
+                    position: static;
+                    margin-bottom: 2em;
+                }
+            }
+            @media screen and (max-width: 736px) {
+                section#noticia-content {
+                    padding-top: 1.5em !important;
+                }
+                .noticia-container {
+                    padding: 0 1.5em;
+                }
+                .article-back {
+                    margin-bottom: 1.7em;
+                }
+                .noticia-titulo {
+                    font-size: 2.55em;
+                    letter-spacing: -1.3px;
+                }
+                .noticia-meta {
+                    gap: 8px;
+                }
+                .noticia-hero-img {
+                    aspect-ratio: 4 / 3;
+                    border-radius: 16px;
+                }
+                .image-caption {
+                    display: block;
+                }
+                .biocultura-box {
+                    padding: 1.6em;
+                }
+            }
+        </style>
         <!-- Google tag (gtag.js) -->
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV0FD8PXC"></script>
-        <script defer src="/assets/js/bioculture-analytics.js?v=2"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag("js", new Date());
+            gtag("config", "G-6PV0FD8PXC");
+        </script>
             <script src="/assets/js/biocultura-i18n-runtime.js?v=2"></script>
-
-        <link rel="stylesheet" href="/assets/css/pages/observatorio-noticia-detalhe.css?v=2">
-        <link rel="stylesheet" href="/assets/css/bioculture-system.css?v=2">
-        <link rel="stylesheet" href="/assets/css/bioculture-sidebar.css?v=2">
-        <link rel="stylesheet" href="/assets/css/bioculture-sidebar.css?v=2">
     </head>
-    <body class="is-preload bio-standard bio-detail">
+    <body class="is-preload">
         <div id="wrapper">
             <div id="main">
                 <div class="inner">
@@ -38,7 +482,7 @@
                                     <span aria-hidden="true" style="opacity: 0.3">·</span>
                                     <span class="source-date" id="data">--</span>
                                     <span aria-hidden="true" style="opacity: 0.3">·</span>
-                                    <span>Leitura contextual bioCulture</span>
+                                    <span>Leitura contextual bioCultura</span>
                                 </div>
                             </header>
 
@@ -70,7 +514,7 @@
                                         </div>
                                     </div>
                                     <p>
-                                        A bioCulture contextualiza a informação. A reportagem e os factos publicados
+                                        A bioCultura contextualiza a informação. A reportagem e os factos publicados
                                         pertencem à fonte identificada.
                                     </p>
                                     <a
@@ -86,7 +530,7 @@
                             <div class="noticia-footer">
                                 <a class="article-back" href="javascript:history.back()" style="margin: 0">← Voltar</a>
                                 <span style="color: #99a29c; font-size: 0.74em"
-                                >Notícia selecionada pelo Observatório bioCulture</span>
+                                >Notícia selecionada pelo Observatório bioCultura</span>
                             </div>
 
                             <footer class="footer footer-wordmark">
@@ -103,7 +547,126 @@
         </div>
 
         <script src="../assets/js/jquery.min.js"></script>
-        <script src="/assets/js/bioculture-app.js?v=2"></script>
-        <script src="/assets/js/pages/observatorio-noticia-detalhe-1.js?v=2"></script>
+        <script>
+            const catColors = {
+                "Água": "#3498db",
+                "Ar": "#95a5a6",
+                "Solo": "#e67e22",
+                "Impacto Digital & IA": "#7b1fa2",
+                "Mineração": "#c62828",
+                "Biodiversidade": "#2ecc71",
+                "Energia Ética": "#f1c40f",
+            };
+
+            async function carregarNoticia() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const noticiaId = urlParams.get("id");
+
+                // 1. Obter língua e garantir que é válida
+                let lang = localStorage.getItem("selected_lang") || "pt";
+                if (!lang || lang === "undefined" || lang === "null") lang = "pt";
+
+                if (!noticiaId) {
+                    window.location.href = "../index.html";
+                    return;
+                }
+
+                try {
+                    // Cache busting para garantir dados frescos
+                    const [ativas, arquivo] = await Promise.all([
+                        fetch("/data/noticias.json?v=" + Date.now()).then((r) => r.json()),
+                        fetch("/data/noticias_arquivo.json?v=" + Date.now()).then((r) =>
+                            r.ok ? r.json() : []
+                        ),
+                    ]);
+                    const noticias = [...ativas, ...arquivo];
+
+                    // Encontrar a notícia pelo ID
+                    const n = noticias.find((item) => item.id === noticiaId);
+
+                    if (n) {
+                        // 2. Lógica de extração: Tenta a língua selecionada, falha para PT, falha para a raiz
+                        const content = n[lang] || n["pt"] || n;
+
+                        document.getElementById("loading").style.display = "none";
+                        document.getElementById("noticia-render").style.display = "block";
+
+                        // 3. Injeção de Título e Corpo com verificação de existência
+                        document.getElementById("titulo").innerText = content.titulo || "Sem título";
+                        document.getElementById("corpo").innerHTML = content.corpo ||
+                            "Conteúdo não disponível.";
+                        document.title = (content.titulo || "bioCultura") + " - bioCultura";
+
+                        // 4. Análise bioCultura (resumo_biocultura)
+                        const bioTxt = content.resumo_biocultura || "";
+                        const bioBox = document.getElementById("biocultura-box");
+                        if (bioTxt) {
+                            bioBox.style.display = "block";
+                            document.getElementById("biocultura-txt").innerHTML = bioTxt;
+                        } else {
+                            bioBox.style.display = "none";
+                        }
+
+                        // 5. Metadados (Estão na raiz do objeto JSON)
+                        const image = document.getElementById("imagem");
+                        const figure = document.getElementById("hero-figure");
+                        if (n.imagem) {
+                            image.src = n.imagem;
+                            image.alt = content.titulo || "Imagem da notícia";
+                            image.addEventListener("error", () => {
+                                figure.hidden = true;
+                            }, { once: true });
+                        } else {
+                            figure.hidden = true;
+                        }
+                        document.getElementById("data").innerText = n.data || "";
+                        document.getElementById("source-name-top").innerText = n.fonte || "";
+                        document.getElementById("image-caption-source").innerText = n.fonte
+                            ? `Imagem: ${n.fonte}`
+                            : "Imagem disponibilizada pela fonte";
+
+                        const catEl = document.getElementById("cat");
+                        catEl.innerText = (n.categoria || "Geral").toUpperCase();
+                        if (catColors[n.categoria]) catEl.style.color = catColors[n.categoria];
+
+                        // 6. Logos e Links
+                        let domain = "";
+                        try {
+                            domain = new URL(n.url).hostname;
+                        } catch (e) {
+                            domain = "biocultura.net";
+                        }
+                        const forcedLogo = `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
+
+                        document.getElementById("source-logo").src = n.logo || forcedLogo;
+                        document.getElementById("footer-logo").src = n.logo || forcedLogo;
+                        ["source-logo", "footer-logo"].forEach((id) => {
+                            const logo = document.getElementById(id);
+                            logo.alt = n.fonte ? `Símbolo de ${n.fonte}` : "";
+                            logo.addEventListener("error", () => {
+                                logo.hidden = true;
+                            }, { once: true });
+                        });
+                        document.getElementById("official-link").href = n.url || "#";
+                        document.getElementById("footer-source").innerText = n.fonte || "";
+                        document.getElementById("footer-date").innerText = n.data || "";
+                    } else {
+                        document.getElementById("loading").classList.add("error-state");
+                        document.getElementById("loading").innerHTML =
+                            "<strong>Notícia não encontrada.</strong><br>O artigo pode ter sido arquivado ou removido.";
+                    }
+                } catch (e) {
+                    console.error("Erro técnico:", e);
+                    document.getElementById("loading").classList.add("error-state");
+                    document.getElementById("loading").innerHTML =
+                        "<strong>Não foi possível abrir esta notícia.</strong><br>Tente novamente dentro de alguns momentos.";
+                }
+            }
+
+            fetch("/sidebar-content.html").then((r) => r.text()).then((html) => {
+                document.getElementById("sidebar").innerHTML = html;
+                carregarNoticia();
+            });
+        </script>
     </body>
 </html>

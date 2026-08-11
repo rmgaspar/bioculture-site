@@ -1,29 +1,409 @@
 <!DOCTYPE html>
-<html data-bio-theme="air" lang="pt">
+<html lang="pt">
     <head>
-        <title>bioCulture — Ar, recurso vital</title>
+        <title>bioCultura — Ar, recurso vital</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
         <link rel="stylesheet" href="/assets/css/main.css" />
+        <style>
+            :root {
+                --ink: #263637;
+                --muted: #718080;
+                --air: #698c91;
+                --blue: #dfeff1;
+                --mist: #f2f6f5;
+                --warm: #f6f1e9;
+                --line: #e8eeee;
+            }
+            body, input, select, textarea {
+                font-family: "Source Sans Pro", sans-serif !important;
+                color: var(--ink);
+            }
+            section, #header, hr, .major {
+                border: none !important;
+                box-shadow: none !important;
+                padding: 0 !important;
+            }
+            
+            #sidebar {
+                position: fixed !important;
+                top: 0;
+                left: 0;
+                height: 100vh !important;
+                width: 18em !important;
+                overflow: hidden !important;
+                z-index: 10000;
+                background: #fff;
+                border-right: 1px solid #f2f2f2 !important;
+            }
+            #wrapper {
+                padding-left: 18em !important;
+            }
+            .inner {
+                padding: 2.2em 5em 0 !important;
+                max-width: 1600px !important;
+                margin: auto;
+                width: 100%;
+                box-sizing: border-box;
+            }
+            .eyebrow {
+                font-size: 0.65em;
+                font-weight: 900;
+                text-transform: uppercase;
+                letter-spacing: 4px;
+                color: #9daaaa;
+                display: block;
+                margin-bottom: 16px;
+            }
+            .hero {
+                display: grid;
+                grid-template-columns: minmax(0, 1.3fr) minmax(280px, 0.7fr);
+                gap: 5em;
+                align-items: start;
+                padding-bottom: 3.7em !important;
+            }
+            .hero h1 {
+                font-size: 3.7em;
+                letter-spacing: -2.5px;
+                line-height: 1.02;
+                margin: 0.15em 0 0.35em;
+                color: #1e3031;
+            }
+            .lead {
+                font-size: 1.17em;
+                line-height: 1.75;
+                color: var(--muted);
+                max-width: 760px;
+            }
+            .air-orbit {
+                width: 100%;
+                max-width: 390px;
+                aspect-ratio: 1;
+                border-radius: 50%;
+                position: relative;
+                margin: 0;
+                justify-self: center;
+                background: #eef5f5 url("/images/ar-vivo.webp") center/cover no-repeat;
+                overflow: hidden;
+                box-sizing: border-box;
+                box-shadow: 0 30px 80px rgba(50, 84, 89, 0.18);
+            }
+            .section-block {
+                border-top: 1px solid var(--line);
+                padding: 3.2em 0 !important;
+            }
+            .section-head {
+                display: grid;
+                grid-template-columns: 180px minmax(0, 800px);
+                gap: 2em;
+                margin-bottom: 2em;
+            }
+            .section-head h2 {
+                font-size: 2em;
+                letter-spacing: -0.6px;
+                margin: 0;
+                color: var(--ink);
+            }
+            .section-head p {
+                margin: 0;
+                color: var(--muted);
+                line-height: 1.7;
+            }
+            .metric-grid {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 1.2em;
+            }
+            .metric {
+                padding: 1.6em;
+                border-radius: 16px;
+                background: var(--mist);
+                min-height: 190px;
+            }
+            .metric:nth-child(2n) {
+                background: var(--warm);
+            }
+            .metric h3 {
+                font-size: 0.7em;
+                text-transform: uppercase;
+                letter-spacing: 1.5px;
+                color: #7c8d8e;
+                margin: 0;
+            }
+            .metric strong {
+                font-size: 2.15em;
+                line-height: 1.05;
+                color: var(--air);
+                display: block;
+                margin: 0.25em 0 0.45em;
+            }
+            .metric p {
+                font-size: 0.86em;
+                line-height: 1.55;
+                color: var(--muted);
+                margin: 0;
+            }
+            .source {
+                display: block;
+                font-size: 0.65em;
+                color: #9ca7a7;
+                margin-top: 1.1em;
+            }
+            .local-card {
+                display: grid;
+                grid-template-columns: 1fr 0.85fr;
+                gap: 2em;
+                background: #29494d;
+                color: #fff;
+                padding: 2.3em;
+                border-radius: 20px;
+            }
+            .local-card h3 {
+                color: #fff;
+                font-size: 1.7em;
+                margin: 0 0 0.4em;
+            }
+            .local-card p {
+                color: #cedddd;
+                line-height: 1.65;
+            }
+            .honesty {
+                border-left: 2px solid #9bc3c7;
+                padding-left: 1em;
+                font-size: 0.85em;
+            }
+            .local-values {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 1px;
+                background: rgba(255, 255, 255, 0.12);
+            }
+            .local-value {
+                background: #29494d;
+                padding: 1.2em;
+            }
+            .local-value small {
+                display: block;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                color: #a9c5c7;
+            }
+            .local-value b {
+                color: #fff;
+            }
+            .pollutants, .episodes, .news-list {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 1.2em;
+            }
+            .pollutant, .episode, .news-item {
+                border: 1px solid var(--line);
+                border-radius: 14px;
+                padding: 1.5em;
+                background: #fff;
+            }
+            .pollutant h3, .episode h3, .news-item h3 {
+                font-size: 1.08em;
+                line-height: 1.4;
+                color: var(--ink);
+                margin: 0.25em 0 0.6em;
+            }
+            .pollutant p, .episode p {
+                font-size: 0.9em;
+                line-height: 1.6;
+                color: var(--muted);
+                margin: 0;
+            }
+            .symbol {
+                font-size: 0.68em;
+                font-weight: 900;
+                letter-spacing: 1.5px;
+                color: var(--air);
+                text-transform: uppercase;
+            }
+            .small-list {
+                font-size: 0.84em;
+                line-height: 1.55;
+                color: var(--muted);
+                padding-left: 1.1em;
+                margin: 0.9em 0 0;
+            }
+            .ecosystem {
+                background: linear-gradient(120deg, #edf4ef, #f6f4ea);
+                border-radius: 20px;
+                padding: 2em;
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 2em;
+            }
+            .ecosystem article {
+                padding-right: 1em;
+            }
+            .ecosystem b {
+                display: block;
+                color: #567b68;
+                margin-bottom: 0.45em;
+            }
+            .ecosystem p {
+                font-size: 0.9em;
+                line-height: 1.6;
+                color: var(--muted);
+                margin: 0;
+            }
+            .qualar {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 2em;
+                border: 1px solid var(--line);
+                border-radius: 16px;
+                padding: 1.8em;
+            }
+            .qualar p {
+                margin: 0;
+                color: var(--muted);
+                line-height: 1.6;
+            }
+            .button-link {
+                display: inline-block;
+                white-space: nowrap;
+                text-decoration: none;
+                background: #315e64;
+                color: #fff !important;
+                border-radius: 8px;
+                padding: 0.8em 1.2em;
+                font-size: 0.78em;
+                font-weight: 800;
+                letter-spacing: 0.4px;
+            }
+            .news-item {
+                text-decoration: none;
+                color: inherit;
+                transition: 0.25s;
+            }
+            .news-item:hover {
+                transform: translateY(-3px);
+                border-color: #b7d0d2;
+            }
+            .news-item span {
+                font-size: 0.7em;
+                color: #99a5a5;
+            }
+            .empty {
+                font-style: italic;
+                color: #99a5a5;
+            }
+            .footer {
+                padding: 4em 5em 2em;
+                border-top: 1px solid var(--line);
+                opacity: 0.4;
+                text-align: right;
+                box-sizing: border-box;
+            }
 
+            .footer-wordmark {
+                display: flex;
+                justify-content: flex-end;
+            }
+
+            .bio-wordmark {
+                display: inline-block;
+                text-align: center;
+                line-height: 1;
+                font-family: "Georgia", "Times New Roman", serif;
+            }
+
+            .bio-wordmark strong {
+                display: block;
+                font-size: 1.15em;
+                font-weight: 400;
+                letter-spacing: -0.4px;
+                color: #81966e;
+                line-height: 1;
+                font-family: inherit;
+            }
+
+            .bio-wordmark small {
+                display: block;
+                margin-top: 2px;
+                font-size: 0.43em;
+                font-weight: 700;
+                letter-spacing: 1.8px;
+                text-transform: uppercase;
+                color: #a66f50;
+                line-height: 1;
+                font-family: inherit;
+            }
+            @media (max-width: 1280px) {
+                #sidebar {
+                    position: relative !important;
+                    width: 100% !important;
+                    height: auto !important;
+                }
+                #wrapper {
+                    padding-left: 0 !important;
+                }
+                .hero {
+                    grid-template-columns: 1fr;
+                }
+                .air-orbit {
+                    width: 320px;
+                }
+                .metric-grid {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+            }
+            @media (max-width: 760px) {
+                .inner {
+                    padding: 1.7em 1.4em 0 !important;
+                }
+                .hero h1 {
+                    font-size: 2.55em;
+                }
+                .hero {
+                    gap: 2.5em;
+                }
+                .air-orbit {
+                    width: 235px;
+                }
+                .section-head, .local-card, .ecosystem {
+                    grid-template-columns: 1fr;
+                }
+                .section-head {
+                    gap: 0.7em;
+                }
+                .metric-grid, .pollutants, .episodes, .news-list {
+                    grid-template-columns: 1fr;
+                }
+                .local-values {
+                    grid-template-columns: 1fr 1fr;
+                }
+                .qualar {
+                    align-items: flex-start;
+                    flex-direction: column;
+                }
+            }
+        </style>
         <!-- Google tag (gtag.js) -->
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV0FD8PXC"></script>
-        <script defer src="/assets/js/bioculture-analytics.js?v=2"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag("js", new Date());
+            gtag("config", "G-6PV0FD8PXC");
+        </script>
             <script src="/assets/js/biocultura-i18n-runtime.js?v=2"></script>
-
-        <link rel="stylesheet" href="/assets/css/pages/recursos-ar.css?v=2">
-        <link rel="stylesheet" href="/assets/css/bioculture-system.css?v=2">
-        <link rel="stylesheet" href="/assets/css/bioculture-sidebar.css?v=2">
-        <link rel="stylesheet" href="/assets/css/bioculture-sidebar.css?v=2">
     </head>
-    <body class="is-preload bio-standard bio-landing">
+    <body class="is-preload">
         <div id="wrapper">
             <div id="main">
                 <div class="inner">
                     <section>
                         <div class="hero">
                             <div>
-                                <span class="eyebrow">Recursos vitais</span><h1>Ar.<br><em>O vínculo invisível.</em></h1>
+                                <span class="eyebrow">Recursos vitais</span><h1>Ar.<br>O vínculo invisível.</h1>
                                 <p class="lead">
                                     Respiramos milhares de vezes por dia, mas raramente vemos o que o ar transporta.
                                     Partículas, gases, pólen, fumo e poeiras atravessam cidades, campos e florestas.
@@ -172,7 +552,7 @@
                             <div>
                                 <span class="eyebrow" data-i18n="index.news_label">Atualidade</span>
                             </div>
-
+                            
                         </div>
 
                             <div class="news-list" id="news"></div>
@@ -189,7 +569,142 @@
             <div id="sidebar"></div>
         </div>
         <script src="/assets/js/jquery.min.js"></script>
-        <script src="/assets/js/bioculture-app.js?v=2"></script>
-        <script src="/assets/js/pages/recursos-ar-1.js?v=2"></script>
+        <script>
+            const el = (id) => document.getElementById(id),
+                safe = (v) => v === undefined || v === null || v === "" ? "—" : String(v);
+            function sourceName(v) {
+                const s = v?.fonte || v?.fontes;
+                if (Array.isArray(s)) return s.map((x) => x.nome).filter(Boolean).join(" · ");
+                return typeof s === "string" ? s : (s?.nome || "Fonte indicada no conjunto de dados");
+            }
+            function metric(title, value, text, source) {
+                return `<article class="metric"><h3>${title}</h3><strong>${value}</strong><p>${text}</p><span class="source">${source}</span></article>`;
+            }
+            function renderMetrics(data) {
+                const s = data.estado_nacional_2024 || {}, o = s.ozono || {}, n = s.no2 || {};
+                el("metrics").innerHTML = [
+                    metric(
+                        "Classe dominante",
+                        safe(s.classe_dominante_iqar),
+                        "Resultado agregado nacional do índice QualAr. Não representa todos os locais.",
+                        sourceName(s),
+                    ),
+                    metric(
+                        "Dias Fraco ou Mau",
+                        safe(s.dias_fraco_ou_mau_percent) + "%",
+                        "Percentagem nacional de dias nestas classes durante 2024.",
+                        sourceName(s),
+                    ),
+                    metric(
+                        "Ozono · informação",
+                        safe(o.ocorrencias_limiar_informacao),
+                        "Ocorrências do limiar de informação; não houve ocorrências do limiar de alerta.",
+                        sourceName(s),
+                    ),
+                    metric(
+                        "NO₂ · excedências anuais",
+                        safe(n.excedencias_anuais?.length),
+                        "Aglomerações acima da referência anual indicada no conjunto de dados.",
+                        sourceName(s),
+                    ),
+                ].join("");
+            }
+            function renderLocal(locations) {
+                const saved = localStorage.getItem("biocultura_region");
+                const info = locations.find((x) => String(x.id) === String(saved)) || locations[0];
+                if (info) {
+                    el("local-name").textContent = [info.titulo, info.concelho].filter(Boolean).join(
+                        ", ",
+                    );
+                }
+            }
+            function renderPollutants(data) {
+                const ids = ["pm25", "pm10", "no2", "o3", "so2", "nh3"];
+                const labels = {
+                    pm25: "PM2,5",
+                    pm10: "PM10",
+                    no2: "NO₂",
+                    o3: "O₃",
+                    so2: "SO₂",
+                    nh3: "NH₃",
+                };
+                el("pollutants").innerHTML = ids.map((id) => {
+                    const p = data.poluentes?.[id] || {};
+                    const effects = [...(p.efeitos_saude || []), ...(p.efeitos_ecossistemas || [])]
+                        .slice(0, 2);
+                    return `<article class="pollutant"><span class="symbol">${labels[id]}</span><h3>${
+                        safe(p.nome)
+                    }</h3><p>${
+                        safe(p.comportamento || p.origem_principal?.slice(0, 2).join(" · "))
+                    }</p>${
+                        effects.length
+                            ? `<ul class="small-list">${
+                                effects.map((x) => `<li>${x}</li>`).join("")
+                            }</ul>`
+                            : ""
+                    }</article>`;
+                }).join("");
+            }
+            function renderEpisodes(data) {
+                const ids = [
+                    "incendios",
+                    "poeira-saariana",
+                    "ozono-calor",
+                    "vulcanismo-acores",
+                    "polen",
+                ];
+                const selected = ids.map((id) => data.episodios_especiais?.find((x) => x.id === id))
+                    .filter(Boolean);
+                el("episodes").innerHTML = selected.map((x) =>
+                    `<article class="episode"><span class="symbol">${
+                        (x.poluentes || []).join(" · ") || "Biológico"
+                    }</span><h3>${x.titulo}</h3><ul class="small-list">${
+                        (x.orientacao || []).slice(0, 4).map((y) => `<li>${y}</li>`).join("")
+                    }</ul>${x.nota ? `<p>${x.nota}</p>` : ""}</article>`
+                ).join("");
+            }
+            function renderNews(items) {
+                const selected = items.filter((n) => {
+                    const c = n.pt || n;
+                    return /qualidade do ar|poluiç|emiss|atmosf|pm2|pm10|ozono|fumo|incênd|poeira|respirat/i
+                        .test(
+                            [n.categoria, n.categoria_id, c.categoria, c.titulo, c.resumo].filter(
+                                Boolean,
+                            ).join(" "),
+                        );
+                }).slice(0, 6);
+                el("news").innerHTML = selected.map((n) => {
+                    const c = n.pt || n;
+                    return `<a class="news-item" href="/observatorio/noticia-detalhe.html?id=${
+                        encodeURIComponent(n.id)
+                    }"><span>${safe(n.data)}</span><h3>${safe(c.titulo)}</h3><span>${
+                        safe(n.fonte)
+                    }</span></a>`;
+                }).join("") || '<p class="empty">Sem notícias desta categoria neste momento.</p>';
+            }
+            async function start() {
+                try {
+                    const [air, loc, news] = await Promise.all(
+                        ["qualidade_ar", "bioregioes", "noticias"].map((f) =>
+                            fetch(`/data/${f}.json`).then((r) => {
+                                if (!r.ok) throw Error(f);
+                                return r.json();
+                            })
+                        ),
+                    );
+                    renderMetrics(air);
+                    renderLocal(loc);
+                    renderPollutants(air);
+                    renderEpisodes(air);
+                    renderNews(news);
+                } catch (e) {
+                    console.error("Não foi possível carregar os dados do ar:", e);
+                }
+            }
+            fetch("/sidebar-content.html").then((r) => r.text()).then((html) => {
+                el("sidebar").innerHTML = html;
+                start();
+            }).catch(() => start());
+        </script>
     </body>
 </html>

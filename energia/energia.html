@@ -1,29 +1,412 @@
 <!DOCTYPE html>
-<html data-bio-theme="energy" lang="pt">
+<html lang="pt">
     <head>
-        <title>bioCulture — Energia consciente</title>
+        <title>bioCultura — Energia consciente</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
         <link rel="stylesheet" href="/assets/css/main.css" />
+        <style>
+            :root {
+                --ink: #26352c;
+                --muted: #748078;
+                --energy: #68814b;
+                --sun: #d7a93e;
+                --pale: #f1f5ea;
+                --sand: #f7f2e5;
+                --line: #e9ede5;
+            }
+            body, input, select, textarea {
+                font-family: "Source Sans Pro", sans-serif !important;
+                color: var(--ink);
+            }
+            section, #header, hr, .major {
+                border: none !important;
+                box-shadow: none !important;
+                padding: 0 !important;
+            }
+            
+            #sidebar {
+                position: fixed !important;
+                top: 0;
+                left: 0;
+                height: 100vh !important;
+                width: 18em !important;
+                overflow: hidden !important;
+                z-index: 10000;
+                background: #fff;
+                border-right: 1px solid #f2f2f2 !important;
+            }
+            #wrapper {
+                padding-left: 18em !important;
+            }
+            .inner {
+                padding: 2.2em 5em 0 !important;
+                max-width: 1600px !important;
+                margin: auto;
+                width: 100%;
+                box-sizing: border-box;
+            }
+            .eyebrow {
+                font-size: 0.65em;
+                font-weight: 900;
+                text-transform: uppercase;
+                letter-spacing: 4px;
+                color: #a2a99e;
+                display: block;
+                margin-bottom: 16px;
+            }
+            .hero {
+                display: grid;
+                grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.75fr);
+                gap: 5em;
+                align-items: start;
+                padding-bottom: 3.6em !important;
+            }
+            .hero h1 {
+                font-size: 3.8em;
+                letter-spacing: -2.5px;
+                line-height: 1.02;
+                margin: 0.15em 0 0.35em;
+                color: #26352c;
+            }
+            .lead {
+                font-size: 1.17em;
+                line-height: 1.75;
+                color: var(--muted);
+                max-width: 800px;
+            }
+            .energy-orbit {
+                width: 100%;
+                max-width: 400px;
+                aspect-ratio: 1;
+                border-radius: 50%;
+                position: relative;
+                margin: 0;
+                justify-self: center;
+                overflow: hidden;
+                box-sizing: border-box;
+                background: #f6f3df url("/images/energia-consciente.webp") center/cover no-repeat;
+                box-shadow: 0 30px 80px rgba(57, 79, 45, 0.2);
+            }
+            .section-block {
+                border-top: 1px solid var(--line);
+                padding: 3.2em 0 !important;
+            }
+            .section-head {
+                display: grid;
+                grid-template-columns: 180px minmax(0, 820px);
+                gap: 2em;
+                margin-bottom: 2em;
+            }
+            .section-head h2 {
+                font-size: 2em;
+                letter-spacing: -0.6px;
+                margin: 0;
+                color: var(--ink);
+            }
+            .section-head p {
+                margin: 0;
+                color: var(--muted);
+                line-height: 1.7;
+            }
+            .principles {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 1.1em;
+            }
+            .principle {
+                padding: 1.55em;
+                border-radius: 15px;
+                background: var(--pale);
+            }
+            .principle:nth-child(2n) {
+                background: var(--sand);
+            }
+            .principle b {
+                color: var(--energy);
+                display: block;
+                margin-bottom: 0.45em;
+            }
+            .principle p {
+                font-size: 0.88em;
+                line-height: 1.6;
+                color: var(--muted);
+                margin: 0;
+            }
+            .stats {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 1.1em;
+            }
+            .stat {
+                padding: 1.55em;
+                border: 1px solid var(--line);
+                border-radius: 15px;
+            }
+            .stat small {
+                display: block;
+                text-transform: uppercase;
+                letter-spacing: 1.2px;
+                color: #8f998f;
+            }
+            .stat strong {
+                display: block;
+                font-size: 2.25em;
+                line-height: 1;
+                color: var(--energy);
+                margin: 0.28em 0;
+            }
+            .stat span {
+                font-size: 0.8em;
+                color: var(--muted);
+            }
+            .mix {
+                display: grid;
+                grid-template-columns: repeat(5, 1fr);
+                gap: 0.8em;
+                margin-top: 1.2em;
+            }
+            .mix-item {
+                background: #fafbf8;
+                padding: 1em;
+                border-radius: 12px;
+            }
+            .mix-item b {
+                display: block;
+                color: var(--ink);
+            }
+            .mix-item span {
+                font-size: 0.77em;
+                color: var(--muted);
+            }
+            .local-card {
+                background: #304a39;
+                color: #fff;
+                padding: 2em;
+                border-radius: 18px;
+            }
+            .local-card h3 {
+                color: #fff;
+                margin: 0 0 0.35em;
+            }
+            .local-card > p {
+                color: #d6e0d8;
+            }
+            .plants {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 0.8em;
+                margin-top: 1.4em;
+            }
+            .plant {
+                background: rgba(255, 255, 255, 0.08);
+                padding: 1.1em;
+                border-radius: 10px;
+            }
+            .plant small {
+                display: block;
+                color: #b9cbbb;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+            }
+            .plant b {
+                color: #fff;
+                display: block;
+                margin: 0.25em 0;
+            }
+            .plant span {
+                font-size: 0.78em;
+                color: #c9d7cc;
+            }
+            .honesty {
+                font-size: 0.78em;
+                color: #b9cbbb !important;
+                margin-top: 1.2em !important;
+            }
+            .steps {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 1.2em;
+            }
+            .step {
+                border-top: 3px solid #d5dfc9;
+                padding: 1.3em 1em 0 0;
+            }
+            .step strong {
+                font-size: 1.7em;
+                color: #a0b184;
+            }
+            .step h3 {
+                font-size: 1.03em;
+                margin: 0.3em 0;
+            }
+            .step p {
+                font-size: 0.88em;
+                line-height: 1.6;
+                color: var(--muted);
+            }
+            .chapters {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 1em;
+            }
+            .chapter {
+                display: block;
+                text-decoration: none;
+                color: inherit;
+                border: 1px solid var(--line);
+                border-radius: 14px;
+                padding: 1.4em;
+                transition: 0.25s;
+            }
+            .chapter:hover {
+                transform: translateY(-3px);
+                border-color: #bdcbaa;
+            }
+            .chapter small {
+                color: var(--sun);
+                text-transform: uppercase;
+                letter-spacing: 1px;
+            }
+            .chapter h3 {
+                font-size: 1.05em;
+                color: var(--ink);
+                margin: 0.4em 0;
+            }
+            .chapter p {
+                font-size: 0.84em;
+                line-height: 1.55;
+                color: var(--muted);
+                margin: 0;
+            }
+            .news-list {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 1.2em;
+            }
+            .news-item {
+                padding: 1.4em;
+                border: 1px solid var(--line);
+                border-radius: 14px;
+                text-decoration: none;
+                color: inherit;
+            }
+            .news-item h3 {
+                font-size: 1.05em;
+                line-height: 1.4;
+                margin: 0.4em 0;
+                color: var(--ink);
+            }
+            .news-item span {
+                font-size: 0.68em;
+                color: #9ba39d;
+            }
+            .empty {
+                color: #9ba39d;
+                font-style: italic;
+            }
+            .footer {
+                padding: 4em 5em 2em;
+                border-top: 1px solid var(--line);
+                opacity: 0.4;
+                text-align: right;
+                box-sizing: border-box;
+            }
 
+            .footer-wordmark {
+                display: flex;
+                justify-content: flex-end;
+            }
+
+            .bio-wordmark {
+                display: inline-block;
+                text-align: center;
+                line-height: 1;
+                font-family: "Georgia", "Times New Roman", serif;
+            }
+
+            .bio-wordmark strong {
+                display: block;
+                font-size: 1.15em;
+                font-weight: 400;
+                letter-spacing: -0.4px;
+                color: #81966e;
+                line-height: 1;
+                font-family: inherit;
+            }
+
+            .bio-wordmark small {
+                display: block;
+                margin-top: 2px;
+                font-size: 0.43em;
+                font-weight: 700;
+                letter-spacing: 1.8px;
+                text-transform: uppercase;
+                color: #a66f50;
+                line-height: 1;
+                font-family: inherit;
+            }
+            @media (max-width: 1280px) {
+                #sidebar {
+                    position: relative !important;
+                    width: 100% !important;
+                    height: auto !important;
+                }
+                #wrapper {
+                    padding-left: 0 !important;
+                }
+                .hero {
+                    grid-template-columns: 1fr;
+                }
+                .energy-orbit {
+                    width: 320px;
+                }
+                .principles, .stats, .chapters {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+            }
+            @media (max-width: 760px) {
+                .inner {
+                    padding: 1.7em 1.4em 0 !important;
+                }
+                .hero h1 {
+                    font-size: 2.55em;
+                }
+                .hero {
+                    gap: 2.5em;
+                }
+                .energy-orbit {
+                    width: 235px;
+                }
+                .section-head {
+                    grid-template-columns: 1fr;
+                    gap: 0.7em;
+                }
+                .principles, .stats, .mix, .plants, .steps, .chapters, .news-list {
+                    grid-template-columns: 1fr;
+                }
+            }
+        </style>
         <!-- Google tag (gtag.js) -->
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV0FD8PXC"></script>
-        <script defer src="/assets/js/bioculture-analytics.js?v=2"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag("js", new Date());
+            gtag("config", "G-6PV0FD8PXC");
+        </script>
             <script src="/assets/js/biocultura-i18n-runtime.js?v=2"></script>
-
-        <link rel="stylesheet" href="/assets/css/pages/energia-energia.css?v=2">
-        <link rel="stylesheet" href="/assets/css/bioculture-system.css?v=2">
-        <link rel="stylesheet" href="/assets/css/bioculture-sidebar.css?v=2">
-        <link rel="stylesheet" href="/assets/css/bioculture-sidebar.css?v=2">
     </head>
-    <body class="is-preload bio-standard bio-landing">
+    <body class="is-preload">
         <div id="wrapper">
             <div id="main">
                 <div class="inner">
                     <section>
                         <div class="hero">
                             <div>
-                                <span class="eyebrow">Energia</span><h1>Usar melhor.<br><em>Produzir com cuidado.</em></h1>
+                                <span class="eyebrow">Energia</span><h1>Usar melhor.<br>Produzir com cuidado.</h1>
                                 <p class="lead">
                                     A transição energética não começa num megaprojeto: começa por reduzir desperdício,
                                     adaptar a procura, aproveitar superfícies já construídas e partilhar energia
@@ -77,7 +460,7 @@
                         <div class="section-block">
                             <div class="section-head">
                                 <span class="eyebrow">Inventário</span><div>
-                                    <h2>Infraestruturas registadas no bioCulture</h2>
+                                    <h2>Infraestruturas registadas no bioCultura</h2>
                                     <p>
                                         Os números seguintes representam o ficheiro de centrais do site, não o parque
                                         eletroprodutor completo nem a produção anual. Potência instalada e eletricidade
@@ -196,7 +579,7 @@
                             <div>
                                 <span class="eyebrow" data-i18n="index.news_label">Atualidade</span>
                             </div>
-
+                            
                         </div>
 
                             <div class="news-list" id="news"></div>
@@ -213,7 +596,121 @@
             <div id="sidebar"></div>
         </div>
         <script src="/assets/js/jquery.min.js"></script>
-        <script src="/assets/js/bioculture-app.js?v=2"></script>
-        <script src="/assets/js/pages/energia-energia-1.js?v=2"></script>
+        <script>
+            const el = (id) => document.getElementById(id),
+                esc = (v) =>
+                    String(v ?? "—").replace(
+                        /[&<>'"]/g,
+                        (c) => ({
+                            "&": "&amp;",
+                            "<": "&lt;",
+                            ">": "&gt;",
+                            "'": "&#39;",
+                            '"': "&quot;",
+                        }[c]),
+                    ),
+                num = (v) => Number(v) || 0,
+                validCoord = (x) =>
+                    Number.isFinite(Number(x.lat)) && Number.isFinite(Number(x.lon)) &&
+                    Number(x.lat) !== 0;
+            function distance(a, b) {
+                const R = 6371,
+                    r = Math.PI / 180,
+                    dLat = (Number(b.lat) - Number(a.lat)) * r,
+                    dLon = (Number(b.lon) - Number(a.lon)) * r;
+                const q = Math.sin(dLat / 2) ** 2 +
+                    Math.cos(Number(a.lat) * r) * Math.cos(Number(b.lat) * r) * Math.sin(dLon / 2) ** 2;
+                return R * 2 * Math.atan2(Math.sqrt(q), Math.sqrt(1 - q));
+            }
+            function renderStats(plants) {
+                const renewable = plants.filter((x) => x.renovavel === true),
+                    capacity = plants.reduce((s, x) => s + num(x.potencia_mw), 0),
+                    dispatch = plants.filter((x) => x.despachavel === true).length;
+                el("stats").innerHTML = [
+                    ["Instalações", plants.length, "registos consolidados"],
+                    [
+                        "Potência registada",
+                        Math.round(capacity).toLocaleString("pt-PT") + " MW",
+                        "soma de potência instalada no inventário",
+                    ],
+                    ["Renováveis", renewable.length, "instalações marcadas como renováveis"],
+                    ["Despacháveis", dispatch, "instalações capazes de ajustar produção"],
+                ].map((x) =>
+                    `<article class="stat"><small>${x[0]}</small><strong>${x[1]}</strong><span>${
+                        x[2]
+                    }</span></article>`
+                ).join("");
+                const types = {};
+                for (const x of plants) types[x.tipo] = (types[x.tipo] || 0) + 1;
+                el("mix").innerHTML = Object.entries(types).sort((a, b) => b[1] - a[1]).map(([k, v]) =>
+                    `<article class="mix-item"><b>${esc(k)}</b><span>${v} instalações</span></article>`
+                ).join("");
+            }
+            function renderLocal(locations, plants) {
+                const saved = localStorage.getItem("biocultura_region");
+                const info = locations.find((x) => String(x.id) === String(saved)) || locations[0];
+                if (!info) return;
+                el("local-name").textContent = [info.titulo, info.concelho].filter(Boolean).join(", ");
+                if (!validCoord(info)) {
+                    el("local-copy").textContent = "Este perfil não possui coordenadas utilizáveis.";
+                    el("plants").innerHTML = "<p>—</p>";
+                    return;
+                }
+                const near = plants.filter(validCoord).map((x) => ({
+                    ...x,
+                    distance: distance(info, x),
+                })).sort((a, b) => a.distance - b.distance).slice(0, 6);
+                el("local-copy").textContent =
+                    `As seis instalações mais próximas entre os ${plants.length} registos do inventário.`;
+                el("plants").innerHTML =
+                    near.map((x) =>
+                        `<article class="plant"><small>${esc(x.tipo)}</small><b>${
+                            esc(x.nome)
+                        }</b><span>${Math.round(x.distance)} km · ${
+                            esc(x.potencia || `${x.potencia_mw} MW`)
+                        }</span></article>`
+                    ).join("") || "<p>—</p>";
+            }
+            function renderNews(items) {
+                const selected = items.filter((n) => {
+                    const c = n.pt || n;
+                    return /energia|renov|solar|eólic|eletric|autoconsumo|eficiên|comunidade energ/i
+                        .test(
+                            [n.categoria, n.categoria_id, c.categoria, c.titulo, c.resumo].filter(
+                                Boolean,
+                            ).join(" "),
+                        );
+                }).slice(0, 6);
+                el("news").innerHTML = selected.map((n) => {
+                    const c = n.pt || n;
+                    return `<a class="news-item" href="/observatorio/noticia-detalhe.html?id=${
+                        encodeURIComponent(n.id)
+                    }"><span>${esc(n.data)}</span><h3>${esc(c.titulo)}</h3><span>${
+                        esc(n.fonte)
+                    }</span></a>`;
+                }).join("") || '<p class="empty">Sem notícias desta categoria neste momento.</p>';
+            }
+            async function start() {
+                try {
+                    const [plants, locations, news] = await Promise.all(
+                        ["centrais_full", "bioregioes", "noticias"].map((f) =>
+                            fetch(`/data/${f}.json`).then((r) => {
+                                if (!r.ok) throw Error(f);
+                                return r.json();
+                            })
+                        ),
+                    );
+                    renderStats(plants);
+                    renderLocal(locations, plants);
+                    renderNews(news);
+                } catch (e) {
+                    console.error("Não foi possível carregar os dados de energia:", e);
+                }
+            }
+            fetch("/sidebar-content.html").then((r) => r.text()).then((html) => {
+                el("sidebar").innerHTML = html;
+                start();
+            }).catch(() => start());
+        </script>
     </body>
 </html>

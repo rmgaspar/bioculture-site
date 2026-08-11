@@ -1,22 +1,346 @@
 <!DOCTYPE html>
-<html data-bio-theme="calendar">
+<html>
     <head>
-        <title>bioCulture - Ficha Técnica Hortícola</title>
+        <title>bioCultura - Ficha Técnica Hortícola</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
         <link rel="stylesheet" href="/assets/css/main.css" />
+        <style>
+            body, input, select, textarea {
+                font-family: "Source Sans Pro", sans-serif !important;
+                color: #444;
+            }
+            section, #header, hr, .major {
+                border: none !important;
+                box-shadow: none !important;
+                padding: 0 !important;
+            }
+            section {
+                min-height: 100vh;
+                display: flex;
+                flex-direction: column;
+            }
+            #sidebar {
+                position: fixed !important;
+                top: 0;
+                left: 0;
+                height: 100vh !important;
+                width: 18em !important;
+                overflow: hidden !important;
+                z-index: 10000;
+                background: #fff;
+                border-right: 1px solid #f2f2f2 !important;
+            }
+            #wrapper {
+                padding-left: 18em !important;
+            }
 
+            /* Alinhamento de Precisão bioCultura */
+            .inner {
+                padding: 2.2em 4em 0 4em !important;
+                max-width: 1600px !important;
+                margin: 0 auto;
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            .category-label {
+                font-size: 0.65em;
+                font-weight: 900;
+                text-transform: uppercase;
+                letter-spacing: 4px;
+                color: #bbb;
+                margin-bottom: 15px;
+                display: block;
+            }
+
+            .hero-split {
+                display: flex;
+                align-items: flex-start;
+                justify-content: space-between;
+                gap: 4em;
+                margin-bottom: 2em;
+            }
+            .hero-text {
+                flex: 1.5;
+                text-align: left;
+                display: flex;
+                flex-direction: column;
+                min-height: 480px;
+            }
+            .hero-text h1 {
+                font-size: 4em;
+                font-weight: 900;
+                color: #1a1a1a;
+                letter-spacing: -2.5px;
+                line-height: 0.95;
+                margin: 0 0 10px 0;
+            }
+            .hero-text h2 {
+                font-size: 1.4em;
+                color: #bbb;
+                font-style: italic;
+                margin-bottom: 2em;
+                font-weight: 400;
+            }
+
+            /* A RODINHA (HERO GLOBE) - PARIDADE TOTAL */
+            .hero-visual {
+                flex: 1;
+                display: flex;
+                justify-content: flex-end;
+            }
+            .hero-globe {
+                position: relative;
+                width: 480px;
+                height: 480px;
+                border-radius: 50%;
+                overflow: hidden;
+                box-shadow: 0 40px 100px rgba(0, 0, 0, 0.12);
+                background: #eef4ed;
+                display: grid;
+                place-items: center;
+                color: #91a096;
+                font-size: 5em;
+                font-weight: 900;
+            }
+            .hero-globe::before {
+                content: attr(data-initial);
+            }
+            .hero-globe img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                position: absolute;
+                inset: 0;
+                z-index: 1;
+                background: #eef4ed;
+            }
+
+            /* GRELHA TÉCNICA */
+            .data-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 30px;
+                border-top: 1px solid #f2f2f2;
+                padding-top: 2em;
+            }
+            .data-item b {
+                display: block;
+                font-size: 0.65em;
+                text-transform: uppercase;
+                letter-spacing: 2px;
+                color: #2e7d32;
+                margin-bottom: 8px;
+            }
+            .data-item p {
+                font-size: 1.1em;
+                color: #444;
+                margin: 0;
+                font-weight: 600;
+            }
+
+            .btn-voltar-base {
+                margin-top: auto;
+                display: inline-block;
+                font-size: 0.75em;
+                font-weight: 800;
+                text-transform: uppercase;
+                letter-spacing: 2px;
+                text-decoration: none;
+                color: #bbb !important;
+                transition: 0.3s;
+            }
+            .btn-voltar-base:hover {
+                color: #1a1a1a !important;
+            }
+
+            .sintese-box {
+                background: #f6fff8;
+                padding: 3em;
+                border-radius: 24px;
+                margin-top: 2em;
+            }
+            .sintese-box b {
+                display: block;
+                margin-bottom: 15px;
+                font-size: 0.8em;
+                text-transform: uppercase;
+                color: #1b4332;
+                letter-spacing: 1px;
+            }
+            .sintese-box p {
+                font-size: 1.15em;
+                line-height: 1.8;
+                text-align: justify;
+                color: #444;
+                margin: 0;
+            }
+            .detail-section {
+                border-top: 1px solid #e7ece8;
+                padding: 3em 0;
+            }
+            .section-head {
+                display: grid;
+                grid-template-columns: 180px minmax(0, 800px);
+                gap: 2em;
+                margin-bottom: 1.7em;
+            }
+            .section-head span {
+                font-size: 0.65em;
+                font-weight: 900;
+                text-transform: uppercase;
+                letter-spacing: 4px;
+                color: #9fa9a1;
+            }
+            .section-head h2 {
+                margin: 0;
+                font-size: 1.85em;
+                color: #21342c;
+            }
+            .section-head p {
+                margin: 0.4em 0 0;
+                color: #718078;
+                line-height: 1.65;
+            }
+            .detail-grid {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1.2em;
+            }
+            .detail-panel {
+                padding: 1.6em;
+                border-radius: 15px;
+                background: #eef4ed;
+            }
+            .detail-panel:nth-child(2n) {
+                background: #f6f2e9;
+            }
+            .detail-panel h3 {
+                font-size: 0.72em;
+                text-transform: uppercase;
+                letter-spacing: 1.4px;
+                color: #527a60;
+                margin: 0 0 0.7em;
+            }
+            .detail-panel p, .detail-panel li {
+                font-size: 0.94em;
+                line-height: 1.68;
+                color: #4d5d54;
+            }
+            .detail-panel p, .detail-panel ul {
+                margin: 0;
+            }
+            .detail-panel ul {
+                padding-left: 1.2em;
+            }
+            .related {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.7em;
+            }
+            .related a {
+                padding: 0.75em 1em;
+                border: 1px solid #dfe7df;
+                border-radius: 999px;
+                text-decoration: none;
+                color: #527a60;
+                font-weight: 700;
+                font-size: 0.78em;
+            }
+            .source-footer a {
+                color: inherit;
+            }
+
+            .source-footer {
+                font-size: 0.65em;
+                color: #bbb !important;
+                text-transform: uppercase;
+                margin-top: 4em;
+                display: block;
+                letter-spacing: 1px;
+            }
+
+            /* RODAPÉ OFICIAL */
+            .footer {
+                padding: 4em 0 2em;
+                border-top: 1px solid var(--line);
+                opacity: 0.4;
+                text-align: right;
+            }
+
+            .footer-wordmark {
+                display: flex;
+                justify-content: flex-end;
+            }
+
+            .bio-wordmark {
+                display: inline-block;
+                text-align: center;
+                line-height: 1;
+                font-family: "Georgia", "Times New Roman", serif;
+            }
+
+            .bio-wordmark strong {
+                display: block;
+                font-size: 1.15em;
+                font-weight: 400;
+                letter-spacing: -0.4px;
+                color: #81966e;
+                line-height: 1;
+                font-family: inherit;
+            }
+
+            .bio-wordmark small {
+                display: block;
+                margin-top: 2px;
+                font-size: 0.43em;
+                font-weight: 700;
+                letter-spacing: 1.8px;
+                text-transform: uppercase;
+                color: #a66f50;
+                line-height: 1;
+                font-family: inherit;
+            }
+
+            @media screen and (max-width: 1280px) {
+                .hero-split {
+                    flex-direction: column-reverse;
+                    align-items: center;
+                }
+                .hero-visual {
+                    justify-content: center;
+                    margin-bottom: 2em;
+                }
+                .hero-globe {
+                    width: 350px;
+                    height: 350px;
+                }
+                .hero-text {
+                    min-height: 0;
+                    text-align: center;
+                }
+                .section-head, .detail-grid {
+                    grid-template-columns: 1fr;
+                }
+                .btn-voltar-base {
+                    margin-top: 2em;
+                }
+            }
+        </style>
         <!-- Google tag (gtag.js) -->
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV0FD8PXC"></script>
-        <script defer src="/assets/js/bioculture-analytics.js?v=2"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag("js", new Date());
+            gtag("config", "G-6PV0FD8PXC");
+        </script>
             <script src="/assets/js/biocultura-i18n-runtime.js?v=2"></script>
-
-        <link rel="stylesheet" href="/assets/css/pages/calendario-horticola-detalhe.css?v=2">
-        <link rel="stylesheet" href="/assets/css/bioculture-system.css?v=2">
-        <link rel="stylesheet" href="/assets/css/bioculture-sidebar.css?v=2">
-        <link rel="stylesheet" href="/assets/css/bioculture-sidebar.css?v=2">
     </head>
-    <body class="is-preload bio-standard bio-detail">
+    <body class="is-preload">
         <div id="wrapper">
             <div id="main">
                 <div class="inner">
@@ -38,7 +362,197 @@
         </div>
 
         <script src="/assets/js/jquery.min.js"></script>
-        <script src="/assets/js/bioculture-app.js?v=2"></script>
-        <script src="/assets/js/pages/calendario-horticola-detalhe-1.js?v=2"></script>
+        <script>
+            const esc = (value) =>
+                String(value ?? "").replace(/[&<>'"]/g, (char) =>
+                    ({
+                        "&": "&amp;",
+                        "<": "&lt;",
+                        ">": "&gt;",
+                        "'": "&#39;",
+                        '"': "&quot;",
+                    })[char]);
+            const valid = (value) =>
+                value !== undefined && value !== null && value !== "" && value !== "-" &&
+                !(Array.isArray(value) && (!value.length || value.every((item) => item === "-")));
+            const values = (value) =>
+                Array.isArray(value) ? value.filter(valid) : valid(value) ? [value] : [];
+            function textPanel(title, value) {
+                return valid(value)
+                    ? `<article class="detail-panel"><h3>${esc(title)}</h3><p>${
+                        esc(value)
+                    }</p></article>`
+                    : "";
+            }
+            function listPanel(title, value) {
+                const list = values(value);
+                return list.length
+                    ? `<article class="detail-panel"><h3>${esc(title)}</h3><ul>${
+                        list.map((item) => `<li>${esc(item)}</li>`).join("")
+                    }</ul></article>`
+                    : "";
+            }
+            function section(label, title, note, content) {
+                return content
+                    ? `<div class="detail-section"><div class="section-head"><span>${
+                        esc(label)
+                    }</span><div><h2>${esc(title)}</h2><p>${
+                        esc(note)
+                    }</p></div></div><div class="detail-grid">${content}</div></div>`
+                    : "";
+            }
+            async function carregar() {
+                const id = new URLSearchParams(window.location.search).get("id");
+                if (!id) {
+                    window.location.href = "calendario.html";
+                    return;
+                }
+
+                try {
+                    const res = await fetch("/data/horticolas_master.json?v=" + Date.now());
+                    const master = await res.json();
+                    const item = master[id];
+
+                    if (!item) {
+                        document.getElementById("render-horta").innerHTML =
+                            "<p>Produto não encontrado.</p>";
+                        return;
+                    }
+
+                    const image = valid(item.imagem)
+                        ? `<img src="${esc(item.imagem)}" alt="${
+                            esc(item.nome)
+                        }" onerror="this.remove()">`
+                        : "";
+                    const facts = [
+                        ["Categoria", item.categoria || item.grupo],
+                        ["Ciclo", item.ciclo],
+                        ["pH do solo", item.ph_solo],
+                        ["Exposição", item.exposicao_solar],
+                    ].filter(([, value]) => valid(value));
+                    const calendar = textPanel("Sementeira", item.sementeira) +
+                        textPanel("Plantação ou transplante", item.plantacao_ou_transplante) +
+                        textPanel("Colheita", item.colheita) + textPanel("Propagação", item.propagacao);
+                    const place = textPanel("Origem", item.origem) +
+                        textPanel("Solo ideal", item.solo_ideal) +
+                        textPanel("pH", item.ph_solo) + textPanel("Clima", item.clima) +
+                        textPanel("Exposição solar", item.exposicao_solar);
+                    const care = textPanel("Irrigação", item.irrigacao) +
+                        textPanel("Método de rega", item.metodo_rega_recomendado) +
+                        textPanel("Manutenção", item.manutencao) +
+                        textPanel("Fertilização orgânica", item.fertilizacao_organica);
+                    const ecology = listPanel("Consociações favoráveis", item.consociacoes_favoraveis) +
+                        listPanel("Evitar consociar", item.evitar_consociar) +
+                        textPanel("Rotação", item.rotacao) +
+                        listPanel("Culturas semelhantes", item.culturas_semelhantes);
+                    const protection = textPanel("Problemas comuns", item.problemas_comuns) +
+                        textPanel("Prevenção sem pesticidas", item.prevencao_sem_pesticidas) +
+                        textPanel("Notas para Portugal", item.notas_portugal);
+                    const related = values(item.culturas_semelhantes).map((name) => {
+                        const found = Object.entries(master).find(([, value]) =>
+                            String(value.nome).toLocaleLowerCase("pt") ===
+                                String(name).toLocaleLowerCase("pt")
+                        );
+                        return found
+                            ? `<a href="?id=${encodeURIComponent(found[0])}">${esc(found[1].nome)}</a>`
+                            : "";
+                    }).filter(Boolean).join("");
+                    document.getElementById("render-horta").innerHTML = `
+                    <div class="hero-split">
+                        <div class="hero-text">
+                            <a href="calendario.html" class="btn-voltar-base" style="margin:0 0 2em">← VOLTAR AO CALENDÁRIO</a>
+                            <span class="category-label">Cultivo biológico</span>
+                            <h1>${esc(item.nome)}</h1>
+                            <h2>${esc(item.nome_cientifico || "")}</h2>
+                            ${
+                        valid(item.descricao)
+                            ? `<p style="font-size:1.05em;line-height:1.7;color:#718078">${
+                                esc(item.descricao)
+                            }</p>`
+                            : ""
+                    }
+                            
+                            <div class="data-grid">
+                                ${
+                        facts.map(([title, value]) =>
+                            `<div class="data-item"><b>${esc(title)}</b><p>${esc(value)}</p></div>`
+                        ).join("")
+                    }
+                            </div>
+                        </div>
+                        <div class="hero-visual">
+                            <div class="hero-globe" data-initial="${
+                        esc(String(item.nome || "?").charAt(0))
+                    }">
+                                ${image}
+                            </div>
+                        </div>
+                    </div>
+                    ${
+                        section(
+                            "Lugar",
+                            "Origem, solo e clima",
+                            "Condições de referência; adapte sempre à variedade, exposição e microclima.",
+                            place,
+                        )
+                    }
+                    ${
+                        section(
+                            "Calendário",
+                            "Do início à colheita",
+                            "As épocas são orientativas e devem acompanhar a temperatura do solo e o risco de geada.",
+                            calendar,
+                        )
+                    }
+                    ${
+                        section(
+                            "Cuidado",
+                            "Água, nutrição e manutenção",
+                            "Regue segundo a humidade real do solo e favoreça matéria orgânica bem amadurecida.",
+                            care,
+                        )
+                    }
+                    ${
+                        section(
+                            "Ecologia",
+                            "Consociações e rotação",
+                            "Diversidade e rotação ajudam a reduzir desequilíbrios sem recorrer a pesticidas.",
+                            ecology,
+                        )
+                    }
+                    ${
+                        section(
+                            "Vigilância",
+                            "Problemas e prevenção",
+                            "Confirme sempre a causa dos sintomas antes de intervir.",
+                            protection,
+                        )
+                    }
+                    ${
+                        related
+                            ? `<div class="detail-section"><div class="section-head"><span>Explorar</span><div><h2>Culturas semelhantes</h2><p>Compare necessidades e épocas antes de escolher alternativas.</p></div></div><div class="related">${related}</div></div>`
+                            : ""
+                    }
+                    ${
+                        valid(item.url_fonte_original)
+                            ? `<span class="source-footer">FONTE ORIGINAL: <a href="${
+                                esc(item.url_fonte_original)
+                            }" target="_blank" rel="noopener noreferrer">${
+                                esc(item.fonte_original || "Consultar")
+                            }</a></span>`
+                            : ""
+                    }
+                `;
+                    document.title = item.nome + " - bioCultura";
+                } catch (e) {
+                    console.error("Erro ao carregar detalhe:", e);
+                }
+            }
+
+            fetch("/sidebar-content.html").then((r) => r.text()).then((html) => {
+                document.getElementById("sidebar").innerHTML = html;
+                carregar();
+            });
+        </script>
     </body>
 </html>

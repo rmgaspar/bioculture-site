@@ -1,21 +1,439 @@
 <!DOCTYPE html>
-<html data-bio-theme="life" lang="pt">
+<html lang="pt">
     <head>
-        <title>bioCulture - Observatório da Terra Portugal</title>
+        <title>bioCultura - Observatório da Terra Portugal</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
         <link rel="stylesheet" href="/assets/css/main.css" />
+        <style>
+            body, input, select, textarea {
+                font-family: "Source Sans Pro", sans-serif !important;
+                color: #444;
+            }
+            section, #header, hr, .major {
+                border: none !important;
+                box-shadow: none !important;
+                padding: 0 !important;
+            }
+            #sidebar {
+                position: fixed !important;
+                top: 0;
+                left: 0;
+                height: 100vh !important;
+                width: 18em !important;
+                overflow: hidden !important;
+                z-index: 10000;
+                background: #fff;
+                border-right: 1px solid #f2f2f2 !important;
+            }
+            #wrapper {
+                padding-left: 18em !important;
+            }
+            .inner {
+                padding: 2.2em 5em 0 !important;
+                max-width: 1600px !important;
+                margin: auto;
+                width: 100%;
+                box-sizing: border-box;
+            }
+            .header-left {
+                text-align: left;
+                margin-bottom: 2em;
+                margin-top: 0 !important;
+            }
+            .header-left h1 {
+                font-size: 2.5em;
+                font-weight: 900;
+                color: #1a1a1a;
+                letter-spacing: -1.5px;
+                line-height: 1.1;
+                margin: 10px 0 !important;
+            }
+            .category-label {
+                font-size: 0.65em;
+                font-weight: 900;
+                text-transform: uppercase;
+                letter-spacing: 4px;
+                color: #bbb;
+                display: block;
+            }
+            .context-switcher {
+                display: flex;
+                gap: 15px;
+                margin-top: 20px;
+            }
+            .context-switcher a {
+                font-size: 0.7em;
+                font-weight: 900;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                text-decoration: none !important;
+                border-bottom: none !important;
+                padding-bottom: 5px;
+            }
+            .context-active-green {
+                color: #1a1a1a !important;
+                border-bottom: 2px solid #2e7d32 !important;
+            }
+            .context-inactive {
+                color: #bbb !important;
+                transition: color 0.3s;
+            }
+            .context-inactive:hover {
+                color: #2e7d32 !important;
+            }
+            .hero-guide {
+                max-width: 760px;
+                margin-top: 2.2em;
+            }
+            .hero-guide > span {
+                display: block;
+                margin-bottom: 0.8em;
+                color: #9aa29c;
+                font-size: 0.62em;
+                font-weight: 900;
+                letter-spacing: 2px;
+                text-transform: uppercase;
+            }
+            .hero-guide-grid {
+                display: grid;
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                gap: 1px;
+                overflow: hidden;
+                border: 1px solid #e8ece8;
+                border-radius: 12px;
+                background: #e8ece8;
+            }
+            .hero-guide article {
+                padding: 1.05em 1.1em;
+                background: #fafbf9;
+            }
+            .hero-guide small {
+                display: block;
+                margin-bottom: 0.45em;
+                color: #2e7d32;
+                font-size: 0.58em;
+                font-weight: 900;
+                letter-spacing: 1px;
+                text-transform: uppercase;
+            }
+            .hero-guide p {
+                margin: 0;
+                color: #66716a;
+                font-size: 0.72em;
+                line-height: 1.5;
+            }
+            @media screen and (max-width: 736px) {
+                .hero-guide-grid {
+                    grid-template-columns: 1fr;
+                }
+            }
+            .observatory-hero {
+                display: grid;
+                grid-template-columns: minmax(0, 1fr) minmax(270px, 390px);
+                gap: 4em;
+                align-items: start;
+                margin-bottom: 2.8em;
+            }
+            .observatory-visual {
+                width: 100%;
+                max-width: 390px;
+                aspect-ratio: 1;
+                border-radius: 50%;
+                justify-self: center;
+                overflow: hidden;
+                box-sizing: border-box;
+                background: #edf2eb url("/images/observatorio-portugal.webp") center/cover no-repeat;
+                box-shadow: 0 30px 80px rgba(45, 65, 51, 0.18);
+            }
 
+            .overview {
+                background: #f4f9f5;
+                padding: 2.2em;
+                border-radius: 15px;
+                margin: 1.5em 0 2em;
+            }
+            .overview h2 {
+                margin: 0 0 12px;
+                font-size: 1em;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                color: #2e7d32;
+            }
+            .overview p {
+                margin: 0;
+                line-height: 1.75;
+                color: #45634a;
+                font-size: 1em;
+            }
+            .scope-note {
+                display: block;
+                margin-top: 12px;
+                color: #738577;
+                font-size: 0.7em;
+            }
+
+            .summary-grid {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 16px;
+                margin: 2em 0 3em;
+            }
+            .summary-card {
+                border: 1px solid #eee;
+                border-radius: 12px;
+                padding: 1.5em;
+                background: #fff;
+            }
+            .summary-card h3 {
+                font-size: 0.68em;
+                text-transform: uppercase;
+                margin: 0 0 12px;
+                color: #777;
+            }
+            .summary-value {
+                display: block;
+                font-size: 1.8em;
+                font-weight: 900;
+                color: #1a1a1a;
+                line-height: 1.1;
+            }
+            .summary-card p {
+                margin: 10px 0 0;
+                font-size: 0.75em;
+                line-height: 1.55;
+                color: #666;
+            }
+
+            .section-heading {
+                margin: 3.5em 0 1.4em;
+            }
+            .section-heading h2 {
+                margin: 0 0 8px;
+                font-size: 1.45em;
+                color: #1a1a1a;
+            }
+            .section-heading p {
+                margin: 0;
+                color: #777;
+                font-size: 0.86em;
+            }
+            .chart-grid {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 24px;
+            }
+            .chart-box {
+                background: #fdfdfd;
+                border: 1px solid #f2f2f2;
+                padding: 1.5em;
+                border-radius: 12px;
+                min-height: 390px;
+                display: flex;
+                flex-direction: column;
+            }
+            .chart-box h3 {
+                font-size: 0.75em;
+                font-weight: 900;
+                text-transform: uppercase;
+                color: #555;
+                margin: 0 0 5px;
+            }
+            .chart-meta {
+                font-size: 0.62em;
+                color: #999;
+                margin-bottom: 14px;
+            }
+            .chart-container {
+                flex-grow: 1;
+                height: 235px;
+                position: relative;
+            }
+            .chart-explanation {
+                font-size: 0.76em;
+                line-height: 1.55;
+                color: #666;
+                margin: 15px 0 0;
+                border-top: 1px solid #eee;
+                padding-top: 11px;
+            }
+            .source-link {
+                font-size: 0.6em;
+                font-weight: 800;
+                color: #2e7d32;
+                text-transform: uppercase;
+                margin-top: 8px;
+                text-decoration: none;
+            }
+
+            .territory-grid, .conclusion-grid {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 18px;
+            }
+            .territory-card, .conclusion-card {
+                border: 1px solid #eee;
+                border-radius: 12px;
+                padding: 1.5em;
+                background: #fff;
+            }
+            .territory-card h3, .conclusion-card h3 {
+                font-size: 0.85em;
+                margin: 0 0 10px;
+                color: #222;
+            }
+            .territory-value {
+                font-size: 1.45em;
+                font-weight: 900;
+                color: #2e7d32;
+                display: block;
+                margin-bottom: 8px;
+            }
+            .territory-card p, .conclusion-card p {
+                font-size: 0.78em;
+                line-height: 1.65;
+                color: #666;
+                margin: 7px 0;
+            }
+            .conclusion-card details {
+                margin-top: 12px;
+                border-top: 1px solid #eee;
+                padding-top: 9px;
+            }
+            .conclusion-card summary {
+                cursor: pointer;
+                color: #2e7d32;
+                font-size: 0.66em;
+                font-weight: 900;
+                text-transform: uppercase;
+            }
+            .conclusion-card details p {
+                font-size: 0.7em;
+                color: #777;
+            }
+            .reading-box {
+                margin-top: 2.5em;
+                padding: 2em;
+                border-left: 4px solid #2e7d32;
+                background: #f7faf8;
+                border-radius: 0 12px 12px 0;
+            }
+            .reading-box h3 {
+                font-size: 0.8em;
+                text-transform: uppercase;
+                margin: 0 0 12px;
+            }
+            .reading-box ul {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px 25px;
+                margin: 0;
+                padding-left: 1.2em;
+            }
+            .reading-box li {
+                font-size: 0.76em;
+                line-height: 1.5;
+                color: #666;
+            }
+            .data-error {
+                padding: 2em;
+                background: #fff4f4;
+                color: #8a3030;
+                border-radius: 12px;
+            }
+            .footer {
+                padding: 4em 5em 2em;
+                border-top: 1px solid var(--line);
+                opacity: 0.4;
+                text-align: right;
+                box-sizing: border-box;
+            }
+
+            .footer-wordmark {
+                display: flex;
+                justify-content: flex-end;
+            }
+
+            .bio-wordmark {
+                display: inline-block;
+                text-align: center;
+                line-height: 1;
+                font-family: "Georgia", "Times New Roman", serif;
+            }
+
+            .bio-wordmark strong {
+                display: block;
+                font-size: 1.15em;
+                font-weight: 400;
+                letter-spacing: -0.4px;
+                color: #81966e;
+                line-height: 1;
+                font-family: inherit;
+            }
+
+            .bio-wordmark small {
+                display: block;
+                margin-top: 2px;
+                font-size: 0.43em;
+                font-weight: 700;
+                letter-spacing: 1.8px;
+                text-transform: uppercase;
+                color: #a66f50;
+                line-height: 1;
+                font-family: inherit;
+            }
+
+            @media screen and (max-width: 1280px) {
+                #sidebar {
+                    position: relative !important;
+                    width: 100% !important;
+                    height: auto !important;
+                }
+                #wrapper {
+                    padding-left: 0 !important;
+                }
+                .observatory-hero {
+                    grid-template-columns: 1fr;
+                }
+                .observatory-visual {
+                    max-width: 330px;
+                }
+                .summary-grid {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+            }
+            @media screen and (max-width: 900px) {
+                .chart-grid, .territory-grid, .conclusion-grid {
+                    grid-template-columns: 1fr;
+                }
+            }
+            @media screen and (max-width: 736px) {
+                .inner {
+                    padding: 1.5em !important;
+                }
+                .observatory-hero {
+                    gap: 2em;
+                }
+                .observatory-visual {
+                    max-width: 260px;
+                }
+                .summary-grid, .reading-box ul {
+                    grid-template-columns: 1fr;
+                }
+            }
+        </style>
         <!-- Google tag (gtag.js) -->
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV0FD8PXC"></script>
-        <script defer src="/assets/js/bioculture-analytics.js?v=2"></script>
-
-        <link rel="stylesheet" href="/assets/css/pages/observatorio-observatorio-terra.css?v=2">
-        <link rel="stylesheet" href="/assets/css/bioculture-system.css?v=2">
-        <link rel="stylesheet" href="/assets/css/bioculture-sidebar.css?v=2">
-        <link rel="stylesheet" href="/assets/css/bioculture-sidebar.css?v=2">
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag("js", new Date());
+            gtag("config", "G-6PV0FD8PXC");
+        </script>
     </head>
-    <body class="is-preload bio-standard bio-landing">
+    <body class="is-preload">
         <div id="wrapper">
             <div id="main">
                 <div class="inner">
@@ -24,7 +442,7 @@
                             <div class="header-left">
                                 <span class="category-label">Observatório Ambiental</span>
                                 <h1 id="page-title">Portugal em dados</h1>
-
+                                
                                 <aside class="hero-guide" aria-label="Antes de interpretar">
                                     <span>Antes de interpretar</span>
                                     <div class="hero-guide-grid">
@@ -112,7 +530,240 @@
 
         <script src="/assets/js/jquery.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <script src="/assets/js/bioculture-app.js?v=2"></script>
-        <script src="/assets/js/pages/observatorio-observatorio-terra-1.js?v=2"></script>
+        <script>
+            const palette = ["#ef5350", "#2e7d32", "#42a5f5", "#ffa726"];
+            const escapeHtml = (value) =>
+                String(value ?? "").replace(
+                    /[&<>'"]/g,
+                    (char) => ({
+                        "&": "&amp;",
+                        "<": "&lt;",
+                        ">": "&gt;",
+                        "'": "&#39;",
+                        '"': "&quot;",
+                    }[char]),
+                );
+            const formatNumber = (value, digits = 0) =>
+                new Intl.NumberFormat("pt-PT", { maximumFractionDigits: digits }).format(value);
+            const entries = (series) =>
+                Object.entries(series.valores).map(([year, value]) => ({ year, value })).filter(
+                    (point) => typeof point.value === "number",
+                );
+            const source = (series) => series.fontes?.[0] || null;
+
+            function renderSummary(data) {
+                const burned = entries(data.series_temporais.area_ardida_continente).at(-1);
+                const temp = entries(data.series_temporais.temperatura_media_anual_continente).at(-1);
+                const desert = data.indicadores_territoriais.suscetibilidade_desertificacao;
+                const coast = data.indicadores_territoriais.erosao_costeira;
+                const cards = [
+                    [
+                        "Temperatura média",
+                        `${formatNumber(temp.value, 2)} °C`,
+                        `${temp.year} · Portugal continental`,
+                    ],
+                    [
+                        "Área ardida",
+                        `${formatNumber(burned.value)} ha`,
+                        `${burned.year} · valor provisório no Continente`,
+                    ],
+                    ["Desertificação", `${desert.valor}%`, "do território continental suscetível"],
+                    [
+                        "Costa em erosão",
+                        `${coast.costa_baixa_arenosa_em_erosao_percent}%`,
+                        "da costa baixa e arenosa continental",
+                    ],
+                ];
+                document.getElementById("summary-grid").innerHTML = cards.map(([title, value, note]) =>
+                    `<article class="summary-card"><h3>${
+                        escapeHtml(title)
+                    }</h3><span class="summary-value">${escapeHtml(value)}</span><p>${
+                        escapeHtml(note)
+                    }</p></article>`
+                ).join("");
+                document.getElementById("overview-text").innerHTML =
+                    `Os dados disponíveis mostram três pressões claras: incêndios rurais muito variáveis e severos em alguns anos, mais de metade do Continente suscetível à desertificação e uma parte significativa da costa arenosa em erosão. Ao mesmo tempo, Portugal tem hoje menos explorações agrícolas, embora a superfície utilizada tenha diminuído muito menos — sinal de concentração da atividade em unidades maiores.`;
+            }
+
+            function addChart(canvas, series, index, type = "line") {
+                const points = entries(series);
+                new Chart(canvas, {
+                    type,
+                    data: {
+                        labels: points.map((point) => point.year),
+                        datasets: [{
+                            data: points.map((point) => point.value),
+                            borderColor: palette[index % palette.length],
+                            backgroundColor: type === "bar"
+                                ? `${palette[index % palette.length]}bb`
+                                : `${palette[index % palette.length]}18`,
+                            borderWidth: 2.5,
+                            pointRadius: 3,
+                            pointHoverRadius: 6,
+                            fill: type === "line",
+                            tension: .2,
+                        }],
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: { intersect: false, mode: "index" },
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: (context) =>
+                                        `${formatNumber(context.parsed.y, 1)} ${series.unidade}`,
+                                },
+                            },
+                        },
+                        scales: {
+                            x: {
+                                grid: { display: false },
+                                ticks: { font: { size: 9 }, autoSkip: true, maxTicksLimit: 9 },
+                            },
+                            y: {
+                                beginAtZero: type === "bar",
+                                ticks: { font: { size: 9 }, callback: (value) => formatNumber(value) },
+                            },
+                        },
+                    },
+                });
+            }
+
+            function renderCharts(data) {
+                const selected = [
+                    [
+                        "area_ardida_continente",
+                        "bar",
+                        "Os totais mudam fortemente de ano para ano. 2017 foi excecional e 2025 ainda é provisório.",
+                    ],
+                    [
+                        "exploracoes_agricolas",
+                        "line",
+                        "O número de explorações diminuiu bastante desde 1989; este indicador deve ser lido juntamente com a área agrícola.",
+                    ],
+                    [
+                        "superficie_agricola_utilizada",
+                        "line",
+                        "A área utilizada variou menos do que o número de explorações, sugerindo unidades agrícolas de maior dimensão média.",
+                    ],
+                    [
+                        "parque_veiculos_motorizados",
+                        "line",
+                        "O parque motorizado aumentou no período mais recente disponível e representa pressão sobre energia, emissões e espaço urbano.",
+                    ],
+                ];
+                const grid = document.getElementById("chart-grid");
+                grid.innerHTML = selected.map(([id, type, explanation], index) => {
+                    const series = data.series_temporais[id];
+                    const link = source(series);
+                    return `<article class="chart-box"><h3>${
+                        escapeHtml(series.titulo)
+                    }</h3><div class="chart-meta">${escapeHtml(series.ambito)} · ${
+                        escapeHtml(series.unidade)
+                    }</div><div class="chart-container"><canvas id="pt-chart-${index}"></canvas></div><p class="chart-explanation">${
+                        escapeHtml(explanation)
+                    }</p>${
+                        link
+                            ? `<a class="source-link" href="${
+                                escapeHtml(link.url)
+                            }" target="_blank" rel="noopener noreferrer">Fonte: ${
+                                escapeHtml(link.nome)
+                            } ↗</a>`
+                            : ""
+                    }</article>`;
+                }).join("");
+                selected.forEach(([id, type], index) =>
+                    addChart(
+                        document.getElementById(`pt-chart-${index}`),
+                        data.series_temporais[id],
+                        index,
+                        type,
+                    )
+                );
+            }
+
+            function renderTerritory(data) {
+                const indicators = data.indicadores_territoriais;
+                const desert = indicators.suscetibilidade_desertificacao;
+                const coast = indicators.erosao_costeira;
+                const flood = indicators.areas_risco_inundacao;
+                const cards = [
+                    [
+                        "Suscetibilidade à desertificação",
+                        `${desert.valor}% do Continente`,
+                        desert.descricao,
+                        desert.fontes[0],
+                    ],
+                    [
+                        "Erosão costeira",
+                        `≈ ${formatNumber(coast.extensao_em_erosao_aproximada_km)} km`,
+                        `${
+                            formatNumber(coast.perda_area_1958_2023_ha)
+                        } hectares de área costeira perdidos entre 1958 e 2023.`,
+                        coast.fontes[0],
+                    ],
+                    [
+                        "Risco de inundação",
+                        `${flood.valor} áreas identificadas`,
+                        `Áreas de risco potencial significativo no ciclo ${flood.periodo}.`,
+                        flood.fontes[0],
+                    ],
+                ];
+                document.getElementById("territory-grid").innerHTML = cards.map((
+                    [title, value, text, link],
+                ) => `<article class="territory-card"><h3>${
+                    escapeHtml(title)
+                }</h3><span class="territory-value">${escapeHtml(value)}</span><p>${
+                    escapeHtml(text)
+                }</p><a class="source-link" href="${
+                    escapeHtml(link.url)
+                }" target="_blank" rel="noopener noreferrer">Fonte: ${
+                    escapeHtml(link.nome)
+                } ↗</a></article>`).join("");
+            }
+
+            function renderConclusions(data) {
+                const allowed = new Set(["fogo", "solo", "mobilidade", "litoral"]);
+                document.getElementById("conclusion-grid").innerHTML = data.relatorios.filter(
+                    (report) => allowed.has(report.id),
+                ).map((report) =>
+                    `<article class="conclusion-card"><h3>${escapeHtml(report.titulo)}</h3><p>${
+                        escapeHtml(report.resumo.split(". ")[0] + ".")
+                    }</p><details><summary>Compreender melhor</summary><p>${
+                        escapeHtml(report.resumo)
+                    }</p></details></article>`
+                ).join("");
+            }
+
+            async function loadObservatory() {
+                try {
+                    const response = await fetch("/data/observatorio_terra.json?v=" + Date.now());
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    const data = await response.json();
+                    if (!data.series_temporais || !data.indicadores_territoriais) {
+                        throw new Error("O ficheiro não contém indicadores utilizáveis.");
+                    }
+                    document.getElementById("page-title").textContent = data.metadados?.titulo ||
+                        "Portugal em dados";
+                    renderSummary(data);
+                    renderCharts(data);
+                    renderTerritory(data);
+                    renderConclusions(data);
+                } catch (error) {
+                    console.error("Erro ao carregar o Observatório de Portugal:", error);
+                    document.getElementById("summary-grid").innerHTML =
+                        `<div class="data-error"><strong>Não foi possível carregar os indicadores.</strong><br>${
+                            escapeHtml(error.message)
+                        }</div>`;
+                }
+            }
+
+            fetch("/sidebar-content.html").then((response) => response.text()).then((html) => {
+                document.getElementById("sidebar").innerHTML = html;
+            }).catch(() => {});
+            loadObservatory();
+        </script>
     </body>
 </html>

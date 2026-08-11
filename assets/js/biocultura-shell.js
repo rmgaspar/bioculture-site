@@ -271,6 +271,7 @@ async function init() {
         choose,
     };
 
+    alignment();
     active();
 
     await applyLanguage(localStorage.getItem("selected_lang") || "pt");
