@@ -6,6 +6,15 @@
     const lang = supported.has(stored) ? stored : "pt";
     if (stored !== lang) localStorage.setItem("selected_lang", lang);
 
+    // O Safari pode recuperar uma página completa da memória de navegação.
+    // Se o idioma guardado mudou entretanto, força uma reconstrução coerente.
+    window.addEventListener("pageshow", (event) => {
+        const selected = localStorage.getItem("selected_lang") || "pt";
+        if (event.persisted && document.documentElement.lang !== selected) {
+            window.location.reload();
+        }
+    });
+
     const categoryNames = {
         "Água": "Water",
         "Ar": "Air",
@@ -66,7 +75,7 @@
     async function loadDictionary() {
         if (dictionary) return dictionary;
         if (!loading) {
-            loading = originalFetch(`/assets/lang/auto/${lang}.json?v=4`, { cache: "no-cache" })
+            loading = originalFetch(`/assets/lang/auto/${lang}.json?v=5`, { cache: "no-cache" })
                 .then((response) => response.ok ? response.json() : {})
                 .catch(() => ({}));
         }

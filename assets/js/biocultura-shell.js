@@ -33,7 +33,7 @@ async function applyLanguage(lang) {
     }
 
     try {
-        const r = await fetch("/assets/lang/" + state.lang + ".json");
+        const r = await fetch("/assets/lang/" + state.lang + ".json?v=5", { cache: "no-cache" });
         if (!r.ok) throw Error("lang");
 
         const t = await r.json();
@@ -71,12 +71,15 @@ async function applyLanguage(lang) {
 function setLanguage(lang) {
     const selected = lang === "en" ? "en" : "pt";
     localStorage.setItem("selected_lang", selected);
-    applyLanguage(selected);
+    document.documentElement.lang = selected;
     document.dispatchEvent(
         new CustomEvent("biocultura:language-change", {
             detail: { lang: selected },
         })
     );
+    // A reconstrução integral é intencional: textos estáticos, conteúdos JSON e
+    // notícias passam a nascer todos no mesmo idioma, inclusive no Safari.
+    window.location.reload();
 }
 
 function status(text) {
