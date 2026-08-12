@@ -4,7 +4,7 @@
     const languageStore = window.BioCultureLanguageStore || (() => {
         const valid = new Set(["pt", "en"]);
         function cookieValue() {
-            const match = document.cookie.match(/(?:^|;\s*)bioculture_lang=([^;]+)/);
+            const match = document.cookie.match(/(?:^|;\s*)bioculture_lang_v2=([^;]+)/);
             return match ? decodeURIComponent(match[1]) : "";
         }
         function write(value) {
@@ -13,7 +13,7 @@
             const domain = /(^|\.)bioculture\.net$/i.test(location.hostname)
                 ? "; Domain=.bioculture.net"
                 : "";
-            document.cookie = `bioculture_lang=${encodeURIComponent(selected)}; Path=/; Max-Age=31536000; SameSite=Lax${domain}${location.protocol === "https:" ? "; Secure" : ""}`;
+            document.cookie = `bioculture_lang_v2=${encodeURIComponent(selected)}; Path=/; Max-Age=31536000; SameSite=Lax${domain}${location.protocol === "https:" ? "; Secure" : ""}`;
             document.documentElement.lang = selected;
             return selected;
         }
@@ -21,7 +21,7 @@
             let local = "";
             try { local = window.localStorage.getItem("selected_lang") || ""; } catch (_) {}
             const cookie = cookieValue();
-            return write(valid.has(local) ? local : valid.has(cookie) ? cookie : "pt");
+            return write(valid.has(cookie) ? cookie : valid.has(local) ? local : "pt");
         }
         return Object.freeze({ read, write });
     })();
@@ -100,7 +100,7 @@
     async function loadDictionary() {
         if (dictionary) return dictionary;
         if (!loading) {
-            loading = originalFetch(`/assets/lang/auto/${lang}.json?v=6`, { cache: "no-cache" })
+            loading = originalFetch(`/assets/lang/auto/${lang}.json?v=7`, { cache: "no-cache" })
                 .then((response) => response.ok ? response.json() : {})
                 .catch(() => ({}));
         }

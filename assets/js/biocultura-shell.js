@@ -3,7 +3,7 @@ const BioCultureLanguageStore = (() => {
     const valid = new Set(["pt", "en"]);
 
     function cookieValue() {
-        const match = document.cookie.match(/(?:^|;\s*)bioculture_lang=([^;]+)/);
+        const match = document.cookie.match(/(?:^|;\s*)bioculture_lang_v2=([^;]+)/);
         return match ? decodeURIComponent(match[1]) : "";
     }
 
@@ -11,7 +11,7 @@ const BioCultureLanguageStore = (() => {
         let local = "";
         try { local = window.localStorage.getItem(key) || ""; } catch (_) {}
         const cookie = cookieValue();
-        const value = valid.has(local) ? local : valid.has(cookie) ? cookie : "pt";
+        const value = valid.has(cookie) ? cookie : valid.has(local) ? local : "pt";
         write(value);
         return value;
     }
@@ -22,7 +22,7 @@ const BioCultureLanguageStore = (() => {
         const domain = /(^|\.)bioculture\.net$/i.test(location.hostname)
             ? "; Domain=.bioculture.net"
             : "";
-        document.cookie = `bioculture_lang=${encodeURIComponent(lang)}; Path=/; Max-Age=31536000; SameSite=Lax${domain}${location.protocol === "https:" ? "; Secure" : ""}`;
+        document.cookie = `bioculture_lang_v2=${encodeURIComponent(lang)}; Path=/; Max-Age=31536000; SameSite=Lax${domain}${location.protocol === "https:" ? "; Secure" : ""}`;
         document.documentElement.lang = lang;
         return lang;
     }
@@ -67,7 +67,7 @@ async function applyLanguage(lang) {
     }
 
     try {
-        const r = await fetch("/assets/lang/" + state.lang + ".json?v=6", { cache: "no-cache" });
+        const r = await fetch("/assets/lang/" + state.lang + ".json?v=7", { cache: "no-cache" });
         if (!r.ok) throw Error("lang");
 
         const t = await r.json();
