@@ -305,13 +305,14 @@
             function renderNews() {
                 const container = document.getElementById("noticias-enologia-dinamico");
                 container.innerHTML =
-                    noticiasEno.slice(0, visibleNews).map((n) =>
-                        `<a href="/observatorio/noticia-detalhe.html?id=${
+                    noticiasEno.slice(0, visibleNews).map((n) => {
+                        const content = window.BioCultureI18n?.content(n) || n.pt || n;
+                        return `<a href="/observatorio/noticia-detalhe.html?id=${
                             encodeURIComponent(n.id)
-                        }" class="news-item"><h3>${escapeHtml(n.titulo)}</h3><span class="news-meta">${
-                            escapeHtml(n.fonte || "Notícia")
-                        } · ${escapeHtml(n.data || "")}</span></a>`
-                    ).join("") ||
+                        }" class="news-item"><h3>${escapeHtml(content.titulo)}</h3><span class="news-meta">${
+                            escapeHtml(n.fonte || window.BioCultureI18n?.choose("Notícia", "News") || "Notícia")
+                        } · ${escapeHtml(window.BioCultureI18n?.date(n.data) || n.data || "")}</span></a>`;
+                    }).join("") ||
                     '<div class="empty-state">Sem notícias de enologia disponíveis neste momento.</div>';
                 document.getElementById("btn-load-more-eno").style.display =
                     noticiasEno.length > visibleNews ? "inline-block" : "none";
@@ -358,11 +359,11 @@
                         ),
                     );
                     [locationsDB, castasDB, pragasDB, dicasDB] = responses;
-                    noticiasEno = responses[4].filter((n) =>
-                        `${n.categoria || ""} ${n.titulo || ""}`.toLowerCase().match(
-                            /enologia|vinho|vinha|viticultura/,
-                        )
-                    );
+                    noticiasEno = responses[4].filter((n) => {
+                        const original = n.pt || n;
+                        return `${n.categoria || ""} ${original.categoria || ""} ${original.titulo || ""}`
+                            .toLowerCase().match(/enologia|vinho|vinha|viticultura/);
+                    });
                     const origins = [...new Set(castasDB.map((c) => c.origem).filter(Boolean))].sort((
                         a,
                         b,

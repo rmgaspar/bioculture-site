@@ -80,10 +80,10 @@
                     .slice(0, 6);
 
                 el("news").innerHTML = rows.map((n) => {
-                    const c = n.pt || n;
+                    const c = window.BioCultureI18n?.content(n) || n.pt || n;
                     return `<a href="/observatorio/noticia-detalhe.html?id=${
                         encodeURIComponent(n.id)
-                    }"><small>${esc(n.data)}</small><h3>${esc(c.titulo)}</h3><span>${
+                    }"><small>${esc(window.BioCultureI18n?.date(n.data) || n.data)}</small><h3>${esc(c.titulo)}</h3><span>${
                         esc(n.fonte)
                     } →</span></a>`;
                 }).join("") || '<p class="empty">Sem notícias disponíveis neste momento.</p>';

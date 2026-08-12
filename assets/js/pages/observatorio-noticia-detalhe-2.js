@@ -37,7 +37,7 @@
 
                     if (n) {
                         // 2. Lógica de extração: Tenta a língua selecionada, falha para PT, falha para a raiz
-                        const content = n[lang] || n["pt"] || n;
+                        const content = window.BioCultureI18n?.content(n) || n[lang] || n["pt"] || n;
 
                         document.getElementById("loading").style.display = "none";
                         document.getElementById("noticia-render").style.display = "block";
@@ -70,14 +70,14 @@
                         } else {
                             figure.hidden = true;
                         }
-                        document.getElementById("data").innerText = n.data || "";
+                        document.getElementById("data").innerText = window.BioCultureI18n?.date(n.data) || n.data || "";
                         document.getElementById("source-name-top").innerText = n.fonte || "";
                         document.getElementById("image-caption-source").innerText = n.fonte
                             ? `Imagem: ${n.fonte}`
                             : "Imagem disponibilizada pela fonte";
 
                         const catEl = document.getElementById("cat");
-                        catEl.innerText = (n.categoria || "Geral").toUpperCase();
+                        catEl.innerText = (window.BioCultureI18n?.category(n.categoria) || n.categoria || "Geral").toUpperCase();
                         if (catColors[n.categoria]) catEl.style.color = catColors[n.categoria];
 
                         // 6. Logos e Links
@@ -100,7 +100,7 @@
                         });
                         document.getElementById("official-link").href = n.url || "#";
                         document.getElementById("footer-source").innerText = n.fonte || "";
-                        document.getElementById("footer-date").innerText = n.data || "";
+                        document.getElementById("footer-date").innerText = window.BioCultureI18n?.date(n.data) || n.data || "";
                     } else {
                         document.getElementById("loading").classList.add("error-state");
                         document.getElementById("loading").innerHTML =

@@ -99,17 +99,17 @@
             }
             function renderNews(items) {
                 const selected = items.filter((n) => {
-                    const c = n.pt || n;
+                    const c = window.BioCultureI18n?.content(n) || n.pt || n;
                     return /água|agua|water|seca|rio|aquífer|aquifer|hídric|hidric|inunda/i.test(
                         [n.categoria, n.categoria_id, c.categoria, c.titulo, c.resumo].filter(Boolean)
                             .join(" "),
                     );
                 }).slice(0, 6);
                 $id("news").innerHTML = selected.map((n) => {
-                    const c = n.pt || n;
+                    const c = window.BioCultureI18n?.content(n) || n.pt || n;
                     return `<a class="news-item" href="/observatorio/noticia-detalhe.html?id=${
                         encodeURIComponent(n.id)
-                    }"><span>${clean(n.data)}</span><h3>${clean(c.titulo)}</h3><span>${
+                    }"><span>${clean(window.BioCultureI18n?.date(n.data) || n.data)}</span><h3>${clean(c.titulo)}</h3><span>${
                         clean(n.fonte)
                     }</span></a>`;
                 }).join("") || '<p class="empty">Sem notícias de água disponíveis neste momento.</p>';

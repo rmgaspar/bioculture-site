@@ -127,17 +127,17 @@
             }
             function renderNews(items) {
                 const chosen = items.filter((n) => {
-                    const c = n.pt || n;
+                    const c = window.BioCultureI18n?.content(n) || n.pt || n;
                     return /pecu|suin|aviário|aviario|bovin|efluente|estrume|chorume|bem-estar animal/i
                         .test(
                             [n.categoria, n.categoria_id, c.titulo, c.resumo].filter(Boolean).join(" "),
                         );
                 }).slice(0, 6);
                 el("news").innerHTML = chosen.map((n) => {
-                    const c = n.pt || n;
+                    const c = window.BioCultureI18n?.content(n) || n.pt || n;
                     return `<a href="/observatorio/noticia-detalhe.html?id=${
                         encodeURIComponent(n.id)
-                    }"><span>${esc(n.data)}</span><h3>${esc(c.titulo)}</h3><span>${
+                    }"><span>${esc(window.BioCultureI18n?.date(n.data) || n.data)}</span><h3>${esc(c.titulo)}</h3><span>${
                         esc(n.fonte)
                     }</span></a>`;
                 }).join("") || '<p class="empty">Sem notícias desta categoria neste momento.</p>';

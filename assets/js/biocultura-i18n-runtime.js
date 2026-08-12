@@ -5,6 +5,54 @@
     const stored = localStorage.getItem("selected_lang") || "pt";
     const lang = supported.has(stored) ? stored : "pt";
     if (stored !== lang) localStorage.setItem("selected_lang", lang);
+
+    const categoryNames = {
+        "Água": "Water",
+        "Ar": "Air",
+        "Solo": "Soil",
+        "Impacto Digital & IA": "Digital Impact & AI",
+        "Mineração": "Mining",
+        "Biodiversidade": "Biodiversity",
+        "Energia Ética": "Ethical Energy",
+        "Pecuária Industrial": "Industrial Livestock",
+        "Geral": "General",
+    };
+
+    function selectedContent(record) {
+        if (!record || typeof record !== "object") return record || {};
+        return record[lang] || record.pt || record;
+    }
+
+    function formatDate(value) {
+        if (!value) return "";
+        const raw = String(value).trim();
+        const portugueseMonths = {
+            jan: "Jan", fev: "Feb", mar: "Mar", abr: "Apr", mai: "May", jun: "Jun",
+            jul: "Jul", ago: "Aug", set: "Sep", out: "Oct", nov: "Nov", dez: "Dec",
+        };
+        const translated = raw.replace(/\b(jan|fev|mar|abr|mai|jun|jul|ago|set|out|nov|dez)\b/gi,
+            (month) => portugueseMonths[month.toLowerCase()] || month);
+        const date = /^\d{4}-\d{2}-\d{2}$/.test(translated)
+            ? new Date(`${translated}T12:00:00Z`)
+            : new Date(translated);
+        if (Number.isNaN(date.getTime())) return raw;
+        return new Intl.DateTimeFormat(lang === "en" ? "en-GB" : "pt-PT", {
+            day: "numeric", month: "short", year: "numeric", timeZone: "UTC",
+        }).format(date);
+    }
+
+    window.BioCultureI18n = Object.freeze({
+        language: lang,
+        isEnglish: lang === "en",
+        content: selectedContent,
+        date: formatDate,
+        category(value) {
+            return lang === "en" ? (categoryNames[value] || value || "General") : (value || "Geral");
+        },
+        choose(pt, en) {
+            return lang === "en" ? en : pt;
+        },
+    });
     if (!supported.has(lang)) return;
 
     let dictionary = null;
@@ -18,7 +66,7 @@
     async function loadDictionary() {
         if (dictionary) return dictionary;
         if (!loading) {
-            loading = originalFetch(`/assets/lang/auto/${lang}.json?v=2`, { cache: "no-cache" })
+            loading = originalFetch(`/assets/lang/auto/${lang}.json?v=4`, { cache: "no-cache" })
                 .then((response) => response.ok ? response.json() : {})
                 .catch(() => ({}));
         }

@@ -94,7 +94,7 @@
             }
             function renderNews(items) {
                 const selected = items.filter((n) => {
-                    const c = n.pt || n;
+                    const c = window.BioCultureI18n?.content(n) || n.pt || n;
                     return /qualidade do ar|poluiç|emiss|atmosf|pm2|pm10|ozono|fumo|incênd|poeira|respirat/i
                         .test(
                             [n.categoria, n.categoria_id, c.categoria, c.titulo, c.resumo].filter(
@@ -103,10 +103,10 @@
                         );
                 }).slice(0, 6);
                 el("news").innerHTML = selected.map((n) => {
-                    const c = n.pt || n;
+                    const c = window.BioCultureI18n?.content(n) || n.pt || n;
                     return `<a class="news-item" href="/observatorio/noticia-detalhe.html?id=${
                         encodeURIComponent(n.id)
-                    }"><span>${safe(n.data)}</span><h3>${safe(c.titulo)}</h3><span>${
+                    }"><span>${safe(window.BioCultureI18n?.date(n.data) || n.data)}</span><h3>${safe(c.titulo)}</h3><span>${
                         safe(n.fonte)
                     }</span></a>`;
                 }).join("") || '<p class="empty">Sem notícias desta categoria neste momento.</p>';
