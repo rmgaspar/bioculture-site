@@ -8,6 +8,11 @@ const BioCultureLanguageStore = (() => {
     }
 
     function read() {
+        const parameter = new URLSearchParams(window.location.search).get("lang");
+        if (valid.has(parameter)) {
+            write(parameter);
+            return parameter;
+        }
         let local = "";
         try { local = window.localStorage.getItem(key) || ""; } catch (_) {}
         const cookie = cookieValue();
@@ -105,14 +110,17 @@ async function applyLanguage(lang) {
 function setLanguage(lang) {
     const selected = lang === "en" ? "en" : "pt";
     BioCultureLanguageStore.write(selected);
-    document.dispatchEvent(
-        new CustomEvent("biocultura:language-change", {
-            detail: { lang: selected },
-        })
-    );
-    // A reconstrução integral é intencional: textos estáticos, conteúdos JSON e
-    // notícias passam a nascer todos no mesmo idioma, inclusive no Safari.
-    window.location.reload();
+    const target = new URL(window.location.href);
+    if (selected === "en") target.searchParams.set("lang", "en");
+    else target.searchParams.delete("lang");
+    window.location.assign(target.href);
+}
+
+function bindLanguageSelector() {
+    const select = get("lang-selector");
+    if (!select || select.dataset.biocultureLanguageBound === "true") return;
+    select.dataset.biocultureLanguageBound = "true";
+    select.value = BioCultureLanguageStore.read();
 }
 
 function status(text) {
@@ -316,6 +324,7 @@ async function init() {
     active();
 
     await applyLanguage(BioCultureLanguageStore.read());
+    bindLanguageSelector();
 
     const saved = localStorage.getItem("biocultura_region");
     if (saved) {
