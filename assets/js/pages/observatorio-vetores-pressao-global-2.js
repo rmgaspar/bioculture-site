@@ -12,7 +12,7 @@
                     }[char]),
                 );
             const format = (value, digits = 1) =>
-                new Intl.NumberFormat("pt-PT", { maximumFractionDigits: digits }).format(value);
+                new Intl.NumberFormat(window.BioCultureI18n?.isEnglish ? "en-GB" : "pt-PT", { maximumFractionDigits: digits }).format(value);
             const getSource = (data, id) => data.fontes.find((item) => item.id === id);
             const highlight = (data, id) => data.destaques.find((item) => item.id === id);
 

@@ -47,7 +47,7 @@
             }
 
             function formatNumber(value, digits = 1) {
-                return new Intl.NumberFormat("pt-PT", { maximumFractionDigits: digits }).format(value);
+                return new Intl.NumberFormat(window.BioCultureI18n?.isEnglish ? "en-GB" : "pt-PT", { maximumFractionDigits: digits }).format(value);
             }
 
             function renderSummary(data) {
