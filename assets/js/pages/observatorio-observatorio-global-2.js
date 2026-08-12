@@ -1,6 +1,6 @@
 
             async function applyLanguage(lang) {
-                if (!lang) lang = localStorage.getItem("selected_lang") || "pt";
+                if (!lang) lang = window.BioCultureLanguageStore?.read() || "pt";
                 try {
                     const response = await fetch(`/assets/lang/${lang}.json`);
                     if (!response.ok) return;
@@ -15,7 +15,7 @@
 
                     const selector = document.getElementById("lang-selector");
                     if (selector) selector.value = lang;
-                    localStorage.setItem("selected_lang", lang);
+                    window.BioCultureLanguageStore?.write(lang);
                 } catch (err) {
                     console.error("Erro i18n:", err);
                 }
@@ -260,7 +260,7 @@
 
             fetch("/sidebar-content.html").then((r) => r.text()).then((html) => {
                 document.getElementById("sidebar").innerHTML = html;
-                const savedLang = localStorage.getItem("selected_lang") || "pt";
+                const savedLang = window.BioCultureLanguageStore?.read() || "pt";
                 applyLanguage(savedLang).then(() => {
                     loadGlobal();
                 });

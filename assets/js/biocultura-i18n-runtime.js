@@ -1,15 +1,40 @@
 (function () {
     "use strict";
 
+    const languageStore = window.BioCultureLanguageStore || (() => {
+        const valid = new Set(["pt", "en"]);
+        function cookieValue() {
+            const match = document.cookie.match(/(?:^|;\s*)bioculture_lang=([^;]+)/);
+            return match ? decodeURIComponent(match[1]) : "";
+        }
+        function write(value) {
+            const selected = valid.has(value) ? value : "pt";
+            try { window.localStorage.setItem("selected_lang", selected); } catch (_) {}
+            const domain = /(^|\.)bioculture\.net$/i.test(location.hostname)
+                ? "; Domain=.bioculture.net"
+                : "";
+            document.cookie = `bioculture_lang=${encodeURIComponent(selected)}; Path=/; Max-Age=31536000; SameSite=Lax${domain}${location.protocol === "https:" ? "; Secure" : ""}`;
+            document.documentElement.lang = selected;
+            return selected;
+        }
+        function read() {
+            let local = "";
+            try { local = window.localStorage.getItem("selected_lang") || ""; } catch (_) {}
+            const cookie = cookieValue();
+            return write(valid.has(local) ? local : valid.has(cookie) ? cookie : "pt");
+        }
+        return Object.freeze({ read, write });
+    })();
+    window.BioCultureLanguageStore = languageStore;
+
     const supported = new Set(["en"]);
-    const stored = localStorage.getItem("selected_lang") || "pt";
+    const stored = languageStore.read();
     const lang = supported.has(stored) ? stored : "pt";
-    if (stored !== lang) localStorage.setItem("selected_lang", lang);
 
     // O Safari pode recuperar uma página completa da memória de navegação.
     // Se o idioma guardado mudou entretanto, força uma reconstrução coerente.
     window.addEventListener("pageshow", (event) => {
-        const selected = localStorage.getItem("selected_lang") || "pt";
+        const selected = languageStore.read();
         if (event.persisted && document.documentElement.lang !== selected) {
             window.location.reload();
         }
@@ -75,7 +100,7 @@
     async function loadDictionary() {
         if (dictionary) return dictionary;
         if (!loading) {
-            loading = originalFetch(`/assets/lang/auto/${lang}.json?v=5`, { cache: "no-cache" })
+            loading = originalFetch(`/assets/lang/auto/${lang}.json?v=6`, { cache: "no-cache" })
                 .then((response) => response.ok ? response.json() : {})
                 .catch(() => ({}));
         }

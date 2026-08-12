@@ -1,3 +1,37 @@
+const BioCultureLanguageStore = (() => {
+    const key = "selected_lang";
+    const valid = new Set(["pt", "en"]);
+
+    function cookieValue() {
+        const match = document.cookie.match(/(?:^|;\s*)bioculture_lang=([^;]+)/);
+        return match ? decodeURIComponent(match[1]) : "";
+    }
+
+    function read() {
+        let local = "";
+        try { local = window.localStorage.getItem(key) || ""; } catch (_) {}
+        const cookie = cookieValue();
+        const value = valid.has(local) ? local : valid.has(cookie) ? cookie : "pt";
+        write(value);
+        return value;
+    }
+
+    function write(value) {
+        const lang = valid.has(value) ? value : "pt";
+        try { window.localStorage.setItem(key, lang); } catch (_) {}
+        const domain = /(^|\.)bioculture\.net$/i.test(location.hostname)
+            ? "; Domain=.bioculture.net"
+            : "";
+        document.cookie = `bioculture_lang=${encodeURIComponent(lang)}; Path=/; Max-Age=31536000; SameSite=Lax${domain}${location.protocol === "https:" ? "; Secure" : ""}`;
+        document.documentElement.lang = lang;
+        return lang;
+    }
+
+    return Object.freeze({ read, write });
+})();
+
+window.BioCultureLanguageStore = BioCultureLanguageStore;
+
 let regionsPromise;
 
 const state = { lang: "pt" };
@@ -25,15 +59,15 @@ function value(obj, path) {
 }
 
 async function applyLanguage(lang) {
-    const requested = lang || localStorage.getItem("selected_lang") || "pt";
+    const requested = lang || BioCultureLanguageStore.read();
     state.lang = requested === "en" ? "en" : "pt";
 
     if (requested !== state.lang) {
-        localStorage.setItem("selected_lang", state.lang);
+        BioCultureLanguageStore.write(state.lang);
     }
 
     try {
-        const r = await fetch("/assets/lang/" + state.lang + ".json?v=5", { cache: "no-cache" });
+        const r = await fetch("/assets/lang/" + state.lang + ".json?v=6", { cache: "no-cache" });
         if (!r.ok) throw Error("lang");
 
         const t = await r.json();
@@ -70,8 +104,7 @@ async function applyLanguage(lang) {
 
 function setLanguage(lang) {
     const selected = lang === "en" ? "en" : "pt";
-    localStorage.setItem("selected_lang", selected);
-    document.documentElement.lang = selected;
+    BioCultureLanguageStore.write(selected);
     document.dispatchEvent(
         new CustomEvent("biocultura:language-change", {
             detail: { lang: selected },
@@ -282,7 +315,7 @@ async function init() {
     alignment();
     active();
 
-    await applyLanguage(localStorage.getItem("selected_lang") || "pt");
+    await applyLanguage(BioCultureLanguageStore.read());
 
     const saved = localStorage.getItem("biocultura_region");
     if (saved) {

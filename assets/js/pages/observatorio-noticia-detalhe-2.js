@@ -14,7 +14,7 @@
                 const noticiaId = urlParams.get("id");
 
                 // 1. Obter língua e garantir que é válida
-                let lang = localStorage.getItem("selected_lang") || "pt";
+                let lang = window.BioCultureLanguageStore?.read() || "pt";
                 if (!lang || lang === "undefined" || lang === "null") lang = "pt";
 
                 if (!noticiaId) {
