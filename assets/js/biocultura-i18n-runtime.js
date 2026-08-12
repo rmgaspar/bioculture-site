@@ -18,6 +18,8 @@
             return selected;
         }
         function read() {
+            const parameter = new URLSearchParams(window.location.search).get("lang");
+            if (valid.has(parameter)) return write(parameter);
             let local = "";
             try { local = window.localStorage.getItem("selected_lang") || ""; } catch (_) {}
             const cookie = cookieValue();
@@ -30,6 +32,48 @@
     const supported = new Set(["en"]);
     const stored = languageStore.read();
     const lang = supported.has(stored) ? stored : "pt";
+
+    function navigateToLanguage(value) {
+        const selected = value === "en" ? "en" : "pt";
+        languageStore.write(selected);
+        const url = new URL(window.location.href);
+        if (selected === "en") url.searchParams.set("lang", "en");
+        else url.searchParams.delete("lang");
+        window.location.assign(url.href);
+    }
+
+    function syncLanguageSelector(root) {
+        const selector = root?.matches?.("#lang-selector")
+            ? root
+            : root?.querySelector?.("#lang-selector");
+        if (!selector) return;
+        selector.value = lang;
+        selector.dataset.biocultureRuntimeBound = "true";
+    }
+
+    // O sidebar é injetado depois do carregamento da página. A delegação no
+    // documento evita depender do onchange inline ou do restauro de formulários
+    // do Safari.
+    document.addEventListener("change", (event) => {
+        if (event.target?.id !== "lang-selector") return;
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        navigateToLanguage(event.target.value);
+    }, true);
+
+    function preserveLanguageInLinks(root) {
+        if (lang !== "en") return;
+        root.querySelectorAll?.("a[href]").forEach((link) => {
+            const raw = link.getAttribute("href");
+            if (!raw || raw.startsWith("#") || raw.startsWith("mailto:") || raw.startsWith("tel:")) return;
+            try {
+                const url = new URL(raw, window.location.href);
+                if (url.origin !== window.location.origin) return;
+                url.searchParams.set("lang", "en");
+                link.href = url.href;
+            } catch (_) {}
+        });
+    }
 
     // O Safari pode recuperar uma página completa da memória de navegação.
     // Se o idioma guardado mudou entretanto, força uma reconstrução coerente.
@@ -90,6 +134,7 @@
     if (!supported.has(lang)) return;
 
     let dictionary = null;
+    let structuredDictionary = null;
     let loading = null;
     const originalFetch = window.fetch.bind(window);
 
@@ -100,12 +145,42 @@
     async function loadDictionary() {
         if (dictionary) return dictionary;
         if (!loading) {
-            loading = originalFetch(`/assets/lang/auto/${lang}.json?v=7`, { cache: "no-cache" })
+            loading = originalFetch(`/assets/lang/auto/${lang}.json?v=12`, { cache: "no-cache" })
                 .then((response) => response.ok ? response.json() : {})
                 .catch(() => ({}));
         }
         dictionary = await loading;
+        if (!structuredDictionary) {
+            structuredDictionary = await originalFetch(`/assets/lang/${lang}.json?v=8`, { cache: "no-cache" })
+                .then((response) => response.ok ? response.json() : {})
+                .catch(() => ({}));
+        }
         return dictionary;
+    }
+
+    function nestedValue(object, path) {
+        return String(path || "").split(".").reduce((value, key) => value?.[key], object);
+    }
+
+    function applyStructuredTranslations(root) {
+        if (!structuredDictionary) return;
+        const scope = root?.querySelectorAll ? root : document;
+        const nodes = [];
+        if (root?.matches?.("[data-i18n], [data-i18n-html], [data-i18n-placeholder], [data-i18n-title]")) nodes.push(root);
+        scope.querySelectorAll?.("[data-i18n], [data-i18n-html], [data-i18n-placeholder], [data-i18n-title]").forEach((node) => nodes.push(node));
+        nodes.forEach((node) => {
+            const text = nestedValue(structuredDictionary, node.dataset.i18n);
+            const html = nestedValue(structuredDictionary, node.dataset.i18nHtml);
+            const placeholder = nestedValue(structuredDictionary, node.dataset.i18nPlaceholder);
+            const title = nestedValue(structuredDictionary, node.dataset.i18nTitle);
+            if (typeof text === "string") node.textContent = text;
+            if (typeof html === "string") node.innerHTML = html;
+            if (typeof placeholder === "string") node.setAttribute("placeholder", placeholder);
+            if (typeof title === "string") {
+                node.setAttribute("title", title);
+                node.setAttribute("aria-label", title);
+            }
+        });
     }
 
     function translateString(value) {
@@ -168,12 +243,20 @@
         await loadDictionary();
         document.documentElement.lang = lang;
         document.title = translateString(document.title);
+        applyStructuredTranslations(document);
         translateElement(document.body);
+        preserveLanguageInLinks(document);
+        syncLanguageSelector(document);
         const observer = new MutationObserver((mutations) => {
             mutations.forEach((mutation) => {
                 mutation.addedNodes.forEach((node) => {
                     if (node.nodeType === Node.TEXT_NODE) translateTextNode(node);
-                    else if (node.nodeType === Node.ELEMENT_NODE) translateElement(node);
+                    else if (node.nodeType === Node.ELEMENT_NODE) {
+                        syncLanguageSelector(node);
+                        applyStructuredTranslations(node);
+                        translateElement(node);
+                        preserveLanguageInLinks(node);
+                    }
                 });
             });
         });

@@ -8,7 +8,7 @@
     <label for="lang-selector" data-i18n="sidebar.lang_label">Idioma</label>
     <select
         id="lang-selector"
-        onchange="if(window.BioCultureShell){BioCultureShell.setLanguage(this.value)}else{var l=this.value==='en'?'en':'pt';try{localStorage.setItem('selected_lang',l)}catch(e){};document.cookie='bioculture_lang_v2='+l+'; Path=/; Max-Age=31536000; SameSite=Lax; Domain=.bioculture.net; Secure';location.reload()}"
+        onchange="var l=this.value==='en'?'en':'pt';if(window.BioCultureShell){BioCultureShell.setLanguage(l)}else{try{localStorage.setItem('selected_lang',l)}catch(e){};var u=new URL(location.href);if(l==='en'){u.searchParams.set('lang','en')}else{u.searchParams.delete('lang')}location.assign(u.href)}"
     >
         <option value="pt">Português</option>
         <option value="en">English</option>
@@ -88,7 +88,7 @@
     class="bio-shell-loader"
     alt=""
     src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="
-    onload="import('/assets/js/biocultura-shell.js?v=10').then(m=>m.init()).catch(console.error)"
+    onload="import('/assets/js/biocultura-shell.js?v=12').then(m=>m.init()).catch(console.error)"
 />
 
 <style>
