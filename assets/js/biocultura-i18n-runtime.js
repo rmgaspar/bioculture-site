@@ -29,6 +29,26 @@
     })();
     window.BioCultureLanguageStore = languageStore;
 
+    // Arranque explícito do módulo territorial. O menu lateral é injetado
+    // depois do HTML principal; não dependemos de imagens invisíveis nem de
+    // eventos onload que o Safari pode omitir ao restaurar a cache.
+    let biocultureShellBooted = false;
+    function bootBioCultureShell() {
+        if (biocultureShellBooted) return;
+        biocultureShellBooted = true;
+        import("/assets/js/biocultura-shell.js?v=14")
+            .then((module) => module.init())
+            .catch((error) => {
+                biocultureShellBooted = false;
+                console.error("Não foi possível iniciar a localização bioCulture.", error);
+            });
+    }
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", bootBioCultureShell, { once: true });
+    } else {
+        bootBioCultureShell();
+    }
+
     const supported = new Set(["en"]);
     const stored = languageStore.read();
     const lang = supported.has(stored) ? stored : "pt";

@@ -213,55 +213,77 @@ function search(query) {
     }, 180);
 }
 
+function coordinates(item) {
+    const latitude = Number(item?.latitude ?? item?.lat);
+    const longitude = Number(item?.longitude ?? item?.lon);
+    return Number.isFinite(latitude) && Number.isFinite(longitude)
+        ? { latitude, longitude }
+        : null;
+}
+
 function distance(a, b) {
+    const target = coordinates(b);
+    if (!target) return Number.POSITIVE_INFINITY;
+
     const r = Math.PI / 180;
     const R = 6371;
-    const dLat = (+b.lat - +a.latitude) * r;
-    const dLon = (+b.lon - +a.longitude) * r;
+    const dLat = (target.latitude - Number(a.latitude)) * r;
+    const dLon = (target.longitude - Number(a.longitude)) * r;
     const q =
         Math.sin(dLat / 2) ** 2 +
-        Math.cos(+a.latitude * r) *
-            Math.cos(+b.lat * r) *
+        Math.cos(Number(a.latitude) * r) *
+            Math.cos(target.latitude * r) *
             Math.sin(dLon / 2) ** 2;
 
     return R * 2 * Math.atan2(Math.sqrt(q), Math.sqrt(1 - q));
 }
 
-async function locate() {
+async function locate(button) {
+    state.lang = BioCultureLanguageStore.read() === "en" ? "en" : "pt";
+
     if (!navigator.geolocation || !window.isSecureContext) {
         status(
             state.lang === "pt"
-                ? "A localização exige uma ligação segura e autorização do navegador."
-                : "Location requires a secure connection and browser permission."
+                ? "A localização exige HTTPS ou localhost e autorização do navegador."
+                : "Location requires HTTPS or localhost and browser permission."
         );
         return;
     }
 
+    const trigger = button || get("btn-gps-trigger");
+    if (trigger) {
+        trigger.disabled = true;
+        trigger.setAttribute("aria-busy", "true");
+    }
+
     status(
         state.lang === "pt"
-            ? "A obter uma localização atual…"
-            : "Getting a current location…"
+            ? "A obter a sua localização…"
+            : "Getting your location…"
     );
 
     navigator.geolocation.getCurrentPosition(
         async (position) => {
             try {
-                const data = (await regions()).filter((x) => {
-                    const lat = Number(x.latitude ?? x.lat);
-                    const lon = Number(x.longitude ?? x.lon);
-                    return Number.isFinite(lat) && Number.isFinite(lon);
-                });
-
+                const data = (await regions()).filter(coordinates);
                 const point = position.coords;
                 const nearest = data.reduce(
-                    (a, b) => (!a || distance(point, b) < distance(point, a) ? b : a),
+                    (best, item) =>
+                        !best || distance(point, item) < distance(point, best)
+                            ? item
+                            : best,
                     null
                 );
 
                 if (nearest) {
+                    status(
+                        state.lang === "pt"
+                            ? `Localização aproximada: ${nearest.titulo}`
+                            : `Approximate location: ${nearest.titulo}`
+                    );
                     choose(nearest);
                 } else {
-                    status(state.lang === "pt" ? "Sem correspondência exata." : "No exact match.");
+                    status(state.lang === "pt" ? "Sem correspondência territorial." : "No territorial match.");
                 }
             } catch (e) {
                 status(
@@ -269,20 +291,37 @@ async function locate() {
                         ? "Não foi possível consultar as localidades."
                         : "Locations could not be loaded."
                 );
+            } finally {
+                if (trigger) {
+                    trigger.disabled = false;
+                    trigger.removeAttribute("aria-busy");
+                }
             }
         },
-        (error) =>
-            status(
-                state.lang === "pt"
-                    ? error.code === 1
-                        ? "Autorize a localização nas definições deste site."
-                        : "Não foi possível obter uma localização atual."
-                    : "A current location could not be obtained."
-            ),
+        (error) => {
+            const messages = state.lang === "pt"
+                ? {
+                    1: "Autorize a localização nas definições deste site.",
+                    2: "O dispositivo não conseguiu determinar a localização. Pode pesquisar a localidade manualmente.",
+                    3: "A localização demorou demasiado. Tente novamente ou pesquise a localidade.",
+                }
+                : {
+                    1: "Allow location access in this site's settings.",
+                    2: "The device could not determine your location. You can search manually.",
+                    3: "Location timed out. Try again or search manually.",
+                };
+            status(messages[error.code] || (state.lang === "pt"
+                ? "Não foi possível obter a localização."
+                : "Location could not be obtained."));
+            if (trigger) {
+                trigger.disabled = false;
+                trigger.removeAttribute("aria-busy");
+            }
+        },
         {
-            enableHighAccuracy: true,
-            timeout: 15000,
-            maximumAge: 0,
+            enableHighAccuracy: false,
+            timeout: 20000,
+            maximumAge: 300000,
         }
     );
 }
@@ -311,6 +350,69 @@ function alignment() {
     document.head.appendChild(link);
 }
 
+let interactionsBound = false;
+let sidebarObserver = null;
+let refreshScheduled = false;
+
+function scheduleRefresh() {
+    if (refreshScheduled) return;
+    refreshScheduled = true;
+    window.requestAnimationFrame(async () => {
+        refreshScheduled = false;
+        active();
+        await applyLanguage(BioCultureLanguageStore.read());
+        bindLanguageSelector();
+
+        let saved = "";
+        try { saved = localStorage.getItem("biocultura_region") || ""; } catch (_) {}
+        if (!saved) return;
+        try {
+            const item = (await regions()).find((x) => String(x.id) === String(saved));
+            const input = get("loc-search-input");
+            if (item && input && !input.value) input.value = item.titulo;
+        } catch (_) {}
+    });
+}
+
+function bindInteractions() {
+    if (interactionsBound) return;
+    interactionsBound = true;
+
+    document.addEventListener("click", (event) => {
+        const trigger = event.target.closest?.("#btn-gps-trigger");
+        if (trigger) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            locate(trigger);
+            return;
+        }
+
+        const dropdown = get("loc-dropdown");
+        if (dropdown && !event.target.closest?.(".bio-location")) {
+            dropdown.style.display = "none";
+        }
+    }, true);
+
+    document.addEventListener("input", (event) => {
+        if (event.target?.id !== "loc-search-input") return;
+        event.stopImmediatePropagation();
+        search(event.target.value);
+    }, true);
+}
+
+function observeSidebar() {
+    if (sidebarObserver || !document.body) return;
+    sidebarObserver = new MutationObserver((mutations) => {
+        if (mutations.some((mutation) =>
+            Array.from(mutation.addedNodes).some((node) =>
+                node.nodeType === Node.ELEMENT_NODE &&
+                (node.matches?.(".bio-shell") || node.querySelector?.(".bio-shell"))
+            )
+        )) scheduleRefresh();
+    });
+    sidebarObserver.observe(document.body, { childList: true, subtree: true });
+}
+
 async function init() {
     window.BioCultureShell = {
         init,
@@ -321,26 +423,9 @@ async function init() {
     };
 
     alignment();
-    active();
-
-    await applyLanguage(BioCultureLanguageStore.read());
-    bindLanguageSelector();
-
-    const saved = localStorage.getItem("biocultura_region");
-    if (saved) {
-        try {
-            const item = (await regions()).find(
-                (x) => String(x.id) === String(saved)
-            );
-            const input = get("loc-search-input");
-            if (item && input) input.value = item.titulo;
-        } catch (e) {}
-    }
-
-    document.addEventListener("click", (e) => {
-        const drop = get("loc-dropdown");
-        if (drop && !e.target.closest(".bio-location")) drop.style.display = "none";
-    });
+    bindInteractions();
+    observeSidebar();
+    scheduleRefresh();
 }
 
 window.BioCultureShell = {

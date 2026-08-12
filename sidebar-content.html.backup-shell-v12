@@ -61,6 +61,7 @@
             <button
                 id="btn-gps-trigger"
                 type="button"
+                onclick="window.BioCultureShell&&BioCultureShell.locate()"
                 data-i18n-title="sidebar.loc_gps"
                 title="Usar localização atual"
                 aria-label="Usar localização atual"
@@ -73,6 +74,7 @@
                 data-i18n-placeholder="sidebar.loc_placeholder"
                 placeholder="Procurar localidade…"
                 autocomplete="off"
+                oninput="window.BioCultureShell&&BioCultureShell.search(this.value)"
             />
         </div>
         <div id="loc-dropdown" class="bio-dropdown" role="listbox"></div>
@@ -81,6 +83,13 @@
 
     </div>
 </div>
+
+<img
+    class="bio-shell-loader"
+    alt=""
+    src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="
+    onload="import('/assets/js/biocultura-shell.js?v=12').then(m=>m.init()).catch(console.error)"
+/>
 
 <style>
     #sidebar * {
