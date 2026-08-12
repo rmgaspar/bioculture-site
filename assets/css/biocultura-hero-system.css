@@ -1,0 +1,108 @@
+/* Sistema editorial comum dos topos bioCulture.
+   Carregado depois do CSS específico para normalizar apenas grelha, título e imagem. */
+
+:root {
+    --bio-hero-title-size: clamp(3.15rem, 4.15vw, 4.65rem);
+    --bio-hero-circle: 400px;
+    --bio-hero-gap: clamp(2.5rem, 4.5vw, 5rem);
+}
+
+body[data-hero-theme] {
+    --hero-accent: #526b57;
+}
+body[data-hero-theme="water"] { --hero-accent: #347f91; }
+body[data-hero-theme="air"] { --hero-accent: #638b91; }
+body[data-hero-theme="soil"] { --hero-accent: #7b684d; }
+body[data-hero-theme="biodiversity"] { --hero-accent: #557558; }
+body[data-hero-theme="calendar"] { --hero-accent: #2f8035; }
+body[data-hero-theme="wine"] { --hero-accent: #7b1730; }
+body[data-hero-theme="energy"] { --hero-accent: #a97718; }
+body[data-hero-theme="renewables"] { --hero-accent: #568064; }
+body[data-hero-theme="mining"] { --hero-accent: #795b49; }
+body[data-hero-theme="digital"] { --hero-accent: #536f84; }
+body[data-hero-theme="livestock"] { --hero-accent: #7a684c; }
+body[data-hero-theme="manifesto"] { --hero-accent: #526b57; }
+body[data-hero-theme="pressure"] { --hero-accent: #a43a32; }
+
+/* A mesma grelha para as páginas editoriais com imagem circular. */
+body[data-hero-theme] #main .hero,
+body[data-hero-theme] #main .observatory-hero {
+    grid-template-columns: minmax(0, 1fr) minmax(320px, var(--bio-hero-circle));
+    gap: var(--bio-hero-gap);
+    align-items: start;
+}
+
+/* Calendário mantém a largura necessária ao painel funcional. */
+body[data-hero-theme="calendar"] #main .hero {
+    grid-template-columns: minmax(0, 1.08fr) minmax(390px, 0.92fr);
+}
+
+body[data-hero-theme] #main .hero h1,
+body[data-hero-theme] #main .header-left h1 {
+    font-family: "Roboto Slab", serif;
+    font-size: var(--bio-hero-title-size);
+    font-weight: 700;
+    letter-spacing: -0.045em;
+    line-height: 0.98;
+    margin-top: 0.15em;
+    text-wrap: balance;
+}
+
+body[data-hero-theme] #main h1 em.hero-accent,
+body[data-hero-theme] #main .hero h1 > em {
+    color: var(--hero-accent);
+    display: block;
+    font-style: normal;
+}
+
+/* Todos os verdadeiros retratos circulares ocupam exatamente a mesma caixa. */
+body[data-hero-theme] #main :is(
+    .hero-image,
+    .water-orbit,
+    .air-orbit,
+    .soil-orbit,
+    .life-orbit,
+    .grape-stage,
+    .energy-orbit,
+    .territory-orbit,
+    .ore-orbit,
+    .digital-orbit,
+    .field-mark,
+    .living-mark,
+    .observatory-visual
+) {
+    width: var(--bio-hero-circle);
+    height: var(--bio-hero-circle);
+    max-width: 100%;
+    aspect-ratio: 1;
+    margin: 0;
+    justify-self: center;
+    align-self: start;
+    border-radius: 50%;
+    box-sizing: border-box;
+}
+
+@media screen and (max-width: 1280px) {
+    :root {
+        --bio-hero-title-size: clamp(2.8rem, 4.7vw, 4rem);
+        --bio-hero-circle: 350px;
+    }
+}
+
+@media screen and (max-width: 900px) {
+    :root {
+        --bio-hero-title-size: clamp(2.65rem, 8vw, 3.7rem);
+        --bio-hero-circle: min(360px, 82vw);
+    }
+    body[data-hero-theme] #main .hero,
+    body[data-hero-theme] #main .observatory-hero,
+    body[data-hero-theme="calendar"] #main .hero {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    :root {
+        --bio-hero-title-size: clamp(2.35rem, 12vw, 3.1rem);
+    }
+}
