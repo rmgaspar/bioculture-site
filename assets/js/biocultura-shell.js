@@ -43,6 +43,11 @@ async function applyLanguage(lang) {
             if (v) node.textContent = v;
         });
 
+        document.querySelectorAll("[data-i18n-html]").forEach((node) => {
+            const v = value(t, node.dataset.i18nHtml);
+            if (v) node.innerHTML = v;
+        });
+
         document.querySelectorAll("[data-i18n-placeholder]").forEach((node) => {
             const v = value(t, node.dataset.i18nPlaceholder);
             if (v) node.placeholder = v;
