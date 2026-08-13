@@ -1,6 +1,6 @@
 (function(){
   'use strict';
-  var DATA='/recursos/water/';
+  var DATA='/data/';
   var charts=[];
   var countryCharts=[];
   var EN=!!window.BioCultureI18n?.isEnglish;
