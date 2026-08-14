@@ -5,9 +5,21 @@
        antigas que ainda não declaram explicitamente esta folha de estilos. */
     const heroSystem = document.querySelector('link[href*="biocultura-hero-system.css"]') || document.createElement("link");
     heroSystem.rel = "stylesheet";
-    heroSystem.href = "/assets/css/biocultura-hero-system.css?v=5";
+    heroSystem.href = "/assets/css/biocultura-hero-system.css?v=6";
     heroSystem.dataset.bioculturaHeroSystem = "true";
     if (!heroSystem.parentNode) document.head.appendChild(heroSystem);
+
+    /* Identifica apenas aberturas editoriais com imagem própria. Painéis
+       funcionais, como o calendário mensal, mantêm a sua composição. */
+    function markEditorialHero() {
+        if (document.body.dataset.heroTheme === "forest") return;
+        const hero = document.querySelector("#main .water-hero, #main .regen-hero, #main .observatory-hero, #main .hero");
+        if (!hero) return;
+        const visual = hero.querySelector(":scope > .water-hero-image, :scope > .regen-hero-image, :scope > .observatory-visual, :scope > .water-orbit, :scope > .air-orbit, :scope > .soil-orbit, :scope > .life-orbit, :scope > .grape-stage, :scope > .energy-orbit, :scope > .territory-orbit, :scope > .ore-orbit, :scope > .digital-orbit, :scope > .field-mark, :scope > .living-mark");
+        if (visual) hero.classList.add("bio-banner-hero");
+    }
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", markEditorialHero, { once: true });
+    else markEditorialHero();
 
     const languageStore = window.BioCultureLanguageStore || (() => {
         const valid = new Set(["pt", "en"]);

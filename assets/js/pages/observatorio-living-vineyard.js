@@ -189,7 +189,7 @@
       document.querySelectorAll('#vine-metrics,#climate-panel,#vine-calendar').forEach(el=>el.innerHTML=`<p>${lang==='pt'?'Não foi possível carregar os dados.':'Data could not be loaded.'}</p>`);
       console.error(err);
     }
-    fetch('/includes/sidebar.html').then(r=>r.ok?r.text():'').then(html=>{if(html)$('#sidebar').innerHTML=html}).catch(()=>{});
+    fetch('/sidebar-content.html?v=20').then(r=>r.ok?r.text():'').then(html=>{if(html)$('#sidebar').innerHTML=html}).catch(()=>{});
   }
   document.addEventListener('DOMContentLoaded',init);
 })();

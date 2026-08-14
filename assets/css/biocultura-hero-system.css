@@ -141,3 +141,163 @@ body[data-hero-theme] #main :is(
         padding-bottom: 2rem !important;
     }
 }
+
+/* Banner bioCulture v2 — painel editorial + retrato circular completo.
+   A classe é aplicada pelo runtime apenas quando a abertura tem imagem própria. */
+body[data-hero-theme] {
+    --bio-banner-panel:#16392a;
+    --bio-banner-panel-end:#315c45;
+    --bio-banner-em:#76907c;
+}
+body[data-hero-theme="water"] { --bio-banner-panel:#153b43; --bio-banner-panel-end:#2e6570; --bio-banner-em:#72a7b1; }
+body[data-hero-theme="air"] { --bio-banner-panel:#203c49; --bio-banner-panel-end:#416979; --bio-banner-em:#83a9b6; }
+body[data-hero-theme="soil"] { --bio-banner-panel:#3d3026; --bio-banner-panel-end:#68503b; --bio-banner-em:#a98a68; }
+body[data-hero-theme="biodiversity"] { --bio-banner-panel:#173825; --bio-banner-panel-end:#3f6847; --bio-banner-em:#7e9c7b; }
+body[data-hero-theme="calendar"] { --bio-banner-panel:#173c25; --bio-banner-panel-end:#386842; --bio-banner-em:#86a881; }
+body[data-hero-theme="wine"] { --bio-banner-panel:#3f1723; --bio-banner-panel-end:#6a2d3e; --bio-banner-em:#b17b88; }
+body[data-hero-theme="energy"] { --bio-banner-panel:#403b1d; --bio-banner-panel-end:#6c6430; --bio-banner-em:#b1a45e; }
+body[data-hero-theme="renewables"] { --bio-banner-panel:#173b2c; --bio-banner-panel-end:#3f684e; --bio-banner-em:#7da087; }
+body[data-hero-theme="mining"] { --bio-banner-panel:#382b24; --bio-banner-panel-end:#654b3c; --bio-banner-em:#aa836c; }
+body[data-hero-theme="digital"] { --bio-banner-panel:#1c3440; --bio-banner-panel-end:#3e6070; --bio-banner-em:#83a2b1; }
+body[data-hero-theme="livestock"] { --bio-banner-panel:#393224; --bio-banner-panel-end:#62563c; --bio-banner-em:#aa9970; }
+body[data-hero-theme="pressure"] { --bio-banner-panel:#33211d; --bio-banner-panel-end:#674238; --bio-banner-em:#cf8e79; }
+body[data-hero-theme="portugal"] { --bio-banner-panel:#18382c; --bio-banner-panel-end:#3e6352; --bio-banner-em:#7f9d89; }
+
+html body[data-hero-theme] #main .bio-banner-hero {
+    position:relative !important;
+    display:block !important;
+    min-height:540px !important;
+    height:540px !important;
+    margin:-30px 0 1.3rem !important;
+    padding:50px 0 40px !important;
+    overflow:visible !important;
+    border:0 !important;
+    border-radius:0 !important;
+    background:transparent !important;
+    box-shadow:none !important;
+}
+html body[data-hero-theme] #main .bio-banner-hero::before,
+html body[data-hero-theme] #main .bio-banner-hero::after {
+    display:none !important;
+    content:none !important;
+}
+html body[data-hero-theme] #main .bio-banner-hero > :is(.water-hero-copy,.regen-hero-copy,.header-left),
+html body[data-hero-theme] #main .hero.bio-banner-hero > div:first-child {
+    position:relative !important;
+    left:clamp(-52px,-3.2vw,-28px);
+    z-index:1;
+    display:flex;
+    width:calc(100% - 235px) !important;
+    min-height:430px !important;
+    height:430px !important;
+    max-width:none !important;
+    margin:0 !important;
+    padding:clamp(3rem,4vw,4.15rem) clamp(2.7rem,5vw,5.4rem) !important;
+    flex-direction:column;
+    justify-content:center;
+    box-sizing:border-box;
+    border-radius:28px 0 0 28px !important;
+    background:linear-gradient(100deg,var(--bio-banner-panel) 0%,var(--bio-banner-panel) 70%,var(--bio-banner-panel-end) 100%) !important;
+    color:#fff !important;
+}
+html body[data-hero-theme] #main .hero.bio-banner-hero > div:first-child {
+    padding-top:1.65rem !important;
+    padding-bottom:1.65rem !important;
+}
+html body[data-hero-theme] #main .bio-banner-hero > :is(.water-hero-copy,.regen-hero-copy,.header-left)::after,
+html body[data-hero-theme] #main .hero.bio-banner-hero > div:first-child::after {
+    content:"" !important;
+    position:absolute;
+    z-index:-1;
+    inset:0 -155px 0 auto;
+    display:block !important;
+    width:190px;
+    background:linear-gradient(90deg,var(--bio-banner-panel-end),color-mix(in srgb,var(--bio-banner-panel-end) 86%,transparent));
+}
+html body[data-hero-theme] #main .bio-banner-hero :is(h1,h1 em,.lead,.hero-intro,.hero-copy,p,.eyebrow,.category-label) {
+    position:relative;
+    z-index:2;
+    max-width:min(520px,calc(100% - 135px));
+}
+html body[data-hero-theme] #main .bio-banner-hero h1 {
+    margin:.12em 0 .35em !important;
+    color:#fff !important;
+    font-family:Georgia,"Times New Roman",serif !important;
+    font-size:clamp(2.9rem,3.9vw,4.35rem) !important;
+    font-weight:700 !important;
+    letter-spacing:-.055em !important;
+    line-height:.91 !important;
+}
+html body[data-hero-theme] #main .bio-banner-hero h1 em {
+    display:block;
+    color:var(--bio-banner-em) !important;
+    font-style:normal;
+    font-weight:400;
+}
+html body[data-hero-theme] #main .bio-banner-hero :is(.lead,.hero-intro,.hero-copy,.regen-hero-copy>p) {
+    margin:1rem 0 0 !important;
+    color:#e5eee8 !important;
+    font-size:clamp(.92rem,1.15vw,1.08rem) !important;
+    line-height:1.65 !important;
+}
+html body[data-hero-theme] #main .bio-banner-hero :is(.eyebrow,.category-label) {
+    color:#bdcec2 !important;
+}
+html body[data-hero-theme] #main .bio-banner-hero :is(.hero-reading-bridge,.vineyard-reading-bridge) {
+    max-width:520px !important;
+    margin-top:.65rem !important;
+}
+html body[data-hero-theme] #main .bio-banner-hero :is(.hero-reading-bridge,.vineyard-reading-bridge) p {
+    margin:0 !important;
+    color:#a9c2b3 !important;
+    font-size:.78rem !important;
+    line-height:1.5 !important;
+}
+html body[data-hero-theme] #main .bio-banner-hero > :is(
+    .water-hero-image,.regen-hero-image,.observatory-visual,.water-orbit,.air-orbit,
+    .soil-orbit,.life-orbit,.grape-stage,.energy-orbit,.territory-orbit,.ore-orbit,
+    .digital-orbit,.field-mark,.living-mark
+) {
+    position:absolute !important;
+    z-index:2;
+    top:0 !important;
+    right:clamp(-68px,-3.55vw,-38px) !important;
+    left:auto !important;
+    display:block !important;
+    width:min(540px,45vw) !important;
+    height:min(540px,45vw) !important;
+    max-width:none !important;
+    min-height:0 !important;
+    aspect-ratio:1 !important;
+    margin:0 !important;
+    padding:0 !important;
+    overflow:hidden !important;
+    border:1px solid rgba(255,255,255,.72) !important;
+    border-radius:50% !important;
+    background-color:#e9eee8;
+    box-shadow:0 28px 70px rgba(27,48,36,.18) !important;
+    transform:none !important;
+}
+html body[data-hero-theme] #main .bio-banner-hero + :is(nav,.pressure-nav,.home-nav) {
+    margin-top:0 !important;
+    border:0 !important;
+    background:transparent !important;
+    box-shadow:none !important;
+}
+
+@media screen and (max-width:1100px) and (min-width:761px) {
+    html body[data-hero-theme] #main .bio-banner-hero { min-height:500px !important; height:500px !important; margin-top:-20px !important; padding:35px 0 !important; }
+    html body[data-hero-theme] #main .bio-banner-hero > :is(.water-hero-copy,.regen-hero-copy,.header-left),
+    html body[data-hero-theme] #main .hero.bio-banner-hero > div:first-child { left:-24px; width:calc(100% - 175px) !important; min-height:430px !important; height:430px !important; padding:3rem !important; }
+    html body[data-hero-theme] #main .bio-banner-hero > :is(.water-hero-image,.regen-hero-image,.observatory-visual,.water-orbit,.air-orbit,.soil-orbit,.life-orbit,.grape-stage,.energy-orbit,.territory-orbit,.ore-orbit,.digital-orbit,.field-mark,.living-mark) { right:-28px !important; width:min(500px,48vw) !important; height:min(500px,48vw) !important; }
+}
+@media screen and (max-width:760px) {
+    html body[data-hero-theme] #main .bio-banner-hero { min-height:650px !important; height:650px !important; margin-top:0 !important; padding:0 !important; }
+    html body[data-hero-theme] #main .bio-banner-hero > :is(.water-hero-copy,.regen-hero-copy,.header-left),
+    html body[data-hero-theme] #main .hero.bio-banner-hero > div:first-child { left:0; width:100% !important; min-height:470px !important; height:470px !important; padding:3.2rem 1.6rem 6.7rem !important; border-radius:22px !important; }
+    html body[data-hero-theme] #main .bio-banner-hero > :is(.water-hero-copy,.regen-hero-copy,.header-left)::after,
+    html body[data-hero-theme] #main .hero.bio-banner-hero > div:first-child::after { display:none !important; }
+    html body[data-hero-theme] #main .bio-banner-hero :is(h1,h1 em,.lead,.hero-intro,.hero-copy,p,.eyebrow,.category-label) { max-width:100%; }
+    html body[data-hero-theme] #main .bio-banner-hero h1 { font-size:clamp(2.65rem,12vw,3.6rem) !important; }
+    html body[data-hero-theme] #main .bio-banner-hero > :is(.water-hero-image,.regen-hero-image,.observatory-visual,.water-orbit,.air-orbit,.soil-orbit,.life-orbit,.grape-stage,.energy-orbit,.territory-orbit,.ore-orbit,.digital-orbit,.field-mark,.living-mark) { top:auto !important; right:50% !important; bottom:0; width:min(300px,82vw) !important; height:min(300px,82vw) !important; transform:translateX(50%) !important; }
+}
