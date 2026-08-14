@@ -5,6 +5,7 @@
     --bio-hero-title-size: clamp(3.15rem, 4.15vw, 4.65rem);
     --bio-hero-circle: 400px;
     --bio-hero-gap: clamp(2.5rem, 4.5vw, 5rem);
+    --bio-banner-standard: clamp(460px, 50vh, 500px);
 }
 
 body[data-hero-theme] {
@@ -35,6 +36,14 @@ body[data-hero-theme] #main .observatory-hero {
 /* Calendário mantém a largura necessária ao painel funcional. */
 body[data-hero-theme="calendar"] #main .hero {
     grid-template-columns: minmax(0, 1.08fr) minmax(390px, 0.92fr);
+}
+
+/* Banner editorial normalizado: apresenta o tema sem ocupar todo o primeiro ecrã. */
+body[data-hero-theme] #main .water-hero {
+    min-height: var(--bio-banner-standard) !important;
+    margin-bottom: 3rem !important;
+    padding-top: clamp(5.6rem, 7vw, 6.6rem) !important;
+    padding-bottom: 3rem !important;
 }
 
 body[data-hero-theme] #main .hero h1,
@@ -114,10 +123,21 @@ body[data-hero-theme] #main :is(
     body[data-hero-theme="calendar"] #main .hero {
         grid-template-columns: 1fr;
     }
+    body[data-hero-theme] #main .water-hero {
+        min-height: 450px !important;
+        padding-top: 4.6rem !important;
+        padding-bottom: 2.5rem !important;
+    }
 }
 
 @media screen and (max-width: 480px) {
     :root {
         --bio-hero-title-size: clamp(2.35rem, 12vw, 3.1rem);
+    }
+    body[data-hero-theme] #main .water-hero {
+        min-height: 430px !important;
+        margin-bottom: 2.25rem !important;
+        padding-top: 4rem !important;
+        padding-bottom: 2rem !important;
     }
 }

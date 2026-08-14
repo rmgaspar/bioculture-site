@@ -1,0 +1,19 @@
+(function(){
+  'use strict';
+  var en=new URLSearchParams(location.search).get('lang')==='en'||!!window.BioCultureI18n?.isEnglish;
+  var $=function(id){return document.getElementById(id)},esc=function(v){return String(v==null?'':v).replace(/[&<>'"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]})},fmt=function(v,d){return new Intl.NumberFormat(en?'en-GB':'pt-PT',{maximumFractionDigits:d==null?1:d}).format(v)};
+  var labels={
+    temperatura_global:['Temperatura global','Global temperature'],co2_mauna_loa:['CO₂ atmosférico','Atmospheric CO₂'],metano_global:['Metano atmosférico','Atmospheric methane'],nivel_medio_mar_satelite:['Nível médio do mar','Mean sea level'],gelo_marinho_artico_minimo:['Gelo marinho do Ártico','Arctic sea ice']
+  };
+  var descriptions={
+    temperatura_global:'Long-term trend is robust; a single year may rise or fall because of natural variability. The baseline is 1951–1980.',
+    co2_mauna_loa:'Mauna Loa is a reference station, not a simple spatial average of the planet.',
+    metano_global:'Concentration combines fossil, agricultural, waste and wetland sources; it does not attribute each source directly.',
+    nivel_medio_mar_satelite:'This is a global mean. Relative sea level at a coast may differ because of land movement and regional ocean dynamics.',
+    gelo_marinho_artico_minimo:'The long-term trend is downward, with strong year-to-year variability.'
+  };
+  var colours=['#a64236','#4c6f63','#8b694d','#5a7891','#718ca3'];
+  function translateShell(){if(!en)return;document.querySelector('#planetary-state .chapter').textContent='04 · Planetary state';document.querySelector('#planetary-state h2').textContent='The physical system is changing';document.querySelector('#planetary-state .pressure-heading p').textContent='These series from the former Global Observatory are preserved with their original units, coverage and sources. They show state and trend; they do not identify the cause of each change in isolation.'}
+  function render(data){var entries=Object.entries(data.series_temporais);$('planetary-summary').innerHTML=entries.map(function(pair){var id=pair[0],s=pair[1],i=s.valores.length-1;return'<article><small>'+esc(labels[id][en?1:0])+'</small><strong>'+esc(fmt(s.valores[i],id==='temperatura_global'?2:1))+' '+esc(s.unidade)+'</strong><span>'+esc(s.anos[i])+' · '+esc(s.cobertura)+'</span></article>'}).join('');$('planetary-chart-grid').innerHTML=entries.map(function(pair,index){var id=pair[0],s=pair[1];return'<article class="planetary-chart-card"><h3>'+esc(labels[id][en?1:0])+'</h3><div class="chart-meta">'+esc(s.cobertura)+' · '+esc(s.unidade)+'</div><div class="chart-container"><canvas id="planetary-chart-'+index+'"></canvas></div><p>'+esc(en?descriptions[id]:s.interpretacao)+'</p><a href="'+esc(s.url)+'" target="_blank" rel="noopener noreferrer">'+(en?'Source':'Fonte')+': '+esc(s.fonte)+' ↗</a></article>'}).join('');entries.forEach(function(pair,index){var s=pair[1],colour=colours[index];new Chart($('planetary-chart-'+index),{type:'line',data:{labels:s.anos,datasets:[{data:s.valores,borderColor:colour,backgroundColor:colour+'16',fill:true,tension:.25,pointRadius:2.5,pointHoverRadius:5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){return fmt(ctx.parsed.y,2)+' '+s.unidade}}}},scales:{x:{grid:{display:false},ticks:{font:{size:9},maxTicksLimit:8}},y:{ticks:{font:{size:9}}}}}})})}
+  translateShell();fetch('/data/observatorio_global.json?v=2').then(function(r){if(!r.ok)throw Error(r.status);return r.json()}).then(render).catch(function(){var box=$('planetary-summary');if(box)box.innerHTML='<p>'+(en?'Planetary series could not be loaded.':'Não foi possível carregar as séries planetárias.')+'</p>'});
+})();

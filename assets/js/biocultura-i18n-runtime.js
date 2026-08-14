@@ -1,6 +1,14 @@
 (function () {
     "use strict";
 
+    /* Mantém todas as páginas no mesmo sistema editorial, incluindo páginas
+       antigas que ainda não declaram explicitamente esta folha de estilos. */
+    const heroSystem = document.querySelector('link[href*="biocultura-hero-system.css"]') || document.createElement("link");
+    heroSystem.rel = "stylesheet";
+    heroSystem.href = "/assets/css/biocultura-hero-system.css?v=5";
+    heroSystem.dataset.bioculturaHeroSystem = "true";
+    if (!heroSystem.parentNode) document.head.appendChild(heroSystem);
+
     const languageStore = window.BioCultureLanguageStore || (() => {
         const valid = new Set(["pt", "en"]);
         function cookieValue() {
