@@ -25,9 +25,12 @@ from difflib import SequenceMatcher
 
 ROOT = Path(__file__).resolve().parents[2]
 NEWS_PATH = ROOT / "data" / "noticias.json"
+PROPOSALS_PATH = ROOT / "data" / "noticias_propostas.json"
+REJECTED_PATH = ROOT / "data" / "noticias_rejeitadas.json"
 CONFIG_PATH = ROOT / "config" / "noticias_fontes.json"
 
 CATEGORIES = {
+    "clima": ("Clima", ["clima", "climate", "aquecimento", "warming", "temperatura", "heatwave"]),
     "agua": ("Água", ["agua", "water", "seca", "drought", "cheia", "flood", "oceano", "rio", "barragem"]),
     "solo": ("Solo", ["solo", "soil", "erosao", "desertificacao", "compost", "agricultura", "pesticida"]),
     "biodiversidade": ("Biodiversidade", ["biodivers", "species", "especie", "habitat", "floresta", "forest", "invasora", "polinizador"]),
@@ -37,6 +40,9 @@ CATEGORIES = {
     "impacto-digital": ("Impacto Digital & IA", ["inteligencia artificial", "artificial intelligence", "data center", "centro de dados", "digitalizacao"]),
     "pecuaria": ("Pecuária", ["pecuaria", "livestock", "suinicultura", "aviario", "gado", "metano"]),
     "enologia": ("Enologia", ["vinha", "vinho", "viticultura", "vineyard", "wine"]),
+    "agricultura": ("Agricultura biológica", ["agricultura", "agriculture", "organic farming", "agroecolog", "crop", "semente", "seed"]),
+    "oceanos": ("Oceanos", ["oceano", "ocean", "marinho", "marine", "sea", "algal", "eutrofiza"]),
+    "territorio": ("Território", ["territorio", "territory", "land use", "ordenamento", "protected area"]),
 }
 
 IMPACT = ["recorde", "emergencia", "risco", "crise", "proibicao", "lei", "relatorio", "estudo", "milhoes", "extincao", "contaminacao"]
@@ -105,14 +111,23 @@ def fetch_feed(url: str) -> list[dict]:
     return result
 
 
-def classify(text: str) -> tuple[str, str, int]:
+def classify(text: str) -> list[tuple[str, str, int]]:
     value = folded(text)
     matches = []
     for category_id, (label, words) in CATEGORIES.items():
         count = sum(1 for word in words if folded(word) in value)
         matches.append((count, category_id, label))
-    count, category_id, label = max(matches)
-    return category_id, label, count
+    return sorted((m for m in matches if m[0] > 0), reverse=True)
+
+
+def geographic_scope(text: str, source_cfg: dict) -> tuple[str, list[str]]:
+    value = folded(text)
+    configured = source_cfg.get("ambito")
+    if configured:
+        return configured, ["PT"] if configured == "portugal" else []
+    if any(word in value for word in PORTUGAL):
+        return "portugal", ["PT"]
+    return "global", []
 
 
 def canonical_url(url: str) -> str:
@@ -162,7 +177,7 @@ def is_duplicate(item: dict, existing: list[dict]) -> bool:
     return False
 
 
-def make_news(item: dict, source_cfg: dict, category_id: str, label: str, points: int, reasons: list[str]) -> dict:
+def make_news(item: dict, source_cfg: dict, matches: list[tuple[str, str, int]], points: int, reasons: list[str]) -> dict:
     published = item["published"]
     captured = dt.datetime.now(dt.timezone.utc)
     source = item["source"] or source_cfg["nome"]
@@ -171,12 +186,19 @@ def make_news(item: dict, source_cfg: dict, category_id: str, label: str, points
         summary = f"A fonte {source} publicou esta atualização. O conteúdo integral e os dados que a sustentam devem ser confirmados na ligação original antes da aprovação."
     body = f"<p>{html.escape(summary)}</p><p><strong>Fonte original:</strong> <a href=\"{html.escape(item['url'], quote=True)}\" rel=\"noopener noreferrer\">{html.escape(source)}</a>.</p>"
     retention = 365 if points >= 85 else 180 if points >= 75 else 60
+    _, category_id, label = matches[0]
+    categories = [category for _, category, _ in matches[:4]]
+    scope, countries = geographic_scope(item["title"] + " " + item["summary"], source_cfg)
     return {
         "id": slug(item["title"], published, item["url"]),
         "categoria": label,
         "categoria_id": category_id,
+        "categorias": categories,
+        "ambito": scope,
+        "paises": countries,
+        "prioridade": points,
         "relevancia": points,
-        "estado": "publicada",
+        "estado": "proposta",
         "data": f"{published.day:02d} {MONTHS[published.month - 1]} {published.year}",
         "publicado_em": published.isoformat().replace("+00:00", "Z"),
         "capturado_em": captured.isoformat().replace("+00:00", "Z"),
@@ -187,7 +209,7 @@ def make_news(item: dict, source_cfg: dict, category_id: str, label: str, points
         "tipo_fonte": source_cfg.get("tipo", "desconhecida"),
         "logo": "",
         "url": canonical_url(item["url"]),
-        "tags": [category_id],
+        "tags": categories,
         "relevancia_detalhe": {"pontuacao": points, "razoes": reasons, "revisao_humana": True},
         "pt": {"titulo": item["title"], "resumo_biocultura": summary, "corpo": body},
     }
@@ -200,6 +222,8 @@ def main() -> int:
     args = parser.parse_args()
     config = json.loads(args.config.read_text(encoding="utf-8"))
     news = json.loads(NEWS_PATH.read_text(encoding="utf-8"))
+    pending = json.loads(PROPOSALS_PATH.read_text(encoding="utf-8")) if PROPOSALS_PATH.exists() else []
+    rejected = json.loads(REJECTED_PATH.read_text(encoding="utf-8")) if REJECTED_PATH.exists() else []
     now = dt.datetime.now(dt.timezone.utc)
     proposals = []
     failures = []
@@ -213,15 +237,16 @@ def main() -> int:
             continue
         for item in items:
             age = (now - item["published"]).days
-            if age < -1 or age > 45 or is_duplicate(item, news + proposals):
+            if age < -1 or age > 45 or is_duplicate(item, news + pending + rejected + proposals):
                 continue
-            category_id, label, hits = classify(item["title"] + " " + item["summary"])
-            if hits == 0:
+            matches = classify(item["title"] + " " + item["summary"])
+            if not matches:
                 continue
+            hits = matches[0][0]
             points, reasons = score(item, int(source.get("autoridade", 15)), hits, now)
             if points < int(config["pontuacao_minima"]):
                 continue
-            proposals.append(make_news(item, source, category_id, label, points, reasons))
+            proposals.append(make_news(item, source, matches, points, reasons))
     proposals.sort(key=lambda n: (n["relevancia"], n["publicado_em"]), reverse=True)
     proposals = proposals[: int(config["limite_por_execucao"])]
     if failures:
@@ -233,7 +258,7 @@ def main() -> int:
     for item in proposals:
         print(f"- [{item['relevancia']}] {item['pt']['titulo']}")
     if not args.dry_run:
-        NEWS_PATH.write_text(json.dumps(proposals + news, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        PROPOSALS_PATH.write_text(json.dumps(proposals + pending, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     return 0
 
 

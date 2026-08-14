@@ -80,14 +80,17 @@
             }
 
             function showNews(items) {
-                const rows = [...items].sort((a, b) => (+b.relevancia || 0) - (+a.relevancia || 0))
-                    .slice(0, 6);
+                const rows = window.BioCultureNews?.select(items, { limit: 6 }) || [...items]
+                    .sort((a, b) => (+b.prioridade || +b.relevancia || 0) - (+a.prioridade || +a.relevancia || 0)).slice(0, 6);
 
                 el("news").innerHTML = rows.map((n) => {
                     const c = window.BioCultureI18n?.content(n) || n.pt || n;
+                    const scope = n.ambito === "portugal"
+                        ? (isEnglish ? "Portugal · territorial case" : "Portugal · caso territorial")
+                        : n.ambito === "regional" ? "Regional" : (isEnglish ? "World" : "Mundo");
                     return `<a href="/observatorio/noticia-detalhe.html?id=${
                         encodeURIComponent(n.id)
-                    }"><small>${esc(window.BioCultureI18n?.date(n.data) || n.data)}</small><h3>${esc(c.titulo)}</h3><span>${
+                    }"><small>${esc(scope)} · ${esc(window.BioCultureI18n?.date(n.data) || n.data)}</small><h3>${esc(c.titulo)}</h3><span>${
                         esc(n.fonte)
                     } →</span></a>`;
                 }).join("") || `<p class="empty">${isEnglish ? "No news available at this time." : "Sem notícias disponíveis neste momento."}</p>`;

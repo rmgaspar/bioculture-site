@@ -1,4 +1,4 @@
-name: Propor notícias para aprovação
+name: Sugerir notícias para decisão editorial
 
 on:
   schedule:
@@ -8,62 +8,51 @@ on:
 
 permissions:
   contents: write
-  pull-requests: write
+  issues: write
 
 concurrency:
-  group: propor-noticias
+  group: noticias-editorial
   cancel-in-progress: false
 
 jobs:
   propor:
     runs-on: ubuntu-latest
     steps:
-      - name: Obter o site
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
-      - name: Recuperar propostas ainda não aprovadas
-        shell: bash
+      - name: Procurar sugestões relevantes
+        run: python3 scripts/noticias/atualizar.py
+      - name: Validar dados editoriais
         run: |
-          git config user.name "bioCultura Notícias"
-          git config user.email "actions@users.noreply.github.com"
-          git fetch origin automatizacao/noticias:refs/remotes/origin/automatizacao/noticias || true
-          if git show-ref --verify --quiet refs/remotes/origin/automatizacao/noticias; then
-            git checkout -B automatizacao/noticias origin/automatizacao/noticias
-            git rebase origin/main
-          else
-            git checkout -b automatizacao/noticias
-          fi
-
-      - name: Procurar notícias relevantes
-        run: |
-          python3 scripts/noticias/arquivar.py
-          python3 scripts/noticias/atualizar.py
-
-      - name: Validar o JSON
-        run: |
+          python3 -m json.tool data/noticias_propostas.json >/dev/null
           python3 -m json.tool data/noticias.json >/dev/null
-          python3 -m json.tool data/noticias_arquivo.json >/dev/null
-
-      - name: Criar ou atualizar a proposta
-        env:
-          GH_TOKEN: ${{ github.token }}
-        shell: bash
+      - name: Guardar propostas sem as publicar
         run: |
-          if git diff --quiet -- data/noticias.json data/noticias_arquivo.json; then
-            echo "Não existem notícias novas."
+          if git diff --quiet -- data/noticias_propostas.json; then
+            echo "Não existem sugestões novas."
             exit 0
           fi
           git config user.name "bioCultura Notícias"
           git config user.email "actions@users.noreply.github.com"
-          git add data/noticias.json data/noticias_arquivo.json
-          git commit -m "Propor notícias ambientais para revisão"
-          git push --force-with-lease origin HEAD:automatizacao/noticias
-          if [ "$(gh pr list --state open --head automatizacao/noticias --json number --jq length)" = "0" ]; then
-            gh pr create \
-              --base main \
-              --head automatizacao/noticias \
-              --title "Notícias ambientais para aprovação" \
-              --body "Propostas recolhidas de fontes autorizadas. Confirme títulos, resumo, ligação original, pontuação e imagem. A publicação só acontece quando este pedido for aprovado e integrado."
-          fi
+          git add data/noticias_propostas.json
+          git commit -m "Adicionar sugestões de notícias para revisão"
+          git pull --rebase origin main
+          git push origin HEAD:main
+      - name: Criar uma notificação simples por notícia
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          gh label create "noticia:pendente" --color "D4A373" --force
+          gh label create "noticia:aprovada" --color "2E6B4C" --force
+          gh label create "noticia:recusada" --color "8B3A3A" --force
+          jq -c '.[]' data/noticias_propostas.json | while read -r ITEM; do
+            ID="$(jq -r '.id' <<<"$ITEM")"
+            URL="$(jq -r '.url' <<<"$ITEM")"
+            TITLE="$(jq -r '.pt.titulo' <<<"$ITEM")"
+            if [ "$(gh issue list --state all --search "$ID in:body" --json number --jq length)" = "0" ]; then
+              printf '%s\n\n<!-- news-id: %s -->' "$URL" "$ID" > "$RUNNER_TEMP/news-body.md"
+              gh issue create --title "$TITLE" --body-file "$RUNNER_TEMP/news-body.md" --label "noticia:pendente"
+            fi
+          done

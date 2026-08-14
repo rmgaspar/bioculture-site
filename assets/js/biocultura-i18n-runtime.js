@@ -5,7 +5,7 @@
        antigas que ainda não declaram explicitamente esta folha de estilos. */
     const heroSystem = document.querySelector('link[href*="biocultura-hero-system.css"]') || document.createElement("link");
     heroSystem.rel = "stylesheet";
-    heroSystem.href = "/assets/css/biocultura-hero-system.css?v=6";
+    heroSystem.href = "/assets/css/biocultura-hero-system.css?v=7";
     heroSystem.dataset.bioculturaHeroSystem = "true";
     if (!heroSystem.parentNode) document.head.appendChild(heroSystem);
 
@@ -150,9 +150,13 @@
         };
         const translated = raw.replace(/\b(jan|fev|mar|abr|mai|jun|jul|ago|set|out|nov|dez)\b/gi,
             (month) => portugueseMonths[month.toLowerCase()] || month);
+        const textual = translated.match(/^(\d{1,2})\s+([A-Za-z]{3})\s+(\d{4})$/);
+        const monthIndex = textual ? ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"].indexOf(textual[2]) : -1;
         const date = /^\d{4}-\d{2}-\d{2}$/.test(translated)
             ? new Date(`${translated}T12:00:00Z`)
-            : new Date(translated);
+            : textual && monthIndex >= 0
+                ? new Date(Date.UTC(Number(textual[3]), monthIndex, Number(textual[1]), 12))
+                : new Date(translated);
         if (Number.isNaN(date.getTime())) return raw;
         return new Intl.DateTimeFormat(lang === "en" ? "en-GB" : "pt-PT", {
             day: "numeric", month: "short", year: "numeric", timeZone: "UTC",
@@ -171,7 +175,50 @@
             return lang === "en" ? en : pt;
         },
     });
-    if (!supported.has(lang)) return;
+
+    window.BioCultureNews = {
+        categories(item) {
+            return [...new Set([...(item?.categorias || []), ...(item?.tags || []), item?.categoria_id].filter(Boolean))];
+        },
+        scope(item) {
+            return item?.ambito || (item?.paises?.includes?.("PT") ? "portugal" : "global");
+        },
+        visibleIn(item, context = "global") {
+            const scope = this.scope(item);
+            if (context === "portugal") return scope === "portugal";
+            return scope !== "portugal" || item?.relevancia_global === true;
+        },
+        select(items, { categories = [], context = "global", limit = 6 } = {}) {
+            const wanted = new Set(categories);
+            return [...(items || [])]
+                .filter((item) => item?.estado !== "proposta" && this.visibleIn(item, context))
+                .filter((item) => !wanted.size || this.categories(item).some((category) => wanted.has(category)))
+                .sort((a, b) => (+b.prioridade || +b.relevancia || 0) - (+a.prioridade || +a.relevancia || 0))
+                .slice(0, limit);
+        },
+    };
+
+    function filterNewsForPage(data, url) {
+        if (!url.includes("/data/noticias.json") || !Array.isArray(data) || location.pathname.includes("noticia-detalhe")) return data;
+        const globalPages = /\/(water|air|soil|biodiversity|energy|renewables-and-territory|ai-data-centres|mining|livestock|regeneration-calendar|living-vineyard|vetores-pressao-global)\.html$/;
+        const portugalPages = /\/(agua|ar|solo|biodiversidade|energia|transicao-etica|digital|mineracao|pecuaria|calendario|enologia|observatorio-terra)\.html$/;
+        if (globalPages.test(location.pathname)) return data.filter((item) => window.BioCultureNews.visibleIn(item, "global"));
+        if (portugalPages.test(location.pathname)) return data.filter((item) => window.BioCultureNews.visibleIn(item, "portugal"));
+        return data;
+    }
+
+    if (!supported.has(lang)) {
+        const portugueseFetch = window.fetch.bind(window);
+        window.fetch = async function (...args) {
+            const response = await portugueseFetch(...args);
+            const url = String(args[0] instanceof Request ? args[0].url : args[0]);
+            if (!url.includes("/data/noticias.json")) return response;
+            const readJson = response.json.bind(response);
+            Object.defineProperty(response, "json", { configurable: true, value: async () => filterNewsForPage(await readJson(), url) });
+            return response;
+        };
+        return;
+    }
 
     let dictionary = null;
     let structuredDictionary = null;
@@ -248,7 +295,10 @@
         const readJson = response.json.bind(response);
         Object.defineProperty(response, "json", {
             configurable: true,
-            value: async () => translateData(await readJson()),
+            value: async () => {
+                const data = translateData(await readJson());
+                return filterNewsForPage(data, url);
+            },
         });
         return response;
     };

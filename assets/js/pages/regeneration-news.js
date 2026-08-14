@@ -13,9 +13,10 @@
     const selected = items.filter(item => {
       const content = window.BioCultureI18n?.content(item) || item.pt || item;
       return /agricult|agroecolog|biológic|organic|solo|soil|semente|seed|hort|cultiv|crop|rega|irrig|compost|poliniz|pest|praga/i.test(
-        [item.categoria, item.categoria_id, content.titulo, content.resumo].filter(Boolean).join(' ')
+        [item.categoria, item.categoria_id, ...(item.categorias || []), content.titulo, content.resumo].filter(Boolean).join(' ')
       );
-    }).slice(0, 6);
+    }).filter(item => window.BioCultureNews?.visibleIn(item, 'global') ?? true)
+      .sort((a,b) => (+b.prioridade || +b.relevancia || 0) - (+a.prioridade || +a.relevancia || 0)).slice(0, 6);
     container.innerHTML = selected.map(item => {
       const content = window.BioCultureI18n?.content(item) || item.pt || item;
       const date = window.BioCultureI18n?.date(item.data) || item.data || '';

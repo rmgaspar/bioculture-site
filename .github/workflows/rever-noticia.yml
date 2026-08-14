@@ -1,0 +1,46 @@
+name: Aprovar ou recusar notícia
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  rever:
+    if: >-
+      github.event.issue.pull_request == null &&
+      contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association) &&
+      (github.event.comment.body == '/aprovar' || github.event.comment.body == '/recusar')
+    runs-on: ubuntu-latest
+    concurrency: noticias-editorial
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Ler a proposta
+        id: proposal
+        env:
+          ISSUE_BODY: ${{ github.event.issue.body }}
+        run: |
+          NEWS_ID="$(printf '%s' "$ISSUE_BODY" | sed -n 's/.*news-id: \([^ ]*\).*/\1/p')"
+          test -n "$NEWS_ID"
+          echo "id=$NEWS_ID" >> "$GITHUB_OUTPUT"
+      - name: Aplicar decisão editorial
+        run: python3 scripts/noticias/rever.py "${{ github.event.comment.body == '/aprovar' && 'aprovar' || 'recusar' }}" "${{ steps.proposal.outputs.id }}"
+      - name: Guardar decisão
+        run: |
+          git config user.name "bioCultura Notícias"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/noticias.json data/noticias_propostas.json data/noticias_rejeitadas.json
+          git commit -m "${{ github.event.comment.body == '/aprovar' && 'Aprovar notícia' || 'Recusar notícia' }}"
+          git pull --rebase origin main
+          git push origin HEAD:main
+      - name: Fechar proposta
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh issue edit "${{ github.event.issue.number }}" --add-label "${{ github.event.comment.body == '/aprovar' && 'noticia:aprovada' || 'noticia:recusada' }}" --remove-label "noticia:pendente"
+          gh issue close "${{ github.event.issue.number }}"
