@@ -1,0 +1,135 @@
+(function () {
+    "use strict";
+
+    const routes = {
+        "/calendario/regeneration-calendar.html": {
+            source: "/calendario/calendario.html",
+            stylesheet: "/assets/css/pages/calendario-calendario.css?v=1",
+            script: "/assets/js/pages/calendario-calendario-2.js?v=1",
+            label: "Portugal em detalhe",
+            title: "Calendário territorial de Portugal",
+            intro: "Região, mês, culturas, plano semanal, pragas e flora invasora passam a fazer parte do calendário global.",
+            calendar: true
+        },
+        "/recursos/water.html": {
+            source: "/recursos/agua.html",
+            stylesheet: "/assets/css/pages/recursos-agua.css?v=2",
+            script: "/assets/js/pages/recursos-agua-2.js?v=1",
+            label: "Portugal em detalhe",
+            title: "A água no território português",
+            intro: "Indicadores, bacias, qualidade, retenção e práticas ligadas à região guardada."
+        },
+        "/recursos/air.html": {
+            source: "/recursos/ar.html",
+            stylesheet: "/assets/css/pages/recursos-ar.css?v=2",
+            script: "/assets/js/pages/recursos-ar-2.js?v=1",
+            label: "Portugal em detalhe",
+            title: "O ar no território português",
+            intro: "Fontes, exposição, saúde e leitura regional ligadas ao contexto guardado."
+        },
+        "/recursos/soil.html": {
+            source: "/recursos/solo.html",
+            stylesheet: "/assets/css/pages/recursos-solo.css?v=2",
+            script: "/assets/js/pages/recursos-solo-2.js?v=1",
+            label: "Portugal em detalhe",
+            title: "O solo no território português",
+            intro: "Perfil territorial, indicadores, observação e práticas adaptadas ao lugar."
+        },
+        "/ecossistemas/biodiversity.html": {
+            source: "/ecossistemas/biodiversidade.html",
+            stylesheet: "/assets/css/pages/ecossistemas-biodiversidade.css?v=2",
+            script: "/assets/js/pages/ecossistemas-biodiversidade-2.js?v=1",
+            label: "Portugal em detalhe",
+            title: "A biodiversidade no território português",
+            intro: "Espécies, habitats, relações ecológicas e inventários aproximados à região guardada."
+        }
+    };
+
+    const config = routes[location.pathname];
+    if (!config) return;
+
+    function addStylesheet() {
+        if (document.querySelector(`link[href^="${config.stylesheet.split("?")[0]}"]`)) return;
+        const link = document.createElement("link");
+        link.rel = "stylesheet";
+        link.href = config.stylesheet;
+        const heroSystem = document.querySelector('link[href*="biocultura-hero-system.css"]');
+        document.head.insertBefore(link, heroSystem || null);
+    }
+
+    function addJourneyNavigation(main) {
+        const hero = main.querySelector(".bio-banner-hero");
+        if (!hero || main.querySelector(".scope-switch")) return;
+        const nav = document.createElement("nav");
+        nav.className = "scope-switch";
+        nav.setAttribute("aria-label", "Escala da página");
+        nav.innerHTML = '<a href="#global-reading">Leitura global</a><a href="#portugal">Portugal em detalhe</a>';
+        const firstGlobalSection = hero.nextElementSibling;
+        if (firstGlobalSection) firstGlobalSection.id ||= "global-reading";
+        hero.insertAdjacentElement("afterend", nav);
+    }
+
+    function createLayer(main) {
+        const section = document.createElement("section");
+        section.id = "portugal";
+        section.className = "section-block portugal-layer";
+        section.innerHTML = `
+            <div class="section-head portugal-layer-head">
+                <span class="eyebrow">${config.label}</span>
+                <div><h2>${config.title}</h2><p>${config.intro}</p></div>
+            </div>
+            <div class="portugal-layer-content" aria-live="polite"><p class="portugal-layer-loading">A aproximar a leitura a Portugal…</p></div>`;
+        const footer = main.querySelector(".footer");
+        const method = main.querySelector(":scope > .method-box, :scope > .methodology");
+        main.insertBefore(section, method || footer || null);
+        return section.querySelector(".portugal-layer-content");
+    }
+
+    function importLegacyContent(html, mount) {
+        const parsed = new DOMParser().parseFromString(html, "text/html");
+        const sourceSection = parsed.querySelector("#main .inner > section");
+        if (!sourceSection) throw new Error("Camada territorial sem conteúdo");
+        const nodes = [...sourceSection.children].filter((node) => !node.matches("footer"));
+        nodes.forEach((node, index) => {
+            if (!config.calendar && index === 0 && node.matches(".hero")) return;
+            const clone = document.importNode(node, true);
+            if (config.calendar && index === 0 && clone.matches(".hero")) {
+                clone.classList.add("territorial-calendar-tool");
+            }
+            mount.appendChild(clone);
+        });
+        mount.querySelector(".portugal-layer-loading")?.remove();
+    }
+
+    function loadLegacyScript() {
+        return new Promise((resolve, reject) => {
+            const script = document.createElement("script");
+            script.src = config.script;
+            script.onload = resolve;
+            script.onerror = reject;
+            document.body.appendChild(script);
+        });
+    }
+
+    async function init() {
+        const main = document.querySelector("#main .inner > main") || document.querySelector("#main .inner");
+        if (!main || document.getElementById("portugal")) return;
+        document.body.classList.add("has-portugal-layer");
+        addStylesheet();
+        addJourneyNavigation(main);
+        const mount = createLayer(main);
+        try {
+            const response = await fetch(config.source);
+            if (!response.ok) throw new Error(config.source);
+            importLegacyContent(await response.text(), mount);
+            await loadLegacyScript();
+            document.dispatchEvent(new CustomEvent("bioculture:territorial-layer-ready"));
+        } catch (error) {
+            console.error(error);
+            mount.innerHTML = "<p>Não foi possível carregar a leitura territorial de Portugal.</p>";
+        }
+    }
+
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init, { once: true });
+    else init();
+})();

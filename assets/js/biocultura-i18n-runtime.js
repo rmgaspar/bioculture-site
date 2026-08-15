@@ -1,11 +1,23 @@
 (function () {
     "use strict";
 
+    const consolidatedLegacyRoutes = {
+        "/calendario/calendario.html": "/calendario/regeneration-calendar.html#portugal",
+        "/recursos/agua.html": "/recursos/water.html#portugal",
+        "/recursos/ar.html": "/recursos/air.html#portugal",
+        "/recursos/solo.html": "/recursos/soil.html#portugal",
+        "/ecossistemas/biodiversidade.html": "/ecossistemas/biodiversity.html#portugal"
+    };
+    if (consolidatedLegacyRoutes[location.pathname]) {
+        location.replace(consolidatedLegacyRoutes[location.pathname]);
+        return;
+    }
+
     /* Mantém todas as páginas no mesmo sistema editorial, incluindo páginas
        antigas que ainda não declaram explicitamente esta folha de estilos. */
     const heroSystem = document.querySelector('link[href*="biocultura-hero-system.css"]') || document.createElement("link");
     heroSystem.rel = "stylesheet";
-    heroSystem.href = "/assets/css/biocultura-hero-system.css?v=7";
+    heroSystem.href = "/assets/css/biocultura-hero-system.css?v=12";
     heroSystem.dataset.bioculturaHeroSystem = "true";
     if (!heroSystem.parentNode) document.head.appendChild(heroSystem);
 
@@ -20,6 +32,23 @@
     }
     if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", markEditorialHero, { once: true });
     else markEditorialHero();
+
+    const consolidatedRoutes = new Set([
+        "/calendario/regeneration-calendar.html",
+        "/recursos/water.html",
+        "/recursos/air.html",
+        "/recursos/soil.html",
+        "/ecossistemas/biodiversity.html"
+    ]);
+    if (consolidatedRoutes.has(location.pathname)) {
+        const consolidationStyle = document.createElement("link");
+        consolidationStyle.rel = "stylesheet";
+        consolidationStyle.href = "/assets/css/territorial-consolidation.css?v=1";
+        document.head.appendChild(consolidationStyle);
+        import("/assets/js/territorial-consolidation.js?v=1").catch((error) => {
+            console.error("Não foi possível carregar a leitura territorial.", error);
+        });
+    }
 
     const languageStore = window.BioCultureLanguageStore || (() => {
         const valid = new Set(["pt", "en"]);
