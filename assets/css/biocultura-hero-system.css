@@ -303,6 +303,106 @@ html body[data-hero-theme] #main .bio-banner-hero + :is(nav,.pressure-nav,.home-
     html body[data-hero-theme] #main .bio-banner-hero > :is(.water-hero-image,.regen-hero-image,.observatory-visual,.water-orbit,.air-orbit,.soil-orbit,.life-orbit,.grape-stage,.energy-orbit,.territory-orbit,.ore-orbit,.digital-orbit,.field-mark,.living-mark) { top:auto !important; right:50% !important; bottom:0; width:min(300px,82vw) !important; height:min(300px,82vw) !important; transform:translateX(50%) !important; }
 }
 
+/* bioCulture interface v4 — componentes transversais e conteúdo seguro. */
+html body[data-hero-theme] #main .bio-banner-hero { isolation:isolate; }
+html body[data-hero-theme] #main .bio-banner-hero > :is(.water-hero-copy,.regen-hero-copy,.header-left),
+html body[data-hero-theme] #main .hero.bio-banner-hero > div:first-child { z-index:1 !important; }
+html body[data-hero-theme] #main .bio-banner-hero > :is(
+    .hero-image,.water-hero-image,.regen-hero-image,.observatory-visual,.water-orbit,.air-orbit,
+    .soil-orbit,.life-orbit,.grape-stage,.energy-orbit,.territory-orbit,.ore-orbit,
+    .digital-orbit,.field-mark,.living-mark
+) {
+    z-index:5 !important;
+    filter:none !important;
+    opacity:1 !important;
+    background-blend-mode:normal !important;
+}
+html body[data-hero-theme] #main .bio-banner-hero > :is(
+    .hero-image,.water-hero-image,.regen-hero-image,.observatory-visual,.water-orbit,.air-orbit,
+    .soil-orbit,.life-orbit,.grape-stage,.energy-orbit,.territory-orbit,.ore-orbit,
+    .digital-orbit,.field-mark,.living-mark
+)::before,
+html body[data-hero-theme] #main .bio-banner-hero > :is(
+    .hero-image,.water-hero-image,.regen-hero-image,.observatory-visual,.water-orbit,.air-orbit,
+    .soil-orbit,.life-orbit,.grape-stage,.energy-orbit,.territory-orbit,.ore-orbit,
+    .digital-orbit,.field-mark,.living-mark
+)::after { content:none !important; display:none !important; }
+
+body[data-hero-theme="water"] .bio-banner-hero .water-hero-image { background-image:url('/recursos/water/water-global-page/images/water-global-hero.png') !important; }
+body[data-hero-theme="air"] .bio-banner-hero .water-hero-image { background-image:url('/images/ar-vivo.webp') !important; }
+body[data-hero-theme="soil"] .bio-banner-hero .water-hero-image { background-image:url('/images/solo-vivo.webp') !important; }
+body[data-hero-theme="biodiversity"] .bio-banner-hero .water-hero-image { background-image:url('/images/biodiversidade-teia-viva.webp') !important; }
+body[data-hero-theme="calendar"] .bio-banner-hero .regen-hero-image { background-image:url('/images/calendario_regeneracao.jpg') !important; }
+body[data-hero-theme="wine"] .bio-banner-hero .water-hero-image { background-image:url('/images/enologia-terroir-abstrato.webp') !important; }
+body[data-hero-theme="energy"] .bio-banner-hero .water-hero-image { background-image:url('/images/energia-consciente.webp') !important; }
+body[data-hero-theme="renewables"] .bio-banner-hero .water-hero-image { background-image:url('/images/renovaveis-territorio.webp') !important; }
+body[data-hero-theme="mining"] .bio-banner-hero .water-hero-image { background-image:url('/images/mineracao-territorio.webp') !important; }
+body[data-hero-theme="digital"] .bio-banner-hero .water-hero-image { background-image:url('/images/digital-impacto-fisico.webp') !important; }
+body[data-hero-theme="livestock"] .bio-banner-hero .water-hero-image { background-image:url('/images/pecuaria-escala.webp') !important; }
+body[data-hero-theme="pressure"] .bio-banner-hero .observatory-visual { background-image:url('/images/pressoes-globais.webp') !important; }
+body[data-hero-theme="portugal"] .bio-banner-hero .observatory-visual { background-image:url('/images/observatorio-portugal.webp') !important; }
+body[data-hero-theme="manifesto"] .bio-banner-hero .hero-image { background-image:url('/images/manifesto-pertencer.webp') !important; }
+
+html body #main .bio-hero-followup {
+    display:flex; align-items:center; gap:.75rem 1.5rem; flex-wrap:wrap;
+    margin:-.25rem 0 1.8rem; padding:.75rem clamp(.25rem,1vw,.75rem); color:#6f7973;
+}
+html body #main .bio-hero-followup :is(.hero-proof,.hero-guide,.location-guide,.hero-reading-bridge,.vineyard-reading-bridge) {
+    position:static !important; display:flex; width:auto !important; max-width:none !important;
+    margin:0 !important; padding:0 !important; gap:.65rem 1.25rem; flex-wrap:wrap;
+    border:0 !important; background:transparent !important; color:inherit !important;
+}
+html body #main .bio-hero-followup :is(p,span,strong,small) {
+    margin:0 !important; color:inherit !important; font-size:.72rem !important; line-height:1.5 !important;
+}
+
+/* Controlos editoriais: o mesmo botão-pílula em todas as páginas novas. */
+html body #main :is(
+    .project-filters,.commodity-filters,.system-filters,.dimension-filters,.climate-filters,
+    .catalogue-filters,.atlas-mode,.hemi-controls,.month-ribbon,.quick-filters,.filter-nav
+) button,
+html body #main :is(.quiet-button,.catalogue-more,.load-more,.btn-clean,.btn-pagination,.button-link),
+html body #main .actions :is(.action,.button) {
+    width:auto !important; height:auto !important; min-height:0 !important;
+    padding:.78em 1.35em !important; border:1px solid #dfe6e1 !important;
+    border-radius:999px !important; background:#fff !important; box-shadow:none !important;
+    color:#758178 !important; font-family:Georgia,"Times New Roman",serif !important;
+    font-size:.68rem !important; font-weight:700 !important; line-height:1.2 !important;
+    letter-spacing:.035em !important; text-decoration:none !important;
+    text-transform:none !important; white-space:normal;
+}
+html body #main :is(
+    .project-filters,.commodity-filters,.system-filters,.dimension-filters,.climate-filters,
+    .catalogue-filters,.atlas-mode,.hemi-controls,.month-ribbon,.quick-filters,.filter-nav
+) button:is(.active,[aria-selected="true"],[aria-pressed="true"]),
+html body #main .actions :is(.action,.button).primary {
+    border-color:#2f6147 !important; background:#2f6147 !important; color:#fff !important;
+}
+html body #main :is(
+    .project-filters,.commodity-filters,.system-filters,.dimension-filters,.climate-filters,
+    .catalogue-filters,.atlas-mode,.hemi-controls,.month-ribbon,.quick-filters,.filter-nav
+) button:hover,
+html body #main :is(.quiet-button,.catalogue-more,.load-more,.btn-clean,.btn-pagination,.button-link):hover,
+html body #main .actions :is(.action,.button):hover {
+    border-color:#9eb2a5 !important; color:#385b47 !important;
+}
+
+/* Cartões e blocos: a altura acompanha o conteúdo e o texto mantém respiro. */
+html body #main :is(.report-grid,.news-list) { align-items:stretch; }
+html body #main :is(.report-card,.news-item) { min-height:0 !important; height:auto !important; }
+html body #main .report-card { padding:clamp(1.35rem,2vw,1.8rem) !important; }
+html body #main .method-box {
+    box-sizing:border-box; padding:clamp(2rem,4vw,3.4rem) !important; overflow:hidden;
+}
+html body #main .method-box > * { min-width:0; }
+html body #main .method-box :is(h2,p,a,b) { overflow-wrap:anywhere; }
+html body #main .method-grid article { min-width:0; padding-inline:.15rem; }
+
+@media (max-width:760px) {
+    html body #main .bio-hero-followup { margin-top:.5rem; }
+    html body #main .method-box { padding:1.5rem !important; }
+}
+
 /* Banner bioCulture v3 — geometria aprovada na página inicial. */
 html,
 body {

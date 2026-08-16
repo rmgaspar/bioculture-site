@@ -66,7 +66,18 @@
         nav.innerHTML = '<a href="#global-reading">Leitura global</a><a href="#portugal">Portugal em detalhe</a>';
         const firstGlobalSection = hero.nextElementSibling;
         if (firstGlobalSection) firstGlobalSection.id ||= "global-reading";
-        hero.insertAdjacentElement("afterend", nav);
+        const calendarJourney = location.pathname === "/calendario/regeneration-calendar.html"
+            ? main.querySelector(".journey-nav")
+            : null;
+        if (calendarJourney) {
+            const bar = document.createElement("div");
+            bar.className = "calendar-navigation-bar";
+            bar.setAttribute("aria-label", "Escala e percurso da página");
+            bar.append(nav, calendarJourney);
+            hero.insertAdjacentElement("afterend", bar);
+        } else {
+            hero.insertAdjacentElement("afterend", nav);
+        }
     }
 
     function createLayer(main) {

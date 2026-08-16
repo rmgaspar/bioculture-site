@@ -17,7 +17,7 @@
        antigas que ainda não declaram explicitamente esta folha de estilos. */
     const heroSystem = document.querySelector('link[href*="biocultura-hero-system.css"]') || document.createElement("link");
     heroSystem.rel = "stylesheet";
-    heroSystem.href = "/assets/css/biocultura-hero-system.css?v=12";
+    heroSystem.href = "/assets/css/biocultura-hero-system.css?v=13";
     heroSystem.dataset.bioculturaHeroSystem = "true";
     if (!heroSystem.parentNode) document.head.appendChild(heroSystem);
 
@@ -28,7 +28,18 @@
         const hero = document.querySelector("#main .water-hero, #main .regen-hero, #main .observatory-hero, #main .hero");
         if (!hero) return;
         const visual = hero.querySelector(":scope > .water-hero-image, :scope > .regen-hero-image, :scope > .observatory-visual, :scope > .water-orbit, :scope > .air-orbit, :scope > .soil-orbit, :scope > .life-orbit, :scope > .grape-stage, :scope > .energy-orbit, :scope > .territory-orbit, :scope > .ore-orbit, :scope > .digital-orbit, :scope > .field-mark, :scope > .living-mark");
-        if (visual) hero.classList.add("bio-banner-hero");
+        if (!visual) return;
+        hero.classList.add("bio-banner-hero");
+
+        /* O banner contém apenas identidade, título e subtítulo. Informação
+           complementar continua imediatamente depois, sem ser cortada. */
+        const extras = hero.querySelectorAll(":scope .hero-proof, :scope .hero-guide, :scope .location-guide, :scope .hero-reading-bridge, :scope .vineyard-reading-bridge");
+        if (extras.length) {
+            const followup = document.createElement("div");
+            followup.className = "bio-hero-followup";
+            extras.forEach((element) => followup.appendChild(element));
+            hero.insertAdjacentElement("afterend", followup);
+        }
     }
     if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", markEditorialHero, { once: true });
     else markEditorialHero();
@@ -45,7 +56,7 @@
         consolidationStyle.rel = "stylesheet";
         consolidationStyle.href = "/assets/css/territorial-consolidation.css?v=1";
         document.head.appendChild(consolidationStyle);
-        import("/assets/js/territorial-consolidation.js?v=1").catch((error) => {
+        import("/assets/js/territorial-consolidation.js?v=2").catch((error) => {
             console.error("Não foi possível carregar a leitura territorial.", error);
         });
     }
