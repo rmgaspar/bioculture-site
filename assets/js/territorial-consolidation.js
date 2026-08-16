@@ -42,6 +42,40 @@
             label: "Portugal em detalhe",
             title: "A biodiversidade no território português",
             intro: "Espécies, habitats, relações ecológicas e inventários aproximados à região guardada."
+        },
+        "/energia/energy.html": {
+            source: "/energia/energia.html", stylesheet: "/assets/css/pages/energia-energia.css?v=2", script: "/assets/js/pages/energia-energia-2.js?v=1",
+            label: "Portugal em detalhe", title: "A energia no território português",
+            intro: "Produção, consumo, redes e escolhas energéticas aproximadas ao contexto português."
+        },
+        "/energia/renewables-and-territory.html": {
+            source: "/energia/transicao-etica.html", stylesheet: "/assets/css/pages/energia-transicao-etica.css?v=2", script: "/assets/js/pages/energia-transicao-etica-2.js?v=1",
+            label: "Portugal em detalhe", title: "Renováveis e território em Portugal",
+            intro: "Transição energética, implantação territorial, comunidades e critérios de justiça aplicados a Portugal."
+        },
+        "/energia/ai-data-centres.html": {
+            source: "/energia/digital.html", stylesheet: "/assets/css/pages/energia-digital.css?v=2", script: "/assets/js/pages/energia-digital-2.js?v=1",
+            label: "Portugal em detalhe", title: "O impacto digital em Portugal",
+            intro: "Infraestruturas, energia, água, materiais e efeitos territoriais da transformação digital."
+        },
+        "/energia/mining.html": {
+            source: "/energia/mineracao.html", stylesheet: "/assets/css/pages/energia-mineracao.css?v=2", script: "/assets/js/pages/energia-mineracao-2.js?v=1",
+            label: "Portugal em detalhe", title: "Mineração e território português",
+            intro: "Recursos minerais, pressões ecológicas, comunidades e decisões de longo prazo em Portugal."
+        },
+        "/energia/livestock.html": {
+            source: "/energia/pecuaria.html", stylesheet: "/assets/css/pages/energia-pecuaria.css?v=2", script: "/assets/js/pages/energia-pecuaria-2.js?v=1",
+            label: "Portugal em detalhe", title: "Pecuária e território português",
+            intro: "Sistemas pecuários, alimentação, emissões, solo e bem-estar aproximados ao contexto nacional."
+        },
+        "/calendario/living-vineyard.html": {
+            source: "/calendario/enologia.html", stylesheet: "/assets/css/pages/calendario-enologia.css?v=2", script: "/assets/js/pages/calendario-enologia-2.js?v=1",
+            label: "Portugal em detalhe", title: "A vinha viva em Portugal",
+            intro: "Castas, terroir, calendário, solo, água e práticas vitícolas ligadas às regiões portuguesas."
+        },
+        "/observatorio/vetores-pressao-global.html": {
+            source: "/observatorio/observatorio-terra.html",
+            direct: true
         }
     };
 
@@ -63,7 +97,8 @@
         const nav = document.createElement("nav");
         nav.className = "scope-switch";
         nav.setAttribute("aria-label", "Escala da página");
-        nav.innerHTML = '<a href="#global-reading">Leitura global</a><a href="#portugal">Portugal em detalhe</a>';
+        const portugalTarget = config.direct || config.calendar ? config.source : "#portugal";
+        nav.innerHTML = `<a href="#global-reading">Leitura global</a><a href="${portugalTarget}">Portugal em detalhe</a>`;
         const firstGlobalSection = hero.nextElementSibling;
         if (firstGlobalSection) firstGlobalSection.id ||= "global-reading";
         const calendarJourney = location.pathname === "/calendario/regeneration-calendar.html"
@@ -90,8 +125,8 @@
                 <div><h2>${config.title}</h2><p>${config.intro}</p></div>
             </div>
             <div class="portugal-layer-content" aria-live="polite"><p class="portugal-layer-loading">A aproximar a leitura a Portugal…</p></div>`;
-        const footer = main.querySelector(".footer");
-        const method = main.querySelector(":scope > .method-box, :scope > .methodology");
+        const footer = main.querySelector(":scope > .footer");
+        const method = main.querySelector(":scope > :is(.method-box,.methodology)");
         main.insertBefore(section, method || footer || null);
         return section.querySelector(".portugal-layer-content");
     }
@@ -125,9 +160,10 @@
     async function init() {
         const main = document.querySelector("#main .inner > main") || document.querySelector("#main .inner");
         if (!main || document.getElementById("portugal")) return;
+        addJourneyNavigation(main);
+        if (config.direct || config.calendar) return;
         document.body.classList.add("has-portugal-layer");
         addStylesheet();
-        addJourneyNavigation(main);
         const mount = createLayer(main);
         try {
             const response = await fetch(config.source);

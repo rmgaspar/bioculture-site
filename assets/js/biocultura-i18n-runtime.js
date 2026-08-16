@@ -2,11 +2,17 @@
     "use strict";
 
     const consolidatedLegacyRoutes = {
-        "/calendario/calendario.html": "/calendario/regeneration-calendar.html#portugal",
         "/recursos/agua.html": "/recursos/water.html#portugal",
         "/recursos/ar.html": "/recursos/air.html#portugal",
         "/recursos/solo.html": "/recursos/soil.html#portugal",
         "/ecossistemas/biodiversidade.html": "/ecossistemas/biodiversity.html#portugal"
+        ,"/energia/energia.html": "/energia/energy.html#portugal"
+        ,"/energia/transicao-etica.html": "/energia/renewables-and-territory.html#portugal"
+        ,"/energia/digital.html": "/energia/ai-data-centres.html#portugal"
+        ,"/energia/mineracao.html": "/energia/mining.html#portugal"
+        ,"/energia/pecuaria.html": "/energia/livestock.html#portugal"
+        ,"/calendario/enologia.html": "/calendario/living-vineyard.html#portugal"
+        ,"/observatorio/vetores-pressao.html": "/observatorio/observatorio-terra.html"
     };
     if (consolidatedLegacyRoutes[location.pathname]) {
         location.replace(consolidatedLegacyRoutes[location.pathname]);
@@ -17,7 +23,7 @@
        antigas que ainda não declaram explicitamente esta folha de estilos. */
     const heroSystem = document.querySelector('link[href*="biocultura-hero-system.css"]') || document.createElement("link");
     heroSystem.rel = "stylesheet";
-    heroSystem.href = "/assets/css/biocultura-hero-system.css?v=13";
+    heroSystem.href = "/assets/css/biocultura-hero-system.css?v=15";
     heroSystem.dataset.bioculturaHeroSystem = "true";
     if (!heroSystem.parentNode) document.head.appendChild(heroSystem);
 
@@ -50,13 +56,20 @@
         "/recursos/air.html",
         "/recursos/soil.html",
         "/ecossistemas/biodiversity.html"
+        ,"/energia/energy.html"
+        ,"/energia/renewables-and-territory.html"
+        ,"/energia/ai-data-centres.html"
+        ,"/energia/mining.html"
+        ,"/energia/livestock.html"
+        ,"/calendario/living-vineyard.html"
+        ,"/observatorio/vetores-pressao-global.html"
     ]);
     if (consolidatedRoutes.has(location.pathname)) {
         const consolidationStyle = document.createElement("link");
         consolidationStyle.rel = "stylesheet";
-        consolidationStyle.href = "/assets/css/territorial-consolidation.css?v=1";
+        consolidationStyle.href = "/assets/css/territorial-consolidation.css?v=6";
         document.head.appendChild(consolidationStyle);
-        import("/assets/js/territorial-consolidation.js?v=2").catch((error) => {
+        import("/assets/js/territorial-consolidation.js?v=6").catch((error) => {
             console.error("Não foi possível carregar a leitura territorial.", error);
         });
     }

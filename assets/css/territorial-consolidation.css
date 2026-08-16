@@ -3,24 +3,52 @@
     top:0;
     z-index:24;
     display:flex;
-    gap:1.6rem;
-    margin:0 0 1.5rem;
+    align-items:center;
+    gap:.55rem;
+    margin:-.15rem 0 2rem;
     padding:.72rem 0;
-    overflow:auto;
+    overflow-x:auto;
     border:0;
     background:rgba(255,255,255,.94);
     backdrop-filter:blur(12px);
+    scrollbar-width:none;
 }
+.scope-switch::-webkit-scrollbar { display:none; }
 .scope-switch a {
+    display:inline-flex;
     flex:none;
-    color:#78827b;
-    font-size:.68rem;
-    font-weight:900;
-    letter-spacing:.12em;
+    align-items:center;
+    min-height:0;
+    padding:.72em 1.15em;
+    border:1px solid #dfe6e1;
+    border-radius:999px;
+    background:#fff;
+    color:#758178;
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:.64rem;
+    font-weight:700;
+    line-height:1.2;
+    letter-spacing:.025em;
     text-decoration:none;
-    text-transform:uppercase;
+    text-transform:none;
+    white-space:nowrap;
 }
-.scope-switch a:last-child { color:var(--hero-accent,#526b57); }
+.scope-switch a:last-child { border-color:#2f6147; background:#2f6147; color:#fff; }
+.scope-switch a:hover { border-color:#9eb2a5; color:#385b47; }
+html body.has-portugal-layer #global-reading { scroll-margin-top:2.25rem; }
+html body.has-portugal-layer #portugal { scroll-margin-top:.35rem; }
+html body.has-portugal-layer[data-hero-theme] #main > .inner > main > .bio-banner-hero > :is(.water-hero-copy,.regen-hero-copy,.header-left),
+html body.has-portugal-layer[data-hero-theme] #main > .inner > main > .hero.bio-banner-hero > div:first-child {
+    padding:2.6rem clamp(4.8rem,7.6vw,7.4rem) !important;
+    justify-content:center !important;
+    border-radius:28px 0 0 28px !important;
+}
+html body.has-portugal-layer[data-hero-theme="biodiversity"] #main > .inner > main > .bio-banner-hero > :is(.water-hero-copy,.header-left) {
+    left:0 !important;
+    width:calc(100% + 20px) !important;
+}
+body.has-portugal-layer #main .bio-banner-hero > :is(.water-hero-copy,.regen-hero-copy,.header-left) :is(h1,p),
+body.has-portugal-layer #main .hero.bio-banner-hero > div:first-child :is(h1,p) { max-width:650px !important; }
 .portugal-layer {
     margin-top:4rem;
     padding-top:4rem !important;
@@ -31,7 +59,23 @@
 .territorial-calendar-tool > div:first-child > :is(.category-label,h1,.hero-intro) { display:none !important; }
 .territorial-calendar-tool > div:first-child { padding-top:1rem; }
 .portugal-layer .footer { display:none; }
+body[data-hero-theme="mining"] .portugal-layer .dimensions { display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:1rem!important; }
+body[data-hero-theme="mining"] .portugal-layer .dimension { padding:1.4rem!important;border:1px solid #e8dfd8!important;border-radius:16px!important;background:#fff!important; }
+body[data-hero-theme="mining"] .portugal-layer .dimension:nth-child(2n) { background:#f5f0eb!important; }
+body[data-hero-theme="mining"] .portugal-layer .dimension :is(small,h3) { display:block;margin:0 0 .45rem;color:#9a684c; }
+body[data-hero-theme="mining"] .portugal-layer .dimension p { margin:0;color:#756e69;line-height:1.58; }
 @media (max-width:760px) {
-    .scope-switch { gap:1rem; }
+    .scope-switch { gap:.5rem; margin-top:.35rem; }
+    html body.has-portugal-layer[data-hero-theme] #main > .inner > main > .bio-banner-hero { min-height:610px !important; height:610px !important; }
+    html body.has-portugal-layer[data-hero-theme] #main > .inner > main > .bio-banner-hero > :is(.water-hero-copy,.regen-hero-copy,.header-left),
+    html body.has-portugal-layer[data-hero-theme] #main > .inner > main > .hero.bio-banner-hero > div:first-child {
+        left:0 !important;
+        width:100% !important;
+        min-height:390px !important;
+        height:390px !important;
+        padding:2.5rem 1.7rem 3rem !important;
+        border-radius:22px !important;
+    }
     .portugal-layer { margin-top:2.5rem; padding-top:2.5rem !important; }
+    body[data-hero-theme="mining"] .portugal-layer .dimensions { grid-template-columns:1fr!important; }
 }
