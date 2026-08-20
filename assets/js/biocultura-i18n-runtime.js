@@ -83,9 +83,9 @@
     if (consolidatedRoutes.has(location.pathname)) {
         const consolidationStyle = document.createElement("link");
         consolidationStyle.rel = "stylesheet";
-        consolidationStyle.href = "/assets/css/territorial-consolidation.css?v=6";
+        consolidationStyle.href = "/assets/css/territorial-consolidation.css?v=7";
         document.head.appendChild(consolidationStyle);
-        import("/assets/js/territorial-consolidation.js?v=6").catch((error) => {
+        import("/assets/js/territorial-consolidation.js?v=7").catch((error) => {
             console.error("Não foi possível carregar a leitura territorial.", error);
         });
     }

@@ -97,7 +97,7 @@
         const nav = document.createElement("nav");
         nav.className = "scope-switch";
         nav.setAttribute("aria-label", "Escala da página");
-        const portugalTarget = config.direct || config.calendar ? config.source : "#portugal";
+        const portugalTarget = config.direct ? config.source : "#portugal";
         nav.innerHTML = `<a href="#global-reading">Leitura global</a><a href="${portugalTarget}">Portugal em detalhe</a>`;
         const firstGlobalSection = hero.nextElementSibling;
         if (firstGlobalSection) firstGlobalSection.id ||= "global-reading";
@@ -161,7 +161,7 @@
         const main = document.querySelector("#main .inner > main") || document.querySelector("#main .inner");
         if (!main || document.getElementById("portugal")) return;
         addJourneyNavigation(main);
-        if (config.direct || config.calendar) return;
+        if (config.direct) return;
         document.body.classList.add("has-portugal-layer");
         addStylesheet();
         const mount = createLayer(main);
