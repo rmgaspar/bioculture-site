@@ -399,6 +399,30 @@ html body #main .actions :is(.action,.button):hover {
     border-color:#9eb2a5 !important; color:#385b47 !important;
 }
 
+/* Estados interativos legíveis: fundo escuro implica sempre texto branco. */
+html body #main :is(
+    .project-filters,.commodity-filters,.system-filters,.dimension-filters,.climate-filters,
+    .catalogue-filters,.atlas-mode,.hemi-controls,.month-ribbon,.quick-filters,.filter-nav,
+    .manual-nav
+) button:is(:hover,.active,[aria-selected="true"],[aria-pressed="true"]),
+html body #main :is(.scope-switch,.calendar-navigation-bar,.home-nav,.pressure-nav) a:hover {
+    border-color:#2f6147 !important;
+    background:#2f6147 !important;
+    color:#fff !important;
+    -webkit-text-fill-color:#fff !important;
+}
+
+/* A navegação interna permanece visível sem ficar colada ao topo do ecrã. */
+html body #main :is(.scope-switch,.calendar-navigation-bar,.home-nav,.pressure-nav) {
+    top:1.75rem !important;
+}
+
+@media (max-width:760px) {
+    html body #main :is(.scope-switch,.calendar-navigation-bar,.home-nav,.pressure-nav) {
+        top:.65rem !important;
+    }
+}
+
 /* Cartões e blocos: a altura acompanha o conteúdo e o texto mantém respiro. */
 html body #main :is(.report-grid,.news-list) { align-items:stretch; }
 html body #main :is(.report-card,.news-item) { min-height:0 !important; height:auto !important; }
