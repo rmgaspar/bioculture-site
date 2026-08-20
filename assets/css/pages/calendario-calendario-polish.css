@@ -1,32 +1,50 @@
 /* Final presentation layer for the complete Portugal and islands calendar. */
 
 html body[data-hero-theme="calendar"] #main .hero.calendar-local-hero {
+    position: relative !important;
     display: grid !important;
-    grid-template-columns: minmax(0, 1.15fr) minmax(23rem, 0.85fr) !important;
+    grid-template-columns: minmax(0, 1fr) minmax(28rem, 0.56fr) !important;
     align-items: center !important;
-    gap: clamp(2rem, 4vw, 4.5rem) !important;
+    gap: clamp(2rem, 4vw, 4rem) !important;
     width: 100% !important;
     max-width: none !important;
     height: auto !important;
-    min-height: 0 !important;
-    margin: 0 0 2rem !important;
-    padding: clamp(2.25rem, 4vw, 4rem) !important;
-    overflow: hidden !important;
-    border-radius: 2rem !important;
-    background: #174732 !important;
-    box-shadow: 0 1.5rem 4rem rgba(20, 61, 43, 0.1) !important;
+    min-height: clamp(33rem, 43vw, 43rem) !important;
+    margin: 0 0 1.5rem !important;
+    padding: clamp(2rem, 4vw, 4rem) clamp(1.5rem, 4vw, 4rem) !important;
+    overflow: visible !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
 }
 
-html body[data-hero-theme="calendar"] #main .hero.calendar-local-hero > div:first-child {
-    position: static !important;
-    inset: auto !important;
-    display: block !important;
-    width: auto !important;
-    max-width: none !important;
+html body[data-hero-theme="calendar"] #main .hero.calendar-local-hero::before {
+    content: "";
+    position: absolute;
+    z-index: 0;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: clamp(21rem, 27vw, 27rem);
+    border-radius: 2rem 0 0 2rem;
+    background: #174732;
+    transform: translateY(-50%);
+    box-shadow: 0 1.5rem 4rem rgba(20, 61, 43, 0.1);
+}
+
+html body[data-hero-theme="calendar"] #main .hero.calendar-local-hero .calendar-banner-copy {
+    position: relative !important;
+    z-index: 1;
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100% !important;
+    max-width: 58rem !important;
     height: auto !important;
     min-height: 0 !important;
-    margin: 0 !important;
-    padding: 0 !important;
+    margin: 0 auto !important;
+    padding: 1.5rem 0 !important;
     overflow: visible !important;
     border-radius: 0 !important;
     background: transparent !important;
@@ -34,83 +52,70 @@ html body[data-hero-theme="calendar"] #main .hero.calendar-local-hero > div:firs
     transform: none !important;
 }
 
-html body[data-hero-theme="calendar"] #main .hero.calendar-local-hero > div:first-child::before,
-html body[data-hero-theme="calendar"] #main .hero.calendar-local-hero > div:first-child::after {
-    display: none !important;
-}
-
+html body[data-hero-theme="calendar"] #main .calendar-local-hero .calendar-banner-copy::before,
+html body[data-hero-theme="calendar"] #main .calendar-local-hero .calendar-banner-copy::after,
 html body[data-hero-theme="calendar"] #main .calendar-local-hero .category-label {
-    position: static !important;
-    display: block !important;
-    margin: 0 0 1rem !important;
-    color: #a9bcb0 !important;
+    display: none !important;
 }
 
 html body[data-hero-theme="calendar"] #main .calendar-local-hero h1 {
     position: static !important;
     width: auto !important;
-    max-width: 12ch !important;
-    margin: 0 0 1.35rem !important;
+    max-width: none !important;
+    margin: 0 0 1rem !important;
     color: #fff !important;
-    font-size: clamp(3rem, 5.2vw, 5.75rem) !important;
-    line-height: 0.94 !important;
-    letter-spacing: -0.055em !important;
-    text-align: left !important;
+    font-size: clamp(3rem, 4.5vw, 5.4rem) !important;
+    line-height: 0.98 !important;
+    letter-spacing: -0.045em !important;
+    text-align: center !important;
 }
 
 html body[data-hero-theme="calendar"] #main .calendar-local-hero h1 em {
-    display: block !important;
+    display: inline !important;
     color: #a9c3a8 !important;
 }
 
 html body[data-hero-theme="calendar"] #main .calendar-local-hero .hero-intro {
     position: static !important;
     width: auto !important;
-    max-width: 48rem !important;
-    margin: 0 0 1.1rem !important;
+    max-width: 50rem !important;
+    margin: 0 auto !important;
     color: #e3ebe5 !important;
-    font-size: clamp(1rem, 1.2vw, 1.15rem) !important;
-    line-height: 1.65 !important;
-    text-align: left !important;
-}
-
-html body[data-hero-theme="calendar"] #main .calendar-local-hero .location-line {
-    color: #b9c9be !important;
-}
-
-html body[data-hero-theme="calendar"] #main .calendar-local-hero .location-line strong {
-    color: #fff !important;
-}
-
-html body[data-hero-theme="calendar"] #main .calendar-local-hero .profile-chip,
-html body[data-hero-theme="calendar"] #main .calendar-local-hero .location-guide {
-    border: 1px solid rgba(255, 255, 255, 0.16) !important;
-    background: rgba(255, 255, 255, 0.08) !important;
-}
-
-html body[data-hero-theme="calendar"] #main .calendar-local-hero .profile-chip span,
-html body[data-hero-theme="calendar"] #main .calendar-local-hero .profile-chip strong,
-html body[data-hero-theme="calendar"] #main .calendar-local-hero .location-guide h3,
-html body[data-hero-theme="calendar"] #main .calendar-local-hero .location-guide p {
-    color: #e1eae3 !important;
-}
-
-html body[data-hero-theme="calendar"] #main .calendar-local-hero .location-guide button {
-    color: #fff !important;
+    font-size: clamp(0.98rem, 1.15vw, 1.14rem) !important;
+    line-height: 1.6 !important;
+    text-align: center !important;
 }
 
 html body[data-hero-theme="calendar"] #main .calendar-local-hero .calendar-panel {
-    position: static !important;
+    position: relative !important;
+    z-index: 2;
     inset: auto !important;
     width: 100% !important;
-    max-width: none !important;
+    max-width: 39rem !important;
     height: auto !important;
     min-height: 0 !important;
-    margin: 0 !important;
+    margin: 0 0 0 auto !important;
+    padding: clamp(2rem, 3vw, 3rem) !important;
     transform: none !important;
-    border: 1px solid rgba(255, 255, 255, 0.56) !important;
+    border: 1px solid #e5ebe5 !important;
     background: #f8faf6 !important;
     box-shadow: 0 1.5rem 4rem rgba(4, 28, 17, 0.24) !important;
+}
+
+html body #main .calendar-local-context {
+    margin: 0 0 2.5rem;
+    padding: clamp(1.5rem, 2.5vw, 2.5rem);
+    border: 1px solid #e2e9e2;
+    border-radius: 1.5rem;
+    background: #fff;
+}
+
+html body #main .calendar-local-context .local-profile {
+    max-width: none;
+}
+
+html body #main .calendar-local-context .location-guide {
+    margin-top: 1rem;
 }
 
 html body #main .section-nav {
@@ -165,21 +170,43 @@ html body #main .principles .moon-note p {
 @media screen and (max-width: 1100px) {
     html body[data-hero-theme="calendar"] #main .hero.calendar-local-hero {
         grid-template-columns: 1fr !important;
+        gap: 1.5rem !important;
+        min-height: 0 !important;
+        padding-top: 2.5rem !important;
+    }
+
+    html body[data-hero-theme="calendar"] #main .hero.calendar-local-hero::before {
+        top: 0;
+        height: 25rem;
+        transform: none;
+    }
+
+    html body[data-hero-theme="calendar"] #main .calendar-local-hero .calendar-banner-copy {
+        min-height: 19rem !important;
     }
 
     html body[data-hero-theme="calendar"] #main .calendar-local-hero .calendar-panel {
         max-width: 42rem !important;
+        margin: 0 auto !important;
     }
 }
 
 @media screen and (max-width: 736px) {
     html body[data-hero-theme="calendar"] #main .hero.calendar-local-hero {
         padding: 1.75rem !important;
-        border-radius: 1.5rem !important;
+    }
+
+    html body[data-hero-theme="calendar"] #main .hero.calendar-local-hero::before {
+        height: 28rem;
+        border-radius: 1.5rem 0 0 1.5rem;
     }
 
     html body[data-hero-theme="calendar"] #main .calendar-local-hero h1 {
         font-size: clamp(2.7rem, 15vw, 4.3rem) !important;
+    }
+
+    html body[data-hero-theme="calendar"] #main .calendar-local-hero h1 em {
+        display: block !important;
     }
 
     html body #main .principles .moon-note {
