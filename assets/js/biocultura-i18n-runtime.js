@@ -23,9 +23,25 @@
        antigas que ainda não declaram explicitamente esta folha de estilos. */
     const heroSystem = document.querySelector('link[href*="biocultura-hero-system.css"]') || document.createElement("link");
     heroSystem.rel = "stylesheet";
-    heroSystem.href = "/assets/css/biocultura-hero-system.css?v=15";
+    heroSystem.href = "/assets/css/biocultura-hero-system.css?v=16";
     heroSystem.dataset.bioculturaHeroSystem = "true";
     if (!heroSystem.parentNode) document.head.appendChild(heroSystem);
+
+    /* Algumas páginas antigas ainda incluem a folha depois deste runtime.
+       No fim da leitura do HTML, uniformiza a versão e elimina duplicados
+       para impedir que uma cópia antiga em cache volte a ganhar prioridade. */
+    function normalizeHeroStylesheet() {
+        const links = Array.from(document.querySelectorAll('link[href*="biocultura-hero-system.css"]'));
+        const canonical = links[0] || heroSystem;
+        canonical.href = "/assets/css/biocultura-hero-system.css?v=16";
+        canonical.dataset.bioculturaHeroSystem = "true";
+        links.slice(1).forEach((link) => link.remove());
+    }
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", normalizeHeroStylesheet, { once: true });
+    } else {
+        normalizeHeroStylesheet();
+    }
 
     /* Identifica apenas aberturas editoriais com imagem própria. Painéis
        funcionais, como o calendário mensal, mantêm a sua composição. */
