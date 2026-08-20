@@ -131,15 +131,21 @@
                 margin: 0 0 4em;
             }
             .stat {
+                --stat-color: #71182f;
+                --stat-soft: #fbf2f5;
                 padding: 1.25em 1.4em;
-                border: 1px solid #eee;
+                border: 1px solid var(--stat-color);
                 border-radius: 12px;
-                background: #fff;
+                background: linear-gradient(145deg, #fff 30%, var(--stat-soft));
+                box-shadow: inset 0 4px 0 var(--stat-color);
             }
+            .stat-native { --stat-color: #627b48; --stat-soft: #f0f5eb; }
+            .stat-region { --stat-color: #b56543; --stat-soft: #fbf0eb; }
+            .stat-country { --stat-color: #c59b2c; --stat-soft: #fbf6e5; }
             .stat strong {
                 display: block;
                 font-size: 1.45em;
-                color: var(--wine);
+                color: var(--stat-color);
             }
             .stat span {
                 font-size: 0.68em;
@@ -240,14 +246,24 @@
                 text-align: left;
             }
             .vine-vignette {
+                --vignette-ring: #71182f;
+                --vignette-soft: #f5e8ed;
                 width: 78px;
                 height: 78px;
                 border-radius: 50%;
                 display: grid;
                 place-items: center;
-                background: linear-gradient(145deg, #f2eee5, #e7eddf);
+                padding: 5px;
+                box-sizing: border-box;
+                background: linear-gradient(145deg, #fff, var(--vignette-soft));
+                border: 3px solid var(--vignette-ring);
+                box-shadow: 0 5px 14px rgba(48, 35, 27, 0.1);
                 overflow: hidden;
             }
+            .vine-vignette.palette-native { --vignette-ring: #627b48; --vignette-soft: #e6efdd; }
+            .vine-vignette.palette-region { --vignette-ring: #b56543; --vignette-soft: #f7e5dd; }
+            .vine-vignette.palette-country { --vignette-ring: #c59b2c; --vignette-soft: #f8efcf; }
+            .vine-vignette img { border-radius: 50%; }
             .vine-vignette svg { width: 68px; height: 68px; }
             .vine-vignette .leaf { fill: #71866d; }
             .vine-vignette .leaf-soft { fill: #96a58a; }
@@ -255,8 +271,6 @@
             .vine-vignette .root { stroke: #9a8265; }
             .vine-vignette .accent { fill: #71182f; }
             .vine-vignette.branco .accent { fill: #d7b936; }
-            .vine-vignette.precoce { background: linear-gradient(145deg, #f5f0dc, #e7eedf); }
-            .vine-vignette.tardia { background: linear-gradient(145deg, #eee8e4, #e3e9df); }
             .casta-content { min-width: 0; }
             .casta-card:hover, .casta-card:focus {
                 transform: translateY(-3px);
@@ -640,4 +654,3 @@
                 .casta-card { grid-template-columns: 70px minmax(0, 1fr); min-height: 0; }
                 .vine-vignette { width: 70px; height: 70px; }
             }
-

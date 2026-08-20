@@ -89,7 +89,15 @@
 
            function vineVignette(c) {
                 const isBranco = c.cor === "Branco";
-                const cls = `${isBranco ? "branco" : "tinto"} ${
+                const origin = String(c.origem || "").toLowerCase();
+                const palette = c.autoctone
+                    ? "palette-native"
+                    : origin.includes("portugal")
+                    ? "palette-region"
+                    : origin
+                    ? "palette-country"
+                    : "palette-documented";
+                const cls = `${isBranco ? "branco" : "tinto"} ${palette} ${
                     String(c.maturacao || "").toLowerCase().includes("precoce") ? "precoce" : "tardia"
                 }`;
 
@@ -122,11 +130,11 @@
                 const countries = new Set(castasDB.flatMap((c) => c.paises || []));
                 const native = castasDB.filter((c) => c.autoctone).length;
                 document.getElementById("stat-strip").innerHTML = [
-                    [castasDB.length, "castas documentadas"],
-                    [native, "castas autóctones"],
-                    [regions.size, "regiões vitícolas"],
-                    [countries.size, "países representados"],
-                ].map(([v, l]) => `<div class="stat"><strong>${v}</strong><span>${l}</span></div>`)
+                    [castasDB.length, "castas documentadas", "documented"],
+                    [native, "castas autóctones", "native"],
+                    [regions.size, "regiões vitícolas", "region"],
+                    [countries.size, "países representados", "country"],
+                ].map(([v, l, tone]) => `<div class="stat stat-${tone}"><strong>${v}</strong><span>${l}</span></div>`)
                     .join("");
             }
 
@@ -433,4 +441,3 @@
                 document.getElementById("sidebar").innerHTML = html;
                 init();
             }).catch(() => init());
-        

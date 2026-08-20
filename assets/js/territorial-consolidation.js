@@ -70,6 +70,7 @@
         },
         "/calendario/living-vineyard.html": {
             source: "/calendario/enologia.html", stylesheet: "/assets/css/pages/calendario-enologia.css?v=2", script: "/assets/js/pages/calendario-enologia-2.js?v=1",
+            portugalTarget: "/calendario/enologia.html",
             label: "Portugal em detalhe", title: "A vinha viva em Portugal",
             intro: "Castas, terroir, calendário, solo, água e práticas vitícolas ligadas às regiões portuguesas."
         },
@@ -97,7 +98,7 @@
         const nav = document.createElement("nav");
         nav.className = "scope-switch";
         nav.setAttribute("aria-label", "Escala da página");
-        const portugalTarget = config.direct ? config.source : "#portugal";
+        const portugalTarget = config.portugalTarget || (config.direct ? config.source : "#portugal");
         nav.innerHTML = `<a href="#global-reading">Leitura global</a><a href="${portugalTarget}">Portugal em detalhe</a>`;
         const firstGlobalSection = hero.nextElementSibling;
         if (firstGlobalSection) firstGlobalSection.id ||= "global-reading";
