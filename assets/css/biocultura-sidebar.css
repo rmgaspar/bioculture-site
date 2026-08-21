@@ -214,62 +214,64 @@
 /* Ocultar label redundante */
 #sidebar .bio-nav-label { display: none; }
 
-/* --- Navegação Global: Estilo Observatório (Eyebrow) --- */
+/* --- Navegação Global: Estilo Observatório (Source Sans Pro 900, 4px) --- */
 #sidebar .bio-nav-hubs > a,
 #sidebar .bio-nav-about > a {
     display: flex;
     align-items: center;
     min-height: 2.35rem;
-    padding: .55rem 0 !important;
+    padding: .55rem 0 !important; /* Alinhado totalmente à esquerda */
     border: 0 !important;
-    
-    /* Estilo herdado do .eyebrow do index.css */
-    color: #98a19b !important; 
+    background: transparent !important;
+    text-decoration: none !important;
+    transition: all .18s ease;
+
+    /* Estilo idêntico ao "OBSERVATÓRIO BIOCULTURA" */
+    color: #98a19b !important;
     font-family: "Source Sans Pro", sans-serif !important;
     font-size: 0.65rem;
     font-weight: 900;
     text-transform: uppercase;
     letter-spacing: 4px;
-    
-    line-height: 1.25;
-    text-decoration: none !important;
-    transition: all .18s ease;
-    background: transparent !important;
 }
 
-/* Configuração dos ícones com a mesma cor aplicada */
+/* Configuração base dos ícones (Mesma cor aplicada) */
 #sidebar .bio-nav-hubs > a::before,
 #sidebar .bio-nav-about > a::before {
     font-family: "Font Awesome 5 Free";
     font-weight: 900;
-    font-size: 1.05rem;
+    font-size: 1rem;
     width: 28px;
-    margin-right: 0.5rem;
+    margin-right: 0.6rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #98a19b; /* Mesma cor do texto */
+    color: #98a19b; /* Cor técnica do observatório */
     transition: all .2s ease;
     flex: 0 0 auto;
 }
 
-/* Estados Hover e Active */
+/* --- Recuperação dos Ícones (Obrigatório para aparecerem) --- */
+#sidebar .bio-nav-hubs > a:nth-child(1)::before { content: "\f14e"; } /* Compass */
+#sidebar .bio-nav-hubs > a:nth-child(2)::before { content: "\f06c"; } /* Leaf */
+#sidebar .bio-nav-hubs > a:nth-child(3)::before { content: "\f201"; } /* Chart-line */
+#sidebar .bio-nav-hubs > a:nth-child(4)::before { content: "\f185"; } /* Sun */
+#sidebar .bio-nav-hubs > a:nth-child(5)::before { content: "\f0eb"; } /* Lightbulb */
+
+#sidebar .bio-nav-about > a:nth-of-type(1)::before { content: "\f303"; } /* Pen-nib */
+#sidebar .bio-nav-about > a:nth-of-type(2)::before { content: "\f1d8"; } /* Paper-plane */
+
+/* Estados Hover e Active (Mudança para o verde profundo do bioCultura) */
 #sidebar .bio-nav-hubs > a:hover,
-#sidebar .bio-nav-about > a:hover {
+#sidebar .bio-nav-about > a:hover,
+#sidebar .bio-nav-hubs > a.active,
+#sidebar .bio-nav-about > a.active {
     color: var(--shell-deep) !important;
     transform: translateX(3px);
 }
 
 #sidebar .bio-nav-hubs > a:hover::before,
-#sidebar .bio-nav-about > a:hover::before {
-    color: var(--shell-deep) !important;
-}
-
-#sidebar .bio-nav-hubs > a.active,
-#sidebar .bio-nav-about > a.active {
-    color: var(--shell-deep) !important;
-}
-
+#sidebar .bio-nav-about > a:hover::before,
 #sidebar .bio-nav-hubs > a.active::before,
 #sidebar .bio-nav-about > a.active::before {
     color: var(--shell-deep);
