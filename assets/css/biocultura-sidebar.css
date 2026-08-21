@@ -184,84 +184,77 @@
 #sidebar .bio-nav-standalone.active { color:#fff; background:#67603c; }
 
 /* Navegação por hubs: lista direta, sem acordeões nem metadados comprimidos. */
+/* Navegação por hubs: lista com ícones minimalistas */
 #sidebar .bio-nav-hubs {
-    display:grid;
-    gap:.35rem;
-    padding:.25rem 0 .8rem;
-    border-bottom:1px solid var(--shell-line);
+    display: grid;
+    gap: .35rem;
+    padding: .25rem 0 .8rem;
+    border-bottom: 1px solid var(--shell-line);
 }
+
 #sidebar .bio-nav-hubs > a {
-    display:flex;
-    align-items:center;
-    min-height:2.35rem;
-    padding:.55rem .75rem;
-    border:1px solid transparent !important;
-    border-radius:11px !important;
-    color:#66736b;
-    font-size:.78rem;
-    font-weight:750;
-    line-height:1.25;
-    text-decoration:none !important;
-    box-shadow:none !important;
-    transition:background-color .18s,color .18s,transform .18s,border-color .18s;
+    display: flex;
+    align-items: center;
+    min-height: 2.35rem;
+    padding: .55rem .75rem;
+    border: 1px solid transparent !important;
+    border-radius: 11px !important;
+    color: #66736b;
+    font-size: .78rem;
+    font-weight: 750;
+    line-height: 1.25;
+    text-decoration: none !important;
+    box-shadow: none !important;
+    transition: all .18s ease;
+    background: transparent; /* Garante que o destaque antigo desaparece */
 }
+
+/* Configuração base dos ícones (substitui o ponto) */
 #sidebar .bio-nav-hubs > a::before {
-    content:"";
-    width:5px;
-    height:5px;
-    margin-right:.65rem;
-    flex:0 0 auto;
-    border-radius:50%;
-    background:#b6c1b8;
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    font-size: 0.85rem;
+    width: 24px;
+    margin-right: 0.6rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #b6c1b8;
+    transition: color .18s, transform .18s;
+    content: ""; /* Fallback */
+    flex: 0 0 auto;
+    border-radius: 0;
+    background: none;
 }
+
+/* Ícones específicos por ordem */
+#sidebar .bio-nav-hubs > a:nth-child(1)::before { content: "\f7a2"; } /* Ler o território (Globe) */
+#sidebar .bio-nav-hubs > a:nth-child(2)::before { content: "\f4d8"; } /* Vida e recursos (Seedling) */
+#sidebar .bio-nav-hubs > a:nth-child(3)::before { content: "\f0e4"; } /* Vetores de pressão (Tachometer) */
+#sidebar .bio-nav-hubs > a:nth-child(4)::before { content: "\f0e7"; } /* Energia consciente (Bolt) */
+#sidebar .bio-nav-hubs > a:nth-child(5)::before { content: "\f5da"; } /* Conhecimento para cuidar (Book) */
+
+/* Estados Hover e Active */
 #sidebar .bio-nav-hubs > a:hover {
-    color:#2e5740;
-    background:var(--shell-soft);
-    transform:translateX(2px);
+    color: #2e5740;
+    background: var(--shell-soft);
+    transform: translateX(3px);
 }
+
+#sidebar .bio-nav-hubs > a:hover::before {
+    color: #2e5740;
+    transform: scale(1.1);
+}
+
 #sidebar .bio-nav-hubs > a.active {
-    color:#fff;
-    background:var(--shell-deep);
+    color: #fff;
+    background: var(--shell-deep);
 }
-#sidebar .bio-nav-hubs > a.active::before { background:#d4e0d7; }
-#sidebar .bio-nav-hubs > a:nth-child(4) {
-    margin:.15rem 0;
-    border-color:#e7e2d3 !important;
-    background:#f8f6ef;
-    color:#6d684c;
+
+#sidebar .bio-nav-hubs > a.active::before {
+    color: #d4e0d7;
 }
-#sidebar .bio-nav-hubs > a:nth-child(4):hover,
-#sidebar .bio-nav-hubs > a:nth-child(4).active {
-    color:#fff;
-    background:#67603c;
-}
-#sidebar .bio-nav-about { padding:.85rem 0 .2rem; }
-#sidebar .bio-nav-label {
-    display:block;
-    padding:.35rem .35rem .45rem;
-    color:#8d9991;
-    font-size:.52rem;
-    font-weight:900;
-    letter-spacing:.15em;
-    text-transform:uppercase;
-}
-#sidebar .bio-nav-about > a {
-    display:block;
-    padding:.42rem .75rem;
-    border:0 !important;
-    border-radius:9px !important;
-    color:#66736b;
-    font-size:.76rem;
-    line-height:1.25;
-    text-decoration:none !important;
-    box-shadow:none !important;
-}
-#sidebar .bio-nav-about > a:hover { color:#2e5740; background:var(--shell-soft); }
-#sidebar .bio-nav-about > a.active { color:#fff; background:var(--shell-deep); }
-#sidebar .bio-nav-primary { padding-bottom:.35rem; border-bottom:1px solid var(--shell-line); }
-#sidebar .bio-nav-primary summary { color:#607569; }
-#sidebar .bio-nav-primary a:first-of-type.active { background:var(--shell-deep); color:#fff; }
-#sidebar .bio-nav-portugal summary::before { background:#b07a58; }
+
 #sidebar .bio-location {
     position:relative;
     padding-top:.8rem;
