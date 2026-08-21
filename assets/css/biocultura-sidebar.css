@@ -214,16 +214,15 @@
 /* Ocultar label redundante */
 #sidebar .bio-nav-label { display: none; }
 
-/* --- 1. Navegação Global: Alinhamento à Esquerda e Cores --- */
+/* --- 1. Navegação Global: Alinhamento e Estilo Editorial --- */
 #sidebar .bio-nav-hubs > a,
 #sidebar .bio-nav-about > a {
     display: flex;
     align-items: center;
     min-height: 2.35rem;
-    padding: .55rem 0 !important; /* Encosta totalmente à esquerda */
+    padding: .55rem 0 !important; /* Totalmente encostado à esquerda */
     border: 0 !important;
-    border-radius: 0 !important;
-    color: #66736b !important; /* Remove qualquer vermelho residual */
+    color: #66736b !important;
     font-family: "Source Sans Pro", sans-serif !important;
     font-size: 0.64rem;
     font-weight: 900;
@@ -235,14 +234,14 @@
     background: transparent !important;
 }
 
-/* Ajuste dos ícones para alinhamento perfeito */
+/* Configuração base dos ícones */
 #sidebar .bio-nav-hubs > a::before,
 #sidebar .bio-nav-about > a::before {
     font-family: "Font Awesome 5 Free";
     font-weight: 900;
     font-size: 1.05rem;
-    width: 24px; /* Reduzido de 28px para o texto não fugir muito da esquerda */
-    margin-right: 0.8rem;
+    width: 28px; /* Espaço fixo para o ícone */
+    margin-right: 0.5rem;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -251,17 +250,31 @@
     flex: 0 0 auto;
 }
 
-/* Estados Hover e Active (Sem vermelho, sem caixas de fundo para manter o alinhamento limpo) */
+/* --- 2. Definição dos Ícones (O que estava em falta) --- */
+#sidebar .bio-nav-hubs > a:nth-child(1)::before { content: "\f14e"; } /* Compass */
+#sidebar .bio-nav-hubs > a:nth-child(2)::before { content: "\f06c"; } /* Leaf */
+#sidebar .bio-nav-hubs > a:nth-child(3)::before { content: "\f201"; } /* Chart-line */
+#sidebar .bio-nav-hubs > a:nth-child(4)::before { content: "\f185"; } /* Sun */
+#sidebar .bio-nav-hubs > a:nth-child(5)::before { content: "\f0eb"; } /* Lightbulb */
+
+#sidebar .bio-nav-about > a:nth-of-type(1)::before { content: "\f303"; } /* Pen-nib */
+#sidebar .bio-nav-about > a:nth-of-type(2)::before { content: "\f1d8"; } /* Paper-plane */
+
+/* Estados Hover e Active */
 #sidebar .bio-nav-hubs > a:hover,
 #sidebar .bio-nav-about > a:hover {
     color: var(--shell-deep) !important;
     transform: translateX(3px);
 }
 
+#sidebar .bio-nav-hubs > a:hover::before,
+#sidebar .bio-nav-about > a:hover::before {
+    color: var(--shell-deep) !important;
+}
+
 #sidebar .bio-nav-hubs > a.active,
 #sidebar .bio-nav-about > a.active {
     color: var(--shell-deep) !important;
-    font-weight: 900;
 }
 
 #sidebar .bio-nav-hubs > a.active::before,
@@ -269,19 +282,18 @@
     color: var(--shell-deep);
 }
 
-/* --- 2. Reverter "O teu território" para o estilo original --- */
+/* --- 3. Restaurar "O teu território" --- */
 #sidebar .bio-location-label {
-    display: block;
+    display: block !important;
     margin: 0 0 .5rem !important;
     color: #9aa49e !important;
     font-family: "Source Sans Pro", sans-serif !important;
-    font-size: .52rem !important; /* Estilo original pequeno */
+    font-size: .52rem !important;
     font-weight: 900 !important;
     letter-spacing: .16em !important;
     text-transform: uppercase !important;
 }
 
-/* Garante que o container da localização também respeita o alinhamento */
 #sidebar .bio-location {
     padding: 1.2rem 0 0 !important;
     border-top: 1px solid var(--shell-line);
