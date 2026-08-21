@@ -183,16 +183,18 @@
 #sidebar .bio-nav-standalone:hover,
 #sidebar .bio-nav-standalone.active { color:#fff; background:#67603c; }
 
-/* Navegação por hubs: lista direta, sem acordeões nem metadados comprimidos. */
-/* Navegação por hubs: lista com ícones minimalistas */
-#sidebar .bio-nav-hubs {
+/* --- Navegação Global (Hubs e Sobre) --- */
+#sidebar .bio-nav-hubs, 
+#sidebar .bio-nav-about {
     display: grid;
     gap: .35rem;
     padding: .25rem 0 .8rem;
-    border-bottom: 1px solid var(--shell-line);
 }
 
-#sidebar .bio-nav-hubs > a {
+#sidebar .bio-nav-hubs { border-bottom: 1px solid var(--shell-line); }
+
+#sidebar .bio-nav-hubs > a,
+#sidebar .bio-nav-about > a {
     display: flex;
     align-items: center;
     min-height: 2.35rem;
@@ -201,59 +203,64 @@
     border-radius: 11px !important;
     color: #66736b;
     font-size: .78rem;
-    font-weight: 750;
+    font-weight: 700;
     line-height: 1.25;
     text-decoration: none !important;
-    box-shadow: none !important;
     transition: all .18s ease;
-    background: transparent; /* Garante que o destaque antigo desaparece */
+    background: transparent;
 }
 
-/* Configuração base dos ícones (substitui o ponto) */
-#sidebar .bio-nav-hubs > a::before {
+/* Configuração base dos ícones */
+#sidebar .bio-nav-hubs > a::before,
+#sidebar .bio-nav-about > a::before {
     font-family: "Font Awesome 5 Free";
     font-weight: 900;
     font-size: 0.85rem;
-    width: 24px;
-    margin-right: 0.6rem;
+    width: 28px; /* Ligeiramente maior para melhor alinhamento */
+    margin-right: 0.5rem;
     display: flex;
     align-items: center;
     justify-content: center;
     color: #b6c1b8;
     transition: color .18s, transform .18s;
-    content: ""; /* Fallback */
     flex: 0 0 auto;
-    border-radius: 0;
-    background: none;
 }
 
-/* Ícones específicos por ordem */
-#sidebar .bio-nav-hubs > a:nth-child(1)::before { content: "\f7a2"; } /* Ler o território (Globe) */
-#sidebar .bio-nav-hubs > a:nth-child(2)::before { content: "\f4d8"; } /* Vida e recursos (Seedling) */
-#sidebar .bio-nav-hubs > a:nth-child(3)::before { content: "\f0e4"; } /* Vetores de pressão (Tachometer) */
-#sidebar .bio-nav-hubs > a:nth-child(4)::before { content: "\f0e7"; } /* Energia consciente (Bolt) */
-#sidebar .bio-nav-hubs > a:nth-child(5)::before { content: "\f5da"; } /* Conhecimento para cuidar (Book) */
+/* Ícones: Hubs Principais */
+#sidebar .bio-nav-hubs > a:nth-child(1)::before { content: "\f7a2"; } /* Globe */
+#sidebar .bio-nav-hubs > a:nth-child(2)::before { content: "\f4d8"; } /* Seedling */
+#sidebar .bio-nav-hubs > a:nth-child(3)::before { content: "\f3fd"; } /* Tachometer-alt (Vetores) */
+#sidebar .bio-nav-hubs > a:nth-child(4)::before { content: "\f0e7"; } /* Bolt */
+#sidebar .bio-nav-hubs > a:nth-child(5)::before { content: "\f5da"; } /* Book */
+
+/* Ícones: Sobre o Projeto */
+#sidebar .bio-nav-about > a:nth-child(2)::before { content: "\f70e"; } /* Scroll (Manifesto) */
+#sidebar .bio-nav-about > a:nth-child(3)::before { content: "\f0e0"; } /* Envelope (Contactos) */
 
 /* Estados Hover e Active */
-#sidebar .bio-nav-hubs > a:hover {
+#sidebar .bio-nav-hubs > a:hover,
+#sidebar .bio-nav-about > a:hover {
     color: #2e5740;
     background: var(--shell-soft);
     transform: translateX(3px);
 }
 
-#sidebar .bio-nav-hubs > a:hover::before {
+#sidebar .bio-nav-hubs > a:hover::before,
+#sidebar .bio-nav-about > a:hover::before {
     color: #2e5740;
-    transform: scale(1.1);
 }
 
-#sidebar .bio-nav-hubs > a.active {
+#sidebar .bio-nav-hubs > a.active,
+#sidebar .bio-nav-about > a.active {
     color: #fff;
     background: var(--shell-deep);
 }
 
-#sidebar .bio-nav-hubs > a.active::before {
+#sidebar .bio-nav-hubs > a.active::before,
+#sidebar .bio-nav-about > a.active::before {
     color: #d4e0d7;
 }
+
 
 #sidebar .bio-location {
     position:relative;
