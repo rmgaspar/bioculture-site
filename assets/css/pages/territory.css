@@ -1,0 +1,59 @@
+/* turismo-territorio.css — bioCultura v4 */
+
+:root {
+    --bio-danger: #a34135;
+    --bio-warning: #a66d17;
+    --bio-ink: #213329;
+    --bio-muted: #68756d;
+    --bio-line: #e4e9e4;
+}
+
+/* Reutiliza a estrutura do ledger de ontem */
+.ledger {
+    display: grid;
+    grid-template-columns: 1fr 52px 1fr;
+    border: 1px solid var(--bio-line);
+    border-radius: 16px;
+    overflow: hidden;
+    margin: 2em 0;
+}
+
+.ledger-col { padding: 2em; }
+.ledger-gain { background: #f2f7ef; }
+.ledger-loss { background: #fdf5f2; }
+.ledger-divider {
+    display: flex; align-items: center; justify-content: center;
+    background: #fff; border-left: 1px solid var(--bio-line); border-right: 1px solid var(--bio-line);
+    writing-mode: vertical-rl; font-family: Georgia, serif; letter-spacing: 4px; color: #ccc;
+}
+
+.ledger-stat { margin-bottom: 1.5em; border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 1em; }
+.ledger-stat strong { display: block; font-size: 2em; font-family: Georgia, serif; line-height: 1; }
+.ledger-gain strong { color: #4a6741; }
+.ledger-loss strong { color: var(--bio-danger); }
+.ledger-stat span { display: block; font-size: 0.75em; font-weight: 800; text-transform: uppercase; margin: 0.4em 0; }
+.ledger-stat p { font-size: 0.85em; color: var(--bio-muted); margin: 0; line-height: 1.6; }
+
+/* Alert Cards */
+.alert-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5em; }
+.alert-card {
+    padding: 2em; border-radius: 18px; border-left: 6px solid; background: #fff;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+}
+.alert-card.danger { border-color: var(--bio-danger); background: #fdf5f4; }
+.alert-card.warning { border-color: var(--bio-warning); background: #fefaf2; }
+.alert-badge { font-size: 0.6em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; }
+
+/* Satire Pills */
+.satire-pills { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1em; }
+.satire-pill { padding: 1.8em; border-radius: 16px; background: #f7f1e6; }
+.pill-number { display: block; font-size: 2.2em; font-weight: 900; color: var(--bio-danger); font-family: Georgia, serif; }
+.pill-label { font-size: 0.8em; color: var(--bio-muted); line-height: 1.5; }
+
+/* Responsive */
+@media (max-width: 1100px) {
+    .ledger { grid-template-columns: 1fr; }
+    .ledger-divider { writing-mode: horizontal-tb; height: 40px; }
+    .satire-pills { grid-template-columns: 1fr 1fr; }
+    .alert-grid { grid-template-columns: 1fr; }
+}
