@@ -193,6 +193,9 @@
 
 #sidebar .bio-nav-hubs { border-bottom: 1px solid var(--shell-line); }
 
+/* Ocultar o label "Sobre o projeto" para maior minimalismo */
+#sidebar .bio-nav-label { display: none; }
+
 #sidebar .bio-nav-hubs > a,
 #sidebar .bio-nav-about > a {
     display: flex;
@@ -202,8 +205,11 @@
     border: 1px solid transparent !important;
     border-radius: 11px !important;
     color: #66736b;
-    font-size: .78rem;
-    font-weight: 700;
+    /* Tipografia bioCulture */
+    font-family: Georgia, "Times New Roman", serif !important;
+    font-size: 0.92rem;
+    font-weight: 400;
+    letter-spacing: -0.02em;
     line-height: 1.25;
     text-decoration: none !important;
     transition: all .18s ease;
@@ -216,7 +222,7 @@
     font-family: "Font Awesome 5 Free";
     font-weight: 900;
     font-size: 0.85rem;
-    width: 28px; /* Ligeiramente maior para melhor alinhamento */
+    width: 28px;
     margin-right: 0.5rem;
     display: flex;
     align-items: center;
@@ -227,15 +233,15 @@
 }
 
 /* Ícones: Hubs Principais */
-#sidebar .bio-nav-hubs > a:nth-child(1)::before { content: "\f7a2"; } /* Globe */
-#sidebar .bio-nav-hubs > a:nth-child(2)::before { content: "\f4d8"; } /* Seedling */
-#sidebar .bio-nav-hubs > a:nth-child(3)::before { content: "\f3fd"; } /* Tachometer-alt (Vetores) */
-#sidebar .bio-nav-hubs > a:nth-child(4)::before { content: "\f0e7"; } /* Bolt */
-#sidebar .bio-nav-hubs > a:nth-child(5)::before { content: "\f5da"; } /* Book */
+#sidebar .bio-nav-hubs > a:nth-child(1)::before { content: "\f7a2"; } 
+#sidebar .bio-nav-hubs > a:nth-child(2)::before { content: "\f4d8"; } 
+#sidebar .bio-nav-hubs > a:nth-child(3)::before { content: "\f3fd"; } 
+#sidebar .bio-nav-hubs > a:nth-child(4)::before { content: "\f0e7"; } 
+#sidebar .bio-nav-hubs > a:nth-child(5)::before { content: "\f5da"; } 
 
-/* Ícones: Sobre o Projeto */
-#sidebar .bio-nav-about > a:nth-child(2)::before { content: "\f70e"; } /* Scroll (Manifesto) */
-#sidebar .bio-nav-about > a:nth-child(3)::before { content: "\f0e0"; } /* Envelope (Contactos) */
+/* Ícones: Sobre o Projeto (Ajustado para ignorar o label oculto) */
+#sidebar .bio-nav-about > a:nth-of-type(1)::before { content: "\f70e"; } /* Manifesto */
+#sidebar .bio-nav-about > a:nth-of-type(2)::before { content: "\f0e0"; } /* Contactos */
 
 /* Estados Hover e Active */
 #sidebar .bio-nav-hubs > a:hover,
@@ -245,15 +251,11 @@
     transform: translateX(3px);
 }
 
-#sidebar .bio-nav-hubs > a:hover::before,
-#sidebar .bio-nav-about > a:hover::before {
-    color: #2e5740;
-}
-
 #sidebar .bio-nav-hubs > a.active,
 #sidebar .bio-nav-about > a.active {
     color: #fff;
     background: var(--shell-deep);
+    font-weight: 400; /* Mantém elegância da Georgia */
 }
 
 #sidebar .bio-nav-hubs > a.active::before,
