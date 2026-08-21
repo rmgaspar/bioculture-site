@@ -214,35 +214,35 @@
 /* Ocultar label redundante */
 #sidebar .bio-nav-label { display: none; }
 
-/* 1. O bloco que tens selecionado (Texto dos links) */
+/* --- 1. Navegação Global: Alinhamento à Esquerda e Cores --- */
 #sidebar .bio-nav-hubs > a,
 #sidebar .bio-nav-about > a {
     display: flex;
     align-items: center;
     min-height: 2.35rem;
-    padding: .55rem .75rem;
-    border: 1px solid transparent !important;
-    border-radius: 11px !important;
-    color: #66736b;
+    padding: .55rem 0 !important; /* Encosta totalmente à esquerda */
+    border: 0 !important;
+    border-radius: 0 !important;
+    color: #66736b !important; /* Remove qualquer vermelho residual */
     font-family: "Source Sans Pro", sans-serif !important;
-    font-size: 0.64rem; /* Ajuste: ligeiramente menor */
+    font-size: 0.64rem;
     font-weight: 900;
     text-transform: uppercase;
     letter-spacing: 2.5px;
     line-height: 1.25;
     text-decoration: none !important;
     transition: all .18s ease;
-    background: transparent;
+    background: transparent !important;
 }
 
-/* 2. O bloco logo abaixo (Ícones) */
+/* Ajuste dos ícones para alinhamento perfeito */
 #sidebar .bio-nav-hubs > a::before,
 #sidebar .bio-nav-about > a::before {
     font-family: "Font Awesome 5 Free";
     font-weight: 900;
-    font-size: 1.05rem; /* Ajuste: ligeiramente maior */
-    width: 28px;
-    margin-right: 0.6rem;
+    font-size: 1.05rem;
+    width: 24px; /* Reduzido de 28px para o texto não fugir muito da esquerda */
+    margin-right: 0.8rem;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -251,49 +251,42 @@
     flex: 0 0 auto;
 }
 
-/* Ícones Reais: Hubs Principais */
-#sidebar .bio-nav-hubs > a:nth-child(1)::before { content: "\f14e"; } /* Compass */
-#sidebar .bio-nav-hubs > a:nth-child(2)::before { content: "\f06c"; } /* Leaf */
-#sidebar .bio-nav-hubs > a:nth-child(3)::before { content: "\f201"; } /* Chart-line */
-#sidebar .bio-nav-hubs > a:nth-child(4)::before { content: "\f185"; } /* Sun */
-#sidebar .bio-nav-hubs > a:nth-child(5)::before { content: "\f0eb"; } /* Lightbulb */
-
-/* Ícones Reais: Sobre o Projeto */
-#sidebar .bio-nav-about > a:nth-of-type(1)::before { content: "\f303"; } /* Pen-nib */
-#sidebar .bio-nav-about > a:nth-of-type(2)::before { content: "\f1d8"; } /* Paper-plane */
-
-/* Estados Hover e Active dos Links - Removido o vermelho */
+/* Estados Hover e Active (Sem vermelho, sem caixas de fundo para manter o alinhamento limpo) */
 #sidebar .bio-nav-hubs > a:hover,
 #sidebar .bio-nav-about > a:hover {
     color: var(--shell-deep) !important;
-    background: var(--shell-soft);
     transform: translateX(3px);
 }
 
-#sidebar .bio-nav-hubs > a:hover::before,
-#sidebar .bio-nav-about > a:hover::before {
-    color: var(--shell-deep) !important;
-}
-
-
-
 #sidebar .bio-nav-hubs > a.active,
 #sidebar .bio-nav-about > a.active {
-    color: #fff;
-    background: var(--shell-deep);
+    color: var(--shell-deep) !important;
+    font-weight: 900;
 }
 
 #sidebar .bio-nav-hubs > a.active::before,
 #sidebar .bio-nav-about > a.active::before {
-    color: #d4e0d7;
+    color: var(--shell-deep);
 }
 
+/* --- 2. Reverter "O teu território" para o estilo original --- */
+#sidebar .bio-location-label {
+    display: block;
+    margin: 0 0 .5rem !important;
+    color: #9aa49e !important;
+    font-family: "Source Sans Pro", sans-serif !important;
+    font-size: .52rem !important; /* Estilo original pequeno */
+    font-weight: 900 !important;
+    letter-spacing: .16em !important;
+    text-transform: uppercase !important;
+}
 
+/* Garante que o container da localização também respeita o alinhamento */
 #sidebar .bio-location {
-    position:relative;
-    padding-top:.8rem;
-    border-top:1px solid var(--shell-line);
+    padding: 1.2rem 0 0 !important;
+    border-top: 1px solid var(--shell-line);
 }
+
 #sidebar .bio-location-control {
     display:flex;
     align-items:center;
