@@ -124,9 +124,9 @@
             function toggleBackup() {
                 const card = document.getElementById('card-backup');
                 const checkbox = document.getElementById('in-backup');
+                
                 checkbox.checked = !checkbox.checked;
                 
-                // Aplica o estilo visual bioCultura
                 if (checkbox.checked) {
                     card.classList.add('active');
                 } else {
