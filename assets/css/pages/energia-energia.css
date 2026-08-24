@@ -380,69 +380,88 @@
                 }
             }
 
-            /* Formulário Intuivo */
+            /* --- Simulador Solar: Estilo bioCultura Editorial --- */
+            .solar-step-form { margin-top: 2rem; }
+
             .input-grid {
                 display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-                gap: 1.5rem;
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: 1.2rem;
             }
 
+            /* Cards de Input estilo Atlas */
             .input-card {
                 background: #fff;
-                border: 1px solid var(--line);
-                border-radius: 16px;
+                border: 1px solid #e8e8e8;
+                border-radius: 12px;
                 padding: 1.5rem;
                 display: flex;
                 flex-direction: column;
                 gap: 0.8rem;
+                transition: all 0.2s ease;
             }
 
-            .input-card label { font-weight: 700; color: var(--ink); font-size: 0.9rem; line-height: 1.3; }
-            .input-card small { font-weight: 900; text-transform: uppercase; letter-spacing: 1px; font-size: 0.55rem; color: var(--clay); }
+            .input-card label { font-weight: 800; color: var(--ink); font-size: 0.85rem; line-height: 1.4; }
+            .input-card small { font-weight: 900; text-transform: uppercase; letter-spacing: 1px; font-size: 0.55rem; color: #bbb; }
 
-            .input-wrap { display: flex; align-items: baseline; border-bottom: 2px solid var(--line); padding-bottom: 5px; }
-            .input-wrap input { border: 0 !important; font-family: Georgia, serif; font-size: 1.4rem; width: 80px; padding: 0 !important; }
-            .input-wrap span { font-size: 0.8rem; font-weight: 800; color: var(--muted); }
+            /* Inputs e Selects Clean */
+            .input-wrap { display: flex; align-items: baseline; border-bottom: 1px solid #e8e8e8; padding-bottom: 4px; }
+            .input-wrap input { border: 0 !important; font-family: Georgia, serif; font-size: 1.3rem; width: 100%; padding: 0 !important; background: transparent; }
+            .input-wrap span { font-size: 0.75rem; font-weight: 800; color: #999; margin-left: 8px; }
 
-            /* Botão Estilo "Ver mais culturas" */
-            .btn-biocultura-alt {
+            select.clean-select {
+                height: 40px;
+                border: 1px solid #e8e8e8 !important;
+                border-radius: 8px !important;
+                background: #fff !important;
+                font-size: 0.8rem;
+                padding: 0 10px;
+                cursor: pointer;
+            }
+
+            /* Botão Estilo "Quick Filter / Ver Mais" */
+            .btn-solar-action {
                 display: inline-flex;
                 align-items: center;
-                padding: 1rem 2.5rem;
-                background: #fff;
-                border: 1px solid #dce4dc;
+                justify-content: center;
+                min-height: 44px;
+                padding: 0 30px;
+                background: var(--forest);
+                color: #fff;
+                border: 0;
                 border-radius: 999px;
-                color: #536b57;
                 font-family: Georgia, serif;
                 font-weight: 700;
-                font-size: 1.1rem;
+                font-size: 0.95rem;
                 cursor: pointer;
                 transition: all 0.2s ease;
-                text-decoration: none;
+                margin-top: 2rem;
             }
 
-            .btn-biocultura-alt:hover {
-                border-color: var(--forest);
-                background: var(--pale);
+            .btn-solar-action:hover {
+                background: var(--ink);
                 transform: translateY(-2px);
             }
 
-            /* Card Selecionável (Backup) */
-            .input-card.selectable { cursor: pointer; transition: all 0.2s; }
-            .input-card.selectable.active { 
-                border-color: var(--forest); 
-                background: var(--pale); 
-                box-shadow: 0 8px 20px rgba(83, 107, 87, 0.1); 
+            /* Estado Ativo do Card de Bateria (Igual ao active das castas) */
+            .input-card.selectable { cursor: pointer; border: 1px solid #e8e8e8; }
+            .input-card.selectable.active {
+                border-color: var(--forest) !important;
+                background: #f4f7f1 !important; /* var(--pale) soft */
             }
 
-            .selection-ui { display: flex; align-items: center; gap: 12px; }
-            .check-circle { width: 20px; height: 20px; border: 2px solid var(--line); border-radius: 50%; position: relative; }
-            .active .check-circle { border-color: var(--forest); background: var(--forest); }
-            .active .check-circle::after { content: ''; position: absolute; width: 6px; height: 10px; border: solid white; border-width: 0 2px 2px 0; transform: rotate(45deg); left: 5px; top: 1px; }
+            .active .check-circle { 
+                border-color: var(--forest); 
+                background: var(--forest); 
+            }
 
-            /* Counter */
-            .counter-input { display: flex; align-items: center; gap: 1rem; }
-            .counter-input button { width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--line); background: #fff; cursor: pointer; }
-            .counter-input input { width: 40px; text-align: center; border: 0; font-size: 1.2rem; font-weight: 700; }
+            /* Counter Minimalista (Sem círculos vermelhos) */
+            .counter-ui { display: flex; align-items: center; gap: 15px; margin-top: 5px; }
+            .counter-ui button { 
+                width: 30px; height: 30px; border-radius: 8px; 
+                border: 1px solid #e8e8e8; background: #fff; 
+                color: var(--forest); font-weight: 900; cursor: pointer; 
+            }
+            .counter-ui input { width: 30px; text-align: center; border: 0; font-weight: 800; font-size: 1.1rem; }
 
-            .help-text { font-size: 0.75rem; color: var(--muted); margin: 0; }
+            .help-note { font-size: 0.7rem; color: #999; line-height: 1.4; margin-top: auto; }
