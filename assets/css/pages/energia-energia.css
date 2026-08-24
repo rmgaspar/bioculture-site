@@ -380,88 +380,105 @@
                 }
             }
 
-            /* --- Simulador Solar: Estilo bioCultura Editorial --- */
-            .solar-step-form { margin-top: 2rem; }
-
-            .input-grid {
+            /* --- Reset e Grid --- */
+            .input-grid-compact {
                 display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-                gap: 1.2rem;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1.5rem;
             }
 
-            /* Cards de Input estilo Atlas */
+            /* --- Cards Estilo bioCultura --- */
             .input-card {
                 background: #fff;
-                border: 1px solid #e8e8e8;
-                border-radius: 12px;
-                padding: 1.5rem;
+                border: 1px solid var(--line);
+                border-radius: 16px;
+                padding: 1.8rem;
                 display: flex;
                 flex-direction: column;
-                gap: 0.8rem;
-                transition: all 0.2s ease;
+                gap: 0.6rem;
+                transition: all 0.3s ease;
             }
 
-            .input-card label { font-weight: 800; color: var(--ink); font-size: 0.85rem; line-height: 1.4; }
-            .input-card small { font-weight: 900; text-transform: uppercase; letter-spacing: 1px; font-size: 0.55rem; color: #bbb; }
+            .input-card label { font-weight: 800; color: var(--ink); font-size: 0.95rem; }
+            .input-card small { font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; font-size: 0.55rem; color: #bbb; }
 
-            /* Inputs e Selects Clean */
-            .input-wrap { display: flex; align-items: baseline; border-bottom: 1px solid #e8e8e8; padding-bottom: 4px; }
-            .input-wrap input { border: 0 !important; font-family: Georgia, serif; font-size: 1.3rem; width: 100%; padding: 0 !important; background: transparent; }
-            .input-wrap span { font-size: 0.75rem; font-weight: 800; color: #999; margin-left: 8px; }
+            /* --- Inputs (Remover bordas vermelhas) --- */
+            .input-wrap { display: flex; align-items: baseline; border-bottom: 2px solid var(--line); padding-bottom: 4px; }
+            .input-wrap input { 
+                border: 0 !important; 
+                outline: none !important; 
+                box-shadow: none !important;
+                font-family: Georgia, serif; 
+                font-size: 1.6rem; 
+                width: 100px; 
+                background: transparent;
+                color: var(--ink);
+            }
 
-            select.clean-select {
-                height: 40px;
-                border: 1px solid #e8e8e8 !important;
-                border-radius: 8px !important;
-                background: #fff !important;
-                font-size: 0.8rem;
+            .clean-select {
+                width: 100%;
+                height: 44px;
+                border: 1px solid var(--line) !important;
+                border-radius: 10px !important;
                 padding: 0 10px;
-                cursor: pointer;
+                font-size: 0.85rem;
+                outline: none !important;
             }
 
-            /* Botão Estilo "Quick Filter / Ver Mais" */
-            .btn-solar-action {
+            /* --- Botão Estilo "Ver mais culturas" --- */
+            .action-area { text-align: center; margin-top: 3rem; }
+
+            .btn-biocultura-pill {
                 display: inline-flex;
                 align-items: center;
-                justify-content: center;
-                min-height: 44px;
-                padding: 0 30px;
-                background: var(--forest);
-                color: #fff;
-                border: 0;
+                padding: 0.8rem 2.5rem;
+                background: #fff;
+                border: 1px solid #dce4dc;
                 border-radius: 999px;
+                color: #536b57;
                 font-family: Georgia, serif;
                 font-weight: 700;
-                font-size: 0.95rem;
+                font-size: 1.05rem;
                 cursor: pointer;
                 transition: all 0.2s ease;
-                margin-top: 2rem;
             }
 
-            .btn-solar-action:hover {
-                background: var(--ink);
-                transform: translateY(-2px);
+            .btn-biocultura-pill:hover {
+                border-color: var(--forest);
+                background: var(--pale);
+                color: var(--forest);
             }
 
-            /* Estado Ativo do Card de Bateria (Igual ao active das castas) */
-            .input-card.selectable { cursor: pointer; border: 1px solid #e8e8e8; }
+            /* --- Seleção de Bateria (Corrigido) --- */
+            .input-card.selectable { cursor: pointer; }
             .input-card.selectable.active {
-                border-color: var(--forest) !important;
-                background: #f4f7f1 !important; /* var(--pale) soft */
+                border-color: var(--forest);
+                background: var(--pale);
             }
 
-            .active .check-circle { 
-                border-color: var(--forest); 
-                background: var(--forest); 
+            .check-circle { 
+                width: 20px; height: 20px; 
+                border: 2px solid var(--line); 
+                border-radius: 50%; 
+                transition: all 0.2s;
             }
 
-            /* Counter Minimalista (Sem círculos vermelhos) */
-            .counter-ui { display: flex; align-items: center; gap: 15px; margin-top: 5px; }
-            .counter-ui button { 
-                width: 30px; height: 30px; border-radius: 8px; 
-                border: 1px solid #e8e8e8; background: #fff; 
-                color: var(--forest); font-weight: 900; cursor: pointer; 
+            .active .check-circle {
+                background: var(--forest);
+                border-color: var(--forest);
+                box-shadow: inset 0 0 0 4px var(--pale);
             }
-            .counter-ui input { width: 30px; text-align: center; border: 0; font-weight: 800; font-size: 1.1rem; }
 
-            .help-note { font-size: 0.7rem; color: #999; line-height: 1.4; margin-top: auto; }
+            /* --- Counter --- */
+            .counter-ui { display: flex; align-items: center; gap: 15px; }
+            .counter-ui button {
+                width: 34px; height: 34px; border-radius: 50%;
+                border: 1px solid var(--line); background: #fff;
+                color: var(--forest); font-weight: bold; cursor: pointer;
+            }
+            .counter-ui input { width: 30px; text-align: center; border: 0; font-weight: 800; font-size: 1.2rem; }
+
+            .help-note { font-size: 0.72rem; color: var(--muted); margin: 0; }
+
+            /* Responsivo */
+            @media (max-width: 760px) { .input-grid-compact { grid-template-columns: 1fr; } }

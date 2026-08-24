@@ -114,20 +114,19 @@
                 start();
             }).catch(() => start());
         
-           // Função para o Counter (Pessoas)
-            function changeCounter(id, delta) {
+           function changeCounter(id, delta) {
                 const el = document.getElementById(id);
                 let val = parseInt(el.value) + delta;
                 if (val < 1) val = 1;
                 el.value = val;
             }
 
-            // Função para o Card Selecionável (Backup)
             function toggleBackup() {
                 const card = document.getElementById('card-backup');
                 const checkbox = document.getElementById('in-backup');
                 checkbox.checked = !checkbox.checked;
                 
+                // Aplica o estilo visual bioCultura
                 if (checkbox.checked) {
                     card.classList.add('active');
                 } else {
@@ -135,48 +134,30 @@
                 }
             }
 
-                function changeCounter(id, delta) {
-                const el = document.getElementById(id);
-                let val = parseInt(el.value) + delta;
-                if (val < 1) val = 1;
-                el.value = val;
-            }
-
-            function toggleBackup() {
-                const card = document.getElementById('card-backup');
-                const checkbox = document.getElementById('in-backup');
-                checkbox.checked = !checkbox.checked;
-                checkbox.checked ? card.classList.add('active') : card.classList.remove('active');
-            }
-
             async function processarSolar() {
                 const fatura = parseFloat(document.getElementById('in-fatura').value) || 0;
                 const presenca = parseFloat(document.getElementById('in-presenca').value);
                 const backup = document.getElementById('in-backup').checked;
 
-                if (fatura <= 0) return alert("Por favor, indique um valor médio de fatura.");
+                if (fatura <= 0) return;
 
-                const consumoKwh = fatura / 0.22; // Preço médio PT
-                const hsp = 4.5; // Horas sol médio PT
-                const potenciaKwp = ((consumoKwh / 30) / hsp) * 1.15 * (1 / presenca);
+                const consumoKwh = fatura / 0.22;
+                const potenciaKwp = ((consumoKwh / 30) / 4.5) * 1.15 * (1 / presenca);
                 const numPaineis = Math.ceil((potenciaKwp * 1000) / 450);
 
                 document.getElementById('res-paineis').innerText = `${numPaineis} Un.`;
                 document.getElementById('res-kwp').innerText = potenciaKwp.toFixed(2);
                 
+                document.getElementById('res-label-tipo').innerText = backup ? "Autonomia com Backup" : "Autoconsumo Direto";
+                document.getElementById('res-inversor').innerText = backup ? "Híbrido" : "String";
+                document.getElementById('res-inversor-desc').innerText = backup ? "Gere baterias e rede." : "Focado em produção solar.";
+
                 if (backup) {
-                    document.getElementById('res-label-tipo').innerText = "Sistema de Autonomia Total (Backup)";
-                    document.getElementById('res-inversor').innerText = "Híbrido";
-                    document.getElementById('res-inversor-desc').innerText = "Inversor inteligente que gere a rede e as baterias em simultâneo.";
                     document.getElementById('node-bateria').style.display = 'block';
                     document.getElementById('res-bateria').innerText = `${(consumoKwh / 30 * 0.8).toFixed(1)} kWh`;
                 } else {
-                    document.getElementById('res-label-tipo').innerText = "Sistema de Autoconsumo Simples";
-                    document.getElementById('res-inversor').innerText = "String";
-                    document.getElementById('res-inversor-desc').innerText = "Inversor focado na máxima eficiência de produção direta.";
                     document.getElementById('node-bateria').style.display = 'none';
                 }
 
                 document.getElementById('solar-results-area').style.display = 'block';
-                document.getElementById('solar-results-area').scrollIntoView({ behavior: 'smooth', block: 'center' });
             }

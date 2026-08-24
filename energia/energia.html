@@ -164,27 +164,29 @@
                             </div>
                         </div>
 
-                       <section class="section-block" id="solar-configurator">
+                       <section class="section-block" id="solar-lab">
                         <div class="section-head">
                             <span class="eyebrow">Simulador bioCultura</span>
                             <div>
                                 <h2>O Sol ao serviço do lugar</h2>
-                                <p>Não precisa de saber dados técnicos. Responda a algumas perguntas sobre o seu quotidiano e desenhamos o sistema ideal para a sua autonomia.</p>
+                                <p>Responda a quatro perguntas simples para desenharmos a sua autonomia energética.</p>
                             </div>
                         </div>
 
                         <div class="solar-step-form">
-                            <div class="input-grid">
+                            <div class="input-grid-compact">
+                                <!-- 01. Consumo -->
                                 <div class="input-card">
                                     <small>01. Consumo</small>
-                                    <label>Qual o valor médio da sua fatura?</label>
+                                    <label>Valor médio da fatura mensal</label>
                                     <div class="input-wrap">
                                         <input type="number" id="in-fatura" placeholder="0.00">
-                                        <span>€ / mês</span>
+                                        <span>€</span>
                                     </div>
-                                    <p class="help-note">Pode encontrar este valor no gráfico de histórico da sua fatura de eletricidade.</p>
+                                    <p class="help-note">Consulte o gráfico de histórico na sua fatura.</p>
                                 </div>
 
+                                <!-- 02. Agregado -->
                                 <div class="input-card">
                                     <small>02. Agregado</small>
                                     <label>Pessoas na habitação</label>
@@ -193,66 +195,65 @@
                                         <input type="number" id="in-pessoas" value="1" readonly>
                                         <button onclick="changeCounter('in-pessoas', 1)">+</button>
                                     </div>
-                                    <p class="help-note">Ajuda a estimar o consumo base e picos de utilização.</p>
+                                    <p class="help-note">Ajuda a prever picos de utilização.</p>
                                 </div>
 
+                                <!-- 03. Presença -->
                                 <div class="input-card">
                                     <small>03. Hábitos</small>
-                                    <label>Período de maior utilização?</label>
+                                    <label>Maior consumo de energia</label>
                                     <select id="in-presenca" class="clean-select">
-                                        <option value="1.0">Durante o dia (Trabalho remoto / Casa)</option>
+                                        <option value="1.0">Durante o dia (Trabalho / Casa)</option>
                                         <option value="0.7">Final do dia e Noite</option>
-                                        <option value="0.85">Equilibrado (Fins de semana)</option>
+                                        <option value="0.85">Equilibrado</option>
                                     </select>
                                 </div>
 
+                                <!-- 04. Backup -->
                                 <div class="input-card selectable" id="card-backup" onclick="toggleBackup()">
                                     <small>04. Resiliência</small>
-                                    <label>Quer ter luz se a rede falhar?</label>
-                                    <div class="selection-ui" style="display:flex; align-items:center; gap:10px; margin-top:10px;">
-                                        <div class="check-circle" style="width:18px; height:18px; border:2px solid #ddd; border-radius:50%;"></div>
-                                        <span style="font-size:0.85rem; font-weight:600;">Sim, incluir Baterias</span>
+                                    <label>Energia se a rede falhar?</label>
+                                    <div class="selection-ui">
+                                        <div class="check-circle"></div>
+                                        <span>Incluir Baterias (Backup)</span>
                                     </div>
                                     <input type="checkbox" id="in-backup" style="display:none">
-                                    <p class="help-note">O sistema de backup (UPS) mantém os essenciais ligados durante apagões.</p>
+                                    <p class="help-note">Mantém os essenciais ligados em apagões.</p>
                                 </div>
                             </div>
 
-                            <div style="text-align: center;">
-                                <button onclick="processarSolar()" class="btn-solar-action">Gerar Projeto Personalizado</button>
+                            <div class="action-area">
+                                <button onclick="processarSolar()" class="btn-biocultura-pill">Gerar Projeto Personalizado</button>
                             </div>
                         </div>
 
-                        <!-- Painel de Resultados (Estilo Relatório Mongólia) -->
-                        <div id="solar-results-area" class="bio-impact-report" style="display: none; margin-top: 4rem;">
+                        <!-- Painel de Resultados (Estilo Mongólia) -->
+                        <div id="solar-results-area" class="bio-impact-report" style="display: none;">
                             <div class="impact-header">
-                                <span class="eyebrow">Projeto de Autonomia Energética</span>
-                                <h2 id="res-label-tipo">Sistema de Autoconsumo</h2>
+                                <span class="eyebrow">Configuração Recomendada</span>
+                                <h2 id="res-label-tipo">--</h2>
                             </div>
                             <div class="impact-grid">
                                 <div class="impact-node">
                                     <div class="node-value" id="res-paineis">--</div>
                                     <div class="node-label">Painéis Fotovoltaicos</div>
-                                    <p>Potência total de <span id="res-kwp">--</span> kWp para cobrir o seu perfil de consumo.</p>
+                                    <p>Potência total de <span id="res-kwp">--</span> kWp.</p>
                                 </div>
                                 <div class="impact-node">
                                     <div class="node-value" id="res-inversor">--</div>
-                                    <div class="node-label">Tipo de Inversor</div>
-                                    <p id="res-inversor-desc">Tecnologia de conversão eficiente para a sua instalação.</p>
+                                    <div class="node-label">Inversor</div>
+                                    <p id="res-inversor-desc">--</p>
                                 </div>
-                                <div class="impact-node" id="node-bateria" style="display:none">
+                                <div id="node-bateria" class="impact-node" style="display:none">
                                     <div class="node-value" id="res-bateria">--</div>
-                                    <div class="node-label">Armazenamento LiFePO4</div>
-                                    <p>Capacidade para garantir o funcionamento dos equipamentos essenciais.</p>
+                                    <div class="node-label">Bateria LiFePO4</div>
+                                    <p>Armazenamento para autonomia noturna.</p>
                                 </div>
                                 <div class="impact-node">
                                     <div class="node-value" style="color: var(--forest);">~85%</div>
-                                    <div class="node-label">Independência Estimada</div>
-                                    <p>Redução potencial na dependência da rede pública durante o dia.</p>
+                                    <div class="node-label">Independência</div>
+                                    <p>Redução estimada na dependência da rede.</p>
                                 </div>
-                            </div>
-                            <div class="impact-footer-note">
-                                <p><strong>Análise bioCultura:</strong> Este dimensionamento considera a radiação solar média da sua localização. Para potências superiores a 350W, a instalação deve ser comunicada à DGEG.</p>
                             </div>
                         </div>
                     </section>
