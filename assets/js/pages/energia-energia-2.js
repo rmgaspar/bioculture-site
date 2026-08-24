@@ -114,29 +114,65 @@
                 start();
             }).catch(() => start());
         
-           function calcularSolar() {
-                const consumo = parseFloat(document.getElementById('solar-consumo').value);
-                const backup = document.getElementById('solar-backup').checked;
-                const azimute = parseFloat(document.getElementById('solar-azimute').value);
-                
-                if (!consumo) return;
+           // Função para o Counter (Pessoas)
+function changeCounter(id, delta) {
+    const el = document.getElementById(id);
+    let val = parseInt(el.value) + delta;
+    if (val < 1) val = 1;
+    el.value = val;
+}
 
-                const hsp = 4.5 * azimute;
-                const potenciaPico = (consumo / 30) / (hsp * 0.86);
-                const numPaineis = Math.ceil((potenciaPico * 1000) / 450);
+// Função para o Card Selecionável (Backup)
+function toggleBackup() {
+    const card = document.getElementById('card-backup');
+    const checkbox = document.getElementById('in-backup');
+    checkbox.checked = !checkbox.checked;
+    
+    if (checkbox.checked) {
+        card.classList.add('active');
+    } else {
+        card.classList.remove('active');
+    }
+}
 
-                document.getElementById('res-potencia-pico').innerText = `${potenciaPico.toFixed(2)} kWp`;
-                document.getElementById('res-num-paineis').innerText = `${numPaineis} Unidades (450W)`;
-                document.getElementById('res-inversor').innerText = backup ? "Híbrido High-Volt" : "String On-Grid";
+    async function processarSolar() {
+        const fatura = parseFloat(document.getElementById('in-fatura').value) || 0;
+        const pessoas = parseInt(document.getElementById('in-pessoas').value);
+        const presenca = parseFloat(document.getElementById('in-presenca').value);
+        const backup = document.getElementById('in-backup').checked;
 
-                if (backup) {
-                    document.getElementById('box-bateria').style.display = 'block';
-                    document.getElementById('res-bateria').innerText = `${(consumo / 30).toFixed(1)} kWh`;
-                } else {
-                    document.getElementById('box-bateria').style.display = 'none';
-                }
+        if (fatura <= 0) {
+            alert("Por favor, indique um valor médio de fatura.");
+            return;
+        }
 
-                const resPanel = document.getElementById('solar-result');
-                resPanel.style.display = 'block';
-                resPanel.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
+        // Lógica de conversão: € -> kWh (Média PT ~0.22€/kWh)
+        const consumoKwh = fatura / 0.22;
+        
+        // Dimensionamento simplificado baseado em radiação média Portugal (HSP 4.5)
+        // kWp = (Consumo Diário / HSP) * Fator de Perdas * Fator de Presença
+        const hsp = 4.5;
+        const potenciaKwp = ((consumoKwh / 30) / hsp) * 1.15 * (1 / presenca);
+        const numPaineis = Math.ceil((potenciaKwp * 1000) / 450);
+
+        // Injeção nos resultados (Estilo Relatório)
+        document.getElementById('res-paineis').innerText = `${numPaineis} Un.`;
+        document.getElementById('res-kwp').innerText = potenciaKwp.toFixed(2);
+        
+        if (backup) {
+            document.getElementById('res-label-tipo').innerText = "Sistema de Autonomia Total (Backup)";
+            document.getElementById('res-inversor').innerText = "Híbrido";
+            document.getElementById('res-inversor-desc').innerText = "Inversor inteligente que gere a rede e as baterias em simultâneo.";
+            document.getElementById('node-bateria').style.display = 'block';
+            document.getElementById('res-bateria').innerText = `${(consumoKwh / 30 * 0.8).toFixed(1)} kWh`;
+        } else {
+            document.getElementById('res-label-tipo').innerText = "Sistema de Autoconsumo Simples";
+            document.getElementById('res-inversor').innerText = "String";
+            document.getElementById('res-inversor-desc').innerText = "Inversor focado na máxima eficiência de produção direta.";
+            document.getElementById('node-bateria').style.display = 'none';
+        }
+
+        const resArea = document.getElementById('solar-results-area');
+        resArea.style.display = 'block';
+        resArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }

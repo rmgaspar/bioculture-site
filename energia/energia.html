@@ -164,88 +164,101 @@
                             </div>
                         </div>
 
-                        <section class="section-block" id="solar-lab">
+                        <section class="section-block" id="solar-configurator">
                         <div class="section-head">
-                            <span class="eyebrow">Laboratório de Energia</span>
+                            <span class="eyebrow">Simulador bioCultura</span>
                             <div>
-                                <h2>Dimensionamento Fotovoltaico</h2>
-                                <p>Uma ferramenta técnica para estimar a transição energética da sua habitação, baseada em perfis de consumo e radiação local.</p>
+                                <h2>O Sol ao serviço do lugar</h2>
+                                <p>Não precisa de saber dados técnicos. Responda a algumas perguntas sobre o seu quotidiano e desenhamos o sistema ideal para a sua autonomia.</p>
                             </div>
                         </div>
 
-                        <div class="solar-config-shell">
-                            <!-- Coluna de Inputs -->
-                            <div class="solar-inputs">
-                                <div class="input-step">
-                                    <small>01. Perfil de Consumo</small>
-                                    <div class="field">
-                                        <label>Consumo Médio Mensal</label>
-                                        <div class="input-with-unit">
-                                            <input type="number" id="solar-consumo" placeholder="0">
-                                            <span>kWh</span>
-                                        </div>
+                        <!-- Formulário de Entrada -->
+                        <div class="solar-step-form">
+                            <div class="input-grid">
+                                <!-- Pergunta 1 -->
+                                <div class="input-card">
+                                    <small>01. Consumo</small>
+                                    <label>Quanto paga de eletricidade por mês?</label>
+                                    <div class="input-wrap">
+                                        <input type="number" id="in-fatura" placeholder="0">
+                                        <span>€ / mês</span>
+                                    </div>
+                                    <p class="help-text">Valor médio da fatura (sem taxas fixas).</p>
+                                </div>
+
+                                <!-- Pergunta 2 -->
+                                <div class="input-card">
+                                    <small>02. Agregado</small>
+                                    <label>Quantas pessoas vivem na casa?</label>
+                                    <div class="counter-input">
+                                        <button onclick="changeCounter('in-pessoas', -1)">-</button>
+                                        <input type="number" id="in-pessoas" value="1" readonly>
+                                        <button onclick="changeCounter('in-pessoas', 1)">+</button>
                                     </div>
                                 </div>
 
-                                <div class="input-step">
-                                    <small>02. Orientação e Geometria</small>
-                                    <div class="grid-fields">
-                                        <div class="field">
-                                            <label>Inclinação (Tilt)</label>
-                                            <select id="solar-tilt">
-                                                <option value="35">35º (Ideal PT)</option>
-                                                <option value="15">15º (Plano)</option>
-                                                <option value="0">0º (Horizontal)</option>
-                                            </select>
-                                        </div>
-                                        <div class="field">
-                                            <label>Azimute (Direção)</label>
-                                            <select id="solar-azimute">
-                                                <option value="1.0">Sul (Máximo)</option>
-                                                <option value="0.85">Este / Oeste</option>
-                                                <option value="0.70">Norte</option>
-                                            </select>
-                                        </div>
+                                <!-- Pergunta 3 -->
+                                <div class="input-card">
+                                    <small>03. Presença</small>
+                                    <label>Há pessoas em casa durante o dia?</label>
+                                    <select id="in-presenca">
+                                        <option value="1.0">Sim, a maior parte do tempo</option>
+                                        <option value="0.6">Apenas ao fim do dia / noite</option>
+                                        <option value="0.8">Metade do tempo</option>
+                                    </select>
+                                </div>
+
+                                <!-- Pergunta 4 (Seleção Visual de Backup) -->
+                                <div class="input-card selectable" id="card-backup" onclick="toggleBackup()">
+                                    <small>04. Resiliência</small>
+                                    <label>Quer energia quando a rede falha?</label>
+                                    <div class="selection-ui">
+                                        <div class="check-circle"></div>
+                                        <span>Sim, incluir Baterias (Backup)</span>
                                     </div>
+                                    <input type="checkbox" id="in-backup" style="display:none">
+                                    <p class="help-text">Garante autonomia em caso de apagão.</p>
                                 </div>
-
-                                <div class="input-step">
-                                    <small>03. Resiliência</small>
-                                    <label class="custom-check">
-                                        <input type="checkbox" id="solar-backup">
-                                        <span class="check-box"></span>
-                                        <span class="check-label">Incluir sistema de Backup (Baterias)</span>
-                                    </label>
-                                </div>
-
-                                <button onclick="calcularSolar()" class="solar-btn">Gerar Configuração Técnica</button>
                             </div>
 
-                            <!-- Coluna de Resultados (Estilo Observatório) -->
-                            <div id="solar-result" class="solar-display" style="display: none;">
-                                <div class="display-header">
-                                    <span class="eyebrow">Estimativa de Projeto</span>
-                                    <h3 id="res-potencia-pico">--</h3>
-                                </div>
-                                
-                                <div class="display-grid">
-                                    <div class="display-node">
-                                        <small>Painéis</small>
-                                        <strong id="res-num-paineis">--</strong>
-                                    </div>
-                                    <div class="display-node">
-                                        <small>Inversor</small>
-                                        <strong id="res-inversor">--</strong>
-                                    </div>
-                                    <div class="display-node" id="box-bateria" style="display:none;">
-                                        <small>Bateria LiFePO4</small>
-                                        <strong id="res-bateria">--</strong>
-                                    </div>
-                                </div>
+                            <div style="text-align: center; margin-top: 3rem;">
+                                <button onclick="processarSolar()" class="btn-biocultura-alt">Gerar Projeto Personalizado</button>
+                            </div>
+                        </div>
 
-                                <div class="display-footer">
-                                    <p><strong>Nota técnica:</strong> Cálculos baseados em HSP (Horas de Sol Equivalentes) médias para Portugal. Em conformidade com as RTIEBT.</p>
+                        <!-- Painel de Resultados (Estilo Relatório Mongólia) -->
+                        <div id="solar-results-area" class="bio-impact-report" style="display: none; margin-top: 4rem;">
+                            <div class="impact-header">
+                                <span class="eyebrow">Projeto de Autonomia Energética</span>
+                                <h2 id="res-label-tipo">Sistema de Autoconsumo</h2>
+                            </div>
+
+                            <div class="impact-grid">
+                                <div class="impact-node">
+                                    <div class="node-value" id="res-paineis">--</div>
+                                    <div class="node-label">Painéis Fotovoltaicos</div>
+                                    <p>Potência total de <span id="res-kwp">--</span> kWp para cobrir o seu perfil de consumo.</p>
                                 </div>
+                                <div class="impact-node">
+                                    <div class="node-value" id="res-inversor">--</div>
+                                    <div class="node-label">Tipo de Inversor</div>
+                                    <p id="res-inversor-desc">Tecnologia de conversão eficiente para a sua instalação.</p>
+                                </div>
+                                <div class="impact-node" id="node-bateria" style="display:none">
+                                    <div class="node-value" id="res-bateria">--</div>
+                                    <div class="node-label">Armazenamento LiFePO4</div>
+                                    <p>Capacidade para garantir o funcionamento dos equipamentos essenciais.</p>
+                                </div>
+                                <div class="impact-node">
+                                    <div class="node-value" style="color: var(--forest);">~85%</div>
+                                    <div class="node-label">Independência Estimada</div>
+                                    <p>Redução potencial na dependência da rede pública durante o dia.</p>
+                                </div>
+                            </div>
+
+                            <div class="impact-footer-note">
+                                <p><strong>Análise bioCultura:</strong> Este dimensionamento considera a radiação solar média da sua localização (GPS). Para potências superiores a 350W, a instalação deve ser comunicada à DGEG.</p>
                             </div>
                         </div>
                     </section>
