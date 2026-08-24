@@ -164,72 +164,87 @@
                             </div>
                         </div>
 
-                        <section class="section-block" id="dimensionamento-solar">
+                        <section class="section-block" id="solar-lab">
                         <div class="section-head">
-                            <span class="eyebrow">Autoconsumo Fotovoltaico</span>
-                            <h2>Dimensionar o meu sistema</h2>
-                            <p>Cálculo de potência instalada, armazenamento e configuração de backup com base na sua localização e perfil de consumo.</p>
+                            <span class="eyebrow">Laboratório de Energia</span>
+                            <div>
+                                <h2>Dimensionamento Fotovoltaico</h2>
+                                <p>Uma ferramenta técnica para estimar a transição energética da sua habitação, baseada em perfis de consumo e radiação local.</p>
+                            </div>
                         </div>
 
-                        <div class="solar-configurator">
-                            <div class="config-form">
-                                <!-- Passo 1: Energia -->
-                                <div class="field-group">
-                                    <label>Consumo Médio Mensal (kWh)</label>
-                                    <input type="number" id="solar-consumo" placeholder="Ver na fatura (ex: 350)">
-                                </div>
-
-                                <!-- Passo 2: Localização e Orientação -->
-                                <div class="config-row">
-                                    <div class="field-group">
-                                        <label>Ângulo do Telhado (Tilt)</label>
-                                        <select id="solar-tilt">
-                                            <option value="35">35º (Ideal PT)</option>
-                                            <option value="15">15º (Plano)</option>
-                                            <option value="0">0º (Horizontal)</option>
-                                        </select>
-                                    </div>
-                                    <div class="field-group">
-                                        <label>Azimute (Orientação)</label>
-                                        <select id="solar-azimute">
-                                            <option value="1.0">Sul (Ideal)</option>
-                                            <option value="0.85">Este/Oeste</option>
-                                            <option value="0.70">Norte</option>
-                                        </select>
+                        <div class="solar-config-shell">
+                            <!-- Coluna de Inputs -->
+                            <div class="solar-inputs">
+                                <div class="input-step">
+                                    <small>01. Perfil de Consumo</small>
+                                    <div class="field">
+                                        <label>Consumo Médio Mensal</label>
+                                        <div class="input-with-unit">
+                                            <input type="number" id="solar-consumo" placeholder="0">
+                                            <span>kWh</span>
+                                        </div>
                                     </div>
                                 </div>
 
-                                <!-- Passo 3: Backup -->
-                                <div class="field-group">
-                                    <label class="checkbox-container">
+                                <div class="input-step">
+                                    <small>02. Orientação e Geometria</small>
+                                    <div class="grid-fields">
+                                        <div class="field">
+                                            <label>Inclinação (Tilt)</label>
+                                            <select id="solar-tilt">
+                                                <option value="35">35º (Ideal PT)</option>
+                                                <option value="15">15º (Plano)</option>
+                                                <option value="0">0º (Horizontal)</option>
+                                            </select>
+                                        </div>
+                                        <div class="field">
+                                            <label>Azimute (Direção)</label>
+                                            <select id="solar-azimute">
+                                                <option value="1.0">Sul (Máximo)</option>
+                                                <option value="0.85">Este / Oeste</option>
+                                                <option value="0.70">Norte</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="input-step">
+                                    <small>03. Resiliência</small>
+                                    <label class="custom-check">
                                         <input type="checkbox" id="solar-backup">
-                                        <span class="checkmark"></span>
-                                        Necessito de sistema de Backup (Energia em caso de falha da rede)
+                                        <span class="check-box"></span>
+                                        <span class="check-label">Incluir sistema de Backup (Baterias)</span>
                                     </label>
                                 </div>
 
-                                <button onclick="calcularSolar()" class="hub-primary-link">Gerar Configuração Técnica</button>
+                                <button onclick="calcularSolar()" class="solar-btn">Gerar Configuração Técnica</button>
                             </div>
 
-                            <div id="solar-result" class="solar-result-panel" style="display: none;">
-                                <div class="tech-specs">
-                                    <div class="spec-item">
-                                        <small>Potência de Pico</small>
-                                        <strong id="res-potencia-pico">--</strong>
-                                        <span id="res-num-paineis">--</span>
+                            <!-- Coluna de Resultados (Estilo Observatório) -->
+                            <div id="solar-result" class="solar-display" style="display: none;">
+                                <div class="display-header">
+                                    <span class="eyebrow">Estimativa de Projeto</span>
+                                    <h3 id="res-potencia-pico">--</h3>
+                                </div>
+                                
+                                <div class="display-grid">
+                                    <div class="display-node">
+                                        <small>Painéis</small>
+                                        <strong id="res-num-paineis">--</strong>
                                     </div>
-                                    <div class="spec-item">
-                                        <small>Tipo de Inversor</small>
+                                    <div class="display-node">
+                                        <small>Inversor</small>
                                         <strong id="res-inversor">--</strong>
                                     </div>
-                                    <div class="spec-item" id="box-bateria" style="display:none;">
-                                        <small>Armazenamento (LiFePO4)</small>
+                                    <div class="display-node" id="box-bateria" style="display:none;">
+                                        <small>Bateria LiFePO4</small>
                                         <strong id="res-bateria">--</strong>
                                     </div>
                                 </div>
-                                
-                                <div class="legal-notice">
-                                    <strong>Conformidade:</strong> Dimensionamento estimado segundo as Regras Técnicas de Instalações Elétricas (RTIEBT). Requer projeto assinado por técnico credenciado pela DGEG para potências > 350W.
+
+                                <div class="display-footer">
+                                    <p><strong>Nota técnica:</strong> Cálculos baseados em HSP (Horas de Sol Equivalentes) médias para Portugal. Em conformidade com as RTIEBT.</p>
                                 </div>
                             </div>
                         </div>
