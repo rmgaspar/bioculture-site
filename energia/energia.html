@@ -163,6 +163,78 @@
                                 </article>
                             </div>
                         </div>
+
+                        <section class="section-block" id="dimensionamento-solar">
+                        <div class="section-head">
+                            <span class="eyebrow">Autoconsumo Fotovoltaico</span>
+                            <h2>Dimensionar o meu sistema</h2>
+                            <p>Cálculo de potência instalada, armazenamento e configuração de backup com base na sua localização e perfil de consumo.</p>
+                        </div>
+
+                        <div class="solar-configurator">
+                            <div class="config-form">
+                                <!-- Passo 1: Energia -->
+                                <div class="field-group">
+                                    <label>Consumo Médio Mensal (kWh)</label>
+                                    <input type="number" id="solar-consumo" placeholder="Ver na fatura (ex: 350)">
+                                </div>
+
+                                <!-- Passo 2: Localização e Orientação -->
+                                <div class="config-row">
+                                    <div class="field-group">
+                                        <label>Ângulo do Telhado (Tilt)</label>
+                                        <select id="solar-tilt">
+                                            <option value="35">35º (Ideal PT)</option>
+                                            <option value="15">15º (Plano)</option>
+                                            <option value="0">0º (Horizontal)</option>
+                                        </select>
+                                    </div>
+                                    <div class="field-group">
+                                        <label>Azimute (Orientação)</label>
+                                        <select id="solar-azimute">
+                                            <option value="1.0">Sul (Ideal)</option>
+                                            <option value="0.85">Este/Oeste</option>
+                                            <option value="0.70">Norte</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- Passo 3: Backup -->
+                                <div class="field-group">
+                                    <label class="checkbox-container">
+                                        <input type="checkbox" id="solar-backup">
+                                        <span class="checkmark"></span>
+                                        Necessito de sistema de Backup (Energia em caso de falha da rede)
+                                    </label>
+                                </div>
+
+                                <button onclick="calcularSolar()" class="hub-primary-link">Gerar Configuração Técnica</button>
+                            </div>
+
+                            <div id="solar-result" class="solar-result-panel" style="display: none;">
+                                <div class="tech-specs">
+                                    <div class="spec-item">
+                                        <small>Potência de Pico</small>
+                                        <strong id="res-potencia-pico">--</strong>
+                                        <span id="res-num-paineis">--</span>
+                                    </div>
+                                    <div class="spec-item">
+                                        <small>Tipo de Inversor</small>
+                                        <strong id="res-inversor">--</strong>
+                                    </div>
+                                    <div class="spec-item" id="box-bateria" style="display:none;">
+                                        <small>Armazenamento (LiFePO4)</small>
+                                        <strong id="res-bateria">--</strong>
+                                    </div>
+                                </div>
+                                
+                                <div class="legal-notice">
+                                    <strong>Conformidade:</strong> Dimensionamento estimado segundo as Regras Técnicas de Instalações Elétricas (RTIEBT). Requer projeto assinado por técnico credenciado pela DGEG para potências > 350W.
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
                         <div class="section-block">
                             <div class="section-head">
                                 <span class="eyebrow">Continuar</span><div>

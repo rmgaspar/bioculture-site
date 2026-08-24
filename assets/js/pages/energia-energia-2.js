@@ -114,3 +114,38 @@
                 start();
             }).catch(() => start());
         
+            async function calcularSolar() {
+                const consumoMensal = parseFloat(document.getElementById('solar-consumo').value);
+                const backup = document.getElementById('solar-backup').checked;
+                const azimute = parseFloat(document.getElementById('solar-azimute').value);
+                
+                if (!consumoMensal) return alert("Insira o seu consumo mensal.");
+
+                // Média de horas de sol equivalente em Portugal (HSP) ~ 4.5h/dia
+                // Ajustado por azimute e perdas de sistema (14%)
+                const hsp = 4.5 * azimute;
+                const eficienciaSistema = 0.86; 
+
+                // Potência de Pico Necessária (kWp)
+                const potenciaPico = (consumoMensal / 30) / (hsp * eficienciaSistema);
+                const numPaineis = Math.ceil((potenciaPico * 1000) / 450);
+
+                // Seleção de Inversor
+                let tipoInversor = backup ? "Híbrido (Backup Ready)" : "String (On-Grid)";
+                
+                // Resultados
+                document.getElementById('res-potencia-pico').innerText = `${potenciaPico.toFixed(2)} kWp`;
+                document.getElementById('res-num-paineis').innerText = `${numPaineis} painéis de 450W`;
+                document.getElementById('res-inversor').innerText = tipoInversor;
+
+                // Lógica de Bateria para Backup
+                if (backup) {
+                    const capBateria = consumoMensal / 30; // Garante 1 dia de autonomia média
+                    document.getElementById('box-bateria').style.display = 'block';
+                    document.getElementById('res-bateria').innerText = `${capBateria.toFixed(1)} kWh`;
+                } else {
+                    document.getElementById('box-bateria').style.display = 'none';
+                }
+
+                document.getElementById('solar-result').style.display = 'block';
+            }
