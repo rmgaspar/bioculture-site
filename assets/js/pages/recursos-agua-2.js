@@ -138,3 +138,39 @@
                 start();
             }).catch(() => start());
         
+            function calcularSAAP() {
+                const A = parseFloat(document.getElementById('saap-area').value);
+                const C = parseFloat(document.getElementById('saap-coeficiente').value);
+                const P = parseFloat(document.getElementById('saap-precipitacao').value);
+
+                if (!A || !P) {
+                    alert("Por favor, preencha a área e a precipitação.");
+                    return;
+                }
+
+                // Cálculo do Potencial de Recolha (Q = A * P * C)
+                const Q = A * P * C; 
+
+                // Dimensionamento do Reservatório (Método Prático - 6% do potencial anual para Portugal)
+                const V = Q * 0.06;
+
+                // Injeção de resultados
+                document.getElementById('res-potencial').innerText = `${Math.round(Q).toLocaleString()} Litros/ano`;
+                document.getElementById('res-cisterna').innerText = `${(V / 1000).toFixed(1)} m³`;
+
+                // Lista de Materiais Dinâmica
+                const materiais = [
+                    "Filtro de folhas e detritos (entrada)",
+                    "Dispositivo de 'First Flush' (descarte dos primeiros 1-2mm)",
+                    `Cisterna de ${(V / 1000).toFixed(1)}m³ (opaca e vedada)`,
+                    "Bomba autoaspirante com pressostato",
+                    "Tubagem PEAD sinalizada (cor castanha para uso não potável)",
+                    "Válvula de retenção e filtro de sedimentos (25 micron)"
+                ];
+
+                const listEl = document.getElementById('res-materiais');
+                listEl.innerHTML = materiais.map(m => `<li>${m}</li>`).join('');
+                
+                document.getElementById('saap-resultado').style.display = 'block';
+                document.getElementById('saap-resultado').scrollIntoView({ behavior: 'smooth' });
+            }
