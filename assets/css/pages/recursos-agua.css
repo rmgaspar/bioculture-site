@@ -400,35 +400,34 @@
                 }
             }
 
-           /* Limitar o tamanho da imagem para não ser gigante */
-            .technical-diagram-container {
-                max-width: 800px; /* Largura controlada */
-                margin: 0 auto 2.5rem 0; /* Alinhado à esquerda */
-                border-radius: 16px;
+           .technical-diagram-panoramic {
+                width: 100%;
+                margin: 1.5rem 0 3rem;
+                border-radius: 20px;
                 overflow: hidden;
                 border: 1px solid var(--line);
                 background: #fff;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.03);
             }
 
-            .technical-diagram-container img {
+            .technical-diagram-panoramic img {
                 width: 100%;
                 height: auto;
-                max-height: 500px; /* Impede que a imagem cresça demasiado verticalmente */
-                object-fit: contain; /* Garante que os 4 quadrados aparecem bem */
                 display: block;
+                /* Garante que a imagem não fica desproporcional */
+                aspect-ratio: 16 / 9;
+                object-fit: cover;
             }
 
-            /* Grid de 4 colunas para as explicações */
+            /* Reajuste das legendas para 4 colunas em linha no desktop */
             .impact-grid-4-cols {
                 display: grid;
-                grid-template-columns: repeat(2, 1fr); /* 2x2 no desktop para bater com a imagem */
-                gap: 2rem;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 1.5rem;
                 margin-top: 2rem;
             }
 
-            @media (min-width: 1000px) {
-                /* Se tiveres muito espaço, podes meter as 4 em linha, 
-                mas 2x2 costuma ler-se melhor com essa imagem específica */
+            @media (max-width: 1000px) {
                 .impact-grid-4-cols { grid-template-columns: repeat(2, 1fr); }
             }
 
