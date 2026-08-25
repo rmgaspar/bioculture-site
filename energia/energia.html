@@ -169,65 +169,58 @@
                             <span class="eyebrow">Simulador bioCultura</span>
                             <div>
                                 <h2>O Sol ao serviço do lugar</h2>
-                                <p>Responda a quatro perguntas simples para desenharmos a sua autonomia energética.</p>
+                                <p>Um exercício de dimensionamento para apoiar a transição energética consciente.</p>
                             </div>
                         </div>
 
                         <div class="solar-step-form">
                             <div class="input-grid-compact">
-                                <!-- 01. Consumo -->
                                 <div class="input-card">
                                     <small>01. Consumo</small>
-                                    <label>Valor médio da fatura mensal</label>
+                                    <label>Fatura mensal média</label>
                                     <div class="input-wrap">
                                         <input type="number" id="in-fatura" placeholder="0.00">
                                         <span>€</span>
                                     </div>
-                                    <p class="help-note">Consulte o gráfico de histórico na sua fatura.</p>
                                 </div>
 
-                                <!-- 02. Agregado -->
                                 <div class="input-card">
                                     <small>02. Agregado</small>
                                     <label>Pessoas na habitação</label>
                                     <div class="counter-ui">
-                                        <button onclick="changeCounter('in-pessoas', -1)">-</button>
+                                        <button type="button" onclick="changeCounter('in-pessoas', -1)">-</button>
                                         <input type="number" id="in-pessoas" value="1" readonly>
-                                        <button onclick="changeCounter('in-pessoas', 1)">+</button>
+                                        <button type="button" onclick="changeCounter('in-pessoas', 1)">+</button>
                                     </div>
-                                    <p class="help-note">Ajuda a prever picos de utilização.</p>
                                 </div>
 
-                                <!-- 03. Presença -->
                                 <div class="input-card">
                                     <small>03. Hábitos</small>
-                                    <label>Maior consumo de energia</label>
+                                    <label>Perfil de utilização</label>
                                     <select id="in-presenca" class="clean-select">
-                                        <option value="1.0">Durante o dia (Trabalho / Casa)</option>
-                                        <option value="0.7">Final do dia e Noite</option>
+                                        <option value="1.0">Maioritário Diurno</option>
+                                        <option value="0.7">Final do dia / Noite</option>
                                         <option value="0.85">Equilibrado</option>
                                     </select>
                                 </div>
 
-                                <!-- 04. Backup -->
                                 <div class="input-card selectable" id="card-backup" onclick="toggleBackup()">
                                     <small>04. Resiliência</small>
-                                    <label>Energia se a rede falhar?</label>
+                                    <label>Backup em falhas de rede</label>
                                     <div class="selection-ui">
                                         <div class="check-circle"></div>
-                                        <span>Incluir Baterias (Backup)</span>
+                                        <span class="check-text">Incluir Baterias</span>
                                     </div>
                                     <input type="checkbox" id="in-backup" style="display:none">
-                                    <p class="help-note">Mantém os essenciais ligados em apagões.</p>
                                 </div>
                             </div>
 
                             <div class="action-area">
-                                <button onclick="processarSolar()" class="btn-biocultura-pill">Gerar Projeto Personalizado</button>
+                                <button type="button" onclick="processarSolar()" class="btn-biocultura-pill">Gerar Projeto</button>
                             </div>
                         </div>
 
-                        <!-- Painel de Resultados (Estilo Relatório bioCultura - 2 Colunas) -->
+                        <!-- Resultados: Estilo Relatório bioCultura -->
                         <div id="solar-results-area" class="bio-impact-report" style="display: none;">
                             <div class="impact-header">
                                 <span class="eyebrow">Configuração Recomendada</span>
@@ -235,48 +228,32 @@
                             </div>
 
                             <div class="impact-grid-two-cols">
-                                <!-- Coluna Esquerda: O Sistema -->
                                 <div class="impact-column">
-                                    <div class="impact-node">
-                                        <div class="node-value" id="res-paineis">--</div>
-                                        <div class="node-label">Painéis Fotovoltaicos</div>
-                                        <p>Configuração sugerida: <span id="res-num-unidades">--</span> painéis de <strong>550W</strong> (Tier 1).</p>
-                                    </div>
-
                                     <div class="impact-node">
                                         <div class="node-value" id="res-kwp">--</div>
-                                        <div class="node-label">Tamanho do Sistema (kWp)</div>
-                                        <p>Potência total instalada para cobrir o seu consumo e perdas do sistema.</p>
+                                        <div class="node-label">Tamanho do Sistema</div>
+                                        <p id="res-desc-paineis">--</p>
                                     </div>
-
                                     <div class="impact-node" id="node-bateria" style="display:none">
                                         <div class="node-value" id="res-bateria">--</div>
-                                        <div class="node-label">Armazenamento (LiFePO4)</div>
-                                        <p>Capacidade de bateria para garantir autonomia noturna ou em falhas de rede.</p>
+                                        <div class="node-label">Armazenamento LiFePO4</div>
+                                        <p>Reserva para períodos sem sol ou falhas na rede.</p>
                                     </div>
                                 </div>
 
-                                <!-- Coluna Direita: Componentes e Investimento -->
                                 <div class="impact-column">
                                     <div class="impact-node">
-                                        <div class="node-value" style="color: var(--forest);" id="res-preco">--</div>
-                                        <div class="node-label">Investimento Estimado</div>
-                                        <p>Valor médio de mercado (inclui IVA e instalação base).</p>
-                                    </div>
-
-                                    <div class="impact-node">
-                                        <div class="node-label">Hardware Recomendado</div>
+                                        <div class="node-label">Componentes de Projeto</div>
                                         <ul class="tech-list">
-                                            <li><strong>Inversor:</strong> <span id="res-inversor-model">--</span></li>
-                                            <li><strong>Contador:</strong> <span id="res-meter">Contador Inteligente (100A)</span></li>
-                                            <li><strong>Estrutura:</strong> Alumínio anodizado (Telhado)</li>
+                                            <li><strong>Inversor:</strong> <span id="res-inversor">--</span></li>
+                                            <li><strong>Medição:</strong> Smart Meter (100A)</li>
+                                            <li><strong>Estrutura:</strong> Alumínio Anodizado</li>
                                         </ul>
                                     </div>
+                                    <div class="tier-info">
+                                        <strong>Nota sobre Tier 1:</strong> Classificação de fabricantes com elevada solidez financeira e processos de fabrico totalmente automatizados, garantindo maior longevidade dos painéis.
+                                    </div>
                                 </div>
-                            </div>
-
-                            <div class="impact-footer-note">
-                                <p><strong>Nota bioCultura:</strong> Estes valores são estimativas baseadas em orçamentos de referência de 2026. A viabilidade final depende de uma visita técnica ao local para validar sombras e estado da rede elétrica.</p>
                             </div>
                         </div>
                     </section>
