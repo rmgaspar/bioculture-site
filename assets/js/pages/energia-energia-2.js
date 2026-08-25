@@ -135,29 +135,47 @@
             }
 
             async function processarSolar() {
-                const fatura = parseFloat(document.getElementById('in-fatura').value) || 0;
-                const presenca = parseFloat(document.getElementById('in-presenca').value);
-                const backup = document.getElementById('in-backup').checked;
+    const fatura = parseFloat(document.getElementById('in-fatura').value) || 0;
+    const presenca = parseFloat(document.getElementById('in-presenca').value);
+    const backup = document.getElementById('in-backup').checked;
 
-                if (fatura <= 0) return;
+    if (fatura <= 0) return;
 
-                const consumoKwh = fatura / 0.22;
-                const potenciaKwp = ((consumoKwh / 30) / 4.5) * 1.15 * (1 / presenca);
-                const numPaineis = Math.ceil((potenciaKwp * 1000) / 450);
+    // 1. Cálculo de Consumo e Potência
+    const consumoKwh = fatura / 0.22; // Preço médio kWh em Portugal
+    const hsp = 4.5; // Horas de Sol Equivalentes médias
+    const potenciaKwp = ((consumoKwh / 30) / hsp) * 1.18 * (1 / presenca);
+    
+    // 2. Cálculo de Unidades (Baseado em painéis modernos de 550W)
+    const wattsPorPainel = 550;
+    const numPaineis = Math.ceil((potenciaKwp * 1000) / wattsPorPainel);
+    const kwpFinal = (numPaineis * wattsPorPainel) / 1000;
 
-                document.getElementById('res-paineis').innerText = `${numPaineis} Un.`;
-                document.getElementById('res-kwp').innerText = potenciaKwp.toFixed(2);
-                
-                document.getElementById('res-label-tipo').innerText = backup ? "Autonomia com Backup" : "Autoconsumo Direto";
-                document.getElementById('res-inversor').innerText = backup ? "Híbrido" : "String";
-                document.getElementById('res-inversor-desc').innerText = backup ? "Gere baterias e rede." : "Focado em produção solar.";
+    // 3. Estimativa de Preço (Baseado nos teus exemplos: ~1100€/kWp + Baterias)
+    let precoBase = kwpFinal * 1050; // Média dos teus orçamentos (~1050€ por kWp)
+    if (backup) precoBase += 2500; // Custo médio de bateria LiFePO4 de 5kWh + Inversor Híbrido
 
-                if (backup) {
-                    document.getElementById('node-bateria').style.display = 'block';
-                    document.getElementById('res-bateria').innerText = `${(consumoKwh / 30 * 0.8).toFixed(1)} kWh`;
-                } else {
-                    document.getElementById('node-bateria').style.display = 'none';
-                }
+    // 4. Seleção de Hardware (Exemplos reais)
+    let inversorModel = backup ? "Huawei SUN2000-KTL-L1 (Híbrido)" : "Growatt MIN 3600 TL-X";
+    let meterModel = backup ? "Huawei DDSU666-H (100A)" : "Smart Meter Standard (100A)";
 
-                document.getElementById('solar-results-area').style.display = 'block';
-            }
+    // Injeção de Dados
+    document.getElementById('res-paineis').innerText = `${numPaineis} Unidades`;
+    document.getElementById('res-num-unidades').innerText = numPaineis;
+    document.getElementById('res-kwp').innerText = kwpFinal.toFixed(2);
+    document.getElementById('res-preco').innerText = `${precoBase.toLocaleString('pt-PT', { style: 'currency', currency: 'EUR' })}`;
+    document.getElementById('res-inversor-model').innerText = inversorModel;
+    document.getElementById('res-meter').innerText = meterModel;
+
+    document.getElementById('res-label-tipo').innerText = backup ? "Autonomia com Backup" : "Autoconsumo Direto";
+
+    if (backup) {
+        document.getElementById('node-bateria').style.display = 'block';
+        document.getElementById('res-bateria').innerText = "5.12 kWh"; // Média para sistemas residenciais base
+    } else {
+        document.getElementById('node-bateria').style.display = 'none';
+    }
+
+    document.getElementById('solar-results-area').style.display = 'block';
+    document.getElementById('solar-results-area').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
