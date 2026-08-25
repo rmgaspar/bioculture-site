@@ -174,3 +174,43 @@
                 document.getElementById('saap-resultado').style.display = 'block';
                 document.getElementById('saap-resultado').scrollIntoView({ behavior: 'smooth' });
             }
+
+            /* --- Lógica de Diagnóstico de Biofossa --- */
+            function analisarSoloParaFossa(textura) {
+                const recomendacao = { tipo: "", alerta: "", cor: "" };
+                const t = (textura || "").toLowerCase();
+
+                if (t.includes('arenosa')) {
+                    recomendacao.tipo = "Vala de Infiltração Standard";
+                    recomendacao.alerta = "Elevada permeabilidade. Manter distância rigorosa de 30m de furos/poços.";
+                    recomendacao.cor = "#536b57";
+                } else if (t.includes('argilosa')) {
+                    recomendacao.tipo = "Biofiltro ou Canteiro Filtrante (Wetland)";
+                    recomendacao.alerta = "Baixa infiltração. O solo pode saturar; exige maior área de evapotranspiração.";
+                    recomendacao.cor = "#a66f50";
+                } else if (t.includes('limosa')) {
+                    recomendacao.tipo = "Vala de Infiltração com Leito de Brita";
+                    recomendacao.alerta = "Permeabilidade moderada. Requer dimensionamento cuidadoso da vala.";
+                    recomendacao.cor = "#6d8992";
+                } else {
+                    recomendacao.tipo = "Requer Teste de Percolação";
+                    recomendacao.alerta = "Dados de solo insuficientes. Realize um teste de absorção no local.";
+                    recomendacao.cor = "#999";
+                }
+                return recomendacao;
+            }
+
+            function atualizarDicaSaneamento(dadosLocal) {
+                const display = document.getElementById('fossa-local-rec');
+                if (!display || !dadosLocal) return;
+
+                const rec = analisarSoloParaFossa(dadosLocal.textura);
+                
+                display.innerHTML = `
+                    <div class="rec-box" style="border-left: 4px solid ${rec.cor}; padding-left: 15px;">
+                        <div class="node-label">Recomendação para ${dadosLocal.freguesia || 'o local'}</div>
+                        <span style="font-family: Georgia, serif; font-size: 1.2rem; display: block; margin: 5px 0;">${rec.tipo}</span>
+                        <p style="font-size: 0.8rem; color: var(--muted); margin: 0;">${rec.alerta}</p>
+                    </div>
+                `;
+            }
