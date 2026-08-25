@@ -380,16 +380,14 @@
                 }
             }
 
-           /* --- 1. RESET TOTAL (Mata o Vermelho e as Setas Nativas) --- */
+           /* --- 1. RESET DE VALIDAÇÃO (Mata o Vermelho e as Setas) --- */
             #solar-lab input::-webkit-outer-spin-button,
             #solar-lab input::-webkit-inner-spin-button {
                 -webkit-appearance: none;
                 margin: 0;
             }
 
-            #solar-lab input[type=number] {
-                -moz-appearance: textfield;
-            }
+            #solar-lab input[type=number] { -moz-appearance: textfield; appearance: none; }
 
             #solar-lab input, 
             #solar-lab select,
@@ -397,77 +395,77 @@
                 box-shadow: none !important;
                 outline: none !important;
                 border-color: var(--line) !important;
+                -webkit-appearance: none;
+                appearance: none;
             }
 
-            /* Impede o border vermelho de validação do browser */
+            /* Remove o border vermelho de erro do browser */
             #solar-lab input:invalid, 
             #solar-lab input:out-of-range,
             #solar-lab input:focus:invalid,
-            #solar-lab select:focus {
-                border-color: var(--energy) !important; /* Verde em vez de vermelho */
+            #solar-lab .clean-select:focus {
+                border-color: var(--energy) !important;
                 box-shadow: none !important;
+                outline: none !important;
             }
 
-            /* --- 2. GRID E CARDS (Estilo Bloco 4) --- */
+            /* --- 2. GRID COMPACTO 2x2 --- */
             .input-grid-compact {
                 display: grid;
                 grid-template-columns: repeat(2, 1fr);
-                gap: 1.2rem;
+                gap: 1rem;
             }
 
             .input-card {
                 background: #fff;
                 border: 1px solid var(--line);
                 border-radius: 16px;
-                padding: 1.5rem;
+                padding: 1.2rem 1.5rem;
                 display: flex;
                 flex-direction: column;
-                gap: 0.5rem;
+                gap: 0.4rem;
             }
 
-            .input-card label { font-weight: 800; color: var(--ink); font-size: 0.9rem; margin: 0; }
-            .input-card small { font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; font-size: 0.55rem; color: #bbb; }
+            .input-card label { font-weight: 800; color: var(--ink); font-size: 0.85rem; margin: 0; }
+            .input-card small { font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; font-size: 0.5rem; color: #bbb; }
 
-            /* --- 3. AJUSTE BLOCO 1 (Consumo) --- */
+            /* --- 3. INPUTS ESTILO CLEAN --- */
             .input-wrap { 
                 display: flex; 
                 align-items: baseline; 
-                border-bottom: 2px solid var(--line); 
+                border-bottom: 1px solid var(--line); 
                 width: fit-content;
                 padding-bottom: 2px;
             }
             .input-wrap input { 
                 border: 0 !important; 
                 font-family: Georgia, serif; 
-                font-size: 1.8rem; 
-                width: 100px; 
+                font-size: 1.6rem; 
+                width: 90px; 
                 padding: 0 !important;
-                background: transparent;
+                background: transparent !important;
             }
-            .input-wrap span { font-size: 1rem; color: var(--muted); font-weight: 400; margin-left: 5px; }
+            .input-wrap span { font-size: 0.9rem; color: var(--muted); margin-left: 5px; }
 
-            /* --- 4. AJUSTE BLOCO 2 (Contador/Pessoas) --- */
-            .counter-ui { display: flex; align-items: center; gap: 10px; }
-            .counter-ui button {
-                width: 32px; height: 32px; border-radius: 8px;
+            .clean-select {
+                width: 100%;
+                height: 40px;
                 border: 1px solid var(--line) !important;
+                border-radius: 8px !important;
                 background: #fff !important;
-                color: var(--energy) !important; /* Verde em vez de vermelho */
-                font-weight: 900; cursor: pointer;
-                display: flex; align-items: center; justify-content: center;
-            }
-            .counter-ui input { 
-                width: 40px; text-align: center; border: 0 !important; 
-                font-weight: 800; font-size: 1.2rem; background: transparent; 
+                font-size: 0.85rem;
+                padding: 0 10px;
             }
 
-            /* --- 5. O BOTÃO (Compacto e Alinhado) --- */
+            /* --- 4. BOTÃO PILL (Estilo "Ver mais culturas") --- */
             .action-area { text-align: left; margin-top: 2.5rem; }
 
             .btn-biocultura-pill {
-                display: inline-flex !important; /* Impede que estique */
+                display: inline-flex !important;
                 width: auto !important;
-                padding: 0.8rem 2.5rem !important;
+                align-items: center;
+                justify-content: center;
+                padding: 0.7rem 2.5rem !important;
                 background: #fff !important;
                 border: 1px solid #dce4dc !important;
                 border-radius: 999px !important;
@@ -480,12 +478,13 @@
             }
             .btn-biocultura-pill:hover { border-color: var(--energy) !important; background: var(--pale) !important; }
 
-            /* --- 6. RESULTADOS (Estilo Editorial Mongólia) --- */
+            /* --- 5. RESULTADOS (Estilo Editorial Mongólia) --- */
             .impact-node .node-value {
                 font-family: Georgia, serif !important;
                 font-size: 2.4rem;
                 font-weight: 400;
                 color: var(--ink);
+                line-height: 1.1;
             }
             .impact-node .node-label {
                 font-family: "Source Sans Pro", sans-serif;
@@ -494,7 +493,11 @@
                 letter-spacing: 1.5px;
                 font-size: 0.65rem;
                 color: var(--muted);
+                margin: 0.5rem 0;
             }
-            .impact-node p { font-size: 0.85rem; line-height: 1.5; color: var(--muted); }
+            .impact-node p { font-size: 0.85rem; line-height: 1.5; color: var(--muted); margin: 0; }
 
-            .tech-list li { font-family: "Source Sans Pro", sans-serif; font-size: 0.85rem; }
+            /* Seleção de Bateria */
+            .input-card.selectable.active { border-color: var(--energy) !important; background: var(--pale) !important; }
+            .check-circle { width: 16px; height: 16px; border: 2px solid var(--line); border-radius: 50%; margin-right: 8px; display: inline-block; vertical-align: middle; }
+            .active .check-circle { background: var(--energy); border-color: var(--energy); }
