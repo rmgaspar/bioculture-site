@@ -380,119 +380,121 @@
                 }
             }
 
-            /* --- 1. Reset de Validação (Mata o Vermelho do Browser) --- */
-#solar-lab input, 
-#solar-lab select,
-#solar-lab button {
-    box-shadow: none !important;
-    outline: none !important;
-    -webkit-appearance: none;
-    appearance: none;
-}
+           /* --- 1. RESET TOTAL (Mata o Vermelho e as Setas Nativas) --- */
+            #solar-lab input::-webkit-outer-spin-button,
+            #solar-lab input::-webkit-inner-spin-button {
+                -webkit-appearance: none;
+                margin: 0;
+            }
 
-#solar-lab input:invalid, 
-#solar-lab input:out-of-range,
-#solar-lab input:focus:invalid {
-    border-color: #e8e8e8 !important;
-    box-shadow: none !important;
-    outline: none !important;
-}
+            #solar-lab input[type=number] {
+                -moz-appearance: textfield;
+            }
 
-/* --- 2. Simulador Solar: Layout Compacto 2x2 --- */
-.input-grid-compact { 
-    display: grid; 
-    grid-template-columns: repeat(2, 1fr); 
-    gap: 1rem; 
-}
+            #solar-lab input, 
+            #solar-lab select,
+            #solar-lab button {
+                box-shadow: none !important;
+                outline: none !important;
+                border-color: var(--line) !important;
+            }
 
-.input-card {
-    background: #fff;
-    border: 1px solid #eef1ed;
-    border-radius: 12px;
-    padding: 1.2rem 1.5rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    transition: all 0.2s ease;
-}
+            /* Impede o border vermelho de validação do browser */
+            #solar-lab input:invalid, 
+            #solar-lab input:out-of-range,
+            #solar-lab input:focus:invalid,
+            #solar-lab select:focus {
+                border-color: var(--energy) !important; /* Verde em vez de vermelho */
+                box-shadow: none !important;
+            }
 
-.input-card label { font-weight: 800; color: var(--ink); font-size: 0.85rem; margin-bottom: 5px; }
-.input-card small { font-weight: 900; text-transform: uppercase; letter-spacing: 1px; font-size: 0.5rem; color: #bbb; margin-bottom: 5px; }
+            /* --- 2. GRID E CARDS (Estilo Bloco 4) --- */
+            .input-grid-compact {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1.2rem;
+            }
 
-.input-wrap { display: flex; align-items: baseline; border-bottom: 1px solid var(--line); width: fit-content; padding-right: 10px; }
-.input-wrap input { 
-    border: 0 !important; 
-    font-family: Georgia, serif; 
-    font-size: 1.3rem; 
-    width: 70px; 
-    background: transparent; 
-    color: var(--ink); 
-    outline: none !important; 
-}
-.input-wrap span { font-size: 0.7rem; font-weight: 800; color: #999; }
+            .input-card {
+                background: #fff;
+                border: 1px solid var(--line);
+                border-radius: 16px;
+                padding: 1.5rem;
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
 
-/* Botão Pill (Estilo "Ver mais culturas" - Alinhado à Esquerda) */
-.action-area { text-align: left; margin-top: 2rem; }
+            .input-card label { font-weight: 800; color: var(--ink); font-size: 0.9rem; margin: 0; }
+            .input-card small { font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; font-size: 0.55rem; color: #bbb; }
 
-.btn-biocultura-pill {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.6rem 2.2rem !important;
-    background: #fff !important;
-    border: 1px solid #dce4dc !important;
-    border-radius: 999px !important;
-    color: #536b57 !important;
-    font-family: Georgia, serif !important;
-    font-weight: 700;
-    font-size: 0.95rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    width: auto !important;
-}
+            /* --- 3. AJUSTE BLOCO 1 (Consumo) --- */
+            .input-wrap { 
+                display: flex; 
+                align-items: baseline; 
+                border-bottom: 2px solid var(--line); 
+                width: fit-content;
+                padding-bottom: 2px;
+            }
+            .input-wrap input { 
+                border: 0 !important; 
+                font-family: Georgia, serif; 
+                font-size: 1.8rem; 
+                width: 100px; 
+                padding: 0 !important;
+                background: transparent;
+            }
+            .input-wrap span { font-size: 1rem; color: var(--muted); font-weight: 400; margin-left: 5px; }
 
-.btn-biocultura-pill:hover { 
-    border-color: #536b57 !important; 
-    background: #f4f7f1 !important; 
-}
+            /* --- 4. AJUSTE BLOCO 2 (Contador/Pessoas) --- */
+            .counter-ui { display: flex; align-items: center; gap: 10px; }
+            .counter-ui button {
+                width: 32px; height: 32px; border-radius: 8px;
+                border: 1px solid var(--line) !important;
+                background: #fff !important;
+                color: var(--energy) !important; /* Verde em vez de vermelho */
+                font-weight: 900; cursor: pointer;
+                display: flex; align-items: center; justify-content: center;
+            }
+            .counter-ui input { 
+                width: 40px; text-align: center; border: 0 !important; 
+                font-weight: 800; font-size: 1.2rem; background: transparent; 
+            }
 
-/* --- 3. Resultados: Estilo Relatório bioCultura --- */
-.impact-grid-two-cols { 
-    display: grid; 
-    grid-template-columns: 1fr 1fr; 
-    gap: 2.5rem; 
-    margin: 2rem 0; 
-}
+            /* --- 5. O BOTÃO (Compacto e Alinhado) --- */
+            .action-area { text-align: left; margin-top: 2.5rem; }
 
-.impact-column { display: flex; flex-direction: column; gap: 1.8rem; }
+            .btn-biocultura-pill {
+                display: inline-flex !important; /* Impede que estique */
+                width: auto !important;
+                padding: 0.8rem 2.5rem !important;
+                background: #fff !important;
+                border: 1px solid #dce4dc !important;
+                border-radius: 999px !important;
+                color: var(--energy) !important;
+                font-family: Georgia, serif !important;
+                font-weight: 700;
+                font-size: 1rem;
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+            .btn-biocultura-pill:hover { border-color: var(--energy) !important; background: var(--pale) !important; }
 
-.tech-list { list-style: none; padding: 0; margin-top: 0.5rem; }
-.tech-list li { 
-    font-size: 0.8rem; 
-    margin-bottom: 4px; 
-    color: var(--muted); 
-    padding-left: 12px;
-    position: relative;
-}
-.tech-list li::before { content: "•"; position: absolute; left: 0; color: var(--energy); }
+            /* --- 6. RESULTADOS (Estilo Editorial Mongólia) --- */
+            .impact-node .node-value {
+                font-family: Georgia, serif !important;
+                font-size: 2.4rem;
+                font-weight: 400;
+                color: var(--ink);
+            }
+            .impact-node .node-label {
+                font-family: "Source Sans Pro", sans-serif;
+                font-weight: 900;
+                text-transform: uppercase;
+                letter-spacing: 1.5px;
+                font-size: 0.65rem;
+                color: var(--muted);
+            }
+            .impact-node p { font-size: 0.85rem; line-height: 1.5; color: var(--muted); }
 
-.tier-info { 
-    font-size: 0.7rem; 
-    line-height: 1.4; 
-    color: #999; 
-    border-left: 2px solid var(--line); 
-    padding-left: 1rem; 
-    margin-top: auto; 
-}
-
-/* Seleção de Bateria */
-.input-card.selectable { cursor: pointer; }
-.input-card.selectable.active { border-color: var(--energy); background: #f4f7f1; }
-.check-circle { width: 16px; height: 16px; border: 2px solid var(--line); border-radius: 50%; margin-right: 8px; display: inline-block; vertical-align: middle; }
-.active .check-circle { background: var(--energy); border-color: var(--energy); }
-.check-text { font-size: 0.85rem; font-weight: 700; color: var(--ink); vertical-align: middle; }
-
-.help-note { font-size: 0.7rem; color: #999; line-height: 1.4; margin-top: auto; }
-
-@media (max-width: 760px) { 
-    .input-grid-compact, .impact-grid-two-cols { grid-template-columns: 1fr; } 
-}
+            .tech-list li { font-family: "Source Sans Pro", sans-serif; font-size: 0.85rem; }
