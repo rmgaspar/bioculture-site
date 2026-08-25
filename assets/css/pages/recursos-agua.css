@@ -400,35 +400,38 @@
                 }
             }
 
+           /* Limitar o tamanho da imagem para não ser gigante */
             .technical-diagram-container {
-                width: 100%;
-                margin-bottom: 2rem;
-                border-radius: 12px;
+                max-width: 800px; /* Largura controlada */
+                margin: 0 auto 2.5rem 0; /* Alinhado à esquerda */
+                border-radius: 16px;
                 overflow: hidden;
                 border: 1px solid var(--line);
+                background: #fff;
             }
 
             .technical-diagram-container img {
                 width: 100%;
+                height: auto;
+                max-height: 500px; /* Impede que a imagem cresça demasiado verticalmente */
+                object-fit: contain; /* Garante que os 4 quadrados aparecem bem */
                 display: block;
             }
 
-            .local-diagnosis-node {
-                padding: 1.5rem;
-                background: #fff;
-                border-radius: 14px;
-                border: 1px solid var(--line);
+            /* Grid de 4 colunas para as explicações */
+            .impact-grid-4-cols {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr); /* 2x2 no desktop para bater com a imagem */
+                gap: 2rem;
+                margin-top: 2rem;
             }
 
-            .rec-box strong {
-                font-size: 0.8rem;
-                color: var(--ink);
+            @media (min-width: 1000px) {
+                /* Se tiveres muito espaço, podes meter as 4 em linha, 
+                mas 2x2 costuma ler-se melhor com essa imagem específica */
+                .impact-grid-4-cols { grid-template-columns: repeat(2, 1fr); }
             }
 
-            .rec-box span {
-                font-family: Georgia, serif;
-                font-size: 1.2rem;
-                color: var(--forest);
-                display: block;
-                margin: 5px 0;
+            @media (max-width: 600px) {
+                .impact-grid-4-cols { grid-template-columns: 1fr; }
             }
