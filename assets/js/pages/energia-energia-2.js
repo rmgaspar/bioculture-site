@@ -135,30 +135,40 @@
             }
 
             async function processarSolar() {
-                const fatura = parseFloat(document.getElementById('in-fatura').value) || 0;
-                const presenca = parseFloat(document.getElementById('in-presenca').value);
-                const backup = document.getElementById('in-backup').checked;
+    const fatura = parseFloat(document.getElementById('in-fatura').value) || 0;
+    const presenca = parseFloat(document.getElementById('in-presenca').value);
+    const backup = document.getElementById('in-backup').checked;
 
-                if (fatura <= 0) return;
+    if (fatura <= 0) return;
 
-                const consumoKwh = fatura / 0.22;
-                const potenciaKwp = ((consumoKwh / 30) / 4.5) * 1.15 * (1 / presenca);
-                const numPaineis = Math.ceil((potenciaKwp * 1000) / 550);
-                const kwpFinal = (numPaineis * 550) / 1000;
+    // 1. Cálculos Base
+    const consumoKwh = fatura / 0.22;
+    const potenciaKwp = ((consumoKwh / 30) / 4.5) * 1.15 * (1 / presenca);
+    const numPaineis = Math.ceil((potenciaKwp * 1000) / 520); // Baseado em JA Solar 520W
+    const kwpFinal = (numPaineis * 520) / 1000;
 
-                // Injeção de texto organizada
-                document.getElementById('res-kwp').innerText = `${kwpFinal.toFixed(2)} kWp`;
-                document.getElementById('res-desc-paineis').innerHTML = `Configuração sugerida: <strong>${numPaineis} Painéis Fotovoltaicos 550W (Tier 1)</strong>.`;
-                
-                document.getElementById('res-label-tipo').innerText = backup ? "Autonomia com Backup" : "Autoconsumo Direto";
-                document.getElementById('res-inversor').innerText = backup ? "Híbrido (Backup Ready)" : "String (Alta Eficiência)";
+    // 2. Preços Estimados (Baseado nos teos exemplos)
+    let precoTotal = kwpFinal * 1100; // Média ~1100€ por kWp instalado
+    if (backup) precoTotal += 2400; // Bateria + Inversor Híbrido
 
-                if (backup) {
-                    document.getElementById('node-bateria').style.display = 'block';
-                    document.getElementById('res-bateria').innerText = "5.12 kWh";
-                } else {
-                    document.getElementById('node-bateria').style.display = 'none';
-                }
+    // 3. Injeção de Dados
+    document.getElementById('res-preco').innerText = precoTotal.toLocaleString('pt-PT', { style: 'currency', currency: 'EUR' });
+    document.getElementById('res-kwp').innerText = `${kwpFinal.toFixed(2)} kWp`;
+    
+    // Hardware específico Huawei/Similar
+    document.getElementById('res-meter').innerText = "1 × Huawei DDSU666-H (100A) ou similar";
+    document.getElementById('res-inversor').innerText = backup ? "1 × Huawei SUN2000-3KTL-L1 (Híbrido)" : "1 × Huawei SUN2000-3KTL-L1";
+    document.getElementById('res-desc-paineis').innerText = `1 × ${numPaineis} × JA Solar JAM60D42-520/LB ou similar`;
 
-                document.getElementById('solar-results-area').style.display = 'block';
-            }
+    document.getElementById('res-label-tipo').innerText = backup ? "Autonomia com Backup" : "Autoconsumo Direto";
+
+    if (backup) {
+        document.getElementById('node-bateria').style.display = 'block';
+        document.getElementById('res-bateria').innerText = "5.12 kWh (LiFePO4)";
+    } else {
+        document.getElementById('node-bateria').style.display = 'none';
+    }
+
+    document.getElementById('solar-results-area').style.display = 'block';
+    document.getElementById('solar-results-area').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
