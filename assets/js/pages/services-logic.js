@@ -1,19 +1,24 @@
-const servicesData = {
-    "biofossas": {
-        "title": "Circuito de Depuração",
-        "diagram": "/assets/images/diagrams/biofossa-panoramic.webp",
-        "nodes": [
-            { "label": "1. Primário", "text": "Biodigestor anaeróbio." },
-            { "label": "2. Filtração", "text": "Filtro biológico ativo." }
-        ]
-    }
-};
-
 $(document).ready(function() {
-    // Carregar Sidebar
+    // 1. Carregar Sidebar
     fetch("/sidebar-content.html").then(r => r.text()).then(html => {
         $("#sidebar").html(html);
     });
 
-    // Injeção de componentes técnicos pode ser feita aqui
+    // 2. Carregar e Renderizar Serviços
+    fetch("/data/services.json").then(r => r.json()).then(data => {
+        const container = $("#services-container");
+        data.services.forEach(s => {
+            container.append(`
+                <article class="service-card">
+                    <div class="service-icon"><img src="${s.icon}" alt=""></div>
+                    <h3>${s.titulo}</h3>
+                    <p>${s.descricao}</p>
+                    <div class="service-highlight">
+                        <p>${s.destaque}</p>
+                    </div>
+                    <a href="#${s.slug}" class="btn-solicitar">Solicitar Estudo Individual</a>
+                </article>
+            `);
+        });
+    });
 });
