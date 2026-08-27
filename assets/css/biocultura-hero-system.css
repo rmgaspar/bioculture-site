@@ -413,14 +413,34 @@ html body #main :is(.scope-switch,.calendar-navigation-bar,.home-nav,.pressure-n
 }
 
 /* A navegação interna permanece visível sem ficar colada ao topo do ecrã. */
-html body #main :is(.scope-switch,.calendar-navigation-bar,.home-nav,.pressure-nav) {
+html body #main :is(.scope-switch,.calendar-navigation-bar,.home-nav,.pressure-nav,.section-nav) {
+    position:sticky !important;
     top:1.75rem !important;
+    z-index:40 !important;
+    overflow:visible !important;
+    flex-wrap:wrap;
+}
+.bio-nav-anchor { width:100%; height:0; }
+html body #main :is(.scope-switch,.calendar-navigation-bar,.home-nav,.pressure-nav,.section-nav).bio-nav-pinned {
+    position:fixed !important;
+    top:1.75rem !important;
+    left:var(--bio-nav-left) !important;
+    width:var(--bio-nav-width) !important;
+    margin:0 !important;
+    padding-right:.75rem !important;
+    padding-left:.75rem !important;
+    border:1px solid rgba(220,227,221,.92) !important;
+    border-radius:12px;
+    background:rgba(255,255,255,.96) !important;
+    box-shadow:0 10px 30px rgba(31,54,40,.08) !important;
+    backdrop-filter:blur(14px);
 }
 
 @media (max-width:760px) {
-    html body #main :is(.scope-switch,.calendar-navigation-bar,.home-nav,.pressure-nav) {
+    html body #main :is(.scope-switch,.calendar-navigation-bar,.home-nav,.pressure-nav,.section-nav) {
         top:.65rem !important;
     }
+    html body #main :is(.scope-switch,.calendar-navigation-bar,.home-nav,.pressure-nav,.section-nav).bio-nav-pinned { top:.65rem !important; }
 }
 
 /* Cartões e blocos: a altura acompanha o conteúdo e o texto mantém respiro. */

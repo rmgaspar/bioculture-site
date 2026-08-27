@@ -228,7 +228,7 @@ section, #header, hr, .major {
     overflow:hidden;
     background: var(--pale);
     border-radius: 24px;
-    padding: 2.5rem;
+    padding: 2.5rem !important;
     margin: 2rem 0;
     border: 1px solid var(--line);
 }
@@ -351,7 +351,9 @@ section, #header, hr, .major {
 .scale-overview p { margin:0; color:var(--muted); font-size:.88rem; line-height:1.55; }
 
 .hub-section { grid-template-columns:1fr; gap:2.3rem; }
-.hub-section-head { display:grid; grid-template-columns:minmax(120px,180px) minmax(0,850px); gap:clamp(1.5rem,4vw,4rem); }
+.hub-section-head { display:block; max-width:900px; }
+.hub-section-head .eyebrow { margin-bottom:.55rem; }
+.hub-section-head h2 { margin:0; text-align:left; }
 .hub-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1.25rem; }
 .hub-grid-two { grid-template-columns:repeat(2,minmax(0,1fr)); }
 
@@ -410,11 +412,11 @@ section, #header, hr, .major {
     border-top:1px solid var(--line) !important;
 }
 .hub-dashboard-head {
-    display:grid;
-    grid-template-columns:minmax(120px,180px) minmax(0,900px);
-    gap:clamp(1.5rem,4vw,4rem);
+    display:block;
+    max-width:900px;
     margin-bottom:2.4rem;
 }
+.hub-dashboard-head .eyebrow { margin-bottom:.55rem; }
 .hub-dashboard h2 {
     margin:0 0 .4em;
     color:var(--ink);
@@ -424,6 +426,7 @@ section, #header, hr, .major {
     letter-spacing:-.045em;
 }
 .hub-dashboard-head p { margin:0; color:var(--muted); line-height:1.7; }
+.hub-dashboard-head h2,.hub-dashboard-head p { text-align:left; }
 .hub-signal-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:1rem; }
 .hub-signal {
     min-height:210px;
@@ -467,6 +470,19 @@ section, #header, hr, .major {
 .hub-territory p { max-width:760px; margin:0; color:#dce8df; line-height:1.62; }
 .hub-territory a { display:inline-flex; padding:.8rem 1rem; border-radius:999px; background:#fff; color:#214c37; font-weight:900; text-decoration:none; white-space:nowrap; }
 
+.hub-latest { padding:clamp(3.5rem,7vw,6rem) 0!important; border-top:1px solid var(--line)!important; }
+.hub-latest-head { max-width:900px; margin-bottom:2rem; }
+.hub-latest-head .eyebrow { margin-bottom:.55rem; }
+.hub-latest-head h2 { margin:0 0 .45rem; color:var(--ink); font-family:Georgia,"Times New Roman",serif; font-size:clamp(2rem,3.5vw,3.25rem); line-height:1; letter-spacing:-.04em; }
+.hub-latest-head p { margin:0; color:var(--muted); line-height:1.65; }
+.hub-latest-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1rem; }
+.hub-latest-grid a { display:flex; flex-direction:column; min-height:190px; padding:1.35rem; border:1px solid var(--line)!important; border-radius:18px; background:#fff; box-shadow:none!important; color:var(--ink)!important; text-decoration:none; transition:transform .2s,border-color .2s,box-shadow .2s; }
+.hub-latest-grid a:hover { transform:translateY(-3px); border-color:#b7c7b9!important; box-shadow:0 16px 38px rgba(36,55,43,.07)!important; }
+.hub-latest-grid small { color:var(--forest); font-size:.62rem; font-weight:900; letter-spacing:.12em; text-transform:uppercase; }
+.hub-latest-grid h3 { margin:.8rem 0 .65rem; color:var(--ink); font-family:Georgia,"Times New Roman",serif; font-size:1.18rem; line-height:1.15; }
+.hub-latest-grid p { margin:0; color:var(--muted); font-size:.82rem; line-height:1.55; }
+.hub-latest-grid span { margin-top:auto; padding-top:1rem; color:var(--forest); font-size:.68rem; font-weight:900; }
+
 @media (max-width:1000px) {
     .hub-card { grid-template-columns:1fr; }
     .hub-thumb { min-height:210px; }
@@ -486,8 +502,9 @@ section, #header, hr, .major {
     .hub-actions a { justify-content:center; }
     .hub-dashboard-head,.hub-territory { grid-template-columns:1fr; gap:1rem; }
     .hub-signal-grid,.hub-findings { grid-template-columns:1fr; }
+    .hub-latest-grid { grid-template-columns:1fr; }
     .source-list { grid-template-columns:1fr; }
     .hub-territory a { justify-content:center; white-space:normal; text-align:center; }
-    .bio-impact-report { padding:1.3rem; }
+    .bio-impact-report { padding:1.3rem !important; }
     .impact-header h2 { overflow-wrap:anywhere; }
 }
