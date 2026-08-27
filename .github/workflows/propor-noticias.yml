@@ -51,8 +51,20 @@ jobs:
             ID="$(jq -r '.id' <<<"$ITEM")"
             URL="$(jq -r '.url' <<<"$ITEM")"
             TITLE="$(jq -r '.pt.titulo' <<<"$ITEM")"
+            SOURCE="$(jq -r '.fonte // "Fonte não indicada"' <<<"$ITEM")"
+            CATEGORY="$(jq -r '.categoria // "Sem categoria"' <<<"$ITEM")"
+            SCORE="$(jq -r '.relevancia // 0' <<<"$ITEM")"
+            SUMMARY="$(jq -r '.pt.resumo_biocultura // "Sem resumo disponível."' <<<"$ITEM")"
             if [ "$(gh issue list --state all --search "$ID in:body" --json number --jq length)" = "0" ]; then
-              printf '%s\n\n<!-- news-id: %s -->' "$URL" "$ID" > "$RUNNER_TEMP/news-body.md"
+              {
+                printf '## Revisão editorial\n\n'
+                printf '**Fonte:** %s  \n**Categoria:** %s  \n**Pontuação:** %s/100\n\n' "$SOURCE" "$CATEGORY" "$SCORE"
+                printf '%s\n\n' "$SUMMARY"
+                printf '[Abrir pré-visualização bioCulture](https://www.bioculture.net/observatorio/noticia-detalhe.html?id=%s&preview=proposal)\n\n' "$ID"
+                printf '[Abrir publicação original](%s)\n\n' "$URL"
+                printf 'Para decidir, comenta com `/aprovar` ou `/recusar`.\n\n'
+                printf '<!-- news-id: %s -->' "$ID"
+              } > "$RUNNER_TEMP/news-body.md"
               gh issue create --title "$TITLE" --body-file "$RUNNER_TEMP/news-body.md" --label "noticia:pendente"
             fi
           done

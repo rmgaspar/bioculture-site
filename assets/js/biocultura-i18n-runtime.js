@@ -242,6 +242,13 @@
         choose(pt, en) {
             return lang === "en" ? en : pt;
         },
+        t(key) {
+            return nestedValue(structuredDictionary, key) || key;
+        },
+        updateDOM(root = document) {
+            applyStructuredTranslations(root);
+            translateElement(root === document ? document.body : root);
+        },
     });
 
     window.BioCultureNews = {
@@ -300,13 +307,13 @@
     async function loadDictionary() {
         if (dictionary) return dictionary;
         if (!loading) {
-            loading = originalFetch(`/assets/lang/auto/${lang}.json?v=15`, { cache: "no-cache" })
+            loading = originalFetch(`/assets/lang/auto/${lang}.json?v=16`, { cache: "no-cache" })
                 .then((response) => response.ok ? response.json() : {})
                 .catch(() => ({}));
         }
         dictionary = await loading;
         if (!structuredDictionary) {
-            structuredDictionary = await originalFetch(`/assets/lang/${lang}.json?v=8`, { cache: "no-cache" })
+            structuredDictionary = await originalFetch(`/assets/lang/${lang}.json?v=9`, { cache: "no-cache" })
                 .then((response) => response.ok ? response.json() : {})
                 .catch(() => ({}));
         }
