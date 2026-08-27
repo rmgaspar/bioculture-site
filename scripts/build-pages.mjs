@@ -8,7 +8,7 @@ const textExtensions = new Set([".css", ".html", ".js", ".json", ".svg", ".webma
 const publicEntries = [
   "assets", "calendario", "config", "contactos.html", "data", "ecossistemas",
   "elements.html", "energia", "generic.html", "images", "index.html", "manifesto.html",
-  "observario.html", "observatorio", "recursos", "servicos", "sidebar-content.html",
+  "observario.html", "observatorio", "recursos", "services", "sidebar-content.html",
   "sidebar.html", "suporte.html"
 ];
 const rootPathPattern = new RegExp(`([\\"'\`\\(=])/(?!/)(?=${publicEntries.map(escapeRegExp).join("|")})(?=[^\\s])`, "g");
