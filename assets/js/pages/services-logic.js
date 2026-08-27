@@ -10,13 +10,13 @@ $(document).ready(function() {
         data.services.forEach(s => {
             container.append(`
                 <article class="service-card">
-                    <div class="service-icon"><img src="${s.icon}" alt=""></div>
+                    <div class="service-icon" aria-hidden="true">${s.symbol}</div>
                     <h3>${s.titulo}</h3>
                     <p>${s.descricao}</p>
                     <div class="service-highlight">
                         <p>${s.destaque}</p>
                     </div>
-                    <a href="#${s.slug}" class="btn-solicitar">Solicitar Estudo Individual</a>
+                    <a href="${s.href}" class="btn-solicitar">Abrir blueprint →</a>
                 </article>
             `);
         });
