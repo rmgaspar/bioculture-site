@@ -286,17 +286,13 @@
                     content: "bioCulture";
                     position: absolute;
                     z-index: 6;
-                    right: .7rem;
-                    bottom: .65rem;
-                    padding: .28rem .52rem;
-                    border: 1px solid rgba(255,255,255,.42);
-                    border-radius: 999px;
-                    background: rgba(25,52,39,.68);
-                    color: rgba(255,255,255,.94);
-                    font: 600 .58rem/1.1 Georgia, serif;
-                    letter-spacing: .04em;
+                    right: .72rem;
+                    bottom: .58rem;
+                    color: rgba(255,255,255,.42);
+                    font: 400 .62rem/1 Georgia, "Times New Roman", serif;
+                    letter-spacing: -.035em;
+                    text-shadow: 0 1px 3px rgba(20,38,29,.28);
                     pointer-events: none;
-                    backdrop-filter: blur(4px);
                 }
             `;
             document.head.appendChild(style);
