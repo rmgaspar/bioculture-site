@@ -274,6 +274,73 @@
         },
     };
 
+    function installImageSignatures() {
+        if (!document.getElementById("bioculture-image-signature-style")) {
+            const style = document.createElement("style");
+            style.id = "bioculture-image-signature-style";
+            style.textContent = `
+                .bioculture-owned-visual { position: relative !important; }
+                .bioculture-image-signature-frame { display: block; overflow: hidden; }
+                .bioculture-image-signature-frame > img { display: block; }
+                .bioculture-owned-visual::after {
+                    content: "bioCulture";
+                    position: absolute;
+                    z-index: 6;
+                    right: .7rem;
+                    bottom: .65rem;
+                    padding: .28rem .52rem;
+                    border: 1px solid rgba(255,255,255,.42);
+                    border-radius: 999px;
+                    background: rgba(25,52,39,.68);
+                    color: rgba(255,255,255,.94);
+                    font: 600 .58rem/1.1 Georgia, serif;
+                    letter-spacing: .04em;
+                    pointer-events: none;
+                    backdrop-filter: blur(4px);
+                }
+            `;
+            document.head.appendChild(style);
+        }
+
+        const ownedPath = (value) => {
+            try {
+                const url = new URL(value, location.href);
+                if (url.origin !== location.origin) return false;
+                if (!/^\/(images|assets\/dicas)\//.test(url.pathname)) return false;
+                return !/(logo|mark|placeholder|favicon|icon)/i.test(url.pathname);
+            } catch (_) { return false; }
+        };
+        const excluded = "#sidebar, .bio-wordmark, .source-logo-detail, [data-no-signature]";
+        const mark = (root = document) => {
+            root.querySelectorAll?.("img[src]").forEach((image) => {
+                if (!ownedPath(image.getAttribute("src")) || image.closest(excluded)) return;
+                let frame = image.closest("picture, .hero-image, .hero-globe, .portal-mark, .dossier-visual, .vine-vignette, .hub-thumb");
+                if (!frame) {
+                    if (image.parentElement?.classList.contains("bioculture-image-signature-frame")) frame = image.parentElement;
+                    else {
+                        frame = document.createElement("span");
+                        frame.className = "bioculture-image-signature-frame";
+                        image.before(frame);
+                        frame.appendChild(image);
+                    }
+                }
+                if (frame && !frame.closest(excluded)) frame.classList.add("bioculture-owned-visual");
+            });
+            root.querySelectorAll?.("[style*='background-image'], .observatory-visual, .hub-thumb").forEach((element) => {
+                if (element.closest(excluded)) return;
+                const match = getComputedStyle(element).backgroundImage.match(/url\(["']?(.*?)["']?\)/);
+                if (match && ownedPath(match[1])) element.classList.add("bioculture-owned-visual");
+            });
+        };
+        mark();
+        new MutationObserver((mutations) => mutations.forEach((mutation) => mutation.addedNodes.forEach((node) => {
+            if (node.nodeType === Node.ELEMENT_NODE) mark(node);
+        }))).observe(document.body, { childList: true, subtree: true });
+    }
+
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", installImageSignatures, { once: true });
+    else installImageSignatures();
+
     function filterNewsForPage(data, url) {
         if (!url.includes("/data/noticias.json") || !Array.isArray(data) || location.pathname.includes("noticia-detalhe")) return data;
         const pageCategories = [
@@ -326,7 +393,7 @@
     async function loadDictionary() {
         if (dictionary) return dictionary;
         if (!loading) {
-            loading = originalFetch(`/assets/lang/auto/${lang}.json?v=16`, { cache: "no-cache" })
+            loading = originalFetch(`/assets/lang/auto/${lang}.json?v=17`, { cache: "no-cache" })
                 .then((response) => response.ok ? response.json() : {})
                 .catch(() => ({}));
         }
