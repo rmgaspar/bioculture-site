@@ -1,6 +1,6 @@
 (function () {
     const byId = (id) => document.getElementById(id);
-    fetch("/sidebar-content.html?v=22").then((r) => r.text()).then((html) => { byId("sidebar").innerHTML = html; });
+    fetch("/sidebar-content.html?v=23").then((r) => r.text()).then((html) => { byId("sidebar").innerHTML = html; });
     byId("calculate-solar")?.addEventListener("click", function () {
         const bill = Number(byId("in-fatura").value);
         const presence = Number(byId("in-presenca").value);
