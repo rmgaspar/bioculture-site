@@ -260,6 +260,7 @@
         },
         visibleIn(item, context = "global") {
             const scope = this.scope(item);
+            if (context === "all") return true;
             if (context === "portugal") return scope === "portugal";
             return scope !== "portugal" || item?.relevancia_global === true;
         },
@@ -275,6 +276,24 @@
 
     function filterNewsForPage(data, url) {
         if (!url.includes("/data/noticias.json") || !Array.isArray(data) || location.pathname.includes("noticia-detalhe")) return data;
+        const pageCategories = [
+            [/\/(water|agua)\.html$/, ["agua"]],
+            [/\/(air|ar)\.html$/, ["ar"]],
+            [/\/(soil|solo)\.html$/, ["solo"]],
+            [/\/(biodiversity|biodiversidade)\.html$/, ["biodiversidade"]],
+            [/\/(energy|energia)\.html$/, ["energia"]],
+            [/\/(renewables-and-territory|transicao-etica)\.html$/, ["energia"]],
+            [/\/(ai-data-centres|digital)\.html$/, ["impacto-digital"]],
+            [/\/(mining|mineracao)\.html$/, ["mineracao"]],
+            [/\/(livestock|pecuaria)\.html$/, ["pecuaria"]],
+            [/\/(regeneration-calendar|calendario)\.html$/, ["agricultura"]],
+            [/\/(living-vineyard|enologia)\.html$/, ["agricultura"]],
+        ];
+        const pageRule = pageCategories.find(([pattern]) => pattern.test(location.pathname));
+        if (pageRule) {
+            const wanted = new Set(pageRule[1]);
+            data = data.filter((item) => window.BioCultureNews.categories(item).some((category) => wanted.has(category)));
+        }
         const globalPages = /\/(water|air|soil|biodiversity|energy|renewables-and-territory|ai-data-centres|mining|livestock|regeneration-calendar|living-vineyard|vetores-pressao-global)\.html$/;
         const portugalPages = /\/(agua|ar|solo|biodiversidade|energia|transicao-etica|digital|mineracao|pecuaria|calendario|enologia|observatorio-terra)\.html$/;
         if (globalPages.test(location.pathname)) return data.filter((item) => window.BioCultureNews.visibleIn(item, "global"));

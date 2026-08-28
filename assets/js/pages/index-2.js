@@ -80,10 +80,12 @@
             }
 
             function showNews(items) {
-                const rows = window.BioCultureNews?.select(items, { limit: 6 }) || [...items]
-                    .sort((a, b) => (+b.prioridade || +b.relevancia || 0) - (+a.prioridade || +a.relevancia || 0)).slice(0, 6);
-
-                el("news").innerHTML = rows.map((n) => {
+                const rows = window.BioCultureNews?.select(items, { context: "all", limit: Number.MAX_SAFE_INTEGER }) || [...items]
+                    .sort((a, b) => (+b.prioridade || +b.relevancia || 0) - (+a.prioridade || +a.relevancia || 0));
+                let expanded = false;
+                const render = () => {
+                    const visible = expanded ? rows : rows.slice(0, 6);
+                    el("news").innerHTML = visible.map((n) => {
                     const c = window.BioCultureI18n?.content(n) || n.pt || n;
                     const scope = n.ambito === "portugal"
                         ? (isEnglish ? "Portugal · territorial case" : "Portugal · caso territorial")
@@ -93,7 +95,19 @@
                     }"><small>${esc(scope)} · ${esc(window.BioCultureI18n?.date(n.data) || n.data)}</small><h3>${esc(c.titulo)}</h3><span>${
                         esc(n.fonte)
                     } →</span></a>`;
-                }).join("") || `<p class="empty">${isEnglish ? "No news available at this time." : "Sem notícias disponíveis neste momento."}</p>`;
+                    }).join("") || `<p class="empty">${isEnglish ? "No news available at this time." : "Sem notícias disponíveis neste momento."}</p>`;
+                    const toggle = el("news-toggle");
+                    if (toggle) {
+                        toggle.hidden = rows.length <= 6;
+                        toggle.textContent = expanded
+                            ? (isEnglish ? "Show less" : "Recolher")
+                            : (isEnglish ? `Show all (${rows.length})` : `Ver mais (${rows.length})`);
+                        toggle.setAttribute("aria-expanded", String(expanded));
+                    }
+                };
+                const toggle = el("news-toggle");
+                if (toggle) toggle.onclick = () => { expanded = !expanded; render(); };
+                render();
             }
 
             function getPortalMarkImage(title) {
