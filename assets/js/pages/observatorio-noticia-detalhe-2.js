@@ -59,6 +59,11 @@
                         if (n.imagem) {
                             image.src = n.imagem;
                             image.alt = content.titulo || "Imagem da notícia";
+                            const isBioCultureImage = /^\/(images|assets\/dicas)\//.test(n.imagem);
+                            document.getElementById("hero-image-frame")?.classList.toggle(
+                                "bioculture-owned-visual",
+                                isBioCultureImage
+                            );
                             image.addEventListener("error", () => { figure.hidden = true; }, { once: true });
                         } else {
                             figure.hidden = true;
@@ -67,10 +72,11 @@
                         document.getElementById("data").innerText = window.BioCultureI18n?.date(n.data) || n.data || "";
                         document.getElementById("source-name-top").innerText = n.fonte || "";
                         
-                        // O texto da legenda é traduzido pelo runtime através de
-                        // data-i18n. Não o substituímos aqui para evitar que a
-                        // tradução assíncrona interrompa o preenchimento dos
-                        // restantes metadados da fonte.
+                        const imageCredit = lang === "en"
+                            ? (n.imagem_credito_en || n.imagem_credito_pt)
+                            : (n.imagem_credito_pt || n.imagem_credito_en);
+                        document.getElementById("image-caption-source").innerText = imageCredit
+                            || (lang === "en" ? "Image supplied by the source" : "Imagem disponibilizada pela fonte");
 
                         const catEl = document.getElementById("cat");
                         const translatedCategory = typeof window.BioCultureI18n?.category === "function"
