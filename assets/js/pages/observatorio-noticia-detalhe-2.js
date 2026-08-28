@@ -67,14 +67,16 @@
                         document.getElementById("data").innerText = window.BioCultureI18n?.date(n.data) || n.data || "";
                         document.getElementById("source-name-top").innerText = n.fonte || "";
                         
-                        // Tradução dinâmica do label da imagem
-                        const imgLabel = window.BioCultureI18n?.t('news_image_source') || "Imagem";
-                        document.getElementById("image-caption-source").innerText = n.fonte
-                            ? `${imgLabel}: ${n.fonte}`
-                            : "Imagem disponibilizada pela fonte";
+                        // O texto da legenda é traduzido pelo runtime através de
+                        // data-i18n. Não o substituímos aqui para evitar que a
+                        // tradução assíncrona interrompa o preenchimento dos
+                        // restantes metadados da fonte.
 
                         const catEl = document.getElementById("cat");
-                        catEl.innerText = (window.BioCultureI18n?.category(n.categoria) || n.categoria || "Geral").toUpperCase();
+                        const translatedCategory = typeof window.BioCultureI18n?.category === "function"
+                            ? window.BioCultureI18n.category(n.categoria)
+                            : n.categoria;
+                        catEl.innerText = (translatedCategory || "Geral").toUpperCase();
                         if (catColors[n.categoria]) catEl.style.color = catColors[n.categoria];
 
                         let domain = "";
