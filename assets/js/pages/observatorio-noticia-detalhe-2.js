@@ -81,8 +81,14 @@
                         try { domain = new URL(n.url).hostname; } catch (e) { domain = "biocultura.net"; }
                         const forcedLogo = `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
 
-                        document.getElementById("source-logo").src = n.logo || forcedLogo;
-                        document.getElementById("footer-logo").src = n.logo || forcedLogo;
+                        ["source-logo", "footer-logo"].forEach((logoId) => {
+                            const logoElement = document.getElementById(logoId);
+                            logoElement.onerror = () => {
+                                if (logoElement.src !== forcedLogo) logoElement.src = forcedLogo;
+                            };
+                            logoElement.src = n.logo || forcedLogo;
+                            logoElement.alt = n.fonte ? `Logótipo ${n.fonte}` : "Logótipo da fonte";
+                        });
                         document.getElementById("official-link").href = n.url || "#";
                         document.getElementById("footer-source").innerText = n.fonte || "";
                         document.getElementById("footer-date").innerText = window.BioCultureI18n?.date(n.data) || n.data || "";
