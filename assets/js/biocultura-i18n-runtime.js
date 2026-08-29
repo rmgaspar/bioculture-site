@@ -252,6 +252,23 @@
     });
 
     window.BioCultureNews = {
+        compare(a, b) {
+            const dateValue = (item) => {
+                const raw = item?.publicado_em || item?.data || item?.capturado_em || "";
+                const normalized = String(raw)
+                    .replace(/\bJan\b/i, "Jan").replace(/\bFev\b/i, "Feb")
+                    .replace(/\bMar\b/i, "Mar").replace(/\bAbr\b/i, "Apr")
+                    .replace(/\bMai\b/i, "May").replace(/\bJun\b/i, "Jun")
+                    .replace(/\bJul\b/i, "Jul").replace(/\bAgo\b/i, "Aug")
+                    .replace(/\bSet\b/i, "Sep").replace(/\bOut\b/i, "Oct")
+                    .replace(/\bNov\b/i, "Nov").replace(/\bDez\b/i, "Dec");
+                const value = Date.parse(normalized.slice(0, 10));
+                return Number.isNaN(value) ? 0 : value;
+            };
+            const dateDifference = dateValue(b) - dateValue(a);
+            if (dateDifference) return dateDifference;
+            return (+b?.prioridade || +b?.relevancia || 0) - (+a?.prioridade || +a?.relevancia || 0);
+        },
         categories(item) {
             return [...new Set([...(item?.categorias || []), ...(item?.tags || []), item?.categoria_id].filter(Boolean))];
         },
@@ -269,7 +286,7 @@
             return [...(items || [])]
                 .filter((item) => item?.estado !== "proposta" && this.visibleIn(item, context))
                 .filter((item) => !wanted.size || this.categories(item).some((category) => wanted.has(category)))
-                .sort((a, b) => (+b.prioridade || +b.relevancia || 0) - (+a.prioridade || +a.relevancia || 0))
+                .sort((a, b) => this.compare(a, b))
                 .slice(0, limit);
         },
     };

@@ -81,7 +81,7 @@
 
             function showNews(items) {
                 const rows = window.BioCultureNews?.select(items, { context: "all", limit: Number.MAX_SAFE_INTEGER }) || [...items]
-                    .sort((a, b) => (+b.prioridade || +b.relevancia || 0) - (+a.prioridade || +a.relevancia || 0));
+                    .sort((a, b) => window.BioCultureNews?.compare(a, b) ?? (Date.parse(b.data || "") - Date.parse(a.data || "")));
                 let expanded = false;
                 const render = () => {
                     const visible = expanded ? rows : rows.slice(0, 6);
