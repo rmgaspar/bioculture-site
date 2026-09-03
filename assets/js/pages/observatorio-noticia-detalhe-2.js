@@ -57,21 +57,7 @@
                         const image = document.getElementById("imagem");
                         const figure = document.getElementById("hero-figure");
                         const caption = document.getElementById("image-caption-source");
-                        const fallbackImages = {
-                            "Água": "/images/agua-ciclo-vivo.webp",
-                            "Ar": "/images/ar-vivo.webp",
-                            "Clima": "/images/pressoes-globais.webp",
-                            "Solo": "/images/solo-vivo.webp",
-                            "Biodiversidade": "/images/biodiversidade-teia-viva.webp",
-                            "Energia": "/images/energia-consciente.webp",
-                            "Energia Ética": "/images/energia-consciente.webp",
-                            "Impacto Digital & IA": "/images/digital-impacto-fisico.webp",
-                            "Mineração": "/images/mineracao-territorio.webp",
-                            "Pecuária Industrial": "/images/pecuaria-escala.webp",
-                            "Saúde": "/images/ar-vivo.webp",
-                            "Conhecimento": "/images/pressoes-globais.webp",
-                            "Pressões": "/images/pressoes-portugal.webp",
-                        };
+                        const fallbackImage = "/images/noticias-sem-imagem.webp";
                         const editorialCredit = lang === "en"
                             ? "bioCulture editorial image"
                             : "Imagem editorial bioCulture";
@@ -92,13 +78,12 @@
                             );
                             caption.innerText = isBioCultureImage ? editorialCredit : sourceCredit;
                             image.addEventListener("error", () => {
-                                const fallback = fallbackImages[n.categoria] || "/images/pressoes-globais.webp";
                                 if (image.dataset.fallbackApplied === "true") {
                                     figure.hidden = true;
                                     return;
                                 }
                                 image.dataset.fallbackApplied = "true";
-                                image.src = fallback;
+                                image.src = fallbackImage;
                                 image.alt = lang === "en"
                                     ? `bioCulture editorial illustration for ${window.BioCultureI18n?.category(n.categoria) || "the article"}`
                                     : `Ilustração editorial bioCulture para ${n.categoria || "a notícia"}`;
@@ -106,7 +91,7 @@
                             });
                         } else {
                             image.dataset.fallbackApplied = "true";
-                            image.src = fallbackImages[n.categoria] || "/images/pressoes-globais.webp";
+                            image.src = fallbackImage;
                             image.alt = lang === "en" ? "bioCulture editorial illustration" : "Ilustração editorial bioCulture";
                             markEditorialImage();
                         }

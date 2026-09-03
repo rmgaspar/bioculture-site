@@ -22,8 +22,24 @@
                 latest.innerHTML = selected.map((item) => {
                     const content = window.BioCultureI18n?.content(item) || item.pt || item;
                     const summary = content.resumo_biocultura || content.resumo || "";
-                    return `<a href="/observatorio/noticia-detalhe.html?id=${encodeURIComponent(item.id)}"><small>${escapeHtml(item.data || item.categoria || "Atualidade")}</small><h3>${escapeHtml(content.titulo || "Notícia")}</h3><p>${escapeHtml(summary)}</p><span>${escapeHtml(item.fonte || "bioCulture")} →</span></a>`;
+                    const sourceImage = typeof item.imagem === "string" && (/^https?:\/\//i.test(item.imagem) || item.imagem.startsWith("/"))
+                        ? item.imagem
+                        : "/images/noticias-sem-imagem.webp";
+                    const imageAlt = sourceImage === "/images/noticias-sem-imagem.webp"
+                        ? (window.BioCultureI18n?.isEnglish ? "bioCulture editorial illustration" : "Ilustração editorial bioCulture")
+                        : (content.titulo || "");
+                    return `<a href="/observatorio/noticia-detalhe.html?id=${encodeURIComponent(item.id)}"><img class="hub-latest-thumb" src="${escapeHtml(sourceImage)}" alt="${escapeHtml(imageAlt)}" loading="lazy"><div class="hub-latest-card-body"><small>${escapeHtml(item.data || item.categoria || "Atualidade")}</small><h3>${escapeHtml(content.titulo || "Notícia")}</h3><p>${escapeHtml(summary)}</p><span>${escapeHtml(item.fonte || "bioCulture")} →</span></div></a>`;
                 }).join("") || "<p>Sem notícias selecionadas neste momento.</p>";
+                latest.querySelectorAll(".hub-latest-thumb").forEach((image) => {
+                    image.addEventListener("error", () => {
+                        if (image.dataset.fallbackApplied === "true") return;
+                        image.dataset.fallbackApplied = "true";
+                        image.src = "/images/noticias-sem-imagem.webp";
+                        image.alt = window.BioCultureI18n?.isEnglish
+                            ? "bioCulture editorial illustration"
+                            : "Ilustração editorial bioCulture";
+                    });
+                });
             })
             .catch(() => { latest.innerHTML = "<p>Não foi possível carregar as notícias.</p>"; });
     }
