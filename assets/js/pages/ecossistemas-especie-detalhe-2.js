@@ -37,20 +37,53 @@
                     )
                     : "";
             }
+            const english = () => window.BioCultureI18n?.isEnglish ??
+                (new URLSearchParams(location.search).get("lang") === "en");
+            const tr = (pt, en) => english() ? en : pt;
+            const localized = (value) => value?.[english() ? "en" : "pt"] || value?.pt || "";
             function sourcePanel(items) {
-                const links = arr(items).filter((x) => /^https?:\/\//i.test(String(x)));
-                return links.length
-                    ? panel(
-                        "Fontes e referências",
-                        `<ul class="list">${
-                            links.map((url) =>
-                                `<li><a href="${
-                                    esc(url)
-                                }" target="_blank" rel="noopener noreferrer">Consultar fonte ↗</a></li>`
-                            ).join("")
-                        }</ul>`,
-                    )
-                    : "";
+                const links = arr(items).map((x) => typeof x === "string" ? { url: x } : x)
+                    .filter((x) => x && /^https?:\/\//i.test(x.url || ""));
+                const unique = [...new Map(links.map((x) => [x.url, x])).values()];
+                return unique.length ? panel(tr("Fontes e referências", "Sources and references"),
+                    `<ul class="list">${unique.map((x) => {
+                        let name = x.nome;
+                        try { name ||= new URL(x.url).hostname.replace(/^www\./, "") + " · " +
+                            decodeURIComponent(new URL(x.url).pathname.split("/").filter(Boolean).pop() || "").replace(/[-_]/g, " "); }
+                        catch (_) { name ||= tr("Consultar referência", "Read reference"); }
+                        return `<li><a href="${esc(x.url)}" target="_blank" rel="noopener noreferrer">${esc(name)} ↗</a></li>`;
+                    }).join("")}</ul>`) : "";
+            }
+            function practicalSections(esp, guidance) {
+                const profile = guidance?.perfis?.find((p) => p.alvos.includes(esp.id));
+                if (!profile) return "";
+                const options = profile.opcoes.map((option) =>
+                    textPanel(esc(localized(option.nome)), localized(option.condicao))).join("");
+                const hasProduct = profile.opcoes.some((option) => option.solucao_id);
+                return `<div class="section-block" id="solucoes"><div class="section-head"><span class="eyebrow">${tr("Na prática", "In practice")}</span><div><h2>${tr("Soluções para este problema", "Solutions for this problem")}</h2><p>${esc(localized(profile.contexto))}</p></div></div>
+                    <div class="grid">${panel(tr("Por onde começar", "Where to start"),
+                        `<ol class="list">${profile.passos.map((step) => `<li>${esc(localized(step))}</li>`).join("")}</ol>`)}
+                        ${textPanel(tr("Como avaliar o resultado", "How to assess results"), localized(profile.avaliacao))}
+                        ${options}${sourcePanel(profile.fontes)}</div>
+                    ${hasProduct ? `<div class="guidance-note"><p>${tr(
+                        "As opções dependem do diagnóstico, da cultura e das condições locais. Para produtos fitofarmacêuticos, confirmar a autorização e a finalidade no SIFITO e seguir o rótulo. A aptidão para agricultura biológica é uma verificação adicional do produto concreto.",
+                        "Options depend on diagnosis, crop and local conditions. For plant protection products, check the authorisation and intended use in SIFITO and follow the label. Suitability for organic farming requires a separate check of the specific product.")}</p>${sourcePanel(guidance.verificacao_produtos)}</div>` : ""}
+                    <p class="source">${tr("Revisão destas orientações", "Guidance reviewed")}: ${esc(profile.data_revisao)} · ${tr("As fontes técnicas não confirmam autorizações comerciais em Portugal.", "Technical sources do not establish commercial authorisations in Portugal.")}</p></div>`;
+            }
+            function invasiveSections(esp) {
+                if (esp.grupo !== "Flora Invasora") return "";
+                return `<div class="section-block" id="prevencao"><div class="section-head"><span class="eyebrow">${tr("Prevenção", "Prevention")}</span><div><h2>${tr("Conter a expansão desde o início", "Contain spread from the start")}</h2><p>${tr("Confirmar a espécie e preparar a intervenção de acordo com o local.", "Confirm the species and plan action for the site.")}</p></div></div><div class="grid">
+                    ${textPanel(tr("Deteção precoce", "Early detection"), esp.deteccao_precoce)}
+                    ${textPanel(tr("Prevenir a dispersão", "Prevent spread"), esp.prevencao)}
+                    ${textPanel(tr("Reprodução e dispersão", "Reproduction and spread"), esp.reproducao_e_dispersao)}
+                    ${textPanel(tr("Segurança no local", "Site safety"), esp.seguranca)}</div></div>
+                    <div class="section-block" id="intervencao"><div class="section-head"><span class="eyebrow">${tr("Controlo e recuperação", "Control and recovery")}</span><div><h2>${tr("Intervir e acompanhar o terreno", "Act and follow up on the site")}</h2><p>${tr("A remoção inicial deve ter continuidade: resíduos, rebentação e recuperação da vegetação.", "Initial removal needs follow-up: plant waste, regrowth and vegetation recovery.")}</p></div></div><div class="grid">
+                    ${textPanel(tr("Método indicado no inventário", "Method recorded in the inventory"), esp.combate)}
+                    ${textPanel(tr("Destino dos resíduos", "Plant waste management"), esp.gestao_residuos)}
+                    ${textPanel(tr("Monitorização", "Monitoring"), esp.monitorizacao)}
+                    ${textPanel(tr("Restaurar o coberto", "Restore vegetation cover"), esp.restauracao)}
+                    ${textPanel(tr("Controlo biológico", "Biological control"), esp.controlo_biologico)}
+                    ${sourcePanel([esp.fonte, ...arr(esp.fontes_complementares)])}</div></div>`;
             }
             function pestSections(esp) {
                 if (esp.grupo !== "Sanidade Vegetal") return "";
@@ -58,13 +91,13 @@
                 const prevention = esp.prevencao_biologica || {};
                 const solution = esp.solucao_biologica || {};
                 const techniques = esp.tecnicas || {};
-                return `<div class="section-block"><div class="section-head"><span class="eyebrow">Diagnóstico</span><div><h2>Reconhecer antes de intervir</h2><p>Sintomas semelhantes podem ter causas diferentes. Confirme o organismo, a extensão do dano e os auxiliares já presentes.</p></div></div><div class="grid">${
+                return `<div class="section-block" id="diagnostico"><div class="section-head"><span class="eyebrow">Diagnóstico</span><div><h2>Reconhecer antes de intervir</h2><p>Sintomas semelhantes podem ter causas diferentes. Confirme o organismo, a extensão do dano e os auxiliares já presentes.</p></div></div><div class="grid">${
                     listPanel("Plantas afetadas", esp.plantas_afetadas)
                 }${textPanel("Sinais e sintomas", esp.sintomas || diagnosis.sintomas_principais)}${
                     textPanel("Quando observar", esp.sazonalidade_portugal)
                 }${textPanel("Monitorização", diagnosis.monitorizacao)}${
                     textPanel("Confirmar antes de intervir", diagnosis.confirmar_antes_de_intervir)
-                }</div></div><div class="section-block"><div class="section-head"><span class="eyebrow">Prevenção biológica</span><div><h2>Reduzir o problema sem destruir os aliados</h2><p>Prioridade à diversidade, ao equilíbrio da cultura e a intervenções seletivas, sem pesticidas de largo espectro.</p></div></div><div class="grid">${
+                }</div></div><div class="section-block" id="prevencao"><div class="section-head"><span class="eyebrow">Prevenção biológica</span><div><h2>Reduzir o problema sem destruir os aliados</h2><p>Prioridade à diversidade, ao equilíbrio da cultura e a intervenções seletivas, sem pesticidas de largo espectro.</p></div></div><div class="grid">${
                     textPanel("Estratégia preventiva", prevention.estrategia || esp.prevencao)
                 }${textPanel("Como aplicar", prevention.como)}${
                     listPanel("Aliados naturais", solution.agentes || esp.aliados_naturais)
@@ -75,7 +108,7 @@
                     )
                 }${
                     listPanel("Infraestrutura ecológica", esp.infraestrutura_ecologica)
-                }</div></div><div class="section-block"><div class="section-head"><span class="eyebrow">Intervenção</span><div><h2>Agir apenas quando necessário</h2><p>Comece pela medida menos perturbadora, registe o resultado e reavalie antes de repetir.</p></div></div><div class="grid">${
+                }</div></div><div class="section-block" id="intervencao"><div class="section-head"><span class="eyebrow">Intervenção</span><div><h2>Agir apenas quando necessário</h2><p>Comece pela medida menos perturbadora, registe o resultado e reavalie antes de repetir.</p></div></div><div class="grid">${
                     textPanel("Resposta recomendada", esp.combate || solution.metodo)
                 }${textPanel("Intervenção seletiva", techniques.intervencao)}${
                     textPanel("Avaliação", techniques.avaliacao)
@@ -102,8 +135,9 @@
                 }).join("");
                 return `<div class="section-block"><div class="section-head"><span class="eyebrow">Comparar</span><div><h2>Espécies semelhantes</h2><p>A semelhança visual não confirma uma identificação. Observe forma, habitat, época e caracteres distintivos.</p></div></div><div class="similar">${links}</div></div>`;
             }
-            function render(esp, master) {
+            function render(esp, master, guidance) {
                 const isPest = esp.grupo === "Sanidade Vegetal";
+                const isInvasive = esp.grupo === "Flora Invasora";
                 const tax = arr(esp.taxonomia_completa).join(" › ");
                 const conservation = [
                     valid(esp.iucn_global) ? `IUCN: ${esp.iucn_global}` : "",
@@ -163,12 +197,12 @@
                         }</div></div>`
                         : ""
                 }${
-                    valid(esp.prevencao) || valid(esp.combate)
+                    !isPest && !isInvasive && (valid(esp.prevencao) || valid(esp.combate))
                         ? `<div class="section-block"><div class="section-head"><span class="eyebrow">Gestão</span><div><h2>Prevenção e controlo responsável</h2><p>Aplicável sobretudo a invasoras e organismos de sanidade vegetal. Confirmar identificação e regras locais antes de intervir.</p></div></div><div class="grid">${
                             textPanel("Prevenção", esp.prevencao)
                         }${textPanel("Controlo", esp.combate)}</div></div>`
                         : ""
-                }${pestSections(esp)}${similarPanel(esp.especies_semelhantes, master)}${
+                }${managementNav(esp, guidance)}${pestSections(esp)}${invasiveSections(esp)}${practicalSections(esp, guidance)}${similarPanel(esp.especies_semelhantes, master)}${
                     valid(esp.observacao_responsavel)
                         ? `<div class="section-block"><div class="responsible"><h3>Observar sem perturbar</h3><p>${
                             esc(esp.observacao_responsavel)
@@ -181,6 +215,28 @@
                 }`;
                 document.title = `${esp.nome} — bioCultura`;
             }
+            function managementNav(esp, guidance) {
+                const pest = esp.grupo === "Sanidade Vegetal";
+                if (!pest && esp.grupo !== "Flora Invasora") return "";
+                const items = pest ? [["diagnostico", tr("Diagnóstico", "Diagnosis")]] : [];
+                items.push(["prevencao", tr("Prevenção", "Prevention")], ["intervencao", tr("Intervenção", "Intervention")]);
+                if (guidance?.perfis?.some((p) => p.alvos.includes(esp.id))) items.push(["solucoes", tr("Soluções práticas", "Practical solutions")]);
+                return `<nav class="management-nav" aria-label="${tr("Nesta ficha", "On this page")}">${items.map(([id, label]) => `<a href="#${id}">${label}</a>`).join("")}</nav>`;
+            }
+            function resolveSpecies(id, master, pests, invasives) {
+                const base = master[id];
+                // Specialised records override the general inventory, including scientific-name aliases.
+                const match = (rows) => rows.find((x) => x.id === id || fallbackId(x) === id) ||
+                    (base?.nome_cientifico ? rows.find((x) => x.nome_cientifico === base.nome_cientifico) : null);
+                const pest = match(pests);
+                if (pest) return { ...base, ...pest, nome: pest.nome_comum || pest.nome,
+                    grupo: "Sanidade Vegetal", estatuto: "Praga / Doença", sintese: pest.descricao || pest.sintomas };
+                const invasive = match(invasives);
+                if (invasive) return { ...base, ...invasive, nome: invasive.nome_comum || invasive.nome,
+                    grupo: "Flora Invasora", estatuto: "Invasora", invasora: true,
+                    sintese: invasive.descricao || invasive.impacto };
+                return base;
+            }
             async function load() {
                 const id = new URLSearchParams(location.search).get("id");
                 if (!id) {
@@ -189,43 +245,20 @@
                     return;
                 }
                 try {
-                    const [master, pests, invasives] = await Promise.all(
-                        ["especies_master", "pragas", "flora_invasora"].map((f) =>
-                            fetch(`/data/${f}.json`).then((r) => r.json())
-                        ),
-                    );
-                    let esp = master[id];
-                    if (!esp) {
-                        const p = Array.isArray(pests)
-                            ? pests.find((x) => x.id === id || fallbackId(x) === id)
-                            : null;
-                        if (p) {
-                            esp = {
-                                ...p,
-                                nome: p.nome_comum || p.nome,
-                                grupo: "Sanidade Vegetal",
-                                estatuto: "Praga / Doença",
-                                sintese: p.descricao || p.sintomas,
-                            };
-                        }
-                    }
-                    if (!esp) {
-                        const f = Array.isArray(invasives)
-                            ? invasives.find((x) => x.id === id || fallbackId(x) === id)
-                            : null;
-                        if (f) {
-                            esp = {
-                                ...f,
-                                nome: f.nome_comum || f.nome,
-                                grupo: "Flora Invasora",
-                                estatuto: "Invasora",
-                                invasora: true,
-                                sintese: f.descricao || f.impacto,
-                            };
-                        }
-                    }
+                    const [master, pests, invasives, guidance] = await Promise.all([
+                        ...["especies_master", "pragas", "flora_invasora"].map((f) =>
+                            fetch(`/data/${f}.json`).then((r) => {
+                                if (!r.ok) throw Error(`HTTP ${r.status}`);
+                                return r.json();
+                            })),
+                        fetch("/data/gestao-solucoes.json").then((r) => {
+                            if (!r.ok) throw Error(`HTTP ${r.status}`);
+                            return r.json();
+                        }).catch(() => null),
+                    ]);
+                    const esp = resolveSpecies(id, master, pests, invasives);
                     if (!esp) throw Error("not-found");
-                    render(esp, master);
+                    render(esp, master, guidance);
                 } catch (e) {
                     document.getElementById("species").innerHTML =
                         '<div class="error"><strong>Espécie não encontrada.</strong><br><a href="biodiversidade.html">Voltar</a></div>';

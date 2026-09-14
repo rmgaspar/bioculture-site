@@ -41,7 +41,6 @@
                         window.locationsDB[0];
 
                     renderPageData(info);
-                    setupSidebarLogic();
                     iniciarCiclos();
                 } catch (e) {
                     console.error("Erro ao carregar dados:", e);
@@ -136,40 +135,6 @@
                 };
                 for (let k in d) if (d[k] === g) return k;
                 return g;
-            }
-
-            function setupSidebarLogic() {
-                $(document).on("click", "#btn-gps-trigger", function () {
-                    navigator.geolocation.getCurrentPosition((pos) => {
-                        let closest = window.locationsDB[0], minD = Infinity;
-                        window.locationsDB.forEach((c) => {
-                            const d = calcularDistancia(
-                                pos.coords.latitude,
-                                pos.coords.longitude,
-                                c.lat,
-                                c.lon,
-                            );
-                            if (d < minD) {
-                                minD = d;
-                                closest = c;
-                            }
-                        });
-                        localStorage.setItem("biocultura_region", closest.id);
-                        location.reload();
-                    });
-                });
-                $(document).on("input", "#loc-search-input", function () {
-                    const val = $(this).val().toLowerCase(), dropdown = $("#loc-dropdown").empty();
-                    if (val.length < 2) return dropdown.hide();
-                    window.locationsDB.filter((i) => i.titulo.toLowerCase().includes(val)).slice(0, 8)
-                        .forEach((m) => {
-                            $('<div class="bio-res-item"></div>').text(m.titulo).on("click", () => {
-                                localStorage.setItem("biocultura_region", m.id);
-                                location.reload();
-                            }).appendTo(dropdown);
-                        });
-                    dropdown.show();
-                });
             }
 
             function iniciarCiclos() {

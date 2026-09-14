@@ -1,5 +1,12 @@
 import { cp, mkdir, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { execFileSync } from "node:child_process";
+
+// Research must validate before preparing any public output.
+execFileSync("python3", ["scripts/catalogo/validar.py"], { stdio: "inherit" });
+execFileSync(process.execPath, ["scripts/validar-gestao.mjs"], { stdio: "inherit" });
+execFileSync(process.execPath, ["scripts/gerar-localidades.mjs"], { stdio: "inherit" });
+execFileSync(process.execPath, ["scripts/catalogo/exportar-indice.mjs"], { stdio: "inherit" });
 
 const repository = process.env.GITHUB_REPOSITORY?.split("/").pop() || "bioculture-site";
 const basePath = process.env.PAGES_BASE_PATH || `/${repository}`;
@@ -38,4 +45,7 @@ for (const entry of publicEntries) {
 }
 await writeFile(path.join(output, ".nojekyll"), "");
 await transformDirectory(output);
+if ((await readdir(output)).includes("catalogo")) {
+  throw new Error("A pesquisa do catálogo não pode fazer parte do site público.");
+}
 console.log(`GitHub Pages build ready in ${output} with base path ${basePath}`);

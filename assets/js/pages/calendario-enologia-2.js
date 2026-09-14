@@ -326,30 +326,6 @@
                     noticiasEno.length > visibleNews ? "inline-block" : "none";
             }
 
-            function setupLocationLogic() {
-                $(document).off("input", "#loc-search-input").on(
-                    "input",
-                    "#loc-search-input",
-                    function () {
-                        const value = $(this).val().toLowerCase(),
-                            dropdown = $("#loc-dropdown").empty();
-                        if (value.length < 2) return dropdown.hide();
-                        locationsDB.filter((item) => item.titulo.toLowerCase().includes(value)).slice(
-                            0,
-                            8,
-                        ).forEach((item) =>
-                            $('<div class="bio-res-item"></div>').text(
-                                item.titulo + (item.concelho ? " (" + item.concelho + ")" : ""),
-                            ).on("click", () => {
-                                localStorage.setItem("biocultura_region", item.id);
-                                location.reload();
-                            }).appendTo(dropdown)
-                        );
-                        dropdown.show();
-                    },
-                );
-            }
-
             async function init() {
                 try {
                     const responses = await Promise.all(
@@ -390,7 +366,6 @@
                     renderPractices();
                     renderPests();
                     renderNews();
-                    setupLocationLogic();
                     document.getElementById("show-region-all").onclick = () => {
                         showAllRegional = !showAllRegional;
                         renderRegion(info);

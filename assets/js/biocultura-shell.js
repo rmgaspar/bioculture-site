@@ -50,13 +50,22 @@ const clean = (s) =>
 const get = (id) => document.getElementById(id);
 
 async function regions() {
-    return (
-        regionsPromise ||
-        (regionsPromise = fetch("/data/bioregioes.json").then((r) => {
-            if (!r.ok) throw Error("bioregioes");
-            return r.json();
-        }))
-    );
+    if (!regionsPromise) {
+        regionsPromise = (async () => {
+            const controller = new AbortController();
+            const timeout = setTimeout(() => controller.abort(), 15000);
+            try {
+                const response = await fetch("/data/localidades.json", { signal: controller.signal });
+                if (!response.ok) throw Error("localidades");
+                const data = await response.json();
+                if (!Array.isArray(data) || !data.length) throw Error("localidades");
+                return data;
+            } finally {
+                clearTimeout(timeout);
+            }
+        })().catch((error) => { regionsPromise = null; throw error; });
+    }
+    return regionsPromise;
 }
 
 function value(obj, path) {
@@ -129,7 +138,12 @@ function status(text) {
 }
 
 function choose(item) {
-    localStorage.setItem("biocultura_region", String(item.id));
+    try { localStorage.setItem("biocultura_region", String(item.id)); }
+    catch (_) {
+        status(state.lang === "pt" ? "Permita o armazenamento deste site para guardar a localidade." : "Allow site storage to save the location.");
+        return;
+    }
+    closeResults();
 
     const input = get("loc-search-input");
     if (input) input.value = item.titulo;
@@ -147,31 +161,43 @@ function choose(item) {
 }
 
 let timer;
+let searchVersion = 0;
+function closeResults() {
+    searchVersion++;
+    clearTimeout(timer);
+    const dropdown = get("loc-dropdown");
+    if (dropdown) dropdown.style.display = "none";
+    get("loc-search-input")?.setAttribute("aria-expanded", "false");
+}
+function matchingRegions(data, query) {
+    const terms = clean(query).trim().split(/\s+/).filter(Boolean);
+    return data.filter(item => {
+        const label = clean([item.titulo, item.concelho, item.distrito].filter(Boolean).join(" "));
+        return terms.every(term => label.includes(term));
+    }).sort((a, b) => Number(clean(b.titulo) === clean(query).trim()) - Number(clean(a.titulo) === clean(query).trim()) ||
+        Number(clean(b.titulo).startsWith(clean(query).trim())) - Number(clean(a.titulo).startsWith(clean(query).trim()))).slice(0, 10);
+}
 
 function search(query) {
     clearTimeout(timer);
+    const version = ++searchVersion;
 
     timer = setTimeout(async () => {
         const dropdown = get("loc-dropdown");
         if (!dropdown) return;
 
-        const q = clean(query);
+        const q = clean(query).trim();
         if (q.length < 2) {
-            dropdown.style.display = "none";
+            closeResults();
+            status("");
             return;
         }
 
+        status(state.lang === "pt" ? "A procurar localidade…" : "Searching locations…");
         try {
             const data = await regions();
-            const found = data
-                .filter((x) =>
-                    clean(
-                        [x.titulo, x.concelho, x.distrito]
-                            .filter(Boolean)
-                            .join(" ")
-                    ).includes(q)
-                )
-                .slice(0, 10);
+            if (version !== searchVersion) return;
+            const found = matchingRegions(data, q);
 
             dropdown.innerHTML = "";
 
@@ -195,6 +221,7 @@ function search(query) {
             });
 
             dropdown.style.display = found.length ? "block" : "none";
+            get("loc-search-input")?.setAttribute("aria-expanded", String(Boolean(found.length)));
 
             status(
                 found.length
@@ -204,6 +231,8 @@ function search(query) {
                       : "No location found."
             );
         } catch (e) {
+            if (version !== searchVersion) return;
+            closeResults();
             status(
                 state.lang === "pt"
                     ? "Não foi possível carregar as localidades."
@@ -214,11 +243,13 @@ function search(query) {
 }
 
 function coordinates(item) {
-    const latitude = Number(item?.latitude ?? item?.lat);
-    const longitude = Number(item?.longitude ?? item?.lon);
-    return Number.isFinite(latitude) && Number.isFinite(longitude)
-        ? { latitude, longitude }
-        : null;
+    const lat = item?.latitude ?? item?.lat;
+    const lon = item?.longitude ?? item?.lon;
+    if (lat === null || lon === null || lat === undefined || lon === undefined ||
+        String(lat).trim() === "" || String(lon).trim() === "") return null;
+    const latitude = Number(lat), longitude = Number(lon);
+    return Number.isFinite(latitude) && Math.abs(latitude) <= 90 &&
+        Number.isFinite(longitude) && Math.abs(longitude) <= 180 ? { latitude, longitude } : null;
 }
 
 function distance(a, b) {
@@ -235,10 +266,13 @@ function distance(a, b) {
             Math.cos(target.latitude * r) *
             Math.sin(dLon / 2) ** 2;
 
-    return R * 2 * Math.atan2(Math.sqrt(q), Math.sqrt(1 - q));
+    const clamped = Math.max(0, Math.min(1, q));
+    return R * 2 * Math.atan2(Math.sqrt(clamped), Math.sqrt(1 - clamped));
 }
 
 async function locate(button) {
+    if (get("btn-gps-trigger")?.disabled) return;
+    closeResults();
     state.lang = BioCultureLanguageStore.read() === "en" ? "en" : "pt";
 
     if (!navigator.geolocation || !window.isSecureContext) {
@@ -262,11 +296,12 @@ async function locate(button) {
             : "Getting your location…"
     );
 
-    navigator.geolocation.getCurrentPosition(
+    try { navigator.geolocation.getCurrentPosition(
         async (position) => {
             try {
                 const data = (await regions()).filter(coordinates);
-                const point = position.coords;
+                const point = coordinates(position.coords);
+                if (!point) throw Error("coordinates");
                 const nearest = data.reduce(
                     (best, item) =>
                         !best || distance(point, item) < distance(point, best)
@@ -275,7 +310,9 @@ async function locate(button) {
                     null
                 );
 
-                if (nearest) {
+                if (nearest && distance(point, nearest) > 50) {
+                    status(state.lang === "pt" ? "Sem localidade próxima no inventário português. Pesquise uma localidade manualmente." : "No nearby location in the Portuguese inventory. Search manually.");
+                } else if (nearest) {
                     status(
                         state.lang === "pt"
                             ? `Localização aproximada: ${nearest.titulo}`
@@ -324,6 +361,10 @@ async function locate(button) {
             maximumAge: 300000,
         }
     );
+    } catch (_) {
+        status(state.lang === "pt" ? "Não foi possível iniciar o GPS. Pesquise a localidade ou verifique a permissão do navegador." : "GPS could not start. Search manually or check browser permission.");
+        if (trigger) { trigger.disabled = false; trigger.removeAttribute("aria-busy"); }
+    }
 }
 
 function active() {
@@ -389,9 +430,24 @@ function bindInteractions() {
 
         const dropdown = get("loc-dropdown");
         if (dropdown && !event.target.closest?.(".bio-location")) {
-            dropdown.style.display = "none";
+            closeResults();
         }
     }, true);
+
+    document.addEventListener("keydown", (event) => {
+        if (!event.target.closest?.(".bio-location")) return;
+        const buttons = [...(get("loc-dropdown")?.querySelectorAll("button") || [])];
+        if (event.key === "Escape") { closeResults(); get("loc-search-input")?.focus(); return; }
+        if (get("loc-dropdown")?.style.display !== "block" || !buttons.length) return;
+        const index = buttons.indexOf(document.activeElement);
+        if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+            event.preventDefault();
+            const next = event.key === "ArrowDown" ? (index + 1) % buttons.length : (index <= 0 ? buttons.length - 1 : index - 1);
+            buttons[next].focus();
+        } else if (event.key === "Enter" && event.target.id === "loc-search-input") {
+            event.preventDefault(); buttons[0].click();
+        }
+    });
 
     document.addEventListener("input", (event) => {
         if (event.target?.id !== "loc-search-input") return;

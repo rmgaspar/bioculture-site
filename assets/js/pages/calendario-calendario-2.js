@@ -434,57 +434,6 @@
                 ).join("");
             }
 
-            function setupLocationLogic() {
-                $(document).off("click", "#btn-gps-trigger").on(
-                    "click",
-                    "#btn-gps-trigger",
-                    function (event) {
-                        event.preventDefault();
-                        if (!navigator.geolocation) return;
-                        const button = $(this).css("opacity", ".5");
-                        navigator.geolocation.getCurrentPosition((position) => {
-                            let closest = locationsDB[0], distance = Infinity;
-                            locationsDB.forEach((item) => {
-                                if (!item.lat || !item.lon) return;
-                                const dLat = (item.lat - position.coords.latitude) * Math.PI / 180,
-                                    dLon = (item.lon - position.coords.longitude) * Math.PI / 180,
-                                    a = Math.sin(dLat / 2) ** 2 +
-                                        Math.cos(position.coords.latitude * Math.PI / 180) *
-                                            Math.cos(item.lat * Math.PI / 180) *
-                                            Math.sin(dLon / 2) ** 2,
-                                    d = 6371 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-                                if (d < distance) {
-                                    distance = d;
-                                    closest = item;
-                                }
-                            });
-                            if (closest) {
-                                localStorage.setItem("biocultura_region", closest.id);
-                                location.reload();
-                            }
-                        }, () => button.css("opacity", "1"));
-                    },
-                );
-                $(document).off("input", "#loc-search-input").on(
-                    "input",
-                    "#loc-search-input",
-                    function () {
-                        const value = normalize($(this).val()), dropdown = $("#loc-dropdown").empty();
-                        if (value.length < 2) return dropdown.hide();
-                        locationsDB.filter((item) => normalize(item.titulo).includes(value)).slice(0, 8)
-                            .forEach((item) =>
-                                $('<div class="bio-res-item"></div>').text(
-                                    item.titulo + (item.concelho ? " (" + item.concelho + ")" : ""),
-                                ).on("click", () => {
-                                    localStorage.setItem("biocultura_region", item.id);
-                                    location.reload();
-                                }).appendTo(dropdown)
-                            );
-                        dropdown.show();
-                    },
-                );
-            }
-
             async function init() {
                 try {
                     const urls = [
@@ -510,7 +459,6 @@
                     renderCalendar();
                     renderCatalog();
                     renderFlora();
-                    setupLocationLogic();
                     document.getElementById("catalog-search").addEventListener("input", () => renderCatalog(true));
                     document.getElementById("catalog-filter").addEventListener("change", () => renderCatalog(true));
                     document.getElementById("guide-location-button").onclick = () => {
