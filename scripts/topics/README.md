@@ -12,6 +12,6 @@ node scripts/tests/unified-topics.test.mjs
 node scripts/build-pages.mjs
 ```
 
-The compact HTML mosaic uses four ordinary images within a shared frame; it does not depend on SVG masks or clipping. News cards have one 4:3 media frame; image wrappers must inherit its dimensions. Service diagrams preserve their original aspect ratio at a smaller width.
+The compact complete web uses four ordinary linked images clipped into adjoining curved sectors with CSS polygons. A decorative external SVG draws the shared strands; image rendering does not depend on SVG masks. Element names and descriptions remain outside the composition. News cards have one 4:3 media frame; image wrappers must inherit its dimensions. Service diagrams preserve their original aspect ratio at a smaller width.
 
 Headline statistics show the existing dataset's reference year, not the date of viewing. Update the explanatory summary when refreshing those datasets. Missing island-level observations must never be replaced by national averages.
