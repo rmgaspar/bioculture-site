@@ -15,11 +15,12 @@ const pairs = [
 for (const [page,alias,control] of pairs) {
  const html=read(page), ids=[...html.matchAll(/\bid="([^"]+)"/g)].map(m=>m[1]);
  assert.equal(ids.length,new Set(ids).size, `${page}: duplicate IDs can break controls`);
- for(const id of [control,'essencial','territorios','panorama-global','leitura-local','portugal']) assert(ids.includes(id),`${page}: missing ${id}`);
+ for(const id of [control,'panorama-global','leitura-local','portugal']) assert(ids.includes(id),`${page}: missing ${id}`);
  assert.equal((html.match(/<h1\b/g)||[]).length,1);
  assert(html.includes('Açores')&&html.includes('Madeira'));
  const script=html.match(/data-global-script="([^"]+)"/)[1].split('?')[0];
  assert(existsSync('.'+script)); new vm.Script(read('.'+script));
+ assert(html.includes('src="'+script+'?v=1"'), 'Global controller must load directly without opening a panel');
  assert(!read('.'+script).includes("fetch('/sidebar-content.html')"), 'Global panels must not replace the shared sidebar');
  const fallback=read(alias).match(/id="unified-destination" href="([^"]+)"/) || read(alias).match(/href="([^"]+)" id="unified-destination"/);
  assert(fallback,`Alias ${alias} needs a non-JS fallback`);
@@ -34,8 +35,15 @@ for (const [page,alias,control] of pairs) {
 const runtime=read('assets/js/biocultura-i18n-runtime.js');
 const legacy=runtime.split('const consolidatedLegacyRoutes = {')[1].split('};')[0];
 for(const [page] of pairs) assert(!legacy.includes('/'+page),`${page} must not redirect back to itself`);
-const puzzle=read('recursos/vida-e-recursos.html').match(/<svg[^>]*class="life-puzzle"[\s\S]*?<\/svg>/)[0];
-assert.equal((puzzle.match(/<clipPath/gi)||[]).length,4);
-assert.equal(new Set([...puzzle.matchAll(/<a[^>]+href="([^"]+)"/g)].map(x=>x[1])).size,4);
+for (const [page] of pairs) {
+ const html = read(page);
+ assert(!html.includes('details class="topic-detail"'), 'Original reading must remain visible');
+ assert(!html.includes('class="topic-essentials"'), 'Do not replace content with generic summaries');
+ assert(html.includes('class="global-reading"'), 'Global content stays in the page');
+}
+const hub = read('recursos/vida-e-recursos.html');
+assert(!hub.includes('life-puzzle'), 'No SVG puzzle dependency');
+assert.equal((hub.match(/class="life-element"/g)||[]).length,4);
+assert.equal((hub.match(/<picture>/g)||[]).length,4);
 assert(read('assets/js/pages/hub-pages.js').includes('class="news-media"'));
-console.log('Eight unified topics: unique IDs, retained controls, aliases with language/hash and base path, no redirect loops, four linked puzzle pieces.');
+console.log('Eight unified topics: unique IDs, retained controls, aliases with language/hash and base path, no redirect loops, four linked HTML images and continuous visible reading.');
