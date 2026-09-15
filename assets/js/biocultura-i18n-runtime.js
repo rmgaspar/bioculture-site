@@ -2,16 +2,8 @@
     "use strict";
 
     const consolidatedLegacyRoutes = {
-        "/recursos/agua.html": "/recursos/water.html#portugal",
-        "/recursos/ar.html": "/recursos/air.html#portugal",
-        "/recursos/solo.html": "/recursos/soil.html#portugal",
-        "/ecossistemas/biodiversidade.html": "/ecossistemas/biodiversity.html#portugal"
-        ,"/energia/energia.html": "/energia/energy.html#portugal"
-        ,"/energia/transicao-etica.html": "/energia/renewables-and-territory.html#portugal"
-        ,"/energia/digital.html": "/energia/ai-data-centres.html#portugal"
-        ,"/energia/mineracao.html": "/energia/mining.html#portugal"
-        ,"/energia/pecuaria.html": "/energia/livestock.html#portugal"
-        ,"/observatorio/vetores-pressao.html": "/observatorio/observatorio-terra.html"
+        "/energia/energia.html": "/energia/energy.html#portugal",
+        "/observatorio/vetores-pressao.html": "/observatorio/observatorio-terra.html"
     };
     if (consolidatedLegacyRoutes[location.pathname]) {
         location.replace(consolidatedLegacyRoutes[location.pathname]);
@@ -65,20 +57,7 @@
     if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", markEditorialHero, { once: true });
     else markEditorialHero();
 
-    const consolidatedRoutes = new Set([
-        "/calendario/regeneration-calendar.html",
-        "/recursos/water.html",
-        "/recursos/air.html",
-        "/recursos/soil.html",
-        "/ecossistemas/biodiversity.html"
-        ,"/energia/energy.html"
-        ,"/energia/renewables-and-territory.html"
-        ,"/energia/ai-data-centres.html"
-        ,"/energia/mining.html"
-        ,"/energia/livestock.html"
-        ,"/calendario/living-vineyard.html"
-        ,"/observatorio/vetores-pressao-global.html"
-    ]);
+    const consolidatedRoutes = new Set(["/calendario/regeneration-calendar.html", "/energia/energy.html", "/calendario/living-vineyard.html", "/observatorio/vetores-pressao-global.html"]);
     if (consolidatedRoutes.has(location.pathname)) {
         const consolidationStyle = document.createElement("link");
         consolidationStyle.rel = "stylesheet";
@@ -406,7 +385,7 @@
     async function loadDictionary() {
         if (dictionary) return dictionary;
         if (!loading) {
-            loading = originalFetch(`/assets/lang/auto/${lang}.json?v=20`, { cache: "no-cache" })
+            loading = originalFetch(`/assets/lang/auto/${lang}.json?v=21`, { cache: "no-cache" })
                 .then((response) => response.ok ? response.json() : {})
                 .catch(() => ({}));
         }

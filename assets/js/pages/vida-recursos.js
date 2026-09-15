@@ -2,7 +2,7 @@ const recursos = [
     {
         name: 'Água',
         description: 'Da precipitação aos aquíferos, da torneira às bacias hidrográficas. O ciclo da água revela o estado de um sistema vivo em permanente tensão.',
-        globalUrl: '/recursos/water.html',
+        globalUrl: '/recursos/agua.html',
         ptUrl: '/recursos/agua.html',
         hasPt: true,
         image: '/recursos/water/water-global-page/images/water-global-hero.png'
@@ -10,7 +10,7 @@ const recursos = [
     {
         name: 'Ar',
         description: 'Qualidade do ar, composição atmosférica e emissões de gases com efeito de estufa. O que respiramos diz o que produzimos e o que queimamos.',
-        globalUrl: '/recursos/air.html',
+        globalUrl: '/recursos/ar.html',
         ptUrl: '/recursos/ar.html',
         hasPt: true,
         image: '/images/ar-vivo.webp'
@@ -18,7 +18,7 @@ const recursos = [
     {
         name: 'Solo',
         description: 'A camada que filtra a água, sustenta a agricultura e armazena carbono. Invisível, mas essencial — a erosão tem consequências sistémicas.',
-        globalUrl: '/recursos/soil.html',
+        globalUrl: '/recursos/solo.html',
         ptUrl: '/recursos/solo.html',
         hasPt: true,
         image: '/images/solo-vivo.webp'

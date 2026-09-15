@@ -29,7 +29,7 @@
                         ? (window.BioCultureI18n?.isEnglish ? "bioCulture editorial illustration" : "Ilustração editorial bioCulture")
                         : (content.titulo || "");
                     const itemHref = item.pagina || `/observatorio/noticia-detalhe.html?id=${encodeURIComponent(item.id)}`;
-                    return `<a href="${escapeHtml(itemHref)}"><img class="hub-latest-thumb" src="${escapeHtml(sourceImage)}" alt="${escapeHtml(imageAlt)}" loading="lazy"><div class="hub-latest-card-body"><small>${escapeHtml(item.data || item.categoria || "Atualidade")}</small><h3>${escapeHtml(content.titulo || "Notícia")}</h3><p>${escapeHtml(summary)}</p><span>${escapeHtml(item.fonte || "bioCulture")} →</span></div></a>`;
+                    return `<a href="${escapeHtml(itemHref)}"><div class="news-media"><img class="hub-latest-thumb" src="${escapeHtml(sourceImage)}" alt="${escapeHtml(imageAlt)}" loading="lazy"></div><div class="hub-latest-card-body"><small>${escapeHtml(item.data || item.categoria || "Atualidade")}</small><h3>${escapeHtml(content.titulo || "Notícia")}</h3><p>${escapeHtml(summary)}</p><span>${escapeHtml(item.fonte || "bioCulture")} →</span></div></a>`;
                 }).join("") || "<p>Sem notícias selecionadas neste momento.</p>";
                 latest.querySelectorAll(".hub-latest-thumb").forEach((image) => {
                     image.addEventListener("error", () => {
