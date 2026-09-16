@@ -5,7 +5,7 @@
                 dicasDB = [],
                 horticolasDB = {},
                 infoGlobal = null;
-            let viewedDate = new Date(), showMorePests = false, catalogLimit = 12;
+            let viewedDate = new Date(), showMorePests = false, showMoreFlora = false, catalogLimit = 12;
             const months = [
                 "janeiro",
                 "fevereiro",
@@ -400,21 +400,29 @@
                     );
                 }).filter(Boolean);
                 const unique = [...new Map(local.map((item) => [item.id, item])).values()];
-                document.getElementById("flora-grid").innerHTML = unique.length
-                    ? unique.slice(0, 6).map((item) =>
-                        `<article class="watch-card"><img class="watch-image" src="${
-                            escapeHtml(item.imagem || "/images/pragas-placeholder.svg")
-                        }" alt="${
-                            escapeHtml(item.nome_comum)
-                        }" loading="lazy" onerror="this.onerror=null;this.src='/images/pragas-placeholder.svg'"><span class="watch-kind">Flora invasora</span><h3>${
-                            escapeHtml(item.nome_comum)
-                        }</h3><span class="watch-meta">${escapeHtml(item.nome_cientifico)}</span><p>${
-                            escapeHtml(item.impacto)
-                        }</p><details><summary>Prevenção e controlo</summary><p>${
-                            escapeHtml(item.prevencao)
-                        }</p><p>${escapeHtml(item.combate)}</p></details></article>`
-                    ).join("")
-                    : '<div class="empty">O perfil regional não contém espécies invasoras que possam ser ligadas de forma segura ao inventário atual.</div>';
+                const all = unique.length ? unique : floraDB,
+                    visible = all.slice(0, showMoreFlora ? 12 : 6);
+                const notice = unique.length
+                    ? ""
+                    : '<div class="empty">O perfil regional ainda não tem espécies invasoras confirmadas no inventário local — pode ser falta de registo, não ausência real. Eis o inventário nacional para consulta e identificação.</div>';
+                document.getElementById("flora-grid").innerHTML = notice + visible.map((item) =>
+                    `<article class="watch-card"><img class="watch-image" src="${
+                        escapeHtml(item.imagem || "/images/pragas-placeholder.svg")
+                    }" alt="${
+                        escapeHtml(item.nome_comum)
+                    }" loading="lazy" onerror="this.onerror=null;this.src='/images/pragas-placeholder.svg'"><span class="watch-kind">Flora invasora</span><h3>${
+                        escapeHtml(item.nome_comum)
+                    }</h3><span class="watch-meta">${escapeHtml(item.nome_cientifico)}</span><p>${
+                        escapeHtml(item.impacto)
+                    }</p><details><summary>Prevenção e controlo</summary><p>${
+                        escapeHtml(item.prevencao)
+                    }</p><p>${escapeHtml(item.combate)}</p></details><a class="watch-detail" href="/ecossistemas/especie-detalhe.html?id=${
+                        encodeURIComponent(item.id)
+                    }">Ver ficha completa →</a></article>`
+                ).join("");
+                const button = document.getElementById("toggle-flora");
+                button.style.display = all.length > 6 ? "inline-block" : "none";
+                button.textContent = showMoreFlora ? "Recolher" : `Ver mais espécies invasoras (${all.length} no total)`;
             }
 
             function renderLocalProfile() {
@@ -480,6 +488,10 @@
                     document.getElementById("toggle-pests").onclick = () => {
                         showMorePests = !showMorePests;
                         renderPests();
+                    };
+                    document.getElementById("toggle-flora").onclick = () => {
+                        showMoreFlora = !showMoreFlora;
+                        renderFlora();
                     };
                 } catch (error) {
                     console.error("Erro ao carregar o calendário:", error);
