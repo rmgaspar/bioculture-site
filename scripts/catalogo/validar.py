@@ -25,6 +25,7 @@ def validar(root=ROOT):
     config = read('catalogo/config.json')
     check(config['versao'] == 1 and config['fase'] == 'pesquisa', 'A base suporta apenas a fase de pesquisa')
     check(config['catalogo_publico'] is False and config['vendas_ativas'] is False, 'Publicação e vendas devem estar desativadas')
+    check(isinstance(config['produtos_publico'], bool), 'produtos_publico deve ser booleano')
     categories = index(read('catalogo/categorias.json'), 'categorias')
     sources = index(read('catalogo/fontes.json'), 'fontes')
     solutions = read('catalogo/solucoes.json')
@@ -51,19 +52,42 @@ def validar(root=ROOT):
     products = read('catalogo/produtos.json')
     index(products, 'produtos')
     template_keys = set(read('catalogo/modelos/produto.json'))
+
+    def translated(value):
+        return isinstance(value, dict) and bool(value.get('pt')) and bool(value.get('en'))
+
+    published = 0
     for row in products:
-        check(template_keys <= set(row), f"{row['id']}: campos do modelo em falta")
-        check(row['solucao_id'] in solution_ids, f"{row['id']}: solução desconhecida")
-        check(row['estado'] == 'rascunho' and row['publicado'] is False and row['venda_ativa'] is False, f"{row['id']}: produto ativo nesta fase")
+        ident = row['id']
+        check(template_keys <= set(row), f'{ident}: campos do modelo em falta')
+        check(row['solucao_id'] in solution_ids, f'{ident}: solução desconhecida')
+        check(row['estado'] in ('rascunho', 'revisto', 'publicado'), f'{ident}: estado inválido')
+        check(isinstance(row['beneficios'], list), f'{ident}: beneficios deve ser uma lista')
+        for beneficio in row['beneficios']:
+            check(translated(beneficio), f'{ident}: benefício sem pt/en')
+        if row['publicado']:
+            check(row['estado'] != 'rascunho', f'{ident}: produto publicado não pode ficar em rascunho')
+            check(translated(row['nome']), f'{ident}: nome em falta para publicação')
+            check(translated(row['descricao_curta']), f'{ident}: descrição curta em falta para publicação')
+            check(translated(row['descricao']), f'{ident}: descrição em falta para publicação')
+            published += 1
+        if row['venda_ativa']:
+            check(row['publicado'], f'{ident}: só pode vender-se um produto publicado')
+            preco = row['preco_referencia']
+            check(isinstance(preco['valor'], (int, float)) and preco['valor'] > 0, f'{ident}: preço de referência em falta para venda ativa')
+            check(bool(preco['moeda']), f'{ident}: moeda em falta para venda ativa')
+            embalagem = row['embalagem']
+            check(isinstance(embalagem['quantidade'], (int, float)) and embalagem['quantidade'] > 0 and bool(embalagem['unidade']),
+                  f'{ident}: embalagem em falta para venda ativa')
         for field in ('embalagem', 'preco_referencia', 'dose'):
             value = row[field]['quantidade' if field == 'embalagem' else 'valor']
-            check(value is None or (type(value) in (int, float) and value > 0), f"{row['id']}: {field} deve ser positivo ou null")
-    return len(solutions), len(products)
+            check(value is None or (type(value) in (int, float) and value > 0), f'{ident}: {field} deve ser positivo ou null')
+    return len(solutions), len(products), published
 
 
 if __name__ == '__main__':
     try:
-        solutions, products = validar()
-        print(f'Catálogo válido: {solutions} soluções em pesquisa; {products} produtos; vendas desativadas.')
+        solutions, products, published = validar()
+        print(f'Catálogo válido: {solutions} soluções em pesquisa; {products} produtos ({published} publicados).')
     except (ValueError, KeyError, TypeError, OSError) as error:
         raise SystemExit(f'Catálogo inválido: {error}')

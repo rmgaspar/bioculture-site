@@ -16,10 +16,28 @@
         const terms = normalize(query).split(/\s+/).filter(Boolean);
         return data.solucoes.filter(s => (category === 'all' || s.categoria_id === category) &&
             terms.every(term => normalize([s.nome.pt,s.nome.en,
-                ...Object.values(data.categorias.find(c => c.id === s.categoria_id)?.nome || {})].join(' ')).includes(term)));
+                ...Object.values(data.categorias.find(c => c.id === s.categoria_id)?.nome || {}),
+                ...(s.produtos||[]).flatMap(p=>[p.nome.pt,p.nome.en,p.marca])].join(' ')).includes(term)));
+    }
+    function money(preco) {
+        const amount = new Intl.NumberFormat(en?'en-IE':'pt-PT',{style:'currency',currency:preco.moeda||'EUR'}).format(preco.valor);
+        return preco.iva_incluido === false ? `${amount} ${tr('+ IVA','+ VAT')}` : amount;
+    }
+    function productBlock(product, fichas) {
+        const beneficios = product.beneficios.map(b=>`<li>${esc(text(b))}</li>`).join('');
+        const references = (fichas||[]).map(f => `<li><a href="${esc(link(f.href))}">${esc(f.nome)} →</a></li>`).join('');
+        const disponibilidade = product.disponivel
+            ? `<span class="hub-tag hub-tag--available">${tr('Disponível','Available')}</span>${product.preco?`<p class="product-price">${esc(money(product.preco))}</p>`:''}`
+            : `<span class="hub-tag hub-tag--soon">${tr('Brevemente disponível','Coming soon')}</span>`;
+        const order = `mailto:geral@bioculture.net?subject=${encodeURIComponent(tr('Encomenda — ','Order — ')+text(product.nome))}`;
+        return `${product.imagem?`<img class="product-image" src="${esc(product.imagem)}" alt="">`:''}${product.marca?`<span class="product-brand">${esc(product.marca)}</span>`:''}<h2>${esc(text(product.nome))}</h2>${disponibilidade}<p class="product-summary">${esc(text(product.descricao_curta))}</p><details><summary>${tr('Saber mais','Learn more')}</summary><p>${esc(text(product.descricao))}</p>${beneficios?`<ul>${beneficios}</ul>`:''}${product.modo_aplicacao?`<p><strong>${tr('Modo de aplicação','How to apply')}:</strong> ${esc(text(product.modo_aplicacao))}</p>`:''}${references?`<p>${tr('Ajuda a prevenir ou controlar:','Helps prevent or control:')}</p><ul>${references}</ul>`:''}</details>${product.disponivel?`<a class="card-action" href="${esc(order)}">${tr('Contactar para encomendar →','Contact to order →')}</a>`:''}`;
     }
     function card(solution, data) {
         const category = data.categorias.find(c => c.id === solution.categoria_id);
+        const product = solution.produtos?.[0];
+        if (product) {
+            return `<article class="product-card" id="${esc(solution.id)}"><span class="product-family">${esc(text(category.nome))}</span>${productBlock(product,solution.fichas)}</article>`;
+        }
         const references = solution.fichas.map(f => `<li><a href="${esc(link(f.href))}">${esc(f.nome)} →</a></li>`).join('');
         return `<article class="product-card" id="${esc(solution.id)}"><span class="product-family">${esc(text(category.nome))}</span><h2>${esc(text(solution.nome))}</h2><span class="hub-tag">${solution.tipo === 'pratica' ? tr('Prática em estudo','Practice under study') : tr('Solução em estudo','Solution under study')}</span><details><summary>${tr('O que estamos a preparar','What we are preparing')}</summary><p>${tr('Ficha técnica, utilizações, limitações e documentação. Ainda sem marca ou formulação selecionada.','Technical information, uses, limitations and documentation. No brand or formulation selected yet.')}</p>${references ? `<p>${tr('Antes de escolher, consulte as orientações relacionadas:','Before choosing, read the related guidance:')}</p><ul>${references}</ul>` : `<p>${tr('As orientações específicas serão acrescentadas após revisão das fontes.','Specific guidance will be added after source review.')}</p>`}</details></article>`;
     }

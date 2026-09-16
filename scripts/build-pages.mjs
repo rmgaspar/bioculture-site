@@ -8,8 +8,11 @@ execFileSync(process.execPath, ["scripts/validar-gestao.mjs"], { stdio: "inherit
 execFileSync(process.execPath, ["scripts/gerar-localidades.mjs"], { stdio: "inherit" });
 execFileSync(process.execPath, ["scripts/catalogo/exportar-indice.mjs"], { stdio: "inherit" });
 
+// Cloudflare Pages sets CF_PAGES automatically and serves the custom domain from its root,
+// unlike the GitHub Pages project site, which needs the /<repo> subpath prefix.
+const isCloudflarePages = Boolean(process.env.CF_PAGES);
 const repository = process.env.GITHUB_REPOSITORY?.split("/").pop() || "bioculture-site";
-const basePath = process.env.PAGES_BASE_PATH || `/${repository}`;
+const basePath = process.env.PAGES_BASE_PATH ?? (isCloudflarePages ? "" : `/${repository}`);
 const output = path.resolve(".pages-dist");
 const textExtensions = new Set([".css", ".html", ".js", ".json", ".svg", ".webmanifest", ".xml"]);
 const publicEntries = [
@@ -48,4 +51,4 @@ await transformDirectory(output);
 if ((await readdir(output)).includes("catalogo")) {
   throw new Error("A pesquisa do catálogo não pode fazer parte do site público.");
 }
-console.log(`GitHub Pages build ready in ${output} with base path ${basePath}`);
+console.log(`Pages build ready in ${output} with base path ${basePath || "/"}`);
