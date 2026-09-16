@@ -1,6 +1,6 @@
 (function () {
     "use strict";
-    const navigationBars = document.querySelectorAll("#main .scope-switch, #main .calendar-navigation-bar, #main .home-nav, #main .pressure-nav, #main .section-nav");
+    const navigationBars = document.querySelectorAll("#main .scope-switch, #main .calendar-navigation-bar, #main .home-nav, #main .pressure-nav, #main .section-nav, #main .journey-nav");
     navigationBars.forEach((navigation) => {
         if (navigation.dataset.bioPinnedReady) return;
         navigation.dataset.bioPinnedReady = "true";
