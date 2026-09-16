@@ -58,4 +58,43 @@
         byId("res-bateria").textContent = backup ? "≈ 5 kWh LiFePO4" : "Não incluído";
         byId("solar-results-area").hidden = false;
     });
+
+    const esc = (v) => String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    const normalize = (v) => String(v).normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+    if (byId("technique-grid")) {
+        fetch("/data/dicas.json").then((r) => {
+            if (!r.ok) throw Error("HTTP " + r.status);
+            return r.json();
+        }).then((dicas) => {
+            const categories = [...new Set(dicas.map((d) => d.categoria))];
+            let selected = "all", query = "";
+            byId("technique-filters").innerHTML = ["all", ...categories].map((c) =>
+                `<button type="button" data-category="${esc(c)}" aria-pressed="${c === selected}">${c === "all" ? "Todas" : esc(c)}</button>`
+            ).join("");
+            const render = () => {
+                const term = normalize(query);
+                const found = dicas.filter((d) =>
+                    (selected === "all" || d.categoria === selected) &&
+                    (!term || normalize(`${d.titulo} ${d.categoria} ${d.resumo}`).includes(term))
+                );
+                byId("technique-grid").innerHTML = found.map((item) =>
+                    `<article class="technique-card"><h3>${esc(item.titulo)}</h3><span class="technique-meta">${esc(item.categoria)} · ${esc(item.nivel)}</span><p>${esc(item.resumo)}</p>${
+                        item.passos?.length
+                            ? `<details><summary>Passos essenciais</summary><ol>${item.passos.map((s) => `<li>${esc(s)}</li>`).join("")}</ol></details>`
+                            : ""
+                    }</article>`
+                ).join("") || `<p class="empty">Nenhuma técnica encontrada para essa pesquisa.</p>`;
+                byId("technique-count").textContent = `${found.length} de ${dicas.length} técnicas`;
+                byId("technique-filters").querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.category === selected)));
+            };
+            byId("technique-filters").addEventListener("click", (e) => {
+                const b = e.target.closest("button[data-category]");
+                if (b) { selected = b.dataset.category; render(); }
+            });
+            byId("technique-search").addEventListener("input", (e) => { query = e.target.value; render(); });
+            render();
+        }).catch(() => {
+            byId("technique-grid").innerHTML = "<p class=\"empty\">Não foi possível carregar o catálogo de técnicas.</p>";
+        });
+    }
 })();
