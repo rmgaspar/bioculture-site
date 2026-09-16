@@ -57,7 +57,7 @@
     if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", markEditorialHero, { once: true });
     else markEditorialHero();
 
-    const consolidatedRoutes = new Set(["/calendario/regeneration-calendar.html", "/energia/energy.html", "/calendario/living-vineyard.html", "/observatorio/vetores-pressao-global.html"]);
+    const consolidatedRoutes = new Set(["/energia/energy.html", "/observatorio/vetores-pressao-global.html"]);
     if (consolidatedRoutes.has(location.pathname)) {
         const consolidationStyle = document.createElement("link");
         consolidationStyle.rel = "stylesheet";
