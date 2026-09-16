@@ -33,22 +33,21 @@ assert(context(false,'#solar').redirect().endsWith('/services/servicos.html#sola
 assert(context(false,'#agua').redirect().endsWith('/services/servicos.html#chuva'));
 const altered={...soap,nome:{pt:'<script>unsafe</script>',en:'test'}};
 assert(!api.card(altered,data).includes('<script>'));
-// Published product card: descriptive content always renders; price/CTA only when disponivel is true.
-const baseProduct={id:'produto-teste',nome:{pt:'Sabão de teste',en:'Test soap'},marca:'Marca X',
+// Published product card: links to the dedicated detail page; price only shown when disponivel is true.
+const baseProduct={id:'produto-teste',nome:{pt:'Sabão <b>de</b> teste',en:'Test soap'},marca:'Marca X',
     descricao_curta:{pt:'Curta',en:'Short'},descricao:{pt:'Longa',en:'Long'},
-    beneficios:[{pt:'Benefício <b>1</b>',en:'Benefit 1'}],modo_aplicacao:{pt:'Aplicar',en:'Apply'},
+    beneficios:[{pt:'Benefício 1',en:'Benefit 1'}],modo_aplicacao:{pt:'Aplicar',en:'Apply'},
     imagem:null,embalagem:null};
 const available={...soap,produtos:[{...baseProduct,disponivel:true,preco:{valor:9.9,moeda:'EUR',iva_incluido:true}}]};
 const availableHtml=api.card(available,data);
-assert(availableHtml.includes('Sabão de teste'));
 assert(availableHtml.includes('Disponível'));
 assert(availableHtml.includes('9,90'));
-assert(availableHtml.includes('Contactar para encomendar'));
-assert(!availableHtml.includes('<b>1</b>'));
+assert(availableHtml.includes('produto-detalhe.html?id=produto-teste'));
+assert(availableHtml.includes('Ver ficha completa'));
+assert(!availableHtml.includes('<b>de</b>'));
 const soon={...soap,produtos:[{...baseProduct,disponivel:false,preco:null}]};
 const soonHtml=api.card(soon,data);
 assert(soonHtml.includes('Brevemente disponível'));
-assert(!soonHtml.includes('Contactar para encomendar'));
 assert(!soonHtml.includes('9,90'));
 const dataWithProduct={...data,solucoes:data.solucoes.map(s=>s.id===soap.id?available:s)};
 assert.equal(api.filterSolutions(dataWithProduct,'marca x','all')[0].id,soap.id);
