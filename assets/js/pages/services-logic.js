@@ -62,6 +62,7 @@
     const esc = (v) => String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
     const normalize = (v) => String(v).normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
     if (byId("technique-grid")) {
+        const tr = (pt, en) => (isEnglish ? en : pt);
         fetch("/data/dicas.json").then((r) => {
             if (!r.ok) throw Error("HTTP " + r.status);
             return r.json();
@@ -69,7 +70,7 @@
             const categories = [...new Set(dicas.map((d) => d.categoria))];
             let selected = "all", query = "";
             byId("technique-filters").innerHTML = ["all", ...categories].map((c) =>
-                `<button type="button" data-category="${esc(c)}" aria-pressed="${c === selected}">${c === "all" ? "Todas" : esc(c)}</button>`
+                `<button type="button" data-category="${esc(c)}" aria-pressed="${c === selected}">${c === "all" ? tr("Todas", "All") : esc(c)}</button>`
             ).join("");
             const render = () => {
                 const term = normalize(query);
@@ -78,13 +79,15 @@
                     (!term || normalize(`${d.titulo} ${d.categoria} ${d.resumo}`).includes(term))
                 );
                 byId("technique-grid").innerHTML = found.map((item) =>
-                    `<article class="technique-card"><h3>${esc(item.titulo)}</h3><span class="technique-meta">${esc(item.categoria)} · ${esc(item.nivel)}</span><p>${esc(item.resumo)}</p>${
+                    `<article class="technique-card" id="tecnica-${esc(item.id)}">${
+                        item.imagem?.src ? `<img src="/${esc(item.imagem.src)}" alt="${esc(item.imagem.alt || "")}" loading="lazy">` : ""
+                    }<div class="technique-card-body"><span class="technique-meta">${esc(item.categoria)} · ${esc(item.nivel)}</span><h3>${esc(item.titulo)}</h3><p>${esc(item.resumo)}</p>${
                         item.passos?.length
-                            ? `<details><summary>Passos essenciais</summary><ol>${item.passos.map((s) => `<li>${esc(s)}</li>`).join("")}</ol></details>`
+                            ? `<details><summary>${tr("Passos essenciais", "Key steps")}</summary><ol>${item.passos.map((s) => `<li>${esc(s)}</li>`).join("")}</ol></details>`
                             : ""
-                    }</article>`
-                ).join("") || `<p class="empty">Nenhuma técnica encontrada para essa pesquisa.</p>`;
-                byId("technique-count").textContent = `${found.length} de ${dicas.length} técnicas`;
+                    }</div></article>`
+                ).join("") || `<p class="empty">${tr("Nenhuma técnica encontrada para essa pesquisa.", "No technique found for this search.")}</p>`;
+                byId("technique-count").textContent = tr(`${found.length} de ${dicas.length} técnicas`, `${found.length} of ${dicas.length} techniques`);
                 byId("technique-filters").querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.category === selected)));
             };
             byId("technique-filters").addEventListener("click", (e) => {
@@ -93,8 +96,14 @@
             });
             byId("technique-search").addEventListener("input", (e) => { query = e.target.value; render(); });
             render();
+            const hashId = location.hash.slice(1);
+            if (hashId.startsWith("tecnica-") && dicas.some((d) => `tecnica-${d.id}` === hashId)) {
+                const entry = byId(hashId);
+                entry?.querySelector("details")?.setAttribute("open", "");
+                entry?.scrollIntoView({ block: "center" });
+            }
         }).catch(() => {
-            byId("technique-grid").innerHTML = "<p class=\"empty\">Não foi possível carregar o catálogo de técnicas.</p>";
+            byId("technique-grid").innerHTML = `<p class="empty">${tr("Não foi possível carregar o catálogo de técnicas.", "The technique catalogue could not be loaded.")}</p>`;
         });
     }
 })();

@@ -8,7 +8,7 @@ assert.equal(data.vendas_ativas,false);
 assert.equal(data.solucoes.length,41);assert.equal(data.categorias.length,7);
 assert.deepEqual(data.solucoes.map(s=>s.id),internal.map(s=>s.id));
 for(const s of data.solucoes){
-    assert.deepEqual(Object.keys(s).sort(),['id','nome','categoria_id','tipo','estado','fichas','produtos'].sort());
+    assert.deepEqual(Object.keys(s).sort(),['id','nome','categoria_id','tipo','estado','tecnica_id','fichas','produtos'].sort());
     assert(s.nome.pt && s.nome.en);
     assert(data.categorias.some(c=>c.id === s.categoria_id));
     assert(Array.isArray(s.produtos));
@@ -51,6 +51,18 @@ assert(soonHtml.includes('Brevemente disponível'));
 assert(!soonHtml.includes('9,90'));
 const dataWithProduct={...data,solucoes:data.solucoes.map(s=>s.id===soap.id?available:s)};
 assert.equal(api.filterSolutions(dataWithProduct,'marca x','all')[0].id,soap.id);
+// Reclassified practices link straight to their técnica guide instead of a generic "under study" tag.
+const bokashi=data.solucoes.find(s=>s.id==='bokashi');
+assert.equal(bokashi.tipo,'pratica');
+assert.equal(bokashi.tecnica_id,'compostagem-bokashi-nota');
+const bokashiHtml=api.card(bokashi,data);
+assert(bokashiHtml.includes('Prática, não produto'));
+assert(bokashiHtml.includes('servicos.html#tecnica-compostagem-bokashi-nota'));
+assert(!bokashiHtml.includes('Solução em estudo'));
+const dicas=read('data/dicas.json');
+for(const id of ['composto-quente','vermicompostagem','compostagem-bokashi-nota','adubo-verde','extrato-de-urtiga','extrato-de-consolda','reaproveitar-cinza-madeira']){
+    assert(dicas.some(d=>d.id===id),`missing técnica for reclassified practice: ${id}`);
+}
 const guide=readFileSync('services/servicos.html','utf8');
 for(const id of ['biofossa','chuva','solar','solo','calculate-solar','in-fatura','service-areas'])assert(guide.includes(`id="${id}"`));
 for(const service of read('data/services.json').services){

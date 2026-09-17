@@ -23,21 +23,40 @@
         const amount = new Intl.NumberFormat(en?'en-IE':'pt-PT',{style:'currency',currency:preco.moeda||'EUR'}).format(preco.valor);
         return preco.iva_incluido === false ? `${amount} ${tr('+ IVA','+ VAT')}` : amount;
     }
+    const categoryVisuals = {
+        fertilidade: {ink:'#4f7a3f', wash:'#eef4e7', icon:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M24 40V24"/><path d="M24 24c0-8-8-12-14-12 0 8 6 14 14 12Z"/><path d="M24 24c0-8 8-12 14-12 0 8-6 14-14 12Z"/></svg>'},
+        correcao: {ink:'#8a6a3e', wash:'#f6efe1', icon:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 18 24 8l12 10-4 16H16Z"/><path d="M12 18h24M18 18 24 34 30 18"/></svg>'},
+        bioestimulantes: {ink:'#236b85', wash:'#e7f2f7', icon:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M24 6c8 10 12 16.5 12 22a12 12 0 1 1-24 0c0-5.5 4-12 12-22Z"/></svg>'},
+        microrganismos: {ink:'#6a4f8a', wash:'#f0eaf7', icon:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="24" r="7"/><circle cx="12" cy="14" r="3"/><circle cx="36" cy="14" r="3"/><circle cx="12" cy="34" r="3"/><circle cx="36" cy="34" r="3"/></svg>'},
+        pragas: {ink:'#a4472f', wash:'#fbe9e3', icon:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M24 6 38 12v10c0 11-6 17.5-14 20-8-2.5-14-9-14-20V12Z"/><ellipse cx="24" cy="26" rx="5" ry="7"/><path d="M24 19v-3M19 22l-4-2M29 22l4-2M19 30l-4 2M29 30l4 2"/></svg>'},
+        doencas: {ink:'#8a3f5e', wash:'#f8e7ee', icon:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M24 6 38 12v10c0 11-6 17.5-14 20-8-2.5-14-9-14-20V12Z"/><path d="M24 17c4 5 6 8 6 11a6 6 0 1 1-12 0c0-3 2-6 6-11Z"/></svg>'},
+        prevencao: {ink:'#5a6b8a', wash:'#edf0f6', icon:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 24c5-9 12-14 20-14s15 5 20 14c-5 9-12 14-20 14S9 33 4 24Z"/><circle cx="24" cy="24" r="6"/></svg>'}
+    };
+    function illustration(categoryId) {
+        const v = categoryVisuals[categoryId] || categoryVisuals.fertilidade;
+        return `<div class="product-illustration" style="--ink:${v.ink};--wash:${v.wash}">${v.icon}</div>`;
+    }
     function productBlock(product) {
         const disponibilidade = product.disponivel
             ? `<span class="hub-tag hub-tag--available">${tr('Disponível','Available')}</span>${product.preco?`<p class="product-price">${esc(money(product.preco))}</p>`:''}`
             : `<span class="hub-tag hub-tag--soon">${tr('Brevemente disponível','Coming soon')}</span>`;
         const detailHref = link('/services/produto-detalhe.html?id=' + encodeURIComponent(product.id));
-        return `${product.imagem?`<img class="product-image" src="${esc(product.imagem)}" alt="">`:''}${product.marca?`<span class="product-brand">${esc(product.marca)}</span>`:''}<h2><a href="${esc(detailHref)}">${esc(text(product.nome))}</a></h2>${disponibilidade}<p class="product-summary">${esc(text(product.descricao_curta))}</p><a class="card-action" href="${esc(detailHref)}">${tr('Ver ficha completa →','View full details →')}</a>`;
+        return `${product.marca?`<span class="product-brand">${esc(product.marca)}</span>`:''}<h2><a href="${esc(detailHref)}">${esc(text(product.nome))}</a></h2>${disponibilidade}<p class="product-summary">${esc(text(product.descricao_curta))}</p><a class="card-action" href="${esc(detailHref)}">${tr('Ver ficha completa →','View full details →')}</a>`;
     }
     function card(solution, data) {
         const category = data.categorias.find(c => c.id === solution.categoria_id);
         const product = solution.produtos?.[0];
+        const isPratica = solution.tipo === 'pratica';
+        const visual = product?.imagem ? `<img class="product-image" src="${esc(product.imagem)}" alt="">` : illustration(solution.categoria_id);
         if (product) {
-            return `<article class="product-card" id="${esc(solution.id)}"><span class="product-family">${esc(text(category.nome))}</span>${productBlock(product)}</article>`;
+            return `<article class="product-card" id="${esc(solution.id)}">${visual}<div class="product-card-body"><span class="product-family">${esc(text(category.nome))}</span>${productBlock(product)}</div></article>`;
+        }
+        if (isPratica && solution.tecnica_id) {
+            const tecnicaHref = link('/services/servicos.html#tecnica-' + encodeURIComponent(solution.tecnica_id));
+            return `<article class="product-card" id="${esc(solution.id)}">${visual}<div class="product-card-body"><span class="product-family">${esc(text(category.nome))}</span><h2>${esc(text(solution.nome))}</h2><span class="hub-tag hub-tag--practice">${tr('Prática, não produto','Practice, not a product')}</span><p class="product-summary">${tr('É uma prática que o próprio agricultor realiza em casa ou no terreno — consulte o guia técnico completo com o passo a passo.','This is a practice the grower carries out at home or in the field — see the full step-by-step technical guide.')}</p><a class="card-action" href="${esc(tecnicaHref)}">${tr('Ver guia técnico completo →','View full technical guide →')}</a></div></article>`;
         }
         const references = solution.fichas.map(f => `<li><a href="${esc(link(f.href))}">${esc(f.nome)} →</a></li>`).join('');
-        return `<article class="product-card" id="${esc(solution.id)}"><span class="product-family">${esc(text(category.nome))}</span><h2>${esc(text(solution.nome))}</h2><span class="hub-tag">${solution.tipo === 'pratica' ? tr('Prática em estudo','Practice under study') : tr('Solução em estudo','Solution under study')}</span><details><summary>${tr('O que estamos a preparar','What we are preparing')}</summary><p>${tr('Ficha técnica, utilizações, limitações e documentação. Ainda sem marca ou formulação selecionada.','Technical information, uses, limitations and documentation. No brand or formulation selected yet.')}</p>${references ? `<p>${tr('Antes de escolher, consulte as orientações relacionadas:','Before choosing, read the related guidance:')}</p><ul>${references}</ul>` : `<p>${tr('As orientações específicas serão acrescentadas após revisão das fontes.','Specific guidance will be added after source review.')}</p>`}</details></article>`;
+        return `<article class="product-card" id="${esc(solution.id)}">${visual}<div class="product-card-body"><span class="product-family">${esc(text(category.nome))}</span><h2>${esc(text(solution.nome))}</h2><span class="hub-tag">${isPratica ? tr('Prática em estudo','Practice under study') : tr('Solução em estudo','Solution under study')}</span><details><summary>${tr('O que estamos a preparar','What we are preparing')}</summary><p>${tr('Ficha técnica, utilizações, limitações e documentação. Ainda sem marca ou formulação selecionada.','Technical information, uses, limitations and documentation. No brand or formulation selected yet.')}</p>${references ? `<p>${tr('Antes de escolher, consulte as orientações relacionadas:','Before choosing, read the related guidance:')}</p><ul>${references}</ul>` : `<p>${tr('As orientações específicas serão acrescentadas após revisão das fontes.','Specific guidance will be added after source review.')}</p>`}</details></div></article>`;
     }
     async function fetchJSON(url) {
         const response = await fetch(url);

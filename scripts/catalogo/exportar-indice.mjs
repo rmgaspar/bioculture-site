@@ -34,7 +34,7 @@ const output = {
     categorias: categories.map(c => ({id:c.id,nome:translate(c.nome)})),
     solucoes: source.map(s => ({
         id:s.id, nome:translate(s.nome), categoria_id:s.categoria_id, tipo:s.tipo,
-        estado:'em_estudo',
+        estado:'em_estudo', tecnica_id: s.tecnica_id || null,
         fichas: [...new Set(profiles.filter(p => p.opcoes.some(o => o.solucao_id === s.id)).flatMap(p => p.alvos))]
             .map(id => ({id, nome: targetName(id),
                 href:'/ecossistemas/especie-detalhe.html?id='+encodeURIComponent(id)+'#solucoes'})),
