@@ -60,7 +60,8 @@
             const data = productCatalogue(await fetchJSON('/data/solucoes-catalogo.json'));
             const filters = byId('category-filters'), input = byId('product-search');
             input.placeholder = tr('Ex.: composto, micorrizas, armadilhas','E.g. compost, mycorrhizae, traps');
-            let selected = 'all';
+            const requestedCategory = new URLSearchParams(location.search).get('categoria');
+            let selected = data.categorias.some(c => c.id === requestedCategory) ? requestedCategory : 'all';
             const filterItems = [{id:'all',nome:{pt:'Todas as famílias',en:'All families'}},...data.categorias];
             filters.innerHTML = filterItems.map(c => `<button type="button" data-category="${esc(c.id)}" aria-pressed="${c.id === selected}">${esc(text(c.nome))}</button>`).join('');
             const render = () => {

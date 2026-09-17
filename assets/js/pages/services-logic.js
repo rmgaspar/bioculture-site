@@ -68,7 +68,8 @@
             return r.json();
         }).then((dicas) => {
             const categories = [...new Set(dicas.map((d) => d.categoria))];
-            let selected = "all", query = "";
+            const requestedCategory = new URLSearchParams(location.search).get("categoria");
+            let selected = categories.includes(requestedCategory) ? requestedCategory : "all", query = "";
             byId("technique-filters").innerHTML = ["all", ...categories].map((c) =>
                 `<button type="button" data-category="${esc(c)}" aria-pressed="${c === selected}">${c === "all" ? tr("Todas", "All") : esc(c)}</button>`
             ).join("");
