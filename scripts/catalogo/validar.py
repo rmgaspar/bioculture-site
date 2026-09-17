@@ -30,7 +30,7 @@ def validar(root=ROOT):
     sources = index(read('catalogo/fontes.json'), 'fontes')
     solutions = read('catalogo/solucoes.json')
     solution_ids = index(solutions, 'soluções')
-    crop_ids = index(read('data/horticolas.json'), 'culturas')
+    crop_ids = set(read('data/horticolas_master.json').keys())
     pest_ids = index(read('data/pragas.json'), 'pragas')
     for row in solutions:
         ident = row['id']
