@@ -51,14 +51,15 @@ assert(soonHtml.includes('Brevemente disponível'));
 assert(!soonHtml.includes('9,90'));
 const dataWithProduct={...data,solucoes:data.solucoes.map(s=>s.id===soap.id?available:s)};
 assert.equal(api.filterSolutions(dataWithProduct,'marca x','all')[0].id,soap.id);
-// Reclassified practices link straight to their técnica guide instead of a generic "under study" tag.
+// Reclassified practices carry a tecnica_id pointing at their full guide...
 const bokashi=data.solucoes.find(s=>s.id==='bokashi');
 assert.equal(bokashi.tipo,'pratica');
 assert.equal(bokashi.tecnica_id,'compostagem-bokashi-nota');
-const bokashiHtml=api.card(bokashi,data);
-assert(bokashiHtml.includes('Prática, não produto'));
-assert(bokashiHtml.includes('servicos.html#tecnica-compostagem-bokashi-nota'));
-assert(!bokashiHtml.includes('Solução em estudo'));
+// ...but the produtos catalogue itself must never list a practice: it belongs only in the técnicas catalogue.
+const publicCatalogue=api.productCatalogue(data);
+assert.equal(publicCatalogue.solucoes.length,33);
+assert(publicCatalogue.solucoes.every(s=>s.tipo!=='pratica'));
+assert(!publicCatalogue.solucoes.some(s=>s.id==='bokashi'));
 const dicas=read('data/dicas.json');
 for(const id of ['composto-quente','vermicompostagem','compostagem-bokashi-nota','adubo-verde','extrato-de-urtiga','extrato-de-consolda','reaproveitar-cinza-madeira']){
     assert(dicas.some(d=>d.id===id),`missing técnica for reclassified practice: ${id}`);

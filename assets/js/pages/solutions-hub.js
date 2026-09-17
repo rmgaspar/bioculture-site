@@ -51,10 +51,6 @@
         if (product) {
             return `<article class="product-card" id="${esc(solution.id)}">${visual}<div class="product-card-body"><span class="product-family">${esc(text(category.nome))}</span>${productBlock(product)}</div></article>`;
         }
-        if (isPratica && solution.tecnica_id) {
-            const tecnicaHref = link('/services/servicos.html#tecnica-' + encodeURIComponent(solution.tecnica_id));
-            return `<article class="product-card" id="${esc(solution.id)}">${visual}<div class="product-card-body"><span class="product-family">${esc(text(category.nome))}</span><h2>${esc(text(solution.nome))}</h2><span class="hub-tag hub-tag--practice">${tr('Prática, não produto','Practice, not a product')}</span><p class="product-summary">${tr('É uma prática que o próprio agricultor realiza em casa ou no terreno — consulte o guia técnico completo com o passo a passo.','This is a practice the grower carries out at home or in the field — see the full step-by-step technical guide.')}</p><a class="card-action" href="${esc(tecnicaHref)}">${tr('Ver guia técnico completo →','View full technical guide →')}</a></div></article>`;
-        }
         const references = solution.fichas.map(f => `<li><a href="${esc(link(f.href))}">${esc(f.nome)} →</a></li>`).join('');
         return `<article class="product-card" id="${esc(solution.id)}">${visual}<div class="product-card-body"><span class="product-family">${esc(text(category.nome))}</span><h2>${esc(text(solution.nome))}</h2><span class="hub-tag">${isPratica ? tr('Prática em estudo','Practice under study') : tr('Solução em estudo','Solution under study')}</span><details><summary>${tr('O que estamos a preparar','What we are preparing')}</summary><p>${tr('Ficha técnica, utilizações, limitações e documentação. Ainda sem marca ou formulação selecionada.','Technical information, uses, limitations and documentation. No brand or formulation selected yet.')}</p>${references ? `<p>${tr('Antes de escolher, consulte as orientações relacionadas:','Before choosing, read the related guidance:')}</p><ul>${references}</ul>` : `<p>${tr('As orientações específicas serão acrescentadas após revisão das fontes.','Specific guidance will be added after source review.')}</p>`}</details></div></article>`;
     }
@@ -63,10 +59,14 @@
         if (!response.ok) throw Error('HTTP '+response.status);
         return response.json();
     }
+    // Practices belong to the técnicas catalogue only — they are the grower's own work, not something bioCulture sells.
+    function productCatalogue(raw) {
+        return {...raw, solucoes: raw.solucoes.filter(s => s.tipo !== 'pratica')};
+    }
     async function products() {
         const grid = byId('product-grid');
         try {
-            const data = await fetchJSON('/data/solucoes-catalogo.json');
+            const data = productCatalogue(await fetchJSON('/data/solucoes-catalogo.json'));
             const filters = byId('category-filters'), input = byId('product-search');
             input.placeholder = tr('Ex.: composto, micorrizas, armadilhas','E.g. compost, mycorrhizae, traps');
             let selected = 'all';
@@ -108,5 +108,5 @@
     if(page !== 'services') fetch('/sidebar-content.html').then(r=>{if(!r.ok)throw Error('sidebar');return r.text();}).then(html=>{byId('sidebar').innerHTML=html;}).catch(()=>{byId('sidebar').innerHTML=`<a href="${link('/index.html')}">${tr('Página inicial','Home')}</a>`;});
     if(page === 'products') products();
     if(page === 'services') services();
-    window.BioCultureSolutions = {filterSolutions,card};
+    window.BioCultureSolutions = {filterSolutions,card,productCatalogue};
 })();
