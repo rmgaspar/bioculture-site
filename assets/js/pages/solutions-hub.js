@@ -23,18 +23,9 @@
         const amount = new Intl.NumberFormat(en?'en-IE':'pt-PT',{style:'currency',currency:preco.moeda||'EUR'}).format(preco.valor);
         return preco.iva_incluido === false ? `${amount} ${tr('+ IVA','+ VAT')}` : amount;
     }
-    const categoryVisuals = {
-        fertilidade: {ink:'#4f7a3f', wash:'#eef4e7', icon:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M24 40V24"/><path d="M24 24c0-8-8-12-14-12 0 8 6 14 14 12Z"/><path d="M24 24c0-8 8-12 14-12 0 8-6 14-14 12Z"/></svg>'},
-        correcao: {ink:'#8a6a3e', wash:'#f6efe1', icon:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 18 24 8l12 10-4 16H16Z"/><path d="M12 18h24M18 18 24 34 30 18"/></svg>'},
-        bioestimulantes: {ink:'#236b85', wash:'#e7f2f7', icon:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M24 6c8 10 12 16.5 12 22a12 12 0 1 1-24 0c0-5.5 4-12 12-22Z"/></svg>'},
-        microrganismos: {ink:'#6a4f8a', wash:'#f0eaf7', icon:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="24" r="7"/><circle cx="12" cy="14" r="3"/><circle cx="36" cy="14" r="3"/><circle cx="12" cy="34" r="3"/><circle cx="36" cy="34" r="3"/></svg>'},
-        pragas: {ink:'#a4472f', wash:'#fbe9e3', icon:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M24 6 38 12v10c0 11-6 17.5-14 20-8-2.5-14-9-14-20V12Z"/><ellipse cx="24" cy="26" rx="5" ry="7"/><path d="M24 19v-3M19 22l-4-2M29 22l4-2M19 30l-4 2M29 30l4 2"/></svg>'},
-        doencas: {ink:'#8a3f5e', wash:'#f8e7ee', icon:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M24 6 38 12v10c0 11-6 17.5-14 20-8-2.5-14-9-14-20V12Z"/><path d="M24 17c4 5 6 8 6 11a6 6 0 1 1-12 0c0-3 2-6 6-11Z"/></svg>'},
-        prevencao: {ink:'#5a6b8a', wash:'#edf0f6', icon:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 24c5-9 12-14 20-14s15 5 20 14c-5 9-12 14-20 14S9 33 4 24Z"/><circle cx="24" cy="24" r="6"/></svg>'}
-    };
     function illustration(categoryId) {
-        const v = categoryVisuals[categoryId] || categoryVisuals.fertilidade;
-        return `<div class="product-illustration" style="--ink:${v.ink};--wash:${v.wash}">${v.icon}</div>`;
+        const id = ['fertilidade','correcao','bioestimulantes','microrganismos','pragas','doencas','prevencao'].includes(categoryId) ? categoryId : 'fertilidade';
+        return `<img class="product-image" src="/images/categoria-${id}-v1.jpg" alt="">`;
     }
     function productBlock(product) {
         const disponibilidade = product.disponivel
