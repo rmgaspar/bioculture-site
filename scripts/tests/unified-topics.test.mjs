@@ -43,7 +43,7 @@ for (const [page] of pairs) {
 }
 const hub = read('recursos/vida-e-recursos.html');
 assert(!hub.includes('life-puzzle'), 'No SVG puzzle dependency');
-assert.equal((hub.match(/class="life-element"/g)||[]).length,4);
-assert.equal((hub.match(/<picture>/g)||[]).length,4);
+assert(!hub.includes('life-element') && !hub.includes('life-web') && !hub.includes('life-connections'), 'Mosaic pattern must not return — the four systems use the shared hub-card grid instead');
+assert.equal((hub.match(/class="hub-card"/g)||[]).length,4, 'Four systems must use the shared hub-card grid, matching other hubs');
 assert(read('assets/js/pages/hub-pages.js').includes('class="news-media"'));
-console.log('Eight unified topics: unique IDs, retained controls, aliases with language/hash and base path, no redirect loops, four linked HTML images and continuous visible reading.');
+console.log('Eight unified topics: unique IDs, retained controls, aliases with language/hash and base path, no redirect loops, four systems on the shared hub-card grid and continuous visible reading.');
