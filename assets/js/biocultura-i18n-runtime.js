@@ -391,7 +391,7 @@
         }
         dictionary = await loading;
         if (!structuredDictionary) {
-            structuredDictionary = await originalFetch(`/assets/lang/${lang}.json?v=9`, { cache: "no-cache" })
+            structuredDictionary = await originalFetch(`/assets/lang/${lang}.json?v=10`, { cache: "no-cache" })
                 .then((response) => response.ok ? response.json() : {})
                 .catch(() => ({}));
         }
