@@ -37,41 +37,41 @@
 
             function seasonFor(month) {
                 if ([11, 0, 1].includes(month)) {
-                    return [
-                        "Inverno",
-                        "Planear, proteger o solo e aproveitar os períodos adequados para plantações lenhosas.",
-                    ];
+                    return {
+                        name: "Inverno", emoji: "❄️", cue: "tipicamente frio",
+                        note: "Planear, proteger o solo e aproveitar os períodos adequados para plantações lenhosas.",
+                    };
                 }
                 if ([2, 3, 4].includes(month)) {
-                    return [
-                        "Primavera",
-                        "Época de crescimento rápido: semear por etapas, vigiar jovens plantas e favorecer polinizadores.",
-                    ];
+                    return {
+                        name: "Primavera", emoji: "🌱", cue: "temperaturas a subir",
+                        note: "Época de crescimento rápido: semear por etapas, vigiar jovens plantas e favorecer polinizadores.",
+                    };
                 }
                 if ([5, 6, 7].includes(month)) {
-                    return [
-                        "Verão",
-                        "Gerir água, sombra e cobertura; colher com frequência e observar sinais de stress.",
-                    ];
+                    return {
+                        name: "Verão", emoji: "☀️", cue: "tipicamente quente e seco",
+                        note: "Gerir água, sombra e cobertura; colher com frequência e observar sinais de stress.",
+                    };
                 }
-                return [
-                    "Outono",
-                    "Colher, guardar sementes, iniciar coberturas e preparar o solo sem o deixar exposto.",
-                ];
+                return {
+                    name: "Outono", emoji: "🍂", cue: "temperaturas a descer",
+                    note: "Colher, guardar sementes, iniciar coberturas e preparar o solo sem o deixar exposto.",
+                };
             }
 
             function moonInfo(date) {
                 const known = Date.UTC(2000, 0, 6, 18, 14), cycle = 29.53058867;
                 let age = ((date.getTime() - known) / 86400000) % cycle;
                 if (age < 0) age += cycle;
-                if (age < 1.85 || age > 27.68) return { name: "Lua nova", cls: "new" };
-                if (age < 5.54) return { name: "Crescente inicial", cls: "" };
-                if (age < 9.23) return { name: "Quarto crescente", cls: "quarter" };
-                if (age < 12.92) return { name: "Crescente gibosa", cls: "" };
-                if (age < 16.61) return { name: "Lua cheia", cls: "full" };
-                if (age < 20.30) return { name: "Minguante gibosa", cls: "" };
-                if (age < 23.99) return { name: "Quarto minguante", cls: "quarter" };
-                return { name: "Minguante final", cls: "" };
+                if (age < 1.85 || age > 27.68) return { name: "Lua nova", cls: "new", emoji: "🌑" };
+                if (age < 5.54) return { name: "Crescente inicial", cls: "", emoji: "🌒" };
+                if (age < 9.23) return { name: "Quarto crescente", cls: "quarter", emoji: "🌓" };
+                if (age < 12.92) return { name: "Crescente gibosa", cls: "", emoji: "🌔" };
+                if (age < 16.61) return { name: "Lua cheia", cls: "full", emoji: "🌕" };
+                if (age < 20.30) return { name: "Minguante gibosa", cls: "", emoji: "🌖" };
+                if (age < 23.99) return { name: "Quarto minguante", cls: "quarter", emoji: "🌗" };
+                return { name: "Minguante final", cls: "", emoji: "🌘" };
             }
 
             function renderCalendar() {
@@ -100,14 +100,27 @@
                     );
                 }
                 document.getElementById("calendar-days").innerHTML = cells.join("");
-                const [season, note] = seasonFor(month),
+                const season = seasonFor(month),
                     selectedMoon = moonInfo(
                         new Date(year, month, Math.min(today.getDate(), last.getDate())),
                     );
-                document.getElementById("season-label").innerHTML =
-                    `<strong>${season}</strong> · ${note}`;
-                document.getElementById("moon-label").innerHTML =
-                    `Referência lunar: <strong>${selectedMoon.name}</strong>`;
+                document.getElementById("calendar-conditions").innerHTML = `<div class="condition-chip">
+                        <span class="condition-icon" aria-hidden="true">${season.emoji}</span>
+                        <span><strong>${season.name}</strong><small>${season.cue}</small></span>
+                    </div><div class="condition-chip">
+                        <span class="condition-icon" aria-hidden="true">${selectedMoon.emoji}</span>
+                        <span><strong>${selectedMoon.name}</strong><small>fase da lua hoje</small></span>
+                    </div>`;
+                const sowing = cropsFor("sementeira", month).slice(0, 3);
+                document.getElementById("calendar-suggestion").innerHTML = sowing.length
+                    ? `<strong>Boa altura para semear:</strong> ${
+                        sowing.map(([id, item]) =>
+                            `<a href="/calendario/horticola-detalhe.html?id=${
+                                encodeURIComponent(id)
+                            }">${escapeHtml(item.nome)}</a>`
+                        ).join(", ")
+                    }`
+                    : `<strong>${season.name}:</strong> ${season.note}`;
                 renderActions();
                 renderWeekPlan();
                 renderPractices();
@@ -238,7 +251,7 @@
             }
 
             function renderWeekPlan() {
-                const month = viewedDate.getMonth(), [season] = seasonFor(month);
+                const month = viewedDate.getMonth(), season = seasonFor(month).name;
                 const seasonal = {
                     Inverno: [
                         ["Observar o solo", "Evite trabalhar solo saturado e proteja zonas nuas."],
@@ -352,7 +365,7 @@
             }
 
             function seasonalPests(month) {
-                const [season] = seasonFor(month),
+                const season = seasonFor(month).name,
                     keywords = {
                         Inverno: ["inverno", "todo o ano", "protegidas"],
                         Primavera: ["primavera", "tempo ameno", "rebentos"],
