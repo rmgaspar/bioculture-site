@@ -127,7 +127,7 @@
                     }
                 }
                 return panel(tr("Plantas afetadas", "Affected plants"),
-                    `<ul class="list">${termos.map((termo) => {
+                    `<ul class="list list-inline-links">${termos.map((termo) => {
                         const t = normalizeText(termo);
                         const cid = byNorm[t] || CROP_ALIASES[t];
                         return cid && horticolas && horticolas[cid]
