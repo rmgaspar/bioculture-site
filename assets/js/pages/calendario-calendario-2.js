@@ -4,7 +4,8 @@
                 floraDB = [],
                 dicasDB = [],
                 horticolasDB = {},
-                infoGlobal = null;
+                infoGlobal = null,
+                weatherNow = null;
             let viewedDate = new Date(), showMorePests = false, showMoreFlora = false, catalogLimit = 12;
             const months = [
                 "janeiro",
@@ -74,6 +75,73 @@
                 return { name: "Minguante final", cls: "", emoji: "🌘" };
             }
 
+            // Códigos WMO devolvidos pela API Open-Meteo (sem chave, gratuita).
+            const WEATHER_CODES = {
+                0: ["☀️", "Céu limpo"], 1: ["🌤️", "Céu quase limpo"], 2: ["⛅", "Parcialmente nublado"],
+                3: ["☁️", "Encoberto"], 45: ["🌫️", "Nevoeiro"], 48: ["🌫️", "Nevoeiro"],
+                51: ["🌦️", "Chuvisco fraco"], 53: ["🌦️", "Chuvisco"], 55: ["🌦️", "Chuvisco forte"],
+                56: ["🌧️", "Chuvisco gelado"], 57: ["🌧️", "Chuvisco gelado"],
+                61: ["🌧️", "Chuva fraca"], 63: ["🌧️", "Chuva"], 65: ["🌧️", "Chuva forte"],
+                66: ["🌧️", "Chuva gelada"], 67: ["🌧️", "Chuva gelada"],
+                71: ["🌨️", "Neve fraca"], 73: ["🌨️", "Neve"], 75: ["🌨️", "Neve forte"], 77: ["🌨️", "Grãos de neve"],
+                80: ["🌦️", "Aguaceiros fracos"], 81: ["🌦️", "Aguaceiros"], 82: ["🌧️", "Aguaceiros fortes"],
+                85: ["🌨️", "Aguaceiros de neve"], 86: ["🌨️", "Aguaceiros de neve"],
+                95: ["⛈️", "Trovoada"], 96: ["⛈️", "Trovoada com granizo"], 99: ["⛈️", "Trovoada com granizo"],
+            };
+            function describeWeather(code) {
+                const [emoji, label] = WEATHER_CODES[code] || ["🌡️", "Sem descrição"];
+                return { emoji, label };
+            }
+            async function fetchWeather() {
+                const lat = infoGlobal?.lat, lon = infoGlobal?.lon;
+                if (!Number.isFinite(lat) || !Number.isFinite(lon)) return;
+                try {
+                    const response = await fetch(
+                        `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&daily=temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=1`,
+                    );
+                    if (!response.ok) throw new Error("weather");
+                    const data = await response.json();
+                    weatherNow = {
+                        temp: Math.round(data.current.temperature_2m),
+                        code: data.current.weather_code,
+                        max: Math.round(data.daily.temperature_2m_max[0]),
+                        min: Math.round(data.daily.temperature_2m_min[0]),
+                    };
+                } catch (_) {
+                    weatherNow = null;
+                }
+                renderConditions();
+            }
+
+            function renderConditions() {
+                const year = viewedDate.getFullYear(), month = viewedDate.getMonth(), today = new Date();
+                const last = new Date(year, month + 1, 0);
+                const season = seasonFor(month);
+                const selectedMoon = moonInfo(
+                    new Date(year, month, Math.min(today.getDate(), last.getDate())),
+                );
+                const weatherChip = weatherNow
+                    ? (() => {
+                        const w = describeWeather(weatherNow.code);
+                        return `<div class="condition-chip">
+                            <span class="condition-icon" aria-hidden="true">${w.emoji}</span>
+                            <span><strong>${weatherNow.temp}°C agora</strong><small>${
+                            w.label
+                        } · máx ${weatherNow.max}° mín ${weatherNow.min}°</small></span>
+                        </div>`;
+                    })()
+                    : `<div class="condition-chip condition-chip-loading">
+                        <span class="condition-icon" aria-hidden="true">🌡️</span>
+                        <span><strong>Tempo agora</strong><small>a carregar…</small></span>
+                    </div>`;
+                document.getElementById("calendar-conditions").innerHTML = `<div class="condition-chip">
+                        <span class="condition-icon" aria-hidden="true">${season.emoji}</span>
+                        <span><strong>${season.name}</strong><small>${months[month]}</small></span>
+                    </div>${weatherChip}<div class="condition-chip">
+                        <span class="condition-icon" aria-hidden="true">${selectedMoon.emoji}</span>
+                        <span><strong>${selectedMoon.name}</strong><small>fase da lua hoje</small></span>
+                    </div>`;
+            }
             function renderCalendar() {
                 const year = viewedDate.getFullYear(),
                     month = viewedDate.getMonth(),
@@ -100,17 +168,7 @@
                     );
                 }
                 document.getElementById("calendar-days").innerHTML = cells.join("");
-                const season = seasonFor(month),
-                    selectedMoon = moonInfo(
-                        new Date(year, month, Math.min(today.getDate(), last.getDate())),
-                    );
-                document.getElementById("calendar-conditions").innerHTML = `<div class="condition-chip">
-                        <span class="condition-icon" aria-hidden="true">${season.emoji}</span>
-                        <span><strong>${season.name}</strong><small>${season.cue}</small></span>
-                    </div><div class="condition-chip">
-                        <span class="condition-icon" aria-hidden="true">${selectedMoon.emoji}</span>
-                        <span><strong>${selectedMoon.name}</strong><small>fase da lua hoje</small></span>
-                    </div>`;
+                renderConditions();
                 const sowing = cropsFor("sementeira", month).slice(0, 3);
                 document.getElementById("calendar-suggestion").innerHTML = sowing.length
                     ? `<strong>Boa altura para semear:</strong> ${
@@ -120,7 +178,7 @@
                             }">${escapeHtml(item.nome)}</a>`
                         ).join(", ")
                     }`
-                    : `<strong>${season.name}:</strong> ${season.note}`;
+                    : `<strong>${seasonFor(month).name}:</strong> ${seasonFor(month).note}`;
                 renderActions();
                 renderWeekPlan();
                 renderPractices();
@@ -478,6 +536,7 @@
                         locationsDB[0];
                     renderLocalProfile();
                     renderCalendar();
+                    fetchWeather();
                     renderCatalog();
                     renderFlora();
                     document.getElementById("catalog-search").addEventListener("input", () => renderCatalog(true));
