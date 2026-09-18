@@ -85,7 +85,46 @@
                     ${textPanel(tr("Controlo biológico", "Biological control"), esp.controlo_biologico)}
                     ${sourcePanel([esp.fonte, ...arr(esp.fontes_complementares)])}</div></div>`;
             }
-            function pestSections(esp) {
+            const normalizeText = (value) =>
+                String(value ?? "").normalize("NFD").replace(/[̀-ͯ]/g, "")
+                    .toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+            const CROP_ALIASES = {
+                batateira: "batata", cerejeira: "cereja", damasqueiro: "damasco",
+                figueira: "figo", laranjeira: "citrinos", limoeiro: "limao",
+                macieira: "maca", marmeleiro: "marmelo", nogueira: "noz",
+                pereira: "pera", pessegueiro: "pessego-da-cova-da-beira",
+                pessego: "pessego-da-cova-da-beira", pimenteiro: "pimento",
+                tangerineira: "tangerina", tomateiro: "tomate", uva: "uvas",
+                "uva de mesa": "uvas", videira: "uvas", vinha: "uvas",
+                couves: "couve", faveira: "fava", nabicas: "nabica",
+            };
+            function cropsForPest(esp, horticolas) {
+                if (!horticolas) return [];
+                const byNorm = {};
+                for (const [cid, c] of Object.entries(horticolas)) {
+                    byNorm[normalizeText(cid)] = cid;
+                    byNorm[normalizeText(c.nome)] = cid;
+                }
+                const ids = new Set();
+                for (const termo of arr(esp.plantas_afetadas)) {
+                    const t = normalizeText(termo);
+                    const cid = byNorm[t] || CROP_ALIASES[t];
+                    if (cid && horticolas[cid]) ids.add(cid);
+                }
+                return [...ids].map((cid) => ({ id: cid, nome: horticolas[cid].nome }));
+            }
+            function affectedCropsPanel(esp, horticolas) {
+                const crops = cropsForPest(esp, horticolas);
+                return crops.length
+                    ? panel(tr("Culturas afetadas", "Affected crops"),
+                        `<ul class="list">${crops.map((c) =>
+                            `<li><a href="/calendario/horticola-detalhe.html?id=${
+                                encodeURIComponent(c.id)
+                            }">${esc(c.nome)} →</a></li>`
+                        ).join("")}</ul>`)
+                    : "";
+            }
+            function pestSections(esp, horticolas) {
                 if (esp.grupo !== "Sanidade Vegetal") return "";
                 const diagnosis = esp.diagnostico || {};
                 const prevention = esp.prevencao_biologica || {};
@@ -97,7 +136,7 @@
                     textPanel("Quando observar", esp.sazonalidade_portugal)
                 }${textPanel("Monitorização", diagnosis.monitorizacao)}${
                     textPanel("Confirmar antes de intervir", diagnosis.confirmar_antes_de_intervir)
-                }</div></div><div class="section-block" id="prevencao"><div class="section-head"><span class="eyebrow">Prevenção biológica</span><div><h2>Reduzir o problema sem destruir os aliados</h2><p>Prioridade à diversidade, ao equilíbrio da cultura e a intervenções seletivas, sem pesticidas de largo espectro.</p></div></div><div class="grid">${
+                }${affectedCropsPanel(esp, horticolas)}</div></div><div class="section-block" id="prevencao"><div class="section-head"><span class="eyebrow">Prevenção biológica</span><div><h2>Reduzir o problema sem destruir os aliados</h2><p>Prioridade à diversidade, ao equilíbrio da cultura e a intervenções seletivas, sem pesticidas de largo espectro.</p></div></div><div class="grid">${
                     textPanel("Estratégia preventiva", prevention.estrategia || esp.prevencao)
                 }${textPanel("Como aplicar", prevention.como)}${
                     listPanel("Aliados naturais", solution.agentes || esp.aliados_naturais)
@@ -135,7 +174,7 @@
                 }).join("");
                 return `<div class="section-block"><div class="section-head"><span class="eyebrow">Comparar</span><div><h2>Espécies semelhantes</h2><p>A semelhança visual não confirma uma identificação. Observe forma, habitat, época e caracteres distintivos.</p></div></div><div class="similar">${links}</div></div>`;
             }
-            function render(esp, master, guidance) {
+            function render(esp, master, guidance, horticolas) {
                 const isPest = esp.grupo === "Sanidade Vegetal";
                 const isInvasive = esp.grupo === "Flora Invasora";
                 const tax = arr(esp.taxonomia_completa).join(" › ");
@@ -202,7 +241,7 @@
                             textPanel("Prevenção", esp.prevencao)
                         }${textPanel("Controlo", esp.combate)}</div></div>`
                         : ""
-                }${managementNav(esp, guidance)}${pestSections(esp)}${invasiveSections(esp)}${practicalSections(esp, guidance)}${similarPanel(esp.especies_semelhantes, master)}${
+                }${managementNav(esp, guidance)}${pestSections(esp, horticolas)}${invasiveSections(esp)}${practicalSections(esp, guidance)}${similarPanel(esp.especies_semelhantes, master)}${
                     valid(esp.observacao_responsavel)
                         ? `<div class="section-block"><div class="responsible"><h3>Observar sem perturbar</h3><p>${
                             esc(esp.observacao_responsavel)
@@ -245,7 +284,7 @@
                     return;
                 }
                 try {
-                    const [master, pests, invasives, guidance] = await Promise.all([
+                    const [master, pests, invasives, guidance, horticolas] = await Promise.all([
                         ...["especies_master", "pragas", "flora_invasora"].map((f) =>
                             fetch(`/data/${f}.json`).then((r) => {
                                 if (!r.ok) throw Error(`HTTP ${r.status}`);
@@ -255,10 +294,11 @@
                             if (!r.ok) throw Error(`HTTP ${r.status}`);
                             return r.json();
                         }).catch(() => null),
+                        fetch("/data/horticolas_master.json").then((r) => r.json()).catch(() => null),
                     ]);
                     const esp = resolveSpecies(id, master, pests, invasives);
                     if (!esp) throw Error("not-found");
-                    render(esp, master, guidance);
+                    render(esp, master, guidance, horticolas);
                 } catch (e) {
                     document.getElementById("species").innerHTML =
                         '<div class="error"><strong>Espécie não encontrada.</strong><br><a href="biodiversidade.html">Voltar</a></div>';

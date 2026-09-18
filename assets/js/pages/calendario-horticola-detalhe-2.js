@@ -37,6 +37,35 @@
                     }</p></div></div><div class="detail-grid">${content}</div></div>`
                     : "";
             }
+            const normalize = (value) =>
+                String(value ?? "").normalize("NFD").replace(/[̀-ͯ]/g, "")
+                    .toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+            const CROP_ALIASES = {
+                batateira: "batata", cerejeira: "cereja", damasqueiro: "damasco",
+                figueira: "figo", laranjeira: "citrinos", limoeiro: "limao",
+                macieira: "maca", marmeleiro: "marmelo", nogueira: "noz",
+                pereira: "pera", pessegueiro: "pessego-da-cova-da-beira",
+                pessego: "pessego-da-cova-da-beira", pimenteiro: "pimento",
+                tangerineira: "tangerina", tomateiro: "tomate", uva: "uvas",
+                "uva de mesa": "uvas", videira: "uvas", vinha: "uvas",
+                couves: "couve", faveira: "fava", nabicas: "nabica",
+            };
+            function pestsForCrop(id, nome, pragas) {
+                const targets = new Set([normalize(id), normalize(nome)]);
+                return pragas.filter((p) =>
+                    (p.plantas_afetadas || []).some((termo) => {
+                        const t = normalize(termo);
+                        return targets.has(t) || CROP_ALIASES[t] === id;
+                    })
+                );
+            }
+            function pestCard(item) {
+                return `<article class="pest-card"><h3>${esc(item.nome_comum)}</h3><span class="pest-meta">${
+                    esc(item.tipo || "")
+                }</span><p>${esc(item.sintomas || item.descricao || "")}</p><a class="pest-detail-link" href="/ecossistemas/especie-detalhe.html?id=${
+                    encodeURIComponent(item.id)
+                }">Ver diagnóstico e solução →</a></article>`;
+            }
             async function carregar() {
                 const id = new URLSearchParams(window.location.search).get("id");
                 if (!id) {
@@ -45,8 +74,10 @@
                 }
 
                 try {
-                    const res = await fetch("/data/horticolas_master.json?v=" + Date.now());
-                    const master = await res.json();
+                    const [master, pragas] = await Promise.all([
+                        fetch("/data/horticolas_master.json?v=" + Date.now()).then((r) => r.json()),
+                        fetch("/data/pragas.json").then((r) => r.json()).catch(() => []),
+                    ]);
                     const item = master[id];
 
                     if (!item) {
@@ -84,6 +115,12 @@
                     const protection = textPanel("Problemas comuns", item.problemas_comuns) +
                         textPanel("Prevenção sem pesticidas", item.prevencao_sem_pesticidas) +
                         textPanel("Notas para Portugal", item.notas_portugal);
+                    const pests = pestsForCrop(id, item.nome, pragas);
+                    const pestSection = pests.length
+                        ? `<div class="detail-section"><div class="section-head"><span>Vigilância</span><div><h2>Pragas e doenças mais comuns</h2><p>Cada ficha reúne diagnóstico, prevenção biológica e, quando existe, a solução prática associada.</p></div></div><div class="pest-grid">${
+                            pests.map(pestCard).join("")
+                        }</div></div>`
+                        : "";
                     const related = values(item.culturas_semelhantes).map((name) => {
                         const found = Object.entries(master).find(([, value]) =>
                             String(value.nome).toLocaleLowerCase("pt") ===
@@ -156,6 +193,7 @@
                             ecology,
                         )
                     }
+                    ${pestSection}
                     ${
                         section(
                             "Vigilância",

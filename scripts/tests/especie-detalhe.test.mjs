@@ -3,6 +3,7 @@ import vm from 'node:vm';
 import assert from 'node:assert/strict';
 const read = name => JSON.parse(readFileSync(`data/${name}.json`, 'utf8'));
 const master = read('especies_master'), pests = read('pragas'), invasives = read('flora_invasora'), guidance = read('gestao-solucoes');
+const horticolas = read('horticolas_master');
 const element = { innerHTML: '' };
 const context = vm.createContext({ URL, URLSearchParams, location: { search: '' }, window: {},
     document: { getElementById: () => element }, fetch: () => new Promise(() => {}) });
@@ -12,15 +13,23 @@ for (const [rows, group] of [[pests, 'Sanidade Vegetal'], [invasives, 'Flora Inv
         const species = context.resolveSpecies(row.id, master, pests, invasives);
         assert.equal(species.grupo, group);
         assert.equal(species.combate, row.combate);
-        context.render(species, master, guidance);
+        context.render(species, master, guidance, horticolas);
         assert(element.innerHTML.includes('id="prevencao"'));
         assert(element.innerHTML.includes('id="intervencao"'));
         assert(!element.innerHTML.includes('Prevenção e controlo responsável'), 'Resumo duplicado');
         if (group === 'Flora Invasora') assert(element.innerHTML.includes('Destino dos resíduos'));
         const profile = guidance.perfis.find(p => p.alvos.includes(row.id));
         assert.equal(element.innerHTML.includes('id="solucoes"'), Boolean(profile));
+        const crops = context.cropsForPest(species, horticolas);
+        assert.equal(element.innerHTML.includes('Culturas afetadas'), crops.length > 0);
+        for (const crop of crops) {
+            assert(element.innerHTML.includes(`/calendario/horticola-detalhe.html?id=${crop.id}`),
+                `Ligação em falta para ${crop.id} a partir de ${row.id}`);
+        }
     }
 }
+assert(context.cropsForPest(context.resolveSpecies('pulgoes', master, pests, invasives), horticolas)
+    .some(c => c.id === 'batata'), 'Alias batateira -> batata deve continuar a resolver');
 const pest = context.resolveSpecies('bichado-da-fruta', master, pests, invasives);
 assert.equal(pest.grupo, 'Sanidade Vegetal');
 context.render(context.resolveSpecies('pulgoes', master, pests, invasives), master, null);
