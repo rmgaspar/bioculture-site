@@ -195,9 +195,7 @@
                     (tax ? textPanel("Taxonomia", tax) : "");
                 document.getElementById("species").innerHTML = `<a class="back" href="${
                     isPest ? "/calendario/calendario.html#vigilancia" : "biodiversidade.html"
-                }">← ${
-                    isPest ? "Voltar" : "Voltar"
-                }</a><div class="hero"><div><span class="eyebrow">${
+                }" onclick="if(window.history.length>1){event.preventDefault();history.back();}">← Voltar</a><div class="hero"><div><span class="eyebrow">${
                     esc(esp.grupo || "Inventário biológico")
                 }</span><h1>${esc(esp.nome)}</h1>${
                     valid(esp.nome_cientifico)
