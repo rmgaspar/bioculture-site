@@ -63,7 +63,20 @@
                         }.`;
                 }
 
-                const entries = Object.entries(species || {});
+                // Só entra no sorteio diário quem tem uma síntese real: sem isto, quase
+                // metade do inventário devolve frases que só repetem o nome ("é uma planta
+                // da família X"), o que transforma "um motivo para voltar" em palha.
+                const dashTitle = /—| - /,
+                    englishHint = /\b(the|is a|species of|found in|native to|belongs to)\b/i,
+                    ptAccent = /[àáâãçéêíóôõú]/i;
+                const entries = Object.entries(species || {}).filter(([, x]) => {
+                    const nome = String(x.nome || ""), sintese = String(x.sintese || "").trim();
+                    if (dashTitle.test(nome)) return false;
+                    if (!sintese || sintese === "-" || sintese.length < 100) return false;
+                    if (sintese.startsWith(nome)) return false;
+                    const looksEnglish = englishHint.test(sintese) && !ptAccent.test(sintese);
+                    return isEnglish ? looksEnglish : !looksEnglish;
+                });
                 if (!entries.length) return;
 
                 const day = Math.floor(now.getTime() / 86400000),
