@@ -130,6 +130,53 @@ def geographic_scope(text: str, source_cfg: dict) -> tuple[str, list[str]]:
     return "global", []
 
 
+def resolve_google_news_url(url: str) -> str:
+    """Troca a ligação ofuscada do Google Notícias pela publicação original.
+
+    O Google Notícias devolve um redireccionamento por JavaScript, não uma
+    hiperligação direta, dificultando a leitura antes de aprovar. O truque
+    (documentado em vários projetos open-source) extrai os atributos
+    data-n-a-id/sg/ts da página de redireccionamento e usa-os para pedir a
+    ligação real à mesma API interna que o Google Notícias usa no browser.
+    Qualquer falha devolve sempre a ligação original, nunca bloqueia o resto.
+    """
+    if "news.google.com" not in url:
+        return url
+    try:
+        request = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+        with urllib.request.urlopen(request, timeout=15) as response:
+            page = response.read().decode("utf-8", errors="ignore")
+        article_id = re.search(r'data-n-a-id="([^"]+)"', page)
+        signature = re.search(r'data-n-a-sg="([^"]+)"', page)
+        timestamp = re.search(r'data-n-a-ts="([^"]+)"', page)
+        if not (article_id and signature and timestamp):
+            return url
+        inner = json.dumps([
+            "garturlreq",
+            [["X", "X", ["X", "X"], None, None, 1, 1, "US:en", None, 1, None, None, None, None, None, 0, 1],
+             "X", "X", 1, [1, 1, 1], 1, 1, None, 0, 0, None, 0],
+            article_id.group(1), int(timestamp.group(1)), signature.group(1),
+        ])
+        body = urllib.parse.urlencode(
+            {"f.req": json.dumps([[["Fbv4je", inner, None, "generic"]]])}
+        ).encode()
+        request = urllib.request.Request(
+            "https://news.google.com/_/DotsSplashUi/data/batchexecute?rpcids=Fbv4je",
+            data=body,
+            headers={
+                "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
+                "User-Agent": "Mozilla/5.0",
+            },
+        )
+        with urllib.request.urlopen(request, timeout=15) as response:
+            text = response.read().decode("utf-8", errors="ignore")
+        payload = json.loads(text.splitlines()[2])
+        resolved = json.loads(payload[0][2])[1]
+        return resolved if isinstance(resolved, str) and resolved.startswith("http") else url
+    except Exception:
+        return url
+
+
 def canonical_url(url: str) -> str:
     parsed = urllib.parse.urlsplit(url)
     query = urllib.parse.parse_qsl(parsed.query, keep_blank_values=False)
@@ -181,16 +228,17 @@ def make_news(item: dict, source_cfg: dict, matches: list[tuple[str, str, int]],
     published = item["published"]
     captured = dt.datetime.now(dt.timezone.utc)
     source = item["source"] or source_cfg["nome"]
+    resolved_url = resolve_google_news_url(item["url"])
     summary = item["summary"][:480].rstrip(" .")
     if not summary or folded(summary) == folded(item["title"]):
         summary = f"A fonte {source} publicou esta atualização. O conteúdo integral e os dados que a sustentam devem ser confirmados na ligação original antes da aprovação."
-    body = f"<p>{html.escape(summary)}</p><p><strong>Fonte original:</strong> <a href=\"{html.escape(item['url'], quote=True)}\" rel=\"noopener noreferrer\">{html.escape(source)}</a>.</p>"
+    body = f"<p>{html.escape(summary)}</p><p><strong>Fonte original:</strong> <a href=\"{html.escape(resolved_url, quote=True)}\" rel=\"noopener noreferrer\">{html.escape(source)}</a>.</p>"
     retention = 365 if points >= 85 else 180 if points >= 75 else 60
     _, category_id, label = matches[0]
     categories = [category for _, category, _ in matches[:4]]
     scope, countries = geographic_scope(item["title"] + " " + item["summary"], source_cfg)
     return {
-        "id": slug(item["title"], published, item["url"]),
+        "id": slug(item["title"], published, resolved_url),
         "categoria": label,
         "categoria_id": category_id,
         "categorias": categories,
@@ -208,7 +256,7 @@ def make_news(item: dict, source_cfg: dict, matches: list[tuple[str, str, int]],
         "fonte": source,
         "tipo_fonte": source_cfg.get("tipo", "desconhecida"),
         "logo": "",
-        "url": canonical_url(item["url"]),
+        "url": canonical_url(resolved_url),
         "tags": categories,
         "relevancia_detalhe": {"pontuacao": points, "razoes": reasons, "revisao_humana": True},
         "pt": {"titulo": item["title"], "resumo_biocultura": summary, "corpo": body},

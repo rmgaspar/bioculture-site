@@ -18,6 +18,13 @@ primárias e científicas recebem maior autoridade editorial; jornalismo de
 referência é usado para atualidade e contexto. Google News deixa de ser a via
 normal sempre que existe um RSS/Atom direto e estável.
 
+Quando uma fonte só existe como pesquisa no Google Notícias, a ligação que o
+RSS devolve é uma página de redireccionamento, não o artigo — `atualizar.py`
+resolve-a automaticamente para a publicação original antes de guardar a
+proposta, para que "Abrir publicação original" abra sempre a notícia real.
+Se a resolução falhar (fonte instável, formato alterado), a ligação do Google
+é mantida sem interromper o resto do processo.
+
 As notícias com prazo terminado saem das listagens e passam para
 `data/noticias_arquivo.json`. As ligações antigas continuam acessíveis na página
 de detalhe; o histórico não é apagado.
