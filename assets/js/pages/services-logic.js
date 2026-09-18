@@ -1,7 +1,7 @@
 (function () {
     const byId = (id) => document.getElementById(id);
     const isEnglish = document.documentElement.lang === "en";
-    fetch("/sidebar-content.html?v=23").then((r) => r.text()).then((html) => { byId("sidebar").innerHTML = html; });
+    fetch("/sidebar-content.html?v=24").then((r) => r.text()).then((html) => { byId("sidebar").innerHTML = html; });
 
     const solarTool = document.querySelector(".solar-tool");
     if (solarTool && !document.querySelector(".solar-layout")) {

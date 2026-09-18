@@ -281,7 +281,7 @@
                         }</div>`;
                 }
             }
-            fetch("/sidebar-content.html?v=19").then((response) => response.text()).then((html) => {
+            fetch("/sidebar-content.html?v=24").then((response) => response.text()).then((html) => {
                 document.getElementById("sidebar").innerHTML = html;
             }).catch(() => {});
             loadData();
