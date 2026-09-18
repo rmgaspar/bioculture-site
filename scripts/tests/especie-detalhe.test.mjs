@@ -21,7 +21,6 @@ for (const [rows, group] of [[pests, 'Sanidade Vegetal'], [invasives, 'Flora Inv
         const profile = guidance.perfis.find(p => p.alvos.includes(row.id));
         assert.equal(element.innerHTML.includes('id="solucoes"'), Boolean(profile));
         const crops = context.cropsForPest(species, horticolas);
-        assert.equal(element.innerHTML.includes('Culturas afetadas'), crops.length > 0);
         for (const crop of crops) {
             assert(element.innerHTML.includes(`/calendario/horticola-detalhe.html?id=${crop.id}`),
                 `Ligação em falta para ${crop.id} a partir de ${row.id}`);

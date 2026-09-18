@@ -113,16 +113,29 @@
                 }
                 return [...ids].map((cid) => ({ id: cid, nome: horticolas[cid].nome }));
             }
-            function affectedCropsPanel(esp, horticolas) {
-                const crops = cropsForPest(esp, horticolas);
-                return crops.length
-                    ? panel(tr("Culturas afetadas", "Affected crops"),
-                        `<ul class="list">${crops.map((c) =>
-                            `<li><a href="/calendario/horticola-detalhe.html?id=${
-                                encodeURIComponent(c.id)
-                            }">${esc(c.nome)} →</a></li>`
-                        ).join("")}</ul>`)
-                    : "";
+            // Wikipedia-style: cada planta afetada aparece como link para a sua própria ficha
+            // quando existe correspondência confirmada no calendário de culturas; caso contrário
+            // fica como texto simples, sem inventar uma cultura que os dados não confirmam.
+            function plantasAfetadasPanel(esp, horticolas) {
+                const termos = arr(esp.plantas_afetadas);
+                if (!termos.length) return "";
+                const byNorm = {};
+                if (horticolas) {
+                    for (const [cid, c] of Object.entries(horticolas)) {
+                        byNorm[normalizeText(cid)] = cid;
+                        byNorm[normalizeText(c.nome)] = cid;
+                    }
+                }
+                return panel(tr("Plantas afetadas", "Affected plants"),
+                    `<ul class="list">${termos.map((termo) => {
+                        const t = normalizeText(termo);
+                        const cid = byNorm[t] || CROP_ALIASES[t];
+                        return cid && horticolas && horticolas[cid]
+                            ? `<li><a href="/calendario/horticola-detalhe.html?id=${
+                                encodeURIComponent(cid)
+                            }">${esc(termo)} →</a></li>`
+                            : `<li>${esc(termo)}</li>`;
+                    }).join("")}</ul>`);
             }
             function pestSections(esp, horticolas) {
                 if (esp.grupo !== "Sanidade Vegetal") return "";
@@ -131,12 +144,12 @@
                 const solution = esp.solucao_biologica || {};
                 const techniques = esp.tecnicas || {};
                 return `<div class="section-block" id="diagnostico"><div class="section-head"><span class="eyebrow">Diagnóstico</span><div><h2>Reconhecer antes de intervir</h2><p>Sintomas semelhantes podem ter causas diferentes. Confirme o organismo, a extensão do dano e os auxiliares já presentes.</p></div></div><div class="grid">${
-                    listPanel("Plantas afetadas", esp.plantas_afetadas)
+                    plantasAfetadasPanel(esp, horticolas)
                 }${textPanel("Sinais e sintomas", esp.sintomas || diagnosis.sintomas_principais)}${
                     textPanel("Quando observar", esp.sazonalidade_portugal)
                 }${textPanel("Monitorização", diagnosis.monitorizacao)}${
                     textPanel("Confirmar antes de intervir", diagnosis.confirmar_antes_de_intervir)
-                }${affectedCropsPanel(esp, horticolas)}</div></div><div class="section-block" id="prevencao"><div class="section-head"><span class="eyebrow">Prevenção biológica</span><div><h2>Reduzir o problema sem destruir os aliados</h2><p>Prioridade à diversidade, ao equilíbrio da cultura e a intervenções seletivas, sem pesticidas de largo espectro.</p></div></div><div class="grid">${
+                }</div></div><div class="section-block" id="prevencao"><div class="section-head"><span class="eyebrow">Prevenção biológica</span><div><h2>Reduzir o problema sem destruir os aliados</h2><p>Prioridade à diversidade, ao equilíbrio da cultura e a intervenções seletivas, sem pesticidas de largo espectro.</p></div></div><div class="grid">${
                     textPanel("Estratégia preventiva", prevention.estrategia || esp.prevencao)
                 }${textPanel("Como aplicar", prevention.como)}${
                     listPanel("Aliados naturais", solution.agentes || esp.aliados_naturais)
