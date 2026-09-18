@@ -213,6 +213,24 @@
                     return /videira|vinha|uva/.test(text);
                 });
             }
+            // Wikipedia-style: uma sensibilidade só vira link quando o próprio termo
+            // corresponde a uma praga/doença já confirmada como afetando a videira — nunca
+            // por adivinhação (ex.: "Ácaros" ou "Peronospora" ficam sem link por não haver
+            // uma praga de videira cujo nome coincida com o termo usado aqui).
+            function linkifySensibilidade(text, pests) {
+                const norm = (s) =>
+                    String(s ?? "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+                const t = norm(text);
+                const pest = pests.find((p) => {
+                    const root = norm(p.nome_comum.split("-")[0]);
+                    return root.length > 3 && t.includes(root);
+                });
+                return pest
+                    ? `<a href="/ecossistemas/especie-detalhe.html?id=${
+                        encodeURIComponent(pest.id)
+                    }">${escapeHtml(text)}</a>`
+                    : escapeHtml(text);
+            }
             function renderPests() {
                 const all = vinePests(), visible = showAllPests ? all : all.slice(0, 6);
                 document.getElementById("pest-grid").innerHTML = visible.map((item) =>
@@ -242,7 +260,7 @@
                     item.id !== c.id && item.cor === c.cor &&
                     (item.regioes || []).some((r) => (c.regioes || []).includes(r))
                 ).slice(0, 4);
-                const profile = c.perfil || {}, tech = c.tecnico || {};
+                const profile = c.perfil || {}, tech = c.tecnico || {}, pests = vinePests();
                 document.getElementById("casta-detail-view").innerHTML =
                     `<span class="detail-back" id="detail-back">← voltar ao atlas</span><div class="detail-hero"><div><span class="category-label">${
                         escapeHtml(c.cor)
@@ -286,7 +304,9 @@
                     }</p><p><strong>Produtividade:</strong> ${
                         escapeHtml(c.produtividade || "-")
                     }</p><p><strong>Sensibilidades:</strong> ${
-                        escapeHtml((c.sensibilidades || []).join(", ") || "-")
+                        (c.sensibilidades || []).length
+                            ? c.sensibilidades.map((s) => linkifySensibilidade(s, pests)).join(", ")
+                            : "-"
                     }</p><p>${
                         escapeHtml(tech.observacao || "Confirmar sempre as decisões na parcela.")
                     }</p></article><article class="detail-box"><h3>Castas próximas</h3><div class="card-tags">${
