@@ -1,4 +1,5 @@
 
+            const isEn = () => !!window.BioCultureI18n?.isEnglish;
             window.locationsDB = [];
             let currentSpeciesList = [];
             let filteredSpecies = [];
@@ -53,13 +54,20 @@
                 const b = info.biomas || {};
 
                 document.getElementById("txt-threatened").innerText = (b.fauna_ameacada?.length)
-                    ? "Registadas: " + b.fauna_ameacada.join(", ")
-                    : "Sem espécies em risco crítico registadas.";
+                    ? (isEn() ? "Recorded: " : "Registadas: ") + b.fauna_ameacada.join(", ")
+                    : (isEn() ? "No critically endangered species recorded." : "Sem espécies em risco crítico registadas.");
                 document.getElementById("txt-protected").innerText = (b.fauna_protegida?.length)
-                    ? "Sob proteção: " + b.fauna_protegida.join(", ")
-                    : "Monitorização geral ICNF.";
+                    ? (isEn() ? "Under protection: " : "Sob proteção: ") + b.fauna_protegida.join(", ")
+                    : (isEn() ? "General ICNF monitoring." : "Monitorização geral ICNF.");
 
-                document.getElementById("report-grid-bio").innerHTML = `
+                document.getElementById("report-grid-bio").innerHTML = isEn() ? `
+                <div class="report-item"><h5>Geology</h5><p>Soil: ${b.solo || "N/A"}. pH: ${
+                    b.ph_solo || "N/A"
+                }. Texture: ${b.textura || "N/A"}.</p></div>
+                <div class="report-item"><h5>Flora</h5><p>Main species: ${
+                    b.flora ? b.flora.join(", ") : "N/A"
+                }.</p></div>
+            ` : `
                 <div class="report-item"><h5>Geologia</h5><p>Solo: ${b.solo || "N/A"}. pH: ${
                     b.ph_solo || "N/A"
                 }. Textura: ${b.textura || "N/A"}.</p></div>
@@ -77,10 +85,8 @@
                 visibleCount = 8;
 
                 document.querySelectorAll(".filter-btn").forEach((btn) => {
-                    const btnText = btn.innerText;
-                    const match = (cat === "All" && btnText === "Todos") ||
-                        (translateTaxonomyReverse(cat) === btnText);
-                    btn.classList.toggle("active", match);
+                    const btnCat = (btn.getAttribute("onclick") || "").match(/filterBy\('([^']*)'\)/)?.[1];
+                    btn.classList.toggle("active", btnCat === cat);
                 });
 
                 filteredSpecies = currentCategory === "All"
@@ -120,21 +126,6 @@
                     "Actinopterygii": "Peixe",
                 };
                 return d[g] || g;
-            }
-            function translateTaxonomyReverse(g) {
-                const d = {
-                    "Amphibia": "Anfíbios",
-                    "Insecta": "Insetos",
-                    "Reptilia": "Répteis",
-                    "Plantae": "Plantas",
-                    "Mammalia": "Mamíferos",
-                    "Aves": "Aves",
-                    "Mollusca": "Moluscos",
-                    "Fungi": "Fungos",
-                    "Actinopterygii": "Peixe",
-                };
-                for (let k in d) if (d[k] === g) return k;
-                return g;
             }
 
             function iniciarCiclos() {

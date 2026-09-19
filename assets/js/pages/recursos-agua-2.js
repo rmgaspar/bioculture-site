@@ -1,6 +1,7 @@
 
             const $id = (id) => document.getElementById(id),
-                clean = (v) => v === undefined || v === null || v === "" ? "—" : String(v);
+                clean = (v) => v === undefined || v === null || v === "" ? "—" : String(v),
+                isEn = () => !!window.BioCultureI18n?.isEnglish;
             function sourceName(item) {
                 const s = item?.fonte || item?.fontes;
                 if (Array.isArray(s)) {
@@ -144,7 +145,7 @@
                 const P = parseFloat(document.getElementById('saap-precipitacao').value);
 
                 if (!A || !P) {
-                    alert("Por favor, preencha a área e a precipitação.");
+                    alert(isEn() ? "Please fill in the area and rainfall." : "Por favor, preencha a área e a precipitação.");
                     return;
                 }
 
@@ -159,7 +160,14 @@
                 document.getElementById('res-cisterna').innerText = `${(V / 1000).toFixed(1)} m³`;
 
                 // Lista de Materiais Dinâmica
-                const materiais = [
+                const materiais = isEn() ? [
+                    "Leaf and debris filter (inlet)",
+                    "'First flush' diverter (discards the first 1-2mm)",
+                    `Cistern of ${(V / 1000).toFixed(1)}m³ (opaque and sealed)`,
+                    "Self-priming pump with pressure switch",
+                    "Marked HDPE piping (brown for non-potable use)",
+                    "Check valve and sediment filter (25 micron)"
+                ] : [
                     "Filtro de folhas e detritos (entrada)",
                     "Dispositivo de 'First Flush' (descarte dos primeiros 1-2mm)",
                     `Cisterna de ${(V / 1000).toFixed(1)}m³ (opaca e vedada)`,
@@ -180,21 +188,22 @@
                 const recomendacao = { tipo: "", alerta: "", cor: "" };
                 const t = (textura || "").toLowerCase();
 
+                const en = isEn();
                 if (t.includes('arenosa')) {
-                    recomendacao.tipo = "Vala de Infiltração Standard";
-                    recomendacao.alerta = "Elevada permeabilidade. Manter distância rigorosa de 30m de furos/poços.";
+                    recomendacao.tipo = en ? "Standard Infiltration Trench" : "Vala de Infiltração Standard";
+                    recomendacao.alerta = en ? "High permeability. Keep a strict 30m distance from boreholes/wells." : "Elevada permeabilidade. Manter distância rigorosa de 30m de furos/poços.";
                     recomendacao.cor = "#536b57";
                 } else if (t.includes('argilosa')) {
-                    recomendacao.tipo = "Biofiltro ou Canteiro Filtrante (Wetland)";
-                    recomendacao.alerta = "Baixa infiltração. O solo pode saturar; exige maior área de evapotranspiração.";
+                    recomendacao.tipo = en ? "Biofilter or Filter Bed (Wetland)" : "Biofiltro ou Canteiro Filtrante (Wetland)";
+                    recomendacao.alerta = en ? "Low infiltration. Soil may saturate; requires a larger evapotranspiration area." : "Baixa infiltração. O solo pode saturar; exige maior área de evapotranspiração.";
                     recomendacao.cor = "#a66f50";
                 } else if (t.includes('limosa')) {
-                    recomendacao.tipo = "Vala de Infiltração com Leito de Brita";
-                    recomendacao.alerta = "Permeabilidade moderada. Requer dimensionamento cuidadoso da vala.";
+                    recomendacao.tipo = en ? "Gravel-Bed Infiltration Trench" : "Vala de Infiltração com Leito de Brita";
+                    recomendacao.alerta = en ? "Moderate permeability. Requires careful trench sizing." : "Permeabilidade moderada. Requer dimensionamento cuidadoso da vala.";
                     recomendacao.cor = "#6d8992";
                 } else {
-                    recomendacao.tipo = "Requer Teste de Percolação";
-                    recomendacao.alerta = "Dados de solo insuficientes. Realize um teste de absorção no local.";
+                    recomendacao.tipo = en ? "Requires a Percolation Test" : "Requer Teste de Percolação";
+                    recomendacao.alerta = en ? "Insufficient soil data. Carry out an on-site absorption test." : "Dados de solo insuficientes. Realize um teste de absorção no local.";
                     recomendacao.cor = "#999";
                 }
                 return recomendacao;
@@ -208,7 +217,7 @@
                 
                 display.innerHTML = `
                     <div class="rec-box" style="border-left: 4px solid ${rec.cor}; padding-left: 15px;">
-                        <div class="node-label">Recomendação para ${dadosLocal.freguesia || 'o local'}</div>
+                        <div class="node-label">${isEn() ? "Recommendation for" : "Recomendação para"} ${dadosLocal.freguesia || (isEn() ? "the location" : "o local")}</div>
                         <span style="font-family: Georgia, serif; font-size: 1.2rem; display: block; margin: 5px 0;">${rec.tipo}</span>
                         <p style="font-size: 0.8rem; color: var(--muted); margin: 0;">${rec.alerta}</p>
                     </div>
