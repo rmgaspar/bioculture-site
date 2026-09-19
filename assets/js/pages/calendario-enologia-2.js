@@ -161,7 +161,10 @@
                     : '<div class="empty-state">Ainda não existem castas regionais comparáveis para esta localização.</div>';
                 const button = document.getElementById("show-region-all");
                 button.style.display = regional.length > 4 ? "inline-block" : "none";
-                button.textContent = showAllRegional ? "Recolher" : `Ver todas (${regional.length})`;
+                const isEn = (window.BioCultureLanguageStore?.read() || "pt") === "en";
+                button.textContent = showAllRegional
+                    ? (isEn ? "Collapse" : "Recolher")
+                    : (isEn ? `Show all (${regional.length})` : `Ver todas (${regional.length})`);
             }
 
             function renderAtlas(reset = false) {

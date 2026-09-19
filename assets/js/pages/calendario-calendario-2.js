@@ -493,7 +493,10 @@
                 ).join("");
                 const button = document.getElementById("toggle-flora");
                 button.style.display = all.length > 6 ? "inline-block" : "none";
-                button.textContent = showMoreFlora ? "Recolher" : `Ver mais espécies invasoras (${all.length} no total)`;
+                const isEn = (window.BioCultureLanguageStore?.read() || "pt") === "en";
+                button.textContent = showMoreFlora
+                    ? (isEn ? "Collapse" : "Recolher")
+                    : (isEn ? `See more invasive species (${all.length} in total)` : `Ver mais espécies invasoras (${all.length} no total)`);
             }
 
             function renderLocalProfile() {
