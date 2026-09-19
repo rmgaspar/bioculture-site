@@ -76,14 +76,14 @@
                 const known = Date.UTC(2000, 0, 6, 18, 14), cycle = 29.53058867;
                 let age = ((date.getTime() - known) / 86400000) % cycle;
                 if (age < 0) age += cycle;
-                if (age < 1.85 || age > 27.68) return { name: en ? "New moon" : "Lua nova", cls: "new", emoji: "🌑", shift: 26 };
-                if (age < 5.54) return { name: en ? "Waxing crescent" : "Crescente inicial", cls: "", emoji: "🌒", shift: 19.5 };
-                if (age < 9.23) return { name: en ? "First quarter" : "Quarto crescente", cls: "quarter", emoji: "🌓", shift: 13 };
-                if (age < 12.92) return { name: en ? "Waxing gibbous" : "Crescente gibosa", cls: "", emoji: "🌔", shift: 6.5 };
-                if (age < 16.61) return { name: en ? "Full moon" : "Lua cheia", cls: "full", emoji: "🌕", shift: 0 };
-                if (age < 20.30) return { name: en ? "Waning gibbous" : "Minguante gibosa", cls: "", emoji: "🌖", shift: -6.5 };
-                if (age < 23.99) return { name: en ? "Last quarter" : "Quarto minguante", cls: "quarter", emoji: "🌗", shift: -13 };
-                return { name: en ? "Waning crescent" : "Minguante final", cls: "", emoji: "🌘", shift: -19.5 };
+                if (age < 1.85 || age > 27.68) return { name: en ? "New moon" : "Lua nova", cls: "new", emoji: "🌑" };
+                if (age < 5.54) return { name: en ? "Waxing crescent" : "Crescente inicial", cls: "", emoji: "🌒" };
+                if (age < 9.23) return { name: en ? "First quarter" : "Quarto crescente", cls: "quarter", emoji: "🌓" };
+                if (age < 12.92) return { name: en ? "Waxing gibbous" : "Crescente gibosa", cls: "", emoji: "🌔" };
+                if (age < 16.61) return { name: en ? "Full moon" : "Lua cheia", cls: "full", emoji: "🌕" };
+                if (age < 20.30) return { name: en ? "Waning gibbous" : "Minguante gibosa", cls: "", emoji: "🌖" };
+                if (age < 23.99) return { name: en ? "Last quarter" : "Quarto minguante", cls: "quarter", emoji: "🌗" };
+                return { name: en ? "Waning crescent" : "Minguante final", cls: "", emoji: "🌘" };
             }
 
             // Códigos WMO devolvidos pela API Open-Meteo (sem chave, gratuita).
@@ -162,7 +162,7 @@
                         <span class="condition-icon" aria-hidden="true">${season.emoji}</span>
                         <span><strong>${season.name}</strong><small>${en ? monthsEn[month] : months[month]}</small></span>
                     </div>${weatherChip}<div class="condition-chip">
-                        <span class="condition-icon moon-icon" aria-hidden="true" style="--moon-shift: ${selectedMoon.shift}px"></span>
+                        <span class="condition-icon" aria-hidden="true">${selectedMoon.emoji}</span>
                         <span><strong>${selectedMoon.name}</strong><small>${en ? "moon phase today" : "fase da lua hoje"}</small></span>
                     </div>`;
             }
