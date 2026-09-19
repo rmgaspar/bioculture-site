@@ -12,6 +12,7 @@
                 );
             const format = (value, digits = 1) =>
                 new Intl.NumberFormat("pt-PT", { maximumFractionDigits: digits }).format(value);
+            const isEn = () => !!window.BioCultureI18n?.isEnglish;
 
             function renderSummary(data) {
                 const renewable = data.estatisticas.energia_renovavel;
@@ -23,12 +24,12 @@
                     [
                         "Eletricidade renovável",
                         `${format(renewable.dados.at(-1))}%`,
-                        `${renewable.labels.at(-1)} · produção bruta nacional`,
+                        isEn() ? `${renewable.labels.at(-1)} · national gross production` : `${renewable.labels.at(-1)} · produção bruta nacional`,
                     ],
                     [
                         "Dependência energética",
                         `${format(dependency.dados.at(-1))}%`,
-                        `${dependency.labels.at(-1)} · energia importada`,
+                        isEn() ? `${dependency.labels.at(-1)} · imported energy` : `${dependency.labels.at(-1)} · energia importada`,
                     ],
                     [
                         "Área proposta para solar",
@@ -154,18 +155,26 @@
                     ],
                     [
                         "Açores",
-                        `≈ ${format(azores.energia.quota_renovavel_aproximada, 0)}% renovável`,
-                        `Sistema insular; a geotermia representa aproximadamente ${
-                            format(azores.energia.geotermia_aproximada, 0)
-                        }%.`,
+                        isEn()
+                            ? `≈ ${format(azores.energia.quota_renovavel_aproximada, 0)}% renewable`
+                            : `≈ ${format(azores.energia.quota_renovavel_aproximada, 0)}% renovável`,
+                        isEn()
+                            ? `Island system; geothermal accounts for approximately ${format(azores.energia.geotermia_aproximada, 0)}%.`
+                            : `Sistema insular; a geotermia representa aproximadamente ${
+                                format(azores.energia.geotermia_aproximada, 0)
+                            }%.`,
                         azores.fontes[0],
                     ],
                     [
                         "Madeira",
-                        `${format(madeira.energia_2024.renovavel_sem_rsu_percent)}% renovável`,
-                        `Em 2024, a produção térmica representou ${
-                            format(madeira.energia_2024.termica_percent)
-                        }% da eletricidade regional.`,
+                        isEn()
+                            ? `${format(madeira.energia_2024.renovavel_sem_rsu_percent)}% renewable`
+                            : `${format(madeira.energia_2024.renovavel_sem_rsu_percent)}% renovável`,
+                        isEn()
+                            ? `In 2024, thermal generation accounted for ${format(madeira.energia_2024.termica_percent)}% of regional electricity.`
+                            : `Em 2024, a produção térmica representou ${
+                                format(madeira.energia_2024.termica_percent)
+                            }% da eletricidade regional.`,
                         madeira.fontes[0],
                     ],
                 ];

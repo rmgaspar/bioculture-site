@@ -116,7 +116,9 @@
                                 if (logoElement.src !== forcedLogo) logoElement.src = forcedLogo;
                             };
                             logoElement.src = n.logo || forcedLogo;
-                            logoElement.alt = n.fonte ? `Logótipo ${n.fonte}` : "Logótipo da fonte";
+                            logoElement.alt = n.fonte
+                                ? (lang === "en" ? `${n.fonte} logo` : `Logótipo ${n.fonte}`)
+                                : (lang === "en" ? "Source logo" : "Logótipo da fonte");
                         });
                         document.getElementById("official-link").href = n.url || "#";
                         document.getElementById("footer-source").innerText = n.fonte || "";

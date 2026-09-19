@@ -14,7 +14,8 @@
                 num = (v) => Number(v) || 0,
                 validCoord = (x) =>
                     Number.isFinite(Number(x.lat)) && Number.isFinite(Number(x.lon)) &&
-                    Number(x.lat) !== 0;
+                    Number(x.lat) !== 0,
+                isEn = () => !!window.BioCultureI18n?.isEnglish;
             function distance(a, b) {
                 const R = 6371,
                     r = Math.PI / 180,
@@ -45,7 +46,7 @@
                 const types = {};
                 for (const x of plants) types[x.tipo] = (types[x.tipo] || 0) + 1;
                 el("mix").innerHTML = Object.entries(types).sort((a, b) => b[1] - a[1]).map(([k, v]) =>
-                    `<article class="mix-item"><b>${esc(k)}</b><span>${v} instalações</span></article>`
+                    `<article class="mix-item"><b>${esc(k)}</b><span>${v} ${isEn() ? "plants" : "instalações"}</span></article>`
                 ).join("");
             }
             function renderLocal(locations, plants) {
@@ -54,7 +55,9 @@
                 if (!info) return;
                 el("local-name").textContent = [info.titulo, info.concelho].filter(Boolean).join(", ");
                 if (!validCoord(info)) {
-                    el("local-copy").textContent = "Este perfil não possui coordenadas utilizáveis.";
+                    el("local-copy").textContent = isEn()
+                        ? "This profile has no usable coordinates."
+                        : "Este perfil não possui coordenadas utilizáveis.";
                     el("plants").innerHTML = "<p>—</p>";
                     return;
                 }
@@ -62,8 +65,9 @@
                     ...x,
                     distance: distance(info, x),
                 })).sort((a, b) => a.distance - b.distance).slice(0, 6);
-                el("local-copy").textContent =
-                    `As seis instalações mais próximas entre os ${plants.length} registos do inventário.`;
+                el("local-copy").textContent = isEn()
+                    ? `The six nearest plants out of ${plants.length} records in the inventory.`
+                    : `As seis instalações mais próximas entre os ${plants.length} registos do inventário.`;
                 el("plants").innerHTML =
                     near.map((x) =>
                         `<article class="plant"><small>${esc(x.tipo)}</small><b>${

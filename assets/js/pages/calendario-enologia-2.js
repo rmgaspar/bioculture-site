@@ -86,6 +86,7 @@
                 String(value || "").split(" ").map((word) =>
                     word.charAt(0).toUpperCase() + word.slice(1)
                 ).join(" ");
+            const isEn = () => !!window.BioCultureI18n?.isEnglish;
 
            function vineVignette(c) {
                 const isBranco = c.cor === "Branco";
@@ -150,7 +151,9 @@
                 document.getElementById("wine-region").textContent = currentRegion;
                 document.getElementById("region-description").textContent =
                     regionIntros[currentRegion] ||
-                    `Património vitícola de ${currentRegion}, moldado pelo solo, clima e práticas locais.`;
+                    (isEn()
+                        ? `Winegrowing heritage of ${currentRegion}, shaped by soil, climate and local practice.`
+                        : `Património vitícola de ${currentRegion}, moldado pelo solo, clima e práticas locais.`);
                 const regional = castasDB.filter((c) =>
                     (c.regioes || []).some((r) => r.toLowerCase() === currentRegion.toLowerCase()) &&
                     c.autoctone
@@ -161,10 +164,9 @@
                     : '<div class="empty-state">Ainda não existem castas regionais comparáveis para esta localização.</div>';
                 const button = document.getElementById("show-region-all");
                 button.style.display = regional.length > 4 ? "inline-block" : "none";
-                const isEn = (window.BioCultureLanguageStore?.read() || "pt") === "en";
                 button.textContent = showAllRegional
-                    ? (isEn ? "Collapse" : "Recolher")
-                    : (isEn ? `Show all (${regional.length})` : `Ver todas (${regional.length})`);
+                    ? (isEn() ? "Collapse" : "Recolher")
+                    : (isEn() ? `Show all (${regional.length})` : `Ver todas (${regional.length})`);
             }
 
             function renderAtlas(reset = false) {
@@ -182,9 +184,9 @@
                             .join(" ").toLowerCase().includes(query)) &&
                         (!color || c.cor === color) && (!origin || c.origem === origin);
                 });
-                document.getElementById("result-count").textContent = `${filtered.length} ${
-                    filtered.length === 1 ? "casta encontrada" : "castas encontradas"
-                } · a mostrar ${Math.min(filtered.length, atlasLimit)}`;
+                document.getElementById("result-count").textContent = isEn()
+                    ? `${filtered.length} ${filtered.length === 1 ? "variety found" : "varieties found"} · showing ${Math.min(filtered.length, atlasLimit)}`
+                    : `${filtered.length} ${filtered.length === 1 ? "casta encontrada" : "castas encontradas"} · a mostrar ${Math.min(filtered.length, atlasLimit)}`;
                 document.getElementById("atlas-grid").innerHTML = filtered.length
                     ? filtered.slice(0, atlasLimit).map(grapeCard).join("")
                     : '<div class="empty-state">Nenhuma casta corresponde aos filtros selecionados.</div>';
@@ -253,7 +255,9 @@
                 ).join("");
                 const button = document.getElementById("toggle-pests");
                 button.style.display = all.length > 6 ? "inline-block" : "none";
-                button.textContent = showAllPests ? "Recolher lista" : `Ver todos (${all.length})`;
+                button.textContent = showAllPests
+                    ? (isEn() ? "Collapse list" : "Recolher lista")
+                    : (isEn() ? `Show all (${all.length})` : `Ver todos (${all.length})`);
             }
 
             function showDetail(id) {

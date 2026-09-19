@@ -35,48 +35,59 @@
                     }[char]),
                 );
             const format = (value) => new Intl.NumberFormat("pt-PT").format(value);
+            const isEn = () => !!window.BioCultureI18n?.isEnglish;
+            const monthsEn = [
+                "January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December",
+            ];
 
             function seasonFor(month) {
+                const en = isEn();
                 if ([11, 0, 1].includes(month)) {
-                    return {
-                        name: "Inverno", emoji: "❄️", cue: "tipicamente frio",
-                        note: "Planear, proteger o solo e aproveitar os períodos adequados para plantações lenhosas.",
-                    };
+                    return en
+                        ? { key: "inverno", name: "Winter", emoji: "❄️", cue: "typically cold",
+                            note: "Plan, protect the soil and make the most of the right windows for woody plantings." }
+                        : { key: "inverno", name: "Inverno", emoji: "❄️", cue: "tipicamente frio",
+                            note: "Planear, proteger o solo e aproveitar os períodos adequados para plantações lenhosas." };
                 }
                 if ([2, 3, 4].includes(month)) {
-                    return {
-                        name: "Primavera", emoji: "🌱", cue: "temperaturas a subir",
-                        note: "Época de crescimento rápido: semear por etapas, vigiar jovens plantas e favorecer polinizadores.",
-                    };
+                    return en
+                        ? { key: "primavera", name: "Spring", emoji: "🌱", cue: "temperatures rising",
+                            note: "Fast growth season: sow in stages, watch young plants and support pollinators." }
+                        : { key: "primavera", name: "Primavera", emoji: "🌱", cue: "temperaturas a subir",
+                            note: "Época de crescimento rápido: semear por etapas, vigiar jovens plantas e favorecer polinizadores." };
                 }
                 if ([5, 6, 7].includes(month)) {
-                    return {
-                        name: "Verão", emoji: "☀️", cue: "tipicamente quente e seco",
-                        note: "Gerir água, sombra e cobertura; colher com frequência e observar sinais de stress.",
-                    };
+                    return en
+                        ? { key: "verao", name: "Summer", emoji: "☀️", cue: "typically hot and dry",
+                            note: "Manage water, shade and cover; harvest often and watch for signs of stress." }
+                        : { key: "verao", name: "Verão", emoji: "☀️", cue: "tipicamente quente e seco",
+                            note: "Gerir água, sombra e cobertura; colher com frequência e observar sinais de stress." };
                 }
-                return {
-                    name: "Outono", emoji: "🍂", cue: "temperaturas a descer",
-                    note: "Colher, guardar sementes, iniciar coberturas e preparar o solo sem o deixar exposto.",
-                };
+                return en
+                    ? { key: "outono", name: "Autumn", emoji: "🍂", cue: "temperatures falling",
+                        note: "Harvest, save seeds, start cover crops and prepare the soil without leaving it bare." }
+                    : { key: "outono", name: "Outono", emoji: "🍂", cue: "temperaturas a descer",
+                        note: "Colher, guardar sementes, iniciar coberturas e preparar o solo sem o deixar exposto." };
             }
 
             function moonInfo(date) {
+                const en = isEn();
                 const known = Date.UTC(2000, 0, 6, 18, 14), cycle = 29.53058867;
                 let age = ((date.getTime() - known) / 86400000) % cycle;
                 if (age < 0) age += cycle;
-                if (age < 1.85 || age > 27.68) return { name: "Lua nova", cls: "new", emoji: "🌑" };
-                if (age < 5.54) return { name: "Crescente inicial", cls: "", emoji: "🌒" };
-                if (age < 9.23) return { name: "Quarto crescente", cls: "quarter", emoji: "🌓" };
-                if (age < 12.92) return { name: "Crescente gibosa", cls: "", emoji: "🌔" };
-                if (age < 16.61) return { name: "Lua cheia", cls: "full", emoji: "🌕" };
-                if (age < 20.30) return { name: "Minguante gibosa", cls: "", emoji: "🌖" };
-                if (age < 23.99) return { name: "Quarto minguante", cls: "quarter", emoji: "🌗" };
-                return { name: "Minguante final", cls: "", emoji: "🌘" };
+                if (age < 1.85 || age > 27.68) return { name: en ? "New moon" : "Lua nova", cls: "new", emoji: "🌑" };
+                if (age < 5.54) return { name: en ? "Waxing crescent" : "Crescente inicial", cls: "", emoji: "🌒" };
+                if (age < 9.23) return { name: en ? "First quarter" : "Quarto crescente", cls: "quarter", emoji: "🌓" };
+                if (age < 12.92) return { name: en ? "Waxing gibbous" : "Crescente gibosa", cls: "", emoji: "🌔" };
+                if (age < 16.61) return { name: en ? "Full moon" : "Lua cheia", cls: "full", emoji: "🌕" };
+                if (age < 20.30) return { name: en ? "Waning gibbous" : "Minguante gibosa", cls: "", emoji: "🌖" };
+                if (age < 23.99) return { name: en ? "Last quarter" : "Quarto minguante", cls: "quarter", emoji: "🌗" };
+                return { name: en ? "Waning crescent" : "Minguante final", cls: "", emoji: "🌘" };
             }
 
             // Códigos WMO devolvidos pela API Open-Meteo (sem chave, gratuita).
-            const WEATHER_CODES = {
+            const WEATHER_CODES_PT = {
                 0: ["☀️", "Céu limpo"], 1: ["🌤️", "Céu quase limpo"], 2: ["⛅", "Parcialmente nublado"],
                 3: ["☁️", "Encoberto"], 45: ["🌫️", "Nevoeiro"], 48: ["🌫️", "Nevoeiro"],
                 51: ["🌦️", "Chuvisco fraco"], 53: ["🌦️", "Chuvisco"], 55: ["🌦️", "Chuvisco forte"],
@@ -88,8 +99,20 @@
                 85: ["🌨️", "Aguaceiros de neve"], 86: ["🌨️", "Aguaceiros de neve"],
                 95: ["⛈️", "Trovoada"], 96: ["⛈️", "Trovoada com granizo"], 99: ["⛈️", "Trovoada com granizo"],
             };
+            const WEATHER_CODES_EN = {
+                0: ["☀️", "Clear sky"], 1: ["🌤️", "Mostly clear sky"], 2: ["⛅", "Partly cloudy"],
+                3: ["☁️", "Overcast"], 45: ["🌫️", "Fog"], 48: ["🌫️", "Fog"],
+                51: ["🌦️", "Light drizzle"], 53: ["🌦️", "Drizzle"], 55: ["🌦️", "Heavy drizzle"],
+                56: ["🌧️", "Freezing drizzle"], 57: ["🌧️", "Freezing drizzle"],
+                61: ["🌧️", "Light rain"], 63: ["🌧️", "Rain"], 65: ["🌧️", "Heavy rain"],
+                66: ["🌧️", "Freezing rain"], 67: ["🌧️", "Freezing rain"],
+                71: ["🌨️", "Light snow"], 73: ["🌨️", "Snow"], 75: ["🌨️", "Heavy snow"], 77: ["🌨️", "Snow grains"],
+                80: ["🌦️", "Light showers"], 81: ["🌦️", "Showers"], 82: ["🌧️", "Heavy showers"],
+                85: ["🌨️", "Snow showers"], 86: ["🌨️", "Snow showers"],
+                95: ["⛈️", "Thunderstorm"], 96: ["⛈️", "Thunderstorm with hail"], 99: ["⛈️", "Thunderstorm with hail"],
+            };
             function describeWeather(code) {
-                const [emoji, label] = WEATHER_CODES[code] || ["🌡️", "Sem descrição"];
+                const [emoji, label] = (isEn() ? WEATHER_CODES_EN : WEATHER_CODES_PT)[code] || ["🌡️", isEn() ? "No description" : "Sem descrição"];
                 return { emoji, label };
             }
             async function fetchWeather() {
@@ -120,34 +143,35 @@
                 const selectedMoon = moonInfo(
                     new Date(year, month, Math.min(today.getDate(), last.getDate())),
                 );
+                const en = isEn();
                 const weatherChip = weatherNow
                     ? (() => {
                         const w = describeWeather(weatherNow.code);
                         return `<div class="condition-chip">
                             <span class="condition-icon" aria-hidden="true">${w.emoji}</span>
-                            <span><strong>${weatherNow.temp}°C agora</strong><small>${
+                            <span><strong>${weatherNow.temp}°C ${en ? "now" : "agora"}</strong><small>${
                             w.label
-                        } · máx ${weatherNow.max}° mín ${weatherNow.min}°</small></span>
+                        } · ${en ? "max" : "máx"} ${weatherNow.max}° ${en ? "min" : "mín"} ${weatherNow.min}°</small></span>
                         </div>`;
                     })()
                     : `<div class="condition-chip condition-chip-loading">
                         <span class="condition-icon" aria-hidden="true">🌡️</span>
-                        <span><strong>Tempo agora</strong><small>a carregar…</small></span>
+                        <span><strong>${en ? "Weather now" : "Tempo agora"}</strong><small>${en ? "loading…" : "a carregar…"}</small></span>
                     </div>`;
                 document.getElementById("calendar-conditions").innerHTML = `<div class="condition-chip">
                         <span class="condition-icon" aria-hidden="true">${season.emoji}</span>
-                        <span><strong>${season.name}</strong><small>${months[month]}</small></span>
+                        <span><strong>${season.name}</strong><small>${en ? monthsEn[month] : months[month]}</small></span>
                     </div>${weatherChip}<div class="condition-chip">
                         <span class="condition-icon" aria-hidden="true">${selectedMoon.emoji}</span>
-                        <span><strong>${selectedMoon.name}</strong><small>fase da lua hoje</small></span>
+                        <span><strong>${selectedMoon.name}</strong><small>${en ? "moon phase today" : "fase da lua hoje"}</small></span>
                     </div>`;
             }
             function renderCalendar() {
                 const year = viewedDate.getFullYear(),
                     month = viewedDate.getMonth(),
                     today = new Date();
-                document.getElementById("calendar-title").textContent = `${months[month]} ${year}`;
-                document.getElementById("selected-month-label").textContent = months[month];
+                document.getElementById("calendar-title").textContent = `${isEn() ? monthsEn[month] : months[month]} ${year}`;
+                document.getElementById("selected-month-label").textContent = isEn() ? monthsEn[month] : months[month];
                 const first = new Date(year, month, 1),
                     last = new Date(year, month + 1, 0),
                     start = (first.getDay() + 6) % 7;
@@ -249,12 +273,12 @@
                         "plantacao_ou_transplante",
                         "Instalações indicadas para o período selecionado.",
                     ], ["Colher", "colheita", "Culturas com colheita provável neste mês."]];
-                document.getElementById("action-intro").textContent = `Sugestões para ${
-                    months[month]
-                }, cruzadas com o pH local sempre que o catálogo contém um intervalo comparável.`;
+                document.getElementById("action-intro").textContent = isEn()
+                    ? `Suggestions for ${monthsEn[month]}, cross-checked with local pH whenever the catalogue has a comparable range.`
+                    : `Sugestões para ${months[month]}, cruzadas com o pH local sempre que o catálogo contém um intervalo comparável.`;
                 document.getElementById("action-grid").innerHTML = groups.map(([title, field, note]) =>
                     `<article class="action-card"><div class="action-card-head"><div><span class="action-label">${
-                        escapeHtml(months[month])
+                        escapeHtml(isEn() ? monthsEn[month] : months[month])
                     }</span><h3>${title}</h3></div><p>${note}</p></div><div class="crop-list">${
                         cropMarkup(cropsFor(field, month), field)
                     }</div></article>`
@@ -264,9 +288,14 @@
                 const overlap = [...sowing].filter(([key]) => harvesting.has(key)).map(([, name]) => name);
                 const note = document.getElementById("cycle-note");
                 if (overlap.length) {
-                    note.innerHTML = `<strong>Porque aparece a mesma cultura em fases diferentes?</strong> ${
-                        escapeHtml(overlap.slice(0, 4).join(", "))
-                    } ${overlap.length > 4 ? "e outras" : ""} podem ser semeadas e colhidas neste mês. Em geral, colhe-se uma geração já desenvolvida enquanto se inicia outra, ou usam-se variedades e datas escalonadas. Confirme sempre a variedade, a temperatura do solo e o microclima.`;
+                    const en = isEn();
+                    note.innerHTML = en
+                        ? `<strong>Why does the same crop appear in different phases?</strong> ${
+                            escapeHtml(overlap.slice(0, 4).join(", "))
+                        } ${overlap.length > 4 ? "and others" : ""} can be sown and harvested this month. Generally, one already-developed generation is harvested while another is started, or staggered varieties and dates are used. Always confirm the variety, soil temperature and microclimate.`
+                        : `<strong>Porque aparece a mesma cultura em fases diferentes?</strong> ${
+                            escapeHtml(overlap.slice(0, 4).join(", "))
+                        } ${overlap.length > 4 ? "e outras" : ""} podem ser semeadas e colhidas neste mês. Em geral, colhe-se uma geração já desenvolvida enquanto se inicia outra, ou usam-se variedades e datas escalonadas. Confirme sempre a variedade, a temperatura do solo e o microclima.`;
                     note.classList.add("visible");
                 } else {
                     note.textContent = "";
@@ -291,9 +320,9 @@
                     const filterMatch = filter === "all" || filter === kind || filter === "perenes" && normalize(item.ciclo).includes("perene");
                     return filterMatch && (!query || haystack.includes(query));
                 }).sort((a, b) => String(a[1].nome || a[0]).localeCompare(String(b[1].nome || b[0]), "pt"));
-                document.getElementById("catalog-summary").textContent = `${format(entries.length)} culturas encontradas · ${
-                    format(Object.keys(horticolasDB).length)
-                } fichas completas no catálogo`;
+                document.getElementById("catalog-summary").textContent = isEn()
+                    ? `${format(entries.length)} crops found · ${format(Object.keys(horticolasDB).length)} complete records in the catalogue`
+                    : `${format(entries.length)} culturas encontradas · ${format(Object.keys(horticolasDB).length)} fichas completas no catálogo`;
                 document.getElementById("catalog-grid").innerHTML = entries.slice(0, catalogLimit).map(([id, item]) =>
                     `<a class="catalog-card" href="/calendario/horticola-detalhe.html?id=${encodeURIComponent(id)}"><img src="${
                         escapeHtml(item.imagem && item.imagem !== "-" ? item.imagem : "/images/cultura-placeholder.svg")
@@ -309,9 +338,9 @@
             }
 
             function renderWeekPlan() {
-                const month = viewedDate.getMonth(), season = seasonFor(month).name;
+                const month = viewedDate.getMonth(), season = seasonFor(month).key;
                 const seasonal = {
-                    Inverno: [
+                    inverno: [
                         ["Observar o solo", "Evite trabalhar solo saturado e proteja zonas nuas."],
                         [
                             "Planear rotações",
@@ -326,7 +355,7 @@
                             "Limpe e repare ferramentas antes da época de crescimento.",
                         ],
                     ],
-                    Primavera: [
+                    primavera: [
                         ["Semear por etapas", "Evite concentrar toda a produção numa única data."],
                         [
                             "Proteger plantas jovens",
@@ -335,7 +364,7 @@
                         ["Acolher auxiliares", "Mantenha flores e água rasa com saída segura."],
                         ["Verificar rega", "Teste linhas e emissores antes do calor."],
                     ],
-                    Verão: [
+                    verao: [
                         [
                             "Verificar humidade",
                             "Observe a zona radicular antes de regar profundamente.",
@@ -344,7 +373,7 @@
                         ["Colher regularmente", "Retire frutos maduros e observe sinais de doença."],
                         ["Criar sombra seletiva", "Proteja culturas sensíveis sem impedir ventilação."],
                     ],
-                    Outono: [
+                    outono: [
                         [
                             "Guardar sementes",
                             "Escolha plantas saudáveis e deixe maturar completamente.",
@@ -423,12 +452,12 @@
             }
 
             function seasonalPests(month) {
-                const season = seasonFor(month).name,
+                const season = seasonFor(month).key,
                     keywords = {
-                        Inverno: ["inverno", "todo o ano", "protegidas"],
-                        Primavera: ["primavera", "tempo ameno", "rebentos"],
-                        Verão: ["verao", "tempo quente", "calor", "seco"],
-                        Outono: ["outono", "humidade", "chuva"],
+                        inverno: ["inverno", "todo o ano", "protegidas"],
+                        primavera: ["primavera", "tempo ameno", "rebentos"],
+                        verao: ["verao", "tempo quente", "calor", "seco"],
+                        outono: ["outono", "humidade", "chuva"],
                     }[season].map(normalize);
                 return pragasDB.filter((item) => {
                     const text = normalize(`${item.sazonalidade_portugal || ""} ${item.quando || ""}`);
@@ -493,10 +522,9 @@
                 ).join("");
                 const button = document.getElementById("toggle-flora");
                 button.style.display = all.length > 6 ? "inline-block" : "none";
-                const isEn = (window.BioCultureLanguageStore?.read() || "pt") === "en";
                 button.textContent = showMoreFlora
-                    ? (isEn ? "Collapse" : "Recolher")
-                    : (isEn ? `See more invasive species (${all.length} in total)` : `Ver mais espécies invasoras (${all.length} no total)`);
+                    ? (isEn() ? "Collapse" : "Recolher")
+                    : (isEn() ? `See more invasive species (${all.length} in total)` : `Ver mais espécies invasoras (${all.length} no total)`);
             }
 
             function renderLocalProfile() {

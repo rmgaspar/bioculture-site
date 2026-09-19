@@ -11,7 +11,8 @@
                             '"': "&quot;",
                         }[c]),
                     ),
-                valid = (v) => v !== undefined && v !== null && v !== "" && v !== "-";
+                valid = (v) => v !== undefined && v !== null && v !== "" && v !== "-",
+                isEn = () => !!window.BioCultureI18n?.isEnglish;
             let records = [], mode = "Todos";
             function phase(x) {
                 return /operacional/i.test(x.status || "") &&
@@ -43,7 +44,9 @@
                     [
                         "Capacidade TI publicada",
                         known.toLocaleString("pt-PT") + " MW",
-                        `soma de ${published} valores operacionais e futuros; não é consumo atual`,
+                        isEn()
+                            ? `sum of ${published} operational and future figures; not current consumption`
+                            : `soma de ${published} valores operacionais e futuros; não é consumo atual`,
                     ],
                 ].map((x) =>
                     `<article class="stat"><small>${x[0]}</small><strong>${x[1]}</strong><span>${

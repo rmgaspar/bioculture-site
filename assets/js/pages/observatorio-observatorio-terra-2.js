@@ -13,6 +13,7 @@
                 );
             const formatNumber = (value, digits = 0) =>
                 new Intl.NumberFormat("pt-PT", { maximumFractionDigits: digits }).format(value);
+            const isEn = () => !!window.BioCultureI18n?.isEnglish;
             const entries = (series) =>
                 Object.entries(series.valores).map(([year, value]) => ({ year, value })).filter(
                     (point) => typeof point.value === "number",
@@ -28,12 +29,12 @@
                     [
                         "Temperatura média",
                         `${formatNumber(temp.value, 2)} °C`,
-                        `${temp.year} · Portugal continental`,
+                        isEn() ? `${temp.year} · mainland Portugal` : `${temp.year} · Portugal continental`,
                     ],
                     [
                         "Área ardida",
                         `${formatNumber(burned.value)} ha`,
-                        `${burned.year} · valor provisório no Continente`,
+                        isEn() ? `${burned.year} · provisional figure for the mainland` : `${burned.year} · valor provisório no Continente`,
                     ],
                     ["Desertificação", `${desert.valor}%`, "do território continental suscetível"],
                     [
@@ -160,22 +161,24 @@
                 const cards = [
                     [
                         "Suscetibilidade à desertificação",
-                        `${desert.valor}% do Continente`,
+                        isEn() ? `${desert.valor}% of the mainland` : `${desert.valor}% do Continente`,
                         desert.descricao,
                         desert.fontes[0],
                     ],
                     [
                         "Erosão costeira",
                         `≈ ${formatNumber(coast.extensao_em_erosao_aproximada_km)} km`,
-                        `${
-                            formatNumber(coast.perda_area_1958_2023_ha)
-                        } hectares de área costeira perdidos entre 1958 e 2023.`,
+                        isEn()
+                            ? `${formatNumber(coast.perda_area_1958_2023_ha)} hectares of coastal area lost between 1958 and 2023.`
+                            : `${formatNumber(coast.perda_area_1958_2023_ha)} hectares de área costeira perdidos entre 1958 e 2023.`,
                         coast.fontes[0],
                     ],
                     [
                         "Risco de inundação",
-                        `${flood.valor} áreas identificadas`,
-                        `Áreas de risco potencial significativo no ciclo ${flood.periodo}.`,
+                        isEn() ? `${flood.valor} areas identified` : `${flood.valor} áreas identificadas`,
+                        isEn()
+                            ? `Areas of significant potential risk in the ${flood.periodo.replace(/^ciclo\s+/i, "")} cycle.`
+                            : `Áreas de risco potencial significativo no ciclo ${flood.periodo}.`,
                         flood.fontes[0],
                     ],
                 ];

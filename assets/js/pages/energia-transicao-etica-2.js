@@ -14,8 +14,9 @@
                 date = (v) => {
                     if (!v || v === "-") return "—";
                     const d = new Date(v + "T12:00:00");
-                    return Number.isNaN(d.getTime()) ? v : d.toLocaleDateString("pt-PT");
-                };
+                    return Number.isNaN(d.getTime()) ? v : d.toLocaleDateString(isEn() ? "en-GB" : "pt-PT");
+                },
+                isEn = () => !!window.BioCultureI18n?.isEnglish;
             function renderStats(d) {
                 const p = d.pszaer || {},
                     a = p.areas_mapeadas || {},
@@ -29,18 +30,24 @@
                 ], [
                     "Solar proposto",
                     Number(solar.area_ha || 0).toLocaleString("pt-PT") + " ha",
-                    `${solar.poligonos || "—"} polígonos a menos de 10 km de subestação`,
+                    isEn()
+                        ? `${solar.poligonos || "—"} polygons within 10 km of a substation`
+                        : `${solar.poligonos || "—"} polígonos a menos de 10 km de subestação`,
                 ], [
                     "Eólica proposta",
                     Number(wind.area_ha || 0).toLocaleString("pt-PT") + " ha",
-                    `${wind.poligonos || "—"} polígonos superiores a 20 ha`,
+                    isEn()
+                        ? `${wind.poligonos || "—"} polygons larger than 20 ha`
+                        : `${wind.poligonos || "—"} polígonos superiores a 20 ha`,
                 ]].map((x) =>
                     `<article class="stat"><small>${x[0]}</small><strong>${x[1]}</strong><span>${
                         x[2]
                     }</span></article>`
                 ).join("");
                 el("zaer-warning").textContent = (a.leitura || []).join(" ");
-                el("snapshot-copy").textContent += ` Instantâneo observado em ${date(c.observado_em)}.`;
+                el("snapshot-copy").textContent += isEn()
+                    ? ` Snapshot observed on ${date(c.observado_em)}.`
+                    : ` Instantâneo observado em ${date(c.observado_em)}.`;
                 const art = p.potencial_solar_artificializado || {};
                 el("art-gw").textContent = `${art.total_capacidade_gw ?? "—"} GW`;
                 el("art-twh").textContent = `${art.total_geracao_twh_ano ?? "—"} TWh/ano`;
