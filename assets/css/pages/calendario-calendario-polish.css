@@ -18,16 +18,20 @@ html body[data-hero-theme="calendar"] #main .hero.calendar-local-hero {
     box-shadow: none !important;
 }
 
+/* A caixa nasce colada ao topo (top:0) e não apenas com "top" a meio, porque uma
+   caixa absoluta que não toca nenhuma margem do grid deixa de pintar a área da
+   coluna vazia à direita (bug de composição confirmado em Chromium e WebKit);
+   o gradiente repõe visualmente o mesmo espaço transparente que "top:4.6875rem" dava. */
 html body[data-hero-theme="calendar"] #main .hero.calendar-local-hero::before {
     content: "";
     position: absolute;
     z-index: 0;
-    top: 4.6875rem;
+    top: 0;
     left: 0;
     right: 0;
-    height: 21.25rem;
+    height: calc(4.6875rem + 21.25rem);
     border-radius: 2rem 0 0 2rem;
-    background: #174732;
+    background: linear-gradient(to bottom, transparent 4.6875rem, #174732 4.6875rem);
     transform: none;
     box-shadow: 0 1.5rem 4rem rgba(20, 61, 43, 0.1);
 }
@@ -242,6 +246,7 @@ html body #main .principles .moon-note p {
     html body[data-hero-theme="calendar"] #main .hero.calendar-local-hero::before {
         top: 5rem;
         height: 25rem;
+        background: #174732;
         transform: none;
     }
 
@@ -277,6 +282,7 @@ html body #main .principles .moon-note p {
     html body[data-hero-theme="calendar"] #main .hero.calendar-local-hero::before {
         top: 4.5rem;
         height: 28rem;
+        background: #174732;
         border-radius: 1.5rem 0 0 1.5rem;
     }
 

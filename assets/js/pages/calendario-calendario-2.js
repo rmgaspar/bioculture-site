@@ -212,6 +212,20 @@
                 renderWeekPlan();
                 renderPractices();
                 renderPests();
+                requestAnimationFrame(syncPanelHeight);
+            }
+
+            function syncPanelHeight() {
+                const panel = document.querySelector(".calendar-panel");
+                const context = document.querySelector(".calendar-local-context");
+                if (!panel || !context) return;
+                context.style.minHeight = "";
+                const panelRect = panel.getBoundingClientRect(), contextRect = context.getBoundingClientRect();
+                const sideBySide = panelRect.left >= contextRect.right;
+                const needed = panelRect.bottom - contextRect.top;
+                if (sideBySide && needed > contextRect.height) {
+                    context.style.minHeight = `${needed}px`;
+                }
             }
 
             function periodMatches(text, month) {
@@ -601,6 +615,11 @@
                         showMoreFlora = !showMoreFlora;
                         renderFlora();
                     };
+                    let resizeTimer;
+                    window.addEventListener("resize", () => {
+                        clearTimeout(resizeTimer);
+                        resizeTimer = setTimeout(syncPanelHeight, 150);
+                    }, { passive: true });
                 } catch (error) {
                     console.error("Erro ao carregar o calendário:", error);
                     document.getElementById("action-grid").innerHTML =
