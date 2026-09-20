@@ -140,6 +140,7 @@
                     weatherNow = null;
                 }
                 renderConditions();
+                requestAnimationFrame(syncPanelHeight);
             }
 
             function renderConditions() {
@@ -587,6 +588,10 @@
                     renderLocalProfile();
                     renderCalendar();
                     fetchWeather();
+                    if (window.ResizeObserver) {
+                        new ResizeObserver(() => syncPanelHeight())
+                            .observe(document.querySelector(".calendar-panel"));
+                    }
                     renderCatalog();
                     renderFlora();
                     document.getElementById("catalog-search").addEventListener("input", () => renderCatalog(true));
