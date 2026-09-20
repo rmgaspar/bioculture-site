@@ -41,23 +41,29 @@
                 "July", "August", "September", "October", "November", "December",
             ];
 
-            function seasonFor(month) {
+            // Fronteiras astronómicas aproximadas (equinócios/solstícios, hemisfério norte).
+            function seasonFor(month, day = 15) {
                 const en = isEn();
-                if ([11, 0, 1].includes(month)) {
+                const md = month * 100 + day;
+                const SPRING = 2 * 100 + 20; // 20 março
+                const SUMMER = 5 * 100 + 21; // 21 junho
+                const AUTUMN = 8 * 100 + 23; // 23 setembro
+                const WINTER = 11 * 100 + 21; // 21 dezembro
+                if (md >= WINTER || md < SPRING) {
                     return en
                         ? { key: "inverno", name: "Winter", emoji: "❄️", cue: "typically cold",
                             note: "Plan, protect the soil and make the most of the right windows for woody plantings." }
                         : { key: "inverno", name: "Inverno", emoji: "❄️", cue: "tipicamente frio",
                             note: "Planear, proteger o solo e aproveitar os períodos adequados para plantações lenhosas." };
                 }
-                if ([2, 3, 4].includes(month)) {
+                if (md < SUMMER) {
                     return en
                         ? { key: "primavera", name: "Spring", emoji: "🌱", cue: "temperatures rising",
                             note: "Fast growth season: sow in stages, watch young plants and support pollinators." }
                         : { key: "primavera", name: "Primavera", emoji: "🌱", cue: "temperaturas a subir",
                             note: "Época de crescimento rápido: semear por etapas, vigiar jovens plantas e favorecer polinizadores." };
                 }
-                if ([5, 6, 7].includes(month)) {
+                if (md < AUTUMN) {
                     return en
                         ? { key: "verao", name: "Summer", emoji: "☀️", cue: "typically hot and dry",
                             note: "Manage water, shade and cover; harvest often and watch for signs of stress." }
@@ -139,10 +145,9 @@
             function renderConditions() {
                 const year = viewedDate.getFullYear(), month = viewedDate.getMonth(), today = new Date();
                 const last = new Date(year, month + 1, 0);
-                const season = seasonFor(month);
-                const selectedMoon = moonInfo(
-                    new Date(year, month, Math.min(today.getDate(), last.getDate())),
-                );
+                const selectedDay = Math.min(today.getDate(), last.getDate());
+                const season = seasonFor(month, selectedDay);
+                const selectedMoon = moonInfo(new Date(year, month, selectedDay));
                 const en = isEn();
                 const weatherChip = weatherNow
                     ? (() => {
