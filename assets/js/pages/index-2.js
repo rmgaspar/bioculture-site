@@ -163,6 +163,22 @@
                 }</div>`;
             }
 
+            function percentBars(items, badges) {
+                const rows = items.map((item) =>
+                    `<div class="percent-row"><span class="percent-label" style="color:${item.color}">${
+                        esc(item.label)
+                    }</span><span class="bar-row"><span class="bar-track"><span class="bar-fill" style="width:${
+                        Math.min(item.val, 100).toFixed(1)
+                    }%;background:${item.color}"></span></span><span class="bar-value"><b>${
+                        fmt(item.val, item.digits ?? 1)
+                    }${item.suffix || "%"}</b></span></span>${
+                        item.note ? `<span class="percent-note">${esc(item.note)}</span>` : ""
+                    }</div>`
+                ).join("");
+                const badgeHTML = (badges || []).map((b) => `<p class="chart-note">${esc(b)}</p>`).join("");
+                return `<div class="portal-chart percent-chart">${rows}${badgeHTML}</div>`;
+            }
+
             function growthChart(items) {
                 const rows = items.map((item) => {
                     const max = Math.max(item.from.v, item.to.v) * 1.05;
@@ -248,30 +264,131 @@
                 ]);
             }
 
-            function atlasContent(pragas, flora, solucoes, vetores) {
+            function recursosChartHTML(water, air, soil) {
+                const waterStress = water?.headline_metrics?.find((m) => m.indicator_id === "sdg_6_4_2_water_stress");
+                const airExposed = air?.contextual_findings?.find((f) => f.unit === "percent");
+                const soilRecent = soil?.headline_metrics?.find((m) => m.year === 2019);
+                const soilPrior = soil?.headline_metrics?.find((m) => m.year === 2015);
+                const items = [];
+                if (waterStress) items.push({
+                    label: isEnglish ? "Water · stress level" : "Água · stress hídrico",
+                    val: waterStress.value, color: "#3498db",
+                    note: isEnglish ? `${waterStress.year}, freshwater withdrawn vs. renewable supply` : `${waterStress.year}, água doce retirada face ao disponível renovável`,
+                });
+                if (airExposed) items.push({
+                    label: isEnglish ? "Air · population above WHO limits" : "Ar · população acima dos limites da OMS",
+                    val: airExposed.value, color: "#95a5a6",
+                });
+                if (soilRecent) items.push({
+                    label: isEnglish ? "Soil · degraded land" : "Solo · terra degradada",
+                    val: soilRecent.value, color: "#e67e22",
+                    note: soilPrior
+                        ? (isEnglish ? `${soilRecent.year}, up from ${fmt(soilPrior.value)}% in ${soilPrior.year}` : `${soilRecent.year}, subiu de ${fmt(soilPrior.value)}% em ${soilPrior.year}`)
+                        : String(soilRecent.year),
+                });
+                return items.length ? percentBars(items) : "";
+            }
+
+            function biodiversidadeChartHTML(bio) {
+                const rli = (bio?.headline_metrics || []).filter((m) => m.indicator_id === "sdg_15_5_1_red_list_index");
+                const first = rli.find((m) => m.year === 1993), last = rli.slice().sort((a, b) => b.year - a.year)[0];
+                if (!first || !last) return "";
+                const species = bio?.contextual_findings?.find((f) => f.unit === "species_assessed");
+                return growthChart([{
+                    label: isEnglish ? "Red List Index (1 = no extinction risk)" : "Índice da Lista Vermelha (1 = sem risco de extinção)",
+                    from: { y: String(first.year), v: first.value },
+                    to: { y: String(last.year), v: last.value },
+                    unit: species ? (isEnglish ? `index · ${fmt(species.value, 0)} species assessed` : `índice · ${fmt(species.value, 0)} espécies avaliadas`) : "index",
+                    color: "#2ecc71",
+                    digits: 3,
+                }]);
+            }
+
+            function pressoesHumanasChartHTML(ai, energy, livestock) {
+                const html = [];
+                const series = (ai?.electricity_series || []).filter((s) => s.kind === "historical" || s.kind === "estimate");
+                const first = series[0], last = series[series.length - 1];
+                if (first && last) html.push(growthChart([{
+                    label: isEnglish ? "AI data-centre electricity" : "Eletricidade em centros de dados (IA)",
+                    from: { y: String(first.year), v: first.twh },
+                    to: { y: String(last.year), v: last.twh },
+                    unit: isEnglish ? "TWh/year" : "TWh/ano",
+                    color: "#7b1fa2",
+                    digits: 0,
+                }]));
+                const renewable = energy?.headline_metrics?.renewable_final_energy_pct;
+                const items = [];
+                if (renewable) items.push({
+                    label: isEnglish ? "Renewables in final energy use" : "Renováveis no consumo final de energia",
+                    val: renewable.value, color: "#f1c40f",
+                    note: String(renewable.year),
+                });
+                const livestockShare = livestock?.headline?.find((h) => (h.label_pt || "").includes("antropogénicas"));
+                if (livestockShare) items.push({
+                    label: isEnglish ? "Livestock share of human-caused emissions" : "Pecuária nas emissões antropogénicas",
+                    val: parseFloat(livestockShare.value), color: "#a66f50",
+                    note: livestockShare.context,
+                });
+                if (items.length) html.push(percentBars(items));
+                return html.join("");
+            }
+
+            function portugalChartHTML(terra) {
+                const ind = terra?.indicadores_territoriais;
+                if (!ind) return "";
+                const items = [];
+                if (ind.suscetibilidade_desertificacao) items.push({
+                    label: isEnglish ? "Mainland territory at desertification risk" : "Território continental suscetível a desertificação",
+                    val: ind.suscetibilidade_desertificacao.valor, color: "#c17f3e",
+                    note: isEnglish ? "up 22% since the 1960–1990 climate normal" : "subiu 22% desde a normal climatológica 1960–1990",
+                });
+                if (ind.erosao_costeira) items.push({
+                    label: isEnglish ? "Sandy coastline in erosion" : "Costa arenosa baixa em erosão",
+                    val: ind.erosao_costeira.costa_baixa_arenosa_em_erosao_percent, color: "#6d8992",
+                    note: isEnglish
+                        ? `${fmt(ind.erosao_costeira.extensao_em_erosao_aproximada_km, 0)} of ${fmt(ind.erosao_costeira.extensao_monitorizada_km, 0)} km monitored`
+                        : `${fmt(ind.erosao_costeira.extensao_em_erosao_aproximada_km, 0)} km de ${fmt(ind.erosao_costeira.extensao_monitorizada_km, 0)} km monitorizados`,
+                });
+                const badges = [];
+                if (ind.areas_risco_inundacao) {
+                    const years = (ind.areas_risco_inundacao.periodo || "").replace(/^ciclo\s*/i, "");
+                    badges.push(
+                        isEnglish
+                            ? `${ind.areas_risco_inundacao.valor} significant flood-risk areas identified (${years} cycle)`
+                            : `${ind.areas_risco_inundacao.valor} áreas de risco de inundação identificadas (ciclo ${years})`
+                    );
+                }
+                return items.length ? percentBars(items, badges) : "";
+            }
+
+            function atlasContent(pragas, flora, solucoes, vetores, water, air, soil, bio, ai, energy, livestock, terra) {
                 const portals = isEnglish ? [
                         ["Planet and pressures","Planeta e pressões","Global pressure indicators are not standing still — material extraction, sea levels and e-waste keep climbing.",[["Planetary state","/observatorio/vetores-pressao-global.html?lang=en#planetary-state"],["Pressure systems","/observatorio/vetores-pressao-global.html?lang=en#pressure-systems"],["Method","/observatorio/vetores-pressao-global.html?lang=en#method"]]],
-                        ["Vital resources","Recursos vitais","The three material foundations of life, read globally and without separating their relationships.",[["Water","/recursos/agua.html?lang=en"],["Air","/recursos/ar.html?lang=en"],["Soil","/recursos/solo.html?lang=en"]]],
-                        ["Biodiversity","Biodiversidade","Species, habitats, extinction risk and ecological relationships, from the world to Portugal.",[["Global","/ecossistemas/biodiversidade.html?lang=en"],["Portugal","/ecossistemas/biodiversidade.html?lang=en"]]],
-                        ["Human pressures","Pressões humanas","Energy and the infrastructures, extraction and production chains transforming territory.",[["Energy","/energia/energy.html?lang=en"],["Territory","/energia/transicao-etica.html?lang=en"],["AI","/energia/digital.html?lang=en"],["Mining","/energia/mineracao.html?lang=en"],["Livestock","/energia/pecuaria.html?lang=en"]]],
+                        ["Vital resources","Recursos vitais","The three material foundations of life are already under measurable stress — water, air and soil, read without separating their relationships.",[["Water","/recursos/agua.html?lang=en"],["Air","/recursos/ar.html?lang=en"],["Soil","/recursos/solo.html?lang=en"]]],
+                        ["Biodiversity","Biodiversidade","Species, habitats, extinction risk and ecological relationships — the Red List Index has been falling for three decades.",[["Global","/ecossistemas/biodiversidade.html?lang=en"],["Portugal","/ecossistemas/biodiversidade.html?lang=en"]]],
+                        ["Human pressures","Pressões humanas","Energy, AI infrastructure and livestock systems keep expanding the chains of extraction and production that transform territory.",[["Energy","/energia/energy.html?lang=en"],["Territory","/energia/transicao-etica.html?lang=en"],["AI","/energia/digital.html?lang=en"],["Mining","/energia/mineracao.html?lang=en"],["Livestock","/energia/pecuaria.html?lang=en"]]],
                         ["Pests and invasive species","Pragas e invasoras","A searchable catalogue of pests, diseases and invasive flora threatening crops and ecosystems — with identification and prevention sheets.",[["Open the catalogue","/calendario/calendario.html?lang=en#pragas-catalogo"]]],
                         ["Natural solutions","Soluções naturais","Biological practices and products organised by function, from soil fertility to integrated pest prevention.",[["Explore solutions","/services/produtos.html?lang=en"]]],
-                        ["Portugal in detail","Portugal em detalhe","Mainland Portugal, the Azores and Madeira through national, regional and local evidence.",[["Observatory","/observatorio/observatorio-terra.html?lang=en"],["Species","/ecossistemas/biodiversidade.html?lang=en"],["Local calendar","/calendario/calendario.html?lang=en"]]],
+                        ["Portugal in detail","Portugal em detalhe","Mainland Portugal, the Azores and Madeira through national, regional and local evidence — from desertification risk to coastal erosion.",[["Observatory","/observatorio/observatorio-terra.html?lang=en"],["Species","/ecossistemas/biodiversidade.html?lang=en"],["Local calendar","/calendario/calendario.html?lang=en"]]],
                         ["Knowledge for care","Conhecimento para cuidar","Global organic practice translated into seasonal decisions for soil, water, plants and vines.",[["Regeneration calendar","/calendario/regeneration-calendar.html?lang=en"],["Living vineyard","/calendario/living-vineyard.html?lang=en"]]]
                     ] : [
                         ["Planeta e pressões","Planeta e pressões","Os indicadores globais de pressão não estão parados — extração de materiais, nível do mar e resíduos eletrónicos continuam a subir.",[["Estado planetário","/observatorio/vetores-pressao-global.html?lang=pt#planetary-state"],["Sistemas de pressão","/observatorio/vetores-pressao-global.html?lang=pt#pressure-systems"],["Método","/observatorio/vetores-pressao-global.html?lang=pt#method"]]],
-                        ["Recursos vitais","Recursos vitais","As três bases materiais da vida, lidas à escala global e sem separar as suas relações.",[["Água","/recursos/agua.html?lang=pt"],["Ar","/recursos/ar.html?lang=pt"],["Solo","/recursos/solo.html?lang=pt"]]],
-                        ["Biodiversidade","Biodiversidade","Espécies, habitats, risco de extinção e relações ecológicas, do mundo a Portugal.",[["Mundo","/ecossistemas/biodiversidade.html?lang=pt"],["Portugal","/ecossistemas/biodiversidade.html?lang=pt"]]],
-                        ["Pressões humanas","Pressões humanas","Energia e cadeias de infraestrutura, extração e produção que transformam o território.",[["Energia","/energia/energy.html?lang=pt"],["Território","/energia/transicao-etica.html?lang=pt"],["IA","/energia/digital.html?lang=pt"],["Mineração","/energia/mineracao.html?lang=pt"],["Pecuária","/energia/pecuaria.html?lang=pt"]]],
+                        ["Recursos vitais","Recursos vitais","As três bases materiais da vida já mostram sinais mensuráveis de stress — água, ar e solo, sem separar as suas relações.",[["Água","/recursos/agua.html?lang=pt"],["Ar","/recursos/ar.html?lang=pt"],["Solo","/recursos/solo.html?lang=pt"]]],
+                        ["Biodiversidade","Biodiversidade","Espécies, habitats, risco de extinção e relações ecológicas — o Índice da Lista Vermelha está a cair há três décadas.",[["Mundo","/ecossistemas/biodiversidade.html?lang=pt"],["Portugal","/ecossistemas/biodiversidade.html?lang=pt"]]],
+                        ["Pressões humanas","Pressões humanas","Energia, infraestrutura de IA e sistemas pecuários continuam a expandir as cadeias de extração e produção que transformam o território.",[["Energia","/energia/energy.html?lang=pt"],["Território","/energia/transicao-etica.html?lang=pt"],["IA","/energia/digital.html?lang=pt"],["Mineração","/energia/mineracao.html?lang=pt"],["Pecuária","/energia/pecuaria.html?lang=pt"]]],
                         ["Pragas e invasoras","Pragas e invasoras","Um catálogo pesquisável de pragas, doenças e flora invasora que ameaçam culturas e ecossistemas — com fichas de identificação e prevenção.",[["Abrir o catálogo","/calendario/calendario.html?lang=pt#pragas-catalogo"]]],
                         ["Soluções naturais","Soluções naturais","Práticas e produtos biológicos organizados por função, da fertilidade do solo à prevenção integrada de pragas.",[["Explorar soluções","/services/produtos.html?lang=pt"]]],
-                        ["Portugal em detalhe","Portugal em detalhe","Portugal Continental, Açores e Madeira através de evidência nacional, regional e local.",[["Observatório","/observatorio/observatorio-terra.html?lang=pt"],["Espécies","/ecossistemas/biodiversidade.html?lang=pt"],["Calendário local","/calendario/calendario.html?lang=pt"]]],
+                        ["Portugal em detalhe","Portugal em detalhe","Portugal Continental, Açores e Madeira através de evidência nacional, regional e local — do risco de desertificação à erosão costeira.",[["Observatório","/observatorio/observatorio-terra.html?lang=pt"],["Espécies","/ecossistemas/biodiversidade.html?lang=pt"],["Calendário local","/calendario/calendario.html?lang=pt"]]],
                         ["Conhecimento para cuidar","Conhecimento para cuidar","Prática biológica global traduzida em decisões sazonais para solo, água, plantas e vinha.",[["Calendário de regeneração","/calendario/regeneration-calendar.html?lang=pt"],["Vinha viva","/calendario/living-vineyard.html?lang=pt"]]]
                     ];
                 const charts = {
                     "Planeta e pressões": vetoresChartHTML(vetores),
+                    "Recursos vitais": recursosChartHTML(water, air, soil),
+                    "Biodiversidade": biodiversidadeChartHTML(bio),
+                    "Pressões humanas": pressoesHumanasChartHTML(ai, energy, livestock),
                     "Pragas e invasoras": pragasChartHTML(pragas, flora),
                     "Soluções naturais": solucoesChartHTML(solucoes),
+                    "Portugal em detalhe": portugalChartHTML(terra),
                 };
                 return portals.map(function(p){
                     const chart = charts[p[1]] || "";
@@ -300,7 +417,11 @@
                     showToday(data[4], data[0]);
                     showNews(data[5]);
 
-                    const atlasNames = ["pragas", "flora_invasora", "solucoes-catalogo", "vetores_pressao_global"];
+                    const atlasNames = [
+                        "pragas", "flora_invasora", "solucoes-catalogo", "vetores_pressao_global",
+                        "water-overview", "air-overview", "soil-overview", "biodiversity-overview",
+                        "ai-data-centres-overview", "energy-overview", "livestock-global", "observatorio_terra",
+                    ];
                     const atlasExtras = await Promise.all(atlasNames.map((n) =>
                         fetch(`/data/${n}.json`).then((r) => (r.ok ? r.json() : null)).catch(() => null)
                     ));
