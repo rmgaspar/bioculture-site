@@ -7,6 +7,35 @@
         const anchor = document.createElement("div");
         anchor.className = "bio-nav-anchor";
         navigation.before(anchor);
+
+        const progress = document.createElement("div");
+        progress.className = "bio-nav-progress";
+        navigation.append(progress);
+
+        const sections = [...navigation.querySelectorAll('a[href*="#"]')]
+            .map((link) => {
+                const hash = link.getAttribute("href").split("#")[1];
+                return { link, el: hash ? document.getElementById(hash) : null };
+            })
+            .filter((item) => item.el);
+
+        const setActive = () => {
+            if (!sections.length) return;
+            const offset = (navigation.classList.contains("bio-nav-pinned") ? navigation.getBoundingClientRect().height : 0) + 48;
+            let current = null;
+            sections.forEach((item) => {
+                if (item.el.getBoundingClientRect().top - offset <= 0) current = item;
+            });
+            sections.forEach((item) => item.link.classList.toggle("bio-nav-active", item === current));
+        };
+
+        const setProgress = () => {
+            const doc = document.documentElement;
+            const max = doc.scrollHeight - doc.clientHeight;
+            const pct = max > 0 ? Math.min(100, Math.max(0, (window.scrollY / max) * 100)) : 0;
+            progress.style.width = `${pct}%`;
+        };
+
         const update = () => {
             const top = window.innerWidth <= 760 ? 10 : 28;
             const shouldPin = anchor.getBoundingClientRect().top <= top;
@@ -21,6 +50,8 @@
                 navigation.classList.remove("bio-nav-pinned");
                 anchor.style.height = "0";
             }
+            setActive();
+            setProgress();
         };
         update();
         window.addEventListener("scroll", update, { passive: true });

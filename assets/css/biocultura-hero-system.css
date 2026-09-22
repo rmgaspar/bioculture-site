@@ -406,7 +406,7 @@ html body #main :is(
     .catalogue-filters,.atlas-mode,.hemi-controls,.month-ribbon,.quick-filters,.filter-nav,
     .manual-nav
 ) button:is(:hover,.active,[aria-selected="true"],[aria-pressed="true"]),
-html body #main :is(.scope-switch,.calendar-navigation-bar,.home-nav,.pressure-nav) a:hover {
+html body #main :is(.scope-switch,.calendar-navigation-bar,.home-nav,.pressure-nav) a:is(:hover,.bio-nav-active) {
     border-color:#2f6147 !important;
     background:#2f6147 !important;
     color:#fff !important;
@@ -422,6 +422,20 @@ html body #main :is(.scope-switch,.calendar-navigation-bar,.home-nav,.pressure-n
     flex-wrap:wrap;
 }
 .bio-nav-anchor { width:100%; height:0; }
+.bio-nav-progress {
+    position:absolute;
+    left:0;
+    bottom:0;
+    height:2px;
+    width:0;
+    background:linear-gradient(90deg,#536b57,#a66f50);
+    border-radius:0 0 2px 2px;
+    pointer-events:none;
+    transition:width .12s linear;
+}
+html body #main :is(.scope-switch,.calendar-navigation-bar,.home-nav,.pressure-nav,.section-nav,.journey-nav).bio-nav-pinned .bio-nav-progress {
+    border-radius:0 0 12px 12px;
+}
 html body #main :is(.scope-switch,.calendar-navigation-bar,.home-nav,.pressure-nav,.section-nav,.journey-nav).bio-nav-pinned {
     position:fixed !important;
     top:1.75rem !important;
