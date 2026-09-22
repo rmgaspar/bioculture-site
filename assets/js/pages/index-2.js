@@ -27,13 +27,13 @@
                     cropSourceLabel = "Genesys PGR / World Vegetable Center",
                     grapeSourceLabel = grapeSource.organisation || "UC Davis FPS Grape Registry";
                 const rows = [
-                    [isEnglish ? "Global biodiversity" : "Biodiversidade · Mundo", Number(biodiversitySummary.accepted_species) || 0, isEnglish ? "accepted species in the global taxonomic index" : "espécies aceites no índice taxonómico mundial", biodiversityMeta.snapshot, biodiversitySource.url],
-                    [isEnglish ? "Global plant accessions" : "Acessos vegetais · Mundo", Number(cropMeta.accession_count) || 0, isEnglish ? "plant genetic resource samples conserved" : "amostras de recursos genéticos conservadas", cropSourceLabel, cropMeta.genesys_dataset || cropMeta.source_url],
-                    [isEnglish ? "Cultivated taxa" : "Táxones cultivados · Mundo", Number(cropMeta.taxon_count) || 0, isEnglish ? "taxa represented in the global catalogue" : "táxones representados no catálogo global", cropSourceLabel, cropMeta.genesys_dataset || cropMeta.source_url],
-                    [isEnglish ? "Grapevines" : "Castas · Mundo", grapeCount, isEnglish ? "varieties in the global grapevine catalogue" : "variedades no catálogo mundial de videira", grapeSourceLabel, grapeSource.url],
+                    [isEnglish ? "Global biodiversity" : "Biodiversidade · Mundo", Number(biodiversitySummary.accepted_species) || 0, isEnglish ? "accepted species in the global taxonomic index" : "espécies aceites no índice taxonómico mundial", biodiversityMeta.snapshot, biodiversitySource.url, "#1e8449"],
+                    [isEnglish ? "Global plant accessions" : "Acessos vegetais · Mundo", Number(cropMeta.accession_count) || 0, isEnglish ? "plant genetic resource samples conserved" : "amostras de recursos genéticos conservadas", cropSourceLabel, cropMeta.genesys_dataset || cropMeta.source_url, "#5c7a4a"],
+                    [isEnglish ? "Cultivated taxa" : "Táxones cultivados · Mundo", Number(cropMeta.taxon_count) || 0, isEnglish ? "taxa represented in the global catalogue" : "táxones representados no catálogo global", cropSourceLabel, cropMeta.genesys_dataset || cropMeta.source_url, "#81966e"],
+                    [isEnglish ? "Grapevines" : "Castas · Mundo", grapeCount, isEnglish ? "varieties in the global grapevine catalogue" : "variedades no catálogo mundial de videira", grapeSourceLabel, grapeSource.url, "#7d3350"],
                 ];
                 el("pulse").innerHTML = rows.map((x) =>
-                    `<article class="number"><small>${x[0]}</small><strong>${
+                    `<article class="number" style="--accent:${x[5]}"><small>${x[0]}</small><strong>${
                         x[1].toLocaleString(isEnglish ? "en-GB" : "pt-PT")
                     }</strong><span>${x[2]}</span>${
                         x[3] && x[4] ? `<a class="source" href="${esc(x[4])}" target="_blank" rel="noopener">${isEnglish ? "Source" : "Fonte"}: ${esc(x[3])} →</a>` : ""
