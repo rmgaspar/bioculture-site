@@ -511,11 +511,22 @@
             }
 
             function renderPests() {
-                const all = seasonalPests(viewedDate.getMonth()),
-                    visible = (all.length ? all : pragasDB).slice(0, showMorePests ? 12 : 6);
-                document.getElementById("pest-grid").innerHTML = visible.map(pestCardHTML).join("");
+                const all = seasonalPests(viewedDate.getMonth());
                 const button = document.getElementById("toggle-pests");
-                button.style.display = (all.length || pragasDB.length) > 6 ? "inline-block" : "none";
+                if (!all.length) {
+                    // No pest matches this month's keywords — the full inventory already lives in the
+                    // searchable catalogue below, so point there instead of repeating all 57 entries here.
+                    document.getElementById("pest-grid").innerHTML = `<div class="empty">${
+                        isEn()
+                            ? "No pests specifically flagged for this month. See the full catalogue further below."
+                            : "Sem pragas assinaladas especificamente para este mês. Consulte o catálogo completo mais abaixo."
+                    } <a href="#pragas-catalogo">${isEn() ? "See full catalogue →" : "Ver catálogo completo →"}</a></div>`;
+                    button.style.display = "none";
+                    return;
+                }
+                const visible = all.slice(0, showMorePests ? 12 : 6);
+                document.getElementById("pest-grid").innerHTML = visible.map(pestCardHTML).join("");
+                button.style.display = all.length > 6 ? "inline-block" : "none";
                 button.textContent = showMorePests ? "Recolher" : "Ver mais pragas sazonais";
             }
 
@@ -530,17 +541,24 @@
                     );
                 }).filter(Boolean);
                 const unique = [...new Map(local.map((item) => [item.id, item])).values()];
-                const all = unique.length ? unique : floraDB,
-                    visible = all.slice(0, showMoreFlora ? 12 : 6);
-                const notice = unique.length
-                    ? ""
-                    : '<div class="empty">O perfil regional ainda não tem espécies invasoras confirmadas no inventário local — pode ser falta de registo, não ausência real. Eis o inventário nacional para consulta e identificação.</div>';
-                document.getElementById("flora-grid").innerHTML = notice + visible.map(floraCardHTML).join("");
                 const button = document.getElementById("toggle-flora");
-                button.style.display = all.length > 6 ? "inline-block" : "none";
+                if (!unique.length) {
+                    // No confirmed regional match — the full inventory already lives in the
+                    // searchable catalogue below, so point there instead of repeating all 111 entries here.
+                    document.getElementById("flora-grid").innerHTML = `<div class="empty">${
+                        isEn()
+                            ? "The regional profile has no confirmed invasive species in the local inventory yet — this may reflect a lack of records rather than a real absence. See the full catalogue further below."
+                            : "O perfil regional ainda não tem espécies invasoras confirmadas no inventário local — pode ser falta de registo, não ausência real. Consulte o catálogo completo mais abaixo."
+                    } <a href="#pragas-catalogo">${isEn() ? "See full catalogue →" : "Ver catálogo completo →"}</a></div>`;
+                    button.style.display = "none";
+                    return;
+                }
+                const visible = unique.slice(0, showMoreFlora ? 12 : 6);
+                document.getElementById("flora-grid").innerHTML = visible.map(floraCardHTML).join("");
+                button.style.display = unique.length > 6 ? "inline-block" : "none";
                 button.textContent = showMoreFlora
                     ? (isEn() ? "Collapse" : "Recolher")
-                    : (isEn() ? `See more invasive species (${all.length} in total)` : `Ver mais espécies invasoras (${all.length} no total)`);
+                    : (isEn() ? `See more invasive species (${unique.length} in total)` : `Ver mais espécies invasoras (${unique.length} no total)`);
             }
 
             function pestCatalogGroupMatch(item, group) {
