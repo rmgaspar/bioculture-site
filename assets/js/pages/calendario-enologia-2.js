@@ -239,19 +239,19 @@
             function renderPests() {
                 const all = vinePests(), visible = showAllPests ? all : all.slice(0, 6);
                 document.getElementById("pest-grid").innerHTML = visible.map((item) =>
-                    `<article class="pest-card"><h3>${
-                        escapeHtml(item.nome_comum)
-                    }</h3><span class="pest-meta">${escapeHtml(item.tipo)} · ${
-                        escapeHtml(item.sazonalidade_portugal || "-")
-                    }</span><p><strong>Sinais:</strong> ${
-                        escapeHtml(item.sintomas)
-                    }</p><details><summary>Prevenção biológica</summary><p>${
-                        escapeHtml(item.prevencao)
-                    }</p><p><strong>Auxiliares:</strong> ${
-                        escapeHtml((item.aliados_naturais || []).join(", ") || "-")
-                    }.</p></details><a class="pest-detail-link" href="/ecossistemas/especie-detalhe.html?id=${
+                    `<a class="catalog-card" href="/ecossistemas/especie-detalhe.html?id=${
                         encodeURIComponent(item.id)
-                    }">Ver ficha completa →</a></article>`
+                    }"><img src="${
+                        escapeHtml(item.imagem || "/images/pragas-placeholder.svg")
+                    }" alt="${
+                        escapeHtml(item.nome_comum)
+                    }" loading="lazy" onerror="this.onerror=null;this.src='/images/pragas-placeholder.svg'"><div class="catalog-card-body"><small>${
+                        escapeHtml(item.tipo || "Praga ou doença")
+                    }</small><h3>${
+                        escapeHtml(item.nome_comum)
+                    }</h3><p>${
+                        escapeHtml(item.nome_cientifico || "Consultar ficha completa")
+                    }</p></div></a>`
                 ).join("");
                 const button = document.getElementById("toggle-pests");
                 button.style.display = all.length > 6 ? "inline-block" : "none";
