@@ -23,27 +23,33 @@
         const amount = new Intl.NumberFormat(en?'en-IE':'pt-PT',{style:'currency',currency:preco.moeda||'EUR'}).format(preco.valor);
         return preco.iva_incluido === false ? `${amount} ${tr('+ IVA','+ VAT')}` : amount;
     }
-    function illustration(categoryId) {
+    function categoryImageSrc(categoryId) {
         const id = ['fertilidade','correcao','bioestimulantes','microrganismos','pragas','doencas','prevencao'].includes(categoryId) ? categoryId : 'fertilidade';
-        return `<img class="product-image" src="/images/categoria-${id}-v1.jpg" alt="">`;
+        return `/images/categoria-${id}-v1.jpg`;
     }
     function productBlock(product) {
         const disponibilidade = product.disponivel
             ? `<span class="hub-tag hub-tag--available">${tr('Disponível','Available')}</span>${product.preco?`<p class="product-price">${esc(money(product.preco))}</p>`:''}`
             : `<span class="hub-tag hub-tag--soon">${tr('Brevemente disponível','Coming soon')}</span>`;
         const detailHref = link('/services/produto-detalhe.html?id=' + encodeURIComponent(product.id));
-        return `${product.marca?`<span class="product-brand">${esc(product.marca)}</span>`:''}<h2><a href="${esc(detailHref)}">${esc(text(product.nome))}</a></h2>${disponibilidade}<p class="product-summary">${esc(text(product.descricao_curta))}</p><a class="card-action" href="${esc(detailHref)}">${tr('Ver ficha completa →','View full details →')}</a>`;
+        const visual = product.imagem ? `<img class="product-image" src="${esc(product.imagem)}" alt="">` : '';
+        return `${visual}<div class="product-card-body">${product.marca?`<span class="product-brand">${esc(product.marca)}</span>`:''}<h2><a href="${esc(detailHref)}">${esc(text(product.nome))}</a></h2>${disponibilidade}<p class="product-summary">${esc(text(product.descricao_curta))}</p><a class="card-action" href="${esc(detailHref)}">${tr('Ver ficha completa →','View full details →')}</a></div>`;
     }
+    // Category photo is shown once per group (categoryGroup); individual cards stay text-only until each
+    // product has its own photo, to avoid repeating the same stock image across every card in a category.
     function card(solution, data) {
-        const category = data.categorias.find(c => c.id === solution.categoria_id);
         const product = solution.produtos?.[0];
         const isPratica = solution.tipo === 'pratica';
-        const visual = product?.imagem ? `<img class="product-image" src="${esc(product.imagem)}" alt="">` : illustration(solution.categoria_id);
         if (product) {
-            return `<article class="product-card" id="${esc(solution.id)}">${visual}<div class="product-card-body"><span class="product-family">${esc(text(category.nome))}</span>${productBlock(product)}</div></article>`;
+            return `<article class="product-card" id="${esc(solution.id)}">${productBlock(product)}</article>`;
         }
         const references = solution.fichas.map(f => `<li><a href="${esc(link(f.href))}">${esc(f.nome)} →</a></li>`).join('');
-        return `<article class="product-card" id="${esc(solution.id)}">${visual}<div class="product-card-body"><span class="product-family">${esc(text(category.nome))}</span><h2>${esc(text(solution.nome))}</h2><span class="hub-tag">${isPratica ? tr('Prática em estudo','Practice under study') : tr('Solução em estudo','Solution under study')}</span><details><summary>${tr('O que estamos a preparar','What we are preparing')}</summary><p>${tr('Ficha técnica, utilizações, limitações e documentação. Ainda sem marca ou formulação selecionada.','Technical information, uses, limitations and documentation. No brand or formulation selected yet.')}</p>${references ? `<p>${tr('Antes de escolher, consulte as orientações relacionadas:','Before choosing, read the related guidance:')}</p><ul>${references}</ul>` : `<p>${tr('As orientações específicas serão acrescentadas após revisão das fontes.','Specific guidance will be added after source review.')}</p>`}</details></div></article>`;
+        return `<article class="product-card" id="${esc(solution.id)}"><div class="product-card-body"><h2>${esc(text(solution.nome))}</h2><span class="hub-tag">${isPratica ? tr('Prática em estudo','Practice under study') : tr('Solução em estudo','Solution under study')}</span><details><summary>${tr('O que estamos a preparar','What we are preparing')}</summary><p>${tr('Ficha técnica, utilizações, limitações e documentação. Ainda sem marca ou formulação selecionada.','Technical information, uses, limitations and documentation. No brand or formulation selected yet.')}</p>${references ? `<p>${tr('Antes de escolher, consulte as orientações relacionadas:','Before choosing, read the related guidance:')}</p><ul>${references}</ul>` : `<p>${tr('As orientações específicas serão acrescentadas após revisão das fontes.','Specific guidance will be added after source review.')}</p>`}</details></div></article>`;
+    }
+    function categoryGroup(category, solutions, data) {
+        const items = solutions.map(s => card(s, data)).join('');
+        const count = tr(`${solutions.length} soluções em estudo`,`${solutions.length} solutions under study`);
+        return `<section class="category-group" id="cat-${esc(category.id)}"><div class="category-banner"><img class="category-image" src="${categoryImageSrc(category.id)}" alt=""><div class="category-banner-body"><h2>${esc(text(category.nome))}</h2><p class="category-count">${esc(count)}</p></div></div><div class="product-grid">${items}</div></section>`;
     }
     async function fetchJSON(url) {
         const response = await fetch(url);
@@ -66,7 +72,8 @@
             filters.innerHTML = filterItems.map(c => `<button type="button" data-category="${esc(c.id)}" aria-pressed="${c.id === selected}">${esc(text(c.nome))}</button>`).join('');
             const render = () => {
                 const found = filterSolutions(data, input.value, selected);
-                grid.innerHTML = found.map(s => card(s,data)).join('') || `<div class="catalogue-empty">${tr('Nenhuma solução encontrada. Experimente outro termo ou escolha todas as famílias.','No solutions found. Try another term or select all families.')} <button type="button" id="reset-products">${tr('Limpar pesquisa','Clear search')}</button></div>`;
+                const groups = data.categorias.map(cat => ({cat, items: found.filter(s => s.categoria_id === cat.id)})).filter(g => g.items.length);
+                grid.innerHTML = groups.map(g => categoryGroup(g.cat, g.items, data)).join('') || `<div class="catalogue-empty">${tr('Nenhuma solução encontrada. Experimente outro termo ou escolha todas as famílias.','No solutions found. Try another term or select all families.')} <button type="button" id="reset-products">${tr('Limpar pesquisa','Clear search')}</button></div>`;
                 byId('product-count').textContent = tr(`${found.length} de ${data.solucoes.length} soluções em estudo`,`${found.length} of ${data.solucoes.length} solutions under study`);
                 filters.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed',String(b.dataset.category === selected)));
                 byId('reset-products')?.addEventListener('click',()=>{input.value='';selected='all';render();input.focus();});
