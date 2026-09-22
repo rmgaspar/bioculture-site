@@ -6,7 +6,16 @@
                 horticolasDB = {},
                 infoGlobal = null,
                 weatherNow = null;
-            let viewedDate = new Date(), showMorePests = false, showMoreFlora = false, catalogLimit = 12;
+            let viewedDate = new Date(), showMorePests = false, showMoreFlora = false, catalogLimit = 12, pestCatalogLimit = 12;
+            const PEST_GROUPS = [
+                { id: "all", pt: "Todos", en: "All" },
+                { id: "horticolas", pt: "Hortícolas", en: "Vegetable garden" },
+                { id: "pomares", pt: "Pomares e fruta", en: "Orchards and fruit" },
+                { id: "vinha", pt: "Vinha", en: "Vineyard" },
+                { id: "ornamentais", pt: "Plantas ornamentais e floresta", en: "Ornamentals and forestry" },
+                { id: "vertebrados", pt: "Vertebrados e outros", en: "Vertebrates and other" },
+                { id: "flora-invasora", pt: "Flora invasora", en: "Invasive flora" },
+            ];
             const months = [
                 "janeiro",
                 "fevereiro",
@@ -469,26 +478,44 @@
                     return keywords.some((key) => text.includes(key)) || periodMatches(text, month);
                 });
             }
+            function pestCardHTML(item) {
+                return `<article class="watch-card"><img class="watch-image" src="${
+                    escapeHtml(item.imagem || "/images/pragas-placeholder.svg")
+                }" alt="${
+                    escapeHtml(item.nome_comum)
+                }" loading="lazy" onerror="this.onerror=null;this.src='/images/pragas-placeholder.svg'"><span class="watch-kind">Praga ou doença</span><h3>${
+                    escapeHtml(item.nome_comum)
+                }</h3><span class="watch-meta">${
+                    escapeHtml(item.sazonalidade_portugal || "Observação regular")
+                }</span><p>${
+                    escapeHtml(item.sintomas)
+                }</p><details><summary>Prevenção</summary><p>${
+                    escapeHtml(item.prevencao)
+                }</p></details><a class="watch-detail" href="/ecossistemas/especie-detalhe.html?id=${
+                    encodeURIComponent(item.id)
+                }">Ver ficha completa →</a></article>`;
+            }
+
+            function floraCardHTML(item) {
+                return `<article class="watch-card"><img class="watch-image" src="${
+                    escapeHtml(item.imagem || "/images/pragas-placeholder.svg")
+                }" alt="${
+                    escapeHtml(item.nome_comum)
+                }" loading="lazy" onerror="this.onerror=null;this.src='/images/pragas-placeholder.svg'"><span class="watch-kind">Flora invasora</span><h3>${
+                    escapeHtml(item.nome_comum)
+                }</h3><span class="watch-meta">${escapeHtml(item.nome_cientifico)}</span><p>${
+                    escapeHtml(item.impacto)
+                }</p><details><summary>Prevenção e controlo</summary><p>${
+                    escapeHtml(item.prevencao)
+                }</p><p>${escapeHtml(item.combate)}</p></details><a class="watch-detail" href="/ecossistemas/especie-detalhe.html?id=${
+                    encodeURIComponent(item.id)
+                }">Ver ficha completa →</a></article>`;
+            }
+
             function renderPests() {
                 const all = seasonalPests(viewedDate.getMonth()),
                     visible = (all.length ? all : pragasDB).slice(0, showMorePests ? 12 : 6);
-                document.getElementById("pest-grid").innerHTML = visible.map((item) =>
-                    `<article class="watch-card"><img class="watch-image" src="${
-                        escapeHtml(item.imagem || "/images/pragas-placeholder.svg")
-                    }" alt="${
-                        escapeHtml(item.nome_comum)
-                    }" loading="lazy" onerror="this.onerror=null;this.src='/images/pragas-placeholder.svg'"><span class="watch-kind">Praga ou doença</span><h3>${
-                        escapeHtml(item.nome_comum)
-                    }</h3><span class="watch-meta">${
-                        escapeHtml(item.sazonalidade_portugal || "Observação regular")
-                    }</span><p>${
-                        escapeHtml(item.sintomas)
-                    }</p><details><summary>Prevenção</summary><p>${
-                        escapeHtml(item.prevencao)
-                    }</p></details><a class="watch-detail" href="/ecossistemas/especie-detalhe.html?id=${
-                        encodeURIComponent(item.id)
-                    }">Ver ficha completa →</a></article>`
-                ).join("");
+                document.getElementById("pest-grid").innerHTML = visible.map(pestCardHTML).join("");
                 const button = document.getElementById("toggle-pests");
                 button.style.display = (all.length || pragasDB.length) > 6 ? "inline-block" : "none";
                 button.textContent = showMorePests ? "Recolher" : "Ver mais pragas sazonais";
@@ -510,26 +537,43 @@
                 const notice = unique.length
                     ? ""
                     : '<div class="empty">O perfil regional ainda não tem espécies invasoras confirmadas no inventário local — pode ser falta de registo, não ausência real. Eis o inventário nacional para consulta e identificação.</div>';
-                document.getElementById("flora-grid").innerHTML = notice + visible.map((item) =>
-                    `<article class="watch-card"><img class="watch-image" src="${
-                        escapeHtml(item.imagem || "/images/pragas-placeholder.svg")
-                    }" alt="${
-                        escapeHtml(item.nome_comum)
-                    }" loading="lazy" onerror="this.onerror=null;this.src='/images/pragas-placeholder.svg'"><span class="watch-kind">Flora invasora</span><h3>${
-                        escapeHtml(item.nome_comum)
-                    }</h3><span class="watch-meta">${escapeHtml(item.nome_cientifico)}</span><p>${
-                        escapeHtml(item.impacto)
-                    }</p><details><summary>Prevenção e controlo</summary><p>${
-                        escapeHtml(item.prevencao)
-                    }</p><p>${escapeHtml(item.combate)}</p></details><a class="watch-detail" href="/ecossistemas/especie-detalhe.html?id=${
-                        encodeURIComponent(item.id)
-                    }">Ver ficha completa →</a></article>`
-                ).join("");
+                document.getElementById("flora-grid").innerHTML = notice + visible.map(floraCardHTML).join("");
                 const button = document.getElementById("toggle-flora");
                 button.style.display = all.length > 6 ? "inline-block" : "none";
                 button.textContent = showMoreFlora
                     ? (isEn() ? "Collapse" : "Recolher")
                     : (isEn() ? `See more invasive species (${all.length} in total)` : `Ver mais espécies invasoras (${all.length} no total)`);
+            }
+
+            function pestCatalogGroupMatch(item, group) {
+                if (group === "all") return true;
+                if (group === "flora-invasora") return false;
+                return (item.grupos || []).includes(group);
+            }
+
+            function renderPestCatalog(reset = false) {
+                if (reset) pestCatalogLimit = 12;
+                const query = normalize(document.getElementById("pest-catalog-search")?.value),
+                    filter = document.getElementById("pest-catalog-filter")?.value || "all";
+                const pests = filter === "flora-invasora" ? [] : pragasDB
+                    .filter((item) => pestCatalogGroupMatch(item, filter))
+                    .filter((item) => !query || normalize(`${item.nome_comum} ${item.nome_cientifico} ${(item.plantas_afetadas || []).join(" ")}`).includes(query))
+                    .map((item) => ({ item, kind: "praga" }));
+                const flora = filter !== "all" && filter !== "flora-invasora" ? [] : floraDB
+                    .filter((item) => !query || normalize(`${item.nome_comum} ${item.nome_cientifico} ${item.habitat || ""}`).includes(query))
+                    .map((item) => ({ item, kind: "flora" }));
+                const entries = [...pests, ...flora].sort((a, b) =>
+                    String(a.item.nome_comum).localeCompare(String(b.item.nome_comum), "pt")
+                );
+                document.getElementById("pest-catalog-summary").textContent = isEn()
+                    ? `${format(entries.length)} records found · ${format(pragasDB.length + floraDB.length)} in the full inventory`
+                    : `${format(entries.length)} fichas encontradas · ${format(pragasDB.length + floraDB.length)} no inventário completo`;
+                document.getElementById("pest-catalog-grid").innerHTML = entries.slice(0, pestCatalogLimit).map(({ item, kind }) =>
+                    kind === "praga" ? pestCardHTML(item) : floraCardHTML(item)
+                ).join("") || '<div class="empty">Nenhum registo encontrado com estes critérios.</div>';
+                const more = document.getElementById("pest-catalog-more");
+                more.hidden = entries.length <= pestCatalogLimit;
+                more.onclick = () => { pestCatalogLimit += 12; renderPestCatalog(); };
             }
 
             function renderLocalProfile() {
@@ -575,8 +619,17 @@
                     fetchWeather();
                     renderCatalog();
                     renderFlora();
+                    const requestedGroup = new URLSearchParams(location.search).get("tipo");
+                    const pestFilter = document.getElementById("pest-catalog-filter");
+                    pestFilter.innerHTML = PEST_GROUPS.map((g) =>
+                        `<option value="${g.id}">${isEn() ? g.en : g.pt}</option>`
+                    ).join("");
+                    if (PEST_GROUPS.some((g) => g.id === requestedGroup)) pestFilter.value = requestedGroup;
+                    renderPestCatalog();
                     document.getElementById("catalog-search").addEventListener("input", () => renderCatalog(true));
                     document.getElementById("catalog-filter").addEventListener("change", () => renderCatalog(true));
+                    document.getElementById("pest-catalog-search").addEventListener("input", () => renderPestCatalog(true));
+                    pestFilter.addEventListener("change", () => renderPestCatalog(true));
                     document.getElementById("guide-location-button").onclick = () => {
                         const input = document.getElementById("loc-search-input");
                         if (input) {
