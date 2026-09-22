@@ -206,9 +206,10 @@
                     listPanel("Habitats", esp.habitats) +
                     textPanel("Função ecológica", esp.funcao_ecologica) +
                     (tax ? textPanel("Taxonomia", tax) : "");
-                document.getElementById("species").innerHTML = `<a class="back" href="${
+                const backLink = `<a class="back" href="${
                     isPest ? "/calendario/calendario.html#vigilancia" : "biodiversidade.html"
-                }" onclick="if(window.history.length>1){event.preventDefault();history.back();}">← Voltar</a><div class="hero"><div><span class="eyebrow">${
+                }" onclick="if(window.history.length>1){event.preventDefault();history.back();}">← Voltar</a>`;
+                document.getElementById("species").innerHTML = `<div class="hero"><div><span class="eyebrow">${
                     esc(esp.grupo || "Inventário biológico")
                 }</span><h1>${esc(esp.nome)}</h1>${
                     valid(esp.nome_cientifico)
@@ -234,7 +235,7 @@
                     esp.invasora === true ? "Sim" : "Não identificada como invasora"
                 }</b></div></div></div><div class="hero-image" data-initial="${
                     esc(String(esp.nome || "?").charAt(0))
-                }">${image}</div></div>${
+                }">${image}</div></div>${backLink}${
                     ecology
                         ? `<div class="section-block"><div class="section-head"><span class="eyebrow">Ecologia</span><div><h2>Onde vive e que papel desempenha</h2><p>São apresentados apenas os campos preenchidos no inventário; informação ausente não é substituída por generalizações.</p></div></div><div class="grid">${ecology}</div></div>`
                         : ""
