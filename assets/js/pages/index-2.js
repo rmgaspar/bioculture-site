@@ -179,6 +179,35 @@
                 return `<div class="portal-chart percent-chart">${rows}${badgeHTML}</div>`;
             }
 
+            function countBars(items, note) {
+                const max = Math.max(...items.map((i) => i.val)) * 1.05 || 1;
+                const rows = items.map((item) =>
+                    `<div class="percent-row"><span class="percent-label" style="color:${item.color}">${
+                        esc(item.label)
+                    }</span><span class="bar-row"><span class="bar-track"><span class="bar-fill" style="width:${
+                        (item.val / max * 100).toFixed(1)
+                    }%;background:${item.color}"></span></span><span class="bar-value"><b>${
+                        fmt(item.val, item.digits ?? 0)
+                    }</b></span></span>${
+                        item.note ? `<span class="percent-note">${esc(item.note)}</span>` : ""
+                    }</div>`
+                ).join("");
+                return `<div class="portal-chart percent-chart">${rows}${note ? `<p class="chart-note">${esc(note)}</p>` : ""}</div>`;
+            }
+
+            function conhecimentoChartHTML(pragas) {
+                const vinhaPests = (pragas || []).filter((p) => (p.grupos || []).includes("vinha")).length;
+                const items = [
+                    { label: isEnglish ? "Growing guides (crops)" : "Fichas de cultivo (hortícolas)", val: 94, color: "#81966e" },
+                    { label: isEnglish ? "Grape varieties documented" : "Castas de videira documentadas", val: 60, color: "#7d3350" },
+                ];
+                if (vinhaPests) items.push({
+                    label: isEnglish ? "Vineyard pests mapped" : "Pragas de videira mapeadas",
+                    val: vinhaPests, color: "#c9762f",
+                });
+                return countBars(items);
+            }
+
             function growthChart(items) {
                 const rows = items.map((item) => {
                     const max = Math.max(item.from.v, item.to.v) * 1.05;
@@ -299,7 +328,7 @@
                     from: { y: String(first.year), v: first.value },
                     to: { y: String(last.year), v: last.value },
                     unit: species ? (isEnglish ? `index · ${fmt(species.value, 0)} species assessed` : `índice · ${fmt(species.value, 0)} espécies avaliadas`) : "index",
-                    color: "#2ecc71",
+                    color: "#1e8449",
                     digits: 3,
                 }]);
             }
@@ -320,7 +349,7 @@
                 const items = [];
                 if (renewable) items.push({
                     label: isEnglish ? "Renewables in final energy use" : "Renováveis no consumo final de energia",
-                    val: renewable.value, color: "#f1c40f",
+                    val: renewable.value, color: "#b8860b",
                     note: String(renewable.year),
                 });
                 const livestockShare = livestock?.headline?.find((h) => (h.label_pt || "").includes("antropogénicas"));
@@ -389,6 +418,7 @@
                     "Pragas e invasoras": pragasChartHTML(pragas, flora),
                     "Soluções naturais": solucoesChartHTML(solucoes),
                     "Portugal em detalhe": portugalChartHTML(terra),
+                    "Conhecimento para cuidar": conhecimentoChartHTML(pragas),
                 };
                 return portals.map(function(p){
                     const chart = charts[p[1]] || "";
