@@ -103,7 +103,8 @@
                         const translatedCategory = typeof window.BioCultureI18n?.category === "function"
                             ? window.BioCultureI18n.category(n.categoria)
                             : n.categoria;
-                        catEl.innerText = (translatedCategory || "Geral").toUpperCase();
+                        const actualidadeLabel = lang === "en" ? "Current affairs" : "Atualidade";
+                        catEl.innerText = `${actualidadeLabel} - ${(translatedCategory || "Geral")}`.toUpperCase();
                         if (catColors[n.categoria]) catEl.style.color = catColors[n.categoria];
 
                         let domain = "";
