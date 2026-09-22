@@ -479,37 +479,35 @@
                 });
             }
             function pestCardHTML(item) {
-                return `<article class="watch-card"><img class="watch-image" src="${
+                return `<a class="catalog-card" href="/ecossistemas/especie-detalhe.html?id=${
+                    encodeURIComponent(item.id)
+                }"><img src="${
                     escapeHtml(item.imagem || "/images/pragas-placeholder.svg")
                 }" alt="${
                     escapeHtml(item.nome_comum)
-                }" loading="lazy" onerror="this.onerror=null;this.src='/images/pragas-placeholder.svg'"><span class="watch-kind">Praga ou doença</span><h3>${
+                }" loading="lazy" onerror="this.onerror=null;this.src='/images/pragas-placeholder.svg'"><div class="catalog-card-body"><small>${
+                    escapeHtml(item.tipo || "Praga ou doença")
+                }</small><h3>${
                     escapeHtml(item.nome_comum)
-                }</h3><span class="watch-meta">${
-                    escapeHtml(item.sazonalidade_portugal || "Observação regular")
-                }</span><p>${
-                    escapeHtml(item.sintomas)
-                }</p><details><summary>Prevenção</summary><p>${
-                    escapeHtml(item.prevencao)
-                }</p></details><a class="watch-detail" href="/ecossistemas/especie-detalhe.html?id=${
-                    encodeURIComponent(item.id)
-                }">Ver ficha completa →</a></article>`;
+                }</h3><p>${
+                    escapeHtml(item.nome_cientifico || "Consultar ficha completa")
+                }</p></div></a>`;
             }
 
             function floraCardHTML(item) {
-                return `<article class="watch-card"><img class="watch-image" src="${
+                return `<a class="catalog-card" href="/ecossistemas/especie-detalhe.html?id=${
+                    encodeURIComponent(item.id)
+                }"><img src="${
                     escapeHtml(item.imagem || "/images/pragas-placeholder.svg")
                 }" alt="${
                     escapeHtml(item.nome_comum)
-                }" loading="lazy" onerror="this.onerror=null;this.src='/images/pragas-placeholder.svg'"><span class="watch-kind">Flora invasora</span><h3>${
+                }" loading="lazy" onerror="this.onerror=null;this.src='/images/pragas-placeholder.svg'"><div class="catalog-card-body"><small>${
+                    escapeHtml(item.forma_de_vida || "Flora invasora")
+                }</small><h3>${
                     escapeHtml(item.nome_comum)
-                }</h3><span class="watch-meta">${escapeHtml(item.nome_cientifico)}</span><p>${
-                    escapeHtml(item.impacto)
-                }</p><details><summary>Prevenção e controlo</summary><p>${
-                    escapeHtml(item.prevencao)
-                }</p><p>${escapeHtml(item.combate)}</p></details><a class="watch-detail" href="/ecossistemas/especie-detalhe.html?id=${
-                    encodeURIComponent(item.id)
-                }">Ver ficha completa →</a></article>`;
+                }</h3><p>${
+                    escapeHtml(item.nome_cientifico || "Consultar ficha completa")
+                }</p></div></a>`;
             }
 
             function renderPests() {
