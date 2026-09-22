@@ -269,7 +269,7 @@
                 ).slice(0, 4);
                 const profile = c.perfil || {}, tech = c.tecnico || {}, pests = vinePests();
                 document.getElementById("casta-detail-view").innerHTML =
-                    `<span class="detail-back" id="detail-back">← voltar ao atlas</span><div class="detail-hero"><div><span class="category-label">${
+                    `<div class="detail-hero"><div><span class="category-label">${
                         escapeHtml(c.cor)
                     } · ${escapeHtml(c.tipo_vinho)}</span><h1>${
                         escapeHtml(c.nome)
@@ -294,7 +294,7 @@
                         escapeHtml((c.aromas || []).join(" · ") || "-")
                     }</p><p><strong>Potencial de guarda:</strong> ${
                         escapeHtml(c.potencial_guarda || "-")
-                    }</p></aside></div><div class="detail-columns"><article class="detail-box"><h3>Condições da vinha</h3><p><strong>Solo:</strong> ${
+                    }</p></aside></div><span class="detail-back" id="detail-back">← voltar ao atlas</span><div class="detail-columns"><article class="detail-box"><h3>Condições da vinha</h3><p><strong>Solo:</strong> ${
                         escapeHtml(tech.solo || "-")
                     }</p><p><strong>Clima:</strong> ${
                         escapeHtml(tech.clima || "-")

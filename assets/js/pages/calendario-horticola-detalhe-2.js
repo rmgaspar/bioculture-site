@@ -246,7 +246,6 @@
                     document.getElementById("render-horta").innerHTML = `
                     <div class="hero-split">
                         <div class="hero-text">
-                            <a href="calendario.html" class="btn-voltar-base" style="margin:0 0 2em" onclick="if(window.history.length>1){event.preventDefault();history.back();}">← VOLTAR AO CALENDÁRIO</a>
                             <span class="category-label">Cultivo biológico</span>
                             <h1>${esc(item.nome)}</h1>
                             <h2>${esc(item.nome_cientifico || "")}</h2>
@@ -274,6 +273,7 @@
                             </div>
                         </div>
                     </div>
+                    <a href="calendario.html" class="btn-voltar-base" style="margin:0 0 2em" onclick="if(window.history.length>1){event.preventDefault();history.back();}">← VOLTAR AO CALENDÁRIO</a>
                     ${
                         section(
                             "Lugar",
