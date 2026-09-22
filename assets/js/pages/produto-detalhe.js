@@ -63,9 +63,10 @@
                 }`;
                 const beneficios = listPanel(tr("Benefícios", "Benefits"),
                     arr(product.beneficios).map((b) => localized(b)));
-                document.getElementById("product").innerHTML = `<a class="back" href="${
+                const backLink = `<a class="back" href="${
                     esc(link("/services/produtos.html#" + (solucao?.id || "")))
-                }">← ${tr("Voltar ao catálogo", "Back to the catalogue")}</a><div class="hero"><div><span class="eyebrow">${
+                }">← ${tr("Voltar ao catálogo", "Back to the catalogue")}</a>`;
+                document.getElementById("product").innerHTML = `<div class="hero"><div><span class="eyebrow">${
                     esc(categoriaNome || tr("Produto", "Product"))
                 }</span><h1>${esc(localized(product.nome))}</h1>${
                     valid(product.marca) ? `<h2 class="scientific">${esc(product.marca)}</h2>` : ""
@@ -85,7 +86,7 @@
                     esc(categoriaNome || "—")
                 }</b></div></div></div><div class="hero-image" data-initial="${
                     esc(String(localized(product.nome) || "?").charAt(0))
-                }">${image}</div></div>${
+                }">${image}</div></div>${backLink}${
                     valid(product.descricao)
                         ? `<div class="section-block" id="descricao"><div class="section-head"><span class="eyebrow">${
                             tr("Sobre este produto", "About this product")
