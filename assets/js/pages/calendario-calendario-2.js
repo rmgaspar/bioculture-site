@@ -510,9 +510,34 @@
                 }</p></div></a>`;
             }
 
+            function nameChipHTML(item) {
+                const hasImage = item.imagem && item.imagem !== "-";
+                return `<a class="name-chip${hasImage ? "" : " no-image"}" href="/ecossistemas/especie-detalhe.html?id=${
+                    encodeURIComponent(item.id)
+                }">${
+                    hasImage
+                        ? `<img src="${escapeHtml(item.imagem)}" alt="" loading="lazy" onerror="this.remove();this.closest('a').classList.add('no-image')">`
+                        : ""
+                }<span>${escapeHtml(item.nome_comum)}</span></a>`;
+            }
+
+            function chooseLocationPrompt(kind) {
+                const message = isEn()
+                    ? `Choose a location at the bottom of the side menu to see the ${kind} recorded for your region.`
+                    : `Escolha uma localização na base do menu lateral para ver ${kind === "pests" ? "as pragas sazonais" : "a flora invasora"} registada${kind === "pests" ? "s" : ""} para a sua região.`;
+                return `<div class="empty">${message} <button type="button" class="link-button" onclick="document.getElementById('guide-location-button')?.click()">${
+                    isEn() ? "Choose location →" : "Escolher localização →"
+                }</button></div>`;
+            }
+
             function renderPests() {
-                const all = seasonalPests(viewedDate.getMonth());
                 const button = document.getElementById("toggle-pests");
+                if (!infoGlobal) {
+                    document.getElementById("pest-grid").innerHTML = chooseLocationPrompt("pests");
+                    button.style.display = "none";
+                    return;
+                }
+                const all = seasonalPests(viewedDate.getMonth());
                 if (!all.length) {
                     // No pest matches this month's keywords — the full inventory already lives in the
                     // searchable catalogue below, so point there instead of repeating all 57 entries here.
@@ -524,13 +549,19 @@
                     button.style.display = "none";
                     return;
                 }
-                const visible = all.slice(0, showMorePests ? 12 : 6);
-                document.getElementById("pest-grid").innerHTML = visible.map(pestCardHTML).join("");
-                button.style.display = all.length > 6 ? "inline-block" : "none";
-                button.textContent = showMorePests ? "Recolher" : "Ver mais pragas sazonais";
+                const visible = all.slice(0, showMorePests ? 24 : 10);
+                document.getElementById("pest-grid").innerHTML = visible.map(nameChipHTML).join("");
+                button.style.display = all.length > 10 ? "inline-block" : "none";
+                button.textContent = showMorePests ? "Recolher" : `Ver mais pragas sazonais (${all.length} no total)`;
             }
 
             function renderFlora() {
+                const button = document.getElementById("toggle-flora");
+                if (!infoGlobal) {
+                    document.getElementById("flora-grid").innerHTML = chooseLocationPrompt("flora");
+                    button.style.display = "none";
+                    return;
+                }
                 const names = infoGlobal?.biomas?.flora_invasora || [];
                 const local = names.map((name) => {
                     const n = normalize(name);
@@ -541,7 +572,6 @@
                     );
                 }).filter(Boolean);
                 const unique = [...new Map(local.map((item) => [item.id, item])).values()];
-                const button = document.getElementById("toggle-flora");
                 if (!unique.length) {
                     // No confirmed regional match — the full inventory already lives in the
                     // searchable catalogue below, so point there instead of repeating all 111 entries here.
@@ -553,9 +583,9 @@
                     button.style.display = "none";
                     return;
                 }
-                const visible = unique.slice(0, showMoreFlora ? 12 : 6);
-                document.getElementById("flora-grid").innerHTML = visible.map(floraCardHTML).join("");
-                button.style.display = unique.length > 6 ? "inline-block" : "none";
+                const visible = unique.slice(0, showMoreFlora ? 24 : 10);
+                document.getElementById("flora-grid").innerHTML = visible.map(nameChipHTML).join("");
+                button.style.display = unique.length > 10 ? "inline-block" : "none";
                 button.textContent = showMoreFlora
                     ? (isEn() ? "Collapse" : "Recolher")
                     : (isEn() ? `See more invasive species (${unique.length} in total)` : `Ver mais espécies invasoras (${unique.length} no total)`);
@@ -628,8 +658,7 @@
                     );
                     [locationsDB, pragasDB, floraDB, horticolasDB, dicasDB] = data;
                     const saved = localStorage.getItem("biocultura_region");
-                    infoGlobal = locationsDB.find((item) => String(item.id) === String(saved)) ||
-                        locationsDB[0];
+                    infoGlobal = locationsDB.find((item) => String(item.id) === String(saved)) || null;
                     renderLocalProfile();
                     renderCalendar();
                     fetchWeather();
