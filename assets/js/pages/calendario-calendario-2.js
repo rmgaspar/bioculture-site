@@ -16,6 +16,51 @@
                 { id: "vertebrados", pt: "Vertebrados e outros", en: "Vertebrates and other" },
                 { id: "flora-invasora", pt: "Flora invasora", en: "Invasive flora" },
             ];
+            const WEEK_PALETTE = [
+                { color: "#2f6f9e", bg: "#eaf4fb" },
+                { color: "#4c7a34", bg: "#eef4e9" },
+                { color: "#a66f50", bg: "#f7ede4" },
+                { color: "#3f7373", bg: "#e9f3f2" },
+            ];
+            const WEEK_ICONS = {
+                eye: '<path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="3"/>',
+                cycle: '<path d="M5 12a7 7 0 0 1 12-4.9"/><path d="M19 12a7 7 0 0 1-12 4.9"/><path d="M17 3.5v3.6h-3.6"/><path d="M7 20.5v-3.6h3.6"/>',
+                nest: '<path d="M4 11 12 4l8 7"/><path d="M6.5 10v8.5a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1V10"/>',
+                tool: '<path d="M15.5 6.5a3.8 3.8 0 0 0-5 5L5 17l2 2 5.5-5.5a3.8 3.8 0 0 0 5-5l-2.5 2.5-2-2Z"/>',
+                seed: '<path d="M12 21v-7"/><path d="M12 14c0-4 3-6.5 6.5-6.5C18.5 11.5 16 14 12 14Z"/><path d="M12 14c0-3-2.3-5-5.5-5C6.5 12 8.8 14 12 14Z"/>',
+                shield: '<path d="M12 3 5 5.5V11c0 4.6 3 8.3 7 9.7 4-1.4 7-5.1 7-9.7V5.5L12 3Z"/>',
+                drop: '<path d="M12 3C12 3 5.5 10.8 5.5 15A6.5 6.5 0 0 0 12 21.5 6.5 6.5 0 0 0 18.5 15C18.5 10.8 12 3 12 3Z"/>',
+                mulch: '<path d="M4 8c2.5-1.3 5 1.3 8 0s5.5-1.3 8 0"/><path d="M4 13c2.5-1.3 5 1.3 8 0s5.5-1.3 8 0"/><path d="M4 18c2.5-1.3 5 1.3 8 0s5.5-1.3 8 0"/>',
+                basket: '<path d="M5.5 10h13l-1.4 8.6a2 2 0 0 1-2 1.7H8.9a2 2 0 0 1-2-1.7L5.5 10Z"/><path d="M8.5 10V7.5a3.5 3.5 0 0 1 7 0V10"/>',
+                shade: '<path d="M4 12a8 8 0 0 1 16 0Z"/><path d="M12 12v7.5a1.8 1.8 0 0 1-3.4.8"/><path d="M12 4.5V3"/>',
+                compost: '<path d="M4.5 19c0-4.7 3.4-8 7.5-8s7.5 3.3 7.5 8"/><path d="M12 11V4"/><path d="M12 5.2c-1.8 0-3 1.4-2.8 3"/>',
+            };
+            function weekIcon(title) {
+                const t = normalize(title);
+                if (/observar/.test(t)) return WEEK_ICONS.eye;
+                if (/rotac|planear/.test(t)) return WEEK_ICONS.cycle;
+                if (/habitat|abrigo|acolher|auxiliar/.test(t)) return WEEK_ICONS.nest;
+                if (/ferramenta/.test(t)) return WEEK_ICONS.tool;
+                if (/seme(ar|nte)/.test(t)) return WEEK_ICONS.seed;
+                if (/proteger/.test(t)) return WEEK_ICONS.shield;
+                if (/rega|humidade|agua|infiltra/.test(t)) return WEEK_ICONS.drop;
+                if (/cobrir|cobertura/.test(t)) return WEEK_ICONS.mulch;
+                if (/colher/.test(t)) return WEEK_ICONS.basket;
+                if (/sombra/.test(t)) return WEEK_ICONS.shade;
+                if (/compost/.test(t)) return WEEK_ICONS.compost;
+                return WEEK_ICONS.seed;
+            }
+            const PRACTICE_COLORS = {
+                "Solo e cobertura": "#6b8f47",
+                "Compostagem e húmus": "#8a5a3c",
+                "Planeamento e fertilidade": "#a66f50",
+                "Água e irrigação": "#2f6f9e",
+                "Sementeiras e propagação": "#4c7a34",
+                "Sementes e diversidade genética": "#7d3350",
+                "Biodiversidade funcional": "#1e8449",
+                "Prevenção sem pesticidas": "#c9762f",
+                "Árvores e sistemas perenes": "#3f7373",
+            };
             const months = [
                 "janeiro",
                 "fevereiro",
@@ -403,9 +448,18 @@
                 document.getElementById("week-plan").innerHTML = seasonal[season].map((
                     [title, text],
                     index,
-                ) => `<article class="week-task"><span class="task-number">0${
-                    index + 1
-                }</span><h3>${title}</h3><p>${text}</p></article>`).join("");
+                ) => {
+                    const palette = WEEK_PALETTE[index % WEEK_PALETTE.length];
+                    return `<article class="week-task"><span class="week-icon" style="color:${
+                        palette.color
+                    };background:${
+                        palette.bg
+                    }"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${
+                        weekIcon(title)
+                    }</svg></span><span class="task-number">0${
+                        index + 1
+                    }</span><h3>${title}</h3><p>${text}</p></article>`;
+                }).join("");
             }
 
             function practiceIdsFor(month) {
@@ -452,17 +506,23 @@
                 const selected = practiceIdsFor(viewedDate.getMonth()).map((id) =>
                     dicasDB.find((item) => item.id === id)
                 ).filter(Boolean);
-                document.getElementById("practice-grid").innerHTML = selected.map((item) =>
-                    `<article class="practice-card"><h3>${
+                document.getElementById("practice-grid").innerHTML = selected.map((item) => {
+                    const color = PRACTICE_COLORS[item.categoria] || "#4c7a34";
+                    const image = item.imagem?.src
+                        ? `<div class="practice-media"><img src="/${escapeHtml(item.imagem.src)}" alt="${
+                            escapeHtml(item.imagem.alt || item.titulo)
+                        }" loading="lazy"></div>`
+                        : "";
+                    return `<article class="practice-card" style="--practice-color:${color}">${image}<div class="practice-body"><span class="practice-meta">${
+                        escapeHtml(item.categoria)
+                    } · ${escapeHtml(item.nivel)}</span><h3>${
                         escapeHtml(item.titulo)
-                    }</h3><span class="practice-meta">${escapeHtml(item.categoria)} · ${
-                        escapeHtml(item.nivel)
-                    }</span><p>${
+                    }</h3><p>${
                         escapeHtml(item.resumo)
-                    }</p><details><summary>Passos essenciais</summary><ol>${
+                    }</p><p class="practice-steps-label">Passos essenciais</p><ol class="practice-steps">${
                         (item.passos || []).map((step) => `<li>${escapeHtml(step)}</li>`).join("")
-                    }</ol></details></article>`
-                ).join("");
+                    }</ol></div></article>`;
+                }).join("");
             }
 
             function seasonalPests(month) {
