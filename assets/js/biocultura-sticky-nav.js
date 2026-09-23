@@ -21,7 +21,11 @@
 
         const setActive = () => {
             if (!sections.length) return;
-            const offset = (navigation.classList.contains("bio-nav-pinned") ? navigation.getBoundingClientRect().height : 0) + 48;
+            // Must stay >= the site's scroll-margin-top convention (6.5rem/104px) so a clicked
+            // link's target — landed there by the browser's own anchor jump — is immediately
+            // recognised as current, instead of leaving the previously active link stuck.
+            const navHeight = navigation.classList.contains("bio-nav-pinned") ? navigation.getBoundingClientRect().height : 0;
+            const offset = Math.max(navHeight + 40, 112);
             let current = null;
             sections.forEach((item) => {
                 if (item.el.getBoundingClientRect().top - offset <= 0) current = item;
