@@ -2,7 +2,6 @@
     "use strict";
 
     const consolidatedLegacyRoutes = {
-        "/energia/energia.html": "/energia/energy.html#portugal",
         "/observatorio/vetores-pressao.html": "/observatorio/observatorio-terra.html"
     };
     if (consolidatedLegacyRoutes[location.pathname]) {
