@@ -1,4 +1,5 @@
 
+(function () {
             const colors = ["#c62828", "#2e7d32", "#607d8b"];
             const isEnglish = new URLSearchParams(location.search).get("lang") === "en" || !!window.BioCultureI18n?.isEnglish;
             const pick = (item, key = "name") => item?.[`${key}_${isEnglish ? "en" : "pt"}`] || item?.[`${key}_pt`] || "";
@@ -51,14 +52,14 @@
                         isEnglish ? `${dc.ano}; estimated global electricity, excluding cryptocurrency mining` : `${dc.ano}; eletricidade global estimada, sem criptomoedas`,
                     ],
                 ];
-                document.getElementById("summary-grid").innerHTML = cards.map(([title, value, text]) =>
+                document.getElementById("global-summary-grid").innerHTML = cards.map(([title, value, text]) =>
                     `<article class="summary-card"><h3>${
                         escapeHtml(title)
                     }</h3><span class="summary-value">${escapeHtml(value)}</span><p>${
                         escapeHtml(text)
                     }</p></article>`
                 ).join("");
-                document.getElementById("overview-text").textContent =
+                document.getElementById("global-overview-text").textContent =
                     isEnglish ? "Environmental pressure does not come from one activity. Energy, food, transport, construction and consumption require materials, occupy land and generate emissions and waste. Responses must also be integrated: a technology can reduce fossil fuels while increasing demand for minerals, electricity, water or land." : "A pressão ambiental não vem de uma única atividade. Energia, alimentação, transportes, construção e consumo exigem materiais, ocupam território e produzem emissões e resíduos. As soluções também precisam de ser integradas: uma tecnologia pode reduzir combustíveis fósseis e, ao mesmo tempo, aumentar a procura de minerais, eletricidade, água ou solo.";
             }
 
@@ -115,7 +116,7 @@
                         waste.fonte_id,
                     ],
                 ];
-                document.getElementById("chart-grid").innerHTML = cards.map((item, index) => {
+                document.getElementById("global-chart-grid").innerHTML = cards.map((item, index) => {
                     const link = getSource(data, item[3]);
                     return `<article class="chart-box"><h3>${
                         escapeHtml(item[0])
@@ -193,12 +194,8 @@
             function translatePressureShell() {
                 if (!isEnglish) return;
                 document.documentElement.lang = "en";
-                document.title = "bioCulture — Global Pressure Systems";
                 const replacements = [
-                    [".category-label", "Planetary pressure observatory"],
-                    ["#page-title", "Planetary <br><em>Pressure Systems</em>"],
-                    [".hero-intro", "The planet does not experience isolated sectors. It experiences extraction, occupation, emissions, pollution and waste accumulated in the same territory and along the same chain."],
-                    [".overview h2", "The global picture in a few words"],
+                    ["#panorama-global .overview h2", "The global picture in a few words"],
                     ["#system-chain .chapter", "01 · Material cycle"], ["#system-chain h2", "Pressure begins before the product"],
                     ["#system-chain .pressure-heading p", "Following the whole chain prevents impacts from disappearing between borders, suppliers and life-cycle stages."],
                     ["#pressure-systems .chapter", "02 · Systems"], ["#pressure-systems h2", "The great machines of transformation"],
@@ -212,8 +209,7 @@
                     [".reading-box h3", "How to interpret this data"], ["#connections h2", "How pressures connect"], ["#connections p", "Simple explanations of mechanisms; additional detail remains collapsed."]
                 ];
                 replacements.forEach(([selector, html]) => { const node = document.querySelector(selector); if (node) node.innerHTML = html; });
-                document.querySelector(".pressure-nav").innerHTML = '<a href="#system-chain">Cycle</a><a href="#pressure-systems">Systems</a><a href="#global-signals">Indicators</a><a href="#planetary-state">State</a><a href="#connections">Connections</a><a href="#method">Method</a>';
-                document.querySelector(".reading-box ul").innerHTML = "<li>Observed values, estimates and projections are identified separately.</li><li>A world average can conceal severe local impacts.</li><li>Production and consumption can occur in different regions because of trade.</li><li>Electricity, water and land use should not be converted using universal factors.</li>";
+                document.querySelector("#panorama-global .reading-box ul").innerHTML = "<li>Observed values, estimates and projections are identified separately.</li><li>A world average can conceal severe local impacts.</li><li>Production and consumption can occur in different regions because of trade.</li><li>Electricity, water and land use should not be converted using universal factors.</li>";
             }
 
             function renderPressureArchitecture(architecture) {
@@ -275,13 +271,11 @@
                     renderPressureNews();
                 } catch (error) {
                     console.error("Erro ao carregar os vetores globais:", error);
-                    document.getElementById("summary-grid").innerHTML =
+                    document.getElementById("global-summary-grid").innerHTML =
                         `<div class="data-error"><strong>Não foi possível carregar os indicadores.</strong><br>${
                             escapeHtml(error.message)
                         }</div>`;
                 }
             }
-            fetch("/sidebar-content.html?v=24").then((response) => response.text()).then((html) => {
-                document.getElementById("sidebar").innerHTML = html;
-            }).catch(() => {});
             loadData();
+})();
