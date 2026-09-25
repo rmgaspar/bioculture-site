@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import assert from 'node:assert/strict';
 const read = name => JSON.parse(readFileSync(name, 'utf8'));
 const data = read('data/gestao-solucoes.json');
-const targets = new Set([...read('data/pragas.json'), ...read('data/flora_invasora.json')].map(x => x.id));
+const targets = new Set([...read('data/pragas.json'), ...read('data/flora_invasora.json'), ...read('data/fauna_invasora.json')].map(x => x.id));
 const solutions = new Set(read('catalogo/solucoes.json').map(x => x.id));
 const used = new Set(), ids = new Set();
 const translated = value => ['pt', 'en'].every(lang => typeof value?.[lang] === 'string' && value[lang].trim());

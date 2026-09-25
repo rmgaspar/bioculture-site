@@ -10,7 +10,8 @@ const categories = read('catalogo/categorias.json');
 const profiles = read('data/gestao-solucoes.json').perfis;
 const pests = read('data/pragas.json');
 const weeds = read('data/flora_invasora.json');
-const targetName = id => pests.find(p => p.id === id)?.nome_comum || weeds.find(w => w.id === id)?.nome_comum || id;
+const fauna = read('data/fauna_invasora.json');
+const targetName = id => pests.find(p => p.id === id)?.nome_comum || weeds.find(w => w.id === id)?.nome_comum || fauna.find(f => f.id === id)?.nome_comum || id;
 const allProducts = read('catalogo/produtos.json');
 const translate = name => { assert(name.pt && name.en); return {pt:name.pt,en:name.en}; };
 // Explicit public projection. Never spread research, supplier, verification or commercial-negotiation records.

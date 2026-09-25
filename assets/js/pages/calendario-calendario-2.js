@@ -2,6 +2,7 @@
             let locationsDB = [],
                 pragasDB = [],
                 floraDB = [],
+                faunaDB = [],
                 dicasDB = [],
                 horticolasDB = {},
                 infoGlobal = null,
@@ -15,6 +16,7 @@
                 { id: "ornamentais", pt: "Plantas ornamentais e floresta", en: "Ornamentals and forestry" },
                 { id: "vertebrados", pt: "Vertebrados e outros", en: "Vertebrates and other" },
                 { id: "flora-invasora", pt: "Flora invasora", en: "Invasive flora" },
+                { id: "fauna-invasora", pt: "Fauna invasora", en: "Invasive fauna" },
             ];
             const WEEK_PALETTE = [
                 { color: "#2f6f9e", bg: "#eaf4fb" },
@@ -570,6 +572,22 @@
                 }</p></div></a>`;
             }
 
+            function faunaCardHTML(item) {
+                return `<a class="catalog-card" href="/ecossistemas/especie-detalhe.html?id=${
+                    encodeURIComponent(item.id)
+                }"><img src="${
+                    escapeHtml(item.imagem || "/images/pragas-placeholder.svg")
+                }" alt="${
+                    escapeHtml(item.nome_comum)
+                }" loading="lazy" onerror="this.onerror=null;this.src='/images/pragas-placeholder.svg'"><div class="catalog-card-body"><small>${
+                    escapeHtml(item.grupo_taxonomico || "Fauna invasora")
+                }</small><h3>${
+                    escapeHtml(item.nome_comum)
+                }</h3><p>${
+                    escapeHtml(item.nome_cientifico || "Consultar ficha completa")
+                }</p></div></a>`;
+            }
+
             function nameChipHTML(item) {
                 const hasImage = item.imagem && item.imagem !== "-";
                 return `<a class="name-chip${hasImage ? "" : " no-image"}" href="/ecossistemas/especie-detalhe.html?id=${
@@ -653,7 +671,7 @@
 
             function pestCatalogGroupMatch(item, group) {
                 if (group === "all") return true;
-                if (group === "flora-invasora") return false;
+                if (group === "flora-invasora" || group === "fauna-invasora") return false;
                 return (item.grupos || []).includes(group);
             }
 
@@ -661,21 +679,24 @@
                 if (reset) pestCatalogLimit = 12;
                 const query = normalize(document.getElementById("pest-catalog-search")?.value),
                     filter = document.getElementById("pest-catalog-filter")?.value || "all";
-                const pests = filter === "flora-invasora" ? [] : pragasDB
+                const pests = filter === "flora-invasora" || filter === "fauna-invasora" ? [] : pragasDB
                     .filter((item) => pestCatalogGroupMatch(item, filter))
                     .filter((item) => !query || normalize(`${item.nome_comum} ${item.nome_cientifico} ${(item.plantas_afetadas || []).join(" ")}`).includes(query))
                     .map((item) => ({ item, kind: "praga" }));
                 const flora = filter !== "all" && filter !== "flora-invasora" ? [] : floraDB
                     .filter((item) => !query || normalize(`${item.nome_comum} ${item.nome_cientifico} ${item.habitat || ""}`).includes(query))
                     .map((item) => ({ item, kind: "flora" }));
-                const entries = [...pests, ...flora].sort((a, b) =>
+                const fauna = filter !== "all" && filter !== "fauna-invasora" ? [] : faunaDB
+                    .filter((item) => !query || normalize(`${item.nome_comum} ${item.nome_cientifico} ${item.habitat || ""}`).includes(query))
+                    .map((item) => ({ item, kind: "fauna" }));
+                const entries = [...pests, ...flora, ...fauna].sort((a, b) =>
                     String(a.item.nome_comum).localeCompare(String(b.item.nome_comum), "pt")
                 );
                 document.getElementById("pest-catalog-summary").textContent = isEn()
-                    ? `${format(entries.length)} records found · ${format(pragasDB.length + floraDB.length)} in the full inventory`
-                    : `${format(entries.length)} fichas encontradas · ${format(pragasDB.length + floraDB.length)} no inventário completo`;
+                    ? `${format(entries.length)} records found · ${format(pragasDB.length + floraDB.length + faunaDB.length)} in the full inventory`
+                    : `${format(entries.length)} fichas encontradas · ${format(pragasDB.length + floraDB.length + faunaDB.length)} no inventário completo`;
                 document.getElementById("pest-catalog-grid").innerHTML = entries.slice(0, pestCatalogLimit).map(({ item, kind }) =>
-                    kind === "praga" ? pestCardHTML(item) : floraCardHTML(item)
+                    kind === "praga" ? pestCardHTML(item) : kind === "flora" ? floraCardHTML(item) : faunaCardHTML(item)
                 ).join("") || '<div class="empty">Nenhum registo encontrado com estes critérios.</div>';
                 const more = document.getElementById("pest-catalog-more");
                 more.hidden = entries.length <= pestCatalogLimit;
@@ -705,6 +726,7 @@
                         "/data/bioregioes.json",
                         "/data/pragas.json",
                         "/data/flora_invasora.json",
+                        "/data/fauna_invasora.json",
                         "/data/horticolas_master.json",
                         "/data/dicas.json",
                     ];
@@ -716,7 +738,7 @@
                             })
                         ),
                     );
-                    [locationsDB, pragasDB, floraDB, horticolasDB, dicasDB] = data;
+                    [locationsDB, pragasDB, floraDB, faunaDB, horticolasDB, dicasDB] = data;
                     const saved = localStorage.getItem("biocultura_region");
                     infoGlobal = locationsDB.find((item) => String(item.id) === String(saved)) || null;
                     renderLocalProfile();

@@ -71,17 +71,17 @@
                     <p class="source">${tr("Revisão destas orientações", "Guidance reviewed")}: ${esc(profile.data_revisao)} · ${tr("As fontes técnicas não confirmam autorizações comerciais em Portugal.", "Technical sources do not establish commercial authorisations in Portugal.")}</p></div>`;
             }
             function invasiveSections(esp) {
-                if (esp.grupo !== "Flora Invasora") return "";
+                if (esp.grupo !== "Flora Invasora" && esp.grupo !== "Fauna Invasora") return "";
                 return `<div class="section-block" id="prevencao"><div class="section-head"><span class="eyebrow">${tr("Prevenção", "Prevention")}</span><div><h2>${tr("Conter a expansão desde o início", "Contain spread from the start")}</h2><p>${tr("Confirmar a espécie e preparar a intervenção de acordo com o local.", "Confirm the species and plan action for the site.")}</p></div></div><div class="grid">
                     ${textPanel(tr("Deteção precoce", "Early detection"), esp.deteccao_precoce)}
                     ${textPanel(tr("Prevenir a dispersão", "Prevent spread"), esp.prevencao)}
                     ${textPanel(tr("Reprodução e dispersão", "Reproduction and spread"), esp.reproducao_e_dispersao)}
                     ${textPanel(tr("Segurança no local", "Site safety"), esp.seguranca)}</div></div>
-                    <div class="section-block" id="intervencao"><div class="section-head"><span class="eyebrow">${tr("Controlo e recuperação", "Control and recovery")}</span><div><h2>${tr("Intervir e acompanhar o terreno", "Act and follow up on the site")}</h2><p>${tr("A remoção inicial deve ter continuidade: resíduos, rebentação e recuperação da vegetação.", "Initial removal needs follow-up: plant waste, regrowth and vegetation recovery.")}</p></div></div><div class="grid">
+                    <div class="section-block" id="intervencao"><div class="section-head"><span class="eyebrow">${tr("Controlo e recuperação", "Control and recovery")}</span><div><h2>${tr("Intervir e acompanhar o terreno", "Act and follow up on the site")}</h2><p>${tr("A remoção inicial deve ter continuidade: resíduos, rebentação ou reincidência, e recuperação do habitat.", "Initial removal needs follow-up: waste, regrowth or reoccurrence, and habitat recovery.")}</p></div></div><div class="grid">
                     ${textPanel(tr("Método indicado no inventário", "Method recorded in the inventory"), esp.combate)}
-                    ${textPanel(tr("Destino dos resíduos", "Plant waste management"), esp.gestao_residuos)}
+                    ${textPanel(tr("Destino dos resíduos", "Waste management"), esp.gestao_residuos)}
                     ${textPanel(tr("Monitorização", "Monitoring"), esp.monitorizacao)}
-                    ${textPanel(tr("Restaurar o coberto", "Restore vegetation cover"), esp.restauracao)}
+                    ${textPanel(tr("Restaurar o habitat", "Restore habitat"), esp.restauracao)}
                     ${textPanel(tr("Controlo biológico", "Biological control"), esp.controlo_biologico)}
                     ${sourcePanel([esp.fonte, ...arr(esp.fontes_complementares)])}</div></div>`;
             }
@@ -189,7 +189,7 @@
             }
             function render(esp, master, guidance, horticolas) {
                 const isPest = esp.grupo === "Sanidade Vegetal";
-                const isInvasive = esp.grupo === "Flora Invasora";
+                const isInvasive = esp.grupo === "Flora Invasora" || esp.grupo === "Fauna Invasora";
                 const tax = arr(esp.taxonomia_completa).join(" › ");
                 const conservation = [
                     valid(esp.iucn_global) ? `IUCN: ${esp.iucn_global}` : "",
@@ -268,13 +268,13 @@
             }
             function managementNav(esp, guidance) {
                 const pest = esp.grupo === "Sanidade Vegetal";
-                if (!pest && esp.grupo !== "Flora Invasora") return "";
+                if (!pest && esp.grupo !== "Flora Invasora" && esp.grupo !== "Fauna Invasora") return "";
                 const items = pest ? [["diagnostico", tr("Diagnóstico", "Diagnosis")]] : [];
                 items.push(["prevencao", tr("Prevenção", "Prevention")], ["intervencao", tr("Intervenção", "Intervention")]);
                 if (guidance?.perfis?.some((p) => p.alvos.includes(esp.id))) items.push(["solucoes", tr("Soluções práticas", "Practical solutions")]);
                 return `<nav class="management-nav" aria-label="${tr("Nesta ficha", "On this page")}">${items.map(([id, label]) => `<a href="#${id}">${label}</a>`).join("")}</nav>`;
             }
-            function resolveSpecies(id, master, pests, invasives) {
+            function resolveSpecies(id, master, pests, invasives, faunas) {
                 const base = master[id];
                 // Specialised records override the general inventory, including scientific-name aliases.
                 const match = (rows) => rows.find((x) => x.id === id || fallbackId(x) === id) ||
@@ -286,6 +286,10 @@
                 if (invasive) return { ...base, ...invasive, nome: invasive.nome_comum || invasive.nome,
                     grupo: "Flora Invasora", estatuto: "Invasora", invasora: true,
                     sintese: invasive.descricao || invasive.impacto };
+                const fauna = match(faunas);
+                if (fauna) return { ...base, ...fauna, nome: fauna.nome_comum || fauna.nome,
+                    grupo: "Fauna Invasora", estatuto: "Invasora", invasora: true,
+                    sintese: fauna.descricao || fauna.impacto };
                 return base;
             }
             async function load() {
@@ -296,8 +300,8 @@
                     return;
                 }
                 try {
-                    const [master, pests, invasives, guidance, horticolas] = await Promise.all([
-                        ...["especies_master", "pragas", "flora_invasora"].map((f) =>
+                    const [master, pests, invasives, faunas, guidance, horticolas] = await Promise.all([
+                        ...["especies_master", "pragas", "flora_invasora", "fauna_invasora"].map((f) =>
                             fetch(`/data/${f}.json`).then((r) => {
                                 if (!r.ok) throw Error(`HTTP ${r.status}`);
                                 return r.json();
@@ -308,7 +312,7 @@
                         }).catch(() => null),
                         fetch("/data/horticolas_master.json").then((r) => r.json()).catch(() => null),
                     ]);
-                    const esp = resolveSpecies(id, master, pests, invasives);
+                    const esp = resolveSpecies(id, master, pests, invasives, faunas);
                     if (!esp) throw Error("not-found");
                     render(esp, master, guidance, horticolas);
                 } catch (e) {
