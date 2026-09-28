@@ -352,10 +352,11 @@
             const wanted = new Set(pageRule[1]);
             data = data.filter((item) => window.BioCultureNews.categories(item).some((category) => wanted.has(category)));
         }
-        const globalPages = /\/(water|air|soil|biodiversity|energy|renewables-and-territory|ai-data-centres|mining|livestock|regeneration-calendar|living-vineyard|vetores-pressao-global)\.html$/;
-        const portugalPages = /\/(agua|ar|solo|biodiversidade|energia|transicao-etica|digital|mineracao|pecuaria|calendario|enologia|observatorio-terra)\.html$/;
-        if (globalPages.test(location.pathname)) return data.filter((item) => window.BioCultureNews.visibleIn(item, "global"));
-        if (portugalPages.test(location.pathname)) return data.filter((item) => window.BioCultureNews.visibleIn(item, "portugal"));
+        // Estas páginas já juntam a leitura global ("No mundo") e a nacional
+        // ("Portugal e ilhas") na mesma página, pelo que o widget de notícias
+        // deve mostrar as duas escalas, não só a portuguesa.
+        const mergedPages = /\/(agua|ar|solo|biodiversidade|energia|transicao-etica|digital|mineracao|pecuaria|calendario|enologia|observatorio-terra)\.html$/;
+        if (mergedPages.test(location.pathname)) return data.filter((item) => window.BioCultureNews.visibleIn(item, "all"));
         return data;
     }
 
