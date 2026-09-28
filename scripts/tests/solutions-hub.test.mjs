@@ -5,7 +5,7 @@ const read = name => JSON.parse(readFileSync(name,'utf8'));
 const data = read('data/solucoes-catalogo.json');
 const internal = read('catalogo/solucoes.json');
 assert.equal(data.vendas_ativas,false);
-assert.equal(data.solucoes.length,53);assert.equal(data.categorias.length,8);
+assert.equal(data.solucoes.length,71);assert.equal(data.categorias.length,8);
 assert.deepEqual(data.solucoes.map(s=>s.id),internal.map(s=>s.id));
 for(const s of data.solucoes){
     assert.deepEqual(Object.keys(s).sort(),['id','nome','categoria_id','tipo','estado','tecnica_id','fichas','produtos'].sort());
@@ -21,10 +21,10 @@ function context(en=false,hash=''){
     return {api:ctx.window.BioCultureSolutions,redirect:()=>redirect};
 }
 const {api}=context();
-assert.equal(api.filterSolutions(data,'','all').length,53);
+assert.equal(api.filterSolutions(data,'','all').length,71);
 assert.equal(api.filterSolutions(data,'acidos humicos','all')[0].id,'acidos-humicos');
 assert.equal(api.filterSolutions(data,'mycorrhizae','all')[0].id,'micorrizas');
-assert.equal(api.filterSolutions(data,'','fertilidade').length,14);
+assert.equal(api.filterSolutions(data,'','fertilidade').length,19);
 assert.equal(api.filterSolutions(data,'composto','pragas').length,0);
 const soap=data.solucoes.find(s=>s.id==='sabao-potassico');
 assert(api.card(soap,data).includes('id=pulgoes#solucoes'));
@@ -57,7 +57,7 @@ assert.equal(bokashi.tipo,'pratica');
 assert.equal(bokashi.tecnica_id,'compostagem-bokashi-nota');
 // ...but the produtos catalogue itself must never list a practice: it belongs only in the técnicas catalogue.
 const publicCatalogue=api.productCatalogue(data);
-assert.equal(publicCatalogue.solucoes.length,45);
+assert.equal(publicCatalogue.solucoes.length,63);
 assert(publicCatalogue.solucoes.every(s=>s.tipo!=='pratica'));
 assert(!publicCatalogue.solucoes.some(s=>s.id==='bokashi'));
 const dicas=read('data/dicas.json');
