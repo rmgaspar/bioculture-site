@@ -116,7 +116,7 @@
                             tr("Contacte-nos para confirmar disponibilidade, prazo de entrega e forma de pagamento.",
                                 "Contact us to confirm availability, delivery time and payment.")
                         }</p><a class="order-cta" href="${esc(order)}">${tr("Contactar para encomendar →", "Contact to order →")}</a>`
-                        : `<h3>${tr("Ainda não disponível para venda", "Not yet available to buy")}</h3>`
+                        : `<h3>${tr("Brevemente", "Coming soon")}</h3>`
                 }</div></div>`;
                 document.title = `${localized(product.nome)} — bioCulture`;
             }
