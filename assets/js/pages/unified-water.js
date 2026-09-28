@@ -1,6 +1,7 @@
 (function(){
   'use strict';
   var DATA='/data/';
+  var EMPTY_STATE_ICON='<svg aria-hidden="true" class="empty-state-icon" focusable="false" viewBox="0 0 64 64"><circle cx="26" cy="27" r="17"></circle><path d="M9 27h34M26 10c5 5 7 10.6 7 17s-2 12-7 17-7-10.6-7-17 2-12 7-17z"></path><path d="M45 29c7.2 0 13 5.6 13 12.5C58 50 45 60 45 60s-13-10-13-18.5C32 34.6 37.8 29 45 29z"></path><circle cx="45" cy="40.5" r="4.2"></circle></svg>';
   var charts=[];
   var countryCharts=[];
   var EN=!!window.BioCultureI18n?.isEnglish;
@@ -37,7 +38,7 @@
     select.addEventListener('change',function(){
       var entity=countries.entities.find(function(e){return e.geography.m49===select.value});var panel=document.getElementById('country-panel');
       countryCharts.forEach(function(c){c.destroy()});countryCharts=[];
-      if(!entity){panel.innerHTML='<div class="empty-state"><strong>'+tr('Escolha uma geografia','Choose a geography')+'</strong><span>'+tr('Os indicadores e a evolução aparecerão aqui.','Indicators and trends will appear here.')+'</span></div>';return}
+      if(!entity){panel.innerHTML='<div class="empty-state">'+EMPTY_STATE_ICON+'<strong>'+tr('Escolha uma geografia','Choose a geography')+'</strong><span>'+tr('Os indicadores e a evolução aparecerão aqui.','Indicators and trends will appear here.')+'</span></div>';return}
       function card(id,label){var x=entity.latest[id];return '<article class="country-value"><small>'+esc(label)+'</small>'+(x?'<strong>'+fmt(x.value,1)+'%</strong><p>'+x.year+(x.flags.estimated?tr(' · valor assinalado como estimado',' · flagged as estimated'):'')+'</p>':'<strong>—</strong><p>'+tr('Sem valor publicado nesta seleção.','No published value for this selection.')+'</p>')+'</article>'}
       var accessRows=series(timeseries,'sdg_6_1_1_safely_managed_drinking_water',select.value);
       var stressRows=series(timeseries,'sdg_6_4_2_water_stress',select.value);
