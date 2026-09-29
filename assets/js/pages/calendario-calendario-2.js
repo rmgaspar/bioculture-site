@@ -781,6 +781,10 @@
                         showMoreFlora = !showMoreFlora;
                         renderFlora();
                     };
+                    if (location.hash) {
+                        const target = document.getElementById(location.hash.slice(1));
+                        if (target) target.scrollIntoView();
+                    }
                 } catch (error) {
                     console.error("Erro ao carregar o calendário:", error);
                     document.getElementById("action-grid").innerHTML =
