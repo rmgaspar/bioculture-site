@@ -386,7 +386,7 @@ function alignment() {
 
     const link = document.createElement("link");
     link.rel = "stylesheet";
-    link.href = "/assets/css/biocultura-alignment.css?v=9";
+    link.href = "/assets/css/biocultura-alignment.css?v=10";
     link.dataset.bioculturaAlignment = "true";
     document.head.appendChild(link);
 }
