@@ -28,23 +28,24 @@
         return `/images/categoria-${id}-v1.jpg`;
     }
     function productBlock(product) {
-        const disponibilidade = product.disponivel
-            ? `<span class="hub-tag hub-tag--available">${tr('Disponível','Available')}</span>${product.preco?`<p class="product-price">${esc(money(product.preco))}</p>`:''}`
-            : `<span class="hub-tag hub-tag--soon">${tr('Brevemente disponível','Coming soon')}</span>`;
         const detailHref = link('/services/produto-detalhe.html?id=' + encodeURIComponent(product.id));
         const visual = product.imagem ? `<img class="product-image" src="${esc(product.imagem)}" alt="">` : '';
-        return `${visual}<div class="product-card-body">${product.marca?`<span class="product-brand">${esc(product.marca)}</span>`:''}<h2><a href="${esc(detailHref)}">${esc(text(product.nome))}</a></h2>${disponibilidade}<p class="product-summary">${esc(text(product.descricao_curta))}</p><a class="card-action" href="${esc(detailHref)}">${tr('Ver ficha completa →','View full details →')}</a></div>`;
+        const kicker = product.disponivel ? tr('Disponível','Available') : tr('Brevemente disponível','Coming soon');
+        const price = (product.disponivel && product.preco) ? `<p class="product-price">${esc(money(product.preco))}</p>` : '';
+        return `${visual}<div class="product-card-body">${product.marca?`<span class="product-brand">${esc(product.marca)}</span>`:''}<small class="${product.disponivel?'is-available':'is-soon'}">${esc(kicker)}</small><h3><a href="${esc(detailHref)}">${esc(text(product.nome))}</a></h3><p>${esc(text(product.descricao_curta))}</p>${price}<a class="card-action" href="${esc(detailHref)}">${tr('Ver ficha completa →','View full details →')}</a></div>`;
     }
-    // Category photo is shown once per group (categoryGroup); individual cards stay text-only until each
-    // product has its own photo, to avoid repeating the same stock image across every card in a category.
+    // Cards follow the same visual language as the other catalogues (calendário, pragas): a small
+    // uppercase kicker, a title and a short description, always visible — no accordions.
     function card(solution, data) {
         const product = solution.produtos?.[0];
         const isPratica = solution.tipo === 'pratica';
         if (product) {
             return `<article class="product-card" id="${esc(solution.id)}">${productBlock(product)}</article>`;
         }
-        const references = solution.fichas.map(f => `<li><a href="${esc(link(f.href))}">${esc(f.nome)} →</a></li>`).join('');
-        return `<article class="product-card" id="${esc(solution.id)}"><div class="product-card-body"><h2>${esc(text(solution.nome))}</h2><span class="hub-tag">${isPratica ? tr('Prática em estudo','Practice under study') : tr('Solução em estudo','Solution under study')}</span><details><summary>${tr('O que estamos a preparar','What we are preparing')}</summary><p>${tr('Ficha técnica, utilizações, limitações e documentação. Ainda sem marca ou formulação selecionada.','Technical information, uses, limitations and documentation. No brand or formulation selected yet.')}</p>${references ? `<p>${tr('Antes de escolher, consulte as orientações relacionadas:','Before choosing, read the related guidance:')}</p><ul>${references}</ul>` : `<p>${tr('As orientações específicas serão acrescentadas após revisão das fontes.','Specific guidance will be added after source review.')}</p>`}</details></div></article>`;
+        const kicker = isPratica ? tr('Prática em estudo','Practice under study') : tr('Solução em estudo','Solution under study');
+        const references = solution.fichas.map(f => `<a href="${esc(link(f.href))}">${esc(f.nome)} →</a>`).join(' ');
+        const refsBlock = references ? `<p class="product-refs">${tr('Consulte:','See:')} ${references}</p>` : '';
+        return `<article class="product-card product-card--placeholder" id="${esc(solution.id)}"><div class="product-card-body"><small>${esc(kicker)}</small><h3>${esc(text(solution.nome))}</h3><p>${tr('Ficha técnica, utilizações, limitações e documentação. Ainda sem marca ou formulação selecionada.','Technical information, uses, limitations and documentation. No brand or formulation selected yet.')}</p>${refsBlock}</div></article>`;
     }
     function categoryGroup(category, solutions, data) {
         const items = solutions.map(s => card(s, data)).join('');
