@@ -148,33 +148,36 @@
                 color: #7a5038 !important;
             }
 
-            /* Barra de navegação interna, fixa ao rolar (mesmo mecanismo da ficha de espécie/praga). */
+            /* Barra de navegação interna, fixa ao rolar (mesmo estilo leve e translúcido do
+               calendário: tiras de texto sem botões, sem "saltar" ao fixar). */
             .crop-nav {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 0.7em;
-                margin: 0 0 2em;
                 position: sticky;
                 top: 1.75rem;
                 z-index: 40;
-                overflow: visible;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 24px;
+                margin: 0 0 2em;
+                padding: 13px 0;
+                background: rgba(255, 255, 255, 0.94);
+                backdrop-filter: blur(10px);
+                border-top: 1px solid #e7ece8;
+                border-bottom: 1px solid #e7ece8;
+                transition: background 0.2s ease, border-color 0.2s ease;
             }
             .crop-nav a {
-                border: 1px solid #dfe7df;
-                border-radius: 2em;
-                padding: 0.65em 1.15em;
+                white-space: nowrap;
+                border: 0 !important;
+                text-decoration: none !important;
+                color: #999;
+                font-size: 0.78em;
+                font-weight: 900;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                transition: color 0.18s ease;
+            }
+            .crop-nav a:hover, .crop-nav a:focus-visible, .crop-nav a.bio-nav-active {
                 color: #527a60;
-                font-weight: 600;
-                background: #fff;
-            }
-            .crop-nav a:hover, .crop-nav a:focus-visible {
-                background: #eef4ed;
-                border-color: #527a60;
-            }
-            .crop-nav a.bio-nav-active {
-                background: #527a60;
-                border-color: #527a60;
-                color: #fff;
             }
             .crop-nav .bio-nav-anchor { width: 100%; height: 0; }
             .crop-nav .bio-nav-progress {
@@ -184,23 +187,10 @@
                 height: 2px;
                 width: 0;
                 background: linear-gradient(90deg, #527a60, #a66f50);
-                border-radius: 0 0 2px 2px;
                 pointer-events: none;
                 transition: width 0.12s linear;
             }
-            .crop-nav.bio-nav-pinned {
-                position: fixed;
-                top: 1.75rem;
-                left: var(--bio-nav-left);
-                width: var(--bio-nav-width);
-                margin: 0;
-                padding: 0.5em 0.75em 0.5em 0;
-                border-radius: 12px;
-                background: rgba(255, 255, 255, 0.96);
-                box-shadow: 0 10px 30px rgba(32, 67, 45, 0.12);
-                backdrop-filter: blur(14px);
-            }
-            .crop-nav.bio-nav-pinned .bio-nav-progress { border-radius: 0 0 12px 12px; }
+            .crop-nav.bio-nav-pinned { border-color: #dfe5df; background: rgba(255, 255, 255, 0.97); }
             .detail-section[id] { scroll-margin-top: 6.5rem; }
             @media (max-width: 760px) {
                 .crop-nav, .crop-nav.bio-nav-pinned { top: 0.65rem; }

@@ -317,18 +317,32 @@
 
 /* In-page guidance navigation and documentary notes. */
 .management-nav {
-    display: flex;
-    flex-wrap: wrap;
-    gap: .7em;
-    margin: 0 0 2em;
     position: sticky;
     top: 1.75rem;
     z-index: 40;
-    overflow: visible;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    margin: 0 0 2em;
+    padding: 13px 0;
+    background: rgba(255, 255, 255, .94);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    transition: background .2s ease, border-color .2s ease;
 }
-.management-nav a { border: 1px solid var(--line); border-radius: 2em; padding: .65em 1.15em; color: var(--green); font-weight: 600; background: #fff; }
-.management-nav a:hover, .management-nav a:focus-visible { background: var(--pale); border-color: var(--green); }
-.management-nav a.bio-nav-active { background: var(--green); border-color: var(--green); color: #fff; }
+.management-nav a {
+    white-space: nowrap;
+    border: 0 !important;
+    text-decoration: none !important;
+    color: #999;
+    font-size: .78em;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: color .18s ease;
+}
+.management-nav a:hover, .management-nav a:focus-visible, .management-nav a.bio-nav-active { color: var(--green); }
 .management-nav .bio-nav-anchor { width: 100%; height: 0; }
 .management-nav .bio-nav-progress {
     position: absolute;
@@ -337,23 +351,10 @@
     height: 2px;
     width: 0;
     background: linear-gradient(90deg, var(--green), #a66f50);
-    border-radius: 0 0 2px 2px;
     pointer-events: none;
     transition: width .12s linear;
 }
-.management-nav.bio-nav-pinned {
-    position: fixed;
-    top: 1.75rem;
-    left: var(--bio-nav-left);
-    width: var(--bio-nav-width);
-    margin: 0;
-    padding: .5em .75em .5em 0;
-    border-radius: 12px;
-    background: rgba(255, 255, 255, .96);
-    box-shadow: 0 10px 30px rgba(32, 67, 45, .12);
-    backdrop-filter: blur(14px);
-}
-.management-nav.bio-nav-pinned .bio-nav-progress { border-radius: 0 0 12px 12px; }
+.management-nav.bio-nav-pinned { border-color: #dfe5df; background: rgba(255, 255, 255, .97); }
 @media (max-width: 760px) {
     .management-nav, .management-nav.bio-nav-pinned { top: .65rem; }
 }
