@@ -17,9 +17,8 @@ const output = path.resolve(".pages-dist");
 const textExtensions = new Set([".css", ".html", ".js", ".json", ".svg", ".webmanifest", ".xml"]);
 const publicEntries = [
   "assets", "calendario", "config", "contactos.html", "data", "ecossistemas",
-  "elements.html", "energia", "generic.html", "images", "index.html", "manifesto.html",
-  "observario.html", "observatorio", "recursos", "services", "sidebar-content.html",
-  "sidebar.html", "suporte.html"
+  "energia", "images", "index.html", "manifesto.html",
+  "observatorio", "recursos", "services", "sidebar-content.html"
 ];
 const rootPathPattern = new RegExp(`([\\"'\`\\(=])/(?!/)(?=${publicEntries.map(escapeRegExp).join("|")})(?=[^\\s])`, "g");
 

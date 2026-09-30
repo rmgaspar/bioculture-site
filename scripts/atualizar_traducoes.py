@@ -13,7 +13,7 @@ from bs4 import BeautifulSoup, Comment
 ROOT = Path(__file__).resolve().parents[1]
 LANGUAGES = {"en": "English"}
 NATIONAL_PAGES = {"observatorio/observatorio-terra.html", "observatorio/vetores-pressao.html"}
-IGNORED_HTML = {"generic.html", "elements.html", "sidebar.html", "observario.html", "suporte.html", "servicos/bioenergia.html"}
+IGNORED_HTML = {"servicos/bioenergia.html"}
 URL_RE = re.compile(r"^(?:https?://|/|[\w.-]+\.(?:jpg|jpeg|png|webp|svg))", re.I)
 LETTER_RE = re.compile(r"[A-Za-zÀ-ÖØ-öø-ÿ]")
 
