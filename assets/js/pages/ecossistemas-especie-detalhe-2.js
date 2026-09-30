@@ -54,11 +54,35 @@
                         return `<li><a href="${esc(x.url)}" target="_blank" rel="noopener noreferrer">${esc(name)} ↗</a></li>`;
                     }).join("")}</ul>`) : "";
             }
-            function practicalSections(esp, guidance) {
+            // Só liga a um produto/técnica quando a orientação já indica um solucao_id concreto;
+            // nunca inferimos por categoria ou palavra-chave (evitaria uma recomendação errada).
+            function solutionLink(option, solucoesCatalogo) {
+                const solucao = solucoesCatalogo?.solucoes?.find((s) => s.id === option.solucao_id);
+                if (!solucao) return null;
+                if (solucao.tipo === "pratica" && valid(solucao.tecnica_id)) {
+                    return { href: `/services/servicos.html#tecnica-${encodeURIComponent(solucao.tecnica_id)}`,
+                        label: tr("Ver técnica →", "See technique →") };
+                }
+                const produto = arr(solucao.produtos)[0];
+                return produto
+                    ? { href: `/services/produto-detalhe.html?id=${encodeURIComponent(produto.id)}`,
+                        label: tr("Ver produto →", "See product →") }
+                    : { href: `/services/produtos.html#${encodeURIComponent(solucao.id)}`,
+                        label: tr("Ver no catálogo →", "See in catalogue →") };
+            }
+            function optionPanel(option, solucoesCatalogo) {
+                const text = localized(option.condicao);
+                if (!valid(text)) return "";
+                const link = option.solucao_id ? solutionLink(option, solucoesCatalogo) : null;
+                return panel(esc(localized(option.nome)), `<p>${esc(text)}</p>${
+                    link ? `<a class="panel-link" href="${esc(link.href)}">${esc(link.label)}</a>` : ""
+                }`);
+            }
+            function practicalSections(esp, guidance, solucoesCatalogo) {
                 const profile = guidance?.perfis?.find((p) => p.alvos.includes(esp.id));
                 if (!profile) return "";
-                const options = profile.opcoes.map((option) =>
-                    textPanel(esc(localized(option.nome)), localized(option.condicao))).join("");
+                const options = profile.opcoes.map((option) => optionPanel(option, solucoesCatalogo))
+                    .join("");
                 const hasProduct = profile.opcoes.some((option) => option.solucao_id);
                 return `<div class="section-block" id="solucoes"><div class="section-head"><span class="eyebrow">${tr("Na prática", "In practice")}</span><div><h2>${tr("Soluções para este problema", "Solutions for this problem")}</h2><p>${esc(localized(profile.contexto))}</p></div></div>
                     <div class="grid">${panel(tr("Por onde começar", "Where to start"),
@@ -187,7 +211,7 @@
                 }).join("");
                 return `<div class="section-block"><div class="section-head"><span class="eyebrow">Comparar</span><div><h2>Espécies semelhantes</h2><p>A semelhança visual não confirma uma identificação. Observe forma, habitat, época e caracteres distintivos.</p></div></div><div class="similar">${links}</div></div>`;
             }
-            function render(esp, master, guidance, horticolas) {
+            function render(esp, master, guidance, horticolas, solucoesCatalogo) {
                 const isPest = esp.grupo === "Sanidade Vegetal";
                 const isInvasive = esp.grupo === "Flora Invasora" || esp.grupo === "Fauna Invasora";
                 const tax = arr(esp.taxonomia_completa).join(" › ");
@@ -236,6 +260,16 @@
                 }</b></div></div></div><div class="hero-image" data-initial="${
                     esc(String(esp.nome || "?").charAt(0))
                 }">${image}</div></div>${backLink}${
+                    managementNav(esp, guidance)
+                }${pestSections(esp, horticolas)}${invasiveSections(esp)}${
+                    practicalSections(esp, guidance, solucoesCatalogo)
+                }${
+                    !isPest && !isInvasive && (valid(esp.prevencao) || valid(esp.combate))
+                        ? `<div class="section-block"><div class="section-head"><span class="eyebrow">Gestão</span><div><h2>Prevenção e controlo responsável</h2><p>Aplicável sobretudo a invasoras e organismos de sanidade vegetal. Confirmar identificação e regras locais antes de intervir.</p></div></div><div class="grid">${
+                            textPanel("Prevenção", esp.prevencao)
+                        }${textPanel("Controlo", esp.combate)}</div></div>`
+                        : ""
+                }${
                     ecology
                         ? `<div class="section-block"><div class="section-head"><span class="eyebrow">Ecologia</span><div><h2>Onde vive e que papel desempenha</h2><p>São apresentados apenas os campos preenchidos no inventário; informação ausente não é substituída por generalizações.</p></div></div><div class="grid">${ecology}</div></div>`
                         : ""
@@ -247,13 +281,7 @@
                             listPanel("Ameaças", esp.ameacas)
                         }</div></div>`
                         : ""
-                }${
-                    !isPest && !isInvasive && (valid(esp.prevencao) || valid(esp.combate))
-                        ? `<div class="section-block"><div class="section-head"><span class="eyebrow">Gestão</span><div><h2>Prevenção e controlo responsável</h2><p>Aplicável sobretudo a invasoras e organismos de sanidade vegetal. Confirmar identificação e regras locais antes de intervir.</p></div></div><div class="grid">${
-                            textPanel("Prevenção", esp.prevencao)
-                        }${textPanel("Controlo", esp.combate)}</div></div>`
-                        : ""
-                }${managementNav(esp, guidance)}${pestSections(esp, horticolas)}${invasiveSections(esp)}${practicalSections(esp, guidance)}${similarPanel(esp.especies_semelhantes, master)}${
+                }${similarPanel(esp.especies_semelhantes, master)}${
                     valid(esp.observacao_responsavel)
                         ? `<div class="section-block"><div class="responsible"><h3>Observar sem perturbar</h3><p>${
                             esc(esp.observacao_responsavel)
@@ -300,7 +328,7 @@
                     return;
                 }
                 try {
-                    const [master, pests, invasives, faunas, guidance, horticolas] = await Promise.all([
+                    const [master, pests, invasives, faunas, guidance, horticolas, solucoesCatalogo] = await Promise.all([
                         ...["especies_master", "pragas", "flora_invasora", "fauna_invasora"].map((f) =>
                             fetch(`/data/${f}.json`).then((r) => {
                                 if (!r.ok) throw Error(`HTTP ${r.status}`);
@@ -311,10 +339,18 @@
                             return r.json();
                         }).catch(() => null),
                         fetch("/data/horticolas_master.json").then((r) => r.json()).catch(() => null),
+                        fetch("/data/solucoes-catalogo.json").then((r) => r.json()).catch(() => null),
                     ]);
                     const esp = resolveSpecies(id, master, pests, invasives, faunas);
                     if (!esp) throw Error("not-found");
-                    render(esp, master, guidance, horticolas);
+                    render(esp, master, guidance, horticolas, solucoesCatalogo);
+                    const stickyNav = document.createElement("script");
+                    stickyNav.src = "/assets/js/biocultura-sticky-nav.js?v=6";
+                    document.body.appendChild(stickyNav);
+                    if (location.hash) {
+                        const target = document.getElementById(location.hash.slice(1));
+                        if (target) requestAnimationFrame(() => target.scrollIntoView({ block: "start" }));
+                    }
                 } catch (e) {
                     document.getElementById("species").innerHTML =
                         '<div class="error"><strong>Espécie não encontrada.</strong><br><a href="biodiversidade.html">Voltar</a></div>';

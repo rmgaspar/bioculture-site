@@ -316,12 +316,52 @@
             }
 
 /* In-page guidance navigation and documentary notes. */
-.management-nav { display: flex; flex-wrap: wrap; gap: .7em; margin: 0 0 2em; }
-.management-nav a { border: 1px solid var(--line); border-radius: 2em; padding: .65em 1.15em; color: var(--green); font-weight: 600; }
+.management-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .7em;
+    margin: 0 0 2em;
+    position: sticky;
+    top: 1.75rem;
+    z-index: 40;
+    overflow: visible;
+}
+.management-nav a { border: 1px solid var(--line); border-radius: 2em; padding: .65em 1.15em; color: var(--green); font-weight: 600; background: #fff; }
 .management-nav a:hover, .management-nav a:focus-visible { background: var(--pale); border-color: var(--green); }
-.section-block[id] { scroll-margin-top: 2em; }
+.management-nav a.bio-nav-active { background: var(--green); border-color: var(--green); color: #fff; }
+.management-nav .bio-nav-anchor { width: 100%; height: 0; }
+.management-nav .bio-nav-progress {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 2px;
+    width: 0;
+    background: linear-gradient(90deg, var(--green), #a66f50);
+    border-radius: 0 0 2px 2px;
+    pointer-events: none;
+    transition: width .12s linear;
+}
+.management-nav.bio-nav-pinned {
+    position: fixed;
+    top: 1.75rem;
+    left: var(--bio-nav-left);
+    width: var(--bio-nav-width);
+    margin: 0;
+    padding: .5em .75em .5em 0;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, .96);
+    box-shadow: 0 10px 30px rgba(32, 67, 45, .12);
+    backdrop-filter: blur(14px);
+}
+.management-nav.bio-nav-pinned .bio-nav-progress { border-radius: 0 0 12px 12px; }
+@media (max-width: 760px) {
+    .management-nav, .management-nav.bio-nav-pinned { top: .65rem; }
+}
+.section-block[id] { scroll-margin-top: 6.5rem; }
 .guidance-note { margin-top: 1.2em; padding: 1.4em; border-left: 3px solid var(--green); background: var(--sand); }
 .guidance-note p { margin: 0 0 .7em; }
 .guidance-note .panel { padding: 0; background: transparent; }
 .panel, .panel a { overflow-wrap: anywhere; }
 .panel ol li + li { margin-top: .7em; }
+.panel-link { display: inline-block; margin-top: .9em; color: var(--green); font-weight: 700; }
+.panel-link:hover { color: #1b4332; }
