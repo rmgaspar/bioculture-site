@@ -28,13 +28,21 @@
                     }</ul></article>`
                     : "";
             }
-            function section(label, title, note, content) {
+            function section(label, title, note, content, id) {
                 return content
-                    ? `<div class="detail-section"><div class="section-head"><span>${
+                    ? `<div class="detail-section"${id ? ` id="${esc(id)}"` : ""}><div class="section-head"><span>${
                         esc(label)
                     }</span><div><h2>${esc(title)}</h2><p>${
                         esc(note)
                     }</p></div></div><div class="detail-grid">${content}</div></div>`
+                    : "";
+            }
+            function cropNav(sections) {
+                const items = sections.filter(([, , content]) => content);
+                return items.length
+                    ? `<nav class="crop-nav" aria-label="Nesta ficha">${
+                        items.map(([id, label]) => `<a href="#${id}">${esc(label)}</a>`).join("")
+                    }</nav>`
                     : "";
             }
             const normalize = (value) =>
@@ -143,6 +151,35 @@
             function linkifyPests(text, pestIndex, cropId, cropNome) {
                 return valid(text) ? linkifyPestsHtml(esc(text), pestIndex, cropId, cropNome) : "";
             }
+            // Mesma correspondência wikipedia-style que linkifyPestsHtml (praga confirmada em
+            // plantas_afetadas, nunca por família ambígua), mas devolve as pragas em vez do HTML —
+            // usado só para saber quais já têm produto/solução associado, sem tocar no texto.
+            function pestsMentionedIn(text, pestIndex, cropId, cropNome) {
+                if (!valid(text)) return [];
+                const html = esc(text);
+                const found = new Map();
+                for (const { original, list, genericFamily } of pestIndex.values()) {
+                    if (!original || genericFamily) continue;
+                    const matches = list.filter((p) => cropMatchesPest(cropId, cropNome, p));
+                    if (matches.length !== 1 || found.has(matches[0].id)) continue;
+                    const pattern = escapeRegExp(original).replace(/ /g, "[ -]");
+                    const re = new RegExp(`(${pattern}s?)(?![^<]*>)`, "i");
+                    if (re.test(html)) found.set(matches[0].id, matches[0]);
+                }
+                return [...found.values()];
+            }
+            function relatedProductsPanel(pests, solutionIds) {
+                const withSolutions = pests.filter((p) => solutionIds.has(p.id));
+                return withSolutions.length
+                    ? `<article class="detail-panel"><h3>Produtos relacionados</h3><div class="related">${
+                        withSolutions.map((p) =>
+                            `<a href="/ecossistemas/especie-detalhe.html?id=${
+                                encodeURIComponent(p.id)
+                            }#solucoes">${esc(p.nome_comum)} →</a>`
+                        ).join("")
+                    }</div></article>`
+                    : "";
+            }
             // Só liga a uma técnica quando o próprio texto da ficha a nomeia; termos
             // genéricos ("solo", "água") não geram correspondência para evitar ligações forçadas.
             const TECHNIQUE_KEYWORDS = [
@@ -188,11 +225,15 @@
                 }
 
                 try {
-                    const [master, pragas] = await Promise.all([
+                    const [master, pragas, solucoesCatalogo] = await Promise.all([
                         fetch("/data/horticolas_master.json?v=" + Date.now()).then((r) => r.json()),
                         fetch("/data/pragas.json").then((r) => r.json()).catch(() => []),
+                        fetch("/data/solucoes-catalogo.json").then((r) => r.json()).catch(() => null),
                     ]);
                     const pestIndex = buildPestIndex(pragas);
+                    const solutionIds = new Set(
+                        (solucoesCatalogo?.solucoes || []).flatMap((s) => (s.fichas || []).map((f) => f.id)),
+                    );
                     const item = master[id];
 
                     if (!item) {
@@ -229,11 +270,17 @@
                         listPanel("Evitar consociar", item.evitar_consociar) +
                         textPanelHtml("Rotação", item.rotacao, linkifyTechniques(item.rotacao)) +
                         listPanel("Culturas semelhantes", item.culturas_semelhantes);
+                    const mentionedPests = [
+                        ...pestsMentionedIn(item.problemas_comuns, pestIndex, id, item.nome),
+                        ...pestsMentionedIn(item.prevencao_sem_pesticidas, pestIndex, id, item.nome),
+                    ];
+                    const uniqueMentionedPests = [...new Map(mentionedPests.map((p) => [p.id, p])).values()];
                     const protection = textPanelHtml("Problemas comuns", item.problemas_comuns,
                             linkifyPests(item.problemas_comuns, pestIndex, id, item.nome)) +
                         textPanelHtml("Prevenção sem pesticidas", item.prevencao_sem_pesticidas,
                             linkifyPestsAndTechniques(item.prevencao_sem_pesticidas, pestIndex, id, item.nome)) +
-                        textPanel("Notas para Portugal", item.notas_portugal);
+                        textPanel("Notas para Portugal", item.notas_portugal) +
+                        relatedProductsPanel(uniqueMentionedPests, solutionIds);
                     const related = values(item.culturas_semelhantes).map((name) => {
                         const found = Object.entries(master).find(([, value]) =>
                             String(value.nome).toLocaleLowerCase("pt") ===
@@ -275,11 +322,19 @@
                     </div>
                     <a href="calendario.html" class="btn-voltar-base" style="margin:0 0 2em" onclick="if(window.history.length>1){event.preventDefault();history.back();}">← VOLTAR AO CALENDÁRIO</a>
                     ${
+                        cropNav([
+                            ["lugar", "Lugar", place], ["calendario", "Calendário", calendar],
+                            ["cuidado", "Cuidado", care], ["ecologia", "Ecologia", ecology],
+                            ["vigilancia", "Vigilância", protection],
+                        ])
+                    }
+                    ${
                         section(
                             "Lugar",
                             "Origem, solo e clima",
                             "Condições de referência; adapte sempre à variedade, exposição e microclima.",
                             place,
+                            "lugar",
                         )
                     }
                     ${
@@ -288,6 +343,7 @@
                             "Do início à colheita",
                             "As épocas são orientativas e devem acompanhar a temperatura do solo e o risco de geada.",
                             calendar,
+                            "calendario",
                         )
                     }
                     ${
@@ -296,6 +352,7 @@
                             "Água, nutrição e manutenção",
                             "Regue segundo a humidade real do solo e favoreça matéria orgânica bem amadurecida.",
                             care,
+                            "cuidado",
                         )
                     }
                     ${
@@ -304,6 +361,7 @@
                             "Consociações e rotação",
                             "Diversidade e rotação ajudam a reduzir desequilíbrios sem recorrer a pesticidas.",
                             ecology,
+                            "ecologia",
                         )
                     }
                     ${
@@ -312,6 +370,7 @@
                             "Problemas e prevenção",
                             "Confirme sempre a causa dos sintomas antes de intervir.",
                             protection,
+                            "vigilancia",
                         )
                     }
                     ${
@@ -330,6 +389,13 @@
                     }
                 `;
                     document.title = item.nome + " - bioCultura";
+                    const stickyNav = document.createElement("script");
+                    stickyNav.src = "/assets/js/biocultura-sticky-nav.js?v=6";
+                    document.body.appendChild(stickyNav);
+                    if (location.hash) {
+                        const target = document.getElementById(location.hash.slice(1));
+                        if (target) requestAnimationFrame(() => target.scrollIntoView({ block: "start" }));
+                    }
                 } catch (e) {
                     console.error("Erro ao carregar detalhe:", e);
                 }
