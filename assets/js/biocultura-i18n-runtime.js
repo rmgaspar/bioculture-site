@@ -76,9 +76,8 @@
         function write(value) {
             const selected = valid.has(value) ? value : "pt";
             try { window.localStorage.setItem("selected_lang", selected); } catch (_) {}
-            const domain = /(^|\.)bioculture\.net$/i.test(location.hostname)
-                ? "; Domain=.bioculture.net"
-                : "";
+            const rootDomainMatch = /(?:^|\.)(bioculture\.(?:net|pt))$/i.exec(location.hostname);
+            const domain = rootDomainMatch ? `; Domain=.${rootDomainMatch[1]}` : "";
             document.cookie = `bioculture_lang_v2=${encodeURIComponent(selected)}; Path=/; Max-Age=31536000; SameSite=Lax${domain}${location.protocol === "https:" ? "; Secure" : ""}`;
             document.documentElement.lang = selected;
             return selected;

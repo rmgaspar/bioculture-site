@@ -24,9 +24,8 @@ const BioCultureLanguageStore = (() => {
     function write(value) {
         const lang = valid.has(value) ? value : "pt";
         try { window.localStorage.setItem(key, lang); } catch (_) {}
-        const domain = /(^|\.)bioculture\.net$/i.test(location.hostname)
-            ? "; Domain=.bioculture.net"
-            : "";
+        const rootDomainMatch = /(?:^|\.)(bioculture\.(?:net|pt))$/i.exec(location.hostname);
+        const domain = rootDomainMatch ? `; Domain=.${rootDomainMatch[1]}` : "";
         document.cookie = `bioculture_lang_v2=${encodeURIComponent(lang)}; Path=/; Max-Age=31536000; SameSite=Lax${domain}${location.protocol === "https:" ? "; Secure" : ""}`;
         document.documentElement.lang = lang;
         return lang;
