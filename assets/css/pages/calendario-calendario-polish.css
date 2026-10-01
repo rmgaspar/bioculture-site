@@ -187,70 +187,81 @@ html body #main :is(#acoes, #catalogo, #semana, #praticas, #vigilancia, #pragas-
 html body #main .principles .moon-note {
     border-color: rgba(255, 255, 255, 0.58) !important;
     background: rgba(255, 255, 255, 0.045) !important;
+    gap: 28px !important;
+    padding: 2.3em !important;
 }
 
-html body #main .principles .moon-large {
-    display: grid;
-    place-items: center;
+/* Os dois ícones (lua e meteorologia) partilham exatamente a mesma caixa,
+   para ficarem no mesmo tamanho e alinhados um com o outro. */
+html body #main .principles :is(.moon-large, .weather-badge) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 110px;
+    height: 110px;
 }
 
 html body #main .principles .moon-large span {
     position: relative;
-    width: 92px;
-    height: 92px;
+    width: 100px;
+    height: 100px;
     overflow: hidden;
     border-radius: 50%;
     background:
         radial-gradient(circle at 32% 32%, rgba(255, 255, 255, 0.28) 0 4%, transparent 5%),
         radial-gradient(circle at 42% 68%, rgba(151, 151, 130, 0.2) 0 5%, transparent 6%),
         linear-gradient(145deg, #f0edcf, #c7c5ab) !important;
-    box-shadow: 0 0 34px rgba(232, 229, 197, 0.2);
 }
 
 html body #main .principles .moon-large span::after {
     content: "";
     position: absolute;
-    inset: -7px -20px -7px 31px;
+    inset: -8px -22px -8px 34px;
     border-radius: 50%;
     background: #17271f;
-    box-shadow: -5px 0 10px rgba(23, 39, 31, 0.4);
-}
-
-@media (max-width: 736px) {
-    html body #main .principles .moon-large span {
-        width: 72px;
-        height: 72px;
-    }
-
-    html body #main .principles .moon-large span::after {
-        inset: -6px -16px -6px 24px;
-    }
-}
-
-html body #main .principles .weather-badge {
-    display: grid;
-    place-items: center;
 }
 
 html body #main .principles .weather-icon {
-    width: 92px;
-    height: 92px;
+    width: 100px;
+    height: 100px;
     filter: drop-shadow(0 6px 14px rgba(180, 120, 30, 0.35));
 }
 
 @media (max-width: 736px) {
+    html body #main .principles :is(.moon-large, .weather-badge) {
+        width: 86px;
+        height: 86px;
+    }
+
+    html body #main .principles .moon-large span {
+        width: 78px;
+        height: 78px;
+    }
+
+    html body #main .principles .moon-large span::after {
+        inset: -6px -17px -6px 26px;
+    }
+
     html body #main .principles .weather-icon {
-        width: 72px;
-        height: 72px;
+        width: 78px;
+        height: 78px;
     }
 }
 
 html body #main .principles .moon-note h3 {
     color: #fff !important;
+    font-size: 1.15em !important;
+    margin-bottom: 0.5em !important;
 }
 
 html body #main .principles .moon-note p {
-    color: rgba(255, 255, 255, 0.76) !important;
+    color: rgba(255, 255, 255, 0.8) !important;
+    font-size: 0.92em !important;
+    line-height: 1.7 !important;
+}
+
+html body #main .principles .moon-note p + p {
+    margin-top: 0.9em !important;
 }
 
 @media screen and (max-width: 1100px) {
