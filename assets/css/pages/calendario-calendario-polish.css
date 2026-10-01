@@ -27,8 +27,18 @@ html body[data-hero-theme="calendar"] #main .hero.calendar-local-hero::before {
     position: absolute;
     z-index: 0;
     top: 4.6875rem;
-    left: calc(clamp(-52px, -3.2vw, -28px) - 28px);
-    right: clamp(-64px, -4vw, -32px);
+    /* .inner tem max-width:1600px e fica centrada dentro de #main (janela menos
+       os 18em da barra lateral); em ecrãs largos isso cria um vão de cada lado
+       antes da margem real da janela, que cresce com a largura do ecrã — por
+       isso o excesso é calculado (não fixo), para acompanhar esse vão em vez
+       de ficar "curto" em monitores largos. Soma-se ainda uma margem fixa
+       generosa, que também absorve a diferença entre uma barra de scroll
+       reservada (comum no Firefox/Windows) e uma barra em overlay
+       (Safari/macOS). O excesso é sempre cortado pelo overflow-x:hidden
+       partilhado do body, por isso nunca é visível para lá da janela. */
+    --calendar-ribbon-gap: max(0px, (100vw - 18em - 1600px) / 2);
+    left: calc(-1 * var(--calendar-ribbon-gap) - 5rem);
+    right: calc(-1 * var(--calendar-ribbon-gap) - 5rem);
     height: 21.25rem;
     border-radius: 2rem 0 0 2rem;
     background: #174732;
