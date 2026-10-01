@@ -110,11 +110,23 @@
                     const scope = n.ambito === "portugal"
                         ? (isEnglish ? "Portugal · territorial case" : "Portugal · caso territorial")
                         : n.ambito === "regional" ? "Regional" : (isEnglish ? "World" : "Mundo");
+                    const summary = c.resumo_biocultura || c.resumo || "";
+                    const image = typeof n.imagem === "string" &&
+                            (/^https?:\/\//i.test(n.imagem) || n.imagem.startsWith("/"))
+                        ? n.imagem
+                        : "/images/noticias-sem-imagem.webp";
+                    const imageAlt = image === "/images/noticias-sem-imagem.webp"
+                        ? (isEnglish ? "bioCulture editorial illustration" : "Ilustração editorial bioCulture")
+                        : (c.titulo || "");
                     return `<a href="/observatorio/noticia-detalhe.html?id=${
                         encodeURIComponent(n.id)
-                    }"><small>${esc(scope)} · ${esc(window.BioCultureI18n?.date(n.data) || n.data)}</small><h3>${esc(c.titulo)}</h3><span>${
-                        esc(n.fonte)
-                    } →</span></a>`;
+                    }"><img class="news-thumb" src="${esc(image)}" alt="${
+                        esc(imageAlt)
+                    }" loading="lazy" onerror="this.src='/images/noticias-sem-imagem.webp'"><div class="news-body"><small>${
+                        esc(scope)
+                    } · ${esc(window.BioCultureI18n?.date(n.data) || n.data)}</small><h3>${esc(c.titulo)}</h3>${
+                        summary ? `<p>${esc(summary)}</p>` : ""
+                    }<span>${esc(n.fonte)} →</span></div></a>`;
                     }).join("") || `<p class="empty">${isEnglish ? "No news available at this time." : "Sem notícias disponíveis neste momento."}</p>`;
                     const toggle = el("news-toggle");
                     if (toggle) {
