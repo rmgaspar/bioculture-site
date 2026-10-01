@@ -219,10 +219,8 @@
                         <span class="condition-icon" aria-hidden="true">🌡️</span>
                         <span><strong>${en ? "Weather now" : "Tempo agora"}</strong><small>${en ? "loading…" : "a carregar…"}</small></span>
                     </div>`;
-                document.getElementById("calendar-conditions").innerHTML = `<div class="condition-chip">
-                        <span class="condition-icon" aria-hidden="true">${season.emoji}</span>
-                        <span><strong>${season.name}</strong><small>${en ? monthsEn[month] : months[month]}</small></span>
-                    </div>${weatherChip}<div class="condition-chip">
+                document.getElementById("calendar-season").textContent = `${season.emoji} ${season.name}`;
+                document.getElementById("calendar-conditions").innerHTML = `${weatherChip}<div class="condition-chip">
                         <span class="condition-icon" aria-hidden="true">${selectedMoon.emoji}</span>
                         <span><strong>${selectedMoon.name}</strong><small>${en ? "moon phase today" : "fase da lua hoje"}</small></span>
                     </div>`;
