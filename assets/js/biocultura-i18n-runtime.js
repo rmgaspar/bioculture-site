@@ -396,7 +396,7 @@
             fullLoading = Promise.all([
                 read(`/assets/lang/auto/${lang}.json?v=28`),
                 read(`/assets/lang/${lang}.json?v=11`),
-                read(`/assets/lang/display/${lang}.json?v=27`),
+                read(`/assets/lang/display/${lang}.json?v=32`),
             ]).then(([auto, structured, display]) => {
                 dictionary = auto;
                 structuredDictionary = structured;
@@ -476,6 +476,41 @@
     function lookupDisplay(key) {
         return dictionary[key] || displayDictionary[key] || "";
     }
+    const HYMENOPTERA = { vespas: "wasps", formigas: "ants", abelhas: "bees", "vespas-oleiras": "mud-dauber wasps", "vespas verdadeiras": "true wasps" };
+    const FAMILY_PT = { coccinelídeos: "Coccinellidae", crambídeos: "Crambidae", esfingídeos: "Sphingidae", ninfalídeos: "Nymphalidae", erebídeos: "Erebidae" };
+    function translateTaxonSentence(key) {
+        let m;
+        const head = "(.+?)(?:,\\s*(?:(?:também |comummente )?conhecid[ao] (?:como|por|pelo nome comum de) |com o nome comum de )(.+?),?)?";
+        const name = (a, b) => (b ? `${a}, also known as ${b},` : a);
+        const family = (value) => FAMILY_PT[value.replace(/^dos /, "").toLowerCase()] || value.replace(/^dos /, "");
+        const rx = (body) => new RegExp(`^${head} ${body}$`);
+        if ((m = key.match(rx("é uma espécie de insetos lepidópteros, mais especificamente de (traças|borboletas)(?: conhecidas? por .+?)?,? pertenc(?:ente|endo) à família (.+)\\.")))) {
+            return `${name(m[1], m[2])} is a species of lepidopteran insect, more specifically of ${m[3] === "traças" ? "moths" : "butterflies"}, belonging to the family ${family(m[4])}.`;
+        }
+        if ((m = key.match(rx("é uma espécie de insetos coleópteros(?: polífagos)? pertencente à família (.+)\\.")))) {
+            return `${name(m[1], m[2])} is a species of beetle (coleopteran insect) belonging to the family ${family(m[3])}.`;
+        }
+        if ((m = key.match(rx("é uma espécie de insetos himenópteros, mais especificamente de (vespas-oleiras|vespas verdadeiras|vespas|formigas|abelhas),? pertenc(?:ente|entes) à família (.+)\\.")))) {
+            return `${name(m[1], m[2])} is a species of hymenopteran insect, more specifically of ${HYMENOPTERA[m[3]]}, belonging to the family ${family(m[4])}.`;
+        }
+        if ((m = key.match(rx("é uma espécie de artrópode pertencente à família (.+)\\.")))) {
+            return `${name(m[1], m[2])} is a species of arthropod belonging to the family ${family(m[3])}.`;
+        }
+        if ((m = key.match(/^(.+?) é um gênero de mariposa pertencente à família (.+)\.$/))) {
+            return `${m[1]} is a genus of moths belonging to the family ${family(m[2])}.`;
+        }
+        if ((m = key.match(/^(.+?) é uma espécie de inseto do gênero (.+?), pertencente à família (.+)\.$/))) {
+            return `${m[1]} is a species of insect of the genus ${m[2]}, belonging to the family ${family(m[3])}.`;
+        }
+        if ((m = key.match(/^(.+?) é uma espécie de libelinha da família (.+)\.$/))) {
+            return `${m[1]} is a species of damselfly or dragonfly of the family ${family(m[2])}.`;
+        }
+        if ((m = key.match(/^A autoridade científica da espécie é (.+?), tendo sido descrita no ano de (\d+)\.$/))) {
+            return `The scientific authority of the species is ${m[1]}, who described it in ${m[2]}.`;
+        }
+        return "";
+    }
+
     function translateComposite(key) {
         const direct = lookupDisplay(key);
         if (direct) return direct;
@@ -492,6 +527,9 @@
             const rest = match[2] ? translateComposite(match[2]) || match[2] : "";
             return `about ${match[1]} km${rest}`;
         }
+        /* Fichas de insetos: frases-modelo da Wikipédia ("X é uma espécie de … pertencente à família Y"). */
+        const taxon = translateTaxonSentence(key);
+        if (taxon) return taxon;
         /* Fichas de pragas: frases-modelo com nomes e listas já traduzidos. */
         if ((match = key.match(/^(.+) afeta sobretudo (.+)\. A gestão recomendada combina prevenção, observação regular, tolerância a dano ligeiro e intervenção seletiva apenas quando o crescimento da praga ou doença ameaça a cultura\.$/))) {
             const plants = match[2].split(", ").map((item) => lookupDisplay(item) || item).join(", ");
