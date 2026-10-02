@@ -105,7 +105,7 @@
     selectors.forEach((selector,i) => { const el=$(selector); if(el && copy.static[i] != null) el.innerHTML=copy.static[i]; });
     document.querySelector('[data-hemi="north"]').textContent=copy.north;
     document.querySelector('[data-hemi="south"]').textContent=copy.south;
-    $('.portugal-link').textContent=copy.viewAtlas;
+    const portugalLink=$('.portugal-link'); if(portugalLink) portugalLink.textContent=copy.viewAtlas;
     $('#catalogue-title').textContent=copy.catalogueTitle;
     $('.grape-search span').textContent=copy.search;
     $('#grape-search').placeholder=copy.placeholder;
