@@ -397,7 +397,7 @@
             structuredDictionary = await originalFetch(`/assets/lang/${lang}.json?v=11`, { cache: "no-cache" })
                 .then((response) => response.ok ? response.json() : {})
                 .catch(() => ({}));
-            displayDictionary = await originalFetch(`/assets/lang/display/${lang}.json?v=9`, { cache: "no-cache" })
+            displayDictionary = await originalFetch(`/assets/lang/display/${lang}.json?v=11`, { cache: "no-cache" })
                 .then((response) => response.ok ? response.json() : {})
                 .catch(() => ({}));
         }
@@ -479,13 +479,13 @@
         let match;
         if ((match = key.match(/^Fonte (\d+)$/))) return `Source ${match[1]}`;
         if ((match = key.match(/^Localização: (.+)$/))) {
-            const rest = translateComposite(match[1]);
-            return rest ? `Location: ${rest}` : "";
+            return `Location: ${translateComposite(match[1]) || match[1]}`;
         }
         if ((match = key.match(/^cerca de (\d+) km(.*)$/))) {
             const rest = match[2] ? translateComposite(match[2]) || match[2] : "";
             return `about ${match[1]} km${rest}`;
         }
+        if ((match = key.match(/^(\d+) participações$/))) return `${match[1]} ${match[1] === "1" ? "submission" : "submissions"}`;
         if ((match = key.match(/^registos com (.+) disponível$/))) {
             return `records with ${lookupDisplay(match[1]) || match[1]} available`;
         }
