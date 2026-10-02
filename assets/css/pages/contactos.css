@@ -58,15 +58,10 @@
                 flex: 0 0 auto;
             }
             .hero {
-                display: grid;
-                grid-template-columns: 1.05fr 0.95fr;
-                gap: 5em;
-                align-items: center;
-                min-height: 68vh;
-                padding: 3.2em 3.4em !important;
+                display: block;
+                padding: 3em 0 0 !important;
                 margin-top: 0.6em;
-                border-radius: 30px;
-                background: linear-gradient(160deg, #f4f7ef 0%, #f8f4ec 100%);
+                background: none;
             }
             .hero h1 {
                 font-size: 4.15em;
@@ -74,6 +69,7 @@
                 line-height: 0.98;
                 margin: 0.15em 0 0.35em;
                 color: var(--ink);
+                max-width: 900px;
             }
             .hero h1 em {
                 color: var(--forest);
@@ -86,67 +82,85 @@
                 max-width: 680px;
             }
             .mail-card {
-                position: relative;
-                overflow: hidden;
-                background: radial-gradient(130% 150% at 12% -10%, #5c7458 0%, #435b41 45%, #2e402d 100%);
-                border-radius: 22px;
-                padding: 2.7em;
-                color: #fff;
-            }
-            .mail-card::before {
-                content: "";
-                position: absolute;
-                top: -70px;
-                right: -70px;
-                width: 200px;
-                height: 200px;
-                border-radius: 50%;
-                background: rgba(255, 255, 255, 0.07);
-            }
-            .mail-card > * {
-                position: relative;
+                display: grid;
+                grid-template-columns: 180px minmax(0, 1fr) auto;
+                grid-template-areas:
+                    "label title action"
+                    "label text action"
+                    "label email action";
+                column-gap: 2em;
+                align-items: start;
+                margin-top: 3em;
+                padding: 2em 0;
+                border-top: 1px solid var(--line);
+                border-bottom: 1px solid var(--line);
             }
             .mail-card small {
-                color: #c5d2c7;
+                grid-area: label;
+                font-size: 0.65em;
+                font-weight: 900;
                 text-transform: uppercase;
-                letter-spacing: 1.5px;
+                letter-spacing: 4px;
+                color: #9ba49e;
+                padding-top: 0.6em;
             }
             .mail-card h2 {
-                color: #fff;
+                grid-area: title;
                 font-size: 1.75em;
-                margin: 0.45em 0;
+                margin: 0 0 0.3em;
+                color: var(--ink);
             }
             .mail-card p {
-                color: #dce5dd;
+                grid-area: text;
+                margin: 0;
+                max-width: 560px;
+                color: var(--muted);
                 line-height: 1.65;
             }
             .mail-link {
-                display: block;
-                color: #fff !important;
+                grid-area: email;
+                justify-self: start;
+                color: var(--forest) !important;
                 text-decoration: none;
-                font-size: 1.35em;
+                font-size: 1.6em;
                 font-weight: 700;
-                margin: 1.3em 0;
+                margin: 0.9em 0 0;
                 overflow-wrap: anywhere;
+                border-bottom: 1px solid var(--clay) !important;
+                transition: color 0.2s ease;
+            }
+            .mail-link:hover {
+                color: var(--clay) !important;
             }
             .button-mail {
+                grid-area: action;
+                align-self: end;
                 display: inline-block;
                 text-decoration: none;
-                border: 1px solid rgba(255, 255, 255, 0.4);
+                border: 1px solid var(--forest) !important;
                 border-radius: 99px;
-                color: #fff;
-                padding: 0.7em 1.1em;
+                color: var(--forest) !important;
+                padding: 0.75em 1.4em;
                 font-size: 0.8em;
+                font-weight: 700;
+                transition: background 0.2s ease, color 0.2s ease;
+            }
+            .button-mail:hover {
+                background: var(--forest);
+                color: #fff !important;
             }
             .block {
                 border-top: 1px solid var(--line);
-                padding: 4em 0 !important;
+                padding: 3.4em 0 !important;
+            }
+            .hero + .block {
+                border-top: 0;
             }
             .head {
                 display: grid;
                 grid-template-columns: 180px minmax(0, 850px);
                 gap: 2em;
-                margin-bottom: 2em;
+                margin-bottom: 2.2em;
             }
             .head h2 {
                 font-size: 2.15em;
@@ -162,41 +176,37 @@
             .reasons {
                 display: grid;
                 grid-template-columns: repeat(4, 1fr);
-                gap: 1em;
+                gap: 2em;
             }
             .reason {
-                padding: 1.5em;
-                border-radius: 15px;
-                background: var(--pale);
-            }
-            .reason:nth-child(even) {
-                background: var(--sand);
+                padding: 1.2em 0 0;
+                border-top: 1px solid var(--line);
             }
             .reason small {
                 color: var(--clay);
                 font-size: 0.65em;
-                letter-spacing: 1px;
+                font-weight: 900;
+                letter-spacing: 2px;
             }
             .reason h3 {
-                font-size: 1.1em;
+                font-size: 1.15em;
                 margin: 0.35em 0;
                 color: var(--ink);
             }
             .reason p {
-                font-size: 0.86em;
-                line-height: 1.6;
+                font-size: 0.9em;
+                line-height: 1.65;
                 color: var(--muted);
                 margin: 0;
             }
             .help {
                 display: grid;
                 grid-template-columns: 1fr 1fr;
-                gap: 1em;
+                gap: 2em;
             }
             .help article {
-                padding: 1.8em;
-                border: 1px solid var(--line);
-                border-radius: 16px;
+                padding: 1.2em 0 0;
+                border-top: 1px solid var(--line);
             }
             .help h3 {
                 font-size: 1.18em;
@@ -204,7 +214,7 @@
             }
             .help p, .help li {
                 color: var(--muted);
-                font-size: 0.9em;
+                font-size: 0.92em;
                 line-height: 1.65;
             }
             .help ul {
@@ -212,9 +222,8 @@
                 margin-bottom: 0;
             }
             .privacy {
-                background: #f8f9f7;
-                padding: 1.5em;
-                border-radius: 14px;
+                max-width: 760px;
+                margin: 0;
                 color: var(--muted);
                 font-size: 0.86em;
                 line-height: 1.65;
@@ -269,21 +278,17 @@
                 #wrapper {
                     padding-left: 0 !important;
                 }
-                .hero {
-                    min-height: auto;
-                    grid-template-columns: 1fr;
-                }
             }
             @media (max-width: 760px) {
                 .inner {
                     padding: 1.7em 1.4em 0 !important;
                 }
                 .hero {
-                    padding: 2em 1.6em !important;
-                    border-radius: 22px;
+                    padding: 1.4em 0 0 !important;
                 }
                 .hero h1 {
                     font-size: 2.8em;
+                    letter-spacing: -2px;
                 }
                 .head, .reasons, .help {
                     grid-template-columns: 1fr;
@@ -292,7 +297,21 @@
                     gap: 0.7em;
                 }
                 .mail-card {
-                    padding: 2em;
+                    grid-template-columns: 1fr;
+                    grid-template-areas: "label" "title" "text" "email" "action";
+                    row-gap: 0.4em;
+                    padding: 1.6em 0;
+                }
+                .mail-card small {
+                    padding-top: 0;
+                    margin-bottom: 0.6em;
+                }
+                .mail-link {
+                    font-size: 1.3em;
+                    margin: 0.8em 0 1.2em;
+                }
+                .button-mail {
+                    justify-self: start;
                 }
             }
         

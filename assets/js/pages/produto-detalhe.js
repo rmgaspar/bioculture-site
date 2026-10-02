@@ -58,7 +58,7 @@
                 const embalagem = product.embalagem
                     ? `${product.embalagem.quantidade} ${esc(product.embalagem.unidade || "")}`
                     : "—";
-                const order = `mailto:geral@bioculture.net?subject=${
+                const order = `mailto:geral@bioculture.pt?subject=${
                     encodeURIComponent(tr("Encomenda — ", "Order — ") + localized(product.nome))
                 }`;
                 const beneficios = listPanel(tr("Benefícios", "Benefits"),
