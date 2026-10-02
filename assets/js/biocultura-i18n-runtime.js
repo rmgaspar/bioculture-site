@@ -396,7 +396,7 @@
             fullLoading = Promise.all([
                 read(`/assets/lang/auto/${lang}.json?v=28`),
                 read(`/assets/lang/${lang}.json?v=11`),
-                read(`/assets/lang/display/${lang}.json?v=18`),
+                read(`/assets/lang/display/${lang}.json?v=22`),
             ]).then(([auto, structured, display]) => {
                 dictionary = auto;
                 structuredDictionary = structured;
@@ -547,6 +547,11 @@
             const translated = parts.map((part) => translateComposite(part) || part);
             return translated.some((part, index) => part !== parts[index]) ? translated.join(" · ") : "";
         }
+        if (key.includes(" — ")) {
+            const parts = key.split(" — ");
+            const translated = parts.map((part) => translateComposite(part) || part);
+            if (translated.some((part, index) => part !== parts[index])) return translated.join(" — ");
+        }
         return "";
     }
 
@@ -580,7 +585,14 @@
     async function start() {
         await loadDictionary();
         document.documentElement.lang = lang;
-        document.title = translateComposite(normalise(document.title)) || translateString(document.title);
+        const translateTitle = () => {
+            const translated = translateComposite(normalise(document.title)) || translateString(document.title);
+            if (translated && translated !== document.title) document.title = translated;
+        };
+        translateTitle();
+        /* Páginas de detalhe definem o título depois de carregar os dados. */
+        const titleElement = document.querySelector("title");
+        if (titleElement) new MutationObserver(translateTitle).observe(titleElement, { childList: true });
         applyStructuredTranslations(document);
         translateElement(document.body);
         preserveLanguageInLinks(document);
