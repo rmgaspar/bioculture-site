@@ -137,7 +137,10 @@
                 el("local-note").textContent = ids.length
                     ? "Seleção territorial disponível no perfil bioCultura."
                     : "Ainda não existem associações de espécies para este perfil.";
-                el("local-species").innerHTML = ids.slice(0, 18).map((id) => {
+                const INITIAL = 12;
+                let expanded = false;
+                const more = el("local-more");
+                const chips = () => (expanded ? ids : ids.slice(0, INITIAL)).map((id) => {
                     const x = master[id];
                     return `<a class="local-chip" href="especie-detalhe.html?id=${
                         encodeURIComponent(id)
@@ -145,6 +148,17 @@
                         esc(x.nome)
                     }</a>`;
                 }).join("");
+                const paint = () => {
+                    el("local-species").innerHTML = chips();
+                    more.hidden = ids.length <= INITIAL;
+                    more.textContent = expanded ? "Ver menos espécies" : "Ver mais espécies";
+                    more.setAttribute("aria-expanded", String(expanded));
+                };
+                more.onclick = () => {
+                    expanded = !expanded;
+                    paint();
+                };
+                paint();
             }
             function renderNews(items) {
                 const selected = items.filter((n) => {
