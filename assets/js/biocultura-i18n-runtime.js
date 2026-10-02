@@ -397,7 +397,7 @@
             structuredDictionary = await originalFetch(`/assets/lang/${lang}.json?v=11`, { cache: "no-cache" })
                 .then((response) => response.ok ? response.json() : {})
                 .catch(() => ({}));
-            displayDictionary = await originalFetch(`/assets/lang/display/${lang}.json?v=1`, { cache: "no-cache" })
+            displayDictionary = await originalFetch(`/assets/lang/display/${lang}.json?v=4`, { cache: "no-cache" })
                 .then((response) => response.ok ? response.json() : {})
                 .catch(() => ({}));
         }
@@ -468,13 +468,43 @@
         return response;
     };
 
+    /* Textos compostos pelas páginas ("Fonte 2", "cerca de 27 km · Tondela",
+       "· Estado", "Tipo · Ano"): traduz cada parte conhecida e mantém o resto. */
+    function lookupDisplay(key) {
+        return dictionary[key] || displayDictionary[key] || "";
+    }
+    function translateComposite(key) {
+        const direct = lookupDisplay(key);
+        if (direct) return direct;
+        let match;
+        if ((match = key.match(/^Fonte (\d+)$/))) return `Source ${match[1]}`;
+        if ((match = key.match(/^Localização: (.+)$/))) {
+            const rest = translateComposite(match[1]);
+            return rest ? `Location: ${rest}` : "";
+        }
+        if ((match = key.match(/^cerca de (\d+) km(.*)$/))) {
+            const rest = match[2] ? translateComposite(match[2]) || match[2] : "";
+            return `about ${match[1]} km${rest}`;
+        }
+        if (key.startsWith("· ")) {
+            const rest = translateComposite(key.slice(2));
+            return rest ? `· ${rest}` : "";
+        }
+        if (key.includes(" · ")) {
+            const parts = key.split(" · ");
+            const translated = parts.map((part) => translateComposite(part) || part);
+            return translated.some((part, index) => part !== parts[index]) ? translated.join(" · ") : "";
+        }
+        return "";
+    }
+
     function translateTextNode(node) {
         if (!dictionary || !node || node.nodeType !== Node.TEXT_NODE) return;
         const parent = node.parentElement;
         if (!parent || parent.closest("script, style, code, pre, [data-no-translate]")) return;
         const raw = node.nodeValue || "";
         const key = normalise(raw);
-        const translated = key && (dictionary[key] || displayDictionary[key]);
+        const translated = key && translateComposite(key);
         if (!translated) return;
         const leading = raw.match(/^\s*/)?.[0] || "";
         const trailing = raw.match(/\s*$/)?.[0] || "";

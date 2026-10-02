@@ -95,19 +95,28 @@
                 [
                     "FAO",
                     tr("Emissões e caminhos de redução", "Emissions and reduction pathways"),
-                    "Avaliação global dos sistemas pecuários, gases, espécies, regiões e opções de mitigação.",
+                    tr(
+                        "Avaliação global dos sistemas pecuários, gases, espécies, regiões e opções de mitigação.",
+                        "Global assessment of livestock systems, gases, species, regions and mitigation options.",
+                    ),
                     "https://www.fao.org/3/cc9029en/cc9029en.pdf",
                 ],
                 [
                     "UNEP",
                     tr("A urgência do metano", "The methane imperative"),
-                    "Reduzir metano oferece benefícios climáticos rápidos e melhora ar, saúde e produtividade.",
+                    tr(
+                        "Reduzir metano oferece benefícios climáticos rápidos e melhora ar, saúde e produtividade.",
+                        "Cutting methane offers rapid climate benefits and improves air quality, health and productivity.",
+                    ),
                     "https://www.unep.org/explore-topics/energy/facts-about-methane",
                 ],
                 [
                     "IPCC",
                     tr("Solo, clima e alimentação", "Land, climate and food"),
-                    "Uso do solo, dietas, produção, segurança alimentar e ecossistemas são partes do mesmo sistema.",
+                    tr(
+                        "Uso do solo, dietas, produção, segurança alimentar e ecossistemas são partes do mesmo sistema.",
+                        "Land use, diets, production, food security and ecosystems are parts of the same system.",
+                    ),
                     "https://www.ipcc.ch/srccl/",
                 ],
             ]

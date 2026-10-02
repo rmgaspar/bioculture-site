@@ -20,7 +20,7 @@ for (const [page,alias,control] of pairs) {
  assert(html.includes('Açores')&&html.includes('Madeira'));
  const script=html.match(/data-global-script="([^"]+)"/)[1].split('?')[0];
  assert(existsSync('.'+script)); new vm.Script(read('.'+script));
- assert(html.includes('src="'+script+'?v=1"'), 'Global controller must load directly without opening a panel');
+ assert(new RegExp('src="'+script.replace(/[.*+?^${}()|[\]\\\/]/g,'\\$&')+'\\?v=\\d+"').test(html), 'Global controller must load directly without opening a panel');
  assert(!read('.'+script).includes("fetch('/sidebar-content.html')"), 'Global panels must not replace the shared sidebar');
  const fallback=read(alias).match(/id="unified-destination" href="([^"]+)"/) || read(alias).match(/href="([^"]+)" id="unified-destination"/);
  assert(fallback,`Alias ${alias} needs a non-JS fallback`);
