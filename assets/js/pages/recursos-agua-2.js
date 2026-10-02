@@ -216,7 +216,7 @@
                 const rec = analisarSoloParaFossa(dadosLocal.textura);
                 
                 display.innerHTML = `
-                    <div class="rec-box" style="border-left: 4px solid ${rec.cor}; padding-left: 15px;">
+                    <div class="rec-box">
                         <div class="node-label">${isEn() ? "Recommendation for" : "Recomendação para"} ${dadosLocal.freguesia || (isEn() ? "the location" : "o local")}</div>
                         <span style="font-family: Georgia, serif; font-size: 1.2rem; display: block; margin: 5px 0;">${rec.tipo}</span>
                         <p style="font-size: 0.8rem; color: var(--muted); margin: 0;">${rec.alerta}</p>

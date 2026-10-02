@@ -289,8 +289,8 @@
             }
             .reading-layout {
                 display: grid;
-                grid-template-columns: minmax(0, 760px) minmax(220px, 1fr);
-                gap: 4em;
+                grid-template-columns: minmax(0, 760px) minmax(260px, 1fr);
+                gap: 3em;
                 align-items: start;
             }
             .article-main {
@@ -301,8 +301,7 @@
                 margin: 0 0 3em;
                 padding: 2.2em 2.3em;
                 border: 0;
-                border-left: 4px solid var(--news-accent);
-                border-radius: 0 18px 18px 0;
+                border-radius: 18px;
                 background: var(--news-pale);
             }
             .biocultura-label {
@@ -338,6 +337,8 @@
             .source-card {
                 position: sticky;
                 top: 2.2em;
+                box-sizing: border-box;
+                min-width: 0;
                 padding: 1.6em;
                 border: 1px solid var(--news-line);
                 border-radius: 16px;
@@ -361,7 +362,8 @@
             .source-card .footer-link-oficial {
                 display: inline-flex;
                 align-items: center;
-                white-space: nowrap;
+                box-sizing: border-box;
+                max-width: 100%;
                 padding: 0.7em 1em;
                 border: 1px solid var(--news-accent);
                 border-radius: 999px;
@@ -443,5 +445,7 @@
                 }
             }
 
-/* A notícia mantém a imagem integral numa moldura uniforme. */
-.noticia-hero-img{aspect-ratio:4/3!important;object-fit:contain!important;height:auto!important;background:#f1f3ed}
+/* Todas as imagens ocupam a mesma moldura arredondada, sem faixas de preenchimento. */
+.hero-figure .bioculture-image-signature-frame{border-radius:22px}
+.noticia-hero-img{aspect-ratio:2/1!important;object-fit:cover!important;height:auto!important;border-radius:22px}
+@media screen and (max-width:736px){.noticia-hero-img{aspect-ratio:4/3!important;border-radius:16px}}

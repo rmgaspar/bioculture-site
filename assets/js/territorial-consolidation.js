@@ -4,7 +4,7 @@
     const routes = {
         "/calendario/regeneration-calendar.html": {
             source: "/calendario/calendario.html",
-            stylesheet: "/assets/css/pages/calendario-calendario.css?v=1",
+            stylesheet: "/assets/css/pages/calendario-calendario.css?v=2",
             script: "/assets/js/pages/calendario-calendario-2.js?v=1",
             label: "Portugal em detalhe",
             title: "Calendário territorial de Portugal",
@@ -13,15 +13,15 @@
         },
         "/recursos/water.html": {
             source: "/recursos/agua.html",
-            stylesheet: "/assets/css/pages/recursos-agua.css?v=2",
-            script: "/assets/js/pages/recursos-agua-2.js?v=1",
+            stylesheet: "/assets/css/pages/recursos-agua.css?v=3",
+            script: "/assets/js/pages/recursos-agua-2.js?v=2",
             label: "Portugal em detalhe",
             title: "A água no território português",
             intro: "Indicadores, bacias, qualidade, retenção e práticas ligadas à região guardada."
         },
         "/recursos/air.html": {
             source: "/recursos/ar.html",
-            stylesheet: "/assets/css/pages/recursos-ar.css?v=2",
+            stylesheet: "/assets/css/pages/recursos-ar.css?v=3",
             script: "/assets/js/pages/recursos-ar-2.js?v=1",
             label: "Portugal em detalhe",
             title: "O ar no território português",
@@ -29,7 +29,7 @@
         },
         "/recursos/soil.html": {
             source: "/recursos/solo.html",
-            stylesheet: "/assets/css/pages/recursos-solo.css?v=2",
+            stylesheet: "/assets/css/pages/recursos-solo.css?v=3",
             script: "/assets/js/pages/recursos-solo-2.js?v=1",
             label: "Portugal em detalhe",
             title: "O solo no território português",
@@ -49,7 +49,7 @@
             intro: "Produção, consumo, redes e escolhas energéticas aproximadas ao contexto português."
         },
         "/energia/renewables-and-territory.html": {
-            source: "/energia/transicao-etica.html", stylesheet: "/assets/css/pages/energia-transicao-etica.css?v=2", script: "/assets/js/pages/energia-transicao-etica-2.js?v=1",
+            source: "/energia/transicao-etica.html", stylesheet: "/assets/css/pages/energia-transicao-etica.css?v=3", script: "/assets/js/pages/energia-transicao-etica-2.js?v=1",
             label: "Portugal em detalhe", title: "Renováveis e território em Portugal",
             intro: "Transição energética, implantação territorial, comunidades e critérios de justiça aplicados a Portugal."
         },
@@ -64,12 +64,12 @@
             intro: "Recursos minerais, pressões ecológicas, comunidades e decisões de longo prazo em Portugal."
         },
         "/energia/livestock.html": {
-            source: "/energia/pecuaria.html", stylesheet: "/assets/css/pages/energia-pecuaria.css?v=2", script: "/assets/js/pages/energia-pecuaria-2.js?v=1",
+            source: "/energia/pecuaria.html", stylesheet: "/assets/css/pages/energia-pecuaria.css?v=3", script: "/assets/js/pages/energia-pecuaria-2.js?v=1",
             label: "Portugal em detalhe", title: "Pecuária e território português",
             intro: "Sistemas pecuários, alimentação, emissões, solo e bem-estar aproximados ao contexto nacional."
         },
         "/calendario/living-vineyard.html": {
-            source: "/calendario/enologia.html", stylesheet: "/assets/css/pages/calendario-enologia.css?v=2", script: "/assets/js/pages/calendario-enologia-2.js?v=1",
+            source: "/calendario/enologia.html", stylesheet: "/assets/css/pages/calendario-enologia.css?v=3", script: "/assets/js/pages/calendario-enologia-2.js?v=1",
             portugalTarget: "/calendario/enologia.html",
             label: "Portugal em detalhe", title: "A vinha viva em Portugal",
             intro: "Castas, terroir, calendário, solo, água e práticas vitícolas ligadas às regiões portuguesas."

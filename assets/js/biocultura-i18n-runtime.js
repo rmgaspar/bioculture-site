@@ -374,6 +374,10 @@
 
     let dictionary = null;
     let structuredDictionary = null;
+    /* Traduções só de apresentação: aplicam-se ao texto já desenhado na página,
+       mas nunca aos dados JSON, porque o código das páginas (calendário, filtros,
+       cruzamentos) lê valores em português como "março–maio" ou "fruteira". */
+    let displayDictionary = {};
     let loading = null;
     const originalFetch = window.fetch.bind(window);
 
@@ -391,6 +395,9 @@
         dictionary = await loading;
         if (!structuredDictionary) {
             structuredDictionary = await originalFetch(`/assets/lang/${lang}.json?v=11`, { cache: "no-cache" })
+                .then((response) => response.ok ? response.json() : {})
+                .catch(() => ({}));
+            displayDictionary = await originalFetch(`/assets/lang/display/${lang}.json?v=1`, { cache: "no-cache" })
                 .then((response) => response.ok ? response.json() : {})
                 .catch(() => ({}));
         }
@@ -428,6 +435,12 @@
         return dictionary[key] || value;
     }
 
+    /* Permite às páginas ordenar pelo nome já traduzido (ex.: catálogo de culturas). */
+    window.BioCultureDisplayTranslate = (value) => {
+        const key = normalise(value);
+        return displayDictionary[key] || (dictionary && dictionary[key]) || value;
+    };
+
     function translateData(value) {
         if (typeof value === "string") return translateString(value);
         if (Array.isArray(value)) return value.map(translateData);
@@ -461,10 +474,11 @@
         if (!parent || parent.closest("script, style, code, pre, [data-no-translate]")) return;
         const raw = node.nodeValue || "";
         const key = normalise(raw);
-        if (!key || !dictionary[key]) return;
+        const translated = key && (dictionary[key] || displayDictionary[key]);
+        if (!translated) return;
         const leading = raw.match(/^\s*/)?.[0] || "";
         const trailing = raw.match(/\s*$/)?.[0] || "";
-        node.nodeValue = leading + dictionary[key] + trailing;
+        node.nodeValue = leading + translated + trailing;
     }
 
     function translateElement(root) {

@@ -378,7 +378,12 @@
                     const kind = catalogKind(item);
                     const filterMatch = filter === "all" || filter === kind || filter === "perenes" && normalize(item.ciclo).includes("perene");
                     return filterMatch && (!query || haystack.includes(query));
-                }).sort((a, b) => String(a[1].nome || a[0]).localeCompare(String(b[1].nome || b[0]), "pt"));
+                }).sort((a, b) => {
+                    const label = (entry) => String(isEn() && window.BioCultureDisplayTranslate
+                        ? window.BioCultureDisplayTranslate(entry[1].nome || entry[0])
+                        : entry[1].nome || entry[0]);
+                    return label(a).localeCompare(label(b), isEn() ? "en" : "pt");
+                });
                 document.getElementById("catalog-summary").textContent = isEn()
                     ? `${format(entries.length)} crops found · ${format(Object.keys(horticolasDB).length)} complete records in the catalogue`
                     : `${format(entries.length)} culturas encontradas · ${format(Object.keys(horticolasDB).length)} fichas completas no catálogo`;

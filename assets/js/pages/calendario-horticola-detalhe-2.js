@@ -149,7 +149,9 @@
                 return html;
             }
             function linkifyPests(text, pestIndex, cropId, cropNome) {
-                return valid(text) ? linkifyPestsHtml(esc(text), pestIndex, cropId, cropNome) : "";
+                if (!valid(text)) return "";
+                if (inEnglish()) return esc(displayText(text));
+                return linkifyPestsHtml(esc(text), pestIndex, cropId, cropNome);
             }
             // Mesma correspondência wikipedia-style que linkifyPestsHtml (praga confirmada em
             // plantas_afetadas, nunca por família ambígua), mas devolve as pragas em vez do HTML —
@@ -183,17 +185,17 @@
             // Só liga a uma técnica quando o próprio texto da ficha a nomeia; termos
             // genéricos ("solo", "água") não geram correspondência para evitar ligações forçadas.
             const TECHNIQUE_KEYWORDS = [
-                { match: /gota[\s-]a[\s-]gota/i, id: "rega-gota-a-gota" },
-                { match: /rega profunda/i, id: "rega-profunda" },
+                { match: /gota[\s-]a[\s-]gota|drip irrigation|\bdrip\b/i, id: "rega-gota-a-gota" },
+                { match: /rega profunda|deep watering/i, id: "rega-profunda" },
                 { match: /\bolla\b/i, id: "olla" },
-                { match: /água da chuva/i, id: "captacao-chuva" },
-                { match: /solo coberto|cobertura morta/i, id: "mulching-organico" },
-                { match: /composto (bem amadurecido|maduro)/i, id: "composto-superficie" },
-                { match: /rotaç[a-zà-ÿ]*/i, id: "rotacao-culturas" },
-                { match: /consociaç[a-zà-ÿ]*/i, id: "consociacao" },
-                { match: /adubação verde/i, id: "adubo-verde" },
-                { match: /rede anti-?insetos?/i, id: "rede-anti-inseto" },
-                { match: /remoção manual/i, id: "remocao-manual" },
+                { match: /água da chuva|rainwater/i, id: "captacao-chuva" },
+                { match: /solo coberto|cobertura morta|keep the soil covered|mulch/i, id: "mulching-organico" },
+                { match: /composto (bem amadurecido|maduro)|(well-matured|mature) compost/i, id: "composto-superficie" },
+                { match: /rotaç[a-zà-ÿ]*|rotation/i, id: "rotacao-culturas" },
+                { match: /consociaç[a-zà-ÿ]*|companion planting|intercropping/i, id: "consociacao" },
+                { match: /adubação verde|green manure/i, id: "adubo-verde" },
+                { match: /rede anti-?insetos?|insect netting/i, id: "rede-anti-inseto" },
+                { match: /remoção manual|manual removal/i, id: "remocao-manual" },
             ];
             function linkifyTechniquesHtml(html) {
                 for (const { match, id } of TECHNIQUE_KEYWORDS) {
@@ -204,13 +206,19 @@
                 }
                 return html;
             }
+            // Em inglês a frase é traduzida antes de ligar as técnicas (o texto da ficha
+            // chega em português e as ligações dividem-no em fragmentos que já não se
+            // conseguem traduzir); as ligações às pragas dependem dos nomes em português.
+            const inEnglish = () =>
+                typeof window !== "undefined" && !!window.BioCultureI18n?.isEnglish && !!window.BioCultureDisplayTranslate;
+            const displayText = (text) => (inEnglish() ? window.BioCultureDisplayTranslate(text) : text);
             function linkifyTechniques(text) {
-                return valid(text) ? linkifyTechniquesHtml(esc(text)) : "";
+                return valid(text) ? linkifyTechniquesHtml(esc(displayText(text))) : "";
             }
             function linkifyPestsAndTechniques(text, pestIndex, cropId, cropNome) {
-                return valid(text)
-                    ? linkifyTechniquesHtml(linkifyPestsHtml(esc(text), pestIndex, cropId, cropNome))
-                    : "";
+                if (!valid(text)) return "";
+                if (inEnglish()) return linkifyTechniquesHtml(esc(displayText(text)));
+                return linkifyTechniquesHtml(linkifyPestsHtml(esc(text), pestIndex, cropId, cropNome));
             }
             function textPanelHtml(title, value, html) {
                 return valid(value)
