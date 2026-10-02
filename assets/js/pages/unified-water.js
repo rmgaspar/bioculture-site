@@ -33,7 +33,7 @@
     chart('water-stress-chart',series(timeseries,'sdg_6_4_2_water_stress','001'),'Stress hídrico','#a66f50');
     var select=document.getElementById('country-select');
     select.innerHTML='<option value="">'+tr('Escolher…','Choose…')+'</option>';
-    countries.entities.forEach(function(e){var o=document.createElement('option');o.value=e.geography.m49;o.textContent=e.geography.name;select.appendChild(o)});
+    window.BioCulturaGeo.fill(select,countries.entities,function(e){return e.geography.m49});
     select.disabled=false;
     select.addEventListener('change',function(){
       var entity=countries.entities.find(function(e){return e.geography.m49===select.value});var panel=document.getElementById('country-panel');

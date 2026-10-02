@@ -424,16 +424,15 @@
             ]);
             var q = $("country-select");
             q.innerHTML = '<option value="">' + tr("Escolher…", "Choose…") + "</option>";
-            c.entities
-                .filter(function (e) {
+            window.BioCulturaGeo.fill(
+                q,
+                c.entities.filter(function (e) {
                     return e.geography.code !== "WLD";
-                })
-                .forEach(function (e) {
-                    var z = document.createElement("option");
-                    z.value = e.geography.code;
-                    z.textContent = e.geography.name;
-                    q.appendChild(z);
-                });
+                }),
+                function (e) {
+                    return e.geography.code;
+                },
+            );
             q.disabled = false;
             q.onchange = function () {
                 var e = c.entities.find(function (x) {

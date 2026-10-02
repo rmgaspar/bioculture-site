@@ -159,11 +159,8 @@
                 "</p>";
             var q = $("country-select");
             q.innerHTML = '<option value="">' + tr("Escolher…", "Choose…") + "</option>";
-            c.entities.forEach(function (e) {
-                var z = document.createElement("option");
-                z.value = e.geography.m49;
-                z.textContent = e.geography.name;
-                q.appendChild(z);
+            window.BioCulturaGeo.fill(q, c.entities, function (e) {
+                return e.geography.m49;
             });
             q.disabled = false;
             q.onchange = function () {

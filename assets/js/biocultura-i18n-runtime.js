@@ -39,6 +39,45 @@
         }
     };
 
+    /* Seletor de países agrupado por continente (optgroup). Entidades que não são países
+       (regiões, grupos de rendimento, mundo…) ficam num grupo final. O mapa código -> continente
+       está em data/geografias.json e cobre códigos M49 numéricos e ISO3. */
+    window.BioCulturaGeo = {
+        fill(select, entities, valueOf, tr) {
+            const english = window.BioCultureI18n?.language === "en";
+            const plain = () => entities.forEach((entity) => {
+                const option = document.createElement("option");
+                option.value = valueOf(entity);
+                option.textContent = entity.geography.name;
+                select.appendChild(option);
+            });
+            return fetch("/data/geografias.json").then((response) => {
+                if (!response.ok) throw new Error("geografias");
+                return response.json();
+            }).then((geo) => {
+                const buckets = new Map(geo.groups.map((group) => [group.key, []]));
+                entities.forEach((entity) => {
+                    const key = geo.countries[valueOf(entity)] || "AGG";
+                    buckets.get(key).push(entity);
+                });
+                const collator = new Intl.Collator(english ? "en" : "pt", { sensitivity: "base" });
+                geo.groups.forEach((group) => {
+                    const rows = buckets.get(group.key);
+                    if (!rows.length) return;
+                    const optgroup = document.createElement("optgroup");
+                    optgroup.label = english ? group.en : group.pt;
+                    rows.sort((a, b) => collator.compare(a.geography.name, b.geography.name)).forEach((entity) => {
+                        const option = document.createElement("option");
+                        option.value = valueOf(entity);
+                        option.textContent = entity.geography.name;
+                        optgroup.appendChild(option);
+                    });
+                    select.appendChild(optgroup);
+                });
+            }).catch(plain);
+        }
+    };
+
     const consolidatedLegacyRoutes = {
         "/observatorio/vetores-pressao.html": "/observatorio/observatorio-terra.html"
     };
