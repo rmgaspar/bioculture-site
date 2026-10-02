@@ -192,7 +192,15 @@
                     fmt(v.value, 5) +
                     "</strong><p>" +
                     v.year +
-                    '</p></article><article class="country-value"><small>' +
+                    "</p>" +
+                    window.BioCulturaLevel.html("sdg_15_5_1_red_list_index", v.value, {
+                        world: last.value,
+                        entities: c.entities,
+                        codeOf: function (z) {
+                            return z.geography.m49;
+                        },
+                    }) +
+                    '</article><article class="country-value"><small>' +
                     tr("Intervalo de incerteza", "Uncertainty interval") +
                     "</small><strong>" +
                     fmt(v.lower_bound, 4) +

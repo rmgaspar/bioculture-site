@@ -196,7 +196,19 @@
                         label +
                         "</small>" +
                         (v
-                            ? "<strong>" + fmt(v.value) + unit + "</strong><p>" + v.year + "</p>"
+                            ? "<strong>" +
+                              fmt(v.value) +
+                              unit +
+                              "</strong><p>" +
+                              v.year +
+                              "</p>" +
+                              window.BioCulturaLevel.html(id, v.value, {
+                                  world: id === "pm25_mean_annual_exposure" ? pm.value : mo.value,
+                                  entities: c.entities,
+                                  codeOf: function (z) {
+                                      return z.geography.iso3;
+                                  },
+                              })
                             : "<strong>—</strong><p>" +
                               tr("Sem valor publicado.", "No published value.") +
                               "</p>") +

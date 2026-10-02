@@ -467,7 +467,22 @@
                                 (x ? fmt(x.value) + "%" : "—") +
                                 "</strong><p>" +
                                 (x ? x.year : tr("Sem dados", "No data")) +
-                                "</p></article>"
+                                "</p>" +
+                                (x
+                                    ? window.BioCulturaLevel.html(v[0], x.value, {
+                                          world: (function () {
+                                              var w = c.entities.find(function (z) {
+                                                  return z.geography.code === "WLD";
+                                              });
+                                              return w && w.latest[v[0]] ? w.latest[v[0]].value : null;
+                                          })(),
+                                          entities: c.entities,
+                                          codeOf: function (z) {
+                                              return z.geography.code;
+                                          },
+                                      })
+                                    : "") +
+                                "</article>"
                             );
                         })
                         .join("") +

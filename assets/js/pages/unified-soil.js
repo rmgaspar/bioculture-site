@@ -172,7 +172,10 @@
                 $("country-panel").innerHTML = e
                     ? '<div class="country-summary">' +
                       rows
-                          .map(function (x) {
+                          .map(function (x, i) {
+                              var ref = world.find(function (w) {
+                                  return w.year === x.year;
+                              });
                               return (
                                   '<article class="country-value"><small>' +
                                   tr("Terra degradada", "Degraded land") +
@@ -180,7 +183,16 @@
                                   x.year +
                                   "</small><strong>" +
                                   fmt(x.value) +
-                                  "%</strong><p>ODS 15.3.1</p></article>"
+                                  "%</strong><p>ODS 15.3.1</p>" +
+                                  window.BioCulturaLevel.html("sdg_15_3_1_degraded_land", x.value, {
+                                      world: ref ? ref.value : null,
+                                      rank: i === rows.length - 1,
+                                      entities: c.entities,
+                                      codeOf: function (z) {
+                                          return z.geography.m49;
+                                      },
+                                  }) +
+                                  "</article>"
                               );
                           })
                           .join("") +

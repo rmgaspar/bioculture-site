@@ -87,6 +87,7 @@
                 if (!response.ok) throw new Error("geografias");
                 return response.json();
             }).then((geo) => {
+                this.geo = geo;
                 this.injectStyle();
                 const collator = new Intl.Collator(english ? "en" : "pt", { sensitivity: "base" });
                 const buckets = new Map(geo.groups.map((group) => [group.key, []]));
@@ -196,6 +197,135 @@
                 picker.append(trigger, panel);
                 select.after(picker);
             }).catch(plain);
+        }
+    };
+
+    /* Barra de nível para valores por país: situa o valor numa escala, mostra a referência
+       mundial e, quando existe um limiar oficial, as zonas correspondentes. Só usa limiares
+       publicados (OMS, ODS 6.4.2/FAO, meta 30x30) e referências calculadas a partir dos próprios
+       dados (média mundial e percentil entre os países com dados). */
+    window.BioCulturaLevel = {
+        styled: false,
+        config: {
+            sdg_6_1_1_safely_managed_drinking_water: { max: 100, better: "high", digits: 1, unit: "%" },
+            sdg_6_4_2_water_stress: {
+                max: 100, digits: 1, unit: "%",
+                // Classes do indicador ODS 6.4.2 (FAO AQUASTAT / ONU-Água).
+                zones: [
+                    { to: 25, tone: "ok", pt: "Sem stress hídrico (abaixo de 25%)", en: "No water stress (below 25%)" },
+                    { to: 50, tone: "low", pt: "Stress hídrico baixo (25–50%)", en: "Low water stress (25–50%)" },
+                    { to: 75, tone: "mid", pt: "Stress hídrico médio (50–75%)", en: "Medium water stress (50–75%)" },
+                    { to: 100, tone: "high", pt: "Stress hídrico alto (75–100%)", en: "High water stress (75–100%)" },
+                    { to: Infinity, tone: "severe", pt: "Stress hídrico crítico (acima de 100%)", en: "Critical water stress (above 100%)" }
+                ]
+            },
+            pm25_mean_annual_exposure: {
+                max: 60, digits: 1, unit: " µg/m³",
+                // Recomendação anual da OMS (2021): 5 µg/m³; meta intermédia 1: 35 µg/m³.
+                zones: [
+                    { to: 5, tone: "ok", pt: "Dentro da recomendação da OMS (5 µg/m³)", en: "Within the WHO guideline (5 µg/m³)" },
+                    { to: 15, tone: "mid", pt: "Acima da recomendação da OMS (5 µg/m³)", en: "Above the WHO guideline (5 µg/m³)" },
+                    { to: 35, tone: "high", pt: "Muito acima da recomendação da OMS (5 µg/m³)", en: "Far above the WHO guideline (5 µg/m³)" },
+                    { to: Infinity, tone: "severe", pt: "Acima de todas as metas intermédias da OMS", en: "Above all WHO interim targets" }
+                ],
+                ticks: [5, 15, 35]
+            },
+            air_pollution_mortality_rate: { max: 320, better: "low", digits: 0, unit: "" },
+            sdg_15_3_1_degraded_land: { max: 75, better: "low", digits: 1, unit: "%" },
+            sdg_15_5_1_red_list_index: { max: 1, better: "high", digits: 3, unit: "" },
+            electricity_access_pct: { max: 100, better: "high", digits: 1, unit: "%" },
+            renewable_final_energy_pct: { max: 100, better: "high", digits: 1, unit: "%" },
+            energy_intensity_mj_per_usd: { max: 20, better: "low", digits: 2, unit: "" },
+            renewable_electricity_pct: { max: 100, better: "high", digits: 1, unit: "%" },
+            terrestrial_protected_pct: { max: 100, better: "high", digits: 1, unit: "%", ticks: [30], target: { at: 30, pt: "Meta global de 30% até 2030", en: "Global target of 30% by 2030" } },
+            marine_protected_pct: { max: 100, better: "high", digits: 1, unit: "%", ticks: [30], target: { at: 30, pt: "Meta global de 30% até 2030", en: "Global target of 30% by 2030" } }
+        },
+        injectStyle() {
+            if (this.styled) return;
+            this.styled = true;
+            const style = document.createElement("style");
+            style.textContent = `
+                .lvl { margin-top: 1.1rem; }
+                .lvl-track { position: relative; height: 8px; border-radius: 99px; background: #e8eee9; }
+                .lvl-track.is-better-high { background: linear-gradient(90deg, #e2b2a6, #ead9a4 50%, #b4d2bd); }
+                .lvl-track.is-better-low { background: linear-gradient(90deg, #b4d2bd, #ead9a4 50%, #e2b2a6); }
+                .lvl-zone { position: absolute; top: 0; bottom: 0; }
+                .lvl-zone:first-child { border-radius: 99px 0 0 99px; }
+                .lvl-zone:last-child { border-radius: 0 99px 99px 0; }
+                .lvl-zone.t-ok { background: #8dbf9f; } .lvl-zone.t-low { background: #c6d58a; } .lvl-zone.t-mid { background: #ecc86b; }
+                .lvl-zone.t-high { background: #e19a62; } .lvl-zone.t-severe { background: #c9605a; }
+                .lvl-dot { position: absolute; top: 50%; width: 16px; height: 16px; margin: -8px 0 0 -8px; border-radius: 50%; background: #1f3628; border: 3px solid #fff; box-shadow: 0 1px 5px rgba(0,0,0,.28); }
+                .lvl-world { position: absolute; top: -5px; bottom: -5px; width: 0; border-left: 2px dashed rgba(31,54,40,.55); }
+                .lvl-world b { position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); padding-bottom: 2px; font-size: .62rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; white-space: nowrap; color: #5d6e63; }
+                .lvl-scale { position: relative; height: 1.1rem; margin-top: .45rem; font-size: .66rem; color: #8a978e; }
+                .lvl-scale span { position: absolute; transform: translateX(-50%); white-space: nowrap; }
+                .lvl-scale span:first-child { transform: none; } .lvl-scale span:last-child { transform: translateX(-100%); }
+                .lvl-scale span.is-target { color: #2f6147; font-weight: 800; }
+                .lvl-text { margin: .5rem 0 0 !important; font-size: .78rem !important; line-height: 1.5 !important; color: #5d6e63 !important; }
+                .lvl-text strong, .country-value .lvl-text strong { display: inline !important; margin: 0 !important; font-size: inherit !important; font-weight: 700 !important; line-height: inherit !important; color: #1f3628 !important; letter-spacing: 0 !important; }
+                .lvl-text em { font-style: normal; white-space: nowrap; }
+            `;
+            document.head.appendChild(style);
+        },
+        // Valores por país (apenas países, sem regiões nem agregados) para calcular o percentil.
+        countryValues(key, entities, codeOf) {
+            const geo = window.BioCulturaGeo?.geo;
+            return (entities || []).filter((entity) => !geo || geo.countries[codeOf(entity)])
+                .map((entity) => entity.latest?.[key]?.value).filter((value) => typeof value === "number");
+        },
+        html(key, value, context) {
+            const settings = this.config[key];
+            if (!settings || typeof value !== "number" || !isFinite(value)) return "";
+            this.injectStyle();
+            const english = window.BioCultureI18n?.language === "en";
+            const tr = (pt, en) => (english ? en : pt);
+            const locale = english ? "en-GB" : "pt-PT";
+            const number = (n) => new Intl.NumberFormat(locale, { maximumFractionDigits: settings.digits }).format(n);
+            const percent = (n) => Math.max(0, Math.min(100, (n / settings.max) * 100));
+            const context_ = context || {};
+            const zones = settings.zones;
+            const track = [];
+            if (zones) {
+                let from = 0;
+                zones.forEach((zone) => {
+                    const to = Math.min(zone.to, settings.max);
+                    if (to > from) track.push(`<i class="lvl-zone t-${zone.tone}" style="left:${percent(from)}%;width:${percent(to) - percent(from)}%"></i>`);
+                    from = Math.max(from, to);
+                });
+            }
+            const ticks = [0, ...(settings.ticks || []), settings.max];
+            const scale = ticks.map((tick, index) => {
+                const label = index === ticks.length - 1 ? `${number(tick)}${value > settings.max ? "+" : ""}` : number(tick);
+                const target = settings.target && tick === settings.target.at ? " is-target" : "";
+                return `<span class="${target.trim()}" style="left:${percent(tick)}%">${label}</span>`;
+            }).join("");
+            const world = typeof context_.world === "number" ? context_.world : null;
+            const worldTick = world === null ? "" : `<i class="lvl-world" style="left:${percent(world)}%"><b>${tr("Mundo", "World")}</b></i>`;
+            const lines = [];
+            if (zones) {
+                const zone = zones.find((candidate) => value < candidate.to) || zones[zones.length - 1];
+                lines.push(`<strong>${english ? zone.en : zone.pt}</strong>`);
+            }
+            if (world !== null) {
+                const shown = `${number(world)}${settings.unit}`;
+                lines.push(`<em>${value > world ? tr(`Acima do valor mundial (${shown})`, `Above the world value (${shown})`)
+                    : value < world ? tr(`Abaixo do valor mundial (${shown})`, `Below the world value (${shown})`)
+                    : tr(`Igual ao valor mundial (${shown})`, `Equal to the world value (${shown})`)}</em>`);
+            }
+            if (context_.rank !== false) {
+                const values = this.countryValues(key, context_.entities, context_.codeOf);
+                if (values.length >= 20) {
+                    const below = Math.round((values.filter((other) => other < value).length / values.length) * 100);
+                    lines.push(`<em>${tr(`Superior a ${below}% dos países com dados`, `Higher than ${below}% of countries with data`)}</em>`);
+                }
+            }
+            if (settings.target) {
+                const reached = value >= settings.target.at;
+                lines.push(`<em>${english ? settings.target.en : settings.target.pt} · ${reached ? tr("já atingida", "reached") : tr("ainda não atingida", "not yet reached")}</em>`);
+            }
+            const trackClass = !zones && settings.better ? ` is-better-${settings.better}` : "";
+            const label = lines.map((line) => line.replace(/<[^>]+>/g, "")).join(". ");
+            return `<div class="lvl" role="img" aria-label="${label.replace(/"/g, "&quot;")}"><div class="lvl-track${trackClass}">${track.join("")}${worldTick}<i class="lvl-dot" style="left:${percent(value)}%"></i></div><div class="lvl-scale">${scale}</div><p class="lvl-text">${zones ? `${lines[0]}<br>${lines.slice(1).join(" · ")}` : lines.join(" · ")}</p></div>`;
         }
     };
 
