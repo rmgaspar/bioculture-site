@@ -396,7 +396,7 @@
             fullLoading = Promise.all([
                 read(`/assets/lang/auto/${lang}.json?v=28`),
                 read(`/assets/lang/${lang}.json?v=11`),
-                read(`/assets/lang/display/${lang}.json?v=26`),
+                read(`/assets/lang/display/${lang}.json?v=27`),
             ]).then(([auto, structured, display]) => {
                 dictionary = auto;
                 structuredDictionary = structured;
