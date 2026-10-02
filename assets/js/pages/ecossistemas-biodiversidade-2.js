@@ -137,26 +137,31 @@
                 el("local-note").textContent = ids.length
                     ? "Seleção territorial disponível no perfil bioCultura."
                     : "Ainda não existem associações de espécies para este perfil.";
-                const INITIAL = 12;
-                let expanded = false;
-                const more = el("local-more");
-                const chips = () => (expanded ? ids : ids.slice(0, INITIAL)).map((id) => {
-                    const x = master[id];
-                    return `<a class="local-chip" href="especie-detalhe.html?id=${
-                        encodeURIComponent(id)
-                    }">${valid(x.imagem) ? `<img src="${esc(x.imagem)}" alt="" loading="lazy">` : ""}${
-                        esc(x.nome)
-                    }</a>`;
-                }).join("");
+                const INITIAL = 12, STEP = 24;
+                let shown = INITIAL;
+                const more = el("local-more"), less = el("local-less"), progress = el("local-progress");
                 const paint = () => {
-                    el("local-species").innerHTML = chips();
-                    more.hidden = ids.length <= INITIAL;
-                    more.textContent = expanded ? "Ver menos espécies" : "Ver mais espécies";
-                    more.setAttribute("aria-expanded", String(expanded));
+                    el("local-species").innerHTML = ids.slice(0, shown).map((id) => {
+                        const x = master[id];
+                        return `<a class="local-chip" href="especie-detalhe.html?id=${
+                            encodeURIComponent(id)
+                        }">${valid(x.imagem) ? `<img src="${esc(x.imagem)}" alt="" loading="lazy">` : ""}${
+                            esc(x.nome)
+                        }</a>`;
+                    }).join("");
+                    el("local-actions").hidden = ids.length <= INITIAL;
+                    progress.textContent = `${Math.min(shown, ids.length)} / ${ids.length}`;
+                    more.hidden = shown >= ids.length;
+                    less.hidden = shown <= INITIAL;
                 };
                 more.onclick = () => {
-                    expanded = !expanded;
+                    shown = Math.min(ids.length, shown + STEP);
                     paint();
+                };
+                less.onclick = () => {
+                    shown = INITIAL;
+                    paint();
+                    el("local-species").scrollIntoView({ block: "center", behavior: "smooth" });
                 };
                 paint();
             }
