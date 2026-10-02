@@ -128,6 +128,7 @@
                 if (!info) return;
                 el("local-name").textContent = [info.titulo, info.concelho].filter(Boolean).join(", ");
                 const raw = [
+                    ...(info.biomas?.especies_ids || []),
                     ...(info.especies_ids || []),
                     ...(info.extensao_biocultura?.especies_ids || []),
                 ];
