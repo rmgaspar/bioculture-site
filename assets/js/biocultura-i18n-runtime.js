@@ -397,7 +397,7 @@
             structuredDictionary = await originalFetch(`/assets/lang/${lang}.json?v=11`, { cache: "no-cache" })
                 .then((response) => response.ok ? response.json() : {})
                 .catch(() => ({}));
-            displayDictionary = await originalFetch(`/assets/lang/display/${lang}.json?v=4`, { cache: "no-cache" })
+            displayDictionary = await originalFetch(`/assets/lang/display/${lang}.json?v=8`, { cache: "no-cache" })
                 .then((response) => response.ok ? response.json() : {})
                 .catch(() => ({}));
         }
@@ -485,6 +485,39 @@
         if ((match = key.match(/^cerca de (\d+) km(.*)$/))) {
             const rest = match[2] ? translateComposite(match[2]) || match[2] : "";
             return `about ${match[1]} km${rest}`;
+        }
+        if ((match = key.match(/^registos com (.+) disponível$/))) {
+            return `records with ${lookupDisplay(match[1]) || match[1]} available`;
+        }
+        /* Vários campos juntos em frases consecutivas. */
+        const sentences = key.split(/(?<=\.)\s+(?=[A-ZÀ-Ý])/);
+        if (sentences.length > 1) {
+            /* Procura sempre o maior grupo de frases que já exista no dicionário
+               (um campo pode ter várias frases). */
+            const translated = [];
+            let index = 0;
+            while (index < sentences.length) {
+                let end = sentences.length;
+                let found = "";
+                for (; end > index; end--) {
+                    found = lookupDisplay(sentences.slice(index, end).join(" "));
+                    if (found) break;
+                }
+                if (found) {
+                    translated.push(found);
+                    index = end;
+                } else {
+                    translated.push(translateComposite(sentences[index]) || sentences[index]);
+                    index += 1;
+                }
+            }
+            if (translated.some((part, position) => part !== sentences[position])) return translated.join(" ");
+        }
+        /* "Rótulo: valor" — traduz o rótulo e o valor conhecidos, mantém o resto. */
+        if ((match = key.match(/^([^:·.]{1,30}): (.+)$/))) {
+            const label = lookupDisplay(match[1]);
+            const rest = translateComposite(match[2]);
+            if (label || rest) return `${label || match[1]}: ${rest || match[2]}`;
         }
         if (key.startsWith("· ")) {
             const rest = translateComposite(key.slice(2));
