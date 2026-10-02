@@ -58,22 +58,20 @@
                 .geo-trigger:focus-visible, .geo-picker.is-open .geo-trigger { outline: none; box-shadow: 0 0 0 3px rgba(47,130,145,.22); }
                 .geo-trigger::after { content: ""; flex: 0 0 auto; width: .5em; height: .5em; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg) translateY(-.15em); opacity: .55; transition: transform .2s ease; }
                 .geo-picker.is-open .geo-trigger::after { transform: rotate(-135deg) translateY(-.1em); }
-                .geo-panel { position: absolute; z-index: 60; left: 0; right: 0; top: calc(100% + .45rem); max-height: min(30rem, 70vh); overflow: auto; padding: .8rem; background: #fff; border: 1px solid #dce5dc; border-radius: 16px; box-shadow: 0 18px 44px rgba(31,54,40,.14); }
+                .geo-panel { position: absolute; z-index: 60; left: 0; right: 0; top: calc(100% + .3rem); max-height: min(24rem, 65vh); overflow: auto; padding: .3rem 0; background: #fff; border: 1px solid #dce5dc; border-radius: 14px; box-shadow: 0 14px 34px rgba(31,54,40,.12); }
                 .geo-panel[hidden] { display: none; }
-                .geo-search { width: 100%; box-sizing: border-box; margin: 0 0 .6rem; padding: .7em 1em; border: 1px solid #dce5dc !important; border-radius: 12px !important; background: #f8faf8 !important; font: inherit; font-size: .9em; color: inherit; }
-                .geo-group { border-top: 1px solid #edf1ed; }
-                .geo-group:first-of-type { border-top: 0; }
-                .geo-head { display: flex; width: 100%; align-items: center; justify-content: space-between; gap: 1em; padding: .8em .4em; border: 0 !important; background: transparent !important; color: inherit !important; font: inherit; font-size: .85em; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; text-align: left; cursor: pointer; box-shadow: none !important; }
-                .geo-head small { margin-left: auto; font-size: .85em; font-weight: 600; letter-spacing: 0; opacity: .55; text-transform: none; }
-                .geo-head::after { content: ""; width: .45em; height: .45em; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg) translateY(-.1em); opacity: .55; transition: transform .2s ease; }
+                .geo-group { border-top: 1px solid #f0f3f0; }
+                .geo-group:first-child { border-top: 0; }
+                .geo-head { display: flex; width: 100%; align-items: center; justify-content: space-between; gap: 1em; padding: .75em 1.1em; border: 0 !important; border-radius: 0 !important; background: transparent !important; color: inherit !important; font: inherit; font-weight: 700; text-transform: none; letter-spacing: 0; text-align: left; cursor: pointer; box-shadow: none !important; }
+                .geo-head:hover { background: #f4f8f4 !important; }
+                .geo-head small { margin-left: auto; font-size: .8em; font-weight: 400; opacity: .5; }
+                .geo-head::after { content: ""; flex: 0 0 auto; width: .45em; height: .45em; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg) translateY(-.1em); opacity: .5; transition: transform .2s ease; }
                 .geo-group.is-open > .geo-head::after { transform: rotate(-135deg); }
-                .geo-items { display: none; grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr)); gap: .35rem; padding: 0 .2rem .9rem; }
-                .geo-group.is-open > .geo-items { display: grid; }
-                .geo-item { padding: .55em .8em; border: 1px solid #e5ebe5 !important; border-radius: 10px !important; background: #fff !important; color: inherit !important; font: inherit; font-size: .85em; text-align: left; text-transform: none; letter-spacing: 0; font-weight: 400; cursor: pointer; box-shadow: none !important; }
-                .geo-item:hover, .geo-item:focus-visible { background: #f1f6f1 !important; border-color: #b9cdbd !important; outline: none; }
-                .geo-item[aria-selected="true"] { background: var(--hero-accent, #2f6147) !important; border-color: var(--hero-accent, #2f6147) !important; color: #fff !important; }
-                .geo-empty { padding: 1em .4em; font-size: .85em; opacity: .6; }
-                @media (max-width: 736px) { .geo-items { grid-template-columns: 1fr 1fr; } }
+                .geo-items { display: none; padding: 0 0 .4rem; }
+                .geo-group.is-open > .geo-items { display: block; }
+                .geo-item { display: block; width: 100%; padding: .5em 1.1em .5em 2em; border: 0 !important; border-radius: 0 !important; background: transparent !important; color: inherit !important; font: inherit; font-weight: 400; text-transform: none; letter-spacing: 0; text-align: left; cursor: pointer; box-shadow: none !important; }
+                .geo-item:hover, .geo-item:focus-visible { background: #f1f6f1 !important; outline: none; }
+                .geo-item[aria-selected="true"] { background: var(--hero-accent, #2f6147) !important; color: #fff !important; }
             `;
             document.head.appendChild(style);
         },
@@ -95,6 +93,9 @@
                 entities.forEach((entity) => buckets.get(geo.countries[valueOf(entity)] || "AGG").push(entity));
                 // Mantém todos os valores no <select> escondido: o código da página continua a usá-lo.
                 plain();
+                // Lê o aspeto do seletor original antes de o esconder.
+                const lookKeys = ["fontSize", "fontFamily", "color", "backgroundColor", "borderRadius", "paddingTop", "paddingBottom", "paddingLeft", "paddingRight", "borderTopWidth", "borderTopColor"];
+                const snapshot = Object.fromEntries(lookKeys.map((key) => [key, getComputedStyle(select)[key]]));
                 select.classList.add("geo-native");
                 select.tabIndex = -1;
                 select.setAttribute("aria-hidden", "true");
@@ -108,20 +109,13 @@
                 trigger.setAttribute("aria-haspopup", "true");
                 trigger.setAttribute("aria-expanded", "false");
                 // Reutiliza o aspeto do seletor original (tamanho, cantos, borda, tipo de letra).
-                const look = getComputedStyle(select);
-                ["fontSize", "fontFamily", "color", "backgroundColor", "borderRadius", "paddingTop", "paddingBottom", "paddingLeft", "paddingRight"].forEach((key) => { trigger.style[key] = look[key]; });
-                trigger.style.border = `${look.borderTopWidth} solid ${look.borderTopColor}`;
+                ["fontSize", "fontFamily", "color", "backgroundColor", "borderRadius", "paddingTop", "paddingBottom", "paddingLeft", "paddingRight"].forEach((key) => { trigger.style[key] = snapshot[key]; });
+                trigger.style.border = `${snapshot.borderTopWidth} solid ${snapshot.borderTopColor}`;
                 const label = document.createElement("span");
                 trigger.appendChild(label);
                 const panel = document.createElement("div");
                 panel.className = "geo-panel";
                 panel.hidden = true;
-                const search = document.createElement("input");
-                search.type = "search";
-                search.className = "geo-search";
-                search.placeholder = english ? "Search country or territory…" : "Pesquisar país ou território…";
-                search.setAttribute("aria-label", search.placeholder);
-                panel.appendChild(search);
                 const list = document.createElement("div");
                 panel.appendChild(list);
 
@@ -166,33 +160,11 @@
                     };
                     head.addEventListener("click", () => {
                         const open = !block.classList.contains("is-open");
-                        if (!search.value) groups.forEach((g) => g.setOpen(false));
+                        groups.forEach((g) => g.setOpen(false));
                         setOpen(open);
                     });
                     groups.push({ block, buttons, setOpen });
                 });
-                const empty = document.createElement("div");
-                empty.className = "geo-empty";
-                empty.textContent = english ? "No results" : "Sem resultados";
-                empty.hidden = true;
-                list.appendChild(empty);
-
-                const refresh = () => {
-                    const query = search.value.trim().toLocaleLowerCase(english ? "en" : "pt");
-                    let any = false;
-                    groups.forEach((group) => {
-                        let shown = 0;
-                        group.buttons.forEach((item) => {
-                            const match = !query || item.textContent.toLocaleLowerCase(english ? "en" : "pt").includes(query);
-                            item.hidden = !match;
-                            if (match) shown += 1;
-                        });
-                        group.block.hidden = shown === 0;
-                        if (query) group.setOpen(shown > 0);
-                        if (shown) any = true;
-                    });
-                    empty.hidden = any;
-                };
                 const sync = () => {
                     const current = select.value;
                     label.textContent = current ? select.options[select.selectedIndex].textContent : placeholder;
@@ -207,15 +179,11 @@
                     panel.hidden = false;
                     picker.classList.add("is-open");
                     trigger.setAttribute("aria-expanded", "true");
-                    search.value = "";
-                    refresh();
                     groups.forEach((group) => group.setOpen(false));
                     const selected = groups.find((group) => group.buttons.some((item) => item.getAttribute("aria-selected") === "true"));
                     if (selected) selected.setOpen(true);
-                    search.focus({ preventScroll: true });
                 };
                 trigger.addEventListener("click", () => (panel.hidden ? open() : close()));
-                search.addEventListener("input", refresh);
                 document.addEventListener("click", (event) => { if (!picker.contains(event.target)) close(); });
                 picker.addEventListener("keydown", (event) => {
                     if (event.key === "Escape") { close(); trigger.focus(); }
