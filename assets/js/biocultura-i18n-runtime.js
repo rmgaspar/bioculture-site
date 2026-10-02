@@ -385,22 +385,25 @@
         return String(value || "").replace(/\s+/g, " ").trim();
     }
 
+    /* Um único carregamento partilhado: quem chega depois espera por todos os
+       dicionários (automático, estruturado e de apresentação). */
+    let fullLoading = null;
     async function loadDictionary() {
-        if (dictionary) return dictionary;
-        if (!loading) {
-            loading = originalFetch(`/assets/lang/auto/${lang}.json?v=28`, { cache: "no-cache" })
+        if (!fullLoading) {
+            const read = (url) => originalFetch(url, { cache: "no-cache" })
                 .then((response) => response.ok ? response.json() : {})
                 .catch(() => ({}));
+            fullLoading = Promise.all([
+                read(`/assets/lang/auto/${lang}.json?v=28`),
+                read(`/assets/lang/${lang}.json?v=11`),
+                read(`/assets/lang/display/${lang}.json?v=18`),
+            ]).then(([auto, structured, display]) => {
+                dictionary = auto;
+                structuredDictionary = structured;
+                displayDictionary = display;
+            });
         }
-        dictionary = await loading;
-        if (!structuredDictionary) {
-            structuredDictionary = await originalFetch(`/assets/lang/${lang}.json?v=11`, { cache: "no-cache" })
-                .then((response) => response.ok ? response.json() : {})
-                .catch(() => ({}));
-            displayDictionary = await originalFetch(`/assets/lang/display/${lang}.json?v=14`, { cache: "no-cache" })
-                .then((response) => response.ok ? response.json() : {})
-                .catch(() => ({}));
-        }
+        await fullLoading;
         return dictionary;
     }
 
@@ -477,9 +480,9 @@
         const direct = lookupDisplay(key);
         if (direct) return direct;
         let match;
-        if (key.endsWith(" ↗")) {
+        if (key.endsWith(" ↗") || key.endsWith(" →")) {
             const rest = translateComposite(key.slice(0, -2));
-            if (rest) return `${rest} ↗`;
+            if (rest) return `${rest} ${key.slice(-1)}`;
         }
         if ((match = key.match(/^Fonte (\d+)$/))) return `Source ${match[1]}`;
         if ((match = key.match(/^Localização: (.+)$/))) {
@@ -488,6 +491,18 @@
         if ((match = key.match(/^cerca de (\d+) km(.*)$/))) {
             const rest = match[2] ? translateComposite(match[2]) || match[2] : "";
             return `about ${match[1]} km${rest}`;
+        }
+        /* Fichas de pragas: frases-modelo com nomes e listas já traduzidos. */
+        if ((match = key.match(/^(.+) afeta sobretudo (.+)\. A gestão recomendada combina prevenção, observação regular, tolerância a dano ligeiro e intervenção seletiva apenas quando o crescimento da praga ou doença ameaça a cultura\.$/))) {
+            const plants = match[2].split(", ").map((item) => lookupDisplay(item) || item).join(", ");
+            return `${lookupDisplay(match[1]) || match[1]} mainly affects ${plants}. The recommended management combines prevention, regular observation, tolerance of slight damage and selective intervention only when the growth of the pest or disease threatens the crop.`;
+        }
+        if ((match = key.match(/^Conservar ou, quando permitido e tecnicamente adequado, recorrer a: (.+)\.$/))) {
+            const items = match[1].split("; ").map((item) => lookupDisplay(item) || item).join("; ");
+            return `Conserve or, where permitted and technically appropriate, use: ${items}.`;
+        }
+        if ((match = key.match(/^(Flora|Fauna) invasora \((.+)\)$/))) {
+            return `Invasive ${match[1] === "Flora" ? "flora" : "fauna"} (${match[2]})`;
         }
         if ((match = key.match(/^(\d+) participações$/))) return `${match[1]} ${match[1] === "1" ? "submission" : "submissions"}`;
         if ((match = key.match(/^registos com (.+) disponível$/))) {
