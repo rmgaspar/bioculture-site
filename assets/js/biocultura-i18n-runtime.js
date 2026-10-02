@@ -1,6 +1,44 @@
 (function () {
     "use strict";
 
+    /* Perfil territorial da localidade escolhida: cada página carrega apenas o seu
+       ficheiro (data/regioes/<id>.json) em vez do ficheiro completo com todas as localidades.
+       Devolve [] sem localidade escolhida; com fallback devolve o perfil por omissão. */
+    window.BioCultureRegion = {
+        load(options) {
+            const useDefault = !options || options.fallback !== false;
+            let saved = "";
+            try { saved = window.localStorage.getItem("biocultura_region") || ""; } catch (_) {}
+            const get = (name) => fetch(`/data/regioes/${encodeURIComponent(name)}.json`).then((response) => {
+                if (!response.ok) throw new Error(name);
+                return response.json();
+            });
+            const fallback = () => (useDefault ? get("_default").then((row) => [row]).catch(() => []) : Promise.resolve([]));
+            return saved ? get(saved).then((row) => [row]).catch(fallback) : fallback();
+        }
+    };
+
+    /* Fichas de espécie: o inventário completo é dividido em blocos (data/especies/b<N>.json) e a
+       página carrega apenas o bloco da espécie pedida. A função de dispersão tem de coincidir com
+       scripts/gerar-especies.mjs. */
+    window.BioCulturaSpecies = {
+        bucket(id) {
+            let hash = 0x811c9dc5;
+            const text = String(id).normalize("NFC");
+            for (let i = 0; i < text.length; i++) {
+                hash ^= text.charCodeAt(i);
+                hash = Math.imul(hash, 0x01000193) >>> 0;
+            }
+            return hash % 64;
+        },
+        record(id) {
+            return fetch(`/data/especies/b${this.bucket(id)}.json`).then((response) => {
+                if (!response.ok) throw new Error(`b${this.bucket(id)}`);
+                return response.json();
+            }).then((rows) => rows[id]);
+        }
+    };
+
     const consolidatedLegacyRoutes = {
         "/observatorio/vetores-pressao.html": "/observatorio/observatorio-terra.html"
     };

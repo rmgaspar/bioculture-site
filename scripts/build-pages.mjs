@@ -6,6 +6,7 @@ import { execFileSync } from "node:child_process";
 execFileSync("python3", ["scripts/catalogo/validar.py"], { stdio: "inherit" });
 execFileSync(process.execPath, ["scripts/validar-gestao.mjs"], { stdio: "inherit" });
 execFileSync(process.execPath, ["scripts/gerar-localidades.mjs"], { stdio: "inherit" });
+execFileSync(process.execPath, ["scripts/gerar-especies.mjs"], { stdio: "inherit" });
 execFileSync(process.execPath, ["scripts/catalogo/exportar-indice.mjs"], { stdio: "inherit" });
 
 // Cloudflare Pages sets CF_PAGES automatically and serves the custom domain from its root,

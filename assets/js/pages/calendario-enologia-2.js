@@ -363,10 +363,12 @@
                             "/data/dicas.json",
                             "/data/noticias.json",
                         ].map((url) =>
-                            fetch(url, { cache: "no-cache" }).then((r) => {
-                                if (!r.ok) throw new Error(url);
-                                return r.json();
-                            })
+                            url === "/data/bioregioes.json"
+                                ? window.BioCultureRegion.load({ fallback: false })
+                                : fetch(url, { cache: "no-cache" }).then((r) => {
+                                    if (!r.ok) throw new Error(url);
+                                    return r.json();
+                                })
                         ),
                     );
                     [locationsDB, castasDB, pragasDB, dicasDB] = responses;

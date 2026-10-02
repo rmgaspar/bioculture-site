@@ -329,7 +329,7 @@
                 }
                 try {
                     const [master, pests, invasives, faunas, guidance, horticolas, solucoesCatalogo] = await Promise.all([
-                        ...["especies_master", "pragas", "flora_invasora", "fauna_invasora"].map((f) =>
+                        ...["especies-indice", "pragas", "flora_invasora", "fauna_invasora"].map((f) =>
                             fetch(`/data/${f}.json`).then((r) => {
                                 if (!r.ok) throw Error(`HTTP ${r.status}`);
                                 return r.json();
@@ -341,7 +341,8 @@
                         fetch("/data/horticolas_master.json").then((r) => r.json()).catch(() => null),
                         fetch("/data/solucoes-catalogo.json").then((r) => r.json()).catch(() => null),
                     ]);
-                    const esp = resolveSpecies(id, master, pests, invasives, faunas);
+                    const record = await window.BioCulturaSpecies.record(id).catch(() => undefined);
+                    const esp = resolveSpecies(id, { [id]: record }, pests, invasives, faunas);
                     if (!esp) throw Error("not-found");
                     render(esp, master, guidance, horticolas, solucoesCatalogo);
                     const stickyNav = document.createElement("script");

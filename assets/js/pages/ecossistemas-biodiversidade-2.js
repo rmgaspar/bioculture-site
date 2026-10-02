@@ -165,8 +165,8 @@
             async function start() {
                 try {
                     const [master, locations, news] = await Promise.all(
-                        ["especies_master", "bioregioes", "noticias"].map((f) =>
-                            fetch(`/data/${f}.json`).then((r) => {
+                        ["especies-indice", "bioregioes", "noticias"].map((f) =>
+                            f === "bioregioes" ? window.BioCultureRegion.load() : fetch(`/data/${f}.json`).then((r) => {
                                 if (!r.ok) throw Error(f);
                                 return r.json();
                             })

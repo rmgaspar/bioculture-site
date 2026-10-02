@@ -735,10 +735,12 @@
                     ];
                     const data = await Promise.all(
                         urls.map((url) =>
-                            fetch(url + "?v=" + Date.now()).then((response) => {
-                                if (!response.ok) throw new Error(url);
-                                return response.json();
-                            })
+                            url === "/data/bioregioes.json"
+                                ? window.BioCultureRegion.load({ fallback: false })
+                                : fetch(url + "?v=" + Date.now()).then((response) => {
+                                    if (!response.ok) throw new Error(url);
+                                    return response.json();
+                                })
                         ),
                     );
                     [locationsDB, pragasDB, floraDB, faunaDB, horticolasDB, dicasDB] = data;

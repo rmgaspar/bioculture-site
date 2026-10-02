@@ -146,7 +146,7 @@
                 try {
                     const [livestock, locations, news] = await Promise.all(
                         ["pecuaria_industrial", "bioregioes", "noticias"].map((f) =>
-                            fetch(`/data/${f}.json`).then((r) => {
+                            f === "bioregioes" ? window.BioCultureRegion.load() : fetch(`/data/${f}.json`).then((r) => {
                                 if (!r.ok) throw Error(f);
                                 return r.json();
                             })

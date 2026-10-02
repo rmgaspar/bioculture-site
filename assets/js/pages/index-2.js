@@ -70,33 +70,27 @@
                         }.`;
                 }
 
-                // Só entra no sorteio diário quem tem uma síntese real: sem isto, quase
-                // metade do inventário devolve frases que só repetem o nome ("é uma planta
-                // da família X"), o que transforma "um motivo para voltar" em palha.
-                const dashTitle = /—| - /,
-                    englishHint = /\b(the|is a|species of|found in|native to|belongs to)\b/i,
-                    ptAccent = /[àáâãçéêíóôõú]/i;
-                const entries = Object.entries(species || {}).filter(([, x]) => {
-                    const nome = String(x.nome || ""), sintese = String(x.sintese || "").trim();
-                    if (dashTitle.test(nome)) return false;
-                    if (!sintese || sintese === "-" || sintese.length < 100) return false;
-                    if (sintese.startsWith(nome)) return false;
-                    const looksEnglish = englishHint.test(sintese) && !ptAccent.test(sintese);
-                    return isEnglish ? looksEnglish : !looksEnglish;
-                });
-                if (!entries.length) return;
-
-                const day = Math.floor(now.getTime() / 86400000),
-                    [id, x] = entries[Math.abs(day) % entries.length],
-                    image = x.imagem && x.imagem !== "-"
-                        ? `<img class="species-image" src="${esc(x.imagem)}" alt="${esc(x.nome)}" loading="lazy" onerror="this.style.display='none'">`
-                        : "";
-
-                el("encounter").innerHTML = `<div><small>${isEnglish ? "Today's encounter" : "Encontro do dia"}</small><h3>${esc(x.nome)}</h3><em>${esc(x.nome_cientifico)}</em><p>${
-                    esc(x.sintese || x.origem || (isEnglish ? "A species from the bioCulture inventory." : "Uma espécie do inventário bioCultura."))
-                }</p><a href="/ecossistemas/especie-detalhe.html?id=${
-                    encodeURIComponent(id)
-                }">${isEnglish ? "Meet this species" : "Conhecer esta espécie"} →</a></div>${image}`;
+                // Só entra no sorteio diário quem tem uma síntese real (lista pré-calculada em
+                // scripts/gerar-especies.mjs). Em inglês, a ficha só serve se já estiver traduzida.
+                const eligible = (isEnglish ? species?.en : species?.pt) || [];
+                if (!eligible.length) return;
+                const day = Math.floor(now.getTime() / 86400000);
+                (async () => {
+                    for (let attempt = 0; attempt < 3; attempt++) {
+                        const id = eligible[(Math.abs(day) + attempt) % eligible.length];
+                        const x = await window.BioCulturaSpecies.record(id).catch(() => null);
+                        if (!x) continue;
+                        const image = x.imagem && x.imagem !== "-"
+                            ? `<img class="species-image" src="${esc(x.imagem)}" alt="${esc(x.nome)}" loading="lazy" onerror="this.style.display='none'">`
+                            : "";
+                        el("encounter").innerHTML = `<div><small>${isEnglish ? "Today's encounter" : "Encontro do dia"}</small><h3>${esc(x.nome)}</h3><em>${esc(x.nome_cientifico)}</em><p>${
+                            esc(x.sintese || x.origem || (isEnglish ? "A species from the bioCulture inventory." : "Uma espécie do inventário bioCultura."))
+                        }</p><a href="/ecossistemas/especie-detalhe.html?id=${
+                            encodeURIComponent(id)
+                        }">${isEnglish ? "Meet this species" : "Conhecer esta espécie"} →</a></div>${image}`;
+                        return;
+                    }
+                })();
             }
 
             function showNews(items) {
@@ -441,18 +435,20 @@
             async function start() {
                 try {
                     const names = [
-                            "especies_master",
+                            "especies-encontro",
                             "biodiversity-global-catalogue",
-                            "crops-global-catalogue",
+                            "crops-global-summary",
                             "grape-varieties-global",
                             "bioregioes",
                             "noticias",
                         ],
                         data = await Promise.all(names.map((n) =>
-                            fetch(`/data/${n}.json`).then((r) => {
-                                if (!r.ok) throw Error(n);
-                                return r.json();
-                            })
+                            n === "bioregioes"
+                                ? window.BioCultureRegion.load({ fallback: false })
+                                : fetch(`/data/${n}.json`).then((r) => {
+                                    if (!r.ok) throw Error(n);
+                                    return r.json();
+                                })
                         ));
 
                     showPulse(data[1], data[2], data[3]);
