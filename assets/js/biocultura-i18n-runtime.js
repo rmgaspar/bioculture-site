@@ -39,11 +39,45 @@
         }
     };
 
-    /* Seletor de países agrupado por continente (optgroup). Entidades que não são países
+    /* Seletor de países por continente: cada continente é um bloco que expande e recolhe, com
+       pesquisa por nome. O <select> original continua no DOM (escondido) e recebe o valor e o
+       evento "change", por isso o código de cada página não muda. Entidades que não são países
        (regiões, grupos de rendimento, mundo…) ficam num grupo final. O mapa código -> continente
        está em data/geografias.json e cobre códigos M49 numéricos e ISO3. */
     window.BioCulturaGeo = {
-        fill(select, entities, valueOf, tr) {
+        styled: false,
+        injectStyle() {
+            if (this.styled) return;
+            this.styled = true;
+            const style = document.createElement("style");
+            style.textContent = `
+                .geo-native { position: absolute !important; width: 1px !important; height: 1px !important; padding: 0 !important; margin: -1px !important; border: 0 !important; overflow: hidden !important; clip: rect(0 0 0 0) !important; opacity: 0; pointer-events: none; }
+                .geo-picker { position: relative; width: 100%; }
+                .geo-trigger { display: flex; width: 100%; align-items: center; justify-content: space-between; gap: 1em; text-align: left; cursor: pointer; box-sizing: border-box; height: auto; text-transform: none; letter-spacing: 0; font-weight: 400; line-height: 1.3; }
+                .geo-trigger:disabled { cursor: default; opacity: .6; }
+                .geo-trigger:focus-visible, .geo-picker.is-open .geo-trigger { outline: none; box-shadow: 0 0 0 3px rgba(47,130,145,.22); }
+                .geo-trigger::after { content: ""; flex: 0 0 auto; width: .5em; height: .5em; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg) translateY(-.15em); opacity: .55; transition: transform .2s ease; }
+                .geo-picker.is-open .geo-trigger::after { transform: rotate(-135deg) translateY(-.1em); }
+                .geo-panel { position: absolute; z-index: 60; left: 0; right: 0; top: calc(100% + .45rem); max-height: min(30rem, 70vh); overflow: auto; padding: .8rem; background: #fff; border: 1px solid #dce5dc; border-radius: 16px; box-shadow: 0 18px 44px rgba(31,54,40,.14); }
+                .geo-panel[hidden] { display: none; }
+                .geo-search { width: 100%; box-sizing: border-box; margin: 0 0 .6rem; padding: .7em 1em; border: 1px solid #dce5dc !important; border-radius: 12px !important; background: #f8faf8 !important; font: inherit; font-size: .9em; color: inherit; }
+                .geo-group { border-top: 1px solid #edf1ed; }
+                .geo-group:first-of-type { border-top: 0; }
+                .geo-head { display: flex; width: 100%; align-items: center; justify-content: space-between; gap: 1em; padding: .8em .4em; border: 0 !important; background: transparent !important; color: inherit !important; font: inherit; font-size: .85em; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; text-align: left; cursor: pointer; box-shadow: none !important; }
+                .geo-head small { margin-left: auto; font-size: .85em; font-weight: 600; letter-spacing: 0; opacity: .55; text-transform: none; }
+                .geo-head::after { content: ""; width: .45em; height: .45em; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg) translateY(-.1em); opacity: .55; transition: transform .2s ease; }
+                .geo-group.is-open > .geo-head::after { transform: rotate(-135deg); }
+                .geo-items { display: none; grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr)); gap: .35rem; padding: 0 .2rem .9rem; }
+                .geo-group.is-open > .geo-items { display: grid; }
+                .geo-item { padding: .55em .8em; border: 1px solid #e5ebe5 !important; border-radius: 10px !important; background: #fff !important; color: inherit !important; font: inherit; font-size: .85em; text-align: left; text-transform: none; letter-spacing: 0; font-weight: 400; cursor: pointer; box-shadow: none !important; }
+                .geo-item:hover, .geo-item:focus-visible { background: #f1f6f1 !important; border-color: #b9cdbd !important; outline: none; }
+                .geo-item[aria-selected="true"] { background: var(--hero-accent, #2f6147) !important; border-color: var(--hero-accent, #2f6147) !important; color: #fff !important; }
+                .geo-empty { padding: 1em .4em; font-size: .85em; opacity: .6; }
+                @media (max-width: 736px) { .geo-items { grid-template-columns: 1fr 1fr; } }
+            `;
+            document.head.appendChild(style);
+        },
+        fill(select, entities, valueOf) {
             const english = window.BioCultureI18n?.language === "en";
             const plain = () => entities.forEach((entity) => {
                 const option = document.createElement("option");
@@ -55,25 +89,144 @@
                 if (!response.ok) throw new Error("geografias");
                 return response.json();
             }).then((geo) => {
-                const buckets = new Map(geo.groups.map((group) => [group.key, []]));
-                entities.forEach((entity) => {
-                    const key = geo.countries[valueOf(entity)] || "AGG";
-                    buckets.get(key).push(entity);
-                });
+                this.injectStyle();
                 const collator = new Intl.Collator(english ? "en" : "pt", { sensitivity: "base" });
+                const buckets = new Map(geo.groups.map((group) => [group.key, []]));
+                entities.forEach((entity) => buckets.get(geo.countries[valueOf(entity)] || "AGG").push(entity));
+                // Mantém todos os valores no <select> escondido: o código da página continua a usá-lo.
+                plain();
+                select.classList.add("geo-native");
+                select.tabIndex = -1;
+                select.setAttribute("aria-hidden", "true");
+
+                const placeholder = select.options[0]?.textContent || (english ? "Choose…" : "Escolher…");
+                const picker = document.createElement("div");
+                picker.className = "geo-picker";
+                const trigger = document.createElement("button");
+                trigger.type = "button";
+                trigger.className = "geo-trigger";
+                trigger.setAttribute("aria-haspopup", "true");
+                trigger.setAttribute("aria-expanded", "false");
+                // Reutiliza o aspeto do seletor original (tamanho, cantos, borda, tipo de letra).
+                const look = getComputedStyle(select);
+                ["fontSize", "fontFamily", "color", "backgroundColor", "borderRadius", "paddingTop", "paddingBottom", "paddingLeft", "paddingRight"].forEach((key) => { trigger.style[key] = look[key]; });
+                trigger.style.border = `${look.borderTopWidth} solid ${look.borderTopColor}`;
+                const label = document.createElement("span");
+                trigger.appendChild(label);
+                const panel = document.createElement("div");
+                panel.className = "geo-panel";
+                panel.hidden = true;
+                const search = document.createElement("input");
+                search.type = "search";
+                search.className = "geo-search";
+                search.placeholder = english ? "Search country or territory…" : "Pesquisar país ou território…";
+                search.setAttribute("aria-label", search.placeholder);
+                panel.appendChild(search);
+                const list = document.createElement("div");
+                panel.appendChild(list);
+
+                const groups = [];
                 geo.groups.forEach((group) => {
                     const rows = buckets.get(group.key);
                     if (!rows.length) return;
-                    const optgroup = document.createElement("optgroup");
-                    optgroup.label = english ? group.en : group.pt;
-                    rows.sort((a, b) => collator.compare(a.geography.name, b.geography.name)).forEach((entity) => {
-                        const option = document.createElement("option");
-                        option.value = valueOf(entity);
-                        option.textContent = entity.geography.name;
-                        optgroup.appendChild(option);
+                    rows.sort((a, b) => collator.compare(a.geography.name, b.geography.name));
+                    const block = document.createElement("div");
+                    block.className = "geo-group";
+                    const head = document.createElement("button");
+                    head.type = "button";
+                    head.className = "geo-head";
+                    head.setAttribute("aria-expanded", "false");
+                    const title = document.createElement("span");
+                    title.textContent = english ? group.en : group.pt;
+                    const count = document.createElement("small");
+                    count.textContent = String(rows.length);
+                    head.append(title, count);
+                    const items = document.createElement("div");
+                    items.className = "geo-items";
+                    const buttons = rows.map((entity) => {
+                        const item = document.createElement("button");
+                        item.type = "button";
+                        item.className = "geo-item";
+                        item.setAttribute("role", "option");
+                        item.dataset.value = valueOf(entity);
+                        item.textContent = entity.geography.name;
+                        item.addEventListener("click", () => {
+                            select.value = item.dataset.value;
+                            select.dispatchEvent(new Event("change", { bubbles: true }));
+                            close();
+                        });
+                        items.appendChild(item);
+                        return item;
                     });
-                    select.appendChild(optgroup);
+                    block.append(head, items);
+                    list.appendChild(block);
+                    const setOpen = (open) => {
+                        block.classList.toggle("is-open", open);
+                        head.setAttribute("aria-expanded", String(open));
+                    };
+                    head.addEventListener("click", () => {
+                        const open = !block.classList.contains("is-open");
+                        if (!search.value) groups.forEach((g) => g.setOpen(false));
+                        setOpen(open);
+                    });
+                    groups.push({ block, buttons, setOpen });
                 });
+                const empty = document.createElement("div");
+                empty.className = "geo-empty";
+                empty.textContent = english ? "No results" : "Sem resultados";
+                empty.hidden = true;
+                list.appendChild(empty);
+
+                const refresh = () => {
+                    const query = search.value.trim().toLocaleLowerCase(english ? "en" : "pt");
+                    let any = false;
+                    groups.forEach((group) => {
+                        let shown = 0;
+                        group.buttons.forEach((item) => {
+                            const match = !query || item.textContent.toLocaleLowerCase(english ? "en" : "pt").includes(query);
+                            item.hidden = !match;
+                            if (match) shown += 1;
+                        });
+                        group.block.hidden = shown === 0;
+                        if (query) group.setOpen(shown > 0);
+                        if (shown) any = true;
+                    });
+                    empty.hidden = any;
+                };
+                const sync = () => {
+                    const current = select.value;
+                    label.textContent = current ? select.options[select.selectedIndex].textContent : placeholder;
+                    groups.forEach((group) => group.buttons.forEach((item) => item.setAttribute("aria-selected", String(item.dataset.value === current && current !== ""))));
+                };
+                function close() {
+                    panel.hidden = true;
+                    picker.classList.remove("is-open");
+                    trigger.setAttribute("aria-expanded", "false");
+                }
+                const open = () => {
+                    panel.hidden = false;
+                    picker.classList.add("is-open");
+                    trigger.setAttribute("aria-expanded", "true");
+                    search.value = "";
+                    refresh();
+                    groups.forEach((group) => group.setOpen(false));
+                    const selected = groups.find((group) => group.buttons.some((item) => item.getAttribute("aria-selected") === "true"));
+                    if (selected) selected.setOpen(true);
+                    search.focus({ preventScroll: true });
+                };
+                trigger.addEventListener("click", () => (panel.hidden ? open() : close()));
+                search.addEventListener("input", refresh);
+                document.addEventListener("click", (event) => { if (!picker.contains(event.target)) close(); });
+                picker.addEventListener("keydown", (event) => {
+                    if (event.key === "Escape") { close(); trigger.focus(); }
+                });
+                select.addEventListener("change", sync);
+                const syncDisabled = () => { trigger.disabled = select.disabled; };
+                new MutationObserver(syncDisabled).observe(select, { attributes: true, attributeFilter: ["disabled"] });
+                syncDisabled();
+                sync();
+                picker.append(trigger, panel);
+                select.after(picker);
             }).catch(plain);
         }
     };
