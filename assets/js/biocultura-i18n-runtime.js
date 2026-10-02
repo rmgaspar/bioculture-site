@@ -397,7 +397,7 @@
             structuredDictionary = await originalFetch(`/assets/lang/${lang}.json?v=11`, { cache: "no-cache" })
                 .then((response) => response.ok ? response.json() : {})
                 .catch(() => ({}));
-            displayDictionary = await originalFetch(`/assets/lang/display/${lang}.json?v=12`, { cache: "no-cache" })
+            displayDictionary = await originalFetch(`/assets/lang/display/${lang}.json?v=14`, { cache: "no-cache" })
                 .then((response) => response.ok ? response.json() : {})
                 .catch(() => ({}));
         }
@@ -477,6 +477,10 @@
         const direct = lookupDisplay(key);
         if (direct) return direct;
         let match;
+        if (key.endsWith(" ↗")) {
+            const rest = translateComposite(key.slice(0, -2));
+            if (rest) return `${rest} ↗`;
+        }
         if ((match = key.match(/^Fonte (\d+)$/))) return `Source ${match[1]}`;
         if ((match = key.match(/^Localização: (.+)$/))) {
             return `Location: ${translateComposite(match[1]) || match[1]}`;
@@ -561,7 +565,7 @@
     async function start() {
         await loadDictionary();
         document.documentElement.lang = lang;
-        document.title = translateString(document.title);
+        document.title = translateComposite(normalise(document.title)) || translateString(document.title);
         applyStructuredTranslations(document);
         translateElement(document.body);
         preserveLanguageInLinks(document);
