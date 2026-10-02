@@ -5,7 +5,7 @@ const recursos = [
         globalUrl: '/recursos/agua.html',
         ptUrl: '/recursos/agua.html',
         hasPt: true,
-        image: '/images/water-global-hero.png'
+        image: '/images/water-global-hero.webp'
     },
     {
         name: 'Ar',

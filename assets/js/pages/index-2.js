@@ -139,13 +139,13 @@
             function getPortalMarkImage(title) {
                 const imageMap = {
                     "Planeta e pressões": "/images/observatorio-planeta-v2.webp",
-                    "Recursos vitais": "/images/recursos.jpg",
+                    "Recursos vitais": "/images/recursos.webp",
                     "Biodiversidade": "/images/biodiversidade-teia-viva.webp",
-                    "Pressões humanas": "/images/energia_pressao.jpg",
+                    "Pressões humanas": "/images/energia_pressao.webp",
                     "Portugal em detalhe": "/images/pressoes-portugal.webp",
-                    "Conhecimento para cuidar": "/images/calendario_regeneracao.jpg",
+                    "Conhecimento para cuidar": "/images/calendario_regeneracao.webp",
                     "Pragas e invasoras": "/images/categoria-pragas-v1.jpg",
-                    "Soluções naturais": "/images/controlo-biologico-pragas-v1.png",
+                    "Soluções naturais": "/images/controlo-biologico-pragas-v1.webp",
                 };
                 const src = imageMap[title] || "/images/placeholder.jpg";
                 return `<img src="${src}" alt="${title}" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;">`;

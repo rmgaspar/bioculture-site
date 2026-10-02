@@ -9,7 +9,7 @@
         layout.className = "solar-layout";
         const figure = document.createElement("figure");
         figure.className = "blueprint-figure solar-figure";
-        figure.innerHTML = `<img src="/images/solar-home-battery-v1.png" alt="${isEnglish ? "Domestic photovoltaic system with hybrid inverter, battery and essential loads" : "Sistema fotovoltaico doméstico com inversor híbrido, bateria e cargas essenciais"}"><figcaption>${isEnglish ? "bioCulture concept — panels, inverter, battery and grid must be sized and protected by qualified professionals." : "Esquema conceptual bioCulture — painéis, inversor, bateria e rede devem ser dimensionados e protegidos por profissionais habilitados."}</figcaption>`;
+        figure.innerHTML = `<img src="/images/solar-home-battery-v1.webp" alt="${isEnglish ? "Domestic photovoltaic system with hybrid inverter, battery and essential loads" : "Sistema fotovoltaico doméstico com inversor híbrido, bateria e cargas essenciais"}"><figcaption>${isEnglish ? "bioCulture concept — panels, inverter, battery and grid must be sized and protected by qualified professionals." : "Esquema conceptual bioCulture — painéis, inversor, bateria e rede devem ser dimensionados e protegidos por profissionais habilitados."}</figcaption>`;
         solarTool.before(layout);
         layout.append(figure, solarTool);
     }
