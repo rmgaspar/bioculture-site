@@ -37,6 +37,29 @@
             if (f.consultas_projetos) {
                 rows.push([`${f.ate_21_dias} ${tr("de", "of")} ${f.consultas_projetos}`, tr(`consultas de ${f.ano} com 21 dias ou menos para participar`, `${f.ano} consultations with 21 days or fewer to take part`)]);
             }
+            const local = document.getElementById("participa-home-local");
+            if (local && window.BioCultureParticipaLocal) {
+                const T = window.BioCultureParticipaLocal.title;
+                window.BioCultureParticipaLocal.match(d).then(({ region, concelho, distrito }) => {
+                    if (!region) {
+                        local.textContent = tr("Escolhe o teu território na barra lateral para ver as consultas do teu concelho.",
+                            "Choose your area in the sidebar to see the consultations in your municipality.");
+                        return;
+                    }
+                    const mun = T(region.concelho), dist = T(region.distrito);
+                    const list = (xs) => xs.slice(0, 2).map((x) => `<a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.titulo)}</a>`).join("; ");
+                    if (concelho.length) {
+                        local.innerHTML = tr(`<strong>No teu concelho (${esc(mun)}):</strong> ${concelho.length} ${concelho.length === 1 ? "consulta" : "consultas"}, ${list(concelho)}.`,
+                            `<strong>In your municipality (${esc(mun)}):</strong> ${concelho.length}: ${list(concelho)}.`);
+                    } else if (distrito.length) {
+                        local.innerHTML = tr(`<strong>No teu concelho (${esc(mun)}):</strong> nenhuma. No distrito de ${esc(dist)}: ${distrito.length}, ${list(distrito)}.`,
+                            `<strong>In your municipality (${esc(mun)}):</strong> none. In the district of ${esc(dist)}: ${distrito.length}, ${list(distrito)}.`);
+                    } else {
+                        local.innerHTML = tr(`<strong>No teu concelho (${esc(mun)}):</strong> nenhuma consulta de renováveis aberta ou em análise, nem no distrito de ${esc(dist)}.`,
+                            `<strong>In your municipality (${esc(mun)}):</strong> no renewables consultation open or under review, nor in the district of ${esc(dist)}.`);
+                    }
+                });
+            }
             facts.innerHTML = rows.map(([v, l]) => `<div><dt>${esc(v)}</dt><dd>${esc(l)}</dd></div>`).join("");
         })
         .catch(() => {});

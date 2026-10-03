@@ -149,6 +149,34 @@
                     }</p><span class="now-date">${esc(f.nota)}</span>`
                     : "";
             }
+            function renderLocal(d) {
+                const box = el("participa-local");
+                if (!box || !window.BioCultureParticipaLocal) return;
+                const tr = (pt, en) => (isEn() ? en : pt),
+                    T = window.BioCultureParticipaLocal.title,
+                    item = (x) => `<li><a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.titulo)}</a> <span>${esc(x.estado_consulta)} · ${date(x.fim)}</span></li>`;
+                window.BioCultureParticipaLocal.match(d).then(({ region, concelho, distrito, nacional }) => {
+                    if (!region) {
+                        box.innerHTML = `<small>${tr("No teu território", "In your area")}</small><p>${
+                            tr("Escolhe a tua localidade em «O teu território», na barra lateral, para ver as consultas do teu concelho e distrito.",
+                                "Choose your locality under “Your area” in the sidebar to see the consultations in your municipality and district.")
+                        }</p>`;
+                        return;
+                    }
+                    const mun = T(region.concelho), dist = T(region.distrito);
+                    let html = `<small>${tr("No teu território", "In your area")} · ${esc(region.titulo)}</small>`;
+                    html += concelho.length
+                        ? `<h3>${tr(`${concelho.length} ${concelho.length === 1 ? "consulta" : "consultas"} no concelho de ${esc(mun)}`, `${concelho.length} in the municipality of ${esc(mun)}`)}</h3><ul>${concelho.map(item).join("")}</ul>`
+                        : `<p>${tr(`Nenhuma consulta de renováveis aberta ou em análise no concelho de ${esc(mun)}.`, `No renewables consultation open or under review in the municipality of ${esc(mun)}.`)}</p>`;
+                    html += distrito.length
+                        ? `<p>${tr(`Noutros concelhos do distrito de ${esc(dist)}:`, `Elsewhere in the district of ${esc(dist)}:`)}</p><ul>${distrito.map(item).join("")}</ul>`
+                        : `<p>${tr(`Também nenhuma noutros concelhos do distrito de ${esc(dist)}.`, `None elsewhere in the district of ${esc(dist)} either.`)}</p>`;
+                    if (nacional.length) {
+                        html += `<p>${tr("De âmbito nacional, abrangendo também o teu território:", "National in scope, also covering your area:")}</p><ul>${nacional.map(item).join("")}</ul>`;
+                    }
+                    box.innerHTML = html;
+                });
+            }
             function renderPlants(d) {
                 const x = d.grandes_centrais_existentes || {};
                 el("plants").innerHTML = (x.registos || []).filter((v) => !v.abaixo_limiar_observatorio)
@@ -213,6 +241,7 @@
                     );
                     renderStats(d);
                     renderConsults(d);
+                    renderLocal(d);
                     renderPlants(d);
                     renderCriteria(d);
                     renderMeasures(d);
