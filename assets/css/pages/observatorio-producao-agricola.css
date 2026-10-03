@@ -1,0 +1,265 @@
+/* Observatório · Produção agrícola mundial.
+   Relatório de leitura contínua: tokens próprios em .agri-report; paleta categórica validada
+   (daltonismo) para séries, verdes bioCulture para a moldura. Gráficos desenhados em
+   assets/js/pages/observatorio-producao-agricola.js. */
+
+/* Topo: mesma grelha das restantes páginas com imagem circular. */
+#main .hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(270px, 0.75fr);
+    gap: 5em;
+    align-items: start;
+    padding-bottom: 2em !important;
+}
+#main .hero .eyebrow {
+    display: block;
+    font-size: 0.65em;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    color: #9ba39d;
+    margin-bottom: 16px;
+}
+#main .hero .lead {
+    font-size: 1.17em;
+    line-height: 1.75;
+    color: #5b665f;
+    max-width: 830px;
+}
+#main .field-mark {
+    position: relative;
+    overflow: hidden;
+    background: #e8dfcd url("/images/pecuaria-escala.webp") center/cover no-repeat;
+    box-shadow: 0 30px 80px rgba(70, 80, 62, 0.2);
+}
+@media (max-width: 1100px) {
+    #main .hero { grid-template-columns: 1fr; }
+}
+@media (max-width: 760px) {
+    #main .hero { gap: 2.5em; }
+}
+
+.agri-report {
+    --ink: #1c2a22;
+    --ink-2: #4d5c53;
+    --muted: #6c7a71;
+    --line: #dfe5dc;
+    --line-2: #eef1ec;
+    --surface: #fcfcfb;
+    --brand: #29483a;
+    --brand-soft: #e9f0e8;
+    --bar: #4f7a5e;
+    --bar-dim: #b9cbbd;
+    --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; --s4: #eda100;
+    --s5: #e87ba4; --s6: #008300; --s7: #4a3aa7; --s8: #e34948;
+    --pos: #2a78d6;
+    --neg: #e34948;
+    --hl: #eb6834;
+    --f-display: "Roboto Slab", Georgia, serif;
+    --f-body: "Open Sans", "Segoe UI", system-ui, sans-serif;
+    display: grid;
+    gap: 72px;
+    color: var(--ink);
+    font-family: var(--f-body);
+    margin-bottom: 4rem;
+}
+.agri-report * { box-sizing: border-box; }
+.agri-report p { margin: 0; max-width: 72ch; }
+.agri-report h2, .agri-report h3 {
+    font-family: var(--f-display);
+    color: var(--ink);
+    text-wrap: balance;
+    line-height: 1.2;
+    margin: 0;
+    letter-spacing: normal;
+    text-transform: none;
+}
+.agri-report h2 { font-size: clamp(1.45rem, 2.6vw, 1.9rem); font-weight: 700; }
+.agri-report h3 { font-size: 1rem; font-weight: 700; }
+.agri-report ol, .agri-report ul { margin: 0; }
+.agri-report a { color: var(--brand); }
+.agri-report .num { font-variant-numeric: tabular-nums; }
+.agri-report .eyebrow {
+    font-size: 0.7rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 800;
+}
+.agri-report section { display: grid; gap: 20px; min-width: 0; scroll-margin-top: 6.5rem; }
+.agri-report .sec-head { display: grid; gap: 8px; }
+.agri-report .sec-head .eyebrow { color: #7a8a3a; }
+.agri-report .prose { display: grid; gap: 14px; }
+.agri-report .prose p { color: var(--ink-2); line-height: 1.75; }
+.agri-report .prose strong { color: var(--ink); font-weight: 700; }
+
+/* Indicadores */
+.agri-report .tiles {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    overflow: hidden;
+}
+@media (max-width: 760px) { .agri-report .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.agri-report .tile { background: var(--surface); padding: 16px 16px 14px; display: grid; gap: 4px; align-content: start; min-width: 0; }
+.agri-report .tile .v { font-family: var(--f-display); font-size: clamp(1.45rem, 2.6vw, 1.95rem); line-height: 1.1; font-variant-numeric: tabular-nums; color: var(--ink); }
+.agri-report .tile .v small { font-family: var(--f-body); font-size: 0.78rem; color: var(--muted); font-weight: 400; margin-left: 3px; }
+.agri-report .tile .k { font-size: 0.82rem; color: var(--ink-2); line-height: 1.4; }
+.agri-report .tile .s { font-size: 0.74rem; color: var(--muted); }
+
+/* Conclusões */
+.agri-report .findings { list-style: none; padding: 0; display: grid; border-top: 1px solid var(--line); }
+.agri-report .findings li { display: grid; grid-template-columns: 2.4em minmax(0, 1fr); gap: 8px; padding: 12px 0; margin: 0; border-bottom: 1px solid var(--line); color: var(--ink-2); line-height: 1.6; }
+.agri-report .findings li b { color: var(--ink); }
+.agri-report .findings li .n { color: var(--muted); font-size: 0.82rem; padding-top: 2px; font-variant-numeric: tabular-nums; }
+
+/* Figuras */
+.agri-report figure { margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px 18px 12px; display: grid; gap: 12px; min-width: 0; }
+.agri-report figcaption { display: grid; gap: 3px; }
+.agri-report figcaption .t { font-family: var(--f-display); font-size: 1.02rem; font-weight: 700; color: var(--ink); }
+.agri-report figcaption .d { font-size: 0.84rem; color: var(--muted); }
+.agri-report .src { font-size: 0.74rem; color: var(--muted); border-top: 1px solid var(--line-2); padding-top: 8px; }
+.agri-report .grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+@media (max-width: 980px) { .agri-report .grid2 { grid-template-columns: minmax(0, 1fr); } }
+.agri-report .chart { position: relative; min-width: 0; }
+.agri-report .chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+.agri-report .ax text { fill: var(--muted); font-family: var(--f-body); font-size: 11px; font-variant-numeric: tabular-nums; }
+.agri-report .ax line { stroke: var(--line-2); }
+.agri-report .ax .base { stroke: var(--line); }
+.agri-report .lbl { fill: var(--ink-2); font-family: var(--f-body); font-size: 11.5px; }
+
+/* Controlos (anula estilos genéricos de botão e select do tema) */
+.agri-report .controls { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.agri-report .seg { display: inline-flex; flex-wrap: wrap; gap: 4px; }
+.agri-report .seg button {
+    font: inherit;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: normal;
+    text-transform: none;
+    height: auto;
+    line-height: 1.3;
+    border: 1px solid var(--line);
+    box-shadow: none;
+    background: var(--surface);
+    color: var(--ink-2) !important;
+    padding: 5px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+}
+.agri-report .seg button[aria-pressed="true"] { background: var(--brand); border-color: var(--brand); color: #fff !important; }
+.agri-report .seg button:hover { border-color: var(--brand); }
+.agri-report button:focus-visible, .agri-report select:focus-visible, .agri-report summary:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+.agri-report select { display: inline-block; width: auto; min-width: 14em; max-width: 100%; font-size: 0.88rem; color: var(--ink); }
+.agri-report .controls label { margin: 0 6px 0 0; }
+
+/* Barras horizontais */
+.agri-report .hbars { display: grid; gap: 5px; }
+.agri-report .hb { display: grid; grid-template-columns: minmax(90px, 30%) minmax(0, 1fr) auto; gap: 10px; align-items: center; font-size: 0.84rem; padding: 1px 0; border-radius: 4px; }
+.agri-report .hb .l { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--ink-2); }
+.agri-report .hb .tr { height: 14px; position: relative; }
+.agri-report .hb .b { position: absolute; left: 0; top: 0; bottom: 0; background: var(--bar); border-radius: 0 4px 4px 0; min-width: 2px; }
+.agri-report .hb .v { font-size: 0.78rem; color: var(--ink); font-variant-numeric: tabular-nums; text-align: right; min-width: 5em; }
+.agri-report .hb.pt .b { background: var(--hl); }
+.agri-report .hb.pt .l { color: var(--ink); font-weight: 700; }
+.agri-report .hb.dim .b { background: var(--bar-dim); }
+.agri-report .hb:hover { background: var(--line-2); }
+
+/* Barras divergentes */
+.agri-report .div { display: grid; gap: 5px; }
+.agri-report .dv { display: grid; grid-template-columns: minmax(110px, 40%) minmax(0, 1fr) 4.6em; gap: 10px; align-items: center; font-size: 0.84rem; border-radius: 4px; }
+.agri-report .dv:hover { background: var(--line-2); }
+.agri-report .dv .l { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--ink-2); }
+.agri-report .dv .tr { position: relative; height: 14px; }
+.agri-report .dv .tr::before { content: ""; position: absolute; left: 50%; top: -3px; bottom: -3px; border-left: 1px solid var(--muted); }
+.agri-report .dv .b { position: absolute; top: 0; bottom: 0; }
+.agri-report .dv .b.p { background: var(--pos); border-radius: 0 4px 4px 0; }
+.agri-report .dv .b.n { background: var(--neg); border-radius: 4px 0 0 4px; }
+.agri-report .dv .v { font-size: 0.78rem; text-align: right; font-variant-numeric: tabular-nums; }
+
+/* Barras 100% empilhadas */
+.agri-report .stk { display: grid; gap: 6px; }
+.agri-report .sk { display: grid; grid-template-columns: 3.2em minmax(0, 1fr); gap: 10px; align-items: center; font-size: 0.8rem; }
+.agri-report .sk .y { color: var(--muted); font-variant-numeric: tabular-nums; }
+.agri-report .sk .bars { display: flex; gap: 2px; height: 22px; }
+.agri-report .sk .part { height: 100%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 0.7rem; font-weight: 700; overflow: hidden; white-space: nowrap; }
+.agri-report .sk .part:first-child { border-radius: 4px 0 0 4px; }
+.agri-report .sk .part:last-child { border-radius: 0 4px 4px 0; }
+
+.agri-report .legend { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 0.8rem; color: var(--ink-2); }
+.agri-report .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+.agri-report .legend .ln i { height: 3px; width: 14px; vertical-align: 3px; }
+
+/* Tabela de dados */
+.agri-report details.tbl { font-size: 0.8rem; }
+.agri-report details.tbl summary { cursor: pointer; color: var(--muted); list-style: none; display: inline-flex; gap: 6px; align-items: center; }
+.agri-report details.tbl summary::-webkit-details-marker { display: none; }
+.agri-report details.tbl summary::before { content: "▸"; font-size: 0.7rem; }
+.agri-report details.tbl[open] summary::before { content: "▾"; }
+.agri-report .tscroll { overflow: auto; margin-top: 8px; max-height: 360px; border: 1px solid var(--line-2); border-radius: 6px; }
+.agri-report table { border-collapse: collapse; width: 100%; margin: 0; font-variant-numeric: tabular-nums; }
+.agri-report table tbody tr, .agri-report table tbody tr:nth-child(2n + 1) { background: transparent; border: 0; }
+.agri-report th, .agri-report td { padding: 5px 10px; text-align: right; border-bottom: 1px solid var(--line-2); white-space: nowrap; font-size: 0.78rem; }
+.agri-report th:first-child, .agri-report td:first-child { text-align: left; }
+.agri-report thead { border: 0; }
+.agri-report thead th { position: sticky; top: 0; background: var(--surface); color: var(--muted); font-weight: 700; }
+
+/* Produto em destaque */
+.agri-report .kpanel { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 24px; }
+@media (max-width: 980px) { .agri-report .kpanel { grid-template-columns: minmax(0, 1fr); } }
+.agri-report .kfacts { display: grid; gap: 12px; align-content: start; }
+.agri-report .kf { display: grid; gap: 2px; padding-bottom: 10px; border-bottom: 1px solid var(--line-2); }
+.agri-report .kf .v { font-family: var(--f-display); font-size: 1.4rem; font-variant-numeric: tabular-nums; }
+.agri-report .kf .k { font-size: 0.78rem; color: var(--muted); }
+
+/* Perfis */
+.agri-report .pcols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+@media (max-width: 1100px) { .agri-report .pcols { grid-template-columns: minmax(0, 1fr); } }
+.agri-report .pcol h3 { font-family: var(--f-body); font-size: 0.74rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+.agri-report .pcol ol { padding: 0; list-style: none; display: grid; }
+.agri-report .pcol li { display: grid; grid-template-columns: 1.4em minmax(0, 1fr) auto; gap: 8px; font-size: 0.84rem; padding: 5px 0; margin: 0; border-bottom: 1px solid var(--line-2); }
+.agri-report .pcol li .r { color: var(--muted); font-size: 0.74rem; padding-top: 2px; }
+.agri-report .pcol li .x { font-size: 0.78rem; color: var(--ink-2); text-align: right; font-variant-numeric: tabular-nums; }
+
+/* Verificação */
+.agri-report .claims { display: grid; border-top: 1px solid var(--line); }
+.agri-report .claim { display: grid; grid-template-columns: 8em minmax(0, 1fr); gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--line); font-size: 0.9rem; }
+@media (max-width: 560px) { .agri-report .claim { grid-template-columns: minmax(0, 1fr); gap: 6px; } }
+.agri-report .pill { display: inline-flex; align-items: center; gap: 6px; font-size: 0.68rem; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; padding: 3px 9px; border-radius: 999px; height: fit-content; width: fit-content; color: var(--ink); }
+.agri-report .pill.ok { background: #e1f0e1; }
+.agri-report .pill.nu { background: #fbecc8; }
+.agri-report .pill.na { background: var(--line-2); color: var(--ink-2); }
+.agri-report .pill svg { width: 12px; height: 12px; }
+.agri-report .claim p { color: var(--ink-2); line-height: 1.6; }
+.agri-report .claim p b { color: var(--ink); }
+
+/* Fontes */
+.agri-report .srcs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+@media (max-width: 760px) { .agri-report .srcs { grid-template-columns: minmax(0, 1fr); } }
+.agri-report .srcc { border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; display: grid; gap: 6px; background: var(--surface); align-content: start; }
+.agri-report .srcc h3 { font-family: var(--f-body); font-size: 0.95rem; }
+.agri-report .srcc p { font-size: 0.86rem; color: var(--ink-2); line-height: 1.6; }
+.agri-report .srcc .u { font-size: 0.74rem; color: var(--muted); word-break: break-all; }
+.agri-report .notes { display: grid; gap: 10px; font-size: 0.9rem; color: var(--ink-2); padding-left: 1.1em; line-height: 1.6; }
+.agri-report .notes li { max-width: 76ch; padding: 0; }
+.agri-report .callout { border-left: 3px solid var(--brand); background: var(--brand-soft); padding: 12px 16px; border-radius: 0 8px 8px 0; font-size: 0.92rem; color: var(--ink); line-height: 1.6; }
+
+/* Dica flutuante */
+#agri-tip {
+    position: fixed; z-index: 50; pointer-events: none;
+    background: #fcfcfb; color: #1c2a22; border: 1px solid #dfe5dc;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.14); border-radius: 8px;
+    padding: 8px 10px; font-size: 0.8rem; min-width: 140px; max-width: 280px; line-height: 1.45;
+    font-family: "Open Sans", sans-serif;
+}
+#agri-tip .h { font-weight: 700; margin-bottom: 3px; }
+#agri-tip .r { display: flex; justify-content: space-between; gap: 14px; }
+#agri-tip .r b { font-weight: 600; font-variant-numeric: tabular-nums; }
+#agri-tip i { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 6px; }
+
+@media (prefers-reduced-motion: no-preference) {
+    .agri-report .hb .b, .agri-report .dv .b { transition: width 0.35s ease, left 0.35s ease; }
+}
