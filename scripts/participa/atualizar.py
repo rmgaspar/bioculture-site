@@ -261,7 +261,7 @@ def main() -> int:
             "ambito": "portugal", "paises": ["PT"], "prioridade": 80, "relevancia": 80, "estado": "proposta",
             "tipo_conteudo": "consulta_publica", "data": date_pt(r["inicio"]),
             "publicado_em": f"{r['inicio']}T00:00:00Z", "capturado_em": dt.datetime.now(dt.timezone.utc).isoformat().replace("+00:00", "Z"),
-            "expira_em": r["fim"], "permanente": False, "imagem": "/images/pressao-solar-territorio.jpg",
+            "expira_em": r["fim"], "permanente": False, "imagem": "/images/renovaveis-territorio.webp",
             "imagem_credito_pt": "Ilustração editorial bioCulture", "imagem_credito_en": "bioCulture editorial illustration",
             "fonte": "Participa.pt", "tipo_fonte": "oficial", "logo": "", "url": r["url"],
             "pagina": "/energia/transicao-etica.html#consultas", "tags": ["consulta-publica", "renovaveis", "participacao"],

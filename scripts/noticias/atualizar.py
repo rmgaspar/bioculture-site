@@ -29,6 +29,8 @@ PROPOSALS_PATH = ROOT / "data" / "noticias_propostas.json"
 REJECTED_PATH = ROOT / "data" / "noticias_rejeitadas.json"
 CONFIG_PATH = ROOT / "config" / "noticias_fontes.json"
 
+IMAGES = json.loads((Path(__file__).resolve().parents[2] / "config" / "noticias_imagens.json").read_text(encoding="utf-8"))
+
 CATEGORIES = {
     "clima": ("Clima", ["clima", "climate", "aquecimento", "warming", "temperatura", "heatwave"]),
     "agua": ("Água", ["agua", "water", "seca", "drought", "cheia", "flood", "oceano", "rio", "barragem"]),
@@ -252,7 +254,9 @@ def make_news(item: dict, source_cfg: dict, matches: list[tuple[str, str, int]],
         "capturado_em": captured.isoformat().replace("+00:00", "Z"),
         "expira_em": (published.date() + dt.timedelta(days=retention)).isoformat(),
         "permanente": False,
-        "imagem": f"/images/{'digital_ia' if category_id == 'impacto-digital' else 'calendario' if category_id == 'enologia' else category_id}.jpg",
+        "imagem": IMAGES["por_categoria"].get(category_id, IMAGES["predefinida"]),
+        "imagem_credito_pt": IMAGES["credito_pt"],
+        "imagem_credito_en": IMAGES["credito_en"],
         "fonte": source,
         "tipo_fonte": source_cfg.get("tipo", "desconhecida"),
         "logo": "",
