@@ -108,6 +108,8 @@ def detail(url: str) -> dict:
     d["distritos"] = [x for x, _ in districts if x]
     d["municipios"] = [c for _, cs in districts for c in cs if c]
     d["nacional"] = "not-national-scope" not in s
+    og = re.search(r'<meta property="og:image" content="([^"]+)"', s)
+    d["imagem_fonte"] = og.group(1).replace("http://", "https://") if og else None
     codes = sorted(set(re.findall(r"AIADOC/((?:DA|AIA)\d+)", s)))
     d["codigo_siaia"] = codes[0] if codes else None
     k = lines.index("Documentos de encerramento") if "Documentos de encerramento" in lines else -1
@@ -188,6 +190,7 @@ def main() -> int:
             "distritos": x["distritos"], "municipios": x["municipios"],
             "participacoes": x["participacoes"], "utilizadores_a_seguir": x["a_seguir"],
             "url": url, "fonte_id": rec.get("fonte_id", "PARTICIPA"), "observado_em": TODAY.isoformat(),
+            "imagem_fonte": x.get("imagem_fonte"),
         }
         rec.update({k: v for k, v in fields.items() if v not in (None, "", [])})
         if x["nacional"] and not x["municipios"] and "ambito" not in rec:
@@ -261,8 +264,9 @@ def main() -> int:
             "ambito": "portugal", "paises": ["PT"], "prioridade": 80, "relevancia": 80, "estado": "proposta",
             "tipo_conteudo": "consulta_publica", "data": date_pt(r["inicio"]),
             "publicado_em": f"{r['inicio']}T00:00:00Z", "capturado_em": dt.datetime.now(dt.timezone.utc).isoformat().replace("+00:00", "Z"),
-            "expira_em": r["fim"], "permanente": False, "imagem": "/images/renovaveis-territorio.webp",
-            "imagem_credito_pt": "Ilustração editorial bioCulture", "imagem_credito_en": "bioCulture editorial illustration",
+            "expira_em": r["fim"], "permanente": False, "imagem": r.get("imagem_fonte") or "/images/renovaveis-territorio.webp",
+            "imagem_credito_pt": "Participa.pt" if r.get("imagem_fonte") else "Ilustração editorial bioCulture",
+            "imagem_credito_en": "Participa.pt" if r.get("imagem_fonte") else "bioCulture editorial illustration",
             "fonte": "Participa.pt", "tipo_fonte": "oficial", "logo": "", "url": r["url"],
             "pagina": "/energia/transicao-etica.html#consultas", "tags": ["consulta-publica", "renovaveis", "participacao"],
             "relevancia_detalhe": {"pontuacao": 80, "razoes": ["consulta pública oficial aberta", f"prazo: {date_pt(r['fim'])}"], "revisao_humana": True},

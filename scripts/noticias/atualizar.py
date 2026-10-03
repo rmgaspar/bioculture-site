@@ -132,6 +132,26 @@ def geographic_scope(text: str, source_cfg: dict) -> tuple[str, list[str]]:
     return "global", []
 
 
+def source_image(url: str) -> str:
+    """Imagem que a fonte original disponibiliza (og:image / twitter:image), ou "" se não houver."""
+    try:
+        request = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (compatible; bioCultura-news/1.0)"})
+        with urllib.request.urlopen(request, timeout=15) as response:
+            page = response.read(400_000).decode("utf-8", "ignore")
+    except Exception:
+        return ""
+    for prop in ("og:image", "twitter:image"):
+        match = (re.search(rf'<meta[^>]+(?:property|name)=["\']{prop}["\'][^>]+content=["\']([^"\']+)', page, re.I)
+                 or re.search(rf'<meta[^>]+content=["\']([^"\']+)["\'][^>]+(?:property|name)=["\']{prop}["\']', page, re.I))
+        if match:
+            image = html.unescape(match.group(1)).strip()
+            if image.startswith("//"):
+                image = "https:" + image
+            if image.startswith("http"):
+                return image
+    return ""
+
+
 def resolve_google_news_url(url: str) -> str:
     """Troca a ligação ofuscada do Google Notícias pela publicação original.
 
@@ -237,6 +257,7 @@ def make_news(item: dict, source_cfg: dict, matches: list[tuple[str, str, int]],
     body = f"<p>{html.escape(summary)}</p><p><strong>Fonte original:</strong> <a href=\"{html.escape(resolved_url, quote=True)}\" rel=\"noopener noreferrer\">{html.escape(source)}</a>.</p>"
     retention = 365 if points >= 85 else 180 if points >= 75 else 60
     _, category_id, label = matches[0]
+    image = source_image(resolved_url)
     categories = [category for _, category, _ in matches[:4]]
     scope, countries = geographic_scope(item["title"] + " " + item["summary"], source_cfg)
     return {
@@ -254,9 +275,10 @@ def make_news(item: dict, source_cfg: dict, matches: list[tuple[str, str, int]],
         "capturado_em": captured.isoformat().replace("+00:00", "Z"),
         "expira_em": (published.date() + dt.timedelta(days=retention)).isoformat(),
         "permanente": False,
-        "imagem": IMAGES["por_categoria"].get(category_id, IMAGES["predefinida"]),
-        "imagem_credito_pt": IMAGES["credito_pt"],
-        "imagem_credito_en": IMAGES["credito_en"],
+        # Regra editorial: imagem da fonte original; a imagem-tipo da categoria só se a fonte não tiver.
+        "imagem": image or IMAGES["por_categoria"].get(category_id, IMAGES["predefinida"]),
+        "imagem_credito_pt": source if image else IMAGES["credito_pt"],
+        "imagem_credito_en": source if image else IMAGES["credito_en"],
         "fonte": source,
         "tipo_fonte": source_cfg.get("tipo", "desconhecida"),
         "logo": "",
