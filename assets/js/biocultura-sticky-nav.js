@@ -1,5 +1,19 @@
 (function () {
     "use strict";
+    // «↑ Topo»: só visível quando a barra está fixa no cimo do ecrã.
+    if (!document.getElementById("bio-nav-top-style")) {
+        const style = document.createElement("style");
+        style.id = "bio-nav-top-style";
+        style.textContent =
+            "#main .bio-nav-top{display:none!important}" +
+            "#main .bio-nav-pinned .bio-nav-top{display:inline-flex!important;align-items:center;margin-left:auto!important;" +
+            "color:#7d8a80!important;-webkit-text-fill-color:#7d8a80!important;background:transparent!important;white-space:nowrap}" +
+            "#main .bio-nav-pinned .bio-nav-top:hover,#main .bio-nav-pinned .bio-nav-top:focus-visible{color:#315b43!important;-webkit-text-fill-color:#315b43!important}";
+        document.head.appendChild(style);
+    }
+    const topLabel = () => ((document.documentElement.lang || "").toLowerCase().startsWith("en") ? "↑ Top" : "↑ Topo");
+    const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
     const navigationBars = document.querySelectorAll("#main .scope-switch, #main .calendar-navigation-bar, #main .home-nav, #main .pressure-nav, #main .section-nav, #main .journey-nav, #main .reading-nav, #main .management-nav, #main .crop-nav");
     navigationBars.forEach((navigation) => {
         if (navigation.dataset.bioPinnedReady) return;
@@ -7,6 +21,17 @@
         const anchor = document.createElement("div");
         anchor.className = "bio-nav-anchor";
         navigation.before(anchor);
+
+        const topLink = document.createElement("a");
+        topLink.className = "bio-nav-top";
+        topLink.href = "#topo";
+        topLink.textContent = topLabel();
+        topLink.addEventListener("click", (event) => {
+            event.preventDefault();
+            window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
+            if (location.hash) history.replaceState(null, "", location.pathname + location.search);
+        });
+        navigation.append(topLink);
 
         const progress = document.createElement("div");
         progress.className = "bio-nav-progress";
@@ -54,6 +79,7 @@
                 navigation.classList.remove("bio-nav-pinned");
                 anchor.style.height = "0";
             }
+            if (topLink.textContent !== topLabel()) topLink.textContent = topLabel();
             setActive();
             setProgress();
         };
