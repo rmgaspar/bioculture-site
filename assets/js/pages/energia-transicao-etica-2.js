@@ -87,8 +87,8 @@
                     pending = (c.em_analise || []).filter((x) => !x.alerta_qualidade).length,
                     total = meta.resumo_pesquisa?.consultas_renovaveis;
                 el("participa-now").innerHTML = `<div class="now-figures"><span><strong>${open}</strong>${
-                    tr(open === 1 ? "aberta agora" : "abertas agora", "open now")
-                }</span><span><strong>${pending}</strong>${tr("a aguardar decisão", "awaiting decision")}</span>${
+                    tr(open === 1 ? "consulta aberta agora" : "consultas abertas agora", "open now")
+                }</span><span><strong>${pending}</strong>${tr("a aguardar decisão (2026)", "awaiting decision (2026)")}</span>${
                     total ? `<span><strong>${total}</strong>${tr("consultas de renováveis no portal", "renewables consultations on the portal")}</span>` : ""
                 }</div><p>${
                     open
@@ -164,16 +164,19 @@
                         return;
                     }
                     const mun = T(region.concelho), dist = T(region.distrito);
-                    let html = `<small>${tr("No teu território", "In your area")} · ${esc(region.titulo)}</small>`;
-                    html += concelho.length
-                        ? `<h3>${tr(`${concelho.length} ${concelho.length === 1 ? "consulta" : "consultas"} no concelho de ${esc(mun)}`, `${concelho.length} in the municipality of ${esc(mun)}`)}</h3><ul>${concelho.map(item).join("")}</ul>`
-                        : `<p>${tr(`Nenhuma consulta de renováveis aberta ou em análise no concelho de ${esc(mun)}.`, `No renewables consultation open or under review in the municipality of ${esc(mun)}.`)}</p>`;
-                    html += distrito.length
-                        ? `<p>${tr(`Noutros concelhos do distrito de ${esc(dist)}:`, `Elsewhere in the district of ${esc(dist)}:`)}</p><ul>${distrito.map(item).join("")}</ul>`
-                        : `<p>${tr(`Também nenhuma noutros concelhos do distrito de ${esc(dist)}.`, `None elsewhere in the district of ${esc(dist)} either.`)}</p>`;
-                    if (nacional.length) {
-                        html += `<p>${tr("De âmbito nacional, abrangendo também o teu território:", "National in scope, also covering your area:")}</p><ul>${nacional.map(item).join("")}</ul>`;
-                    }
+                    const col = (head, rows, none) => `<div class="local-col"><h4>${head}</h4>${
+                        rows.length ? `<ul>${rows.map(item).join("")}</ul>` : `<p>${none}</p>`
+                    }</div>`;
+                    const html = `<small>${tr("No teu território", "In your area")} · ${esc(region.titulo)}</small><div class="local-grid">${
+                        col(tr(`Concelho de ${esc(mun)}`, `Municipality of ${esc(mun)}`), concelho,
+                            tr("Nenhuma consulta de renováveis aberta ou em análise.", "No renewables consultation open or under review."))
+                    }${
+                        col(tr(`Outros concelhos do distrito de ${esc(dist)}`, `Elsewhere in the district of ${esc(dist)}`), distrito,
+                            tr("Nenhuma consulta de renováveis aberta ou em análise.", "No renewables consultation open or under review."))
+                    }${
+                        col(tr("Âmbito nacional, abrange também o teu território", "National scope, also covers your area"), nacional,
+                            tr("Nenhuma consulta nacional em curso.", "No national consultation in progress."))
+                    }</div>`;
                     box.innerHTML = html;
                 });
             }
