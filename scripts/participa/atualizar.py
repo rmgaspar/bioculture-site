@@ -264,7 +264,7 @@ def main() -> int:
             "ambito": "portugal", "paises": ["PT"], "prioridade": 80, "relevancia": 80, "estado": "proposta",
             "tipo_conteudo": "consulta_publica", "data": date_pt(r["inicio"]),
             "publicado_em": f"{r['inicio']}T00:00:00Z", "capturado_em": dt.datetime.now(dt.timezone.utc).isoformat().replace("+00:00", "Z"),
-            "expira_em": r["fim"], "permanente": False, "imagem": r.get("imagem_fonte") or "/images/renovaveis-territorio.webp",
+            "expira_em": r["fim"], "permanente": False, "imagem": r.get("imagem_fonte") or "/images/pressao-solar-territorio.webp",
             "imagem_credito_pt": "Participa.pt" if r.get("imagem_fonte") else "Ilustração editorial bioCulture",
             "imagem_credito_en": "Participa.pt" if r.get("imagem_fonte") else "bioCulture editorial illustration",
             "fonte": "Participa.pt", "tipo_fonte": "oficial", "logo": "", "url": r["url"],
