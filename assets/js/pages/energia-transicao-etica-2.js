@@ -54,14 +54,62 @@
             }
             function renderConsults(d) {
                 const c = d.consultas_participa || {},
-                    items = [...(c.abertas || []), ...(c.em_analise || []), ...(c.encerradas || [])];
+                    meta = c.metadados || {},
+                    tr = (pt, en) => (isEn() ? en : pt),
+                    today = new Date(new Date().toISOString().slice(0, 10) + "T12:00:00"),
+                    days = (v) => Math.round((new Date(v + "T12:00:00") - today) / 864e5),
+                    current = [...(c.abertas || []), ...(c.em_analise || []), ...(c.encerradas || [])],
+                    recent = current.filter((x) => !x.alerta_qualidade);
+                // Sinais de atenção: factos observáveis, sem pontuação nem juízo sobre o projeto.
+                const byMunicipality = {};
+                recent.forEach((x) => (x.municipios || []).forEach((m) => {
+                    byMunicipality[m] = (byMunicipality[m] || 0) + 1;
+                }));
+                const signals = (x) => {
+                    const out = [];
+                    if (/aberta/i.test(x.estado_consulta) && x.fim) {
+                        const n = days(x.fim);
+                        out.push(["urgent", n <= 0 ? tr("Último dia", "Last day") : tr(`Fecha em ${n} dias`, `Closes in ${n} days`)]);
+                    }
+                    if (x.subtipologia === "Proposta de definição de âmbito" || /\bPDA\b/.test(x.titulo || "")) {
+                        out.push(["phase", tr("PDA: haverá nova consulta do EIA", "Scoping: an EIA consultation will follow")]);
+                    }
+                    if (!x.alerta_qualidade) {
+                        const shared = Math.max(0, ...(x.municipios || []).map((m) => byMunicipality[m] - 1));
+                        if (shared > 0) out.push(["cumulative", tr(`+${shared} no mesmo concelho`, `+${shared} in the same municipality`)]);
+                        if (typeof x.participacoes === "number" && x.participacoes < 50) {
+                            out.push(["low", tr("Pouca participação", "Low participation")]);
+                        }
+                    }
+                    return out;
+                };
+                const open = (c.abertas || []).length,
+                    pending = (c.em_analise || []).filter((x) => !x.alerta_qualidade).length,
+                    total = meta.resumo_pesquisa?.consultas_renovaveis;
+                el("participa-now").innerHTML = `<div class="now-figures"><span><strong>${open}</strong>${
+                    tr(open === 1 ? "aberta agora" : "abertas agora", "open now")
+                }</span><span><strong>${pending}</strong>${tr("a aguardar decisão", "awaiting decision")}</span>${
+                    total ? `<span><strong>${total}</strong>${tr("consultas de renováveis no portal", "renewables consultations on the portal")}</span>` : ""
+                }</div><p>${
+                    open
+                        ? tr("Ainda é possível participar nas consultas assinaladas como abertas.", "You can still take part in the consultations marked as open.")
+                        : tr(
+                            "Não há nenhuma consulta de renováveis aberta neste momento. As que estão em análise aguardam decisão e, nas PDA, virá ainda a consulta do Estudo de Impacte Ambiental. Use «Seguir» na ficha do Participa para ser avisado.",
+                            "No renewables consultation is open right now. Those under review await a decision, and scoping procedures will be followed by an EIA consultation. Use “Follow” on the Participa page to be notified.",
+                        )
+                }</p><span class="now-date">${tr("Verificado no Participa.pt em", "Checked on Participa.pt on")} ${date(meta.instantaneo_em)}</span>`;
                 el("consults").innerHTML =
-                    items.map((x) =>
-                        `<article class="consult"><small class="${
+                    current.map((x) => {
+                        const tags = signals(x);
+                        return `<article class="consult"><small class="${
                             /aberta/i.test(x.estado_consulta) ? "status-open" : "status-analysis"
                         }">${esc(x.estado_consulta)} · ${date(x.fim)}</small><h3>${
                             esc(x.titulo)
-                        }</h3><p>${
+                        }</h3>${
+                            tags.length
+                                ? `<div class="signals">${tags.map(([k, t]) => `<span class="signal signal-${k}">${esc(t)}</span>`).join("")}</div>`
+                                : ""
+                        }<p>${
                             esc((x.municipios || []).join(" · ") || x.ambito || x.tipologia)
                         }</p>${
                             x.participacoes !== undefined
@@ -79,8 +127,27 @@
                                     esc(x.url)
                                 }" target="_blank" rel="noopener">Abrir ficha original</a>`
                                 : ""
-                        }</article>`
-                    ).join("") || '<p class="empty">—</p>';
+                        }</article>`;
+                    }).join("") || '<p class="empty">—</p>';
+                const f = c.factos_participacao,
+                    ps = d.pszaer?.consulta_publica || {};
+                el("participa-facts").innerHTML = f && f.consultas_projetos
+                    ? `<small>${tr("Factos sobre a participação", "Facts about participation")} · ${f.ano}</small><h3>${
+                        tr(`${f.consultas_projetos} consultas de projetos de renováveis`, `${f.consultas_projetos} renewables project consultations`)
+                    }</h3><ul><li>${
+                        tr(`<strong>${f.ate_21_dias}</strong> tiveram 21 dias ou menos para participar (mediana: ${f.duracao_mediana_dias} dias).`,
+                            `<strong>${f.ate_21_dias}</strong> allowed 21 days or fewer to take part (median: ${f.duracao_mediana_dias} days).`)
+                    }</li><li>${
+                        tr(`<strong>${f.com_dias_em_agosto}</strong> decorreram total ou parcialmente em agosto; em <strong>${f.maioria_em_agosto}</strong>, a maior parte do prazo calhou em agosto.`,
+                            `<strong>${f.com_dias_em_agosto}</strong> ran fully or partly in August; for <strong>${f.maioria_em_agosto}</strong>, most of the period fell in August.`)
+                    }</li><li>${
+                        tr(`Mediana de <strong>${Number(f.participacoes_mediana).toLocaleString("pt-PT")}</strong> participações por consulta. O PSZAER, com cobertura mediática, recebeu ${Number(ps.participacoes || 0).toLocaleString("pt-PT")}.`,
+                            `Median of <strong>${Number(f.participacoes_mediana).toLocaleString("en-GB")}</strong> submissions per consultation. The PSZAER, which had media coverage, received ${Number(ps.participacoes || 0).toLocaleString("en-GB")}.`)
+                    }</li></ul><p>${
+                        tr("Prazos curtos e períodos de férias reduzem a possibilidade real de participar. A divulgação oficial é feita sobretudo no portal e por editais.",
+                            "Short deadlines and holiday periods reduce the real chance to take part. Official notice is given mainly on the portal and through public notices.")
+                    }</p><span class="now-date">${esc(f.nota)}</span>`
+                    : "";
             }
             function renderPlants(d) {
                 const x = d.grandes_centrais_existentes || {};
