@@ -142,7 +142,7 @@ $('#heroTiles').innerHTML = [
   [fmt(cer.prod_mt.at(-1)), 'Mt', 'cereais colhidos no mundo em '+K.yp, '×'+fmt(cer.prod_mt.at(-1)/cer.prod_mt[0],1)+' desde 1961'],
   [fmt(cer.yield_tha.at(-1),2), 't/ha', 'rendimento médio dos cereais', 'eram '+fmt(cer.yield_tha[0],2)+' t/ha em 1961'],
   [fmt(agri), 'Mha', 'de terra agrícola', K.agriShare+' da área terrestre'],
-  [fmt(D.world_trade.exp_bn.at(-1)), 'mil M USD', 'exportações agrícolas mundiais', 'em '+K.yt+', valores correntes']
+  [fmt(D.world_trade.exp_bn.at(-1)), 'mil M €', 'exportações agrícolas mundiais', 'em '+K.yt+', valores correntes']
 ].map(t=>`<div class="tile"><span class="v">${t[0]}<small>${t[1]}</small></span><span class="k">${t[2]}</span><span class="s">${t[3]}</span></div>`).join('');
 
 /* ---------- findings ---------- */
@@ -153,10 +153,10 @@ const F = [
   `<b>A Ásia produz metade dos cereais e 44% da carne do mundo.</b> Em 1961 a Europa liderava a carne, com 42%.`,
   `<b>Cinco países produzem 87% da soja e 91% do fruto de palma.</b> Brasil e EUA fazem ${fmt(soy.exp[0].t/soy.exp_total_t*100+soy.exp[1].t/soy.exp_total_t*100)}% das exportações de soja.`,
   `<b>A agricultura ocupa ${K.agriShare} das terras emersas</b>, e dois terços dessa área são pastagens.`,
-  `<b>O comércio agrícola mundial vale ${K.tradeBn} mil milhões USD</b>, cinco vezes o valor de 2000 em termos nominais.`,
-  `<b>O Brasil tem o maior excedente agrícola do mundo</b> (+${fmt(D.surplus[0].bal)} mil M USD). A China tem o maior défice (${fmt(D.deficit[0].bal)} mil M USD).`,
-  `<b>Uma só rota, soja do Brasil para a China, vale cerca de ${fmt(D.flows.items[0].rows[0].m/1000,1)} mil milhões USD</b> por ano.`,
-  `<b>Portugal exporta ${K.ptExp} e importa ${K.ptImp} mil milhões USD</b> em produtos agrícolas. A Espanha é o destino de ${fmt(D.pt_partners.exp.top[0].share)}% das exportações e a origem de ${fmt(D.pt_partners.imp.top[0].share)}% das importações.`,
+  `<b>O comércio agrícola mundial vale ${K.tradeBn} mil milhões de euros</b>, quatro vezes o valor de 2000 em termos nominais.`,
+  `<b>O Brasil tem o maior excedente agrícola do mundo</b> (+${fmt(D.surplus[0].bal)} mil M €). A China tem o maior défice (${fmt(D.deficit[0].bal)} mil M €).`,
+  `<b>Uma só rota, soja do Brasil para a China, vale cerca de ${fmt(D.flows.items[0].rows[0].m/1000,1)} mil milhões de euros</b> por ano.`,
+  `<b>Portugal exporta ${K.ptExp} e importa ${K.ptImp} mil milhões de euros</b> em produtos agrícolas. A Espanha é o destino de ${fmt(D.pt_partners.exp.top[0].share)}% das exportações e a origem de ${fmt(D.pt_partners.imp.top[0].share)}% das importações.`,
   `<b>Portugal produz cerca de 4% do trigo e 27% do milho que consome</b>, e mais do dobro do azeite e da pera que consome.`
 ];
 $('#agri-findings').innerHTML = F.map((f,i)=>`<li><span class="n">${String(i+1).padStart(2,'0')}</span><span>${f}</span></li>`).join('');
@@ -225,15 +225,15 @@ org.push({l:'Portugal', v:D.organic.pt_kha, hl:true});
 hbars($('#cOrg'), org, {unit:'mil ha', f:v=>fmt(v), table:['País','mil ha']});
 
 /* ---------- 6. trade ---------- */
-line($('#cTrade'), {x:D.world_trade.years, series:[{n:'Exportações',c:css('--s1'),v:D.world_trade.exp_bn,area:true}], aria:'Exportações agrícolas mundiais', tf:(s,i)=>fmt(s.v[i])+' mil M USD', table:true, tableEvery:5});
+line($('#cTrade'), {x:D.world_trade.years, series:[{n:'Exportações',c:css('--s1'),v:D.world_trade.exp_bn,area:true}], aria:'Exportações agrícolas mundiais', tf:(s,i)=>fmt(s.v[i])+' mil M €', table:true, tableEvery:5});
 function drawExIm(k){
   const f = k==='exporters' ? 'exp' : 'imp';
-  hbars($('#cExIm'), D[k].map(r=>({l:an(r.a), v:r[f], tip:`<div class="r"><span>Exportações</span><b>${fmt(r.exp,1)}</b></div><div class="r"><span>Importações</span><b>${fmt(r.imp,1)}</b></div><div class="r"><span>Saldo</span><b>${(r.bal>0?'+':'')+fmt(r.bal,1)}</b></div>`})), {unit:'mil M USD', table:['País','mil M USD']});
+  hbars($('#cExIm'), D[k].map(r=>({l:an(r.a), v:r[f], tip:`<div class="r"><span>Exportações</span><b>${fmt(r.exp,1)}</b></div><div class="r"><span>Importações</span><b>${fmt(r.imp,1)}</b></div><div class="r"><span>Saldo</span><b>${(r.bal>0?'+':'')+fmt(r.bal,1)}</b></div>`})), {unit:'mil M €', table:['País','mil M €']});
 }
 drawExIm('exporters'); seg($('#segExIm'), drawExIm);
 const bal = [...D.surplus.slice(0,10), ...D.deficit.slice(0,10).reverse()];
-dbars($('#cBal'), bal.map(r=>({l:an(r.a), v:r.bal, tip:`<div class="r"><span>Saldo</span><b>${(r.bal>0?'+':'')+fmt(r.bal,1)} mil M USD</b></div>`})), {table:['País','Saldo (mil M USD)']});
-hbars($('#cTopTraded'), D.top_traded.map(x=>({l:it(x), v:x.bn})), {unit:'mil M USD', table:['Produto','mil M USD']});
+dbars($('#cBal'), bal.map(r=>({l:an(r.a), v:r.bal, tip:`<div class="r"><span>Saldo</span><b>${(r.bal>0?'+':'')+fmt(r.bal,1)} mil M €</b></div>`})), {table:['País','Saldo (mil M €)']});
+hbars($('#cTopTraded'), D.top_traded.map(x=>({l:it(x), v:x.bn})), {unit:'mil M €', table:['Produto','mil M €']});
 
 /* ---------- 7. routes ---------- */
 const selT = $('#selTrade');
@@ -250,7 +250,7 @@ selT.addEventListener('change', ()=>drawKT(+selT.value)); drawKT(0);
 const sf = $('#segFlow');
 sf.innerHTML = D.flows.items.map((f,i)=>`<button aria-pressed="${i===0}" data-v="${i}">${it(f)}</button>`).join('');
 function drawFlow(i){ const f = D.flows.items[i];
-  hbars($('#cFlow'), f.rows.map(r=>({l:`${an(r.from)} → ${an(r.to)}`, v:r.m})), {unit:'M USD', f:v=>fmt(v), table:['Rota','M USD']}); }
+  hbars($('#cFlow'), f.rows.map(r=>({l:`${an(r.from)} → ${an(r.to)}`, v:r.m})), {unit:'M €', f:v=>fmt(v), table:['Rota','M €']}); }
 drawFlow(0); seg(sf, v=>drawFlow(+v));
 
 /* ---------- 8. profiles ---------- */
@@ -259,14 +259,14 @@ sp.innerHTML = D.profiles.map((p,i)=>`<button aria-pressed="${i===0}" data-v="${
 function drawProf(i){
   const p = D.profiles[i], ts = p.ts, last = ts.years.length-1, e = ts.exp[last], m = ts.imp[last];
   $('#profTiles').innerHTML = [
-    [fmt(e,1),'mil M USD','exportações agrícolas'],[fmt(m,1),'mil M USD','importações agrícolas'],
-    [(e-m>0?'+':'')+fmt(e-m,1),'mil M USD','saldo'],[fmt(e/m*100),'%','taxa de cobertura']
+    [fmt(e,1),'mil M €','exportações agrícolas'],[fmt(m,1),'mil M €','importações agrícolas'],
+    [(e-m>0?'+':'')+fmt(e-m,1),'mil M €','saldo'],[fmt(e/m*100),'%','taxa de cobertura']
   ].map(t=>`<div class="tile"><span class="v">${t[0]}<small>${t[1]}</small></span><span class="k">${t[2]}</span></div>`).join('');
   const col = (h, arr, f) => `<div class="pcol"><h3>${h}</h3><ol>${arr.map((x,j)=>`<li><span class="r">${j+1}</span><span>${it(x)}</span><span class="x">${f(x)}</span></li>`).join('')}</ol></div>`;
-  $('#profCols').innerHTML = col('Mais produzido (Mt)', p.prod, x=>fmt(x.mt,1)) + col('Mais exportado (mil M USD)', p.exp, x=>fmt(x.bn,2)) + col('Mais importado (mil M USD)', p.imp, x=>fmt(x.bn,2));
+  $('#profCols').innerHTML = col('Mais produzido (Mt)', p.prod, x=>fmt(x.mt,1)) + col('Mais exportado (mil M €)', p.exp, x=>fmt(x.bn,2)) + col('Mais importado (mil M €)', p.imp, x=>fmt(x.bn,2));
   const series = [{n:'Exportações',c:css('--s1'),v:ts.exp},{n:'Importações',c:css('--s2'),v:ts.imp}];
   legend($('#lgProf'), series, true);
-  line($('#cProf'), {x:ts.years, series, h:220, aria:'Exportações e importações', tf:(s,j)=>fmt(s.v[j],1)+' mil M USD'});
+  line($('#cProf'), {x:ts.years, series, h:220, aria:'Exportações e importações', tf:(s,j)=>fmt(s.v[j],1)+' mil M €'});
 }
 drawProf(0); seg(sp, v=>drawProf(+v));
 
@@ -274,17 +274,17 @@ drawProf(0); seg(sp, v=>drawProf(+v));
 const ptE = ptT.exp_m[pti], ptM = ptT.imp_m[pti];
 const i2000 = ptT.years.indexOf(2000);
 $('#ptTiles').innerHTML = [
-  [fmt(ptE/1000,1),'mil M USD','exportações agrícolas, '+K.yt, '×'+fmt(ptE/ptT.exp_m[i2000],1)+' desde 2000'],
-  [fmt(ptM/1000,1),'mil M USD','importações agrícolas, '+K.yt, '×'+fmt(ptM/ptT.imp_m[i2000],1)+' desde 2000'],
-  [fmt((ptE-ptM)/1000,1),'mil M USD','saldo agrícola', 'défice estrutural desde 1961'],
+  [fmt(ptE/1000,1),'mil M €','exportações agrícolas, '+K.yt, '×'+fmt(ptE/ptT.exp_m[i2000],1)+' desde 2000'],
+  [fmt(ptM/1000,1),'mil M €','importações agrícolas, '+K.yt, '×'+fmt(ptM/ptT.imp_m[i2000],1)+' desde 2000'],
+  [fmt((ptE-ptM)/1000,1),'mil M €','saldo agrícola', 'défice em todos os anos desde 1971'],
   [fmt(ptE/ptM*100),'%','taxa de cobertura', 'era '+fmt(ptT.exp_m[i2000]/ptT.imp_m[i2000]*100)+'% em 2000']
 ].map(t=>`<div class="tile"><span class="v">${t[0]}<small>${t[1]}</small></span><span class="k">${t[2]}</span><span class="s">${t[3]}</span></div>`).join('');
 (function(){ const series=[{n:'Exportações',c:css('--s1'),v:ptT.exp_m},{n:'Importações',c:css('--s2'),v:ptT.imp_m}];
   legend($('#lgPtT'), series, true);
-  line($('#cPtTrade'), {x:ptT.years, series, aria:'Comércio agrícola de Portugal', tf:(s,i)=>fmt(s.v[i])+' M USD', table:true, tableEvery:5}); })();
+  line($('#cPtTrade'), {x:ptT.years, series, aria:'Comércio agrícola de Portugal', tf:(s,i)=>fmt(s.v[i])+' M €', table:true, tableEvery:5}); })();
 dbars($('#cPtGroups'), D.pt_groups.slice().sort((a,b)=>(b.exp_m-b.imp_m)-(a.exp_m-a.imp_m)).map(g=>({l:g.name, v:g.exp_m-g.imp_m, f:1,
   tip:`<div class="r"><span>Exportações</span><b>${fmt(g.exp_m)} M</b></div><div class="r"><span>Importações</span><b>${fmt(g.imp_m)} M</b></div>`, cells:[fmt(g.exp_m),fmt(g.imp_m),fmt(g.exp_m-g.imp_m)]})),
-  {f:v=>fmt(v), table:['Grupo','Export. (M USD)','Import. (M USD)','Saldo']});
+  {f:v=>fmt(v), table:['Grupo','Export. (M €)','Import. (M €)','Saldo']});
 (function(){
   const rows = D.pt_ssr.rows.filter(r=>r.ssr!=null).sort((a,b)=>b.ssr-a.ssr);
   const el = $('#cSSR'); const max = Math.max(...rows.map(r=>r.ssr));
@@ -299,7 +299,7 @@ function drawPtProd(i){ const s = ptSeries[i];
   line($('#cPtProd'), {x:D.pt_prod.years, series:[{n:s.name,c:css('--bar'),v:s.kt,area:true}], h:240, aria:'Produção em Portugal', tf:(se,j)=>fmt(se.v[j],1)+' mil t', table:true, tableEvery:5}); }
 drawPtProd(0); seg(spp, v=>drawPtProd(+v));
 function drawPart(k){ const p = D.pt_partners[k];
-  hbars($('#cPart'), p.top.map(r=>({l:an(r.a), v:r.share, tip:`<div class="r"><span>Valor</span><b>${fmt(r.m)} M USD</b></div><div class="r"><span>Quota</span><b>${fmt(r.share,1)}%</b></div>`})), {unit:'%', f:v=>fmt(v,1)+'%', table:['País','%']}); }
+  hbars($('#cPart'), p.top.map(r=>({l:an(r.a), v:r.share, tip:`<div class="r"><span>Valor</span><b>${fmt(r.m)} M €</b></div><div class="r"><span>Quota</span><b>${fmt(r.share,1)}%</b></div>`})), {unit:'%', f:v=>fmt(v,1)+'%', table:['País','%']}); }
 drawPart('exp'); seg($('#segPart'), drawPart);
 const pl = D.pt_land;
 $('#ptLand').innerHTML = `<b>Terra em Portugal (${pl.year}):</b> ${fmt(pl['6610'])} mil ha de terra agrícola (${fmt(pl['6610']/pl['6601']*100)}% do território), dos quais ${fmt(pl['6620'])} mil ha cultivados e ${fmt(pl['6655'])} mil ha de pastagens permanentes. ${fmt(pl['6690'])} mil ha estão equipados para rega e ${fmt(pl['6671'])} mil ha em modo biológico, ou seja, ${fmt(pl['6671']/pl['6610']*100)}% da terra agrícola contra cerca de 2% no mundo. A floresta ocupa ${fmt(pl['6646'])} mil ha.`;
@@ -313,8 +313,8 @@ const C = [
   ['ok', `<b>Brasil exporta soja, açúcar, carne bovina e café.</b> Os 4 primeiros produtos exportados são ${topNames(21,'exp')}. O trigo é a maior importação.`],
   ['na', `<b>Brasil exporta celulose e importa fertilizantes e químicos.</b> É verdade, mas não são produtos agrícolas nas estatísticas da FAO. Ver UN Comtrade ou OEC.`],
   ['nu', `<b>EUA exportam milho, soja, algodão, carne suína e frutos secos.</b> No topo estão ${topNames(231,'exp',5)}. A carne bovina pesa mais do que a suína. As importações são lideradas por bebidas espirituosas, carne, cerveja, vinho e café.`],
-  ['ok', `<b>China importa soja e carne para ração e consumo.</b> A soja sozinha custou ${fmt(prof(41).imp[0].bn,1)} mil M USD, seguida de carne de bovino.`],
-  ['nu', `<b>China exporta chá, hortícolas processados e alho.</b> O alho é de facto o 1.º produto agrícola exportado. O peixe não entra nesta base. As exportações agrícolas chinesas (${fmt(prof(41).ts.exp.at(-1),0)} mil M USD) são pequenas face às importações.`],
+  ['ok', `<b>China importa soja e carne para ração e consumo.</b> A soja sozinha custou ${fmt(prof(41).imp[0].bn,1)} mil M €, seguida de carne de bovino.`],
+  ['nu', `<b>China exporta chá, hortícolas processados e alho.</b> O alho é de facto o 1.º produto agrícola exportado. O peixe não entra nesta base. As exportações agrícolas chinesas (${fmt(prof(41).ts.exp.at(-1),0)} mil M €) são pequenas face às importações.`],
   ['ok', `<b>UE exporta vinho, queijo e carne de porco; importa café, cacau e oleaginosas.</b> Queijo e vinho lideram as exportações, e trigo, azeite e carne de porco também estão no top 8. Nas importações, café verde, cacau e bagaço de soja surgem logo a seguir ao queijo. Nota: os valores da UE incluem o comércio intra-UE.`],
   ['ok', `<b>Ucrânia e Rússia exportam trigo, óleo de girassol e milho.</b> Confirma-se nos dois países. A Rússia é o 1.º exportador mundial de trigo.`],
   ['ok', `<b>Portugal exporta azeite e vinho; a Espanha é o principal parceiro.</b> Azeite e vinho são os 2 primeiros produtos exportados. A Espanha recebe ${fmt(D.pt_partners.exp.top[0].share)}% das exportações.`],
@@ -325,7 +325,7 @@ $('#claims').innerHTML = C.map(c=>`<div class="claim"><span class="pill ${c[0]}"
 
 
 }
-fetch("/data/agriculture-global.json?v=20261003")
+fetch("/data/agriculture-global.json?v=20261004")
   .then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); })
   .then((data) => { D = data; render(); })
   .catch(() => {

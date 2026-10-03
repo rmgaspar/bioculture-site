@@ -24,6 +24,8 @@ CACHE = ROOT / '.cache' / 'faostat'
 OUT = ROOT / 'data' / 'agriculture-global.json'
 BULK = 'https://bulks-faostat.fao.org/production/'
 INDEX = BULK + 'datasets_E.xml'
+EUROSTAT_FX = ('https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/ert_bil_eur_a'
+               '?currency=USD&statinfo=AVG&format=JSON&lang=EN')
 DATASETS = {
     'QCL': 'Production_Crops_Livestock_E_All_Data_(Normalized)',
     'TCL': 'Trade_CropsLivestock_E_All_Data_(Normalized)',
@@ -82,6 +84,33 @@ COLS = ['Area Code', 'Area', 'Item Code', 'Item', 'Element Code', 'Year', 'Unit'
 P = pd.read_csv(fetch('QCL'), usecols=COLS + ['Element', 'Flag'], encoding='utf-8')
 T = pd.concat(c[c['Element Code'].isin([5922, 5622, 5910, 5610])]
               for c in pd.read_csv(fetch('TCL'), usecols=COLS, encoding='utf-8', chunksize=3_000_000))
+VALUE_ELEMENTS = (5922, 5622)  # Export value, Import value (1000 USD correntes)
+
+
+def eur_rates():
+    """Taxas médias anuais EUR/USD (1971–1998: ECU) do Eurostat, ert_bil_eur_a."""
+    cache = CACHE / 'eurostat_ert_bil_eur_a_usd.json'
+    if REFRESH or not cache.exists():
+        urllib.request.urlretrieve(EUROSTAT_FX, cache)
+    d = json.loads(cache.read_text())
+    idx = {i: int(y) for y, i in d['dimension']['time']['category']['index'].items()}
+    return {idx[int(k)]: v for k, v in d['value'].items()}, d.get('updated', '')[:10]
+
+
+FX, FX_UPDATED = eur_rates()
+
+
+def to_eur(df, year_col, value_col, element_col):
+    """Converte valores em USD para EUR com a taxa média do próprio ano; anos sem taxa (antes de 1971) saem."""
+    is_val = df[element_col].isin(VALUE_ELEMENTS)
+    rate = df[year_col].map(FX)
+    df = df[~is_val | rate.notna()].copy()
+    m = df[element_col].isin(VALUE_ELEMENTS)
+    df.loc[m, value_col] = df.loc[m, value_col] / df.loc[m, year_col].map(FX)
+    return df
+
+
+T = to_eur(T, 'Year', 'Value', 'Element Code')
 L = pd.read_csv(fetch('RL'), encoding='utf-8', usecols=['Area Code', 'Item Code', 'Element Code', 'Year', 'Value', 'Unit'])
 am = pd.concat([codes('QCL', 'AreaCodes'), codes('TCL', 'AreaCodes'), codes('RL', 'AreaCodes')]).drop_duplicates('Area Code')
 M49 = dict(zip(am['Area Code'], am.iloc[:, 1].astype(str).str.strip("'")))
@@ -288,6 +317,7 @@ out['pt_land'] = {'year': ly2, **{str(k): r(pl.loc[ly2, k], 1) if k in pl and no
 # ---- J. Partners from detailed trade matrix
 TM = pd.read_csv(tm_subset(), header=None, encoding='utf-8', encoding_errors='replace',
                  names=['rc', 'rm', 'rn', 'pc', 'pm', 'pn', 'ic', 'icpc', 'item', 'ec', 'el', 'yc', 'y', 'u', 'v', 'f'])
+TM = to_eur(TM, 'y', 'v', 'ec')
 YTM = int(TM.y.max())
 pt_tm = TM[(TM.rc == PT) & (TM.y == YTM) & TM.ec.isin([5922, 5622])]
 def partners(ec):
@@ -313,7 +343,12 @@ out['meta'].update({
     'licence': 'CC BY-NC-SA 3.0 IGO',
     'datasets': DATASET_INFO,
     'partners_year': YTM,
-    'missing_data_policy': 'Valores tal como publicados pela FAO (incluindo estimativas oficiais). Nada é interpolado.',
+    'currency': 'EUR',
+    'currency_note': ('Valores de comércio convertidos de USD correntes para EUR com a taxa média anual '
+                      'do próprio ano (Eurostat ert_bil_eur_a; 1971–1998: ECU). Série começa em 1971.'),
+    'fx_source': {'dataset': 'ert_bil_eur_a', 'updated': FX_UPDATED,
+                  'url': 'https://ec.europa.eu/eurostat/databrowser/view/ert_bil_eur_a/default/table'},
+    'missing_data_policy': 'Volumes tal como publicados pela FAO (incluindo estimativas oficiais). Nada é interpolado.',
     'country_note': 'China = China continental (código FAO 41). UE (27) = agregado FAO, inclui comércio intra-UE.'
 })
 OUT.parent.mkdir(parents=True, exist_ok=True)
