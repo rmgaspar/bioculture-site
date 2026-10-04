@@ -192,7 +192,68 @@ const F = EN ? [
   `<b>Portugal exporta ${K.ptExp} e importa ${K.ptImp} mil milhões de euros</b> em produtos agrícolas. A Espanha é o destino de ${fmt(D.pt_partners.exp.top[0].share)}% das exportações e a origem de ${fmt(D.pt_partners.imp.top[0].share)}% das importações.`,
   `<b>Portugal produz cerca de 4% do trigo e 27% do milho que consome</b>, e mais do dobro do azeite e da pera que consome.`
 ];
-$('#agri-findings').innerHTML = F.map((f,i)=>`<li><span class="n">${String(i+1).padStart(2,'0')}</span><span>${f}</span></li>`).join('');
+/* Mini-gráfico de cada conclusão: os números que a sustentam, lidos dos mesmos dados. */
+const miniBars = (rows, o={}) => {
+  const max = o.max || Math.max(...rows.map(r=>Math.abs(r.v)));
+  return `<div class="mini">${rows.map(r=>`<div class="mr${r.hl?' hl':''}"><span class="ml">${r.l}</span><span class="mt">${o.ref!=null?`<span class="mref" style="left:${o.ref/max*100}%"></span>`:''}<span class="mb" style="width:${Math.min(100,Math.abs(r.v)/max*100)}%${r.c?`;background:${r.c}`:''}"></span></span><span class="mv">${r.t}</span></div>`).join('')}</div>`;
+};
+const miniDiv = (rows) => {
+  const max = Math.max(...rows.map(r=>Math.abs(r.v)));
+  return `<div class="mini">${rows.map(r=>{ const w=Math.abs(r.v)/max*50;
+    return `<div class="mr"><span class="ml">${r.l}</span><span class="mt mdiv"><span class="mb ${r.v>=0?'pos':'neg'}" style="${r.v>=0?`left:50%`:`left:${50-w}%`};width:${w}%"></span></span><span class="mv">${r.t}</span></div>`; }).join('')}</div>`;
+};
+const miniStack = (parts) => `<div class="mini"><div class="mstack">${parts.map(p=>`<span style="width:${p.v}%;background:${p.c}" title="${p.l}: ${fmt(p.v)}%"></span>`).join('')}</div><div class="mlegend">${parts.map(p=>`<span><i style="background:${p.c}"></i>${p.l} ${fmt(p.v)}%</span>`).join('')}</div></div>`;
+const V = (() => {
+  const c = D.cereals, idx = a => a.at(-1)/a[0]*100;
+  const grp = id => { const g = D.world_groups.series.find(x=>x.id===id); return g.mt.at(-1)/g.mt[0]; };
+  const shareOf = (key, id, yi) => { const cc = D[key]; const tot = cc.series.reduce((a,x)=>a+x.mt[yi],0); return cc.series.find(x=>x.id===id).mt[yi]/tot*100; };
+  const key = id => D.key.find(k=>k.id===id);
+  const wt = D.world_trade, w2000 = wt.exp_bn[wt.years.indexOf(2000)];
+  const fl = D.flows.items[0].rows;
+  const ssrRow = id => D.pt_ssr.rows.find(r=>r.id===id);
+  const pastures = land.series['6655'][li], crop = land.series['6620'][li];
+  const last = D.cereals_continent.years.length-1;
+  return [
+    miniBars([
+      {l:tr('Produção','Production'), v:idx(c.prod_mt), t:'×'+fmt(idx(c.prod_mt)/100,1), hl:true},
+      {l:tr('Rendimento','Yield'), v:idx(c.yield_tha), t:'×'+fmt(idx(c.yield_tha)/100,1)},
+      {l:tr('Área colhida','Harvested area'), v:idx(c.area_mha), t:'×'+fmt(idx(c.area_mha)/100,2)}
+    ], {ref:100}),
+    miniBars([[1732,tr('Oleaginosas','Oilcrops')],[1735,tr('Hortícolas','Vegetables')],[1765,tr('Carne','Meat')],[1717,tr('Cereais','Cereals')],[1780,tr('Leite','Milk')]]
+      .map(([id,l],i)=>({l, v:grp(id), t:'×'+fmt(grp(id),1), hl:i===0}))),
+    miniBars([
+      {l:tr('Ásia · cereais '+K.yp,'Asia · cereals '+K.yp), v:shareOf('cereals_continent',5300,last), t:fmt(shareOf('cereals_continent',5300,last))+'%', hl:true},
+      {l:tr('Ásia · carne '+K.yp,'Asia · meat '+K.yp), v:shareOf('meat_continent',5300,last), t:fmt(shareOf('meat_continent',5300,last))+'%', hl:true},
+      {l:tr('Europa · carne 1961','Europe · meat 1961'), v:shareOf('meat_continent',5400,0), t:fmt(shareOf('meat_continent',5400,0))+'%'}
+    ], {max:100}),
+    miniBars([
+      {l:tr('Soja · top 5','Soya · top 5'), v:key(236).top5_share, t:fmt(key(236).top5_share)+'%', hl:true},
+      {l:tr('Fruto de palma · top 5','Oil palm · top 5'), v:key(254).top5_share, t:fmt(key(254).top5_share)+'%', hl:true},
+      {l:tr('Café · top 5','Coffee · top 5'), v:key(656).top5_share, t:fmt(key(656).top5_share)+'%'}
+    ], {max:100}),
+    miniStack([
+      {l:tr('Pastagens','Pasture'), v:pastures/landA*100, c:css('--s3')},
+      {l:tr('Cultivo','Cropland'), v:crop/landA*100, c:css('--s4')},
+      {l:tr('Resto','Other land'), v:100-(pastures+crop)/landA*100, c:css('--bar-dim')}
+    ]),
+    miniBars([
+      {l:'2000', v:w2000, t:fmt(w2000)+tr(' mil M €',' € bn')},
+      {l:K.yt, v:wt.exp_bn.at(-1), t:fmt(wt.exp_bn.at(-1))+tr(' mil M €',' € bn'), hl:true}
+    ]),
+    miniDiv([
+      {l:an(D.surplus[0].a), v:D.surplus[0].bal, t:'+'+fmt(D.surplus[0].bal)},
+      {l:an(D.deficit[0].a), v:D.deficit[0].bal, t:fmt(D.deficit[0].bal)}
+    ]),
+    miniBars(fl.slice(0,3).map((r,i)=>({l:`${an(r.from)} → ${an(r.to)}`, v:r.m, t:fmt(r.m/1000,1)+tr(' mil M €',' € bn'), hl:i===0}))),
+    miniBars([
+      {l:tr('Exportações','Exports'), v:ptT.exp_m[pti], t:fmt(ptT.exp_m[pti]/1000,1)+tr(' mil M €',' € bn'), c:css('--s1')},
+      {l:tr('Importações','Imports'), v:ptT.imp_m[pti], t:fmt(ptT.imp_m[pti]/1000,1)+tr(' mil M €',' € bn'), c:css('--s2')}
+    ]),
+    miniBars([[15,tr('Trigo','Wheat')],[56,tr('Milho','Maize')],[521,tr('Pera','Pears')],[261,tr('Azeite','Olive oil')]]
+      .map(([id,l])=>{ const v=ssrRow(id).ssr; return {l, v:Math.min(v,250), t:fmt(v)+'%', hl:v>=100}; }), {max:250, ref:100})
+  ];
+})();
+$('#agri-findings').innerHTML = F.map((f,i)=>`<li><span class="n">${String(i+1).padStart(2,'0')}</span><div class="ftxt">${f}</div>${V[i]||''}</li>`).join('');
 
 /* ---------- 1. top items + groups ---------- */
 hbars($('#cTopItems'), D.top_items.map(x=>({l:it(x), v:x.mt})), {unit:'Mt', table:[tr('Produto','Product'),'Mt']});
