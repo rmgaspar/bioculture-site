@@ -63,6 +63,28 @@ function groupLegend(el, ids){
   const used = GROUPS.filter(g=>ids.some(id=>groupOf(id)===g));
   lg.innerHTML = used.map(g=>`<span><i style="background:${css(g.c)}"></i>${tr(g.pt,g.en)}</span>`).join('');
 }
+/* Continentes: países coloridos pelo continente (mesmas cores do gráfico «Quota de cada continente»). */
+const CONT_ISO = {
+  5100:'DZ AO BJ BW BF BI CV CM CF TD KM CG CD CI DJ EG GQ ER SZ ET GA GM GH GN GW KE LS LR LY MG MW ML MR MU YT MA MZ NA NE NG RE RW SH ST SN SC SL SO ZA SS SD TZ TG TN UG EH ZM ZW',
+  5200:'AI AG AR AW BS BB BZ BM BO BQ BR VG CA KY CL CO CR CU CW DM DO EC SV FK GF GL GD GP GT GY HT HN JM MQ MX MS NI PA PY PE PR BL KN LC MF PM VC SX SR TT TC US UY VE VI',
+  5300:'AF AM AZ BH BD BT BN KH CN CY GE HK IN ID IR IQ IL JP JO KZ KW KG LA LB MO MY MV MN MM NP KP OM PK PS PH QA SA SG KR LK SY TW TJ TH TL TR TM AE UZ VN YE',
+  5400:'AL AD AT BY BE BA BG HR CZ DK EE FO FI FR DE GI GR HU IS IE IM IT XK LV LI LT LU MT MD MC ME NL MK NO PL PT RO RU SM RS SK SI ES SE CH UA GB VA',
+  5500:'AS AU CK FJ PF GU KI MH FM NR NC NZ NU NF MP PW PG PN WS SB TK TO TV VU WF'
+};
+const CONT_COLOR = {5300:'--s1',5200:'--s2',5400:'--s3',5100:'--s4',5500:'--s5'};
+const CONT_NAME = {5300:['Ásia','Asia'],5200:['Américas','Americas'],5400:['Europa','Europe'],5100:['África','Africa'],5500:['Oceânia','Oceania']};
+const contOf = code => {
+  if (String(code)==='5707') return 5400;
+  const iso = D.areas[String(code)]?.iso2;
+  return +Object.keys(CONT_ISO).find(k=>CONT_ISO[k].split(' ').includes(iso)) || null;
+};
+const contColor = code => { const c = contOf(code); return c ? css(CONT_COLOR[c]) : css('--bar'); };
+function contLegend(el, codes){
+  let lg = el.parentElement.querySelector(':scope > .legend.cont');
+  if(!lg){ lg = document.createElement('div'); lg.className = 'legend cont'; el.before(lg); }
+  const used = [5300,5200,5400,5100,5500].filter(k=>codes.some(c=>contOf(c)===k));
+  lg.innerHTML = used.map(k=>`<span><i style="background:${css(CONT_COLOR[k])}"></i>${tr(...CONT_NAME[k])}</span>`).join('');
+}
 const nm = (kind, x) => EN ? ((NAMES_EN[kind] && NAMES_EN[kind][x.id]) || IT_EN[x.id] || x.name) : x.name;
 
 /* tooltip */
@@ -317,7 +339,8 @@ const selKey = $('#selKey');
 selKey.innerHTML = D.key.map((k,i)=>`<option value="${i}">${it(k)}</option>`).join('');
 function drawKey(i){
   const k = D.key[i], unit = k.world_mt < 50 ? 1e3 : 1e6, ul = unit===1e3 ? tr('mil t','kt') : 'Mt';
-  hbars($('#cKey'), k.top.map(t=>({l:an(t.a), v:t.t/unit, hl:t.a===174, tip:`<div class="r"><span>${tr('Produção','Production')}</span><b>${fmt(t.t/unit,1)} ${ul}</b></div><div class="r"><span>${tr('Quota mundial','World share')}</span><b>${fmt(t.t/(k.world_mt*1e6)*100,1)}%</b></div>`})), {unit:ul, table:[tr('País','Country'), ul]});
+  contLegend($('#cKey'), k.top.map(t=>t.a));
+  hbars($('#cKey'), k.top.map(t=>({l:an(t.a), v:t.t/unit, hl:t.a===174, c:contColor(t.a), tip:`<div class="r"><span>${tr('Produção','Production')}</span><b>${fmt(t.t/unit,1)} ${ul}</b></div><div class="r"><span>${tr('Quota mundial','World share')}</span><b>${fmt(t.t/(k.world_mt*1e6)*100,1)}%</b></div>`})), {unit:ul, table:[tr('País','Country'), ul]});
   const pt = k.pt.t ? (EN ? `${fmt(k.pt.t/1000,1)} kt · ranked ${k.pt.rank} of ${k.pt.n} countries` : `${fmt(k.pt.t/1000,1)} mil t · ${k.pt.rank}.º de ${k.pt.n} países`) : tr('Sem produção registada','No recorded production');
   $('#kFacts').innerHTML = `
     <div class="kf"><span class="v">${fmt(k.world_mt, k.world_mt<50?2:0)} <small style="font-size:.8rem;color:var(--muted)">Mt</small></span><span class="k">${tr('Produção mundial','World production')}, ${k.year}</span></div>
@@ -325,7 +348,7 @@ function drawKey(i){
     <div class="kf"><span class="v" style="font-size:1.05rem">${pt}</span><span class="k">Portugal</span></div>
     <div><div class="chart" id="cKeyTs"></div><span class="k" style="font-size:.78rem;color:var(--muted)">${tr('Produção mundial','World production')}, 1961–${k.year} (Mt)</span></div>`;
   const ys = k.world_ts.mt.map((_,j)=>1961+j);
-  line($('#cKeyTs'), {x:ys, series:[{n:it(k), c:css('--bar'), v:k.world_ts.mt, area:true}], h:130, aria:tr('Produção mundial ao longo do tempo','World production over time'), tf:(s,j)=>fmt(s.v[j],1)+' Mt'});
+  line($('#cKeyTs'), {x:ys, series:[{n:it(k), c:groupColor(k.id), v:k.world_ts.mt, area:true}], h:130, aria:tr('Produção mundial ao longo do tempo','World production over time'), tf:(s,j)=>fmt(s.v[j],1)+' Mt'});
 }
 selKey.addEventListener('change', ()=>drawKey(+selKey.value)); drawKey(0);
 
@@ -337,15 +360,17 @@ function drawLand(){
   line($('#cLand'), {x:land.years, series, aria:tr('Uso agrícola da terra','Agricultural land use'), tf:(se,i)=>fmt(se.v[i])+' Mha', table:true, tableEvery:5});
 }
 drawLand();
-const org = D.organic.top.map(t=>({l:an(t.a), v:t.kha}));
-org.push({l:'Portugal', v:D.organic.pt_kha, hl:true});
+const org = D.organic.top.map(t=>({l:an(t.a), v:t.kha, c:contColor(t.a)}));
+org.push({l:'Portugal', v:D.organic.pt_kha, hl:true, c:contColor(174)});
+contLegend($('#cOrg'), [...D.organic.top.map(t=>t.a), 174]);
 hbars($('#cOrg'), org, {unit:tr('mil ha','thousand ha'), f:v=>fmt(v), table:[tr('País','Country'),tr('mil ha','thousand ha')]});
 
 /* ---------- 6. trade ---------- */
 line($('#cTrade'), {x:D.world_trade.years, series:[{n:tr('Exportações','Exports'),c:css('--s1'),v:D.world_trade.exp_bn,area:true}], aria:tr('Exportações agrícolas mundiais','World agricultural exports'), tf:(s,i)=>fmt(s.v[i])+tr(' mil M €',' € bn'), table:true, tableEvery:5});
 function drawExIm(k){
   const f = k==='exporters' ? 'exp' : 'imp';
-  hbars($('#cExIm'), D[k].map(r=>({l:an(r.a), v:r[f], tip:`<div class="r"><span>${tr('Exportações','Exports')}</span><b>${fmt(r.exp,1)}</b></div><div class="r"><span>${tr('Importações','Imports')}</span><b>${fmt(r.imp,1)}</b></div><div class="r"><span>${tr('Saldo','Balance')}</span><b>${(r.bal>0?'+':'')+fmt(r.bal,1)}</b></div>`})), {unit:tr('mil M €','€ bn'), table:[tr('País','Country'),tr('mil M €','€ bn')]});
+  contLegend($('#cExIm'), D[k].map(r=>r.a));
+  hbars($('#cExIm'), D[k].map(r=>({l:an(r.a), v:r[f], c:contColor(r.a), tip:`<div class="r"><span>${tr('Exportações','Exports')}</span><b>${fmt(r.exp,1)}</b></div><div class="r"><span>${tr('Importações','Imports')}</span><b>${fmt(r.imp,1)}</b></div><div class="r"><span>${tr('Saldo','Balance')}</span><b>${(r.bal>0?'+':'')+fmt(r.bal,1)}</b></div>`})), {unit:tr('mil M €','€ bn'), table:[tr('País','Country'),tr('mil M €','€ bn')]});
 }
 drawExIm('exporters'); seg($('#segExIm'), drawExIm);
 const bal = [...D.surplus.slice(0,10), ...D.deficit.slice(0,10).reverse()];
@@ -358,8 +383,9 @@ const selT = $('#selTrade');
 selT.innerHTML = D.key_trade.map((k,i)=>`<option value="${i}">${it(k)}</option>`).join('');
 function drawKT(i){
   const k = D.key_trade[i], small = k.exp_total_t < 2e7, u = small?1e3:1e6, ul = small?tr('mil t','kt'):'Mt';
-  const rows = (arr,tot)=>arr.map(r=>({l:an(r.a), v:r.t/u, hl:r.a===174, tip:`<div class="r"><span>Volume</span><b>${fmt(r.t/u,1)} ${ul}</b></div><div class="r"><span>${tr('Quota','Share')}</span><b>${fmt(r.t/tot*100,1)}%</b></div>`}));
+  const rows = (arr,tot)=>arr.map(r=>({l:an(r.a), v:r.t/u, hl:r.a===174, c:contColor(r.a), tip:`<div class="r"><span>Volume</span><b>${fmt(r.t/u,1)} ${ul}</b></div><div class="r"><span>${tr('Quota','Share')}</span><b>${fmt(r.t/tot*100,1)}%</b></div>`}));
   const max = Math.max(k.exp[0].t, k.imp[0].t)/u;
+  contLegend($('#cKTexp').closest('.grid2'), [...k.exp, ...k.imp].map(r=>r.a));
   hbars($('#cKTexp'), rows(k.exp,k.exp_total_t), {max, unit:ul, table:[tr('País','Country'),ul]});
   hbars($('#cKTimp'), rows(k.imp,k.imp_total_t), {max, unit:ul, table:[tr('País','Country'),ul]});
   $('#kTnote').textContent = tr(`Exportações mundiais declaradas: ${fmt(k.exp_total_t/u,1)} ${ul}. Os 3 maiores exportadores somam ${fmt(k.top3_exp_share)}%.`, `Reported world exports: ${fmt(k.exp_total_t/u,1)} ${ul}. The top 3 exporters account for ${fmt(k.top3_exp_share)}%.`);
@@ -368,7 +394,8 @@ selT.addEventListener('change', ()=>drawKT(+selT.value)); drawKT(0);
 const sf = $('#segFlow');
 sf.innerHTML = D.flows.items.map((f,i)=>`<button aria-pressed="${i===0}" data-v="${i}">${it(f)}</button>`).join('');
 function drawFlow(i){ const f = D.flows.items[i];
-  hbars($('#cFlow'), f.rows.map(r=>({l:`${an(r.from)} → ${an(r.to)}`, v:r.m})), {unit:tr('M €','€ m'), f:v=>fmt(v), table:[tr('Rota','Route'),tr('M €','€ m')]}); }
+  contLegend($('#cFlow'), f.rows.map(r=>r.from));
+  hbars($('#cFlow'), f.rows.map(r=>({l:`${an(r.from)} → ${an(r.to)}`, v:r.m, c:contColor(r.from), tip:`<div class="r"><span>${tr('Origem','Origin')}</span><b>${tr(...CONT_NAME[contOf(r.from)]||['',''])}</b></div><div class="r"><span>${tr('Valor','Value')}</span><b>${fmt(r.m)} ${tr('M €','€ m')}</b></div>`})), {unit:tr('M €','€ m'), f:v=>fmt(v), table:[tr('Rota','Route'),tr('M €','€ m')]}); }
 drawFlow(0); seg(sf, v=>drawFlow(+v));
 
 /* ---------- 8. profiles ---------- */
@@ -415,10 +442,11 @@ const spp = $('#segPtProd'); const PTS = [261,564,388,56,15,521,1765];
 const ptSeries = PTS.map(id=>D.pt_prod.series.find(s=>s.id===id)).filter(Boolean);
 spp.innerHTML = ptSeries.map((s,i)=>`<button aria-pressed="${i===0}" data-v="${i}">${nm('item',s)}</button>`).join('');
 function drawPtProd(i){ const s = ptSeries[i];
-  line($('#cPtProd'), {x:D.pt_prod.years, series:[{n:nm('item',s),c:css('--bar'),v:s.kt,area:true}], h:240, aria:tr('Produção em Portugal','Production in Portugal'), tf:(se,j)=>fmt(se.v[j],1)+tr(' mil t',' kt'), table:true, tableEvery:5}); }
+  line($('#cPtProd'), {x:D.pt_prod.years, series:[{n:nm('item',s),c:groupColor(s.id === 1765 ? 1765 : s.id),v:s.kt,area:true}], h:240, aria:tr('Produção em Portugal','Production in Portugal'), tf:(se,j)=>fmt(se.v[j],1)+tr(' mil t',' kt'), table:true, tableEvery:5}); }
 drawPtProd(0); seg(spp, v=>drawPtProd(+v));
 function drawPart(k){ const p = D.pt_partners[k];
-  hbars($('#cPart'), p.top.map(r=>({l:an(r.a), v:r.share, tip:`<div class="r"><span>${tr('Valor','Value')}</span><b>${fmt(r.m)} ${tr('M €','€ m')}</b></div><div class="r"><span>${tr('Quota','Share')}</span><b>${fmt(r.share,1)}%</b></div>`})), {unit:'%', f:v=>fmt(v,1)+'%', table:[tr('País','Country'),'%']}); }
+  contLegend($('#cPart'), p.top.map(r=>r.a));
+  hbars($('#cPart'), p.top.map(r=>({l:an(r.a), v:r.share, c:contColor(r.a), tip:`<div class="r"><span>${tr('Valor','Value')}</span><b>${fmt(r.m)} ${tr('M €','€ m')}</b></div><div class="r"><span>${tr('Quota','Share')}</span><b>${fmt(r.share,1)}%</b></div>`})), {unit:'%', f:v=>fmt(v,1)+'%', table:[tr('País','Country'),'%']}); }
 drawPart('exp'); seg($('#segPart'), drawPart);
 const pl = D.pt_land;
 $('#ptLand').innerHTML = EN ? `<b>Land in Portugal (${pl.year}):</b> ${fmt(pl['6610'])} thousand ha of agricultural land (${fmt(pl['6610']/pl['6601']*100)}% of the territory), of which ${fmt(pl['6620'])} thousand ha is cropland and ${fmt(pl['6655'])} thousand ha permanent pasture. ${fmt(pl['6690'])} thousand ha is equipped for irrigation and ${fmt(pl['6671'])} thousand ha is farmed organically, that is ${fmt(pl['6671']/pl['6610']*100)}% of agricultural land against about 2% worldwide. Forest covers ${fmt(pl['6646'])} thousand ha.` : `<b>Terra em Portugal (${pl.year}):</b> ${fmt(pl['6610'])} mil ha de terra agrícola (${fmt(pl['6610']/pl['6601']*100)}% do território), dos quais ${fmt(pl['6620'])} mil ha cultivados e ${fmt(pl['6655'])} mil ha de pastagens permanentes. ${fmt(pl['6690'])} mil ha estão equipados para rega e ${fmt(pl['6671'])} mil ha em modo biológico, ou seja, ${fmt(pl['6671']/pl['6610']*100)}% da terra agrícola contra cerca de 2% no mundo. A floresta ocupa ${fmt(pl['6646'])} mil ha.`;
