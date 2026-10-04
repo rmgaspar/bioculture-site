@@ -43,6 +43,26 @@ const NAMES_EN = {
   grp: {1885:'Meat and preparations',1848:'Other food',1944:'Cereals',1899:'Oilseeds',1892:'Animal feed',1886:'Dairy and eggs',1889:'Fruit and vegetables',1908:'Non-alcoholic beverages',1907:'Alcoholic beverages',1844:'Oils and fats'},
   item: {1035:'Pig meat',1058:'Chicken meat',882:'Cow milk',1765:'Meat (total)'}
 };
+/* Grupos de produtos: cada produto tem a cor do seu grupo (8 grupos, ordem fixa, com legenda). */
+const GROUPS = [
+  {k:'cereais', pt:'Cereais', en:'Cereals', c:'--s4', ids:[15,27,30,31,44,49,56]},
+  {k:'acucar', pt:'Açúcar', en:'Sugar', c:'--s5', ids:[156,157,162,164,168]},
+  {k:'oleo', pt:'Oleaginosas e azeite', en:'Oilcrops and olive oil', c:'--s3', ids:[236,237,238,243,254,257,260,261,266,267,268,269,270,271]},
+  {k:'horticolas', pt:'Hortícolas, raízes e leguminosas', en:'Vegetables, roots and pulses', c:'--s6', ids:[116,118,125,176,187,197,388,391,397,403,406,463,689]},
+  {k:'fruta', pt:'Fruta e frutos secos', en:'Fruit and nuts', c:'--s2', ids:[217,486,490,495,515,521,531,547,560,567,572,603]},
+  {k:'animal', pt:'Carne e lacticínios', en:'Meat and dairy', c:'--s8', ids:[867,870,882,897,901,947,951,1035,1038,1058,1765,1780]},
+  {k:'bebidas', pt:'Bebidas, café, cacau e tabaco', en:'Beverages, coffee, cocoa and tobacco', c:'--s7', ids:[51,564,633,634,656,657,661,662,664,667,826,828,831]},
+  {k:'outros', pt:'Outros', en:'Other', c:'--bar-dim', ids:[]}
+];
+const groupOf = id => GROUPS.find(g=>g.ids.includes(id)) || GROUPS.at(-1);
+const groupColor = id => css(groupOf(id).c);
+const groupName = id => tr(groupOf(id).pt, groupOf(id).en);
+function groupLegend(el, ids){
+  let lg = el.parentElement.querySelector(':scope > .legend.grp');
+  if(!lg){ lg = document.createElement('div'); lg.className = 'legend grp'; el.before(lg); }
+  const used = GROUPS.filter(g=>ids.some(id=>groupOf(id)===g));
+  lg.innerHTML = used.map(g=>`<span><i style="background:${css(g.c)}"></i>${tr(g.pt,g.en)}</span>`).join('');
+}
 const nm = (kind, x) => EN ? ((NAMES_EN[kind] && NAMES_EN[kind][x.id]) || IT_EN[x.id] || x.name) : x.name;
 
 /* tooltip */
@@ -68,7 +88,7 @@ function tableView(el, head, rows){
 function hbars(el, rows, o={}){
   const max = o.max || Math.max(...rows.map(r=>r.v||0));
   el.className = 'chart hbars';
-  el.innerHTML = rows.map((r,i)=>`<div class="hb${r.hl?' pt':''}${r.dim?' dim':''}" data-i="${i}"><span class="l" title="${r.l}">${r.l}</span><span class="tr"><span class="b" style="width:${(r.v||0)/max*100}%"></span></span><span class="v">${o.f? o.f(r.v): fmt(r.v,1)}</span></div>`).join('');
+  el.innerHTML = rows.map((r,i)=>`<div class="hb${r.hl?' pt':''}${r.dim?' dim':''}" data-i="${i}"><span class="l" title="${r.l}">${r.l}</span><span class="tr"><span class="b" style="width:${(r.v||0)/max*100}%${r.c?`;background:${r.c}`:''}"></span></span><span class="v">${o.f? o.f(r.v): fmt(r.v,1)}</span></div>`).join('');
   el.querySelectorAll('.hb').forEach(n=>{
     const r = rows[+n.dataset.i];
     n.addEventListener('mousemove', e=>showTip(e, `<div class="h">${r.l}</div>` + (r.tip || `<div class="r"><span>${o.unit||''}</span><b>${o.f?o.f(r.v):fmt(r.v,1)}</b></div>`)));
@@ -221,7 +241,7 @@ const V = (() => {
       {l:tr('Área colhida','Harvested area'), v:idx(c.area_mha), t:'×'+fmt(idx(c.area_mha)/100,2)}
     ], {ref:100}),
     miniBars([[1732,tr('Oleaginosas','Oilcrops')],[1735,tr('Hortícolas','Vegetables')],[1765,tr('Carne','Meat')],[1717,tr('Cereais','Cereals')],[1780,tr('Leite','Milk')]]
-      .map(([id,l],i)=>({l, v:grp(id), t:'×'+fmt(grp(id),1), hl:i===0}))),
+      .map(([id,l],i)=>({l, v:grp(id), t:'×'+fmt(grp(id),1), hl:i===0, c:css({1732:'--s3',1735:'--s6',1765:'--s8',1717:'--s4',1780:'--s1'}[id])}))),
     miniBars([
       {l:tr('Ásia · cereais '+K.yp,'Asia · cereals '+K.yp), v:shareOf('cereals_continent',5300,last), t:fmt(shareOf('cereals_continent',5300,last))+'%', hl:true},
       {l:tr('Ásia · carne '+K.yp,'Asia · meat '+K.yp), v:shareOf('meat_continent',5300,last), t:fmt(shareOf('meat_continent',5300,last))+'%', hl:true},
@@ -257,12 +277,14 @@ const V = (() => {
 $('#agri-findings').innerHTML = F.map((f,i)=>`<li><span class="n">${String(i+1).padStart(2,'0')}</span><div class="ftxt">${f}</div>${V[i]||''}</li>`).join('');
 
 /* ---------- 1. top items + groups ---------- */
-hbars($('#cTopItems'), D.top_items.map(x=>({l:it(x), v:x.mt})), {unit:'Mt', table:[tr('Produto','Product'),'Mt']});
+groupLegend($('#cTopItems'), D.top_items.map(x=>x.id));
+hbars($('#cTopItems'), D.top_items.map(x=>({l:it(x), v:x.mt, c:groupColor(x.id), tip:`<div class="r"><span>${groupName(x.id)}</span><b>${fmt(x.mt,1)} Mt</b></div>`})), {unit:'Mt', table:[tr('Produto','Product'),'Mt']});
 const GSEL = [1732,1735,1765,1738,1717,1780];
 const gs = D.world_groups.series.filter(s=>GSEL.includes(s.id)).sort((a,b)=>GSEL.indexOf(a.id)-GSEL.indexOf(b.id));
 const gNames = EN ? {1732:'Oilcrops',1735:'Vegetables',1765:'Meat',1738:'Fruit',1717:'Cereals',1780:'Milk'} : {1732:'Oleaginosas',1735:'Hortícolas',1765:'Carne',1738:'Fruta',1717:'Cereais',1780:'Leite'};
 function drawGroups(){
-  const series = gs.map((s,i)=>({n:gNames[s.id], c:css(SER[i]), v:s.mt.map(v=>v==null?null:v/s.mt[0]*100), raw:s.mt}));
+  const GCOL = {1732:'--s3',1735:'--s6',1765:'--s8',1738:'--s2',1717:'--s4',1780:'--s1'}; /* mesmas cores dos grupos de produtos; leite a azul para se distinguir da carne */
+  const series = gs.map((s,i)=>({n:gNames[s.id], c:css(GCOL[s.id]||SER[i]), v:s.mt.map(v=>v==null?null:v/s.mt[0]*100), raw:s.mt}));
   legend($('#lgGroups'), series, true);
   line($('#cGroups'), {x:D.world_groups.years, series, endLabels:true, aria:tr('Índice de crescimento da produção por grupo','Production growth index by group'), tf:(s,i)=>fmt(s.v[i])+' · '+fmt(s.raw[i])+' Mt', table:true, tableEvery:5});
 }
@@ -328,7 +350,8 @@ function drawExIm(k){
 drawExIm('exporters'); seg($('#segExIm'), drawExIm);
 const bal = [...D.surplus.slice(0,10), ...D.deficit.slice(0,10).reverse()];
 dbars($('#cBal'), bal.map(r=>({l:an(r.a), v:r.bal, tip:`<div class="r"><span>${tr('Saldo','Balance')}</span><b>${(r.bal>0?'+':'')+fmt(r.bal,1)}${tr(' mil M €',' € bn')}</b></div>`})), {table:[tr('País','Country'),tr('Saldo (mil M €)','Balance (€ bn)')]});
-hbars($('#cTopTraded'), D.top_traded.map(x=>({l:it(x), v:x.bn})), {unit:tr('mil M €','€ bn'), table:[tr('Produto','Product'),tr('mil M €','€ bn')]});
+groupLegend($('#cTopTraded'), D.top_traded.map(x=>x.id));
+hbars($('#cTopTraded'), D.top_traded.map(x=>({l:it(x), v:x.bn, c:groupColor(x.id), tip:`<div class="r"><span>${groupName(x.id)}</span><b>${fmt(x.bn,1)}${tr(' mil M €',' € bn')}</b></div>`})), {unit:tr('mil M €','€ bn'), table:[tr('Produto','Product'),tr('mil M €','€ bn')]});
 
 /* ---------- 7. routes ---------- */
 const selT = $('#selTrade');
@@ -357,7 +380,7 @@ function drawProf(i){
     [fmt(e,1),tr('mil M €','€ bn'),tr('exportações agrícolas','agricultural exports')],[fmt(m,1),tr('mil M €','€ bn'),tr('importações agrícolas','agricultural imports')],
     [(e-m>0?'+':'')+fmt(e-m,1),tr('mil M €','€ bn'),tr('saldo','balance')],[fmt(e/m*100),'%',tr('taxa de cobertura','export/import coverage')]
   ].map(t=>`<div class="tile"><span class="v">${t[0]}<small>${t[1]}</small></span><span class="k">${t[2]}</span></div>`).join('');
-  const col = (h, arr, f) => `<div class="pcol"><h3>${h}</h3><ol>${arr.map((x,j)=>`<li><span class="r">${j+1}</span><span>${it(x)}</span><span class="x">${f(x)}</span></li>`).join('')}</ol></div>`;
+  const col = (h, arr, f) => `<div class="pcol"><h3>${h}</h3><ol>${arr.map((x,j)=>`<li><span class="r">${j+1}</span><span><i class="gdot" style="background:${groupColor(x.id)}" title="${groupName(x.id)}"></i>${it(x)}</span><span class="x">${f(x)}</span></li>`).join('')}</ol></div>`;
   $('#profCols').innerHTML = col(tr('Mais produzido (Mt)','Most produced (Mt)'), p.prod, x=>fmt(x.mt,1)) + col(tr('Mais exportado (mil M €)','Top exports (€ bn)'), p.exp, x=>fmt(x.bn,2)) + col(tr('Mais importado (mil M €)','Top imports (€ bn)'), p.imp, x=>fmt(x.bn,2));
   const series = [{n:tr('Exportações','Exports'),c:css('--s1'),v:ts.exp},{n:tr('Importações','Imports'),c:css('--s2'),v:ts.imp}];
   legend($('#lgProf'), series, true);
@@ -383,7 +406,8 @@ dbars($('#cPtGroups'), D.pt_groups.slice().sort((a,b)=>(b.exp_m-b.imp_m)-(a.exp_
 (function(){
   const rows = D.pt_ssr.rows.filter(r=>r.ssr!=null).sort((a,b)=>b.ssr-a.ssr);
   const el = $('#cSSR'); const max = Math.max(...rows.map(r=>r.ssr));
-  hbars(el, rows.map(r=>({l:nm('item',r), v:r.ssr, dim:r.ssr<100, tip:`<div class="r"><span>${tr('Produção','Production')}</span><b>${fmt(r.prod_t/1000)} ${tr('mil t','kt')}</b></div><div class="r"><span>${tr('Importação','Imports')}</span><b>${fmt(r.imp_t/1000)} ${tr('mil t','kt')}</b></div><div class="r"><span>${tr('Exportação','Exports')}</span><b>${fmt(r.exp_t/1000)} ${tr('mil t','kt')}</b></div><div class="r"><span>${tr('Autoaprovisionamento','Self-sufficiency')}</span><b>${fmt(r.ssr)}%</b></div>`})), {max, unit:'%', f:v=>fmt(v)+'%'});
+  groupLegend(el, rows.map(r=>r.id));
+  hbars(el, rows.map(r=>({l:nm('item',r), v:r.ssr, c:groupColor(r.id), tip:`<div class="r"><span>${tr('Produção','Production')}</span><b>${fmt(r.prod_t/1000)} ${tr('mil t','kt')}</b></div><div class="r"><span>${tr('Importação','Imports')}</span><b>${fmt(r.imp_t/1000)} ${tr('mil t','kt')}</b></div><div class="r"><span>${tr('Exportação','Exports')}</span><b>${fmt(r.exp_t/1000)} ${tr('mil t','kt')}</b></div><div class="r"><span>${tr('Autoaprovisionamento','Self-sufficiency')}</span><b>${fmt(r.ssr)}%</b></div>`})), {max, unit:'%', f:v=>fmt(v)+'%'});
   el.querySelectorAll('.hb .tr').forEach(t=>{ const m=document.createElement('span'); m.style.cssText=`position:absolute;top:-3px;bottom:-3px;left:${100/max*100}%;border-left:1.5px dashed var(--ink-2)`; t.appendChild(m); });
   tableView(el, [tr('Produto','Product'),tr('Produção (t)','Production (t)'),tr('Importação (t)','Imports (t)'),tr('Exportação (t)','Exports (t)'),tr('Autoaprov. (%)','Self-suff. (%)')], rows.map(r=>[nm('item',r), fmt(r.prod_t), fmt(r.imp_t), fmt(r.exp_t), fmt(r.ssr)]));
 })();
