@@ -3,26 +3,47 @@
 (function () {
 "use strict";
 let D;
+/* Versão inglesa: o texto fixo vem de <template id="agri-report-en"> e dos atributos data-en;
+   o texto gerado usa tr() em render(). As zonas com data-no-translate ficam fora do tradutor automático. */
+if (window.BioCultureI18n?.isEnglish || (document.documentElement.lang || "").startsWith("en")) {
+  const tpl = document.getElementById("agri-report-en"), box = document.querySelector(".agri-report");
+  if (tpl && box) box.innerHTML = tpl.innerHTML;
+  document.querySelectorAll("[data-en]").forEach((n) => { n.innerHTML = n.dataset.en; });
+  document.querySelectorAll("[data-en-label]").forEach((n) => n.setAttribute("aria-label", n.dataset.enLabel));
+  document.title = "World agricultural production — Observatory | bioCulture";
+}
 function render() {
 
 
 /* ---------- helpers ---------- */
 const $ = s => document.querySelector('.agri-report ' + s) || document.querySelector(s);
-const nf = (d=0) => new Intl.NumberFormat('pt-PT',{minimumFractionDigits:d,maximumFractionDigits:d});
+const EN = !!window.BioCultureI18n?.isEnglish || (document.documentElement.lang || '').startsWith('en');
+const tr = (pt, en) => (EN ? en : pt);
+const nf = (d=0) => new Intl.NumberFormat(EN ? 'en-GB' : 'pt-PT',{minimumFractionDigits:d,maximumFractionDigits:d});
 const fmt = (v,d=0) => v==null ? '–' : nf(d).format(v);
 const css = v => getComputedStyle(document.querySelector('.agri-report') || document.documentElement).getPropertyValue(v).trim();
 const SER = ['--s1','--s2','--s3','--s4','--s5','--s6','--s7','--s8'];
-let DN; try { DN = new Intl.DisplayNames(['pt-PT','pt'],{type:'region'}); } catch(e){ DN = null; }
-const NAME_FIX = {CN:'China', TW:'Taiwan', US:'Estados Unidos', GB:'Reino Unido', CI:'Costa do Marfim', CD:'RD Congo', KR:'Coreia do Sul', RU:'Rússia', NL:'Países Baixos', AE:'Emirados Árabes Unidos', VN:'Vietname', IR:'Irão'};
+let DN; try { DN = new Intl.DisplayNames(EN ? ['en-GB','en'] : ['pt-PT','pt'],{type:'region'}); } catch(e){ DN = null; }
+const NAME_FIX = EN
+  ? {CN:'China', TW:'Taiwan', US:'United States', GB:'United Kingdom', CI:'Côte d’Ivoire', CD:'DR Congo', KR:'South Korea', RU:'Russia', NL:'Netherlands', AE:'United Arab Emirates', VN:'Vietnam', IR:'Iran'}
+  : {CN:'China', TW:'Taiwan', US:'Estados Unidos', GB:'Reino Unido', CI:'Costa do Marfim', CD:'RD Congo', KR:'Coreia do Sul', RU:'Rússia', NL:'Países Baixos', AE:'Emirados Árabes Unidos', VN:'Vietname', IR:'Irão'};
 function an(code){
   const a = D.areas[String(code)]; if(!a) return String(code);
-  if(String(code)==='5707') return 'União Europeia (27)';
+  if(String(code)==='5707') return tr('União Europeia (27)','European Union (27)');
   if(a.iso2 && NAME_FIX[a.iso2]) return NAME_FIX[a.iso2];
   if(a.iso2 && DN){ try { const n = DN.of(a.iso2); if(n && n!==a.iso2) return n; } catch(e){} }
   return a.en || String(code);
 }
 const IT = {15:'Trigo',27:'Arroz',30:'Arroz (equiv. branqueado)',31:'Arroz branqueado',44:'Cevada',49:'Malte',51:'Cerveja',56:'Milho',109:'Alimentos infantis',116:'Batata',118:'Batata congelada',125:'Mandioca',156:'Cana-de-açúcar',157:'Beterraba sacarina',162:'Açúcar bruto',164:'Açúcar refinado',168:'Confeitaria',176:'Feijão seco',187:'Ervilha seca',197:'Feijão-guandu',217:'Caju com casca',236:'Soja',237:'Óleo de soja',238:'Bagaço de soja',243:'Amendoim descascado',254:'Fruto de palma',257:'Óleo de palma',260:'Azeitona',261:'Azeite',266:'Óleo de rícino',267:'Girassol (semente)',268:'Óleo de girassol bruto',269:'Bagaço de girassol',270:'Colza (semente)',271:'Óleo de colza bruto',388:'Tomate',391:'Concentrado de tomate',397:'Pepino',403:'Cebola',406:'Alho verde',463:'Outros hortícolas frescos',486:'Banana',490:'Laranja',495:'Tangerina e clementina',515:'Maçã',521:'Pera',531:'Cereja',547:'Framboesa',560:'Uva',564:'Vinho',567:'Melancia',572:'Abacate',603:'Outros frutos tropicais',633:'Bebidas não alcoólicas calóricas',634:'Bebidas espirituosas',653:'Resíduos alimentares',656:'Café verde',657:'Café torrado ou descafeinado',661:'Cacau (amêndoa)',662:'Pasta de cacau',664:'Manteiga de cacau',667:'Chá',689:'Pimentos e malaguetas secos',767:'Algodão (fibra)',826:'Tabaco em rama',828:'Cigarros',831:'Outros produtos de tabaco',843:'Alimentos para cães e gatos',867:'Carne de bovino com osso',870:'Carne de bovino desossada',882:'Leite de vaca',897:'Leite em pó gordo',901:'Queijo de leite de vaca',947:'Carne de búfalo',951:'Leite de búfala',1035:'Carne de porco com osso',1038:'Carne de porco desossada',1058:'Carne de frango',1274:'Gorduras e óleos modificados',1765:'Carne (total)',1780:'Leite (total)'};
-const it = x => IT[x.id] || x.item;
+const IT_EN = {15:'Wheat',27:'Rice',30:'Rice (milled equivalent)',31:'Milled rice',44:'Barley',49:'Malt',51:'Beer',56:'Maize',109:'Infant food',116:'Potatoes',118:'Frozen potatoes',125:'Cassava',156:'Sugar cane',157:'Sugar beet',162:'Raw sugar',164:'Refined sugar',168:'Confectionery',176:'Dry beans',187:'Dry peas',197:'Pigeon peas',217:'Cashew nuts in shell',236:'Soya beans',237:'Soya bean oil',238:'Soya bean cake',243:'Shelled groundnuts',254:'Oil palm fruit',257:'Palm oil',260:'Olives',261:'Olive oil',266:'Castor oil',267:'Sunflower seed',268:'Crude sunflower oil',269:'Sunflower cake',270:'Rapeseed',271:'Crude rapeseed oil',388:'Tomatoes',391:'Tomato paste',397:'Cucumbers',403:'Onions',406:'Green garlic',463:'Other fresh vegetables',486:'Bananas',490:'Oranges',495:'Tangerines and clementines',515:'Apples',521:'Pears',531:'Cherries',547:'Raspberries',560:'Grapes',564:'Wine',567:'Watermelons',572:'Avocados',603:'Other tropical fruit',633:'Non-alcoholic caloric beverages',634:'Spirits',653:'Food waste',656:'Green coffee',657:'Roasted or decaf coffee',661:'Cocoa beans',662:'Cocoa paste',664:'Cocoa butter',667:'Tea',689:'Dried chillies and peppers',767:'Cotton lint',826:'Raw tobacco',828:'Cigarettes',831:'Other tobacco products',843:'Dog and cat food',867:'Beef, bone-in',870:'Beef, boneless',882:'Cow milk',897:'Whole milk powder',901:'Cow milk cheese',947:'Buffalo meat',951:'Buffalo milk',1035:'Pig meat, bone-in',1038:'Pig meat, boneless',1058:'Chicken meat',1274:'Modified fats and oils',1765:'Meat (total)',1780:'Milk (total)'};
+const it = x => (EN ? IT_EN[x.id] : IT[x.id]) || x.item;
+/* Nomes que vêm em português no JSON: tradução por identificador. */
+const NAMES_EN = {
+  cont: {5300:'Asia',5200:'Americas',5400:'Europe',5100:'Africa',5500:'Oceania'},
+  grp: {1885:'Meat and preparations',1848:'Other food',1944:'Cereals',1899:'Oilseeds',1892:'Animal feed',1886:'Dairy and eggs',1889:'Fruit and vegetables',1908:'Non-alcoholic beverages',1907:'Alcoholic beverages',1844:'Oils and fats'},
+  item: {1035:'Pig meat',1058:'Chicken meat',882:'Cow milk',1765:'Meat (total)'}
+};
+const nm = (kind, x) => EN ? ((NAMES_EN[kind] && NAMES_EN[kind][x.id]) || IT_EN[x.id] || x.name) : x.name;
 
 /* tooltip */
 const tip = document.getElementById('agri-tip');
@@ -39,7 +60,7 @@ const hideTip = () => { tip.hidden = true; };
 function tableView(el, head, rows){
   let d = el.parentElement.querySelector(':scope > details.tbl');
   if(!d){ d = document.createElement('details'); d.className='tbl'; el.after(d); }
-  d.innerHTML = '<summary>Ver tabela de dados</summary><div class="tscroll"><table><thead><tr>' + head.map(h=>`<th>${h}</th>`).join('') + '</tr></thead><tbody>' +
+  d.innerHTML = '<summary>' + tr('Ver tabela de dados','Show data table') + '</summary><div class="tscroll"><table><thead><tr>' + head.map(h=>`<th>${h}</th>`).join('') + '</tr></thead><tbody>' +
     rows.map(r=>'<tr>'+r.map(c=>`<td>${c}</td>`).join('')+'</tr>').join('') + '</tbody></table></div>';
 }
 
@@ -113,7 +134,7 @@ function line(el, cfg){
   };
   el._draw = draw; draw(); ro.observe(el);
   if(cfg.table){ const idx = cfg.x.map((_,i)=>i).filter(i=>cfg.tableEvery? (cfg.x[i]%cfg.tableEvery===0 || i===cfg.x.length-1) : true);
-    tableView(el, ['Ano', ...cfg.series.map(s=>s.n)], idx.map(i=>[cfg.x[i], ...cfg.series.map(s=>cfg.tf?cfg.tf(s,i):fmt(s.v[i],1))])); }
+    tableView(el, [tr('Ano','Year'), ...cfg.series.map(s=>s.n)], idx.map(i=>[cfg.x[i], ...cfg.series.map(s=>cfg.tf?cfg.tf(s,i):fmt(s.v[i],1))])); }
 }
 const lastI = se => { for(let i=se.v.length-1;i>=0;i--) if(se.v[i]!=null) return i; return -1; };
 const lastX = (se,xs) => xs[lastI(se)], firstX = (se,xs) => xs[se.v.findIndex(v=>v!=null)];
@@ -139,19 +160,31 @@ document.querySelectorAll('[data-k]').forEach(n=>{ if(K[n.dataset.k]!=null) n.te
 /* ---------- hero tiles ---------- */
 const cer = D.cereals;
 $('#heroTiles').innerHTML = [
-  [fmt(cer.prod_mt.at(-1)), 'Mt', 'cereais colhidos no mundo em '+K.yp, '×'+fmt(cer.prod_mt.at(-1)/cer.prod_mt[0],1)+' desde 1961'],
-  [fmt(cer.yield_tha.at(-1),2), 't/ha', 'rendimento médio dos cereais', 'eram '+fmt(cer.yield_tha[0],2)+' t/ha em 1961'],
-  [fmt(agri), 'Mha', 'de terra agrícola', K.agriShare+' da área terrestre'],
-  [fmt(D.world_trade.exp_bn.at(-1)), 'mil M €', 'exportações agrícolas mundiais', 'em '+K.yt+', valores correntes']
+  [fmt(cer.prod_mt.at(-1)), 'Mt', tr('cereais colhidos no mundo em ','cereals harvested worldwide in ')+K.yp, '×'+fmt(cer.prod_mt.at(-1)/cer.prod_mt[0],1)+tr(' desde 1961',' since 1961')],
+  [fmt(cer.yield_tha.at(-1),2), 't/ha', tr('rendimento médio dos cereais','average cereal yield'), tr('eram ','was ')+fmt(cer.yield_tha[0],2)+tr(' t/ha em 1961',' t/ha in 1961')],
+  [fmt(agri), 'Mha', tr('de terra agrícola','of agricultural land'), K.agriShare+tr(' da área terrestre',' of land area')],
+  [fmt(D.world_trade.exp_bn.at(-1)), tr('mil M €','€ bn'), tr('exportações agrícolas mundiais','world agricultural exports'), tr('em '+K.yt+', valores correntes','in '+K.yt+', current values')]
 ].map(t=>`<div class="tile"><span class="v">${t[0]}<small>${t[1]}</small></span><span class="k">${t[2]}</span><span class="s">${t[3]}</span></div>`).join('');
 
 /* ---------- findings ---------- */
 const soy = D.key_trade.find(k=>k.id===236);
-const F = [
+const soyShare = fmt(soy.exp[0].t/soy.exp_total_t*100+soy.exp[1].t/soy.exp_total_t*100);
+const F = EN ? [
+  `<b>Cereal output has grown 3.6-fold since 1961</b> with only 15% more harvested area. Yield per hectare has tripled.`,
+  `<b>Oilcrops grew almost tenfold</b>, more than any other group, driven by soya and palm.`,
+  `<b>Asia produces half of the world's cereals and 44% of its meat.</b> In 1961 Europe led meat production, with 42%.`,
+  `<b>Five countries produce 87% of soya beans and 91% of oil palm fruit.</b> Brazil and the US account for ${soyShare}% of soya exports.`,
+  `<b>Agriculture occupies ${K.agriShare} of the world's land</b>, and two thirds of that area is pasture.`,
+  `<b>World agricultural trade is worth €${K.tradeBn} billion</b>, four times the 2000 value in nominal terms.`,
+  `<b>Brazil has the world's largest agricultural surplus</b> (+€${fmt(D.surplus[0].bal)} bn). China has the largest deficit (−€${fmt(Math.abs(D.deficit[0].bal))} bn).`,
+  `<b>A single route, soya from Brazil to China, is worth about €${fmt(D.flows.items[0].rows[0].m/1000,1)} billion</b> a year.`,
+  `<b>Portugal exports €${K.ptExp} billion and imports €${K.ptImp} billion</b> in agricultural products. Spain takes ${fmt(D.pt_partners.exp.top[0].share)}% of exports and supplies ${fmt(D.pt_partners.imp.top[0].share)}% of imports.`,
+  `<b>Portugal produces about 4% of the wheat and 27% of the maize it consumes</b>, and more than twice the olive oil and pears it consumes.`
+] : [
   `<b>A produção de cereais multiplicou-se por 3,6 desde 1961</b> com apenas mais 15% de área colhida. O rendimento por hectare triplicou.`,
   `<b>As oleaginosas cresceram quase dez vezes</b>, mais do que qualquer outro grupo, puxadas pela soja e pela palma.`,
   `<b>A Ásia produz metade dos cereais e 44% da carne do mundo.</b> Em 1961 a Europa liderava a carne, com 42%.`,
-  `<b>Cinco países produzem 87% da soja e 91% do fruto de palma.</b> Brasil e EUA fazem ${fmt(soy.exp[0].t/soy.exp_total_t*100+soy.exp[1].t/soy.exp_total_t*100)}% das exportações de soja.`,
+  `<b>Cinco países produzem 87% da soja e 91% do fruto de palma.</b> Brasil e EUA fazem ${soyShare}% das exportações de soja.`,
   `<b>A agricultura ocupa ${K.agriShare} das terras emersas</b>, e dois terços dessa área são pastagens.`,
   `<b>O comércio agrícola mundial vale ${K.tradeBn} mil milhões de euros</b>, quatro vezes o valor de 2000 em termos nominais.`,
   `<b>O Brasil tem o maior excedente agrícola do mundo</b> (+${fmt(D.surplus[0].bal)} mil M €). A China tem o maior défice (${fmt(D.deficit[0].bal)} mil M €).`,
@@ -162,36 +195,36 @@ const F = [
 $('#agri-findings').innerHTML = F.map((f,i)=>`<li><span class="n">${String(i+1).padStart(2,'0')}</span><span>${f}</span></li>`).join('');
 
 /* ---------- 1. top items + groups ---------- */
-hbars($('#cTopItems'), D.top_items.map(x=>({l:it(x), v:x.mt})), {unit:'Mt', table:['Produto','Mt']});
+hbars($('#cTopItems'), D.top_items.map(x=>({l:it(x), v:x.mt})), {unit:'Mt', table:[tr('Produto','Product'),'Mt']});
 const GSEL = [1732,1735,1765,1738,1717,1780];
 const gs = D.world_groups.series.filter(s=>GSEL.includes(s.id)).sort((a,b)=>GSEL.indexOf(a.id)-GSEL.indexOf(b.id));
-const gNames = {1732:'Oleaginosas',1735:'Hortícolas',1765:'Carne',1738:'Fruta',1717:'Cereais',1780:'Leite'};
+const gNames = EN ? {1732:'Oilcrops',1735:'Vegetables',1765:'Meat',1738:'Fruit',1717:'Cereals',1780:'Milk'} : {1732:'Oleaginosas',1735:'Hortícolas',1765:'Carne',1738:'Fruta',1717:'Cereais',1780:'Leite'};
 function drawGroups(){
   const series = gs.map((s,i)=>({n:gNames[s.id], c:css(SER[i]), v:s.mt.map(v=>v==null?null:v/s.mt[0]*100), raw:s.mt}));
   legend($('#lgGroups'), series, true);
-  line($('#cGroups'), {x:D.world_groups.years, series, endLabels:true, aria:'Índice de crescimento da produção por grupo', tf:(s,i)=>fmt(s.v[i])+' · '+fmt(s.raw[i])+' Mt', table:true, tableEvery:5});
+  line($('#cGroups'), {x:D.world_groups.years, series, endLabels:true, aria:tr('Índice de crescimento da produção por grupo','Production growth index by group'), tf:(s,i)=>fmt(s.v[i])+' · '+fmt(s.raw[i])+' Mt', table:true, tableEvery:5});
 }
 drawGroups();
 
 /* ---------- 2. cereals index ---------- */
 function drawCereal(){
   const c = D.cereals, b = (a)=>a.map(v=>v/a[0]*100);
-  const series = [{n:'Produção',c:css('--s1'),v:b(c.prod_mt),raw:c.prod_mt,u:'Mt'},{n:'Rendimento',c:css('--s2'),v:b(c.yield_tha),raw:c.yield_tha,u:'t/ha'},{n:'Área colhida',c:css('--s3'),v:b(c.area_mha),raw:c.area_mha,u:'Mha'}];
+  const series = [{n:tr('Produção','Production'),c:css('--s1'),v:b(c.prod_mt),raw:c.prod_mt,u:'Mt'},{n:tr('Rendimento','Yield'),c:css('--s2'),v:b(c.yield_tha),raw:c.yield_tha,u:'t/ha'},{n:tr('Área colhida','Harvested area'),c:css('--s3'),v:b(c.area_mha),raw:c.area_mha,u:'Mha'}];
   legend($('#lgCereal'), series, true);
-  line($('#cCereal'), {x:c.years, series, endLabels:true, ref:100, aria:'Cereais: produção, área e rendimento', tf:(s,i)=>fmt(s.v[i])+' · '+fmt(s.raw[i], s.u==='t/ha'?2:0)+' '+s.u, table:true, tableEvery:5});
+  line($('#cCereal'), {x:c.years, series, endLabels:true, ref:100, aria:tr('Cereais: produção, área e rendimento','Cereals: production, area and yield'), tf:(s,i)=>fmt(s.v[i])+' · '+fmt(s.raw[i], s.u==='t/ha'?2:0)+' '+s.u, table:true, tableEvery:5});
 }
 drawCereal();
 
 /* ---------- 3. continents ---------- */
 function drawCont(key){
   const c = D[key], el = $('#cCont'), cols = c.series.map((_,i)=>css(SER[i]));
-  legend($('#lgCont'), c.series.map((s,i)=>({n:s.name,c:cols[i]})));
+  legend($('#lgCont'), c.series.map((s,i)=>({n:nm('cont',s),c:cols[i]})));
   el.innerHTML = c.years.map((y,yi)=>{ const tot = c.series.reduce((a,s)=>a+s.mt[yi],0);
     return `<div class="sk"><span class="y">${y}</span><div class="bars">` + c.series.map((s,si)=>{ const p = s.mt[yi]/tot*100;
       return `<span class="part" data-y="${yi}" data-s="${si}" style="width:${p}%;background:${cols[si]}">${p>=9?fmt(p)+'%':''}</span>`; }).join('') + '</div></div>'; }).join('');
   el.querySelectorAll('.sk .part').forEach(n=>{ const yi=+n.dataset.y, si=+n.dataset.s, s=c.series[si], tot=c.series.reduce((a,x)=>a+x.mt[yi],0);
-    n.addEventListener('mousemove',e=>showTip(e,`<div class="h">${s.name} · ${c.years[yi]}</div><div class="r"><span>Quota</span><b>${fmt(s.mt[yi]/tot*100,1)}%</b></div><div class="r"><span>Produção</span><b>${fmt(s.mt[yi])} Mt</b></div>`)); n.addEventListener('mouseleave',hideTip); });
-  tableView(el, ['Ano', ...c.series.map(s=>s.name+' (%)')], c.years.map((y,yi)=>{ const tot=c.series.reduce((a,s)=>a+s.mt[yi],0); return [y, ...c.series.map(s=>fmt(s.mt[yi]/tot*100,1))]; }));
+    n.addEventListener('mousemove',e=>showTip(e,`<div class="h">${nm('cont',s)} · ${c.years[yi]}</div><div class="r"><span>${tr('Quota','Share')}</span><b>${fmt(s.mt[yi]/tot*100,1)}%</b></div><div class="r"><span>${tr('Produção','Production')}</span><b>${fmt(s.mt[yi])} Mt</b></div>`)); n.addEventListener('mouseleave',hideTip); });
+  tableView(el, [tr('Ano','Year'), ...c.series.map(s=>nm('cont',s)+' (%)')], c.years.map((y,yi)=>{ const tot=c.series.reduce((a,s)=>a+s.mt[yi],0); return [y, ...c.series.map(s=>fmt(s.mt[yi]/tot*100,1))]; }));
 }
 let contKey = 'cereals_continent'; drawCont(contKey); seg($('#segCont'), v=>{ contKey=v; drawCont(v); });
 
@@ -199,58 +232,58 @@ let contKey = 'cereals_continent'; drawCont(contKey); seg($('#segCont'), v=>{ co
 const selKey = $('#selKey');
 selKey.innerHTML = D.key.map((k,i)=>`<option value="${i}">${it(k)}</option>`).join('');
 function drawKey(i){
-  const k = D.key[i], unit = k.world_mt < 50 ? 1e3 : 1e6, ul = unit===1e3 ? 'mil t' : 'Mt';
-  hbars($('#cKey'), k.top.map(t=>({l:an(t.a), v:t.t/unit, hl:t.a===174, tip:`<div class="r"><span>Produção</span><b>${fmt(t.t/unit,1)} ${ul}</b></div><div class="r"><span>Quota mundial</span><b>${fmt(t.t/(k.world_mt*1e6)*100,1)}%</b></div>`})), {unit:ul, table:['País', ul]});
-  const pt = k.pt.t ? `${fmt(k.pt.t/1000,1)} mil t · ${k.pt.rank}.º de ${k.pt.n} países` : 'Sem produção registada';
+  const k = D.key[i], unit = k.world_mt < 50 ? 1e3 : 1e6, ul = unit===1e3 ? tr('mil t','kt') : 'Mt';
+  hbars($('#cKey'), k.top.map(t=>({l:an(t.a), v:t.t/unit, hl:t.a===174, tip:`<div class="r"><span>${tr('Produção','Production')}</span><b>${fmt(t.t/unit,1)} ${ul}</b></div><div class="r"><span>${tr('Quota mundial','World share')}</span><b>${fmt(t.t/(k.world_mt*1e6)*100,1)}%</b></div>`})), {unit:ul, table:[tr('País','Country'), ul]});
+  const pt = k.pt.t ? (EN ? `${fmt(k.pt.t/1000,1)} kt · ranked ${k.pt.rank} of ${k.pt.n} countries` : `${fmt(k.pt.t/1000,1)} mil t · ${k.pt.rank}.º de ${k.pt.n} países`) : tr('Sem produção registada','No recorded production');
   $('#kFacts').innerHTML = `
-    <div class="kf"><span class="v">${fmt(k.world_mt, k.world_mt<50?2:0)} <small style="font-size:.8rem;color:var(--muted)">Mt</small></span><span class="k">Produção mundial, ${k.year}</span></div>
-    <div class="kf"><span class="v">${fmt(k.top5_share,0)}%</span><span class="k">Quota dos 5 maiores produtores</span></div>
+    <div class="kf"><span class="v">${fmt(k.world_mt, k.world_mt<50?2:0)} <small style="font-size:.8rem;color:var(--muted)">Mt</small></span><span class="k">${tr('Produção mundial','World production')}, ${k.year}</span></div>
+    <div class="kf"><span class="v">${fmt(k.top5_share,0)}%</span><span class="k">${tr('Quota dos 5 maiores produtores','Share of the top 5 producers')}</span></div>
     <div class="kf"><span class="v" style="font-size:1.05rem">${pt}</span><span class="k">Portugal</span></div>
-    <div><div class="chart" id="cKeyTs"></div><span class="k" style="font-size:.78rem;color:var(--muted)">Produção mundial, 1961–${k.year} (Mt)</span></div>`;
+    <div><div class="chart" id="cKeyTs"></div><span class="k" style="font-size:.78rem;color:var(--muted)">${tr('Produção mundial','World production')}, 1961–${k.year} (Mt)</span></div>`;
   const ys = k.world_ts.mt.map((_,j)=>1961+j);
-  line($('#cKeyTs'), {x:ys, series:[{n:it(k), c:css('--bar'), v:k.world_ts.mt, area:true}], h:130, aria:'Produção mundial ao longo do tempo', tf:(s,j)=>fmt(s.v[j],1)+' Mt'});
+  line($('#cKeyTs'), {x:ys, series:[{n:it(k), c:css('--bar'), v:k.world_ts.mt, area:true}], h:130, aria:tr('Produção mundial ao longo do tempo','World production over time'), tf:(s,j)=>fmt(s.v[j],1)+' Mt'});
 }
 selKey.addEventListener('change', ()=>drawKey(+selKey.value)); drawKey(0);
 
 /* ---------- 5. land ---------- */
 function drawLand(){
   const s = land.series; const series = [
-    {n:'Pastagens',c:css('--s1'),v:s['6655']},{n:'Terra cultivada',c:css('--s2'),v:s['6620']},{n:'Equipada para rega',c:css('--s3'),v:s['6690']}];
+    {n:tr('Pastagens','Pastures'),c:css('--s1'),v:s['6655']},{n:tr('Terra cultivada','Cropland'),c:css('--s2'),v:s['6620']},{n:tr('Equipada para rega','Equipped for irrigation'),c:css('--s3'),v:s['6690']}];
   legend($('#lgLand'), series, true);
-  line($('#cLand'), {x:land.years, series, aria:'Uso agrícola da terra', tf:(se,i)=>fmt(se.v[i])+' Mha', table:true, tableEvery:5});
+  line($('#cLand'), {x:land.years, series, aria:tr('Uso agrícola da terra','Agricultural land use'), tf:(se,i)=>fmt(se.v[i])+' Mha', table:true, tableEvery:5});
 }
 drawLand();
 const org = D.organic.top.map(t=>({l:an(t.a), v:t.kha}));
 org.push({l:'Portugal', v:D.organic.pt_kha, hl:true});
-hbars($('#cOrg'), org, {unit:'mil ha', f:v=>fmt(v), table:['País','mil ha']});
+hbars($('#cOrg'), org, {unit:tr('mil ha','thousand ha'), f:v=>fmt(v), table:[tr('País','Country'),tr('mil ha','thousand ha')]});
 
 /* ---------- 6. trade ---------- */
-line($('#cTrade'), {x:D.world_trade.years, series:[{n:'Exportações',c:css('--s1'),v:D.world_trade.exp_bn,area:true}], aria:'Exportações agrícolas mundiais', tf:(s,i)=>fmt(s.v[i])+' mil M €', table:true, tableEvery:5});
+line($('#cTrade'), {x:D.world_trade.years, series:[{n:tr('Exportações','Exports'),c:css('--s1'),v:D.world_trade.exp_bn,area:true}], aria:tr('Exportações agrícolas mundiais','World agricultural exports'), tf:(s,i)=>fmt(s.v[i])+tr(' mil M €',' € bn'), table:true, tableEvery:5});
 function drawExIm(k){
   const f = k==='exporters' ? 'exp' : 'imp';
-  hbars($('#cExIm'), D[k].map(r=>({l:an(r.a), v:r[f], tip:`<div class="r"><span>Exportações</span><b>${fmt(r.exp,1)}</b></div><div class="r"><span>Importações</span><b>${fmt(r.imp,1)}</b></div><div class="r"><span>Saldo</span><b>${(r.bal>0?'+':'')+fmt(r.bal,1)}</b></div>`})), {unit:'mil M €', table:['País','mil M €']});
+  hbars($('#cExIm'), D[k].map(r=>({l:an(r.a), v:r[f], tip:`<div class="r"><span>${tr('Exportações','Exports')}</span><b>${fmt(r.exp,1)}</b></div><div class="r"><span>${tr('Importações','Imports')}</span><b>${fmt(r.imp,1)}</b></div><div class="r"><span>${tr('Saldo','Balance')}</span><b>${(r.bal>0?'+':'')+fmt(r.bal,1)}</b></div>`})), {unit:tr('mil M €','€ bn'), table:[tr('País','Country'),tr('mil M €','€ bn')]});
 }
 drawExIm('exporters'); seg($('#segExIm'), drawExIm);
 const bal = [...D.surplus.slice(0,10), ...D.deficit.slice(0,10).reverse()];
-dbars($('#cBal'), bal.map(r=>({l:an(r.a), v:r.bal, tip:`<div class="r"><span>Saldo</span><b>${(r.bal>0?'+':'')+fmt(r.bal,1)} mil M €</b></div>`})), {table:['País','Saldo (mil M €)']});
-hbars($('#cTopTraded'), D.top_traded.map(x=>({l:it(x), v:x.bn})), {unit:'mil M €', table:['Produto','mil M €']});
+dbars($('#cBal'), bal.map(r=>({l:an(r.a), v:r.bal, tip:`<div class="r"><span>${tr('Saldo','Balance')}</span><b>${(r.bal>0?'+':'')+fmt(r.bal,1)}${tr(' mil M €',' € bn')}</b></div>`})), {table:[tr('País','Country'),tr('Saldo (mil M €)','Balance (€ bn)')]});
+hbars($('#cTopTraded'), D.top_traded.map(x=>({l:it(x), v:x.bn})), {unit:tr('mil M €','€ bn'), table:[tr('Produto','Product'),tr('mil M €','€ bn')]});
 
 /* ---------- 7. routes ---------- */
 const selT = $('#selTrade');
 selT.innerHTML = D.key_trade.map((k,i)=>`<option value="${i}">${it(k)}</option>`).join('');
 function drawKT(i){
-  const k = D.key_trade[i], small = k.exp_total_t < 2e7, u = small?1e3:1e6, ul = small?'mil t':'Mt';
-  const rows = (arr,tot)=>arr.map(r=>({l:an(r.a), v:r.t/u, hl:r.a===174, tip:`<div class="r"><span>Volume</span><b>${fmt(r.t/u,1)} ${ul}</b></div><div class="r"><span>Quota</span><b>${fmt(r.t/tot*100,1)}%</b></div>`}));
+  const k = D.key_trade[i], small = k.exp_total_t < 2e7, u = small?1e3:1e6, ul = small?tr('mil t','kt'):'Mt';
+  const rows = (arr,tot)=>arr.map(r=>({l:an(r.a), v:r.t/u, hl:r.a===174, tip:`<div class="r"><span>Volume</span><b>${fmt(r.t/u,1)} ${ul}</b></div><div class="r"><span>${tr('Quota','Share')}</span><b>${fmt(r.t/tot*100,1)}%</b></div>`}));
   const max = Math.max(k.exp[0].t, k.imp[0].t)/u;
-  hbars($('#cKTexp'), rows(k.exp,k.exp_total_t), {max, unit:ul, table:['País',ul]});
-  hbars($('#cKTimp'), rows(k.imp,k.imp_total_t), {max, unit:ul, table:['País',ul]});
-  $('#kTnote').textContent = `Exportações mundiais declaradas: ${fmt(k.exp_total_t/u,1)} ${ul}. Os 3 maiores exportadores somam ${fmt(k.top3_exp_share)}%.`;
+  hbars($('#cKTexp'), rows(k.exp,k.exp_total_t), {max, unit:ul, table:[tr('País','Country'),ul]});
+  hbars($('#cKTimp'), rows(k.imp,k.imp_total_t), {max, unit:ul, table:[tr('País','Country'),ul]});
+  $('#kTnote').textContent = tr(`Exportações mundiais declaradas: ${fmt(k.exp_total_t/u,1)} ${ul}. Os 3 maiores exportadores somam ${fmt(k.top3_exp_share)}%.`, `Reported world exports: ${fmt(k.exp_total_t/u,1)} ${ul}. The top 3 exporters account for ${fmt(k.top3_exp_share)}%.`);
 }
 selT.addEventListener('change', ()=>drawKT(+selT.value)); drawKT(0);
 const sf = $('#segFlow');
 sf.innerHTML = D.flows.items.map((f,i)=>`<button aria-pressed="${i===0}" data-v="${i}">${it(f)}</button>`).join('');
 function drawFlow(i){ const f = D.flows.items[i];
-  hbars($('#cFlow'), f.rows.map(r=>({l:`${an(r.from)} → ${an(r.to)}`, v:r.m})), {unit:'M €', f:v=>fmt(v), table:['Rota','M €']}); }
+  hbars($('#cFlow'), f.rows.map(r=>({l:`${an(r.from)} → ${an(r.to)}`, v:r.m})), {unit:tr('M €','€ m'), f:v=>fmt(v), table:[tr('Rota','Route'),tr('M €','€ m')]}); }
 drawFlow(0); seg(sf, v=>drawFlow(+v));
 
 /* ---------- 8. profiles ---------- */
@@ -259,14 +292,14 @@ sp.innerHTML = D.profiles.map((p,i)=>`<button aria-pressed="${i===0}" data-v="${
 function drawProf(i){
   const p = D.profiles[i], ts = p.ts, last = ts.years.length-1, e = ts.exp[last], m = ts.imp[last];
   $('#profTiles').innerHTML = [
-    [fmt(e,1),'mil M €','exportações agrícolas'],[fmt(m,1),'mil M €','importações agrícolas'],
-    [(e-m>0?'+':'')+fmt(e-m,1),'mil M €','saldo'],[fmt(e/m*100),'%','taxa de cobertura']
+    [fmt(e,1),tr('mil M €','€ bn'),tr('exportações agrícolas','agricultural exports')],[fmt(m,1),tr('mil M €','€ bn'),tr('importações agrícolas','agricultural imports')],
+    [(e-m>0?'+':'')+fmt(e-m,1),tr('mil M €','€ bn'),tr('saldo','balance')],[fmt(e/m*100),'%',tr('taxa de cobertura','export/import coverage')]
   ].map(t=>`<div class="tile"><span class="v">${t[0]}<small>${t[1]}</small></span><span class="k">${t[2]}</span></div>`).join('');
   const col = (h, arr, f) => `<div class="pcol"><h3>${h}</h3><ol>${arr.map((x,j)=>`<li><span class="r">${j+1}</span><span>${it(x)}</span><span class="x">${f(x)}</span></li>`).join('')}</ol></div>`;
-  $('#profCols').innerHTML = col('Mais produzido (Mt)', p.prod, x=>fmt(x.mt,1)) + col('Mais exportado (mil M €)', p.exp, x=>fmt(x.bn,2)) + col('Mais importado (mil M €)', p.imp, x=>fmt(x.bn,2));
-  const series = [{n:'Exportações',c:css('--s1'),v:ts.exp},{n:'Importações',c:css('--s2'),v:ts.imp}];
+  $('#profCols').innerHTML = col(tr('Mais produzido (Mt)','Most produced (Mt)'), p.prod, x=>fmt(x.mt,1)) + col(tr('Mais exportado (mil M €)','Top exports (€ bn)'), p.exp, x=>fmt(x.bn,2)) + col(tr('Mais importado (mil M €)','Top imports (€ bn)'), p.imp, x=>fmt(x.bn,2));
+  const series = [{n:tr('Exportações','Exports'),c:css('--s1'),v:ts.exp},{n:tr('Importações','Imports'),c:css('--s2'),v:ts.imp}];
   legend($('#lgProf'), series, true);
-  line($('#cProf'), {x:ts.years, series, h:220, aria:'Exportações e importações', tf:(s,j)=>fmt(s.v[j],1)+' mil M €'});
+  line($('#cProf'), {x:ts.years, series, h:220, aria:tr('Exportações e importações','Exports and imports'), tf:(s,j)=>fmt(s.v[j],1)+tr(' mil M €',' € bn')});
 }
 drawProf(0); seg(sp, v=>drawProf(+v));
 
@@ -274,42 +307,54 @@ drawProf(0); seg(sp, v=>drawProf(+v));
 const ptE = ptT.exp_m[pti], ptM = ptT.imp_m[pti];
 const i2000 = ptT.years.indexOf(2000);
 $('#ptTiles').innerHTML = [
-  [fmt(ptE/1000,1),'mil M €','exportações agrícolas, '+K.yt, '×'+fmt(ptE/ptT.exp_m[i2000],1)+' desde 2000'],
-  [fmt(ptM/1000,1),'mil M €','importações agrícolas, '+K.yt, '×'+fmt(ptM/ptT.imp_m[i2000],1)+' desde 2000'],
-  [fmt((ptE-ptM)/1000,1),'mil M €','saldo agrícola', 'défice em todos os anos desde 1971'],
-  [fmt(ptE/ptM*100),'%','taxa de cobertura', 'era '+fmt(ptT.exp_m[i2000]/ptT.imp_m[i2000]*100)+'% em 2000']
+  [fmt(ptE/1000,1),tr('mil M €','€ bn'),tr('exportações agrícolas, ','agricultural exports, ')+K.yt, '×'+fmt(ptE/ptT.exp_m[i2000],1)+tr(' desde 2000',' since 2000')],
+  [fmt(ptM/1000,1),tr('mil M €','€ bn'),tr('importações agrícolas, ','agricultural imports, ')+K.yt, '×'+fmt(ptM/ptT.imp_m[i2000],1)+tr(' desde 2000',' since 2000')],
+  [fmt((ptE-ptM)/1000,1),tr('mil M €','€ bn'),tr('saldo agrícola','agricultural balance'), tr('défice em todos os anos desde 1971','in deficit every year since 1971')],
+  [fmt(ptE/ptM*100),'%',tr('taxa de cobertura','export/import coverage'), tr('era ','was ')+fmt(ptT.exp_m[i2000]/ptT.imp_m[i2000]*100)+tr('% em 2000','% in 2000')]
 ].map(t=>`<div class="tile"><span class="v">${t[0]}<small>${t[1]}</small></span><span class="k">${t[2]}</span><span class="s">${t[3]}</span></div>`).join('');
-(function(){ const series=[{n:'Exportações',c:css('--s1'),v:ptT.exp_m},{n:'Importações',c:css('--s2'),v:ptT.imp_m}];
+(function(){ const series=[{n:tr('Exportações','Exports'),c:css('--s1'),v:ptT.exp_m},{n:tr('Importações','Imports'),c:css('--s2'),v:ptT.imp_m}];
   legend($('#lgPtT'), series, true);
-  line($('#cPtTrade'), {x:ptT.years, series, aria:'Comércio agrícola de Portugal', tf:(s,i)=>fmt(s.v[i])+' M €', table:true, tableEvery:5}); })();
-dbars($('#cPtGroups'), D.pt_groups.slice().sort((a,b)=>(b.exp_m-b.imp_m)-(a.exp_m-a.imp_m)).map(g=>({l:g.name, v:g.exp_m-g.imp_m, f:1,
-  tip:`<div class="r"><span>Exportações</span><b>${fmt(g.exp_m)} M</b></div><div class="r"><span>Importações</span><b>${fmt(g.imp_m)} M</b></div>`, cells:[fmt(g.exp_m),fmt(g.imp_m),fmt(g.exp_m-g.imp_m)]})),
-  {f:v=>fmt(v), table:['Grupo','Export. (M €)','Import. (M €)','Saldo']});
+  line($('#cPtTrade'), {x:ptT.years, series, aria:tr('Comércio agrícola de Portugal','Portugal agricultural trade'), tf:(s,i)=>fmt(s.v[i])+tr(' M €',' € m'), table:true, tableEvery:5}); })();
+dbars($('#cPtGroups'), D.pt_groups.slice().sort((a,b)=>(b.exp_m-b.imp_m)-(a.exp_m-a.imp_m)).map(g=>({l:nm('grp',g), v:g.exp_m-g.imp_m, f:1,
+  tip:`<div class="r"><span>${tr('Exportações','Exports')}</span><b>${fmt(g.exp_m)} ${tr('M €','€ m')}</b></div><div class="r"><span>${tr('Importações','Imports')}</span><b>${fmt(g.imp_m)} ${tr('M €','€ m')}</b></div>`, cells:[fmt(g.exp_m),fmt(g.imp_m),fmt(g.exp_m-g.imp_m)]})),
+  {f:v=>fmt(v), table:[tr('Grupo','Group'),tr('Export. (M €)','Exports (€ m)'),tr('Import. (M €)','Imports (€ m)'),tr('Saldo','Balance')]});
 (function(){
   const rows = D.pt_ssr.rows.filter(r=>r.ssr!=null).sort((a,b)=>b.ssr-a.ssr);
   const el = $('#cSSR'); const max = Math.max(...rows.map(r=>r.ssr));
-  hbars(el, rows.map(r=>({l:r.name, v:r.ssr, dim:r.ssr<100, tip:`<div class="r"><span>Produção</span><b>${fmt(r.prod_t/1000)} mil t</b></div><div class="r"><span>Importação</span><b>${fmt(r.imp_t/1000)} mil t</b></div><div class="r"><span>Exportação</span><b>${fmt(r.exp_t/1000)} mil t</b></div><div class="r"><span>Autoaprovisionamento</span><b>${fmt(r.ssr)}%</b></div>`})), {max, unit:'%', f:v=>fmt(v)+'%'});
+  hbars(el, rows.map(r=>({l:nm('item',r), v:r.ssr, dim:r.ssr<100, tip:`<div class="r"><span>${tr('Produção','Production')}</span><b>${fmt(r.prod_t/1000)} ${tr('mil t','kt')}</b></div><div class="r"><span>${tr('Importação','Imports')}</span><b>${fmt(r.imp_t/1000)} ${tr('mil t','kt')}</b></div><div class="r"><span>${tr('Exportação','Exports')}</span><b>${fmt(r.exp_t/1000)} ${tr('mil t','kt')}</b></div><div class="r"><span>${tr('Autoaprovisionamento','Self-sufficiency')}</span><b>${fmt(r.ssr)}%</b></div>`})), {max, unit:'%', f:v=>fmt(v)+'%'});
   el.querySelectorAll('.hb .tr').forEach(t=>{ const m=document.createElement('span'); m.style.cssText=`position:absolute;top:-3px;bottom:-3px;left:${100/max*100}%;border-left:1.5px dashed var(--ink-2)`; t.appendChild(m); });
-  tableView(el, ['Produto','Produção (t)','Importação (t)','Exportação (t)','Autoaprov. (%)'], rows.map(r=>[r.name, fmt(r.prod_t), fmt(r.imp_t), fmt(r.exp_t), fmt(r.ssr)]));
+  tableView(el, [tr('Produto','Product'),tr('Produção (t)','Production (t)'),tr('Importação (t)','Imports (t)'),tr('Exportação (t)','Exports (t)'),tr('Autoaprov. (%)','Self-suff. (%)')], rows.map(r=>[nm('item',r), fmt(r.prod_t), fmt(r.imp_t), fmt(r.exp_t), fmt(r.ssr)]));
 })();
 const spp = $('#segPtProd'); const PTS = [261,564,388,56,15,521,1765];
 const ptSeries = PTS.map(id=>D.pt_prod.series.find(s=>s.id===id)).filter(Boolean);
-spp.innerHTML = ptSeries.map((s,i)=>`<button aria-pressed="${i===0}" data-v="${i}">${s.name}</button>`).join('');
+spp.innerHTML = ptSeries.map((s,i)=>`<button aria-pressed="${i===0}" data-v="${i}">${nm('item',s)}</button>`).join('');
 function drawPtProd(i){ const s = ptSeries[i];
-  line($('#cPtProd'), {x:D.pt_prod.years, series:[{n:s.name,c:css('--bar'),v:s.kt,area:true}], h:240, aria:'Produção em Portugal', tf:(se,j)=>fmt(se.v[j],1)+' mil t', table:true, tableEvery:5}); }
+  line($('#cPtProd'), {x:D.pt_prod.years, series:[{n:nm('item',s),c:css('--bar'),v:s.kt,area:true}], h:240, aria:tr('Produção em Portugal','Production in Portugal'), tf:(se,j)=>fmt(se.v[j],1)+tr(' mil t',' kt'), table:true, tableEvery:5}); }
 drawPtProd(0); seg(spp, v=>drawPtProd(+v));
 function drawPart(k){ const p = D.pt_partners[k];
-  hbars($('#cPart'), p.top.map(r=>({l:an(r.a), v:r.share, tip:`<div class="r"><span>Valor</span><b>${fmt(r.m)} M €</b></div><div class="r"><span>Quota</span><b>${fmt(r.share,1)}%</b></div>`})), {unit:'%', f:v=>fmt(v,1)+'%', table:['País','%']}); }
+  hbars($('#cPart'), p.top.map(r=>({l:an(r.a), v:r.share, tip:`<div class="r"><span>${tr('Valor','Value')}</span><b>${fmt(r.m)} ${tr('M €','€ m')}</b></div><div class="r"><span>${tr('Quota','Share')}</span><b>${fmt(r.share,1)}%</b></div>`})), {unit:'%', f:v=>fmt(v,1)+'%', table:[tr('País','Country'),'%']}); }
 drawPart('exp'); seg($('#segPart'), drawPart);
 const pl = D.pt_land;
-$('#ptLand').innerHTML = `<b>Terra em Portugal (${pl.year}):</b> ${fmt(pl['6610'])} mil ha de terra agrícola (${fmt(pl['6610']/pl['6601']*100)}% do território), dos quais ${fmt(pl['6620'])} mil ha cultivados e ${fmt(pl['6655'])} mil ha de pastagens permanentes. ${fmt(pl['6690'])} mil ha estão equipados para rega e ${fmt(pl['6671'])} mil ha em modo biológico, ou seja, ${fmt(pl['6671']/pl['6610']*100)}% da terra agrícola contra cerca de 2% no mundo. A floresta ocupa ${fmt(pl['6646'])} mil ha.`;
+$('#ptLand').innerHTML = EN ? `<b>Land in Portugal (${pl.year}):</b> ${fmt(pl['6610'])} thousand ha of agricultural land (${fmt(pl['6610']/pl['6601']*100)}% of the territory), of which ${fmt(pl['6620'])} thousand ha is cropland and ${fmt(pl['6655'])} thousand ha permanent pasture. ${fmt(pl['6690'])} thousand ha is equipped for irrigation and ${fmt(pl['6671'])} thousand ha is farmed organically, that is ${fmt(pl['6671']/pl['6610']*100)}% of agricultural land against about 2% worldwide. Forest covers ${fmt(pl['6646'])} thousand ha.` : `<b>Terra em Portugal (${pl.year}):</b> ${fmt(pl['6610'])} mil ha de terra agrícola (${fmt(pl['6610']/pl['6601']*100)}% do território), dos quais ${fmt(pl['6620'])} mil ha cultivados e ${fmt(pl['6655'])} mil ha de pastagens permanentes. ${fmt(pl['6690'])} mil ha estão equipados para rega e ${fmt(pl['6671'])} mil ha em modo biológico, ou seja, ${fmt(pl['6671']/pl['6610']*100)}% da terra agrícola contra cerca de 2% no mundo. A floresta ocupa ${fmt(pl['6646'])} mil ha.`;
 
 /* ---------- 10. claims ---------- */
 const ICON = {ok:'<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2.5 6.5l2.2 2.2L9.5 3.5"/></svg>', nu:'<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3v4M6 9v.5"/></svg>', na:'<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h6"/></svg>'};
-const LBL = {ok:'Confirma-se', nu:'Com nuance', na:'Fora do âmbito'};
+const LBL = EN ? {ok:'Confirmed', nu:'Nuanced', na:'Out of scope'} : {ok:'Confirma-se', nu:'Com nuance', na:'Fora do âmbito'};
 const prof = c => D.profiles.find(p=>p.a===c);
 const topNames = (c,k,n=4) => prof(c)[k].slice(0,n).map(it).join(', ');
-const C = [
+const ssr = id => fmt(D.pt_ssr.rows.find(r=>r.id===id).ssr);
+const C = EN ? [
+  ['ok', `<b>Brazil exports soya, sugar, beef and coffee.</b> Its top 4 agricultural exports are ${topNames(21,'exp')}. Wheat is its largest import.`],
+  ['na', `<b>Brazil exports pulp and imports fertilisers and chemicals.</b> True, but these are not agricultural products in FAO statistics. See UN Comtrade or OEC.`],
+  ['nu', `<b>The US exports maize, soya, cotton, pork and nuts.</b> The top items are ${topNames(231,'exp',5)}. Beef weighs more than pork. Imports are led by spirits, beef, beer, wine and coffee.`],
+  ['ok', `<b>China imports soya and meat for feed and consumption.</b> Soya alone cost €${fmt(prof(41).imp[0].bn,1)} bn, followed by beef.`],
+  ['nu', `<b>China exports tea, processed vegetables and garlic.</b> Garlic is indeed its top agricultural export. Fish is not part of this database. China's agricultural exports (€${fmt(prof(41).ts.exp.at(-1),0)} bn) are small compared with its imports.`],
+  ['ok', `<b>The EU exports wine, cheese and pork; imports coffee, cocoa and oilseeds.</b> Cheese and wine lead exports, and wheat, olive oil and pork are also in the top 8. On the import side, green coffee, cocoa and soya cake come right after cheese. Note: EU figures include intra-EU trade.`],
+  ['ok', `<b>Ukraine and Russia export wheat, sunflower oil and maize.</b> Confirmed for both countries. Russia is the world's largest wheat exporter.`],
+  ['ok', `<b>Portugal exports olive oil and wine; Spain is its main partner.</b> Olive oil and wine are its top 2 exports. Spain takes ${fmt(D.pt_partners.exp.top[0].share)}% of exports.`],
+  ['ok', `<b>Portugal imports most of its cereals and soya.</b> Self-sufficiency of ${ssr(15)}% for wheat, ${ssr(56)}% for maize and 0% for soya.`],
+  ['nu', `<b>Portugal stands out in wood pulp.</b> That is a forestry and industrial sector, not agriculture. It falls outside this report.`]
+] : [
   ['ok', `<b>Brasil exporta soja, açúcar, carne bovina e café.</b> Os 4 primeiros produtos exportados são ${topNames(21,'exp')}. O trigo é a maior importação.`],
   ['na', `<b>Brasil exporta celulose e importa fertilizantes e químicos.</b> É verdade, mas não são produtos agrícolas nas estatísticas da FAO. Ver UN Comtrade ou OEC.`],
   ['nu', `<b>EUA exportam milho, soja, algodão, carne suína e frutos secos.</b> No topo estão ${topNames(231,'exp',5)}. A carne bovina pesa mais do que a suína. As importações são lideradas por bebidas espirituosas, carne, cerveja, vinho e café.`],
@@ -318,7 +363,7 @@ const C = [
   ['ok', `<b>UE exporta vinho, queijo e carne de porco; importa café, cacau e oleaginosas.</b> Queijo e vinho lideram as exportações, e trigo, azeite e carne de porco também estão no top 8. Nas importações, café verde, cacau e bagaço de soja surgem logo a seguir ao queijo. Nota: os valores da UE incluem o comércio intra-UE.`],
   ['ok', `<b>Ucrânia e Rússia exportam trigo, óleo de girassol e milho.</b> Confirma-se nos dois países. A Rússia é o 1.º exportador mundial de trigo.`],
   ['ok', `<b>Portugal exporta azeite e vinho; a Espanha é o principal parceiro.</b> Azeite e vinho são os 2 primeiros produtos exportados. A Espanha recebe ${fmt(D.pt_partners.exp.top[0].share)}% das exportações.`],
-  ['ok', `<b>Portugal importa a maioria dos cereais e a soja.</b> Autoaprovisionamento de ${fmt(D.pt_ssr.rows.find(r=>r.id===15).ssr)}% no trigo, ${fmt(D.pt_ssr.rows.find(r=>r.id===56).ssr)}% no milho e 0% na soja.`],
+  ['ok', `<b>Portugal importa a maioria dos cereais e a soja.</b> Autoaprovisionamento de ${ssr(15)}% no trigo, ${ssr(56)}% no milho e 0% na soja.`],
   ['nu', `<b>Portugal destaca-se na pasta de papel.</b> É um setor florestal e industrial, não agrícola. Fica fora deste relatório.`]
 ];
 $('#claims').innerHTML = C.map(c=>`<div class="claim"><span class="pill ${c[0]}">${ICON[c[0]]}${LBL[c[0]]}</span><p>${c[1]}</p></div>`).join('');
@@ -330,6 +375,6 @@ fetch("/data/agriculture-global.json?v=20261004")
   .then((data) => { D = data; render(); })
   .catch(() => {
     const el = document.getElementById("agri-findings");
-    if (el) el.innerHTML = "<li>Não foi possível carregar os dados. Recarregue a página.</li>";
+    if (el) el.innerHTML = (window.BioCultureI18n?.isEnglish ? "<li>The data could not be loaded. Please reload the page.</li>" : "<li>Não foi possível carregar os dados. Recarregue a página.</li>");
   });
 })();
