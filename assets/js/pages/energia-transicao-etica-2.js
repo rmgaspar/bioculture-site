@@ -61,6 +61,19 @@
             };
             const SCOPE_EN = { "Nacional": "National", "Nacional — Portugal continental": "National — mainland Portugal", "Transfronteiriço": "Cross-border", "Transfronteiriço — Zamora (Espanha)": "Cross-border — Zamora (Spain)" };
             const stateTxt = (v) => (isEn() ? STATE_EN[v] || v : v);
+            /* Mini-gráficos coloridos (mesma paleta e regras do relatório de Produção agrícola). */
+            const PALETTE = ["#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4"];
+            const num = (v) => Number(v || 0).toLocaleString(isEn() ? "en-GB" : "pt-PT");
+            const miniStack = (parts) => {
+                const total = parts.reduce((a, p) => a + p.v, 0) || 1;
+                return `<div class="mini"><div class="mstack">${parts.filter((p) => p.v > 0).map((p, i) =>
+                    `<span style="width:${p.v / total * 100}%;background:${p.c || PALETTE[i]}" title="${esc(p.l)}: ${num(p.v)}"></span>`).join("")}</div><div class="mlegend">${
+                    parts.map((p, i) => `<span><i style="background:${p.c || PALETTE[i]}"></i>${esc(p.l)} ${num(p.v)}</span>`).join("")}</div></div>`;
+            };
+            const miniBars = (rows) => {
+                const max = Math.max(...rows.map((r) => r.v)) || 1;
+                return `<div class="mini">${rows.map((r, i) => `<div class="mr"><span class="ml">${esc(r.l)}</span><span class="mt"><span class="mb" style="width:${Math.max(r.v / max * 100, 0.8)}%;background:${r.c || PALETTE[i]}"></span></span><span class="mv">${num(r.v)}</span></div>`).join("")}</div>`;
+            };
             /* Texto fixo com versão inglesa em data-en (bloco «Como participar»). */
             function applyEnglishBlocks() {
                 if (!isEn()) return;
@@ -105,7 +118,15 @@
                     tr(open === 1 ? "consulta aberta agora" : "consultas abertas agora", "open now")
                 }</span><span><strong>${pending}</strong>${tr("a aguardar decisão (2026)", "awaiting decision (2026)")}</span>${
                     total ? `<span><strong>${total}</strong>${tr("consultas de renováveis no portal", "renewables consultations on the portal")}</span>` : ""
-                }</div><p>${
+                }</div>${
+                    meta.resumo_pesquisa
+                        ? miniStack([
+                            { l: tr("Abertas", "Open"), v: meta.resumo_pesquisa.abertas, c: PALETTE[2] },
+                            { l: tr("Em análise", "Under review"), v: meta.resumo_pesquisa.em_analise, c: PALETTE[3] },
+                            { l: tr("Encerradas", "Closed"), v: meta.resumo_pesquisa.encerradas, c: "#b9cbbd" },
+                        ])
+                        : ""
+                }<p>${
                     open
                         ? tr("Ainda é possível participar nas consultas assinaladas como abertas.", "You can still take part in the consultations marked as open.")
                         : tr(
@@ -152,13 +173,23 @@
                     }</h3><ul><li>${
                         tr(`<strong>${f.ate_21_dias}</strong> tiveram 21 dias ou menos para participar (mediana: ${f.duracao_mediana_dias} dias).`,
                             `<strong>${f.ate_21_dias}</strong> allowed 21 days or fewer to take part (median: ${f.duracao_mediana_dias} days).`)
-                    }</li><li>${
+                    }${miniStack([
+                        { l: tr("21 dias ou menos", "21 days or fewer"), v: f.ate_21_dias, c: PALETTE[1] },
+                        { l: tr("Mais de 21 dias", "More than 21 days"), v: f.consultas_projetos - f.ate_21_dias, c: PALETTE[0] },
+                    ])}</li><li>${
                         tr(`<strong>${f.com_dias_em_agosto}</strong> decorreram total ou parcialmente em agosto; em <strong>${f.maioria_em_agosto}</strong>, a maior parte do prazo calhou em agosto.`,
                             `<strong>${f.com_dias_em_agosto}</strong> ran fully or partly in August; for <strong>${f.maioria_em_agosto}</strong>, most of the period fell in August.`)
-                    }</li><li>${
+                    }${miniStack([
+                        { l: tr("Sobretudo em agosto", "Mostly in August"), v: f.maioria_em_agosto, c: PALETTE[1] },
+                        { l: tr("Parte em agosto", "Partly in August"), v: f.com_dias_em_agosto - f.maioria_em_agosto, c: PALETTE[3] },
+                        { l: tr("Fora de agosto", "Outside August"), v: f.consultas_projetos - f.com_dias_em_agosto, c: PALETTE[0] },
+                    ])}</li><li>${
                         tr(`Mediana de <strong>${Number(f.participacoes_mediana).toLocaleString("pt-PT")}</strong> participações por consulta. O PSZAER, com cobertura mediática, recebeu ${Number(ps.participacoes || 0).toLocaleString("pt-PT")}.`,
                             `Median of <strong>${Number(f.participacoes_mediana).toLocaleString("en-GB")}</strong> submissions per consultation. The PSZAER, which had media coverage, received ${Number(ps.participacoes || 0).toLocaleString("en-GB")}.`)
-                    }</li></ul><p>${
+                    }${miniBars([
+                        { l: tr("Mediana por projeto", "Median per project"), v: f.participacoes_mediana },
+                        { l: tr("PSZAER (com cobertura mediática)", "PSZAER (media coverage)"), v: ps.participacoes || 0 },
+                    ])}</li></ul><p>${
                         tr("Prazos curtos e períodos de férias reduzem a possibilidade real de participar. A divulgação oficial é feita sobretudo no portal e por editais.",
                             "Short deadlines and holiday periods reduce the real chance to take part. Official notice is given mainly on the portal and through public notices.")
                     }</p><span class="now-date">${esc(isEn() ? "Projects subject to environmental assessment; excludes national programmes and strategies. Duration in calendar days, including the first and last day." : f.nota)}</span>`
