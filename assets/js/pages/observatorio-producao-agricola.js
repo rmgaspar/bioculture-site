@@ -195,7 +195,8 @@ const F = EN ? [
 /* Mini-gráfico de cada conclusão: os números que a sustentam, lidos dos mesmos dados. */
 const miniBars = (rows, o={}) => {
   const max = o.max || Math.max(...rows.map(r=>Math.abs(r.v)));
-  return `<div class="mini">${rows.map(r=>`<div class="mr${r.hl?' hl':''}"><span class="ml">${r.l}</span><span class="mt">${o.ref!=null?`<span class="mref" style="left:${o.ref/max*100}%"></span>`:''}<span class="mb" style="width:${Math.min(100,Math.abs(r.v)/max*100)}%${r.c?`;background:${r.c}`:''}"></span></span><span class="mv">${r.t}</span></div>`).join('')}</div>`;
+  /* Cada barra com a sua cor da paleta (ordem fixa), para os valores se distinguirem de relance. */
+  return `<div class="mini">${rows.map((r,i)=>`<div class="mr${r.hl?' hl':''}"><span class="ml">${r.l}</span><span class="mt">${o.ref!=null?`<span class="mref" style="left:${o.ref/max*100}%"></span>`:''}<span class="mb" style="width:${Math.min(100,Math.abs(r.v)/max*100)}%;background:${r.c || css(SER[i % SER.length])}"></span></span><span class="mv">${r.t}</span></div>`).join('')}</div>`;
 };
 const miniDiv = (rows) => {
   const max = Math.max(...rows.map(r=>Math.abs(r.v)));
