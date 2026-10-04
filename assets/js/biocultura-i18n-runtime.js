@@ -722,7 +722,7 @@
                 .then((response) => response.ok ? response.json() : {})
                 .catch(() => ({}));
             fullLoading = Promise.all([
-                read(`/assets/lang/auto/${lang}.json?v=36`),
+                read(`/assets/lang/auto/${lang}.json?v=37`),
                 read(`/assets/lang/${lang}.json?v=11`),
                 read(`/assets/lang/display/${lang}.json?v=32`),
             ]).then(([auto, structured, display]) => {

@@ -52,7 +52,22 @@
                 el("art-gw").textContent = `${art.total_capacidade_gw ?? "—"} GW`;
                 el("art-twh").textContent = `${art.total_geracao_twh_ano ?? "—"} TWh/ano`;
             }
+            const STATE_EN = { "Aberta": "Open", "Em análise": "Under review", "Encerrada": "Closed" };
+            const ALERT_EN = {
+                "Estado sem atualização visível desde 2019; confirmar decisão na autoridade competente antes de inferir situação do projeto.":
+                    "Status not visibly updated since 2019; confirm the decision with the competent authority before drawing conclusions about the project.",
+                "Título abreviado e estado sem atualização visível desde 2019; não assumir que corresponde ao ativo atualmente em exploração.":
+                    "Abbreviated title and status not visibly updated since 2019; do not assume it is the asset currently in operation.",
+            };
+            const SCOPE_EN = { "Nacional": "National", "Nacional — Portugal continental": "National — mainland Portugal", "Transfronteiriço": "Cross-border", "Transfronteiriço — Zamora (Espanha)": "Cross-border — Zamora (Spain)" };
+            const stateTxt = (v) => (isEn() ? STATE_EN[v] || v : v);
+            /* Texto fixo com versão inglesa em data-en (bloco «Como participar»). */
+            function applyEnglishBlocks() {
+                if (!isEn()) return;
+                document.querySelectorAll("#consultas [data-en]").forEach((n) => { n.innerHTML = n.dataset.en; });
+            }
             function renderConsults(d) {
+                applyEnglishBlocks();
                 const c = d.consultas_participa || {},
                     meta = c.metadados || {},
                     tr = (pt, en) => (isEn() ? en : pt),
@@ -103,29 +118,29 @@
                         const tags = signals(x);
                         return `<article class="consult"><small class="${
                             /aberta/i.test(x.estado_consulta) ? "status-open" : "status-analysis"
-                        }">${esc(x.estado_consulta)} · ${date(x.fim)}</small><h3>${
+                        }">${esc(stateTxt(x.estado_consulta))} · ${date(x.fim)}</small><h3>${
                             esc(x.titulo)
                         }</h3>${
                             tags.length
                                 ? `<div class="signals">${tags.map(([k, t]) => `<span class="signal signal-${k}">${esc(t)}</span>`).join("")}</div>`
                                 : ""
                         }<p>${
-                            esc((x.municipios || []).join(" · ") || x.ambito || x.tipologia)
+                            esc((x.municipios || []).join(" · ") || (isEn() ? SCOPE_EN[x.ambito] || x.ambito : x.ambito) || x.tipologia)
                         }</p>${
                             x.participacoes !== undefined
                                 ? `<p>${
-                                    Number(x.participacoes).toLocaleString("pt-PT")
-                                } participações</p>`
+                                    Number(x.participacoes).toLocaleString(isEn() ? "en-GB" : "pt-PT")
+                                } ${x.participacoes === 1 ? tr("participação", "submission") : tr("participações", "submissions")}</p>`
                                 : ""
                         }${
                             x.alerta_qualidade
-                                ? `<p><strong>Atenção:</strong> ${esc(x.alerta_qualidade)}</p>`
+                                ? `<p><strong>${tr("Atenção:", "Note:")}</strong> ${esc(isEn() ? ALERT_EN[x.alerta_qualidade] || x.alerta_qualidade : x.alerta_qualidade)}</p>`
                                 : ""
                         }${
                             x.url
                                 ? `<a href="${
                                     esc(x.url)
-                                }" target="_blank" rel="noopener">Abrir ficha original</a>`
+                                }" target="_blank" rel="noopener">${tr("Abrir ficha original", "Open original page")}</a>`
                                 : ""
                         }</article>`;
                     }).join("") || '<p class="empty">—</p>';
@@ -146,7 +161,7 @@
                     }</li></ul><p>${
                         tr("Prazos curtos e períodos de férias reduzem a possibilidade real de participar. A divulgação oficial é feita sobretudo no portal e por editais.",
                             "Short deadlines and holiday periods reduce the real chance to take part. Official notice is given mainly on the portal and through public notices.")
-                    }</p><span class="now-date">${esc(f.nota)}</span>`
+                    }</p><span class="now-date">${esc(isEn() ? "Projects subject to environmental assessment; excludes national programmes and strategies. Duration in calendar days, including the first and last day." : f.nota)}</span>`
                     : "";
             }
             function renderLocal(d) {
@@ -154,7 +169,7 @@
                 if (!box || !window.BioCultureParticipaLocal) return;
                 const tr = (pt, en) => (isEn() ? en : pt),
                     T = window.BioCultureParticipaLocal.title,
-                    item = (x) => `<li><a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.titulo)}</a> <span>${esc(x.estado_consulta)} · ${date(x.fim)}</span></li>`;
+                    item = (x) => `<li><a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.titulo)}</a> <span>${esc(stateTxt(x.estado_consulta))} · ${date(x.fim)}</span></li>`;
                 window.BioCultureParticipaLocal.match(d).then(({ region, concelho, distrito, nacional }) => {
                     if (!region) {
                         box.innerHTML = `<small>${tr("No teu território", "In your area")}</small><p>${
