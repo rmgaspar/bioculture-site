@@ -8,7 +8,7 @@ Uso: python3 scripts/css/extract-components.py [--apply]"""
 import glob, re, sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
-from cssunits import units, key, render, dedupe_keep_last
+from cssunits import units, key, render, dedupe_keep_last, remove_units
 
 ROOT = Path(__file__).resolve().parents[2]
 COMPONENTS = {
@@ -92,10 +92,7 @@ if "--apply" in sys.argv:
         for f in users:
             removed.setdefault(f, set()).update(key(u) for u in canon)
     for f, keys in removed.items():
-        original = (ROOT / f).read_text()
-        header = re.match(r"\s*(/\*[\s\S]*?\*/)", original)
-        kept = [u for u in units(original) if key(u) not in keys]
-        (ROOT / f).write_text((header.group(1) + "\n" if header else "") + render(kept))
+        (ROOT / f).write_text(remove_units((ROOT / f).read_text(), keys))
     for p, f in page_css.items():
         names = [n for n, (_, users) in plan.items() if f in users]
         if not names:
