@@ -442,6 +442,14 @@
         bootBioCultureShell();
     }
 
+    // Menu em ecrãs até 1280 px: botão e gaveta lateral (ver biocultura-mobile-nav.js).
+    if (!document.querySelector('script[src*="biocultura-mobile-nav.js"]')) {
+        const mobileNav = document.createElement("script");
+        mobileNav.src = "/assets/js/biocultura-mobile-nav.js?v=2";
+        mobileNav.defer = true;
+        document.head.appendChild(mobileNav);
+    }
+
     const supported = new Set(["en"]);
     const stored = languageStore.read();
     const lang = supported.has(stored) ? stored : "pt";
