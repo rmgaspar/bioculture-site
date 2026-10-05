@@ -362,7 +362,7 @@
        antigas que ainda não declaram explicitamente esta folha de estilos. */
     const heroSystem = document.querySelector('link[href*="biocultura-hero-system.css"]') || document.createElement("link");
     heroSystem.rel = "stylesheet";
-    heroSystem.href = "/assets/css/biocultura-hero-system.css?v=26";
+    heroSystem.href = "/assets/css/biocultura-hero-system.css?v=27";
     heroSystem.dataset.bioculturaHeroSystem = "true";
     if (!heroSystem.parentNode) document.head.appendChild(heroSystem);
 
@@ -372,7 +372,7 @@
     function normalizeHeroStylesheet() {
         const links = Array.from(document.querySelectorAll('link[href*="biocultura-hero-system.css"]'));
         const canonical = links[0] || heroSystem;
-        canonical.href = "/assets/css/biocultura-hero-system.css?v=26";
+        canonical.href = "/assets/css/biocultura-hero-system.css?v=27";
         canonical.dataset.bioculturaHeroSystem = "true";
         links.slice(1).forEach((link) => link.remove());
     }
