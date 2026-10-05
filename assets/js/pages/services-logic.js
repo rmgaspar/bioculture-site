@@ -13,6 +13,19 @@
         (benefits || solarTool).before(figure);
     }
 
+    // Imagem de cada técnica dimensionada para caber no ecrã com o título (ver services.css, --bp-head).
+    const headings = [...document.querySelectorAll(".blueprint .blueprint-heading")];
+    const measureHeadings = () => headings.forEach((heading) => {
+        heading.closest(".blueprint").style.setProperty("--bp-head", `${Math.ceil(heading.getBoundingClientRect().height)}px`);
+    });
+    measureHeadings();
+    if ("ResizeObserver" in window) {
+        const observer = new ResizeObserver(measureHeadings);
+        headings.forEach((heading) => observer.observe(heading));
+    } else {
+        window.addEventListener("resize", measureHeadings, { passive: true });
+    }
+
     const backupInput = byId("in-backup");
     const batteryCard = backupInput?.closest(".input-check");
     if (backupInput && batteryCard) {

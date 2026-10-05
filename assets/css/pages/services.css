@@ -685,7 +685,7 @@ html body #main nav.reading-nav.services-nav.bio-nav-pinned .bio-nav-top {
     background: #fff !important;
     box-shadow: -16px 0 12px -6px #fff, 16px 0 0 0 #fff !important; /* cobre também a margem interior à direita */
 }
-#main :is(#biofossa, #chuva, #solar, #solo, #compostagem, #agrofloresta, #hortas, #apicultura, #aguascinzentas, #pragas, #catalogo-tecnicas, #o-teu-projeto) {
+html body #main :is(#catalogo-tecnicas, #o-teu-projeto) {
     scroll-margin-top: 6rem;
 }
 html body #main nav.reading-nav.services-nav .hub-back {
@@ -697,4 +697,44 @@ html body #main nav.reading-nav.services-nav .hub-back {
 .blueprint .blueprint-benefits + .blueprint-steps,
 .blueprint .blueprint-benefits + .solar-tool {
     margin-top: 1.6rem !important;
+}
+
+/* Ao escolher uma técnica na barra, título e imagem (com legenda) cabem no ecrã: o título aterra logo
+   abaixo da barra fixa, a imagem fica junto ao título e a sua altura acompanha o espaço disponível,
+   sem cortes (a moldura e a legenda ajustam-se à largura da imagem). Telemóvel: leitura vertical normal. */
+html body #main :is(#biofossa, #chuva, #solar, #solo, #compostagem, #agrofloresta, #hortas, #apicultura, #aguascinzentas, #pragas) {
+    scroll-margin-top: 1rem !important;
+}
+@media (max-width: 736px) {
+    html body #main :is(#biofossa, #chuva, #solar, #solo, #compostagem, #agrofloresta, #hortas, #apicultura, #aguascinzentas, #pragas) {
+        scroll-margin-top: 0 !important;
+    }
+}
+@media (min-width: 737px) {
+    html body #main .blueprint .blueprint-figure {
+        width: fit-content !important;
+        max-width: 88% !important;
+        margin: 1.1rem auto 1.5rem !important;
+    }
+    html body #main :is(#biofossa, #chuva) .blueprint-figure {
+        max-width: 82% !important;
+    }
+    html body #main .blueprint .blueprint-figure .bioculture-image-signature-frame {
+        display: block;
+        width: auto !important;
+    }
+    html body #main .blueprint .blueprint-figure img {
+        width: auto !important;
+        max-width: 100% !important;
+        height: auto !important;
+        min-height: 0 !important;
+        /* --bp-head: altura do título desta secção, medida por services-logic.js */
+        max-height: calc(100vh - var(--bp-head, 150px) - 195px);
+        margin: 0 auto;
+    }
+    html body #main .blueprint .blueprint-figure figcaption {
+        width: 0;
+        min-width: 100%;
+        box-sizing: border-box;
+    }
 }
