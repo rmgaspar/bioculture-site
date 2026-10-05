@@ -80,7 +80,7 @@ async function applyLanguage(lang) {
     }
 
     try {
-        const r = await fetch("/assets/lang/" + state.lang + ".json?v=7", { cache: "no-cache" });
+        const r = await fetch("/assets/lang/" + state.lang + ".json?v=12", { cache: "no-cache" });
         if (!r.ok) throw Error("lang");
 
         const t = await r.json();
