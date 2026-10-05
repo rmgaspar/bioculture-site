@@ -135,7 +135,7 @@
                 const ids = [...new Set(raw)].filter((id) => master[id]);
                 el("local-count").innerHTML = `${ids.length}<small>espécies associadas</small>`;
                 el("local-note").textContent = ids.length
-                    ? "Seleção territorial disponível no perfil bioCultura."
+                    ? "Seleção territorial disponível no perfil bioCulture."
                     : "Ainda não existem associações de espécies para este perfil.";
                 const INITIAL = 12, STEP = 24;
                 let shown = INITIAL;

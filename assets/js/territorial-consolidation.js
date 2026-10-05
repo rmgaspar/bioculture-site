@@ -38,7 +38,7 @@
         "/ecossistemas/biodiversity.html": {
             source: "/ecossistemas/biodiversidade.html",
             stylesheet: "/assets/css/pages/ecossistemas-biodiversidade.css?v=3",
-            script: "/assets/js/pages/ecossistemas-biodiversidade-2.js?v=1",
+            script: "/assets/js/pages/ecossistemas-biodiversidade-2.js?v=2",
             label: "Portugal em detalhe",
             title: "A biodiversidade no território português",
             intro: "Espécies, habitats, relações ecológicas e inventários aproximados à região guardada."

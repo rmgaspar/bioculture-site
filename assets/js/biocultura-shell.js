@@ -80,7 +80,7 @@ async function applyLanguage(lang) {
     }
 
     try {
-        const r = await fetch("/assets/lang/" + state.lang + ".json?v=12", { cache: "no-cache" });
+        const r = await fetch("/assets/lang/" + state.lang + ".json?v=13", { cache: "no-cache" });
         if (!r.ok) throw Error("lang");
 
         const t = await r.json();
@@ -385,7 +385,7 @@ function alignment() {
 
     const link = document.createElement("link");
     link.rel = "stylesheet";
-    link.href = "/assets/css/biocultura-alignment.css?v=11";
+    link.href = "/assets/css/biocultura-alignment.css?v=12";
     link.dataset.bioculturaAlignment = "true";
     document.head.appendChild(link);
 }

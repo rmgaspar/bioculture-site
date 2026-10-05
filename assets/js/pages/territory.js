@@ -1,6 +1,6 @@
 async function loadTerritoryReport() {
     try {
-        console.log("bioCultura: A iniciar carga de dados...");
+        console.log("bioCulture: A iniciar carga de dados...");
         const res = await fetch('/data/territory_impact.json');
         
         if (!res.ok) throw new Error(`Erro HTTP: ${res.status}`);
@@ -81,7 +81,7 @@ async function loadTerritoryReport() {
         document.body.classList.remove('is-preload');
 
     } catch (e) {
-        console.error("Erro Crítico bioCultura:", e);
+        console.error("Erro Crítico bioCulture:", e);
         // Mostrar erro na página para saberes o que falhou
         const container = document.getElementById('main');
         if(container) container.innerHTML += `<div style="color:red; padding: 20px;">Erro ao carregar JSON: ${e.message}</div>`;

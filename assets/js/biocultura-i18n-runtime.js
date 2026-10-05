@@ -429,7 +429,7 @@
     function bootBioCultureShell() {
         if (biocultureShellBooted) return;
         biocultureShellBooted = true;
-        import("/assets/js/biocultura-shell.js?v=16")
+        import("/assets/js/biocultura-shell.js?v=17")
             .then((module) => module.init())
             .catch((error) => {
                 biocultureShellBooted = false;
@@ -730,9 +730,9 @@
                 .then((response) => response.ok ? response.json() : {})
                 .catch(() => ({}));
             fullLoading = Promise.all([
-                read(`/assets/lang/auto/${lang}.json?v=38`),
-                read(`/assets/lang/${lang}.json?v=12`),
-                read(`/assets/lang/display/${lang}.json?v=32`),
+                read(`/assets/lang/auto/${lang}.json?v=39`),
+                read(`/assets/lang/${lang}.json?v=13`),
+                read(`/assets/lang/display/${lang}.json?v=33`),
             ]).then(([auto, structured, display]) => {
                 dictionary = auto;
                 structuredDictionary = structured;

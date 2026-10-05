@@ -84,7 +84,7 @@
                             ? `<img class="species-image" src="${esc(x.imagem)}" alt="${esc(x.nome)}" loading="lazy" onerror="this.style.display='none'">`
                             : "";
                         el("encounter").innerHTML = `<div><small>${isEnglish ? "Today's encounter" : "Encontro do dia"}</small><h3>${esc(x.nome)}</h3><em>${esc(x.nome_cientifico)}</em><p>${
-                            esc(x.sintese || x.origem || (isEnglish ? "A species from the bioCulture inventory." : "Uma espécie do inventário bioCultura."))
+                            esc(x.sintese || x.origem || (isEnglish ? "A species from the bioCulture inventory." : "Uma espécie do inventário bioCulture."))
                         }</p><a href="/ecossistemas/especie-detalhe.html?id=${
                             encodeURIComponent(id)
                         }">${isEnglish ? "Meet this species" : "Conhecer esta espécie"} →</a></div>${image}`;
