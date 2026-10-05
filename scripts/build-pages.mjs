@@ -34,7 +34,8 @@ async function sitemap() {
       try {
         lastmod = execFileSync("git", ["log", "-1", "--format=%cs", "--", page], { encoding: "utf8" }).trim();
       } catch {}
-      const loc = page === "index.html" ? `${config.site}/` : `${config.site}/${page}`;
+      // Endereço final servido pelo Cloudflare Pages (sem .html), igual ao canonical das páginas.
+      const loc = page === "index.html" ? `${config.site}/` : `${config.site}/${page.replace(/\.html$/, "")}`;
       return [
         "  <url>",
         `    <loc>${loc}</loc>`,

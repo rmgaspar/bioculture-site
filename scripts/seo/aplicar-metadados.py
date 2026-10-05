@@ -21,7 +21,9 @@ def slug(page: str) -> str:
 
 
 def block(site: str, page: str, meta: dict) -> str:
-    url = f"{site}/" if page == "index.html" else f"{site}/{page}"
+    # O Cloudflare Pages serve as páginas sem extensão (…/pagina.html → 308 → …/pagina):
+    # o endereço canónico é o final, para não apontar para um redirecionamento.
+    url = f"{site}/" if page == "index.html" else f"{site}/{page.removesuffix('.html')}"
     a = lambda v: html.escape(v, quote=True)
     og_title = meta["pt"].removesuffix(" — bioCulture")
     image = f"{site}/images/partilha/{slug(page)}.jpg"
