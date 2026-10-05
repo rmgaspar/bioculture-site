@@ -204,7 +204,7 @@
 
             async function loadData() {
                 try {
-                    const response = await fetch("/data/pressao_vetores.json?v=" + Date.now());
+                    const response = await fetch("/data/pressao_vetores.json");
                     if (!response.ok) throw new Error(`HTTP ${response.status}`);
                     const data = await response.json();
                     if (!data.estatisticas || !data.zaer || !data.territorio) {

@@ -5,7 +5,7 @@
         "/calendario/regeneration-calendar.html": {
             source: "/calendario/calendario.html",
             stylesheet: "/assets/css/pages/calendario-calendario.css?v=3",
-            script: "/assets/js/pages/calendario-calendario-2.js?v=1",
+            script: "/assets/js/pages/calendario-calendario-2.js?v=2",
             label: "Portugal em detalhe",
             title: "Calendário territorial de Portugal",
             intro: "Região, mês, culturas, plano semanal, pragas e flora invasora passam a fazer parte do calendário global.",

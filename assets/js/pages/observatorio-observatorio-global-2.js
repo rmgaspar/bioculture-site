@@ -235,7 +235,7 @@
             async function loadGlobal() {
                 const summary = document.getElementById("summary-grid");
                 try {
-                    const res = await fetch("/data/observatorio_global.json?v=" + Date.now());
+                    const res = await fetch("/data/observatorio_global.json");
                     if (!res.ok) throw new Error(`HTTP ${res.status}`);
                     const data = await res.json();
                     if (!data.series_temporais || !Object.keys(data.series_temporais).length) {

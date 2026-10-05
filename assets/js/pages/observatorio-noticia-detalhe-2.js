@@ -24,12 +24,12 @@
                 try {
                     const previewProposal = urlParams.get("preview") === "proposal";
                     const [ativas, arquivo, propostas] = await Promise.all([
-                        fetch("/data/noticias.json?v=" + Date.now()).then((r) => r.json()),
-                        fetch("/data/noticias_arquivo.json?v=" + Date.now()).then((r) =>
+                        fetch("/data/noticias.json").then((r) => r.json()),
+                        fetch("/data/noticias_arquivo.json").then((r) =>
                             r.ok ? r.json() : []
                         ),
                         previewProposal
-                            ? fetch("/data/noticias_propostas.json?v=" + Date.now()).then((r) => r.ok ? r.json() : [])
+                            ? fetch("/data/noticias_propostas.json").then((r) => r.ok ? r.json() : [])
                             : Promise.resolve([]),
                     ]);
                     const noticias = [...ativas, ...arquivo, ...propostas];

@@ -210,7 +210,7 @@
 
             async function loadObservatory() {
                 try {
-                    const response = await fetch("/data/observatorio_terra.json?v=" + Date.now());
+                    const response = await fetch("/data/observatorio_terra.json");
                     if (!response.ok) throw new Error(`HTTP ${response.status}`);
                     const data = await response.json();
                     if (!data.series_temporais || !data.indicadores_territoriais) {

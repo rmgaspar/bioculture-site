@@ -234,7 +234,7 @@
 
                 try {
                     const [master, pragas, solucoesCatalogo] = await Promise.all([
-                        fetch("/data/horticolas_master.json?v=" + Date.now()).then((r) => r.json()),
+                        fetch("/data/horticolas_master.json").then((r) => r.json()),
                         fetch("/data/pragas.json").then((r) => r.json()).catch(() => []),
                         fetch("/data/solucoes-catalogo.json").then((r) => r.json()).catch(() => null),
                     ]);

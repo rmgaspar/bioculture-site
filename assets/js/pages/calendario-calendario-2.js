@@ -737,7 +737,7 @@
                         urls.map((url) =>
                             url === "/data/bioregioes.json"
                                 ? window.BioCultureRegion.load({ fallback: false })
-                                : fetch(url + "?v=" + Date.now()).then((response) => {
+                                : fetch(url).then((response) => {
                                     if (!response.ok) throw new Error(url);
                                     return response.json();
                                 })
