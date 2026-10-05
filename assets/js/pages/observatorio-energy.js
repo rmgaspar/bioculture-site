@@ -41,11 +41,14 @@
         "Acesso mundial à eletricidade": "Global access to electricity",
         "Percentagem da população com acesso, sem medir qualidade, preço ou continuidade do serviço.":
             "Share of the population with access, without measuring service quality, price or continuity.",
-        "Renováveis e intensidade energética": "Renewables and energy intensity",
-        "As escalas são distintas: percentagem de renováveis e megajoules por dólar PPC de 2021.":
-            "The scales differ: renewable percentage and megajoules per 2021 PPP dollar.",
+        "Renováveis no consumo final": "Renewables in final consumption",
+        "Percentagem do consumo final de energia que vem de fontes renováveis. Subir é bom.":
+            "Share of final energy consumption that comes from renewable sources. Higher is better.",
+        "Intensidade energética": "Energy intensity",
+        "Megajoules gastos por cada dólar de riqueza produzida (PPC de 2021). Descer é bom: menos energia para o mesmo resultado.":
+            "Megajoules used per dollar of output (2021 PPP). Lower is better: less energy for the same result.",
         "Como ler os gráficos:": "How to read the charts:",
-        "observe tendências de longo prazo e confirma sempre o ano de cada série.":
+        "observa tendências de longo prazo e confirma sempre o ano de cada série.":
             "follow long-term trends and always check the year of each series.",
         "Países e territórios": "Countries and territories",
         "Mudar de escala": "Change scale",
@@ -121,12 +124,11 @@
                 "Landscape of renewable energy, community and territory",
             );
         $("access-chart").setAttribute("aria-label", "Global electricity access trend");
-        $("transition-chart").setAttribute(
-            "aria-label",
-            "Global renewable share and energy intensity trends",
-        );
+        $("transition-chart").setAttribute("aria-label", "Global renewable share of final energy consumption");
+        $("intensity-chart").setAttribute("aria-label", "Global energy intensity trend");
     }
-    function chart(id, rows, sets, dual) {
+    // Um eixo por gráfico: grandezas diferentes (percentagem e MJ por dólar) vão para gráficos separados.
+    function chart(id, rows, sets) {
         return new Chart($(id), {
             type: "line",
             data: { labels: rows, datasets: sets },
@@ -138,7 +140,6 @@
                 scales: {
                     x: { grid: { display: false } },
                     y: { beginAtZero: false },
-                    y1: dual ? { position: "right", grid: { drawOnChartArea: false } } : undefined,
                 },
             },
         });
@@ -173,7 +174,7 @@
                 ],
                 [
                     tr("Intensidade energética", "Energy intensity"),
-                    fmt(intensity.value, 2) + " MJ/USD",
+                    fmt(intensity.value, 2) + tr(" MJ por $ PPC", " MJ per PPP $"),
                     intensity.year,
                 ],
                 [
@@ -241,7 +242,6 @@
                         pointRadius: 0,
                     },
                 ],
-                false,
             );
             chart(
                 "transition-chart",
@@ -251,19 +251,27 @@
                         label: tr("Renováveis (%)", "Renewables (%)"),
                         data: series("renewable_final_energy_pct"),
                         borderColor: "#6f8c4a",
+                        backgroundColor: "#6f8c4a18",
+                        fill: true,
                         tension: 0.2,
                         pointRadius: 0,
-                    },
-                    {
-                        label: tr("Intensidade (MJ/USD)", "Intensity (MJ/USD)"),
-                        data: series("energy_intensity_mj_per_usd"),
-                        borderColor: "#b4762d",
-                        tension: 0.2,
-                        pointRadius: 0,
-                        yAxisID: "y1",
                     },
                 ],
-                true,
+            );
+            chart(
+                "intensity-chart",
+                years,
+                [
+                    {
+                        label: tr("MJ por dólar PPC", "MJ per PPP dollar"),
+                        data: series("energy_intensity_mj_per_usd"),
+                        borderColor: "#b4762d",
+                        backgroundColor: "#b4762d18",
+                        fill: true,
+                        tension: 0.2,
+                        pointRadius: 0,
+                    },
+                ],
             );
             var q = $("country-select");
             q.innerHTML = '<option value="">' + tr("Escolher…", "Choose…") + "</option>";
@@ -310,7 +318,7 @@
                                 "</small><strong>" +
                                 (x
                                     ? fmt(x.value, v[0].includes("intensity") ? 2 : 1) +
-                                      (x.unit === "%" ? "%" : " MJ/USD")
+                                      (x.unit === "%" ? "%" : tr(" MJ por $ PPC", " MJ per PPP $"))
                                     : "—") +
                                 "</strong><p>" +
                                 (x ? x.year : tr("Sem dados", "No data")) +
