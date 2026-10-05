@@ -1,0 +1,20 @@
+# Cloudflare Pages: cabeçalhos HTTP do site (https://developers.cloudflare.com/pages/configuration/headers/)
+
+# CSS e JS levam ?v=N no endereço e mudam de versão a cada alteração: podem ficar em cache.
+# 7 dias (e não 1 ano) para limitar o efeito de uma alteração publicada sem mudar a versão.
+/assets/*
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+
+# Imagens raramente mudam; o browser usa a cópia guardada e atualiza em segundo plano.
+/images/*
+  Cache-Control: public, max-age=604800, stale-while-revalidate=2592000
+
+# Dados atualizados por automatismos (notícias, Participa): confirmar sempre se há versão nova.
+/data/*
+  Cache-Control: public, max-age=0, must-revalidate
+
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: SAMEORIGIN
+  Permissions-Policy: geolocation=(self), camera=(), microphone=(), payment=(), usb=()
