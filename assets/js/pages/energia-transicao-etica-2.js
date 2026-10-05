@@ -130,7 +130,7 @@
                     open
                         ? tr("Ainda é possível participar nas consultas assinaladas como abertas.", "You can still take part in the consultations marked as open.")
                         : tr(
-                            "Não há nenhuma consulta de renováveis aberta neste momento. As que estão em análise aguardam decisão e, nas PDA, virá ainda a consulta do Estudo de Impacte Ambiental. Use «Seguir» na ficha do Participa para ser avisado.",
+                            "Não há nenhuma consulta de renováveis aberta neste momento. As que estão em análise aguardam decisão e, nas PDA, virá ainda a consulta do Estudo de Impacte Ambiental. Usa «Seguir» na ficha do Participa para ser avisado.",
                             "No renewables consultation is open right now. Those under review await a decision, and scoping procedures will be followed by an EIA consultation. Use “Follow” on the Participa page to be notified.",
                         )
                 }</p><span class="now-date">${tr("Verificado no Participa.pt em", "Checked on Participa.pt on")} ${date(meta.instantaneo_em)}</span>`;

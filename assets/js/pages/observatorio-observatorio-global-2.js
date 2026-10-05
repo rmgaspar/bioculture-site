@@ -188,7 +188,7 @@
 
             function renderPrinciples() {
                 const principles = [
-                    "Compare valores apenas quando usam a mesma unidade e o mesmo período de referência.",
+                    "Compara valores apenas quando usam a mesma unidade e o mesmo período de referência.",
                     "Uma subida ou descida num único ano não representa, por si só, uma tendência.",
                     "Os valores globais escondem diferenças importantes entre países e regiões.",
                     "As ligações das fontes permitem consultar a metodologia e os dados originais.",

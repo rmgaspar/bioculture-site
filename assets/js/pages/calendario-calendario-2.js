@@ -322,7 +322,7 @@
                             escapeHtml(item[field] || item.categoria || "")
                         }</span></span></a>`
                     ).join("")
-                    : '<div class="empty">Não existem entradas suficientemente claras para este mês. Consulte as condições locais antes de decidir.</div>';
+                    : '<div class="empty">Não existem entradas suficientemente claras para este mês. Consulta as condições locais antes de decidir.</div>';
             }
 
             function renderActions() {
@@ -354,7 +354,7 @@
                         } ${overlap.length > 4 ? "and others" : ""} can be sown and harvested this month. Generally, one already-developed generation is harvested while another is started, or staggered varieties and dates are used. Always confirm the variety, soil temperature and microclimate.`
                         : `<strong>Porque aparece a mesma cultura em fases diferentes?</strong> ${
                             escapeHtml(overlap.slice(0, 4).join(", "))
-                        } ${overlap.length > 4 ? "e outras" : ""} podem ser semeadas e colhidas neste mês. Em geral, colhe-se uma geração já desenvolvida enquanto se inicia outra, ou usam-se variedades e datas escalonadas. Confirme sempre a variedade, a temperatura do solo e o microclima.`;
+                        } ${overlap.length > 4 ? "e outras" : ""} podem ser semeadas e colhidas neste mês. Em geral, colhe-se uma geração já desenvolvida enquanto se inicia outra, ou usam-se variedades e datas escalonadas. Confirma sempre a variedade, a temperatura do solo e o microclima.`;
                     note.classList.add("visible");
                 } else {
                     note.textContent = "";
@@ -412,37 +412,37 @@
                         ],
                         [
                             "Criar habitat",
-                            "Instale sebes ou abrigos sem perturbar refúgios existentes.",
+                            "Instala sebes ou abrigos sem perturbar refúgios existentes.",
                         ],
                         [
                             "Rever ferramentas",
-                            "Limpe e repare ferramentas antes da época de crescimento.",
+                            "Limpa e repare ferramentas antes da época de crescimento.",
                         ],
                     ],
                     primavera: [
-                        ["Semear por etapas", "Evite concentrar toda a produção numa única data."],
+                        ["Semear por etapas", "Evita concentrar toda a produção numa única data."],
                         [
                             "Proteger plantas jovens",
-                            "Use barreiras físicas apenas quando existe risco identificado.",
+                            "Usa barreiras físicas apenas quando existe risco identificado.",
                         ],
-                        ["Acolher auxiliares", "Mantenha flores e água rasa com saída segura."],
+                        ["Acolher auxiliares", "Mantém flores e água rasa com saída segura."],
                         ["Verificar rega", "Teste linhas e emissores antes do calor."],
                     ],
                     verao: [
                         [
                             "Verificar humidade",
-                            "Observe a zona radicular antes de regar profundamente.",
+                            "Observa a zona radicular antes de regar profundamente.",
                         ],
                         ["Cobrir o solo", "Reponha cobertura sem a encostar aos caules."],
-                        ["Colher regularmente", "Retire frutos maduros e observe sinais de doença."],
-                        ["Criar sombra seletiva", "Proteja culturas sensíveis sem impedir ventilação."],
+                        ["Colher regularmente", "Retire frutos maduros e observa sinais de doença."],
+                        ["Criar sombra seletiva", "Protege culturas sensíveis sem impedir ventilação."],
                     ],
                     outono: [
                         [
                             "Guardar sementes",
-                            "Escolha plantas saudáveis e deixe maturar completamente.",
+                            "Escolhe plantas saudáveis e deixe maturar completamente.",
                         ],
-                        ["Semear coberturas", "Mantenha raízes vivas entre culturas."],
+                        ["Semear coberturas", "Mantém raízes vivas entre culturas."],
                         [
                             "Compostar materiais",
                             "Equilibre materiais secos e verdes sem enterrar resíduos.",
@@ -605,7 +605,7 @@
             function chooseLocationPrompt(kind) {
                 const message = isEn()
                     ? `Choose a location at the bottom of the side menu to see the ${kind} recorded for your region.`
-                    : `Escolha uma localização na base do menu lateral para ver ${kind === "pests" ? "as pragas sazonais" : "a flora invasora"} registada${kind === "pests" ? "s" : ""} para a sua região.`;
+                    : `Escolhe uma localização na base do menu lateral para ver ${kind === "pests" ? "as pragas sazonais" : "a flora invasora"} registada${kind === "pests" ? "s" : ""} para a tua região.`;
                 return `<div class="empty">${message} <button type="button" class="link-button" onclick="document.getElementById('guide-location-button')?.click()">${
                     isEn() ? "Choose location →" : "Escolher localização →"
                 }</button></div>`;
@@ -625,7 +625,7 @@
                     document.getElementById("pest-grid").innerHTML = `<div class="empty">${
                         isEn()
                             ? "No pests specifically flagged for this month. See the full catalogue further below."
-                            : "Sem pragas assinaladas especificamente para este mês. Consulte o catálogo completo mais abaixo."
+                            : "Sem pragas assinaladas especificamente para este mês. Consulta o catálogo completo mais abaixo."
                     } <a href="#pragas-catalogo">${isEn() ? "See full catalogue →" : "Ver catálogo completo →"}</a></div>`;
                     button.style.display = "none";
                     return;
@@ -659,7 +659,7 @@
                     document.getElementById("flora-grid").innerHTML = `<div class="empty">${
                         isEn()
                             ? "The regional profile has no confirmed invasive species in the local inventory yet — this may reflect a lack of records rather than a real absence. See the full catalogue further below."
-                            : "O perfil regional ainda não tem espécies invasoras confirmadas no inventário local — pode ser falta de registo, não ausência real. Consulte o catálogo completo mais abaixo."
+                            : "O perfil regional ainda não tem espécies invasoras confirmadas no inventário local — pode ser falta de registo, não ausência real. Consulta o catálogo completo mais abaixo."
                     } <a href="#pragas-catalogo">${isEn() ? "See full catalogue →" : "Ver catálogo completo →"}</a></div>`;
                     button.style.display = "none";
                     return;

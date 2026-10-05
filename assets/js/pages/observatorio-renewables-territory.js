@@ -48,7 +48,7 @@
             "Legal designation alone does not describe effectiveness, connectivity, management or community consent.",
         "Países e territórios": "Countries and territories",
         "Mudar de escala": "Change scale",
-        "Compare os valores mais recentes e os respetivos anos. Uma média nacional pode esconder conflitos locais, corredores ecológicos e impactos cumulativos.":
+        "Compara os valores mais recentes e os respetivos anos. Uma média nacional pode esconder conflitos locais, corredores ecológicos e impactos cumulativos.":
             "Compare latest values and their years. A national average can hide local conflicts, ecological corridors and cumulative impacts.",
         "Explorar país ou território": "Explore a country or territory",
         "Ver renováveis e território em Portugal": "See renewables and territory in Portugal",

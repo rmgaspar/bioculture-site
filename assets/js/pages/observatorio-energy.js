@@ -45,11 +45,11 @@
         "As escalas são distintas: percentagem de renováveis e megajoules por dólar PPC de 2021.":
             "The scales differ: renewable percentage and megajoules per 2021 PPP dollar.",
         "Como ler os gráficos:": "How to read the charts:",
-        "observe tendências de longo prazo e confirme sempre o ano de cada série.":
+        "observe tendências de longo prazo e confirma sempre o ano de cada série.":
             "follow long-term trends and always check the year of each series.",
         "Países e territórios": "Countries and territories",
         "Mudar de escala": "Change scale",
-        "Escolha uma geografia para comparar os três indicadores. Lacunas são mostradas como ausência de dados e nunca preenchidas por nós.":
+        "Escolhe uma geografia para comparar os três indicadores. Lacunas são mostradas como ausência de dados e nunca preenchidas por nós.":
             "Choose a geography to compare the three indicators. Gaps are shown as missing data and are never filled by us.",
         "Explorar país ou território": "Explore a country or territory",
         "Ver energia em Portugal": "See energy in Portugal",

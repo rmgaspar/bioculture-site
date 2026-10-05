@@ -61,7 +61,7 @@
                 "Açores":
                     "Solos vulcânicos, vento e salinidade atlântica moldam uma viticultura insular singular.",
                 "Portugal":
-                    "Selecione uma localidade para apresentar o contexto vitícola mais próximo.",
+                    "Seleciona uma localidade para apresentar o contexto vitícola mais próximo.",
             };
             const practiceIds = [
                 "adubo-verde",

@@ -376,14 +376,14 @@
                         section(
                             "Vigilância",
                             "Problemas e prevenção",
-                            "Confirme sempre a causa dos sintomas antes de intervir.",
+                            "Confirma sempre a causa dos sintomas antes de intervir.",
                             protection,
                             "vigilancia",
                         )
                     }
                     ${
                         related
-                            ? `<div class="detail-section"><div class="section-head"><span>Explorar</span><div><h2>Culturas semelhantes</h2><p>Compare necessidades e épocas antes de escolher alternativas.</p></div></div><div class="related">${related}</div></div>`
+                            ? `<div class="detail-section"><div class="section-head"><span>Explorar</span><div><h2>Culturas semelhantes</h2><p>Compara necessidades e épocas antes de escolher alternativas.</p></div></div><div class="related">${related}</div></div>`
                             : ""
                     }
                     ${

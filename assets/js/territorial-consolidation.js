@@ -5,7 +5,7 @@
         "/calendario/regeneration-calendar.html": {
             source: "/calendario/calendario.html",
             stylesheet: "/assets/css/pages/calendario-calendario.css?v=3",
-            script: "/assets/js/pages/calendario-calendario-2.js?v=2",
+            script: "/assets/js/pages/calendario-calendario-2.js?v=3",
             label: "Portugal em detalhe",
             title: "Calendário territorial de Portugal",
             intro: "Região, mês, culturas, plano semanal, pragas e flora invasora passam a fazer parte do calendário global.",
@@ -49,7 +49,7 @@
             intro: "Produção, consumo, redes e escolhas energéticas aproximadas ao contexto português."
         },
         "/energia/renewables-and-territory.html": {
-            source: "/energia/transicao-etica.html", stylesheet: "/assets/css/pages/energia-transicao-etica.css?v=4", script: "/assets/js/pages/energia-transicao-etica-2.js?v=1",
+            source: "/energia/transicao-etica.html", stylesheet: "/assets/css/pages/energia-transicao-etica.css?v=4", script: "/assets/js/pages/energia-transicao-etica-2.js?v=2",
             label: "Portugal em detalhe", title: "Renováveis e território em Portugal",
             intro: "Transição energética, implantação territorial, comunidades e critérios de justiça aplicados a Portugal."
         },
@@ -69,7 +69,7 @@
             intro: "Sistemas pecuários, alimentação, emissões, solo e bem-estar aproximados ao contexto nacional."
         },
         "/calendario/living-vineyard.html": {
-            source: "/calendario/enologia.html", stylesheet: "/assets/css/pages/calendario-enologia.css?v=4", script: "/assets/js/pages/calendario-enologia-2.js?v=1",
+            source: "/calendario/enologia.html", stylesheet: "/assets/css/pages/calendario-enologia.css?v=4", script: "/assets/js/pages/calendario-enologia-2.js?v=2",
             portugalTarget: "/calendario/enologia.html",
             label: "Portugal em detalhe", title: "A vinha viva em Portugal",
             intro: "Castas, terroir, calendário, solo, água e práticas vitícolas ligadas às regiões portuguesas."

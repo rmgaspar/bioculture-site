@@ -74,7 +74,7 @@
             const render = () => {
                 const found = filterSolutions(data, input.value, selected);
                 const groups = data.categorias.map(cat => ({cat, items: found.filter(s => s.categoria_id === cat.id)})).filter(g => g.items.length);
-                grid.innerHTML = groups.map(g => categoryGroup(g.cat, g.items, data)).join('') || `<div class="catalogue-empty">${tr('Nenhuma solução encontrada. Experimente outro termo ou escolha todas as famílias.','No solutions found. Try another term or select all families.')} <button type="button" id="reset-products">${tr('Limpar pesquisa','Clear search')}</button></div>`;
+                grid.innerHTML = groups.map(g => categoryGroup(g.cat, g.items, data)).join('') || `<div class="catalogue-empty">${tr('Nenhuma solução encontrada. Experimenta outro termo ou escolhe todas as famílias.','No solutions found. Try another term or select all families.')} <button type="button" id="reset-products">${tr('Limpar pesquisa','Clear search')}</button></div>`;
                 byId('product-count').textContent = tr(`${found.length} de ${data.solucoes.length} soluções em estudo`,`${found.length} of ${data.solucoes.length} solutions under study`);
                 filters.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed',String(b.dataset.category === selected)));
                 byId('reset-products')?.addEventListener('click',()=>{input.value='';selected='all';render();input.focus();});

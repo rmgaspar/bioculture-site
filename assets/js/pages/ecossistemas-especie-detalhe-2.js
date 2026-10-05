@@ -167,7 +167,7 @@
                 const prevention = esp.prevencao_biologica || {};
                 const solution = esp.solucao_biologica || {};
                 const techniques = esp.tecnicas || {};
-                return `<div class="section-block" id="diagnostico"><div class="section-head"><span class="eyebrow">Diagnóstico</span><div><h2>Reconhecer antes de intervir</h2><p>Sintomas semelhantes podem ter causas diferentes. Confirme o organismo, a extensão do dano e os auxiliares já presentes.</p></div></div><div class="grid">${
+                return `<div class="section-block" id="diagnostico"><div class="section-head"><span class="eyebrow">Diagnóstico</span><div><h2>Reconhecer antes de intervir</h2><p>Sintomas semelhantes podem ter causas diferentes. Confirma o organismo, a extensão do dano e os auxiliares já presentes.</p></div></div><div class="grid">${
                     plantasAfetadasPanel(esp, horticolas)
                 }${textPanel("Sinais e sintomas", esp.sintomas || diagnosis.sintomas_principais)}${
                     textPanel("Quando observar", esp.sazonalidade_portugal)
@@ -184,7 +184,7 @@
                     )
                 }${
                     listPanel("Infraestrutura ecológica", esp.infraestrutura_ecologica)
-                }</div></div><div class="section-block" id="intervencao"><div class="section-head"><span class="eyebrow">Intervenção</span><div><h2>Agir apenas quando necessário</h2><p>Comece pela medida menos perturbadora, registe o resultado e reavalie antes de repetir.</p></div></div><div class="grid">${
+                }</div></div><div class="section-block" id="intervencao"><div class="section-head"><span class="eyebrow">Intervenção</span><div><h2>Agir apenas quando necessário</h2><p>Começa pela medida menos perturbadora, regista o resultado e reavalia antes de repetir.</p></div></div><div class="grid">${
                     textPanel("Resposta recomendada", esp.combate || solution.metodo)
                 }${textPanel("Intervenção seletiva", techniques.intervencao)}${
                     textPanel("Avaliação", techniques.avaliacao)
@@ -209,7 +209,7 @@
                         }</i></a>`
                         : `<span>${esc(x.nome)} <i>${esc(x.nome_cientifico)}</i></span>`;
                 }).join("");
-                return `<div class="section-block"><div class="section-head"><span class="eyebrow">Comparar</span><div><h2>Espécies semelhantes</h2><p>A semelhança visual não confirma uma identificação. Observe forma, habitat, época e caracteres distintivos.</p></div></div><div class="similar">${links}</div></div>`;
+                return `<div class="section-block"><div class="section-head"><span class="eyebrow">Comparar</span><div><h2>Espécies semelhantes</h2><p>A semelhança visual não confirma uma identificação. Observa forma, habitat, época e caracteres distintivos.</p></div></div><div class="similar">${links}</div></div>`;
             }
             function render(esp, master, guidance, horticolas, solucoesCatalogo) {
                 const isPest = esp.grupo === "Sanidade Vegetal";

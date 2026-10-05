@@ -80,7 +80,7 @@ async function applyLanguage(lang) {
     }
 
     try {
-        const r = await fetch("/assets/lang/" + state.lang + ".json?v=13", { cache: "no-cache" });
+        const r = await fetch("/assets/lang/" + state.lang + ".json?v=14", { cache: "no-cache" });
         if (!r.ok) throw Error("lang");
 
         const t = await r.json();
@@ -291,7 +291,7 @@ async function locate(button) {
 
     status(
         state.lang === "pt"
-            ? "A obter a sua localização…"
+            ? "A obter a tua localização…"
             : "Getting your location…"
     );
 
@@ -310,7 +310,7 @@ async function locate(button) {
                 );
 
                 if (nearest && distance(point, nearest) > 50) {
-                    status(state.lang === "pt" ? "Sem localidade próxima no inventário português. Pesquise uma localidade manualmente." : "No nearby location in the Portuguese inventory. Search manually.");
+                    status(state.lang === "pt" ? "Sem localidade próxima no inventário português. Pesquisa uma localidade manualmente." : "No nearby location in the Portuguese inventory. Search manually.");
                 } else if (nearest) {
                     status(
                         state.lang === "pt"
@@ -339,7 +339,7 @@ async function locate(button) {
                 ? {
                     1: "Autorize a localização nas definições deste site.",
                     2: "O dispositivo não conseguiu determinar a localização. Pode pesquisar a localidade manualmente.",
-                    3: "A localização demorou demasiado. Tente novamente ou pesquise a localidade.",
+                    3: "A localização demorou demasiado. Tente novamente ou pesquisa a localidade.",
                 }
                 : {
                     1: "Allow location access in this site's settings.",
@@ -361,7 +361,7 @@ async function locate(button) {
         }
     );
     } catch (_) {
-        status(state.lang === "pt" ? "Não foi possível iniciar o GPS. Pesquise a localidade ou verifique a permissão do navegador." : "GPS could not start. Search manually or check browser permission.");
+        status(state.lang === "pt" ? "Não foi possível iniciar o GPS. Pesquisa a localidade ou verifica a permissão do navegador." : "GPS could not start. Search manually or check browser permission.");
         if (trigger) { trigger.disabled = false; trigger.removeAttribute("aria-busy"); }
     }
 }
