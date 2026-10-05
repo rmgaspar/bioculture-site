@@ -180,6 +180,30 @@ html body #main .section-nav.bio-nav-pinned {
     background: #f6f2e9 !important;
 }
 
+/* Barra de secções sempre numa só linha: se não couber, desliza na horizontal e o «↑ Topo» fica
+   preso à direita, visível. Espaçamento ligeiramente menor para caber inteira a partir de ~1440 px. */
+html body #main .section-nav {
+    flex-wrap: nowrap !important;
+    gap: 14px !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    scrollbar-width: none;
+}
+html body #main .section-nav::-webkit-scrollbar {
+    display: none;
+}
+html body #main .section-nav > a {
+    flex: 0 0 auto !important;
+}
+html body #main .section-nav.bio-nav-pinned .bio-nav-top {
+    position: sticky;
+    right: 0;
+    z-index: 1;
+    padding-left: 14px !important;
+    background: #f6f2e9 !important;
+    box-shadow: -16px 0 12px -6px #f6f2e9 !important;
+}
+
 html body #main :is(#acoes, #catalogo, #semana, #praticas, #vigilancia, #pragas-catalogo, #principios, #mundo) {
     scroll-margin-top: 6.5rem;
 }
