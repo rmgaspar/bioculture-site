@@ -466,7 +466,7 @@
     // Menu em ecrãs até 1280 px: botão e gaveta lateral (ver biocultura-mobile-nav.js).
     if (!document.querySelector('script[src*="biocultura-mobile-nav.js"]')) {
         const mobileNav = document.createElement("script");
-        mobileNav.src = "/assets/js/biocultura-mobile-nav.js?v=2";
+        mobileNav.src = "/assets/js/biocultura-mobile-nav.js?v=3";
         mobileNav.defer = true;
         document.head.appendChild(mobileNav);
     }

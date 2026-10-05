@@ -1,4 +1,4 @@
-/* Menu em ecrãs até 1280 px (telemóvel, tablet e portáteis pequenos).
+/* Menu em ecrãs até 1280 px (telemóvel, tablet e portáteis pequenos) e ligação «Saltar para o conteúdo».
    O tema original escondia o menu lateral nessas larguras e confiava no main.js do HTML5 UP para
    criar o botão; esse ficheiro deixou de ser carregado e o site ficava sem navegação.
    Aqui o menu passa a gaveta lateral, aberta por um botão flutuante (canto inferior direito, para
@@ -41,7 +41,10 @@
 }
 @media (min-width:1281px){.bio-nav-toggle,.bio-nav-backdrop{display:none!important}}
 @media (prefers-reduced-motion:reduce){body.bio-nav #sidebar,.bio-nav-backdrop,.bio-nav-toggle .bars,.bio-nav-toggle .bars::before,.bio-nav-toggle .bars::after{transition:none!important}}
-@media print{.bio-nav-toggle,.bio-nav-backdrop{display:none!important}}`;
+@media print{.bio-nav-toggle,.bio-nav-backdrop{display:none!important}}
+.bio-skip{position:fixed;left:1rem;top:1rem;z-index:10070;padding:.7rem 1.1rem;border-radius:999px;background:#143426;color:#fff!important;
+  font:600 .95rem/1 "Source Sans Pro",system-ui,sans-serif;text-decoration:none!important;border:0!important;transform:translateY(-200%);transition:transform .15s ease}
+.bio-skip:focus{transform:none;outline:3px solid #e0b84f;outline-offset:2px}`;
 
     function start() {
         const sidebar = document.getElementById("sidebar");
@@ -65,6 +68,19 @@
 
         const body = document.body;
         let open = false;
+
+        // Teclado: primeira paragem do Tab salta o menu e vai direta ao conteúdo.
+        const main = document.getElementById("main");
+        if (main && !document.querySelector(".bio-skip")) {
+            if (!main.hasAttribute("tabindex")) main.setAttribute("tabindex", "-1");
+            const skip = document.createElement("a");
+            skip.className = "bio-skip";
+            skip.href = "#main";
+            skip.setAttribute("data-no-translate", "");
+            skip.textContent = EN() ? "Skip to content" : "Saltar para o conteúdo";
+            skip.addEventListener("click", (event) => { event.preventDefault(); main.focus({ preventScroll: false }); main.scrollIntoView(); });
+            body.prepend(skip);
+        }
 
         function label() {
             toggle.querySelector(".label").textContent = open ? (EN() ? "Close" : "Fechar") : "Menu";
