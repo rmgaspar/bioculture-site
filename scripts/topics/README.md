@@ -4,10 +4,12 @@ The Portuguese routes are the canonical pages for the four resource topics and f
 
 Each page keeps local controls and data IDs, with the original introduction and continuous visible sections. The global panel loads its `unified-*.js` controller on page load. These controllers retain the existing data readers, but must not replace the sidebar or the page title. Global IDs must remain unique within the combined document.
 
-Global legacy styles are scoped to `.global-reading`. After editing their source styles, run:
+Global styles are scoped to `.global-reading`. Rules shared by all eight panels live in
+`assets/css/pages/global-reading-base.css`; each `assets/css/pages/unified-<topic>.css` holds only that
+topic's own rules and is loaded right after the base. Edit these files directly (the former generator,
+`scope-styles.py`, was retired when the styles were consolidated). After editing, run:
 
 ```sh
-python3 scripts/topics/scope-styles.py
 node scripts/tests/unified-topics.test.mjs
 node scripts/build-pages.mjs
 ```
