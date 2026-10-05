@@ -3,15 +3,14 @@
     const isEnglish = document.documentElement.lang === "en";
     fetch("/sidebar-content.html?v=24").then((r) => r.text()).then((html) => { byId("sidebar").innerHTML = html; });
 
+    // Como nas restantes técnicas: título, logo a imagem, e depois vantagens e calculadora.
     const solarTool = document.querySelector(".solar-tool");
-    if (solarTool && !document.querySelector(".solar-layout")) {
-        const layout = document.createElement("div");
-        layout.className = "solar-layout";
+    if (solarTool && !document.querySelector(".solar-figure")) {
         const figure = document.createElement("figure");
         figure.className = "blueprint-figure solar-figure";
         figure.innerHTML = `<img src="/images/solar-home-battery-v1.webp" alt="${isEnglish ? "Domestic photovoltaic system with hybrid inverter, battery and essential loads" : "Sistema fotovoltaico doméstico com inversor híbrido, bateria e cargas essenciais"}"><figcaption>${isEnglish ? "bioCulture concept — panels, inverter, battery and grid must be sized and protected by qualified professionals." : "Esquema conceptual bioCulture — painéis, inversor, bateria e rede devem ser dimensionados e protegidos por profissionais habilitados."}</figcaption>`;
-        solarTool.before(layout);
-        layout.append(figure, solarTool);
+        const benefits = solarTool.closest("section")?.querySelector(".blueprint-benefits");
+        (benefits || solarTool).before(figure);
     }
 
     const backupInput = byId("in-backup");
