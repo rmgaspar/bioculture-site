@@ -50,6 +50,7 @@
             })
             .filter((item) => item.el);
 
+        let lastActive = null;
         const setActive = () => {
             if (!sections.length) return;
             // Must stay >= the site's scroll-margin-top convention (6.5rem/104px) so a clicked
@@ -62,6 +63,14 @@
                 if (item.el.getBoundingClientRect().top - offset <= 0) current = item;
             });
             sections.forEach((item) => item.link.classList.toggle("bio-nav-active", item === current));
+            // Barras que deslizam na horizontal: mantém a secção ativa à vista (sem mexer na página).
+            if (current && current !== lastActive && navigation.scrollWidth > navigation.clientWidth + 1) {
+                const link = current.link;
+                const left = link.offsetLeft - navigation.offsetLeft;
+                const visible = left >= navigation.scrollLeft && left + link.offsetWidth <= navigation.scrollLeft + navigation.clientWidth - 90;
+                if (!visible) navigation.scrollTo({ left: Math.max(0, left - 140), behavior: reduceMotion ? "auto" : "smooth" });
+            }
+            lastActive = current;
         };
 
         const setProgress = () => {

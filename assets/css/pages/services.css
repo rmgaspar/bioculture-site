@@ -658,3 +658,33 @@ section {
         grid-template-columns: 1fr;
     }
 }
+
+/* Barra «Nesta página» das técnicas: fixa no topo ao descer (biocultura-sticky-nav.js), sempre numa linha;
+   se não couber, desliza na horizontal e o «↑ Topo» fica preso à direita. */
+html body #main nav.reading-nav.services-nav {
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    scrollbar-width: none;
+}
+html body #main nav.reading-nav.services-nav::-webkit-scrollbar {
+    display: none;
+}
+html body #main nav.reading-nav.services-nav > a,
+html body #main nav.reading-nav.services-nav > span {
+    flex: 0 0 auto !important;
+}
+html body #main nav.reading-nav.services-nav .hub-back {
+    margin: 0 !important;
+}
+html body #main nav.reading-nav.services-nav.bio-nav-pinned .bio-nav-top {
+    position: sticky;
+    right: 0;
+    z-index: 1;
+    padding-left: 14px !important;
+    background: #fff !important;
+    box-shadow: -16px 0 12px -6px #fff, 16px 0 0 0 #fff !important; /* cobre também a margem interior à direita */
+}
+#main :is(#biofossa, #chuva, #solar, #solo, #compostagem, #agrofloresta, #hortas, #apicultura, #aguascinzentas, #pragas, #catalogo-tecnicas, #o-teu-projeto) {
+    scroll-margin-top: 6rem;
+}
