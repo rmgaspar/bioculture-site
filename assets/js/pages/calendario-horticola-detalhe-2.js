@@ -306,7 +306,7 @@
                             <h2>${esc(item.nome_cientifico || "")}</h2>
                             ${
                         valid(item.descricao)
-                            ? `<p style="font-size:1.05em;line-height:1.7;color:#718078">${
+                            ? `<p style="font-size:1.05em;line-height:1.7;color:#616e67">${
                                 esc(item.descricao)
                             }</p>`
                             : ""

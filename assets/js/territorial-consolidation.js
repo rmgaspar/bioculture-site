@@ -4,7 +4,7 @@
     const routes = {
         "/calendario/regeneration-calendar.html": {
             source: "/calendario/calendario.html",
-            stylesheet: "/assets/css/pages/calendario-calendario.css?v=2",
+            stylesheet: "/assets/css/pages/calendario-calendario.css?v=3",
             script: "/assets/js/pages/calendario-calendario-2.js?v=1",
             label: "Portugal em detalhe",
             title: "Calendário territorial de Portugal",
@@ -13,7 +13,7 @@
         },
         "/recursos/water.html": {
             source: "/recursos/agua.html",
-            stylesheet: "/assets/css/pages/recursos-agua.css?v=3",
+            stylesheet: "/assets/css/pages/recursos-agua.css?v=4",
             script: "/assets/js/pages/recursos-agua-2.js?v=2",
             label: "Portugal em detalhe",
             title: "A água no território português",
@@ -21,7 +21,7 @@
         },
         "/recursos/air.html": {
             source: "/recursos/ar.html",
-            stylesheet: "/assets/css/pages/recursos-ar.css?v=3",
+            stylesheet: "/assets/css/pages/recursos-ar.css?v=4",
             script: "/assets/js/pages/recursos-ar-2.js?v=1",
             label: "Portugal em detalhe",
             title: "O ar no território português",
@@ -29,7 +29,7 @@
         },
         "/recursos/soil.html": {
             source: "/recursos/solo.html",
-            stylesheet: "/assets/css/pages/recursos-solo.css?v=3",
+            stylesheet: "/assets/css/pages/recursos-solo.css?v=4",
             script: "/assets/js/pages/recursos-solo-2.js?v=1",
             label: "Portugal em detalhe",
             title: "O solo no território português",
@@ -37,39 +37,39 @@
         },
         "/ecossistemas/biodiversity.html": {
             source: "/ecossistemas/biodiversidade.html",
-            stylesheet: "/assets/css/pages/ecossistemas-biodiversidade.css?v=2",
+            stylesheet: "/assets/css/pages/ecossistemas-biodiversidade.css?v=3",
             script: "/assets/js/pages/ecossistemas-biodiversidade-2.js?v=1",
             label: "Portugal em detalhe",
             title: "A biodiversidade no território português",
             intro: "Espécies, habitats, relações ecológicas e inventários aproximados à região guardada."
         },
         "/energia/energy.html": {
-            source: "/energia/energia.html", stylesheet: "/assets/css/pages/energia-energia.css?v=2", script: "/assets/js/pages/energia-energia-2.js?v=1",
+            source: "/energia/energia.html", stylesheet: "/assets/css/pages/energia-energia.css?v=3", script: "/assets/js/pages/energia-energia-2.js?v=1",
             label: "Portugal em detalhe", title: "A energia no território português",
             intro: "Produção, consumo, redes e escolhas energéticas aproximadas ao contexto português."
         },
         "/energia/renewables-and-territory.html": {
-            source: "/energia/transicao-etica.html", stylesheet: "/assets/css/pages/energia-transicao-etica.css?v=3", script: "/assets/js/pages/energia-transicao-etica-2.js?v=1",
+            source: "/energia/transicao-etica.html", stylesheet: "/assets/css/pages/energia-transicao-etica.css?v=4", script: "/assets/js/pages/energia-transicao-etica-2.js?v=1",
             label: "Portugal em detalhe", title: "Renováveis e território em Portugal",
             intro: "Transição energética, implantação territorial, comunidades e critérios de justiça aplicados a Portugal."
         },
         "/energia/ai-data-centres.html": {
-            source: "/energia/digital.html", stylesheet: "/assets/css/pages/energia-digital.css?v=2", script: "/assets/js/pages/energia-digital-2.js?v=1",
+            source: "/energia/digital.html", stylesheet: "/assets/css/pages/energia-digital.css?v=3", script: "/assets/js/pages/energia-digital-2.js?v=1",
             label: "Portugal em detalhe", title: "O impacto digital em Portugal",
             intro: "Infraestruturas, energia, água, materiais e efeitos territoriais da transformação digital."
         },
         "/energia/mining.html": {
-            source: "/energia/mineracao.html", stylesheet: "/assets/css/pages/energia-mineracao.css?v=2", script: "/assets/js/pages/energia-mineracao-2.js?v=1",
+            source: "/energia/mineracao.html", stylesheet: "/assets/css/pages/energia-mineracao.css?v=3", script: "/assets/js/pages/energia-mineracao-2.js?v=1",
             label: "Portugal em detalhe", title: "Mineração e território português",
             intro: "Recursos minerais, pressões ecológicas, comunidades e decisões de longo prazo em Portugal."
         },
         "/energia/livestock.html": {
-            source: "/energia/pecuaria.html", stylesheet: "/assets/css/pages/energia-pecuaria.css?v=3", script: "/assets/js/pages/energia-pecuaria-2.js?v=1",
+            source: "/energia/pecuaria.html", stylesheet: "/assets/css/pages/energia-pecuaria.css?v=4", script: "/assets/js/pages/energia-pecuaria-2.js?v=1",
             label: "Portugal em detalhe", title: "Pecuária e território português",
             intro: "Sistemas pecuários, alimentação, emissões, solo e bem-estar aproximados ao contexto nacional."
         },
         "/calendario/living-vineyard.html": {
-            source: "/calendario/enologia.html", stylesheet: "/assets/css/pages/calendario-enologia.css?v=3", script: "/assets/js/pages/calendario-enologia-2.js?v=1",
+            source: "/calendario/enologia.html", stylesheet: "/assets/css/pages/calendario-enologia.css?v=4", script: "/assets/js/pages/calendario-enologia-2.js?v=1",
             portugalTarget: "/calendario/enologia.html",
             label: "Portugal em detalhe", title: "A vinha viva em Portugal",
             intro: "Castas, terroir, calendário, solo, água e práticas vitícolas ligadas às regiões portuguesas."
