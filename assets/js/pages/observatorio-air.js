@@ -65,7 +65,7 @@
             var k = (n.nodeValue || "").trim();
             if (tx[k]) n.nodeValue = n.nodeValue.replace(k, tx[k]);
         });
-        document.title = "bioCultura — Global Air Observatory";
+        document.title = "Air quality worldwide and in Portugal — bioCulture";
     }
     Promise.all(
         ["air-overview.json", "air-countries.json", "air-timeseries.json", "air-sources.json"].map(

@@ -51,7 +51,7 @@
             var k = (n.nodeValue || "").trim();
             if (tx[k]) n.nodeValue = n.nodeValue.replace(k, tx[k]);
         });
-        document.title = "bioCultura — Global Soil Observatory";
+        document.title = "Soil worldwide and in Portugal — bioCulture";
     }
     Promise.all(
         [

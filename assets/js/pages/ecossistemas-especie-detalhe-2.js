@@ -292,7 +292,7 @@
                         }</div>`
                         : ""
                 }`;
-                document.title = `${esp.nome} — bioCultura`;
+                document.title = `${esp.nome} — bioCulture`;
             }
             function managementNav(esp, guidance) {
                 const pest = esp.grupo === "Sanidade Vegetal";

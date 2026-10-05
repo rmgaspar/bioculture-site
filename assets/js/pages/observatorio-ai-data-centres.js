@@ -61,7 +61,7 @@
             var k = (n.nodeValue || "").trim();
             if (tx[k]) n.nodeValue = n.nodeValue.replace(k, tx[k]);
         });
-        document.title = "bioCulture — AI and Data Centres Observatory";
+        document.title = "Digital impact and AI — bioCulture";
     }
     Promise.all([
         load("ai-data-centres-overview.json"),

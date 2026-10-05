@@ -396,7 +396,7 @@
                             : ""
                     }
                 `;
-                    document.title = item.nome + " - bioCultura";
+                    document.title = item.nome + " — bioCulture";
                     const stickyNav = document.createElement("script");
                     stickyNav.src = "/assets/js/biocultura-sticky-nav.js?v=6";
                     document.body.appendChild(stickyNav);

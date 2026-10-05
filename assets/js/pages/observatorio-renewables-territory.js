@@ -90,7 +90,7 @@
             var k = (n.nodeValue || "").trim();
             if (tx[k]) n.nodeValue = n.nodeValue.replace(k, tx[k]);
         });
-        document.title = "bioCulture — Renewables and Territory Observatory";
+        document.title = "Renewables and territory — bioCulture";
     }
     if (en) {
         var txMore = {

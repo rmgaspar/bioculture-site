@@ -43,7 +43,7 @@
 
                         document.getElementById("titulo").innerText = content.titulo || "Sem título";
                         document.getElementById("corpo").innerHTML = content.corpo || "Conteúdo não disponível.";
-                        document.title = (content.titulo || "bioCultura") + " - bioCultura";
+                        document.title = (content.titulo || "bioCulture") + " — bioCulture";
 
                         const bioTxt = content.resumo_biocultura || "";
                         const bioBox = document.getElementById("biocultura-box");

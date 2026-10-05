@@ -45,7 +45,7 @@
             var k = (n.nodeValue || "").trim();
             if (tx[k]) n.nodeValue = n.nodeValue.replace(k, tx[k]);
         });
-        document.title = "bioCulture — Global Mining Observatory";
+        document.title = "Mining worldwide and in Portugal — bioCulture";
     }
     fetch("/data/mining-global.json")
         .then(function (r) {

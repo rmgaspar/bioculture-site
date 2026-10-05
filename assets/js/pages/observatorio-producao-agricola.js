@@ -10,7 +10,7 @@ if (window.BioCultureI18n?.isEnglish || (document.documentElement.lang || "").st
   if (tpl && box) box.innerHTML = tpl.innerHTML;
   document.querySelectorAll("[data-en]").forEach((n) => { n.innerHTML = n.dataset.en; });
   document.querySelectorAll("[data-en-label]").forEach((n) => n.setAttribute("aria-label", n.dataset.enLabel));
-  document.title = "World agricultural production — Observatory | bioCulture";
+  document.title = "World agricultural production — bioCulture";
 }
 function render() {
 

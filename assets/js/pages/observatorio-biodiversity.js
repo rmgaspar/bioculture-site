@@ -50,7 +50,7 @@
             var k = (n.nodeValue || "").trim();
             if (tx[k]) n.nodeValue = n.nodeValue.replace(k, tx[k]);
         });
-        document.title = "bioCultura — Global Biodiversity Observatory";
+        document.title = "Biodiversity worldwide and in Portugal — bioCulture";
     }
     Promise.all(
         [

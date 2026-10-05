@@ -18,10 +18,35 @@ const output = path.resolve(".pages-dist");
 const textExtensions = new Set([".css", ".html", ".js", ".json", ".svg", ".webmanifest", ".xml"]);
 const publicEntries = [
   "assets", "calendario", "config", "contactos.html", "data", "ecossistemas",
-  "energia", "images", "index.html", "manifesto.html", "privacidade.html",
+  "energia", "images", "index.html", "manifesto.html", "privacidade.html", "404.html", "robots.txt",
   "observatorio", "recursos", "services", "sidebar-content.html"
 ];
 const rootPathPattern = new RegExp(`([\\"'\`\\(=])/(?!/)(?=${publicEntries.map(escapeRegExp).join("|")})(?=[^\\s])`, "g");
+
+// Mapa do site para os motores de pesquisa, a partir de config/paginas.json; a data de cada página
+// é a do último commit que a alterou.
+async function sitemap() {
+  const config = JSON.parse(await readFile("config/paginas.json", "utf8"));
+  const urls = Object.entries(config.paginas)
+    .filter(([, meta]) => meta.sitemap !== false)
+    .map(([page, meta]) => {
+      let lastmod = "";
+      try {
+        lastmod = execFileSync("git", ["log", "-1", "--format=%cs", "--", page], { encoding: "utf8" }).trim();
+      } catch {}
+      const loc = page === "index.html" ? `${config.site}/` : `${config.site}/${page}`;
+      return [
+        "  <url>",
+        `    <loc>${loc}</loc>`,
+        lastmod ? `    <lastmod>${lastmod}</lastmod>` : "",
+        `    <xhtml:link rel="alternate" hreflang="pt-PT" href="${loc}"/>`,
+        `    <xhtml:link rel="alternate" hreflang="en" href="${loc}?lang=en"/>`,
+        meta.prioridade ? `    <priority>${meta.prioridade.toFixed(1)}</priority>` : "",
+        "  </url>",
+      ].filter(Boolean).join("\n");
+    });
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n${urls.join("\n")}\n</urlset>\n`;
+}
 
 function escapeRegExp(value) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -47,6 +72,7 @@ for (const entry of publicEntries) {
   await cp(entry, path.join(output, entry), { recursive: true });
 }
 await writeFile(path.join(output, ".nojekyll"), "");
+await writeFile(path.join(output, "sitemap.xml"), await sitemap());
 await transformDirectory(output);
 if ((await readdir(output)).includes("catalogo")) {
   throw new Error("A pesquisa do catálogo não pode fazer parte do site público.");
