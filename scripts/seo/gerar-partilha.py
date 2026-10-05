@@ -26,7 +26,6 @@ CARDS = {
     "observatorio/producao-agricola.html": ("Produção agrícola.", "O que o mundo cultiva e troca."),
     "observatorio/pressoes-humanas.html": ("Pressões diferentes.", "Efeitos que se cruzam."),
     "observatorio/limitar-ultrapassagem-1-5.html": ("Depois de 1,5 °C.", "Limitar o pico, acelerar a descida."),
-    "observatorio/territory.html": ("Turismo e território.", "A face da extração."),
     "observatorio/noticia-detalhe.html": ("Atualidade.", "O que muda no território."),
     "recursos/vida-e-recursos.html": ("Quatro sistemas.", "Uma só teia de vida."),
     "recursos/agua.html": ("Água.", "O sistema que liga tudo."),
