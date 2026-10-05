@@ -460,10 +460,25 @@
                         "water-overview", "air-overview", "soil-overview", "biodiversity-overview",
                         "ai-data-centres-overview", "energy-overview", "livestock-global", "observatorio_terra",
                     ];
-                    const atlasExtras = await Promise.all(atlasNames.map((n) =>
-                        fetch(`/data/${n}.json`).then((r) => (r.ok ? r.json() : null)).catch(() => null)
-                    ));
-                    el("atlas-container").innerHTML = atlasContent(...atlasExtras);
+                    // O atlas fica mais abaixo e junta 13 ficheiros (inventários de pragas e invasoras incluídos):
+                    // só é pedido quando o leitor se aproxima da secção, para não pesar na entrada.
+                    const loadAtlas = async () => {
+                        const atlasExtras = await Promise.all(atlasNames.map((n) =>
+                            fetch(`/data/${n}.json`).then((r) => (r.ok ? r.json() : null)).catch(() => null)
+                        ));
+                        el("atlas-container").innerHTML = atlasContent(...atlasExtras);
+                    };
+                    const atlas = el("atlas-container");
+                    if (atlas && "IntersectionObserver" in window) {
+                        const watch = new IntersectionObserver((entries) => {
+                            if (!entries.some((entry) => entry.isIntersecting)) return;
+                            watch.disconnect();
+                            loadAtlas().catch((error) => console.error("Atlas:", error));
+                        }, { rootMargin: "800px 0px" });
+                        watch.observe(atlas);
+                    } else {
+                        await loadAtlas();
+                    }
                 } catch (e) {
                     console.error("Não foi possível carregar a entrada do observatório:", e);
                     el("pulse").innerHTML = '<p class="empty">—</p>';

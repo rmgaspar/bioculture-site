@@ -407,7 +407,12 @@ function scheduleRefresh() {
         try { saved = localStorage.getItem("biocultura_region") || ""; } catch (_) {}
         if (!saved) return;
         try {
-            const item = (await regions()).find((x) => String(x.id) === String(saved));
+            // Só o nome da localidade: lê o ficheiro pequeno da região (o mesmo que as páginas usam)
+            // em vez do inventário completo de localidades (~540 KB), que fica para a pesquisa e o GPS.
+            const rows = window.BioCultureRegion
+                ? await window.BioCultureRegion.load({ fallback: false })
+                : (await regions()).filter((x) => String(x.id) === String(saved));
+            const item = rows && rows[0];
             const input = get("loc-search-input");
             if (item && input && !input.value) input.value = item.titulo;
         } catch (_) {}

@@ -18,6 +18,27 @@
         }
     };
 
+    /* Cada ficheiro de dados é pedido uma única vez por página. Vários scripts (a página, a leitura
+       global, o menu) pediam o mesmo JSON — noticias.json, en.json — e descarregavam-no duas vezes;
+       os pedidos seguintes reutilizam agora uma cópia da mesma resposta. */
+    (function shareDataRequests() {
+        const base = window.fetch.bind(window);
+        const pending = new Map();
+        window.fetch = function (input, init) {
+            const url = String(input instanceof Request ? input.url : input);
+            const method = String((init && init.method) || (input instanceof Request ? input.method : "GET")).toUpperCase();
+            if (method !== "GET" || !/\/(?:data|assets\/lang)\/[^?#]+\.json(?:[?#]|$)/.test(url)) return base(input, init);
+            const key = new URL(url, location.href).href;
+            if (!pending.has(key)) {
+                pending.set(key, base(input, init).then(
+                    (response) => { if (!response.ok) pending.delete(key); return response; },
+                    (error) => { pending.delete(key); throw error; },
+                ));
+            }
+            return pending.get(key).then((response) => response.clone());
+        };
+    })();
+
     /* Fichas de espécie: o inventário completo é dividido em blocos (data/especies/b<N>.json) e a
        página carrega apenas o bloco da espécie pedida. A função de dispersão tem de coincidir com
        scripts/gerar-especies.mjs. */
@@ -429,7 +450,7 @@
     function bootBioCultureShell() {
         if (biocultureShellBooted) return;
         biocultureShellBooted = true;
-        import("/assets/js/biocultura-shell.js?v=18")
+        import("/assets/js/biocultura-shell.js?v=19")
             .then((module) => module.init())
             .catch((error) => {
                 biocultureShellBooted = false;
