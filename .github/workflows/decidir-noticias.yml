@@ -1,0 +1,53 @@
+name: Aplicar decisões sobre notícias
+
+# Disparado pela página de revisão (revisao.html) com a lista das escolhas, p. ex.
+# "id-da-noticia:aprovar,outro-id:recusar". Só a lista é aceite: nada mais da página entra aqui.
+on:
+  workflow_dispatch:
+    inputs:
+      decisoes:
+        description: "Lista id:aprovar ou id:recusar, separada por vírgulas"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: noticias-editorial
+  cancel-in-progress: false
+
+jobs:
+  decidir:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Validar a lista
+        env:
+          DECISOES: ${{ inputs.decisoes }}
+        run: |
+          printf '%s' "$DECISOES" | grep -Eq '^[a-z0-9-]+:(aprovar|recusar)(,[a-z0-9-]+:(aprovar|recusar))*$' \
+            || { echo "::error::Formato de decisões inválido."; exit 1; }
+      - name: Aplicar decisões
+        env:
+          DECISOES: ${{ inputs.decisoes }}
+        run: python3 scripts/noticias/rever.py lote "$DECISOES"
+      - name: Validar dados editoriais
+        run: |
+          python3 -m json.tool data/noticias_propostas.json >/dev/null
+          python3 -m json.tool data/noticias.json >/dev/null
+          python3 -m json.tool data/noticias_rejeitadas.json >/dev/null
+      - name: Guardar decisões
+        run: |
+          if git diff --quiet; then
+            echo "Nada a guardar."
+            exit 0
+          fi
+          git config user.name "bioCultura Notícias"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/noticias.json data/noticias_propostas.json data/noticias_rejeitadas.json
+          git commit -m "Notícias: decisões da revisão editorial"
+          git pull --rebase origin main
+          git push origin HEAD:main

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>Revisão de notícias — bioCulture</title>
+<link rel="icon" type="image/png" sizes="32x32" href="/images/bioculture-favicon-32.png">
+<link rel="stylesheet" href="/assets/css/pages/revisao.css?v=1">
+</head>
+<body>
+<main class="revisao">
+  <header class="revisao-topo">
+    <span class="revisao-etiqueta">Equipa bioCulture · privado</span>
+    <h1>Notícias à espera de decisão</h1>
+    <p class="revisao-intro" id="intro">A carregar propostas…</p>
+  </header>
+
+  <details class="revisao-ligacao" id="ligacao">
+    <summary><span id="ligacao-estado">Ligação ao GitHub</span></summary>
+    <div class="revisao-ligacao-corpo">
+      <p>Para aprovar ou recusar é preciso uma chave do GitHub só para este repositório. Fica guardada apenas neste navegador.</p>
+      <ol>
+        <li>Abre <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener noreferrer">a criação de chaves</a>.</li>
+        <li>Em <em>Repository access</em> escolhe só <strong>bioculture-site</strong>.</li>
+        <li>Em <em>Permissions → Repository permissions</em> põe <strong>Actions: Read and write</strong> (nada mais).</li>
+        <li>Copia a chave gerada e cola-a aqui.</li>
+      </ol>
+      <form id="form-chave" autocomplete="off">
+        <label for="chave">Chave do GitHub</label>
+        <div class="revisao-linha">
+          <input id="chave" type="password" spellcheck="false" autocomplete="off" placeholder="github_pat_…">
+          <button type="submit" class="botao">Guardar</button>
+          <button type="button" class="botao botao-fraco" id="remover-chave" hidden>Remover</button>
+        </div>
+        <p class="revisao-nota" id="chave-nota" role="status"></p>
+      </form>
+    </div>
+  </details>
+
+  <div class="revisao-filtros" id="filtros" hidden>
+    <label>Categoria <select id="f-categoria"></select></label>
+    <label>Fonte <select id="f-fonte"></select></label>
+    <label>Ordenar <select id="f-ordem">
+      <option value="relevancia">Relevância</option>
+      <option value="data">Mais recentes</option>
+    </select></label>
+  </div>
+
+  <section id="lista" class="revisao-lista" aria-live="polite"></section>
+</main>
+
+<div class="revisao-barra" id="barra" hidden>
+  <p id="barra-resumo"></p>
+  <button type="button" class="botao botao-fraco" id="limpar">Limpar escolhas</button>
+  <button type="button" class="botao" id="aplicar">Aplicar decisões</button>
+</div>
+<p class="revisao-estado" id="estado" role="status"></p>
+
+<script src="/assets/js/revisao-noticias.js?v=1"></script>
+</body>
+</html>

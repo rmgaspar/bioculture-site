@@ -33,22 +33,22 @@ IMAGES = json.loads((Path(__file__).resolve().parents[2] / "config" / "noticias_
 
 CATEGORIES = {
     "clima": ("Clima", ["clima", "climate", "aquecimento", "warming", "temperatura", "heatwave"]),
-    "agua": ("Água", ["agua", "water", "seca", "drought", "cheia", "flood", "oceano", "rio", "barragem"]),
+    "agua": ("Água", ["agua", "water", "seca", "drought", "cheia", "flood", "oceano", "rios", "barragem"]),
     "solo": ("Solo", ["solo", "soil", "erosao", "desertificacao", "compost", "agricultura", "pesticida"]),
-    "biodiversidade": ("Biodiversidade", ["biodivers", "species", "especie", "habitat", "floresta", "forest", "invasora", "polinizador"]),
-    "ar": ("Ar", ["qualidade do ar", "air quality", "poluicao", "pollution", "emissoes", "emissions", "incendio", "wildfire"]),
-    "energia": ("Energia", ["energia", "energy", "renovavel", "renewable", "solar", "eolica", "wind power"]),
-    "mineracao": ("Mineração", ["mineracao", "mining", "litio", "lithium", "mina ", "extracao mineral"]),
+    "biodiversidade": ("Biodiversidade", ["biodivers*", "species", "especie", "habitat", "floresta", "forest", "invasora", "polinizador"]),
+    "ar": ("Ar", ["qualidade do ar", "air quality", "poluicao", "pollution", "emissoes", "emissions", "incendio", "incendio florestal", "fogo florestal", "wildfire"]),
+    "energia": ("Energia", ["energia", "energy", "renovavel", "renewable", "solar", "eolica", "wind power", "nuclear", "central nuclear", "hidroeletric*"]),
+    "mineracao": ("Mineração", ["mineracao", "mining", "litio", "lithium", "minas", "extracao mineral"]),
     "impacto-digital": ("Impacto Digital & IA", ["inteligencia artificial", "artificial intelligence", "data center", "centro de dados", "digitalizacao"]),
     "pecuaria": ("Pecuária", ["pecuaria", "livestock", "suinicultura", "aviario", "gado", "metano"]),
     "enologia": ("Enologia", ["vinha", "vinho", "viticultura", "vineyard", "wine"]),
-    "agricultura": ("Agricultura biológica", ["agricultura", "agriculture", "organic farming", "agroecolog", "crop", "semente", "seed"]),
-    "oceanos": ("Oceanos", ["oceano", "ocean", "marinho", "marine", "sea", "algal", "eutrofiza"]),
+    "agricultura": ("Agricultura biológica", ["agricultura", "agriculture", "organic farming", "agroecolog*", "crop", "semente", "seed"]),
+    "oceanos": ("Oceanos", ["oceano", "ocean", "marinho", "marine", "sea level", "algal", "eutrofiza*"]),
     "territorio": ("Território", ["territorio", "territory", "land use", "ordenamento", "protected area"]),
 }
 
 IMPACT = ["recorde", "emergencia", "risco", "crise", "proibicao", "lei", "relatorio", "estudo", "milhoes", "extincao", "contaminacao"]
-PORTUGAL = ["portugal", "portugues", "acores", "madeira", "algarve", "alentejo", "lisboa", "porto"]
+PORTUGAL = ["portugal", "portugues*", "acores", "madeira", "algarve", "alentejo", "lisboa", "porto"]
 MONTHS = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"]
 
 
@@ -113,13 +113,48 @@ def fetch_feed(url: str) -> list[dict]:
     return result
 
 
-def classify(text: str) -> list[tuple[str, str, int]]:
+def has_word(word: str, value: str) -> bool:
+    """Palavra inteira (com plural simples); "raiz*" aceita qualquer terminação.
+
+    Procurar texto solto fazia "rio" casar com "Rio Ave" e "lei" com "leilão".
+    """
+    stem = word.endswith("*")
+    pattern = r"(?<![a-z0-9])" + re.escape(folded(word.rstrip("*"))) + (r"[a-z]*" if stem else r"s?(?![a-z0-9])")
+    return re.search(pattern, value) is not None
+
+
+def classify(text: str) -> list[tuple[int, str, str]]:
     value = folded(text)
     matches = []
     for category_id, (label, words) in CATEGORIES.items():
-        count = sum(1 for word in words if folded(word) in value)
+        count = sum(1 for word in words if has_word(word, value))
         matches.append((count, category_id, label))
     return sorted((m for m in matches if m[0] > 0), reverse=True)
+
+
+def distinct_terms(text: str) -> int:
+    """Termos temáticos diferentes encontrados no texto, somando todas as categorias."""
+    value = folded(text)
+    return len({w for _, words in CATEGORIES.values() for w in words if has_word(w, value)})
+
+
+def blocked(item: dict, source_cfg: dict, config: dict) -> str:
+    """Motivo pelo qual a notícia nunca chega à fila de revisão, ou "" se pode seguir."""
+    text = folded(item["title"])
+    source = folded(item["source"] or source_cfg["nome"])
+    path = urllib.parse.urlsplit(item["url"]).path.strip("/").split("/")
+    for pattern in config.get("bloquear_titulos", []):
+        if re.search(pattern, text, re.I):
+            return "título fora do âmbito"
+    if any(folded(name) in source for name in config.get("bloquear_fontes", [])):
+        return "fonte excluída"
+    sections = source_cfg.get("secoes_url")
+    if sections and (len(path) < 2 or path[1] not in sections):
+        return "secção fora do âmbito"
+    minimum = int(source_cfg.get("termos_minimos", 1))
+    if distinct_terms(item["title"] + " " + item["summary"]) < minimum:
+        return "pouca ligação ao tema"
+    return ""
 
 
 def geographic_scope(text: str, source_cfg: dict) -> tuple[str, list[str]]:
@@ -127,7 +162,7 @@ def geographic_scope(text: str, source_cfg: dict) -> tuple[str, list[str]]:
     configured = source_cfg.get("ambito")
     if configured:
         return configured, ["PT"] if configured == "portugal" else []
-    if any(word in value for word in PORTUGAL):
+    if any(has_word(word, value) for word in PORTUGAL):
         return "portugal", ["PT"]
     return "global", []
 
@@ -213,10 +248,10 @@ def score(item: dict, authority: int, keyword_hits: int, now: dt.datetime) -> tu
     topic = min(25, 9 + keyword_hits * 5)
     points += topic
     reasons.append(f"relação temática: {topic}/25")
-    geo = 15 if any(word in text for word in PORTUGAL) else 7
+    geo = 15 if any(has_word(word, text) for word in PORTUGAL) else 7
     points += geo
     reasons.append(f"relevância geográfica: {geo}/15")
-    impact = min(15, 5 + 3 * sum(1 for word in IMPACT if word in text))
+    impact = min(15, 5 + 3 * sum(1 for word in IMPACT if has_word(word, text)))
     points += impact
     reasons.append(f"impacto potencial: {impact}/15")
     age = max(0, (now - item["published"]).days)
@@ -289,9 +324,30 @@ def make_news(item: dict, source_cfg: dict, matches: list[tuple[str, str, int]],
     }
 
 
+def reassess(pending: list[dict], config: dict, today: dt.date) -> tuple[list[dict], list[tuple[dict, str]]]:
+    """Aplica os critérios atuais à fila já existente: tira o que expirou ou não passa no filtro."""
+    sources = {s["nome"]: s for s in config["fontes"]}
+    keep, dropped = [], []
+    for row in pending:
+        title = (row.get("pt") or {}).get("titulo", "")
+        summary = (row.get("pt") or {}).get("resumo_biocultura", "")
+        if row.get("expira_em") and row["expira_em"] < today.isoformat():
+            dropped.append((row, "prazo terminado"))
+            continue
+        cfg = sources.get(row.get("fonte", ""), {"nome": row.get("fonte", "")})
+        item = {"title": title, "summary": summary, "url": row.get("url", ""), "source": row.get("fonte", "")}
+        reason = blocked(item, cfg, config)
+        # Itens vindos de pesquisas do Google já não trazem a secção da fonte original: só se aplicam os filtros de texto.
+        if reason == "secção fora do âmbito" and "news.google.com" in row.get("url", ""):
+            reason = ""
+        (dropped.append((row, reason)) if reason else keep.append(row))
+    return keep, dropped
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--reavaliar", action="store_true", help="só reaplica os critérios à fila existente, sem ir às fontes")
     parser.add_argument("--config", type=Path, default=CONFIG_PATH)
     args = parser.parse_args()
     config = json.loads(args.config.read_text(encoding="utf-8"))
@@ -299,8 +355,17 @@ def main() -> int:
     pending = json.loads(PROPOSALS_PATH.read_text(encoding="utf-8")) if PROPOSALS_PATH.exists() else []
     rejected = json.loads(REJECTED_PATH.read_text(encoding="utf-8")) if REJECTED_PATH.exists() else []
     now = dt.datetime.now(dt.timezone.utc)
+    pending, dropped = reassess(pending, config, now.date())
+    for row, reason in dropped:
+        print(f"- retirada da fila ({reason}): {row['pt']['titulo'][:80]}")
+    if args.reavaliar:
+        print(f"Fila: {len(pending)} proposta(s) mantida(s), {len(dropped)} retirada(s).")
+        if not args.dry_run:
+            PROPOSALS_PATH.write_text(json.dumps(pending, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        return 0
     proposals = []
     failures = []
+    skipped = {}
     for source in config["fontes"]:
         if not source.get("ativa", True):
             continue
@@ -309,9 +374,14 @@ def main() -> int:
         except Exception as exc:  # Uma fonte indisponível não bloqueia as restantes.
             failures.append(f"{source['id']}: {exc}")
             continue
+        from_source = []
         for item in items:
             age = (now - item["published"]).days
-            if age < -1 or age > 45 or is_duplicate(item, news + pending + rejected + proposals):
+            if age < -1 or age > 45 or is_duplicate(item, news + pending + rejected + proposals + from_source):
+                continue
+            reason = blocked(item, source, config)
+            if reason:
+                skipped[reason] = skipped.get(reason, 0) + 1
                 continue
             matches = classify(item["title"] + " " + item["summary"])
             if not matches:
@@ -320,12 +390,16 @@ def main() -> int:
             points, reasons = score(item, int(source.get("autoridade", 15)), hits, now)
             if points < int(config["pontuacao_minima"]):
                 continue
-            proposals.append(make_news(item, source, matches, points, reasons))
+            from_source.append(make_news(item, source, matches, points, reasons))
+        from_source.sort(key=lambda n: (n["relevancia"], n["publicado_em"]), reverse=True)
+        proposals.extend(from_source[: int(source.get("limite_por_execucao", config.get("limite_por_fonte", 3)))])
     proposals.sort(key=lambda n: (n["relevancia"], n["publicado_em"]), reverse=True)
     proposals = proposals[: int(config["limite_por_execucao"])]
     if failures:
         print("Fontes temporariamente indisponíveis:", *failures, sep="\n- ", file=sys.stderr)
-    if not proposals:
+    if skipped:
+        print("Descartadas pelo filtro:", ", ".join(f"{k} ({v})" for k, v in sorted(skipped.items())))
+    if not proposals and not dropped:
         print("Nenhuma proposta nova cumpre os critérios.")
         return 0
     print(f"{len(proposals)} proposta(s) preparada(s) para revisão:")

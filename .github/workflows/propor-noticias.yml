@@ -1,9 +1,11 @@
 name: Sugerir notícias para decisão editorial
 
 on:
-  # A pesquisa automática ficou suspensa por produzir demasiados falsos
-  # positivos. Mantemos apenas a execução manual enquanto o filtro editorial
-  # não for redesenhado e validado.
+  # Segundas e quintas. O filtro editorial (scripts/noticias/atualizar.py) deixa passar
+  # só o que tem ligação clara aos temas do observatório; nada é publicado sem decisão
+  # tua na página /revisao.
+  schedule:
+    - cron: "17 6 * * 1,4"
   workflow_dispatch:
 
 permissions:
@@ -28,43 +30,35 @@ jobs:
           python3 -m json.tool data/noticias_propostas.json >/dev/null
           python3 -m json.tool data/noticias.json >/dev/null
       - name: Guardar propostas sem as publicar
+        id: guardar
         run: |
           if git diff --quiet -- data/noticias_propostas.json; then
             echo "Não existem sugestões novas."
+            echo "mudou=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
           git config user.name "bioCultura Notícias"
           git config user.email "actions@users.noreply.github.com"
           git add data/noticias_propostas.json
-          git commit -m "Adicionar sugestões de notícias para revisão"
+          git commit -m "Notícias: propostas para revisão"
           git pull --rebase origin main
           git push origin HEAD:main
-      - name: Criar uma notificação simples por notícia
+          echo "mudou=true" >> "$GITHUB_OUTPUT"
+      - name: Avisar que há propostas à espera
+        if: steps.guardar.outputs.mudou == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
-          gh label create "noticia:pendente" --color "D4A373" --force
-          gh label create "noticia:aprovada" --color "2E6B4C" --force
-          gh label create "noticia:recusada" --color "8B3A3A" --force
-          jq -c '.[]' data/noticias_propostas.json | while read -r ITEM; do
-            ID="$(jq -r '.id' <<<"$ITEM")"
-            URL="$(jq -r '.url' <<<"$ITEM")"
-            TITLE="$(jq -r '.pt.titulo' <<<"$ITEM")"
-            SOURCE="$(jq -r '.fonte // "Fonte não indicada"' <<<"$ITEM")"
-            CATEGORY="$(jq -r '.categoria // "Sem categoria"' <<<"$ITEM")"
-            SCORE="$(jq -r '.relevancia // 0' <<<"$ITEM")"
-            SUMMARY="$(jq -r '.pt.resumo_biocultura // "Sem resumo disponível."' <<<"$ITEM")"
-            if [ "$(gh issue list --state all --search "$ID in:body" --json number --jq length)" = "0" ]; then
-              {
-                printf '## Revisão editorial\n\n'
-                printf '**Fonte:** %s  \n**Categoria:** %s  \n**Pontuação:** %s/100\n\n' "$SOURCE" "$CATEGORY" "$SCORE"
-                printf '%s\n\n' "$SUMMARY"
-                printf '[Abrir pré-visualização bioCulture](https://www.bioculture.pt/observatorio/noticia-detalhe.html?id=%s&preview=proposal)\n\n' "$ID"
-                printf '[Abrir publicação original](%s)\n\n' "$URL"
-                printf 'Para decidir, comenta com `/aprovar` ou `/recusar`.\n\n'
-                printf '<!-- news-id: %s -->' "$ID"
-              } > "$RUNNER_TEMP/news-body.md"
-              gh issue create --title "$TITLE" --body-file "$RUNNER_TEMP/news-body.md" --label "noticia:pendente"
-            fi
-          done
+          TOTAL="$(jq length data/noticias_propostas.json)"
+          [ "$TOTAL" -gt 0 ] || exit 0
+          gh label create "noticias:revisao" --color "D4A373" --force
+          TEXTO="Há **$TOTAL** notícias à espera de decisão.
+
+          [Abrir a página de revisão](https://www.bioculture.pt/revisao)"
+          ABERTA="$(gh issue list --label noticias:revisao --state open --json number --jq '.[0].number // empty')"
+          if [ -n "$ABERTA" ]; then
+            gh issue comment "$ABERTA" --body "$TEXTO"
+          else
+            gh issue create --title "Notícias à espera de decisão" --label noticias:revisao --body "$TEXTO"
+          fi

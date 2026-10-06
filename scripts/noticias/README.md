@@ -1,17 +1,31 @@
 # Notícias com aprovação editorial
 
-O processo consulta fontes selecionadas duas vezes por dia. Cada sugestão fica
-em `data/noticias_propostas.json`, que nunca é carregado pelo site, e abre uma
-notificação individual no GitHub. O corpo visível da notificação contém apenas
-a ligação original, para permitir a leitura integral na própria publicação.
+O processo consulta as fontes selecionadas às segundas e quintas-feiras
+(`.github/workflows/propor-noticias.yml`). Cada sugestão fica em
+`data/noticias_propostas.json`, que o site não carrega nas listagens, e nada é
+publicado sem decisão humana.
 
-Depois de ler, responder `/aprovar` ou `/recusar`. A primeira decisão move a
-entrada para `data/noticias.json`; a segunda guarda apenas o identificador e a
-ligação em `data/noticias_rejeitadas.json`, evitando que volte a ser proposta.
+**Decidir.** A página privada `/revisao` (fora dos motores de pesquisa) mostra as
+propostas com imagem, resumo, pontuação e ligação para o original. Cada uma tem
+**Aprovar** ou **Recusar**; carregando em «Aplicar decisões» a página dispara
+`decidir-noticias.yml`, que move as aprovadas para `data/noticias.json` e guarda
+as recusadas em `data/noticias_rejeitadas.json` (só o identificador e a ligação,
+para não voltarem a ser propostas). Demora cerca de 2 minutos até o site
+refletir. A página precisa de uma chave do GitHub só para este repositório
+(permissão *Actions: Read and write*), guardada apenas no navegador de quem a
+configura. Sempre que há propostas novas abre-se (ou recebe um comentário) uma
+única issue «Notícias à espera de decisão» com a ligação para a página.
 
-Antes de aprovar, confirme sempre a ligação original, a data, o resumo, a
-categoria e a pontuação. O processo não copia o artigo completo e utiliza uma
-imagem local da categoria, evitando cópia ou ligação direta a imagens editoriais.
+**Filtro.** `atualizar.py` só propõe o que tem ligação clara aos temas: palavras
+inteiras (não pedaços de palavras), mínimo de termos por fonte (as generalistas,
+como a RTP, pedem dois), secções de URL permitidas, títulos e fontes bloqueados
+em `config/noticias_fontes.json` (desporto, ofertas de emprego…) e um máximo por
+fonte e execução. `python3 scripts/noticias/atualizar.py --reavaliar` volta a
+aplicar os critérios à fila existente e retira o que expirou.
+
+Antes de aprovar, confirma sempre a ligação original, a data, o resumo, a
+categoria e a pontuação. O processo não copia o artigo completo; usa a imagem da
+fonte original e, só se não existir, uma imagem local da categoria.
 
 As fontes e os limites encontram-se em `config/noticias_fontes.json`. As fontes
 primárias e científicas recebem maior autoridade editorial; jornalismo de
