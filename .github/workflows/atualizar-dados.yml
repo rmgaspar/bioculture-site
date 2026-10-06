@@ -1,0 +1,94 @@
+name: Atualizar dados do observatório
+
+# Mantém atualizados os dados mundiais (água, solo, biodiversidade, ar, energia, renováveis e
+# território) a partir das APIs oficiais do Banco Mundial e dos Indicadores ODS da ONU.
+# Só publica se os dados passarem na validação e o site compilar; se nada mudou, não faz nada.
+# O Cloudflare Pages publica automaticamente cada commit em main.
+on:
+  schedule:
+    - cron: "43 5 * * 3"   # quartas-feiras, 05:43 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: dados-observatorio
+  cancel-in-progress: false
+
+jobs:
+  atualizar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Ir buscar os dados às fontes oficiais
+        id: fontes
+        run: |
+          status=0
+          python3 scripts/dados/banco_mundial.py || status=1
+          python3 scripts/dados/ods_onu.py || status=1
+          # Retira das listagens as notícias com prazo terminado (histórico preservado no arquivo).
+          python3 scripts/noticias/arquivar.py || status=1
+          echo "falhas=$status" >> "$GITHUB_OUTPUT"
+
+      - name: Validar dados
+        run: |
+          python3 scripts/dados/validar.py
+          for f in data/*.json; do python3 -m json.tool "$f" >/dev/null; done
+
+      - name: Confirmar que o site compila e os testes passam
+        run: |
+          CF_PAGES=1 node scripts/build-pages.mjs
+          for f in scripts/tests/*.test.mjs; do node --test "$f"; done
+
+      - name: Guardar atualização
+        run: |
+          if git diff --quiet -- data; then
+            echo "Os dados já estavam atualizados."
+            exit 0
+          fi
+          git config user.name "bioCultura Dados"
+          git config user.email "actions@users.noreply.github.com"
+          git add data
+          git commit -m "Dados do observatório: atualização automática ($(date -u +%F))"
+          git pull --rebase origin main
+          git push origin HEAD:main
+
+      - name: Falhar se alguma fonte não respondeu
+        if: steps.fontes.outputs.falhas != '0'
+        run: |
+          echo "::error::Pelo menos uma fonte falhou; os restantes dados foram guardados."
+          exit 1
+
+  avisar:
+    needs: atualizar
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Abrir (ou atualizar) a notificação de falha
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh label create "dados:falha" --color "8B3A3A" --force --repo "$GITHUB_REPOSITORY"
+          URL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          EXISTENTE="$(gh issue list --repo "$GITHUB_REPOSITORY" --label dados:falha --state open --json number --jq '.[0].number // empty')"
+          if [ -n "$EXISTENTE" ]; then
+            gh issue comment "$EXISTENTE" --repo "$GITHUB_REPOSITORY" --body "Nova falha na atualização de dados: $URL"
+          else
+            gh issue create --repo "$GITHUB_REPOSITORY" --label dados:falha \
+              --title "Falha na atualização automática dos dados" \
+              --body "A atualização automática dos dados do observatório falhou. Os dados publicados não foram alterados por esta execução (ou só parcialmente). Detalhes: $URL"
+          fi

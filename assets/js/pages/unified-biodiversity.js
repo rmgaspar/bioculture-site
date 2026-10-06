@@ -124,6 +124,12 @@
                 .sort(function (x, y) {
                     return x.year - y.year;
                 });
+            window.BioCulturaSeries.label(
+                $("biodiversity-rli-chart"),
+                rows.map(function (x) {
+                    return x.year;
+                }),
+            );
             new Chart($("biodiversity-rli-chart"), {
                 type: "line",
                 data: {

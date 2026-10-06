@@ -350,6 +350,17 @@
         }
     };
 
+    /* Os intervalos de anos nos cabeçalhos dos gráficos acompanham os dados (que se atualizam sozinhos). */
+    window.BioCulturaSeries = {
+        label(canvas, years) {
+            const heading = canvas?.closest(".chart-card")?.querySelector(".chart-title b");
+            const valid = (years || []).filter((year) => Number.isFinite(year));
+            if (!heading || !valid.length) return;
+            const first = Math.min(...valid), last = Math.max(...valid);
+            heading.textContent = first === last ? String(first) : `${first}–${last}`;
+        }
+    };
+
     const consolidatedLegacyRoutes = {
         "/observatorio/vetores-pressao.html": "/observatorio/observatorio-terra.html"
     };

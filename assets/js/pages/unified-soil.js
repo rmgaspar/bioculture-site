@@ -115,6 +115,12 @@
                     "a degradação reduz produtividade, carbono, infiltração e biodiversidade. Desertificação é uma forma de degradação em zonas secas, não um sinónimo para todos os solos.",
                     "degradation reduces productivity, carbon, infiltration and biodiversity. Desertification is land degradation in drylands, not a synonym for every soil process.",
                 );
+            window.BioCulturaSeries.label(
+                $("soil-degradation-chart"),
+                world.map(function (x) {
+                    return x.year;
+                }),
+            );
             new Chart($("soil-degradation-chart"), {
                 type: "bar",
                 data: {

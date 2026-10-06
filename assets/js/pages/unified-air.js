@@ -130,6 +130,12 @@
                 .sort(function (a, b) {
                     return a.year - b.year;
                 });
+            window.BioCulturaSeries.label(
+                $("air-pm25-chart"),
+                rows.map(function (x) {
+                    return x.year;
+                }),
+            );
             new Chart($("air-pm25-chart"), {
                 type: "line",
                 data: {
