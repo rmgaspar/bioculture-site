@@ -62,9 +62,11 @@ def ipma() -> list[dict]:
         summary = text(re.search(r"<p class=\"padright10[^>]*>(.*?)<span", block, re.S).group(1)) if re.search(r"<p class=\"padright10[^>]*>(.*?)<span", block, re.S) else ""
         # O título completo junta o tema (a negrito) e a manchete (atributo title).
         title = f"{headline}: {subtitle}" if headline and subtitle and headline.lower() not in subtitle.lower() else (subtitle or headline)
+        thumb = re.search(r'<img[^>]+src="([^"]+)"', block)
         items.append({
             "title": title, "url": urllib.parse.urljoin(base, html.unescape(link.group(1))),
             "summary": summary.rstrip(" .…"), "published": published, "source": "IPMA",
+            "image": urllib.parse.urljoin(base, thumb.group(1)) if thumb else "",
         })
     return items
 
@@ -129,7 +131,9 @@ def dgadr() -> list[dict]:
         if not (stamp and link):
             continue
         paragraph = re.search(r'property="text">\s*<p>(.*?)</p>', block, re.S)
+        figure = re.search(r'<figure[^>]*>\s*<img[^>]+src="([^"]+)"', block)
         items.append({
+            "image": urllib.parse.urljoin(base, figure.group(1)) if figure else "",
             "title": text(link.group(2)), "url": urllib.parse.urljoin(base, link.group(1)),
             "summary": text(paragraph.group(1))[:480] if paragraph else "",
             "published": dt.datetime.fromisoformat(stamp.group(1)).astimezone(dt.timezone.utc), "source": "DGADR",

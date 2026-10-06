@@ -6,7 +6,7 @@
   var KEY_TOKEN = "bioculture.revisao.chave";
   var KEY_CHOICES = "bioculture.revisao.escolhas";
   var KEY_SENT = "bioculture.revisao.enviadas";
-  var HIDE_SENT_MS = 10 * 60 * 1000;
+  var HIDE_SENT_MS = 60 * 60 * 1000;
 
   var proposals = [];
   var choices = read(KEY_CHOICES, {});
@@ -185,7 +185,7 @@
   function api(path, options) {
     options = options || {};
     options.headers = {
-      Accept: "application/vnd.github+json",
+      Accept: (options.headers && options.headers.Accept) || "application/vnd.github+json",
       Authorization: "Bearer " + token(),
       "X-GitHub-Api-Version": "2022-11-28"
     };
@@ -256,10 +256,31 @@
 
   ["f-categoria", "f-fonte", "f-ordem"].forEach(function (id) { $(id).addEventListener("change", render); });
 
-  fetch("/data/noticias_propostas.json", { cache: "no-store" })
-    .then(function (response) { if (!response.ok) throw new Error(response.status); return response.json(); })
+  // Com a chave, a fila lê-se diretamente do GitHub (estado real, sem esperar pelo deploy do site);
+  // sem ela, ou se falhar, usa-se a cópia publicada no site, que pode estar uns minutos atrasada.
+  function loadProposals() {
+    var fromSite = function () {
+      return fetch("/data/noticias_propostas.json", { cache: "no-store" })
+        .then(function (response) { if (!response.ok) throw new Error(response.status); return response.json(); });
+    };
+    if (!token()) return fromSite();
+    return api("/repos/" + REPO + "/contents/data/noticias_propostas.json?ref=main", {
+      cache: "no-store",
+      headers: { Accept: "application/vnd.github.raw+json" }
+    }).then(function (response) {
+      if (!response.ok) throw new Error(response.status);
+      return response.json();
+    }).catch(fromSite);
+  }
+
+  loadProposals()
     .then(function (rows) {
       proposals = Array.isArray(rows) ? rows : [];
+      // Uma decisão enviada só deixa de estar «a processar» quando a proposta sai mesmo da fila.
+      var ids = {};
+      proposals.forEach(function (p) { ids[p.id] = true; });
+      Object.keys(sent).forEach(function (id) { if (!ids[id]) delete sent[id]; });
+      write(KEY_SENT, sent);
       var unique = function (key) {
         return proposals.map(function (p) { return p[key]; }).filter(function (v, i, a) { return v && a.indexOf(v) === i; }).sort();
       };

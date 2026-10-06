@@ -17,6 +17,7 @@ import json
 import re
 import sys
 import unicodedata
+import urllib.error
 import urllib.parse
 import urllib.request
 import xml.etree.ElementTree as ET
@@ -194,13 +195,53 @@ def geographic_scope(text: str, source_cfg: dict) -> tuple[str, list[str]]:
     return "global", []
 
 
+# Imagens do modelo do site (logótipo, banner genérico), não da notícia: contam como «a fonte não tem imagem».
+GENERIC_IMAGE = re.compile(r"/themes/|/dist/images/|open_graph|opengraph|logo|favicon|placeholder|default[_.-]|_default|/assets/front/", re.I)
+
+
+def page_image(url: str, page: str) -> str:
+    """Imagem da própria notícia na página da fonte, por ordem de fiabilidade."""
+
+    def meta(prop: str) -> str:
+        match = (re.search(rf'<meta[^>]+(?:property|name)=["\']{prop}["\'][^>]+content=["\']([^"\']+)', page, re.I)
+                 or re.search(rf'<meta[^>]+content=["\']([^"\']+)["\'][^>]+(?:property|name)=["\']{prop}["\']', page, re.I))
+        return html.unescape(match.group(1)).strip() if match else ""
+
+    candidates = [meta("og:image"), meta("twitter:image")]
+    for block in re.findall(r'<script[^>]+application/ld\+json[^>]*>(.*?)</script>', page, re.S | re.I):
+        for found in re.findall(r'"image"\s*:\s*(?:\[\s*)?(?:\{[^}]*?"url"\s*:\s*)?"(https?:[^"]+)"', block):
+            candidates.append(found.replace("\\/", "/"))
+    host = urllib.parse.urlsplit(url).netloc
+    if host.endswith("ipma.pt"):
+        candidates += re.findall(r"href='(/opencms/pt/media/noticias/imagens/[^']+)'", page)[:1] + re.findall(r"src='(/opencms/pt/media/noticias/imagens/[^']+)' alt='' style='border", page)[:1]
+    elif host.endswith("dgeg.gov.pt"):
+        candidates += re.findall(r'<img src="(/media/[^"]+)" class="w-100"', page)[:1]
+    elif host.endswith("apambiente.pt"):
+        candidates += re.findall(r'<img[^>]+src="(/sites/default/files/[^"]+)"', page)[:1]
+    for found in candidates:
+        found = urllib.parse.urljoin(url, found) if found else ""
+        if found.startswith("//"):
+            found = "https:" + found
+        if found.startswith("http") and not GENERIC_IMAGE.search(found):
+            return found
+    return ""
+
+
 def source_page(url: str) -> tuple[str, str]:
-    """Imagem (og:image / twitter:image) e descrição (og:description) que a fonte original publica; "" se não houver."""
-    try:
-        request = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (compatible; bioCultura-news/1.0)"})
-        with urllib.request.urlopen(request, timeout=15) as response:
-            page = response.read(400_000).decode("utf-8", "ignore")
-    except Exception:
+    """Imagem e descrição (og:description) que a fonte original publica; "" se não houver."""
+    page = ""
+    for agent in ("Mozilla/5.0 (compatible; bioCultura-news/1.0)", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36"):
+        try:
+            request = urllib.request.Request(url, headers={"User-Agent": agent})
+            with urllib.request.urlopen(request, timeout=15) as response:
+                page = response.read(900_000).decode("utf-8", "ignore")
+            break
+        except urllib.error.HTTPError as exc:
+            if exc.code not in (401, 403):
+                break
+        except Exception:
+            break
+    if not page:
         return "", ""
 
     def meta(prop: str) -> str:
@@ -208,16 +249,8 @@ def source_page(url: str) -> tuple[str, str]:
                  or re.search(rf'<meta[^>]+content=["\']([^"\']+)["\'][^>]+(?:property|name)=["\']{prop}["\']', page, re.I))
         return html.unescape(match.group(1)).strip() if match else ""
 
-    image = ""
-    for prop in ("og:image", "twitter:image"):
-        found = meta(prop)
-        if found.startswith("//"):
-            found = "https:" + found
-        if found.startswith("http"):
-            image = found
-            break
     description = plain(meta("og:description") or meta("description") or meta("twitter:description"))
-    return image, description
+    return page_image(url, page), description
 
 
 def source_image(url: str) -> str:
@@ -332,6 +365,7 @@ def make_news(item: dict, source_cfg: dict, matches: list[tuple[str, str, int]],
     resolved_url = resolve_google_news_url(item["url"])
     summary = item["summary"][:480].rstrip(" .")
     image, page_summary = source_page(resolved_url)
+    image = image or item.get("image", "")
     if is_title_only(summary, item["title"], source):
         summary = page_summary[:480].rstrip(" .") if page_summary and not is_title_only(page_summary, item["title"], source) else ""
     if not summary:
