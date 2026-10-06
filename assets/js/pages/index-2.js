@@ -96,13 +96,15 @@
             function showNews(items) {
                 const rows = window.BioCultureNews?.select(items, { context: "all", limit: Number.MAX_SAFE_INTEGER }) || [...items]
                     .sort((a, b) => window.BioCultureNews?.compare(a, b) ?? (Date.parse(b.data || "") - Date.parse(a.data || "")));
-                let expanded = false;
+                // Primeiro as principais; «Ver mais» acrescenta mais um bloco de cada vez, «Ver menos» volta ao início.
+                const INITIAL = 8, STEP = 8;
+                let shown = INITIAL;
                 const render = () => {
-                    const visible = expanded ? rows : rows.slice(0, 6);
+                    const visible = rows.slice(0, shown);
                     el("news").innerHTML = visible.map((n) => {
                     const c = window.BioCultureI18n?.content(n) || n.pt || n;
                     const scope = n.ambito === "portugal"
-                        ? (isEnglish ? "Portugal · territorial case" : "Portugal · caso territorial")
+                        ? (isEnglish ? "Portugal" : "Portugal")
                         : n.ambito === "regional" ? "Regional" : (isEnglish ? "World" : "Mundo");
                     const summary = c.resumo_biocultura || c.resumo || "";
                     const image = typeof n.imagem === "string" &&
@@ -111,28 +113,35 @@
                         : "/images/noticias-sem-imagem.webp";
                     const imageAlt = image === "/images/noticias-sem-imagem.webp"
                         ? (isEnglish ? "bioCulture editorial illustration" : "Ilustração editorial bioCulture")
-                        : (c.titulo || "");
+                        : "";
                     return `<a href="/observatorio/noticia-detalhe.html?id=${
                         encodeURIComponent(n.id)
                     }"><img class="news-thumb" src="${esc(image)}" alt="${
                         esc(imageAlt)
                     }" loading="lazy" onerror="this.src='/images/noticias-sem-imagem.webp'"><div class="news-body"><small>${
                         esc(scope)
-                    } · ${esc(window.BioCultureI18n?.date(n.data) || n.data)}</small><h3>${esc(c.titulo)}</h3>${
+                    } · ${esc(window.BioCultureI18n?.date(n.data) || n.data)} · ${esc(n.fonte)}</small><h3>${esc(c.titulo)}</h3>${
                         summary ? `<p>${esc(summary)}</p>` : ""
-                    }<span>${esc(n.fonte)} →</span></div></a>`;
+                    }</div></a>`;
                     }).join("") || `<p class="empty">${isEnglish ? "No news available at this time." : "Sem notícias disponíveis neste momento."}</p>`;
-                    const toggle = el("news-toggle");
-                    if (toggle) {
-                        toggle.hidden = rows.length <= 6;
-                        toggle.textContent = expanded
-                            ? (isEnglish ? "Show less" : "Recolher")
-                            : (isEnglish ? `Show all (${rows.length})` : `Ver mais (${rows.length})`);
-                        toggle.setAttribute("aria-expanded", String(expanded));
+                    const left = rows.length - visible.length;
+                    const more = el("news-toggle"), less = el("news-collapse");
+                    if (more) {
+                        more.hidden = left <= 0;
+                        more.textContent = isEnglish ? `Show more (${left} left)` : `Ver mais (${left} restantes)`;
+                    }
+                    if (less) {
+                        less.hidden = shown <= INITIAL;
+                        less.textContent = isEnglish ? "Show less" : "Ver menos";
                     }
                 };
-                const toggle = el("news-toggle");
-                if (toggle) toggle.onclick = () => { expanded = !expanded; render(); };
+                const more = el("news-toggle"), less = el("news-collapse");
+                if (more) more.onclick = () => { shown = Math.min(rows.length, shown + STEP); render(); };
+                if (less) less.onclick = () => {
+                    shown = INITIAL;
+                    render();
+                    el("news-block")?.scrollIntoView({ block: "start" });
+                };
                 render();
             }
 

@@ -356,28 +356,34 @@ html body #main :is(#structure, #inventories, #atlas, #highlights, #today, #news
 
 .species-image { width: 120px; height: 160px; border-radius: 60px; object-fit: cover; background: #e8e3d8; }
 
-.news { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1em; }
+.news { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.8em; }
 .news a {
     display: flex;
-    flex-direction: column;
-    min-height: 320px;
+    flex-direction: row;
+    min-height: 124px;
     padding: 0;
     overflow: hidden;
     border: 1px solid var(--line);
-    border-radius: 18px;
+    border-radius: 14px;
     background: #fff;
     color: var(--ink);
     text-decoration: none;
     transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
-.news a:hover { transform: translateY(-3px); border-color: #b7c7b9; box-shadow: 0 16px 38px rgba(36, 55, 43, 0.07); }
-.news-thumb { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; background: var(--pale); }
-.news-body { display: flex; flex: 1; flex-direction: column; padding: 1.35rem; }
-.news small { color: var(--forest); font-size: max(11px, 0.62rem); font-weight: 900; letter-spacing: 0.12em; text-transform: uppercase; }
-.news h3 { font-family: Georgia, "Times New Roman", serif; font-size: 1.18rem; line-height: 1.2; color: var(--ink); margin: 0.8rem 0 0.65rem; }
-.news p { margin: 0; color: var(--muted); font-size: 0.82rem; line-height: 1.55; }
-.news-body > span { display: block; margin-top: auto; padding-top: 1rem; color: var(--forest); font-size: max(11px, 0.68rem); font-weight: 900; }
-.news-controls { display: flex; justify-content: center; margin-top: 1.5em; }
+.news a:hover { transform: translateY(-2px); border-color: #b7c7b9; box-shadow: 0 12px 28px rgba(36, 55, 43, 0.07); }
+.news-thumb { display: block; flex: 0 0 116px; width: 116px; align-self: stretch; object-fit: cover; background: var(--pale); }
+.news-body { display: flex; flex: 1; min-width: 0; flex-direction: column; padding: 0.8rem 1rem; }
+.news small { color: var(--forest); font-size: max(10px, 0.58rem); font-weight: 900; letter-spacing: 0.1em; text-transform: uppercase; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.news h3 {
+    font-family: Georgia, "Times New Roman", serif; font-size: 1rem; line-height: 1.22; color: var(--ink); margin: 0.4rem 0 0.35rem;
+    display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden;
+}
+/* O excerto acaba onde o bloco acaba (reticências), sem esperar pelo fim de uma frase; a leitura continua na notícia. */
+.news p {
+    margin: 0; color: var(--muted); font-size: 0.78rem; line-height: 1.5;
+    display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; line-clamp: 3; overflow: hidden;
+}
+.news-controls { display: flex; justify-content: center; flex-wrap: wrap; gap: 0.7em; margin-top: 1.5em; }
 .news-controls .action { min-width: 10rem; border-color: var(--line) !important; background: #fff !important; color: var(--forest) !important; box-shadow: none !important; }
 
 .manifesto {
@@ -422,6 +428,8 @@ html body #main :is(#structure, #inventories, #atlas, #highlights, #today, #news
     .inner { padding: 1.7em 1.4em 0 !important; }
     .head { grid-template-columns: 1fr; gap: 0.7em; }
     .path, .pulse, .atlas, .today, .news { grid-template-columns: 1fr; }
+    .news-thumb { flex-basis: 92px; width: 92px; }
+    .news a { min-height: 112px; }
     .portal { grid-template-columns: 70px 1fr; }
     .portal-mark { width: 70px; }
     .encounter { grid-template-columns: 1fr; }

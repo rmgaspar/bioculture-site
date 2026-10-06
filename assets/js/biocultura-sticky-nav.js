@@ -3,7 +3,7 @@
     // Regresso ao mesmo cartão quando se volta de uma notícia.
     if (!window.__bioNewsReturn && !document.querySelector('script[src*="bioculture-news-return.js"]')) {
         const script = document.createElement("script");
-        script.src = "/assets/js/bioculture-news-return.js?v=1";
+        script.src = "/assets/js/bioculture-news-return.js?v=2";
         document.head.appendChild(script);
     }
     // «↑ Topo»: só visível quando a barra está fixa no cimo do ecrã.

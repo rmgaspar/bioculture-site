@@ -1,7 +1,7 @@
 /* Voltar de uma notícia para o mesmo sítio da listagem.
    Ao abrir uma notícia guarda qual foi; ao regressar (← Voltar / botão do browser) espera que a
    listagem seja desenhada (os dados chegam por fetch) e centra o cartão. Se a notícia estava
-   escondida atrás de «Ver mais», abre a listagem completa primeiro.
+   escondida atrás de «Ver mais», vai abrindo mais blocos até ela aparecer.
    Carregado por biocultura-sticky-nav.js e hub-pages.js. */
 (function () {
     "use strict";
@@ -24,7 +24,7 @@
     if (!saved || saved.path !== location.pathname || Date.now() - saved.t > 30 * 60 * 1000) return;
     try { history.scrollRestoration = "manual"; } catch (_) {}
 
-    let userMoved = false, target = null, expanded = false;
+    let userMoved = false, target = null, opened = 0;
     ["wheel", "touchstart", "keydown"].forEach((type) => window.addEventListener(type, () => { userMoved = true; }, { passive: true, once: true }));
 
     const center = () => { if (target && !userMoved) target.scrollIntoView({ block: "center" }); };
@@ -47,8 +47,8 @@
             return true;
         }
         const toggle = document.getElementById("news-toggle");
-        if (!expanded && toggle && !toggle.hidden && toggle.getAttribute("aria-expanded") === "false") {
-            expanded = true;
+        if (toggle && !toggle.hidden && opened < 60) {
+            opened += 1;
             toggle.click();
             return attempt();
         }
