@@ -597,22 +597,42 @@
     });
 
     window.BioCultureNews = {
+        dateValue(item) {
+            const raw = item?.publicado_em || item?.data || item?.capturado_em || "";
+            const normalized = String(raw)
+                .replace(/\bJan\b/i, "Jan").replace(/\bFev\b/i, "Feb")
+                .replace(/\bMar\b/i, "Mar").replace(/\bAbr\b/i, "Apr")
+                .replace(/\bMai\b/i, "May").replace(/\bJun\b/i, "Jun")
+                .replace(/\bJul\b/i, "Jul").replace(/\bAgo\b/i, "Aug")
+                .replace(/\bSet\b/i, "Sep").replace(/\bOut\b/i, "Oct")
+                .replace(/\bNov\b/i, "Nov").replace(/\bDez\b/i, "Dec");
+            const value = Date.parse(normalized.slice(0, 10));
+            return Number.isNaN(value) ? 0 : value;
+        },
         compare(a, b) {
-            const dateValue = (item) => {
-                const raw = item?.publicado_em || item?.data || item?.capturado_em || "";
-                const normalized = String(raw)
-                    .replace(/\bJan\b/i, "Jan").replace(/\bFev\b/i, "Feb")
-                    .replace(/\bMar\b/i, "Mar").replace(/\bAbr\b/i, "Apr")
-                    .replace(/\bMai\b/i, "May").replace(/\bJun\b/i, "Jun")
-                    .replace(/\bJul\b/i, "Jul").replace(/\bAgo\b/i, "Aug")
-                    .replace(/\bSet\b/i, "Sep").replace(/\bOut\b/i, "Oct")
-                    .replace(/\bNov\b/i, "Nov").replace(/\bDez\b/i, "Dec");
-                const value = Date.parse(normalized.slice(0, 10));
-                return Number.isNaN(value) ? 0 : value;
-            };
-            const dateDifference = dateValue(b) - dateValue(a);
+            const dateDifference = this.dateValue(b) - this.dateValue(a);
             if (dateDifference) return dateDifference;
             return (+b?.prioridade || +b?.relevancia || 0) - (+a?.prioridade || +a?.relevancia || 0);
+        },
+        // Mais recentes à frente, por escalões de idade (até 7 dias, até 3 semanas, até 6 semanas, mais antigas);
+        // dentro de cada escalão manda a relevância, depois o tipo de fonte (organismos oficiais antes de imprensa,
+        // e esta antes de artigos científicos) e só por fim a data.
+        compareByRelevance(items) {
+            const newest = Math.max(0, ...items.map((item) => this.dateValue(item)));
+            const tier = (item) => {
+                const age = (newest - this.dateValue(item)) / 86400000;
+                return age <= 7 ? 0 : age <= 21 ? 1 : age <= 45 ? 2 : 3;
+            };
+            const sourceRank = (item) => ({
+                "organizacao-internacional": 0, "agencia-publica": 0, "fonte-primaria": 0,
+                "servico-publico": 1, "jornalismo-especializado": 1, "agencia-noticiosa": 1,
+                "imprensa-internacional": 1, "imprensa-nacional": 1, "ciencia": 2,
+            }[item?.tipo_fonte] ?? 1);
+            const relevance = (item) => +item?.prioridade || +item?.relevancia || 0;
+            return (a, b) => tier(a) - tier(b)
+                || relevance(b) - relevance(a)
+                || sourceRank(a) - sourceRank(b)
+                || this.dateValue(b) - this.dateValue(a);
         },
         categories(item) {
             return [...new Set([...(item?.categorias || []), ...(item?.tags || []), item?.categoria_id].filter(Boolean))];
@@ -626,12 +646,13 @@
             if (context === "portugal") return scope === "portugal";
             return scope !== "portugal" || item?.relevancia_global === true;
         },
-        select(items, { categories = [], context = "global", limit = 6 } = {}) {
+        select(items, { categories = [], context = "global", limit = 6, order = "date" } = {}) {
             const wanted = new Set(categories);
-            return [...(items || [])]
+            const rows = [...(items || [])]
                 .filter((item) => item?.estado !== "proposta" && this.visibleIn(item, context))
-                .filter((item) => !wanted.size || this.categories(item).some((category) => wanted.has(category)))
-                .sort((a, b) => this.compare(a, b))
+                .filter((item) => !wanted.size || this.categories(item).some((category) => wanted.has(category)));
+            return rows
+                .sort(order === "relevance" ? this.compareByRelevance(rows) : (a, b) => this.compare(a, b))
                 .slice(0, limit);
         },
     };
