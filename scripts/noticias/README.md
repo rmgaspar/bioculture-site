@@ -27,6 +27,9 @@ Antes de aprovar, confirma sempre a ligação original, a data, o resumo, a
 categoria e a pontuação. O processo não copia o artigo completo; usa a imagem da
 fonte original e, só se não existir, uma imagem local da categoria.
 
+Ao aprovar, o prazo da notícia nunca fica abaixo de 30 dias a contar do dia da
+aprovação (o prazo original conta desde a publicação na fonte).
+
 As fontes e os limites encontram-se em `config/noticias_fontes.json`. As fontes
 primárias e científicas recebem maior autoridade editorial; jornalismo de
 referência é usado para atualidade e contexto. Google News deixa de ser a via

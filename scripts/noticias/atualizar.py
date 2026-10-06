@@ -99,6 +99,9 @@ def fetch_feed(url: str) -> list[dict]:
     request = urllib.request.Request(url, headers={"User-Agent": "bioCultura-news/1.0 (+https://biocultura.net)"})
     with urllib.request.urlopen(request, timeout=25) as response:
         payload = response.read(2_000_000)
+    # Alguns feeds (p. ex. o da NASA) vêm sem espaço entre atributos do cabeçalho e não são XML válido.
+    head, rest = payload[:3000], payload[3000:]
+    payload = re.sub(rb'"(?=xmlns[:=])', b'" ', head) + rest
     root = ET.fromstring(payload)
     nodes = [n for n in root.iter() if n.tag.rsplit("}", 1)[-1].lower() in ("item", "entry")]
     result = []

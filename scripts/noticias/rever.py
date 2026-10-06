@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import datetime as dt
 import json
 from pathlib import Path
 
@@ -11,6 +12,7 @@ ROOT = Path(__file__).resolve().parents[2]
 PROPOSALS = ROOT / "data" / "noticias_propostas.json"
 PUBLISHED = ROOT / "data" / "noticias.json"
 REJECTED = ROOT / "data" / "noticias_rejeitadas.json"
+MIN_DAYS_ONLINE = 30
 
 
 def read(path: Path) -> list[dict]:
@@ -32,6 +34,10 @@ def decide(action: str, news_id: str) -> bool:
 
     if action == "aprovar":
         selected["estado"] = "publicada"
+        # O prazo conta desde a publicação original; uma notícia aprovada dias depois não pode sair logo a seguir.
+        minimum = (dt.date.today() + dt.timedelta(days=MIN_DAYS_ONLINE)).isoformat()
+        if not selected.get("permanente") and selected.get("expira_em", "") < minimum:
+            selected["expira_em"] = minimum
         published = [row for row in read(PUBLISHED) if row.get("id") != news_id]
         published.append(selected)
         published.sort(
