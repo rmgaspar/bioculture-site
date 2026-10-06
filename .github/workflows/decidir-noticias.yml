@@ -12,6 +12,7 @@ on:
 
 permissions:
   contents: write
+  models: read
 
 concurrency:
   group: noticias-editorial
@@ -34,6 +35,11 @@ jobs:
         env:
           DECISOES: ${{ inputs.decisoes }}
         run: python3 scripts/noticias/rever.py lote "$DECISOES"
+      - name: Traduzir as notícias aprovadas
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python3 scripts/noticias/traduzir.py
       - name: Validar dados editoriais
         run: |
           python3 -m json.tool data/noticias_propostas.json >/dev/null
