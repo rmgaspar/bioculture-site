@@ -29,6 +29,8 @@
                 // Um artigo científico só conta pelas palavras do tema da sua própria categoria.
                 const belongs = (item) => {
                     if (item.estado === "proposta") return false;
+                    // «fora_do_tema»: temas dos hubs de onde uma notícia é retirada à mão, mesmo que as palavras do título a apanhem.
+                    if ((item.fora_do_tema || []).some((topic) => known.includes(topic))) return false;
                     if (item.capturado_em && item.tipo_fonte === "ciencia") {
                         const topic = registry[item.categoria_id];
                         return !!topic && known.includes(item.categoria_id) && window.BioCultureNews.about(item, topic.words, topic.categories);
