@@ -372,7 +372,7 @@
                         ),
                     );
                     [locationsDB, castasDB, pragasDB, dicasDB] = responses;
-                    noticiasEno = responses[4].filter((n) => {
+                    noticiasEno = (window.BioCultureNews?.rank(responses[4]) || responses[4]).filter((n) => {
                         const original = n.pt || n;
                         return `${n.categoria || ""} ${original.categoria || ""} ${original.titulo || ""}`
                             .toLowerCase().match(/enologia|vinho|vinha|viticultura/);

@@ -280,7 +280,7 @@
             return r.json();
         })
         .then(function (items) {
-            var n = items
+            var n = (window.BioCultureNews ? window.BioCultureNews.rank(items) : items)
                 .filter(function (x) {
                     var c = window.BioCultureI18n?.content(x) || x.pt || x;
                     return /solo|soil|eros|desert|degrada|carbono|carbon|agricult|terra|land restoration/i.test(

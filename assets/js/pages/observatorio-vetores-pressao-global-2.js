@@ -246,7 +246,7 @@
 
             function renderPressureNews() {
                 fetch("/data/noticias.json").then(response => response.json()).then(items => {
-                    const selected = items.filter(item => /clima|energia|minera|constru|urban|têxt|moda|indústr|resíduo|plást|pecuár|desflorest|biodivers/i.test([item.categoria, item.categoria_id, item.pt?.titulo, item.pt?.resumo, item.en?.titulo, item.en?.resumo].filter(Boolean).join(" "))).slice(0, 6);
+                    const selected = (window.BioCultureNews?.rank(items) || items).filter(item => /clima|energia|minera|constru|urban|têxt|moda|indústr|resíduo|plást|pecuár|desflorest|biodivers/i.test([item.categoria, item.categoria_id, item.pt?.titulo, item.pt?.resumo, item.en?.titulo, item.en?.resumo].filter(Boolean).join(" "))).slice(0, 6);
                     document.getElementById("pressure-news-grid").innerHTML = selected.map(item => {
                         const content = isEnglish ? (item.en || item.pt || item) : (item.pt || item);
                         return `<a href="/observatorio/noticia-detalhe.html?id=${encodeURIComponent(item.id)}"><small>${escapeHtml(item.data || "")}</small><h3>${escapeHtml(content.titulo || "")}</h3><span>${escapeHtml(item.fonte || "bioCulture")}</span></a>`;

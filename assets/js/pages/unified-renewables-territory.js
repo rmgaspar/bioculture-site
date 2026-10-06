@@ -560,7 +560,7 @@
             return r.json();
         })
         .then(function (items) {
-            var n = items
+            var n = (window.BioCultureNews ? window.BioCultureNews.rank(items) : items)
                 .filter(function (x) {
                     var c = window.BioCultureI18n?.content(x) || x.pt || x;
                     return /ZAER|solar|eólic|renew|renov|licenciamento|território|fotovolta|biodivers|land use/i.test(

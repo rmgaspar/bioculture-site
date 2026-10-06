@@ -220,7 +220,7 @@
             return r.json();
         })
         .then(function (items) {
-            var n = items
+            var n = (window.BioCultureNews ? window.BioCultureNews.rank(items) : items)
                 .filter(function (x) {
                     var c = window.BioCultureI18n?.content(x) || x.pt || x;
                     return /minera|mina|lítio|lithium|ouro|gold|cobre|copper|carvão|coal|níquel|cobalt|rejeitado/i.test(

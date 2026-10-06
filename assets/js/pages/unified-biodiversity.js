@@ -286,7 +286,7 @@
             return r.json();
         })
         .then(function (items) {
-            var n = items
+            var n = (window.BioCultureNews ? window.BioCultureNews.rank(items) : items)
                 .filter(function (x) {
                     var c = window.BioCultureI18n?.content(x) || x.pt || x;
                     return /biodivers|species|espéc|habitat|iucn|extin|conserv|invasor|wildlife|ecossist|ecosystem/i.test(

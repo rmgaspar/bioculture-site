@@ -62,7 +62,7 @@
     document.getElementById('country-panel').innerHTML='<div class="empty-state"><strong>Explorador indisponível</strong><span>Os dados não puderam ser carregados.</span></div>';
   });
   fetch('/data/noticias.json').then(function(r){if(!r.ok)throw new Error('noticias');return r.json()}).then(function(items){
-    var selected=items.filter(function(n){var c=window.BioCultureI18n?.content(n)||n.pt||n;return /água|agua|water|seca|drought|rio|river|aquífer|aquifer|hídric|hydro|inunda|flood/i.test([n.categoria,n.categoria_id,c.categoria,c.titulo,c.resumo].filter(Boolean).join(' '))}).slice(0,6);
+    var selected=(window.BioCultureNews?window.BioCultureNews.rank(items):items).filter(function(n){var c=window.BioCultureI18n?.content(n)||n.pt||n;return /água|agua|water|seca|drought|rio|river|aquífer|aquifer|hídric|hydro|inunda|flood/i.test([n.categoria,n.categoria_id,c.categoria,c.titulo,c.resumo].filter(Boolean).join(' '))}).slice(0,6);
     document.getElementById('water-news').innerHTML=selected.map(function(n){var c=window.BioCultureI18n?.content(n)||n.pt||n;return '<a class="news-item" href="/observatorio/noticia-detalhe.html?id='+encodeURIComponent(n.id)+'"><span>'+esc(window.BioCultureI18n?.date(n.data)||n.data||'')+'</span><h3>'+esc(c.titulo||tr('Notícia','News'))+'</h3><span class="news-source">'+esc(n.fonte||c.fonte||'bioCulture')+'</span></a>'}).join('')||'<p class="empty">'+tr('Sem notícias de água disponíveis neste momento.','No water news is available at the moment.')+'</p>';
   }).catch(function(){document.getElementById('water-news').innerHTML='<p class="empty">'+tr('Não foi possível carregar as notícias.','News could not be loaded.')+'</p>'});
 })();

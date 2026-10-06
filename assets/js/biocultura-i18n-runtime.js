@@ -634,6 +634,10 @@
                 || sourceRank(a) - sourceRank(b)
                 || this.dateValue(b) - this.dateValue(a);
         },
+        rank(items) {
+            const rows = Array.isArray(items) ? items : [];
+            return [...rows].sort(this.compareByRelevance(rows));
+        },
         categories(item) {
             return [...new Set([...(item?.categorias || []), ...(item?.tags || []), item?.categoria_id].filter(Boolean))];
         },
@@ -648,11 +652,13 @@
         },
         select(items, { categories = [], context = "global", limit = 6, order = "date" } = {}) {
             const wanted = new Set(categories);
-            const rows = [...(items || [])]
-                .filter((item) => item?.estado !== "proposta" && this.visibleIn(item, context))
+            const published = (items || []).filter((item) => item?.estado !== "proposta");
+            const rows = published
+                .filter((item) => this.visibleIn(item, context))
                 .filter((item) => !wanted.size || this.categories(item).some((category) => wanted.has(category)));
+            // A idade conta-se desde a notícia mais recente de todas, não da mais recente do tema.
             return rows
-                .sort(order === "relevance" ? this.compareByRelevance(rows) : (a, b) => this.compare(a, b))
+                .sort(order === "relevance" ? this.compareByRelevance(published) : (a, b) => this.compare(a, b))
                 .slice(0, limit);
         },
     };

@@ -16,7 +16,7 @@
         [item.categoria, item.categoria_id, ...(item.categorias || []), content.titulo, content.resumo].filter(Boolean).join(' ')
       );
     }).filter(item => window.BioCultureNews?.visibleIn(item, 'global') ?? true)
-      .sort((a,b) => window.BioCultureNews?.compare(a, b) ?? (Date.parse(b.data || '') - Date.parse(a.data || ''))).slice(0, 6);
+      .sort(window.BioCultureNews ? window.BioCultureNews.compareByRelevance(items) : (a,b) => Date.parse(b.data || '') - Date.parse(a.data || '')).slice(0, 6);
     container.innerHTML = selected.map(item => {
       const content = window.BioCultureI18n?.content(item) || item.pt || item;
       const date = window.BioCultureI18n?.date(item.data) || item.data || '';

@@ -415,7 +415,7 @@
             return r.json();
         })
         .then(function (items) {
-            var n = items
+            var n = (window.BioCultureNews ? window.BioCultureNews.rank(items) : items)
                 .filter(function (x) {
                     var c = window.BioCultureI18n?.content(x) || x.pt || x;
                     return /energia|renew|renov|solar|eólic|electric|eletric|eficiên|rede|grid|autoconsumo/i.test(

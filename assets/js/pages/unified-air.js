@@ -313,7 +313,7 @@
             return r.json();
         })
         .then(function (items) {
-            var n = items
+            var n = (window.BioCultureNews ? window.BioCultureNews.rank(items) : items)
                 .filter(function (x) {
                     var c = window.BioCultureI18n?.content(x) || x.pt || x;
                     return /qualidade do ar|air quality|poluiç|pollution|emiss|atmosf|pm2|pm10|ozono|ozone|fumo|smoke|incênd|wildfire|poeira|dust|respirat|mega-incênd|mega-fire|fogos|fires/i.test(

@@ -21,7 +21,7 @@
             .then((items) => {
                 const categories = (latest.dataset.newsCategories || "agua,ar,solo,biodiversidade")
                     .split(",").map((category) => category.trim()).filter(Boolean);
-                const selected = window.BioCultureNews?.select(items, { categories, context: "all", limit: 6 }) || items.filter((item) => {
+                const selected = window.BioCultureNews?.select(items, { categories, context: "all", limit: 6, order: "relevance" }) || items.filter((item) => {
                     const itemCategories = new Set([item.categoria_id, ...(item.categorias || []), ...(item.tags || [])]);
                     return categories.some((category) => itemCategories.has(category));
                 }).slice(0, 6);
