@@ -28,7 +28,14 @@
                 const desert = obs?.indicadores_territoriais?.suscetibilidade_desertificacao || {};
                 const flood = obs?.indicadores_territoriais?.areas_risco_inundacao || {};
                 const rain = obs?.series_temporais?.precipitacao_anual_continente || {};
-                const r24 = rain?.valores?.["2024"], r25 = rain?.valores?.["2025"];
+                // Os dois anos mais recentes da série (atualiza-se sozinha quando o IPMA publica o boletim anual).
+                const rainYears = Object.keys(rain?.valores || {}).sort().slice(-2);
+                const rainMetric = (year) => metric(
+                    "Precipitação anual",
+                    clean(rain.valores[year]) + " mm",
+                    isEn() ? `Mainland, ${year}. Isolated annual value.` : `Continente, ${year}. Valor anual isolado.`,
+                    sourceName(rain),
+                );
                 $id("metrics").innerHTML = [
                     metric(
                         "Desertificação",
@@ -42,18 +49,7 @@
                         "Áreas de risco potencial significativo no ciclo 2022–2027.",
                         sourceName(flood),
                     ),
-                    metric(
-                        "Precipitação anual",
-                        clean(r24) + " mm",
-                        "Continente, 2024. Valor anual isolado.",
-                        sourceName(rain),
-                    ),
-                    metric(
-                        "Precipitação anual",
-                        clean(r25) + " mm",
-                        "Continente, 2025. Valor anual isolado.",
-                        sourceName(rain),
-                    ),
+                    ...rainYears.map(rainMetric),
                 ].join("");
             }
             function renderLocal(locations) {

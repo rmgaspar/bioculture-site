@@ -762,7 +762,7 @@
                 .then((response) => response.ok ? response.json() : {})
                 .catch(() => ({}));
             fullLoading = Promise.all([
-                read(`/assets/lang/auto/${lang}.json?v=45`),
+                read(`/assets/lang/auto/${lang}.json?v=46`),
                 read(`/assets/lang/${lang}.json?v=14`),
                 read(`/assets/lang/display/${lang}.json?v=35`),
             ]).then(([auto, structured, display]) => {
@@ -888,6 +888,7 @@
             if (rest) return `${rest} ${key.slice(-1)}`;
         }
         if ((match = key.match(/^Fonte (\d+)$/))) return `Source ${match[1]}`;
+        if ((match = key.match(/^IPMA — Boletim climatológico anual de (\d{4})$/))) return `IPMA — Annual climatological bulletin ${match[1]}`;
         if ((match = key.match(/^Localização: (.+)$/))) {
             return `Location: ${translateComposite(match[1]) || match[1]}`;
         }

@@ -7,6 +7,8 @@ Fluxo: `.github/workflows/atualizar-dados.yml` (quartas-feiras, 05:43 UTC, e man
 |---|---|---|
 | `banco_mundial.py` | API do Banco Mundial | `energy-*`, `renewables-territory-*`, `air-*` |
 | `ods_onu.py` | API dos Indicadores ODS da ONU (UNSD) | `water-*`, `soil-*`, `biodiversity-*` |
+| `ipma_clima.py` | IPMA — Boletim Climatológico Anual | `observatorio_terra.json` (temperatura, desvio e precipitação de Portugal continental; acrescenta o ano novo quando o boletim sai, normalmente em janeiro ou fevereiro) |
+| `vigia_fontes.py` | APA — Relatório do Estado do Ambiente | não altera dados: abre uma notificação `dados:atualizar` quando sai uma edição nova |
 | `validar.py` | — | valida estrutura, intervalos e valor mundial antes de publicar |
 | `../noticias/arquivar.py` | — | retira das listagens as notícias com prazo terminado |
 
@@ -25,10 +27,18 @@ python3 scripts/dados/ods_onu.py [--dry-run] [--only agua,solo,biodiversidade]
 python3 scripts/dados/validar.py
 ```
 
+## Dados portugueses
+- **Automático:** clima do IPMA (acima) e consultas públicas do Participa.pt (fluxo próprio).
+- **Com aviso:** os indicadores do REA da APA (qualidade do ar, desertificação, erosão costeira, gases
+  com efeito de estufa) saem em relatórios anuais sem API. O vigia avisa quando há edição nova; a
+  atualização é manual. Depois, subir `conhecida` em `config/vigia_fontes.json`.
+- **Não automatizável com fiabilidade:** área ardida (a cartografia do ICNF não coincide com as
+  estatísticas oficiais, por isso não se misturam), séries do Pordata/INE sem código de API estável e
+  textos de relatórios.
+
 ## Não automatizado (curadoria editorial)
-Pecuária, mineração, centros de dados, inventário de espécies, culturas, notícias (aprovação
-manual) e os indicadores portugueses (qualidade do ar, solo, observatório da terra). O Participa.pt
-e as traduções têm os seus próprios fluxos.
+Pecuária, mineração, centros de dados, inventário de espécies, culturas e notícias (aprovação
+manual). As traduções têm o seu próprio fluxo.
 
 ## Texto fixo que pode ficar desatualizado
 Algumas frases editoriais mencionam anos concretos (por exemplo «o último valor JMP refere-se a
