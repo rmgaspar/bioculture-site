@@ -27,6 +27,7 @@ from difflib import SequenceMatcher
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 NEWS_PATH = ROOT / "data" / "noticias.json"
+ARCHIVE_PATH = ROOT / "data" / "noticias_arquivo.json"
 PROPOSALS_PATH = ROOT / "data" / "noticias_propostas.json"
 REJECTED_PATH = ROOT / "data" / "noticias_rejeitadas.json"
 CONFIG_PATH = ROOT / "config" / "noticias_fontes.json"
@@ -352,9 +353,11 @@ def is_duplicate(item: dict, existing: list[dict]) -> bool:
     for news in existing:
         if canonical_url(news.get("url", "")) == url:
             return True
-        old_title = folded((news.get("pt") or {}).get("titulo", news.get("titulo", "")))
-        if old_title and SequenceMatcher(None, title, old_title).ratio() >= 0.88:
-            return True
+        # Compara com o título nas duas línguas: as notícias aprovadas têm o original e a tradução.
+        for old in ((news.get("pt") or {}).get("titulo", news.get("titulo", "")), (news.get("en") or {}).get("titulo", "")):
+            old_title = folded(old)
+            if old_title and SequenceMatcher(None, title, old_title).ratio() >= 0.88:
+                return True
     return False
 
 
@@ -435,6 +438,8 @@ def main() -> int:
     args = parser.parse_args()
     config = json.loads(args.config.read_text(encoding="utf-8"))
     news = json.loads(NEWS_PATH.read_text(encoding="utf-8"))
+    if ARCHIVE_PATH.exists():  # o que foi arquivado (expirado ou retirado) não volta a ser proposto
+        news += json.loads(ARCHIVE_PATH.read_text(encoding="utf-8"))
     pending = json.loads(PROPOSALS_PATH.read_text(encoding="utf-8")) if PROPOSALS_PATH.exists() else []
     rejected = json.loads(REJECTED_PATH.read_text(encoding="utf-8")) if REJECTED_PATH.exists() else []
     now = dt.datetime.now(dt.timezone.utc)
@@ -488,6 +493,12 @@ def main() -> int:
             hits = matches[0][0]
             points, reasons = score(item, int(source.get("autoridade", 15)), hits, now)
             if points < int(config["pontuacao_minima"]):
+                continue
+            # Só agora, com a candidata aprovada nos filtros, se resolve a ligação do Google Notícias
+            # para a da publicação original: é ela que se compara com as notícias já publicadas ou arquivadas.
+            item["url"] = resolve_google_news_url(item["url"])
+            if is_duplicate(item, news + pending + rejected + proposals + from_source):
+                skipped["já publicada, arquivada ou proposta"] = skipped.get("já publicada, arquivada ou proposta", 0) + 1
                 continue
             from_source.append(make_news(item, source, matches, points, reasons))
         from_source.sort(key=lambda n: (n["relevancia"], n["publicado_em"]), reverse=True)
