@@ -247,10 +247,7 @@
             function renderPressureNews() {
                 fetch("/data/noticias.json").then(response => response.json()).then(items => {
                     const selected = (window.BioCultureNews?.rank(items) || items).filter(item => window.BioCultureNews.about(item, ["clima*", "climate", "energia", "energy", "minera*", "mining", "construção", "construction", "urban*", "têxt*", "textile*", "moda", "fashion", "indústria*", "industr*", "resíduo*", "waste", "plástic*", "plastic*", "pecuári*", "livestock", "desflorest*", "deforestation", "biodivers*", "carvão", "coal", "nuclear", "emissões", "emissions"], ["clima", "energia", "mineracao", "impacto-digital", "biodiversidade"])).slice(0, 6);
-                    document.getElementById("pressure-news-grid").innerHTML = selected.map(item => {
-                        const content = isEnglish ? (item.en || item.pt || item) : (item.pt || item);
-                        return `<a href="/observatorio/noticia-detalhe.html?id=${encodeURIComponent(item.id)}"><small>${escapeHtml(item.data || "")}</small><h3>${escapeHtml(content.titulo || "")}</h3><span>${escapeHtml(item.fonte || "bioCulture")}</span></a>`;
-                    }).join("") || `<p>${isEnglish ? "No selected news at this time." : "Sem notícias selecionadas neste momento."}</p>`;
+                    document.getElementById("pressure-news-grid").innerHTML = selected.map(item => window.BioCultureNews.cardHtml(item)).join("") || `<p>${isEnglish ? "No selected news at this time." : "Sem notícias selecionadas neste momento."}</p>`;
                 }).catch(() => { document.getElementById("pressure-news-grid").innerHTML = `<p>${isEnglish ? "News could not be loaded." : "Não foi possível carregar as notícias."}</p>`; });
             }
 

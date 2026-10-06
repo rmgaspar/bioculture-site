@@ -321,20 +321,7 @@
                 .slice(0, 6);
             $("air-news").innerHTML =
                 n
-                    .map(function (x) {
-                        var c = window.BioCultureI18n?.content(x) || x.pt || x;
-                        return (
-                            '<a class="news-item" href="/observatorio/noticia-detalhe.html?id=' +
-                            encodeURIComponent(x.id) +
-                            '"><span>' +
-                            (window.BioCultureI18n?.date(x.data) || x.data || "") +
-                            "</span><h3>" +
-                            (c.titulo || tr("Notícia", "News")) +
-                            '</h3><span class="news-source">' +
-                            (x.fonte || "bioCulture") +
-                            "</span></a>"
-                        );
-                    })
+                    .map(function (x) { return window.BioCultureNews.cardHtml(x); })
                     .join("") ||
                 "<p>" + tr("Sem notícias desta categoria.", "No news in this category.") + "</p>";
         });

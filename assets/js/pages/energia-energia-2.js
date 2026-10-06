@@ -81,9 +81,16 @@
                 const words = ["energia", "energy", "renovável*", "renováveis", "renewable*", "solar", "eólic*", "wind", "elétric*", "eletric*", "electric*", "eficiência", "efficiency", "rede elétrica", "grid", "autoconsumo", "self-consumption", "nuclear", "hidroelétric*", "fotovolta*", "photovoltaic*", "bateria*", "battery", "armazenamento", "storage"];
                 const selected = window.BioCultureNews.rank(items)
                     .filter((n) => window.BioCultureNews.about(n, words, ["energia"]))
-                    .slice(0, 6);
+                    .slice(6, 12);
                 el("news").innerHTML = selected.map((n) => window.BioCultureNews.cardHtml(n)).join("") ||
                     '<p class="empty">Sem notícias desta categoria neste momento.</p>';
+                // O bloco «Atualidade» do fim da página mostra as notícias a seguir às do bloco «em foco» (não as mesmas);
+                // sem mais notícias, esconde-se com a ligação que lhe aponta.
+                const section = el("news").closest("section");
+                if (section && !selected.length) {
+                    section.hidden = true;
+                    if (section.id) document.querySelectorAll(`a[href="#${section.id}"]`).forEach((link) => (link.hidden = true));
+                }
             }
             async function start() {
                 try {

@@ -166,21 +166,19 @@
                 paint();
             }
             function renderNews(items) {
-                const selected = items.filter((n) => {
-                    const c = window.BioCultureI18n?.content(n) || n.pt || n;
-                    return /biodiv|espéc|habitat|conserva|invasor|ecossistema|restauro/i.test(
-                        [n.categoria, n.categoria_id, c.categoria, c.titulo, c.resumo].filter(Boolean)
-                            .join(" "),
-                    );
-                }).slice(0, 6);
-                el("news").innerHTML = selected.map((n) => {
-                    const c = window.BioCultureI18n?.content(n) || n.pt || n;
-                    return `<a class="news-item" href="/observatorio/noticia-detalhe.html?id=${
-                        encodeURIComponent(n.id)
-                    }"><span>${esc(window.BioCultureI18n?.date(n.data) || n.data)}</span><h3>${esc(c.titulo)}</h3><span>${
-                        esc(n.fonte)
-                    }</span></a>`;
-                }).join("") || '<p class="empty">Sem notícias desta categoria neste momento.</p>';
+                const words = ["biodivers*", "espécies ameaçadas", "threatened species", "endangered species", "invasor*", "invasive", "habitat*", "wildlife", "vida selvagem", "extinção", "extinction", "conservação", "conservation", "ecossistema*", "ecosystem*", "floresta*", "forest*", "polinizador*", "pollinator*", "orangotango*", "orangutan*", "tartaruga*", "turtle*", "aves", "birds", "gannet*", "alcatraz*"];
+                const selected = window.BioCultureNews.rank(items)
+                    .filter((n) => window.BioCultureNews.about(n, words, ["biodiversidade", "conservacao"]))
+                    .slice(6, 12);
+                el("news").innerHTML = selected.map((n) => window.BioCultureNews.cardHtml(n)).join("") ||
+                    '<p class="empty">Sem notícias desta categoria neste momento.</p>';
+                // O bloco «Atualidade» do fim da página mostra as notícias a seguir às do bloco «em foco» (não as mesmas);
+                // sem mais notícias, esconde-se com a ligação que lhe aponta.
+                const section = el("news").closest("section");
+                if (section && !selected.length) {
+                    section.hidden = true;
+                    if (section.id) document.querySelectorAll(`a[href="#${section.id}"]`).forEach((link) => (link.hidden = true));
+                }
             }
             async function start() {
                 try {

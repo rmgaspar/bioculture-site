@@ -21,22 +21,24 @@
             .then((items) => {
                 const categories = (latest.dataset.newsCategories || "agua,ar,solo,biodiversidade")
                     .split(",").map((category) => category.trim()).filter(Boolean);
-                const selected = window.BioCultureNews?.select(items, { categories, context: "all", limit: 6, order: "relevance" }) || items.filter((item) => {
-                    const itemCategories = new Set([item.categoria_id, ...(item.categorias || []), ...(item.tags || [])]);
-                    return categories.some((category) => itemCategories.has(category));
-                }).slice(0, 6);
-                latest.innerHTML = selected.map((item) => {
-                    const content = window.BioCultureI18n?.content(item) || item.pt || item;
-                    const summary = content.resumo_biocultura || content.resumo || "";
-                    const sourceImage = typeof item.imagem === "string" && (/^https?:\/\//i.test(item.imagem) || item.imagem.startsWith("/"))
-                        ? item.imagem
-                        : "/images/noticias-sem-imagem.webp";
-                    const imageAlt = sourceImage === "/images/noticias-sem-imagem.webp"
-                        ? (window.BioCultureI18n?.isEnglish ? "bioCulture editorial illustration" : "Ilustração editorial bioCulture")
-                        : (content.titulo || "");
-                    const itemHref = item.pagina || `/observatorio/noticia-detalhe.html?id=${encodeURIComponent(item.id)}`;
-                    return `<a href="${escapeHtml(itemHref)}"><div class="news-media"><img class="hub-latest-thumb" src="${escapeHtml(sourceImage)}" alt="${escapeHtml(imageAlt)}" loading="lazy"></div><div class="hub-latest-card-body"><small>${escapeHtml(item.data || item.categoria || "Atualidade")}</small><h3>${escapeHtml(content.titulo || "Notícia")}</h3><p>${escapeHtml(summary)}</p><span>${escapeHtml(item.fonte || "bioCulture")} →</span></div></a>`;
-                }).join("") || "<p>Sem notícias selecionadas neste momento.</p>";
+                // Cada hub junta as palavras (no título) e as categorias principais dos seus temas, como nas páginas de tema.
+                const registry = window.BioCultureNews?.topics || {};
+                const known = categories.filter((category) => registry[category]);
+                const words = [...new Set(known.flatMap((topic) => registry[topic].words))];
+                const topicCategories = [...new Set(known.flatMap((topic) => registry[topic].categories))];
+                // Um artigo científico só conta pelas palavras do tema da sua própria categoria.
+                const belongs = (item) => {
+                    if (item.estado === "proposta") return false;
+                    if (item.capturado_em && item.tipo_fonte === "ciencia") {
+                        const topic = registry[item.categoria_id];
+                        return !!topic && known.includes(item.categoria_id) && window.BioCultureNews.about(item, topic.words, topic.categories);
+                    }
+                    return window.BioCultureNews.about(item, words, topicCategories);
+                };
+                const selected = known.length
+                    ? window.BioCultureNews.rank(items).filter(belongs).slice(0, 6)
+                    : (window.BioCultureNews?.select(items, { categories, context: "all", limit: 6, order: "relevance" }) || []);
+                latest.innerHTML = selected.map((item) => window.BioCultureNews.cardHtml(item)).join("") || "<p>Sem notícias selecionadas neste momento.</p>";
                 latest.querySelectorAll(".hub-latest-thumb").forEach((image) => {
                     image.addEventListener("error", () => {
                         if (image.dataset.fallbackApplied === "true") return;

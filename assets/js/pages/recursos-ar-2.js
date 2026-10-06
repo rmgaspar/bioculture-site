@@ -93,23 +93,19 @@
                 ).join("");
             }
             function renderNews(items) {
-                const selected = items.filter((n) => {
-                    const c = window.BioCultureI18n?.content(n) || n.pt || n;
-                    return /qualidade do ar|poluiç|emiss|atmosf|pm2|pm10|ozono|fumo|incênd|poeira|respirat/i
-                        .test(
-                            [n.categoria, n.categoria_id, c.categoria, c.titulo, c.resumo].filter(
-                                Boolean,
-                            ).join(" "),
-                        );
-                }).slice(0, 6);
-                el("news").innerHTML = selected.map((n) => {
-                    const c = window.BioCultureI18n?.content(n) || n.pt || n;
-                    return `<a class="news-item" href="/observatorio/noticia-detalhe.html?id=${
-                        encodeURIComponent(n.id)
-                    }"><span>${safe(window.BioCultureI18n?.date(n.data) || n.data)}</span><h3>${safe(c.titulo)}</h3><span>${
-                        safe(n.fonte)
-                    }</span></a>`;
-                }).join("") || '<p class="empty">Sem notícias desta categoria neste momento.</p>';
+                const words = ["qualidade do ar", "air quality", "poluição", "pollution", "poluent*", "pollutant*", "emissões", "emissions", "atmosfer*", "atmospher*", "pm2*", "pm10", "ozono", "ozone", "fumo", "smoke", "incêndio*", "incendi*", "wildfire*", "fogo*", "fires", "poeira", "dust", "respirat*", "mega-incêndio*"];
+                const selected = window.BioCultureNews.rank(items)
+                    .filter((n) => window.BioCultureNews.about(n, words, ["ar", "poluicao"]))
+                    .slice(6, 12);
+                el("news").innerHTML = selected.map((n) => window.BioCultureNews.cardHtml(n)).join("") ||
+                    '<p class="empty">Sem notícias desta categoria neste momento.</p>';
+                // O bloco «Atualidade» do fim da página mostra as notícias a seguir às do bloco «em foco» (não as mesmas);
+                // sem mais notícias, esconde-se com a ligação que lhe aponta.
+                const section = el("news").closest("section");
+                if (section && !selected.length) {
+                    section.hidden = true;
+                    if (section.id) document.querySelectorAll(`a[href="#${section.id}"]`).forEach((link) => (link.hidden = true));
+                }
             }
             async function start() {
                 try {
