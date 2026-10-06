@@ -77,6 +77,49 @@ def entry(title: str, summary: str, item: dict, language: str) -> dict:
     return {"titulo": title, "resumo_biocultura": summary, "corpo": body(summary, item, language)}
 
 
+def trim_summary(summary: str, title: str) -> str:
+    """Resumos de feeds vêm cortados: fica só até à última frase completa; vazio se for só o título."""
+    summary = re.sub(r"\s*Continue reading\s*$", "", summary).strip()
+    summary = re.sub(r"\s*The post .*? appeared first on .*$", "", summary).strip()
+    summary = re.sub(r"\s*\[…\]\s*$", "", summary).strip()
+    if not re.search(r"[.?!”\"]$", summary):
+        ends = list(re.finditer(r"[.?!](?=\s|$)", summary))
+        summary = summary[: ends[-1].end()] if ends else summary
+    if summary.lower().startswith(title.lower()[:40]) and len(summary) < len(title) + 60:
+        return ""
+    return summary
+
+
+def export_pending(rows: list[dict]) -> list[dict]:
+    """Notícias por traduzir, prontas para traduzir à mão ou por outra ferramenta."""
+    out = []
+    for item in pending(rows):
+        title, summary = item["pt"]["titulo"], item["pt"].get("resumo_biocultura", "")
+        summary = trim_summary(summary, title)
+        out.append({"id": item["id"], "de": "en" if looks_english(title + " " + summary) else "pt", "title": title, "summary": summary})
+    return out
+
+
+def import_translations(rows: list[dict], translations: list[dict]) -> int:
+    """Aplica {id, title, summary} (na língua oposta à de origem, como em `export_pending`)."""
+    by_id = {r["id"]: r for r in rows}
+    source = {e["id"]: e for e in export_pending(rows)}
+    done = 0
+    for tr in translations:
+        item, src = by_id.get(tr["id"]), source.get(tr["id"])
+        if not item or not src:
+            continue
+        if src["de"] == "en":  # fonte em inglês: o original passa a `en` e a tradução a `pt`
+            item["en"] = entry(src["title"], src["summary"], item, "en")
+            item["pt"] = entry(tr["title"], tr["summary"], item, "pt")
+        else:
+            item["en"] = entry(tr["title"], tr["summary"], item, "en")
+            item["pt"] = entry(src["title"], src["summary"], item, "pt")
+        item["idioma_original"] = src["de"]
+        done += 1
+    return done
+
+
 def pending(rows: list[dict]) -> list[dict]:
     """Notícias automáticas (sem curadoria bilingue) a que falta uma das línguas."""
     return [r for r in rows if r.get("pt") and not r.get("en")]
@@ -86,11 +129,22 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--file", default=str(NEWS))
     parser.add_argument("--batch-size", type=int, default=12)
+    parser.add_argument("--exportar", metavar="FICHEIRO", help="grava as notícias por traduzir (JSON) para traduzir à mão")
+    parser.add_argument("--importar", metavar="FICHEIRO", help="aplica traduções [{id, title, summary}] gravadas à mão")
     parser.add_argument("--probe", action="store_true", help="só verifica se o serviço responde")
     args = parser.parse_args()
     path = Path(args.file)
     key = os.environ.get("ANTHROPIC_API_KEY", "")
     rows = json.loads(path.read_text(encoding="utf-8"))
+    if args.exportar:
+        Path(args.exportar).write_text(json.dumps(export_pending(rows), ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+        print(f"{len(export_pending(rows))} notícia(s) exportada(s) para {args.exportar}.")
+        return 0
+    if args.importar:
+        done = import_translations(rows, json.loads(Path(args.importar).read_text(encoding="utf-8")))
+        path.write_text(json.dumps(rows, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        print(f"{done} notícia(s) traduzida(s); faltam {len(pending(rows))}.")
+        return 0
     todo = pending(rows)
     print(f"{len(todo)} notícia(s) por traduzir em {path.name}.")
     if args.probe or todo:
