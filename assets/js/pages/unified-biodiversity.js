@@ -289,7 +289,7 @@
             var n = (window.BioCultureNews ? window.BioCultureNews.rank(items) : items)
                 .filter(function (x) {
                     var c = window.BioCultureI18n?.content(x) || x.pt || x;
-                    return window.BioCultureNews.about(x, ["biodivers*", "espécies ameaçadas", "threatened species", "endangered species", "invasor*", "invasive", "habitat*", "wildlife", "vida selvagem", "extinção", "extinction", "conservação", "conservation", "ecossistema*", "ecosystem*", "floresta*", "forest*", "polinizador*", "pollinator*", "orangotango*", "orangutan*", "tartaruga*", "turtle*", "aves", "birds", "gannet*", "alcatraz*"], ["biodiversidade"]);
+                    return window.BioCultureNews.about(x, ["biodivers*", "espécies ameaçadas", "threatened species", "endangered species", "invasor*", "invasive", "habitat*", "wildlife", "vida selvagem", "extinção", "extinction", "conservação", "conservation", "ecossistema*", "ecosystem*", "floresta*", "forest*", "polinizador*", "pollinator*", "orangotango*", "orangutan*", "tartaruga*", "turtle*", "aves", "birds", "gannet*", "alcatraz*"], ["biodiversidade", "conservacao"]);
                 })
                 .slice(0, 6);
             $("biodiversity-news").innerHTML =

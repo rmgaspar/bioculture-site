@@ -10,7 +10,7 @@
     document.querySelector('#news .section-head p').textContent = 'Selected news on organic agriculture, seeds, soil, water, climate, cultivated biodiversity and crop protection.';
   }
   fetch('/data/noticias.json').then(response => response.json()).then(items => {
-    const selected = items.filter(item => window.BioCultureNews.about(item, ["agricultur*", "agrícola*", "agroecolog*", "biológic*", "organic", "solo*", "soil*", "semente*", "seed*", "horta*", "hortícola*", "cultiv*", "crop*", "rega", "irrigation", "compost*", "polinizador*", "pollinator*", "praga*", "pest*", "vinha*", "vindima*", "vineyard*", "harvest*", "cereais", "cereal*", "fertiliz*"], ["agricultura", "solo", "biodiversidade"])).filter(item => window.BioCultureNews?.visibleIn(item, 'global') ?? true)
+    const selected = items.filter(item => window.BioCultureNews.about(item, ["agricultur*", "agrícola*", "agroecolog*", "biológic*", "organic", "solo*", "soil*", "semente*", "seed*", "horta*", "hortícola*", "cultiv*", "crop*", "rega", "irrigation", "compost*", "polinizador*", "pollinator*", "praga*", "pest*", "vinha*", "vindima*", "vineyard*", "harvest*", "cereais", "cereal*", "fertiliz*"], ["agricultura"])).filter(item => window.BioCultureNews?.visibleIn(item, 'global') ?? true)
       .sort(window.BioCultureNews ? window.BioCultureNews.compareByRelevance(items) : (a,b) => Date.parse(b.data || '') - Date.parse(a.data || '')).slice(0, 6);
     container.innerHTML = selected.map(item => {
       const content = window.BioCultureI18n?.content(item) || item.pt || item;

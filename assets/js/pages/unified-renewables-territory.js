@@ -563,7 +563,7 @@
             var n = (window.BioCultureNews ? window.BioCultureNews.rank(items) : items)
                 .filter(function (x) {
                     var c = window.BioCultureI18n?.content(x) || x.pt || x;
-                    return window.BioCultureNews.about(x, ["ZAER", "solar", "eólic*", "wind", "renew*", "renov*", "licenciamento", "licensing", "fotovolta*", "photovoltaic*", "land use", "mapa verde"], ["energia", "territorio"]);
+                    return window.BioCultureNews.about(x, ["ZAER", "solar", "eólic*", "wind", "renew*", "renov*", "licenciamento", "licensing", "fotovolta*", "photovoltaic*", "land use", "mapa verde"], []);
                 })
                 .slice(0, 6);
             $("territory-news").innerHTML =

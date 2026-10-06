@@ -316,7 +316,7 @@
             var n = (window.BioCultureNews ? window.BioCultureNews.rank(items) : items)
                 .filter(function (x) {
                     var c = window.BioCultureI18n?.content(x) || x.pt || x;
-                    return window.BioCultureNews.about(x, ["qualidade do ar", "air quality", "poluição", "pollution", "poluent*", "pollutant*", "emissões", "emissions", "atmosfer*", "atmospher*", "pm2*", "pm10", "ozono", "ozone", "fumo", "smoke", "incêndio*", "incendi*", "wildfire*", "fogo*", "fires", "poeira", "dust", "respirat*", "mega-incêndio*"], ["ar"]);
+                    return window.BioCultureNews.about(x, ["qualidade do ar", "air quality", "poluição", "pollution", "poluent*", "pollutant*", "emissões", "emissions", "atmosfer*", "atmospher*", "pm2*", "pm10", "ozono", "ozone", "fumo", "smoke", "incêndio*", "incendi*", "wildfire*", "fogo*", "fires", "poeira", "dust", "respirat*", "mega-incêndio*"], ["ar", "poluicao"]);
                 })
                 .slice(0, 6);
             $("air-news").innerHTML =

@@ -661,8 +661,11 @@
                 if (item.tipo_fonte === "ciencia" && categories.length && !categories.includes(item.categoria_id)) return false;
                 return rx.test(titles);
             }
-            const pt = item?.pt || {};
-            return rx.test([item?.categoria, titles, pt.resumo_biocultura, pt.resumo, pt.corpo].filter(Boolean).join(" "));
+            // Notícias escritas à mão: vale a categoria principal que lhes atribuíste ou o título. As categorias
+            // secundárias, o resumo e o corpo tocam em muita coisa de passagem («água», «solo», «ecossistemas»)
+            // e levavam a mesma notícia para todas as páginas.
+            if (categories.includes(item?.categoria_id)) return true;
+            return rx.test(titles);
         },
         rank(items) {
             const rows = Array.isArray(items) ? items : [];
