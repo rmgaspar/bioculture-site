@@ -42,6 +42,8 @@ jobs:
           python3 scripts/dados/ods_onu.py || status=1
           # Clima de Portugal continental: acrescenta o ano novo quando o IPMA publica o boletim anual.
           python3 scripts/dados/ipma_clima.py || status=1
+          # Emissões de gases com efeito de estufa e erosão costeira (fichas do REA da APA).
+          python3 scripts/dados/apa_rea.py || status=1
           # Retira das listagens as notícias com prazo terminado (histórico preservado no arquivo).
           python3 scripts/noticias/arquivar.py || status=1
           echo "falhas=$status" >> "$GITHUB_OUTPUT"
@@ -101,6 +103,8 @@ jobs:
               echo "Ficheiros a rever: $(jq -r '.ficheiros | join(", ")' <<<"$ALERTA")"
               echo
               echo "O que rever: $(jq -r '.o_que_rever' <<<"$ALERTA")"
+              echo
+              echo "Valores lidos agora na ficha de qualidade do ar: $(jq -c '.valores_lidos' <<<"$ALERTA")"
               echo
               echo "Depois de atualizar os dados, subir «conhecida» em config/vigia_fontes.json para $EDICAO."
               echo

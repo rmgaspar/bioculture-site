@@ -15,6 +15,7 @@ import sys
 import urllib.error
 import urllib.request
 
+import apa_rea
 import comum
 from comum import RAIZ, USER_AGENT, ErroDados
 
@@ -55,7 +56,13 @@ def main():
         estado = "NOVA EDIÇÃO" if atual > fonte["conhecida"] else "em dia"
         print(f"{fonte['id']}: edição publicada {atual}, incorporada {fonte['conhecida']} — {estado}")
         if atual > fonte["conhecida"]:
-            alertas.append({
+            lidos = {}
+            if fonte["id"] == "apa-rea":
+                try:  # ajuda à revisão: o que a ficha de qualidade do ar diz agora (best effort)
+                    lidos = apa_rea.ler_qualidade_ar()
+                except ErroDados:
+                    pass
+            alertas.append({"valores_lidos": lidos,
                 "id": f"{fonte['id']}@{atual}", "fonte": fonte["nome"], "edicao": atual,
                 "url": fonte["url"], "ficheiros": fonte["ficheiros"], "o_que_rever": fonte["o_que_rever"],
             })

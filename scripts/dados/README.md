@@ -8,7 +8,8 @@ Fluxo: `.github/workflows/atualizar-dados.yml` (quartas-feiras, 05:43 UTC, e man
 | `banco_mundial.py` | API do Banco Mundial | `energy-*`, `renewables-territory-*`, `air-*` |
 | `ods_onu.py` | API dos Indicadores ODS da ONU (UNSD) | `water-*`, `soil-*`, `biodiversity-*` |
 | `ipma_clima.py` | IPMA — Boletim Climatológico Anual | `observatorio_terra.json` (temperatura, desvio e precipitação de Portugal continental; acrescenta o ano novo quando o boletim sai, normalmente em janeiro ou fevereiro) |
-| `vigia_fontes.py` | APA — Relatório do Estado do Ambiente | não altera dados: abre uma notificação `dados:atualizar` quando sai uma edição nova |
+| `apa_rea.py` | APA — Relatório do Estado do Ambiente (fichas) | `observatorio_terra.json`: emissões de gases com efeito de estufa e erosão costeira |
+| `vigia_fontes.py` | APA — Relatório do Estado do Ambiente | não altera dados: abre uma notificação `dados:atualizar` (com os valores lidos da qualidade do ar) quando sai uma edição nova |
 | `validar.py` | — | valida estrutura, intervalos e valor mundial antes de publicar |
 | `../noticias/arquivar.py` | — | retira das listagens as notícias com prazo terminado |
 
@@ -29,9 +30,11 @@ python3 scripts/dados/validar.py
 
 ## Dados portugueses
 - **Automático:** clima do IPMA (acima) e consultas públicas do Participa.pt (fluxo próprio).
-- **Com aviso:** os indicadores do REA da APA (qualidade do ar, desertificação, erosão costeira, gases
-  com efeito de estufa) saem em relatórios anuais sem API. O vigia avisa quando há edição nova; a
-  atualização é manual. Depois, subir `conhecida` em `config/vigia_fontes.json`.
+- **Automático a partir do REA:** emissões de gases com efeito de estufa e erosão costeira (frases-modelo
+  das fichas; se o formato ou o período mudarem, avisa e não escreve).
+- **Com aviso e revisão humana:** qualidade do ar e desertificação (textos interpretativos; o REA 2025
+  mudou a metodologia da desertificação). O vigia avisa quando há edição nova do REA. Depois de
+  atualizar, subir `conhecida` em `config/vigia_fontes.json`.
 - **Não automatizável com fiabilidade:** área ardida (a cartografia do ICNF não coincide com as
   estatísticas oficiais, por isso não se misturam), séries do Pordata/INE sem código de API estável e
   textos de relatórios.
