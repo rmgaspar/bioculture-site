@@ -24,6 +24,7 @@ from pathlib import Path
 from difflib import SequenceMatcher
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 NEWS_PATH = ROOT / "data" / "noticias.json"
 PROPOSALS_PATH = ROOT / "data" / "noticias_propostas.json"
 REJECTED_PATH = ROOT / "data" / "noticias_rejeitadas.json"
@@ -124,6 +125,17 @@ def has_word(word: str, value: str) -> bool:
     stem = word.endswith("*")
     pattern = r"(?<![a-z0-9])" + re.escape(folded(word.rstrip("*"))) + (r"[a-z]*" if stem else r"s?(?![a-z0-9])")
     return re.search(pattern, value) is not None
+
+
+def fetch_source(source: dict) -> list[dict]:
+    """RSS/Atom, ou um leitor de HTML (leitores_html.py) para organismos sem feed."""
+    if source.get("leitor"):
+        import leitores_html
+        items = leitores_html.LEITORES[source["leitor"]]()
+        if not items:
+            raise RuntimeError("o leitor não encontrou notícias (o site pode ter mudado)")
+        return items
+    return fetch_feed(source["url"])
 
 
 def classify(text: str) -> list[tuple[int, str, str]]:
@@ -373,7 +385,7 @@ def main() -> int:
         if not source.get("ativa", True):
             continue
         try:
-            items = fetch_feed(source["url"])
+            items = fetch_source(source)
         except Exception as exc:  # Uma fonte indisponível não bloqueia as restantes.
             failures.append(f"{source['id']}: {exc}")
             continue
