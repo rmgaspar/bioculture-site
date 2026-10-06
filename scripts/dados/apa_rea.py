@@ -4,10 +4,12 @@
 Fichas lidas (frases-modelo da própria APA, com números):
 - «Emissões de gases com efeito de estufa»: emissões do ano, sem uso do solo e florestas (Mt CO₂e);
 - «Linha de costa em situação de erosão»: percentagem e extensão do litoral baixo e arenoso em erosão e
-  perda de território costeiro.
+  perda de território costeiro;
+- «Suscetibilidade à desertificação»: classes do Índice de Suscetibilidade à Desertificação (ISD), a
+  metodologia adotada pelo REA 2025 (substitui o índice de aridez; as duas não são comparáveis).
 
-O que NÃO se automatiza: a qualidade do ar e a desertificação (o REA 2025 mudou a metodologia da
-desertificação), cujos textos interpretativos pedem revisão humana. Para esses, ver vigia_fontes.py.
+O que NÃO se automatiza: a qualidade do ar, cujos textos interpretativos pedem revisão humana.
+Para esta, ver vigia_fontes.py.
 
 Segurança: só se escreve se as frases forem encontradas e os valores plausíveis. Se o texto mudar de
 formato ou o período da erosão deixar de ser 1958–2023 (nomes de campos e textos fixos), avisa e não escreve.
@@ -28,8 +30,10 @@ from comum import USER_AGENT, ErroDados, escrever_se_mudou, hoje, ler
 BASE = "https://rea.apambiente.pt/content/"
 FICHA_GEE = BASE + quote("emissões-de-gases-com-efeito-de-estufa")
 FICHA_EROSAO = BASE + quote("linha-de-costa-em-situação-de-erosão")
+FICHA_DESERT = BASE + quote("suscetibilidade-à-desertificação")
 NOME_FONTE_GEE = "APA — Relatório do Estado do Ambiente: emissões de gases com efeito de estufa"
 NOME_FONTE_EROSAO = "APA — Relatório do Estado do Ambiente: linha de costa em situação de erosão"
+NOME_FONTE_DESERT = "APA — Relatório do Estado do Ambiente: suscetibilidade à desertificação"
 PERIODO_EROSAO = (1958, 2023)  # os nomes dos campos e os textos da página usam estes anos
 
 
@@ -79,6 +83,99 @@ def extrair_erosao(t):
     if not (0 < percentagem <= 100 and 0 < em_erosao <= total <= 3000 and 0 < perda < 100000):
         raise ErroDados(f"Erosão costeira: valores implausíveis ({percentagem}%, {em_erosao}/{total} km, {perda} ha)")
     return percentagem, em_erosao, total, perda
+
+
+def extrair_desertificacao(t):
+    """Classes do ISD (percentagem do território continental) e ano; variação da área semiárida, se existir."""
+    m = re.search(
+        r"indica que ([\d.,]+)% do territ[óo]rio continental apresenta muito elevada suscetibilidade, ([\d.,]+)% alta suscetibilidade, ([\d.,]+)% suscetibilidade moderada e ([\d.,]+)% suscetibilidade ligeira",
+        t,
+    )
+    a = re.search(r"Suscetibilidade à Desertifica[cç][aã]o \(ISD\) no territ[óo]rio de Portugal continental para o ano de (\d{4})", t)
+    if not m or not a:
+        raise ErroDados(f"Desertificação: frases do ISD não encontradas (classes: {bool(m)}, ano: {bool(a)})")
+    classes = {"muito_elevada": decimal(m.group(1)), "alta": decimal(m.group(2)), "moderada": decimal(m.group(3)), "ligeira": decimal(m.group(4))}
+    ano = int(a.group(1))
+    if sum(classes.values()) > 100.5 or not 2020 <= ano <= 2100:
+        raise ErroDados(f"Desertificação: valores implausíveis ({classes}, {ano})")
+    semiarida = re.search(r"superf[ií]cie ocupada por [áa]reas semi[áa]ridas aumentado (\d+)% entre os per[ií]odos de observa[cç][aã]o (\d{4}-\d{4}) e (\d{4}-\d{4}), segundo o ([^()]+?) \(([^)]*\d{4})\)", t)
+    extra = None
+    if semiarida:
+        extra = {"variacao_percent": int(semiarida.group(1)), "de": semiarida.group(2).replace("-", "–"),
+                 "ate": semiarida.group(3).replace("-", "–"), "fonte": f"{semiarida.group(4).strip()}, {semiarida.group(5).split()[-1]}"}
+    return ano, classes, extra
+
+
+def pt(valor, casas=1):
+    return f"{valor:.{casas}f}".replace(".", ",")
+
+
+def textos_desertificacao(ano, classes, extra):
+    alta_ou_mais = round(classes["alta"] + classes["muito_elevada"], 1)
+    frase_semiarida = ""
+    if extra:
+        frase_semiarida = (f" A superfície ocupada por áreas semiáridas aumentou {extra['variacao_percent']}% entre "
+                           f"{extra['de']} e {extra['ate']} ({extra['fonte']}).")
+    descricao = (
+        f"Percentagem do território continental com suscetibilidade alta ({pt(classes['alta'], 2)}%) ou muito elevada "
+        f"({pt(classes['muito_elevada'], 2)}%) à desertificação, segundo o Índice de Suscetibilidade à Desertificação (ISD) de {ano}; "
+        f"a suscetibilidade moderada abrange {pt(classes['moderada'], 2)}% e a ligeira {pt(classes['ligeira'], 2)}%."
+        f"{frase_semiarida} O REA 2025 passou a usar este índice, em vez do índice de aridez; os valores não são comparáveis com os de edições anteriores."
+    )
+    leitura = (
+        f"Índice de Suscetibilidade à Desertificação (ISD) {ano}: {pt(classes['muito_elevada'], 2)}% do território continental com "
+        f"suscetibilidade muito elevada e {pt(classes['alta'], 2)}% alta. Suscetibilidade não significa área já desertificada: combina "
+        f"solo, clima, vegetação e gestão das terras. Metodologia nova no REA 2025, não comparável com a das edições anteriores."
+    )
+    return alta_ou_mais, descricao, leitura
+
+
+def atualizar_desertificacao(dados_terra):
+    ano, classes, extra = extrair_desertificacao(ler_ficha(FICHA_DESERT))
+    valor, descricao, leitura = textos_desertificacao(ano, classes, extra)
+    periodo = f"Índice de Suscetibilidade à Desertificação (ISD), {ano}"
+    unidade = "% do território continental com suscetibilidade alta ou muito elevada"
+    ind = dados_terra["indicadores_territoriais"]["suscetibilidade_desertificacao"]
+    ind.clear()
+    ind.update({
+        "valor": valor, "unidade": unidade, "periodo": periodo, "ambito": "Portugal continental",
+        "classes_percent": classes, "descricao": descricao,
+        "fontes": [{"nome": NOME_FONTE_DESERT, "url": FICHA_DESERT}],
+    })
+    if extra:
+        ind["area_semiarida"] = extra
+
+    for relatorio in dados_terra.get("relatorios", []):
+        if relatorio.get("id") == "solo":  # só a primeira frase fala da desertificação
+            resto = relatorio["resumo"].split(". ", 1)[1] if ". " in relatorio["resumo"] else ""
+            relatorio["resumo"] = f"A suscetibilidade alta ou muito elevada à desertificação abrange {pt(valor)}% do Continente (ISD {ano}). {resto}".strip()
+
+    solo = ler("solo_stats.json")
+    destaque = next(x for x in solo["destaques"] if x["id"] == "desertificacao")
+    destaque.clear()
+    destaque.update({
+        "id": "desertificacao", "titulo": "Suscetibilidade à desertificação", "valor": valor, "unidade": unidade,
+        "periodo": periodo, "leitura": leitura, "fonte_id": "REA_DESERTIFICACAO",
+    })
+    # A série antiga (índice de aridez, normais 1960–2010) fica guardada, mas claramente separada.
+    series = solo["series"]
+    antiga = series.pop("susceptibilidade_desertificacao", None) or series.get("susceptibilidade_desertificacao_metodologia_anterior")
+    if antiga is not None and not antiga.get("nota", "").startswith("Metodologia anterior"):
+        antiga["nota"] = ("Metodologia anterior (índice de aridez, normais climáticas), descontinuada no REA 2025. "
+                          "Não comparar com o ISD. " + antiga.get("nota", "").replace("Não interpolar anos intermédios.", "").strip()).strip()
+    if antiga is not None:
+        series["susceptibilidade_desertificacao_metodologia_anterior"] = antiga
+    series["suscetibilidade_desertificacao_isd"] = {
+        "unidade": "% do território continental", "tipo_periodo": "índice anual (ISD)", "ano": ano,
+        "classes": classes, "nota": "Classes do ISD, metodologia do REA 2025. Não comparável com a série anterior.",
+        "fonte_id": "REA_DESERTIFICACAO",
+    }
+    for fonte in solo["fontes"]:
+        if fonte["id"] == "REA_DESERTIFICACAO":
+            fonte.update({"titulo": "Relatório do Estado do Ambiente — Suscetibilidade à desertificação", "url": FICHA_DESERT, "consultado_em": hoje()})
+    solo["metadados"]["atualizado_em"] = hoje()
+    mudou = escrever_se_mudou("solo_stats.json", solo, None, ("atualizado_em", "consultado_em"))
+    return ano, valor, mudou
 
 
 FICHA_AR = BASE + "qualidade-do-ar-0"
@@ -147,6 +244,14 @@ def main():
     except ErroDados as erro:
         print(f"::warning::{erro}")
         falhas.append("erosao")
+
+    try:
+        ano, valor, mudou_solo = atualizar_desertificacao(dados)
+        print(f"Desertificação (ISD {ano}): {valor}% com suscetibilidade alta ou muito elevada; solo_stats.json: {'atualizado' if mudou_solo else 'sem alterações'}")
+        alterou = True
+    except ErroDados as erro:
+        print(f"::warning::{erro}")
+        falhas.append("desertificacao")
 
     if alterou:
         dados["metadados"]["ultima_atualizacao"] = hoje()

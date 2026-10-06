@@ -9,6 +9,9 @@
             }
             function metric(x, data) {
                 let value = x.valor !== undefined ? x.valor : x.valor_final;
+                if (typeof value === "number" && !Number.isInteger(value)) {
+                    value = new Intl.NumberFormat(window.BioCultureI18n?.isEnglish ? "en-GB" : "pt-PT", { maximumFractionDigits: 1 }).format(value);
+                }
                 let unit = x.unidade || "";
                 return `<article class="metric"><h3>${x.titulo}</h3><strong>${safe(value)}${
                     unit.startsWith("%") ? "%" : ""

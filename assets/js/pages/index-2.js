@@ -373,9 +373,13 @@
                 if (!ind) return "";
                 const items = [];
                 if (ind.suscetibilidade_desertificacao) items.push({
-                    label: isEnglish ? "Mainland territory at desertification risk" : "Território continental suscetível a desertificação",
+                    label: isEnglish ? "Mainland territory with high or very high desertification susceptibility" : "Território continental com suscetibilidade alta ou muito elevada à desertificação",
                     val: ind.suscetibilidade_desertificacao.valor, color: "#c17f3e",
-                    note: isEnglish ? "up 22% since the 1960–1990 climate normal" : "subiu 22% desde a normal climatológica 1960–1990",
+                    note: ind.suscetibilidade_desertificacao.area_semiarida
+                        ? (isEnglish
+                            ? `semi-arid area up ${ind.suscetibilidade_desertificacao.area_semiarida.variacao_percent}% between ${ind.suscetibilidade_desertificacao.area_semiarida.de} and ${ind.suscetibilidade_desertificacao.area_semiarida.ate}`
+                            : `área semiárida +${ind.suscetibilidade_desertificacao.area_semiarida.variacao_percent}% entre ${ind.suscetibilidade_desertificacao.area_semiarida.de} e ${ind.suscetibilidade_desertificacao.area_semiarida.ate}`)
+                        : "",
                 });
                 if (ind.erosao_costeira) items.push({
                     label: isEnglish ? "Sandy coastline in erosion" : "Costa arenosa baixa em erosão",

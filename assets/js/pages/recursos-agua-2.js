@@ -27,6 +27,7 @@
             function renderMetrics(obs, soil) {
                 const desert = obs?.indicadores_territoriais?.suscetibilidade_desertificacao || {};
                 const flood = obs?.indicadores_territoriais?.areas_risco_inundacao || {};
+                const desertYear = (desert.periodo || "").match(/\d{4}/)?.[0] || "";
                 const rain = obs?.series_temporais?.precipitacao_anual_continente || {};
                 // Os dois anos mais recentes da série (atualiza-se sozinha quando o IPMA publica o boletim anual).
                 const rainYears = Object.keys(rain?.valores || {}).sort().slice(-2);
@@ -39,8 +40,10 @@
                 $id("metrics").innerHTML = [
                     metric(
                         "Desertificação",
-                        clean(desert.valor ?? desert.percentagem) + "%",
-                        "Território continental suscetível, segundo a normal climatológica indicada.",
+                        (isEn() ? clean(desert.valor) : clean(desert.valor).replace(".", ",")) + "%",
+                        isEn()
+                            ? `Mainland territory with high or very high susceptibility (ISD, ${desertYear}).`
+                            : `Território continental com suscetibilidade alta ou muito elevada (ISD, ${desertYear}).`,
                         sourceName(desert),
                     ),
                     metric(

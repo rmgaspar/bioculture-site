@@ -36,7 +36,7 @@
                         `${formatNumber(burned.value)} ha`,
                         isEn() ? `${burned.year} · provisional figure for the mainland` : `${burned.year} · valor provisório no Continente`,
                     ],
-                    ["Desertificação", `${desert.valor}%`, "do território continental suscetível"],
+                    ["Desertificação", `${isEn() ? desert.valor : formatNumber(desert.valor, 1)}%`, "do território continental com suscetibilidade alta ou muito elevada"],
                     [
                         "Costa em erosão",
                         `${coast.costa_baixa_arenosa_em_erosao_percent}%`,
@@ -51,7 +51,7 @@
                     }</p></article>`
                 ).join("");
                 document.getElementById("overview-text").innerHTML =
-                    `Os dados disponíveis mostram três pressões claras: incêndios rurais muito variáveis e severos em alguns anos, mais de metade do Continente suscetível à desertificação e uma parte significativa da costa arenosa em erosão. Ao mesmo tempo, Portugal tem hoje menos explorações agrícolas, embora a superfície utilizada tenha diminuído muito menos — sinal de concentração da atividade em unidades maiores.`;
+                    `Os dados disponíveis mostram três pressões claras: incêndios rurais muito variáveis e severos em alguns anos, cerca de um terço do Continente com suscetibilidade alta ou muito elevada à desertificação e uma parte significativa da costa arenosa em erosão. Ao mesmo tempo, Portugal tem hoje menos explorações agrícolas, embora a superfície utilizada tenha diminuído muito menos — sinal de concentração da atividade em unidades maiores.`;
             }
 
             function addChart(canvas, series, index, type = "line") {
@@ -161,7 +161,7 @@
                 const cards = [
                     [
                         "Suscetibilidade à desertificação",
-                        isEn() ? `${desert.valor}% of the mainland` : `${desert.valor}% do Continente`,
+                        isEn() ? `${desert.valor}% of the mainland (high or very high)` : `${formatNumber(desert.valor, 1)}% do Continente (alta ou muito elevada)`,
                         desert.descricao,
                         desert.fontes[0],
                     ],
