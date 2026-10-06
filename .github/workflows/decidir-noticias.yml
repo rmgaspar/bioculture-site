@@ -12,7 +12,6 @@ on:
 
 permissions:
   contents: write
-  models: read
 
 concurrency:
   group: noticias-editorial
@@ -38,7 +37,7 @@ jobs:
       - name: Traduzir as notícias aprovadas
         continue-on-error: true
         env:
-          GITHUB_TOKEN: ${{ github.token }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: python3 scripts/noticias/traduzir.py
       - name: Validar dados editoriais
         run: |

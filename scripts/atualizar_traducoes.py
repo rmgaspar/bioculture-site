@@ -64,49 +64,23 @@ def collect_editorial():
     return sorted(strings)
 
 
-def github_request(url, token, data=None):
-    headers = {
-        "Authorization": f"Bearer {token}",
-        "Content-Type": "application/json",
-        "Accept": "application/vnd.github+json",
-        "X-GitHub-Api-Version": "2026-03-10",
-    }
-    request = urllib.request.Request(url, data=data, headers=headers)
-    try:
-        return urllib.request.urlopen(request, timeout=120)
-    except urllib.error.HTTPError as error:
-        detail = error.read().decode("utf-8", errors="replace")
-        raise RuntimeError(f"GitHub Models devolveu HTTP {error.code}: {detail}") from error
+MODEL = "claude-haiku-4-5-20251001"
 
 
-def choose_model(token):
-    url = "https://models.github.ai/catalog/models?api-version=2026-03-10"
-    with github_request(url, token) as response:
-        catalog = json.loads(response.read())
-    available = {item.get("id") for item in catalog}
-    preferred = (
-        "openai/gpt-5-mini",
-        "openai/gpt-5",
-        "openai/gpt-4.1",
-        "openai/gpt-4o-mini",
-        "openai/gpt-4o",
+def anthropic(prompt, key):
+    payload = json.dumps({"model": MODEL, "max_tokens": 8000, "temperature": 0.1, "messages": [{"role": "user", "content": prompt}]}).encode()
+    request = urllib.request.Request(
+        "https://api.anthropic.com/v1/messages", data=payload,
+        headers={"x-api-key": key, "anthropic-version": "2023-06-01", "content-type": "application/json"},
     )
-    for model in preferred:
-        if model in available:
-            print(f"Modelo selecionado automaticamente: {model}")
-            return model
-    compatible = [
-        item.get("id") for item in catalog
-        if item.get("id") and "text" in item.get("supported_input_modalities", ["text"])
-        and "text" in item.get("supported_output_modalities", ["text"])
-    ]
-    if not compatible:
-        raise RuntimeError("A conta não apresenta nenhum modelo de texto disponível no GitHub Models.")
-    print(f"Modelo selecionado automaticamente: {compatible[0]}")
-    return compatible[0]
+    try:
+        with urllib.request.urlopen(request, timeout=120) as response:
+            return json.loads(response.read())["content"][0]["text"]
+    except urllib.error.HTTPError as error:
+        raise RuntimeError(f"Anthropic devolveu HTTP {error.code}: {error.read().decode('utf-8', errors='replace')[:300]}") from error
 
 
-def translate_batch(token, language, batch, model):
+def translate_batch(key, language, batch):
     items = [{"id": str(i), "text": text} for i, text in enumerate(batch)]
     prompt = (
         f"Translate every item from European Portuguese into {LANGUAGES[language]}. "
@@ -114,10 +88,7 @@ def translate_batch(token, language, batch, model):
         "scientific names and punctuation. Use clear, natural language. Return only a JSON array with the same id and a target field.\n"
         + json.dumps(items, ensure_ascii=False)
     )
-    payload = json.dumps({"model": model, "temperature": 0.1, "messages": [{"role": "user", "content": prompt}]}).encode()
-    url = "https://models.github.ai/inference/chat/completions?api-version=2026-03-10"
-    with github_request(url, token, payload) as response:
-        content = json.loads(response.read())["choices"][0]["message"]["content"].strip()
+    content = anthropic(prompt, key).strip()
     content = re.sub(r"^```(?:json)?\s*|\s*```$", "", content)
     translated = json.loads(content)
     by_id = {str(item["id"]): clean(item["target"]) for item in translated}
@@ -131,13 +102,11 @@ def main():
     parser.add_argument("--language", choices=LANGUAGES, required=True)
     parser.add_argument("--max-items", type=int, default=1500)
     parser.add_argument("--batch-size", type=int, default=40)
-    parser.add_argument("--model", default="auto")
     args = parser.parse_args()
-    token = os.environ.get("GITHUB_TOKEN")
-    if not token:
-        raise SystemExit("GITHUB_TOKEN is required")
-    if args.model == "auto":
-        args.model = choose_model(token)
+    key = os.environ.get("ANTHROPIC_API_KEY")
+    if not key:
+        print("::warning::Falta o segredo ANTHROPIC_API_KEY do repositório: tradução do site ignorada.")
+        return
     target = ROOT / "assets" / "lang" / "auto" / f"{args.language}.json"
     target.parent.mkdir(parents=True, exist_ok=True)
     catalog = json.loads(target.read_text(encoding="utf-8")) if target.exists() else {}
@@ -145,7 +114,7 @@ def main():
     missing = [text for text in all_strings if text not in catalog][: args.max_items]
     for start in range(0, len(missing), args.batch_size):
         batch = missing[start : start + args.batch_size]
-        results = translate_batch(token, args.language, batch, args.model)
+        results = translate_batch(key, args.language, batch)
         catalog.update(dict(zip(batch, results)))
         target.write_text(json.dumps(catalog, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
         print(f"{args.language}: {min(start + len(batch), len(missing))}/{len(missing)} translated")

@@ -2,8 +2,9 @@
 """Traduz as notícias publicadas que ainda não têm as duas línguas (PT e EN).
 
 Notícias em português recebem `en`; notícias cuja fonte está em inglês ficam com o
-original em `en` e a tradução em `pt`. Usa o GitHub Models com o GITHUB_TOKEN da Action
-(permissão `models: read`). Se o serviço falhar, não bloqueia nada: avisa e deixa as
+original em `en` e a tradução em `pt`. Usa a API da Anthropic (Claude Haiku) com o segredo
+ANTHROPIC_API_KEY do repositório. (O GitHub Models, usado antes, foi descontinuado a 30/07/2026.)
+Se a chave faltar ou o serviço falhar, não bloqueia nada: avisa e deixa as
 notícias como estavam, para a execução seguinte tentar de novo.
 """
 
@@ -23,9 +24,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 NEWS = ROOT / "data" / "noticias.json"
 PROPOSALS = ROOT / "data" / "noticias_propostas.json"
-CATALOG = "https://models.github.ai/catalog/models"
-CHAT = "https://models.github.ai/inference/chat/completions"
-PREFERRED = ("openai/gpt-4.1", "openai/gpt-4o", "openai/gpt-4.1-mini", "openai/gpt-4o-mini", "openai/gpt-5-mini")
+API = "https://api.anthropic.com/v1/messages"
+MODEL = "claude-haiku-4-5-20251001"
 
 EN_WORDS = {"the", "of", "and", "to", "in", "for", "is", "are", "with", "on", "that", "as", "by", "from", "this", "will", "has", "have"}
 PT_WORDS = {"de", "da", "do", "das", "dos", "e", "em", "para", "que", "os", "as", "um", "uma", "com", "no", "na", "por", "se", "ao"}
@@ -38,33 +38,20 @@ def looks_english(text: str) -> bool:
     return en >= 2 and en > pt * 1.5
 
 
-def call(url: str, token: str, payload: dict | None = None) -> str:
-    headers = {
-        "Authorization": f"Bearer {token}",
-        "Accept": "application/vnd.github+json",
-        "X-GitHub-Api-Version": "2022-11-28",
-        "Content-Type": "application/json",
-    }
-    request = urllib.request.Request(url, data=json.dumps(payload).encode() if payload else None, headers=headers)
+def call(prompt: str, key: str) -> str:
+    payload = {"model": MODEL, "max_tokens": 8000, "temperature": 0.1, "messages": [{"role": "user", "content": prompt}]}
+    request = urllib.request.Request(
+        API, data=json.dumps(payload).encode(),
+        headers={"x-api-key": key, "anthropic-version": "2023-06-01", "content-type": "application/json"},
+    )
     try:
         with urllib.request.urlopen(request, timeout=120) as response:
-            body = response.read().decode("utf-8", "replace")
-            if not body.lstrip().startswith(("{", "[")):
-                raise RuntimeError(f"resposta inesperada de {url} (HTTP {response.status}, {response.headers.get('content-type')}): {body[:200]!r}")
-            return body
+            return json.loads(response.read())["content"][0]["text"]
     except urllib.error.HTTPError as error:
-        raise RuntimeError(f"HTTP {error.code} em {url}: {error.read().decode('utf-8', 'replace')[:300]}") from error
+        raise RuntimeError(f"HTTP {error.code}: {error.read().decode('utf-8', 'replace')[:300]}") from error
 
 
-def choose_model(token: str) -> str:
-    available = {item.get("id") for item in json.loads(call(CATALOG, token))}
-    for model in PREFERRED:
-        if model in available:
-            return model
-    raise RuntimeError(f"nenhum dos modelos previstos está disponível ({sorted(x for x in available if x)[:8]}…)")
-
-
-def translate(token: str, model: str, rows: list[dict], target: str) -> list[dict]:
+def translate(key: str, rows: list[dict], target: str) -> list[dict]:
     language = {"pt": "European Portuguese (Portugal)", "en": "English"}[target]
     payload = [{"id": str(i), "title": r["title"], "summary": r["summary"]} for i, r in enumerate(rows)]
     prompt = (
@@ -73,8 +60,7 @@ def translate(token: str, model: str, rows: list[dict], target: str) -> list[dic
         "Natural, concise, no commentary. Return only a JSON array of objects with the same id and the fields title and summary.\n"
         + json.dumps(payload, ensure_ascii=False)
     )
-    body = json.loads(call(CHAT, token, {"model": model, "temperature": 0.1, "messages": [{"role": "user", "content": prompt}]}))
-    content = re.sub(r"^```(?:json)?\s*|\s*```$", "", body["choices"][0]["message"]["content"].strip())
+    content = re.sub(r"^```(?:json)?\s*|\s*```$", "", call(prompt, key).strip())
     by_id = {str(x["id"]): x for x in json.loads(content)}
     if len(by_id) != len(rows) or any(not by_id[str(i)].get("title") for i in range(len(rows))):
         raise RuntimeError("tradução incompleta")
@@ -103,20 +89,20 @@ def main() -> int:
     parser.add_argument("--probe", action="store_true", help="só verifica se o serviço responde")
     args = parser.parse_args()
     path = Path(args.file)
-    token = os.environ.get("GITHUB_TOKEN", "")
+    key = os.environ.get("ANTHROPIC_API_KEY", "")
     rows = json.loads(path.read_text(encoding="utf-8"))
     todo = pending(rows)
     print(f"{len(todo)} notícia(s) por traduzir em {path.name}.")
     if args.probe or todo:
-        if not token:
-            print("::warning::Sem GITHUB_TOKEN: tradução ignorada.")
+        if not key:
+            print("::warning::Falta o segredo ANTHROPIC_API_KEY do repositório: tradução ignorada.")
             return 0
         try:
-            model = choose_model(token)
+            call("Reply with the single word: ok", key)
         except Exception as error:
             print(f"::warning::Serviço de tradução indisponível: {error}")
             return 0
-        print(f"Modelo: {model}")
+        print(f"Modelo: {MODEL}")
     if args.probe or not todo:
         return 0
 
@@ -132,7 +118,7 @@ def main() -> int:
                 if not items:
                     continue
                 source = [{"title": i["pt"]["titulo"], "summary": i["pt"].get("resumo_biocultura", "")} for i in items]
-                translated = translate(token, model, source, target)
+                translated = translate(key, source, target)
                 for item, original, result in zip(items, source, translated):
                     if target == "en":
                         item["en"] = entry(result["title"], result["summary"], item, "en")

@@ -13,7 +13,6 @@ on:
 permissions:
   contents: write
   pull-requests: write
-  models: read
 
 concurrency:
   group: traducoes-biocultura
@@ -43,7 +42,7 @@ jobs:
 
       - name: Traduzir integralmente o conteúdo editorial para inglês
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           MAX_ITEMS: ${{ inputs.max_items || '1500' }}
         shell: bash
         run: |

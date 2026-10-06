@@ -14,7 +14,6 @@ on:
 
 permissions:
   contents: write
-  models: read
 
 concurrency:
   group: noticias-editorial
@@ -29,7 +28,7 @@ jobs:
           fetch-depth: 0
       - name: Traduzir
         env:
-          GITHUB_TOKEN: ${{ github.token }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: python3 scripts/noticias/traduzir.py ${{ inputs.sondar && '--probe' || '' }}
       - name: Validar
         run: python3 -m json.tool data/noticias.json >/dev/null
