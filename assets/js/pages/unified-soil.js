@@ -283,9 +283,7 @@
             var n = (window.BioCultureNews ? window.BioCultureNews.rank(items) : items)
                 .filter(function (x) {
                     var c = window.BioCultureI18n?.content(x) || x.pt || x;
-                    return /solo|soil|eros|desert|degrada|carbono|carbon|agricult|terra|land restoration/i.test(
-                        [x.categoria, x.categoria_id, c.titulo, c.resumo].filter(Boolean).join(" "),
-                    );
+                    return window.BioCultureNews.about(x, ["solo*", "soil*", "erosão", "erosion", "desertific*", "degradação", "land degradation", "land restoration", "restauro do solo", "compost*", "húmus", "humus", "pastagem*", "pasture*", "rangeland*"], ["solo"]);
                 })
                 .slice(0, 6);
             $("soil-news").innerHTML =

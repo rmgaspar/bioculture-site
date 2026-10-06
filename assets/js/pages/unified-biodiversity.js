@@ -289,11 +289,7 @@
             var n = (window.BioCultureNews ? window.BioCultureNews.rank(items) : items)
                 .filter(function (x) {
                     var c = window.BioCultureI18n?.content(x) || x.pt || x;
-                    return /biodivers|species|espéc|habitat|iucn|extin|conserv|invasor|wildlife|ecossist|ecosystem/i.test(
-                        [x.categoria, x.categoria_id, c.titulo, c.resumo, c.corpo]
-                            .filter(Boolean)
-                            .join(" "),
-                    );
+                    return window.BioCultureNews.about(x, ["biodivers*", "espécies ameaçadas", "threatened species", "endangered species", "invasor*", "invasive", "habitat*", "wildlife", "vida selvagem", "extinção", "extinction", "conservação", "conservation", "ecossistema*", "ecosystem*", "floresta*", "forest*", "polinizador*", "pollinator*", "orangotango*", "orangutan*", "tartaruga*", "turtle*", "aves", "birds", "gannet*", "alcatraz*"], ["biodiversidade"]);
                 })
                 .slice(0, 6);
             $("biodiversity-news").innerHTML =

@@ -304,11 +304,7 @@
             var n = (window.BioCultureNews ? window.BioCultureNews.rank(items) : items)
                 .filter(function (x) {
                     var c = window.BioCultureI18n?.content(x) || x.pt || x;
-                    return /centro de dados|data cent|datacenter|inteligência artificial|\bIA\b|artificial intelligence|chips|semicondutor/i.test(
-                        [x.categoria, x.categoria_id, c.titulo, c.resumo, c.corpo]
-                            .filter(Boolean)
-                            .join(" "),
-                    );
+                    return window.BioCultureNews.about(x, ["centro de dados", "centros de dados", "data cent*", "datacenter*", "inteligência artificial", "artificial intelligence", "IA", "AI", "chips", "semicondutor*", "semiconductor*", "cloud", "nuvem"], ["impacto-digital"]);
                 })
                 .slice(0, 6);
             $("ai-news").innerHTML =

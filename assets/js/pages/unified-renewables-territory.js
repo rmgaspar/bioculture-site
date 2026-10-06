@@ -563,11 +563,7 @@
             var n = (window.BioCultureNews ? window.BioCultureNews.rank(items) : items)
                 .filter(function (x) {
                     var c = window.BioCultureI18n?.content(x) || x.pt || x;
-                    return /ZAER|solar|eólic|renew|renov|licenciamento|território|fotovolta|biodivers|land use/i.test(
-                        [x.categoria, x.categoria_id, c.titulo, c.resumo, c.corpo]
-                            .filter(Boolean)
-                            .join(" "),
-                    );
+                    return window.BioCultureNews.about(x, ["ZAER", "solar", "eólic*", "wind", "renew*", "renov*", "licenciamento", "licensing", "fotovolta*", "photovoltaic*", "land use", "mapa verde"], ["energia", "territorio"]);
                 })
                 .slice(0, 6);
             $("territory-news").innerHTML =

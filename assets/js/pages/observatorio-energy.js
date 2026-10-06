@@ -418,11 +418,7 @@
             var n = (window.BioCultureNews ? window.BioCultureNews.rank(items) : items)
                 .filter(function (x) {
                     var c = window.BioCultureI18n?.content(x) || x.pt || x;
-                    return /energia|renew|renov|solar|eólic|electric|eletric|eficiên|rede|grid|autoconsumo/i.test(
-                        [x.categoria, x.categoria_id, c.titulo, c.resumo, c.corpo]
-                            .filter(Boolean)
-                            .join(" "),
-                    );
+                    return window.BioCultureNews.about(x, ["energia", "energy", "renovável*", "renováveis", "renewable*", "solar", "eólic*", "wind", "elétric*", "eletric*", "electric*", "eficiência", "efficiency", "rede elétrica", "grid", "autoconsumo", "self-consumption", "nuclear", "hidroelétric*", "fotovolta*", "photovoltaic*", "bateria*", "battery", "armazenamento", "storage"], ["energia"]);
                 })
                 .slice(0, 6);
             $("energy-news").innerHTML =

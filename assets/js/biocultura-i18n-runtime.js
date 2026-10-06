@@ -634,6 +634,36 @@
                 || sourceRank(a) - sourceRank(b)
                 || this.dateValue(b) - this.dateValue(a);
         },
+        // Palavras inteiras (com plural simples); «raiz*» aceita qualquer terminação. Assim «rio» já não apanha «negócio».
+        wordsRegex(words) {
+            const escape = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+            const body = (letters) => words.map((word) => {
+                const stem = word.endsWith("*");
+                const text = escape(word.replace(/\*$/, ""));
+                return stem ? `${text}${letters}*` : `${text}s?(?!${letters})`;
+            }).join("|");
+            try {
+                return new RegExp(`(?<![\\p{L}\\p{N}])(?:${body("[\\p{L}\\p{N}]").replace(/\(\?!\[\\p\{L\}\\p\{N\}\]\)/g, "(?![\\p{L}\\p{N}])")})`, "iu");
+            } catch (_) {
+                return new RegExp(`(?:^|[^\\wÀ-ÿ])(?:${body("[\\wÀ-ÿ]").replace(/\(\?!\[\\wÀ-ÿ\]\)/g, "(?![\\wÀ-ÿ])")})`, "i");
+            }
+        },
+        // Uma notícia é «sobre» um tema se o título o diz. Nas notícias captadas automaticamente só conta o título
+        // (o resumo apanha referências de passagem); nas escritas à mão conta também o resumo e o corpo.
+        about(item, words, categories = []) {
+            this._topics = this._topics || {};
+            const key = words.join("|");
+            const rx = this._topics[key] || (this._topics[key] = this.wordsRegex(words));
+            const titles = [item?.pt?.titulo, item?.en?.titulo, item?.titulo].filter(Boolean).join(" ");
+            if (item?.capturado_em) {
+                // Artigos científicos: além do título, a categoria principal tem de ser a do tema («water» num título
+                // sobre lavagem de hortícolas não faz dele uma notícia de água).
+                if (item.tipo_fonte === "ciencia" && categories.length && !categories.includes(item.categoria_id)) return false;
+                return rx.test(titles);
+            }
+            const pt = item?.pt || {};
+            return rx.test([item?.categoria, titles, pt.resumo_biocultura, pt.resumo, pt.corpo].filter(Boolean).join(" "));
+        },
         rank(items) {
             const rows = Array.isArray(items) ? items : [];
             return [...rows].sort(this.compareByRelevance(rows));

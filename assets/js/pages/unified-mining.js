@@ -223,11 +223,7 @@
             var n = (window.BioCultureNews ? window.BioCultureNews.rank(items) : items)
                 .filter(function (x) {
                     var c = window.BioCultureI18n?.content(x) || x.pt || x;
-                    return /minera|mina|lítio|lithium|ouro|gold|cobre|copper|carvão|coal|níquel|cobalt|rejeitado/i.test(
-                        [x.categoria, x.categoria_id, c.titulo, c.resumo, c.corpo]
-                            .filter(Boolean)
-                            .join(" "),
-                    );
+                    return window.BioCultureNews.about(x, ["mineração", "mineiro*", "mina", "minas", "mining", "mine", "minério*", "mineral*", "lítio", "lithium", "ouro", "gold", "cobre", "copper", "carvão", "coal", "níquel", "nickel", "cobalto", "cobalt", "caulino", "kaolin", "pedreira*", "quarry", "rejeitado*", "baldios"], ["mineracao"]);
                 })
                 .slice(0, 6);
             $("mining-news").innerHTML =
