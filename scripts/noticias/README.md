@@ -35,6 +35,21 @@ primárias e científicas recebem maior autoridade editorial; jornalismo de
 referência é usado para atualidade e contexto. Google News deixa de ser a via
 normal sempre que existe um RSS/Atom direto e estável.
 
+**Fontes.** A lista está organizada por organização: ONU (Notícias, PNUA, FAO, UNFCCC,
+UNCCD, UNDRR), WMO, IPCC, IPBES, IUCN, IEA, IRENA, EEA, Copernicus, Comissão Europeia,
+NASA, NOAA, ESA, Nature, Science e jornalismo de referência. Quando uma organização não
+tem RSS, a pesquisa no Google Notícias restringe-se à secção de notícias do próprio site
+(`site:wmo.int/news`); consultar só o domínio devolve páginas estáticas, circulares e
+ofertas de emprego. A pontuação mínima é 60, porque notícias de organizações
+internacionais sem menção a Portugal ficam por volta de 61.
+
+Os organismos portugueses sem RSS (IPMA, APA, DGEG, DGADR) são lidos diretamente das
+listagens de notícias dos próprios sites por `scripts/noticias/leitores_html.py`
+(`"leitor"` em `config/noticias_fontes.json`). Dependem do HTML de cada site: se um
+mudar e o leitor deixar de encontrar notícias, a fonte aparece como indisponível nos
+registos da Action em vez de devolver resultados inventados. O ICNF está desativado
+(`"ativa": false`): o site carrega as notícias por JavaScript e não tem RSS.
+
 Quando uma fonte só existe como pesquisa no Google Notícias, a ligação que o
 RSS devolve é uma página de redireccionamento, não o artigo — `atualizar.py`
 resolve-a automaticamente para a publicação original antes de guardar a
