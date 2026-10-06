@@ -194,17 +194,21 @@
 
   $("form-chave").addEventListener("submit", function (event) {
     event.preventDefault();
-    var value = $("chave").value.trim();
+    var value = $("chave").value.replace(/\s+/g, "").replace(/^["']|["']$/g, "");
     if (!value) { setNote("Cola primeiro a chave.", true); return; }
+    if (!/^(github_pat_|ghp_)[A-Za-z0-9_]{20,}$/.test(value)) { setNote("Isto não parece uma chave do GitHub (deve começar por github_pat_ e ter cerca de 90 caracteres).", true); return; }
     try { localStorage.setItem(KEY_TOKEN, value); } catch (e) { setNote("Este navegador não deixa guardar a chave.", true); return; }
     $("chave").value = "";
     setNote("A verificar…");
     api("/repos/" + REPO + "/actions/workflows/" + WORKFLOW).then(function (response) {
       if (response.ok) { setNote("Ligação confirmada."); paintToken(); return; }
       try { localStorage.removeItem(KEY_TOKEN); } catch (e) {}
-      setNote(response.status === 401 || response.status === 403 || response.status === 404
-        ? "A chave não serve: confirma que é só para o repositório bioculture-site e que tem Actions: Read and write."
-        : "O GitHub respondeu com erro " + response.status + ".", true);
+      var reason = {
+        401: "O GitHub não aceitou a chave (401). Costuma ser cópia incompleta: copia-a de novo, inteira (começa por github_pat_), ou gera outra com «Regenerate token».",
+        403: "A chave não tem permissão (403). Confirma Actions: Read and write.",
+        404: "O GitHub não encontra o repositório com esta chave (404). Confirma que a chave é para bioculture-site."
+      }[response.status] || ("O GitHub respondeu com erro " + response.status + ".");
+      setNote(reason, true);
       paintToken();
     }).catch(function () { setNote("Sem ligação ao GitHub.", true); });
   });
