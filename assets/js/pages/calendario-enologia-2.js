@@ -340,14 +340,7 @@
             function renderNews() {
                 const container = document.getElementById("noticias-enologia-dinamico");
                 container.innerHTML =
-                    noticiasEno.slice(0, visibleNews).map((n) => {
-                        const content = window.BioCultureI18n?.content(n) || n.pt || n;
-                        return `<a href="/observatorio/noticia-detalhe.html?id=${
-                            encodeURIComponent(n.id)
-                        }" class="news-item"><h3>${escapeHtml(content.titulo)}</h3><span class="news-meta">${
-                            escapeHtml(n.fonte || window.BioCultureI18n?.choose("Notícia", "News") || "Notícia")
-                        } · ${escapeHtml(window.BioCultureI18n?.date(n.data) || n.data || "")}</span></a>`;
-                    }).join("") ||
+                    noticiasEno.slice(0, visibleNews).map((n) => window.BioCultureNews.cardHtml(n)).join("") ||
                     '<div class="empty-state">Sem notícias de enologia disponíveis neste momento.</div>';
                 document.getElementById("btn-load-more-eno").style.display =
                     noticiasEno.length > visibleNews ? "inline-block" : "none";

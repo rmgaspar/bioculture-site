@@ -667,6 +667,19 @@
             if (categories.includes(item?.categoria_id)) return true;
             return rx.test(titles);
         },
+        // Cartão de notícia no formato dos hubs (imagem, data, título, excerto, fonte). Usa as classes hub-latest-*.
+        cardHtml(item) {
+            const esc = (value) => String(value ?? "").replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch]);
+            const i18n = window.BioCultureI18n;
+            const c = i18n?.content(item) || item?.pt || item || {};
+            const fallback = "/images/noticias-sem-imagem.webp";
+            const raw = item?.imagem;
+            const image = typeof raw === "string" && (/^https?:\/\//i.test(raw) || raw.startsWith("/")) ? raw : fallback;
+            const alt = image === fallback ? (i18n?.isEnglish ? "bioCulture editorial illustration" : "Ilustração editorial bioCulture") : "";
+            const href = item?.pagina || `/observatorio/noticia-detalhe.html?id=${encodeURIComponent(item?.id)}`;
+            const summary = c.resumo_biocultura || c.resumo || "";
+            return `<a href="${esc(href)}"><div class="news-media"><img class="hub-latest-thumb" src="${esc(image)}" alt="${esc(alt)}" loading="lazy" onerror="this.onerror=null;this.src='${fallback}'"></div><div class="hub-latest-card-body"><small>${esc(i18n?.date(item?.data) || item?.data || item?.categoria || "")}</small><h3>${esc(c.titulo || "")}</h3>${summary ? `<p>${esc(summary)}</p>` : ""}<span>${esc(item?.fonte || "bioCulture")} →</span></div></a>`;
+        },
         rank(items) {
             const rows = Array.isArray(items) ? items : [];
             return [...rows].sort(this.compareByRelevance(rows));

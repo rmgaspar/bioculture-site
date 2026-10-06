@@ -78,23 +78,12 @@
                     ).join("") || "<p>—</p>";
             }
             function renderNews(items) {
-                const selected = items.filter((n) => {
-                    const c = window.BioCultureI18n?.content(n) || n.pt || n;
-                    return /energia|renov|solar|eólic|eletric|autoconsumo|eficiên|comunidade energ/i
-                        .test(
-                            [n.categoria, n.categoria_id, c.categoria, c.titulo, c.resumo].filter(
-                                Boolean,
-                            ).join(" "),
-                        );
-                }).slice(0, 6);
-                el("news").innerHTML = selected.map((n) => {
-                    const c = window.BioCultureI18n?.content(n) || n.pt || n;
-                    return `<a class="news-item" href="/observatorio/noticia-detalhe.html?id=${
-                        encodeURIComponent(n.id)
-                    }"><span>${esc(window.BioCultureI18n?.date(n.data) || n.data)}</span><h3>${esc(c.titulo)}</h3><span>${
-                        esc(n.fonte)
-                    }</span></a>`;
-                }).join("") || '<p class="empty">Sem notícias desta categoria neste momento.</p>';
+                const words = ["energia", "energy", "renovável*", "renováveis", "renewable*", "solar", "eólic*", "wind", "elétric*", "eletric*", "electric*", "eficiência", "efficiency", "rede elétrica", "grid", "autoconsumo", "self-consumption", "nuclear", "hidroelétric*", "fotovolta*", "photovoltaic*", "bateria*", "battery", "armazenamento", "storage"];
+                const selected = window.BioCultureNews.rank(items)
+                    .filter((n) => window.BioCultureNews.about(n, words, ["energia"]))
+                    .slice(0, 6);
+                el("news").innerHTML = selected.map((n) => window.BioCultureNews.cardHtml(n)).join("") ||
+                    '<p class="empty">Sem notícias desta categoria neste momento.</p>';
             }
             async function start() {
                 try {
