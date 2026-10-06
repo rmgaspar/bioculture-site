@@ -358,10 +358,11 @@ html body #main :is(#structure, #inventories, #atlas, #highlights, #today, #news
 
 .news { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.8em; }
 .news a {
+    position: relative;
     display: flex;
     flex-direction: row;
+    padding: 0 0 0 116px;
     min-height: 124px;
-    padding: 0;
     overflow: hidden;
     border: 1px solid var(--line);
     border-radius: 14px;
@@ -371,7 +372,13 @@ html body #main :is(#structure, #inventories, #atlas, #highlights, #today, #news
     transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 .news a:hover { transform: translateY(-2px); border-color: #b7c7b9; box-shadow: 0 12px 28px rgba(36, 55, 43, 0.07); }
-.news-thumb { display: block; flex: 0 0 116px; width: 116px; align-self: stretch; object-fit: cover; background: var(--pale); }
+/* A miniatura ocupa sempre toda a altura do bloco: com «align-self: stretch» o Safari mantém a proporção da imagem
+   e deixa uma faixa em branco por baixo das imagens horizontais. */
+.news-thumb { position: absolute; top: 0; bottom: 0; left: 0; display: block; width: 116px; height: 100%; object-fit: cover; background: var(--pale); }
+/* As ilustrações bioCulture (imagens locais) vêm envolvidas pelo runtime num <span> com a assinatura: é esse
+   invólucro que ocupa a faixa da miniatura. */
+.news a > .bioculture-image-signature-frame { position: absolute !important; top: 0; bottom: 0; left: 0; width: 116px; }
+.news a > .bioculture-image-signature-frame > .news-thumb { position: static; width: 100%; height: 100%; }
 .news-body { display: flex; flex: 1; min-width: 0; flex-direction: column; padding: 0.8rem 1rem; }
 .news small { color: var(--forest); font-size: max(10px, 0.58rem); font-weight: 900; letter-spacing: 0.1em; text-transform: uppercase; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .news h3 {
@@ -428,8 +435,8 @@ html body #main :is(#structure, #inventories, #atlas, #highlights, #today, #news
     .inner { padding: 1.7em 1.4em 0 !important; }
     .head { grid-template-columns: 1fr; gap: 0.7em; }
     .path, .pulse, .atlas, .today, .news { grid-template-columns: 1fr; }
-    .news-thumb { flex-basis: 92px; width: 92px; }
-    .news a { min-height: 112px; }
+    .news a { min-height: 112px; padding-left: 92px; }
+    .news-thumb, .news a > .bioculture-image-signature-frame { width: 92px; }
     .portal { grid-template-columns: 70px 1fr; }
     .portal-mark { width: 70px; }
     .encounter { grid-template-columns: 1fr; }
