@@ -96,6 +96,17 @@ def parse_date(value: str) -> dt.datetime:
             return dt.datetime.now(dt.timezone.utc)
 
 
+def clean_title(title: str, source: str) -> str:
+    """Tira o «- Fonte» que o Google Notícias acrescenta ao fim dos títulos (também «| X - X»)."""
+    if not source:
+        return title
+    suffix = r"\s*[-–|]\s*" + re.escape(source) + r"\s*$"
+    previous = None
+    while previous != title:
+        previous, title = title, re.sub(suffix, "", title, flags=re.I).strip()
+    return title
+
+
 def fetch_feed(url: str) -> list[dict]:
     request = urllib.request.Request(url, headers={"User-Agent": "bioCultura-news/1.0 (+https://biocultura.net)"})
     with urllib.request.urlopen(request, timeout=25) as response:
@@ -112,6 +123,7 @@ def fetch_feed(url: str) -> list[dict]:
         summary = plain(child_text(node, ("description", "summary", "content")))
         published = child_text(node, ("pubdate", "published", "updated", "date"))
         source = plain(child_text(node, ("source",)))
+        title = clean_title(title, source)
         if title and link:
             result.append({"title": title, "url": link, "summary": summary, "published": parse_date(published), "source": source})
     return result
@@ -344,6 +356,8 @@ def reassess(pending: list[dict], config: dict, today: dt.date) -> tuple[list[di
     sources = {s["nome"]: s for s in config["fontes"]}
     keep, dropped = [], []
     for row in pending:
+        if row.get("pt"):
+            row["pt"]["titulo"] = clean_title(row["pt"].get("titulo", ""), row.get("fonte", ""))
         title = (row.get("pt") or {}).get("titulo", "")
         summary = (row.get("pt") or {}).get("resumo_biocultura", "")
         if row.get("expira_em") and row["expira_em"] < today.isoformat():
