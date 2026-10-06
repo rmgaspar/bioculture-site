@@ -194,24 +194,41 @@ def geographic_scope(text: str, source_cfg: dict) -> tuple[str, list[str]]:
     return "global", []
 
 
-def source_image(url: str) -> str:
-    """Imagem que a fonte original disponibiliza (og:image / twitter:image), ou "" se não houver."""
+def source_page(url: str) -> tuple[str, str]:
+    """Imagem (og:image / twitter:image) e descrição (og:description) que a fonte original publica; "" se não houver."""
     try:
         request = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (compatible; bioCultura-news/1.0)"})
         with urllib.request.urlopen(request, timeout=15) as response:
             page = response.read(400_000).decode("utf-8", "ignore")
     except Exception:
-        return ""
-    for prop in ("og:image", "twitter:image"):
+        return "", ""
+
+    def meta(prop: str) -> str:
         match = (re.search(rf'<meta[^>]+(?:property|name)=["\']{prop}["\'][^>]+content=["\']([^"\']+)', page, re.I)
                  or re.search(rf'<meta[^>]+content=["\']([^"\']+)["\'][^>]+(?:property|name)=["\']{prop}["\']', page, re.I))
-        if match:
-            image = html.unescape(match.group(1)).strip()
-            if image.startswith("//"):
-                image = "https:" + image
-            if image.startswith("http"):
-                return image
-    return ""
+        return html.unescape(match.group(1)).strip() if match else ""
+
+    image = ""
+    for prop in ("og:image", "twitter:image"):
+        found = meta(prop)
+        if found.startswith("//"):
+            found = "https:" + found
+        if found.startswith("http"):
+            image = found
+            break
+    description = plain(meta("og:description") or meta("description") or meta("twitter:description"))
+    return image, description
+
+
+def source_image(url: str) -> str:
+    return source_page(url)[0]
+
+
+def is_title_only(summary: str, title: str, source: str) -> bool:
+    """O Google Notícias devolve como «resumo» o próprio título (por vezes seguido da fonte)."""
+    text = folded(summary).strip(" .")
+    base = folded(title).strip(" .")
+    return not text or text == base or text == f"{base} {folded(source)}".strip() or text.startswith(base) and len(text) <= len(base) + len(source) + 4
 
 
 def resolve_google_news_url(url: str) -> str:
@@ -314,12 +331,14 @@ def make_news(item: dict, source_cfg: dict, matches: list[tuple[str, str, int]],
     source = item["source"] or source_cfg["nome"]
     resolved_url = resolve_google_news_url(item["url"])
     summary = item["summary"][:480].rstrip(" .")
-    if not summary or folded(summary) == folded(item["title"]):
+    image, page_summary = source_page(resolved_url)
+    if is_title_only(summary, item["title"], source):
+        summary = page_summary[:480].rstrip(" .") if page_summary and not is_title_only(page_summary, item["title"], source) else ""
+    if not summary:
         summary = f"A fonte {source} publicou esta atualização. O conteúdo integral e os dados que a sustentam devem ser confirmados na ligação original antes da aprovação."
     body = f"<p>{html.escape(summary)}</p><p><strong>Fonte original:</strong> <a href=\"{html.escape(resolved_url, quote=True)}\" rel=\"noopener noreferrer\">{html.escape(source)}</a>.</p>"
     retention = 365 if points >= 85 else 180 if points >= 75 else 60
     _, category_id, label = matches[0]
-    image = source_image(resolved_url)
     categories = [category for _, category, _ in matches[:4]]
     scope, countries = geographic_scope(item["title"] + " " + item["summary"], source_cfg)
     return {
@@ -376,6 +395,7 @@ def reassess(pending: list[dict], config: dict, today: dt.date) -> tuple[list[di
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--reparar-resumos", action="store_true", help="vai buscar à fonte o resumo das propostas cujo resumo é só o título")
     parser.add_argument("--reavaliar", action="store_true", help="só reaplica os critérios à fila existente, sem ir às fontes")
     parser.add_argument("--config", type=Path, default=CONFIG_PATH)
     args = parser.parse_args()
@@ -387,6 +407,22 @@ def main() -> int:
     pending, dropped = reassess(pending, config, now.date())
     for row, reason in dropped:
         print(f"- retirada da fila ({reason}): {row['pt']['titulo'][:80]}")
+    if args.reparar_resumos:
+        fixed = 0
+        for row in pending:
+            pt = row["pt"]
+            if not is_title_only(pt.get("resumo_biocultura", ""), pt["titulo"], row.get("fonte", "")) and not pt.get("resumo_biocultura", "").startswith("A fonte "):
+                continue
+            _, description = source_page(row["url"])
+            if description and not is_title_only(description, pt["titulo"], row.get("fonte", "")):
+                description = description[:480].rstrip(" .")
+                pt["resumo_biocultura"] = description
+                pt["corpo"] = re.sub(r"^<p>.*?</p>", "<p>" + html.escape(description) + "</p>", pt["corpo"], count=1, flags=re.S)
+                fixed += 1
+        print(f"Resumos reparados: {fixed}.")
+        if not args.dry_run:
+            PROPOSALS_PATH.write_text(json.dumps(pending, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        return 0
     if args.reavaliar:
         print(f"Fila: {len(pending)} proposta(s) mantida(s), {len(dropped)} retirada(s).")
         if not args.dry_run:
