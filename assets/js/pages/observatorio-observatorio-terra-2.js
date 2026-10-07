@@ -217,7 +217,7 @@
                         throw new Error("O ficheiro não contém indicadores utilizáveis.");
                     }
                     document.getElementById("page-title").textContent = data.metadados?.titulo ||
-                        "Observatório da Terra — Mundo, Portugal e ilhas";
+                        "Observatório da Terra";
                     renderSummary(data);
                     renderCharts(data);
                     renderTerritory(data);

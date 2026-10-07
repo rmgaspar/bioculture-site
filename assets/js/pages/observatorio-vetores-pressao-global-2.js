@@ -203,7 +203,7 @@
                     ["#global-signals .chapter", "03 · Global signals"], ["#global-signals h2", "Magnitudes that do not fit one unit"],
                     ["#global-signals .pressure-heading p", "Cards keep climate, materials, health, waste and energy separate to avoid a false universal score."],
                     ["#method .chapter", "05 · Method"], ["#method h2", "How not to lose the planet in the numbers"],
-                    ["#pressure-news .chapter", "06 · Latest"], ["#pressure-news h2", "Pressures in motion"],
+                    ["#pressure-news .chapter", "Latest"], ["#pressure-news h2", "Pressures in motion"],
                     ["#pressure-news .pressure-heading p", "Selected news on decisions, projects and chains that alter pressure on living systems."],
                     [".comparison-heading h2", "Comparisons supported by data"], [".comparison-heading p", "We do not draw false annual curves when only period averages or a few observations exist."],
                     [".reading-box h3", "How to interpret this data"], ["#connections h2", "How pressures connect"], ["#connections p", "Simple explanations of mechanisms; additional detail remains collapsed."]
