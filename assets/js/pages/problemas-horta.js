@@ -19,7 +19,8 @@
     const STEP = 12; // quantos mais cada «Ver mais» acrescenta
     const CROP_CHIPS = 8; // culturas visíveis sem expandir
 
-    const TIPOS = [["", "Todas as culturas", "All crops"], ["horticolas", "Hortícolas", "Vegetables"], ["fruteiras", "Árvores e plantas de fruto", "Fruit trees and plants"], ["aromaticas", "Aromáticas", "Herbs"], ["perenes", "Culturas perenes", "Perennial crops"]];
+    const VINHA = ["uvas"]; // culturas da vinha
+    const TIPOS = [["", "Todas as culturas", "All crops"], ["horticolas", "Hortícolas", "Vegetables"], ["fruteiras", "Árvores e plantas de fruto", "Fruit trees and plants"], ["vinha", "Vinha", "Vineyard"], ["aromaticas", "Aromáticas", "Herbs"], ["perenes", "Culturas perenes", "Perennial crops"]];
     let lastSignature = "";
     const state = { grupo: "", cultura: "", tipo: "", q: "", shown: INITIAL, allCrops: false, open: "" };
     let rows = [];
@@ -36,7 +37,7 @@
     function matches(row, skip) {
         if (skip !== "grupo" && state.grupo && row.grupo !== state.grupo) return false;
         if (skip !== "cultura" && state.cultura && !(row.culturas || []).includes(state.cultura)) return false;
-        if (state.tipo && !(row.culturas || []).some((id) => state.tipo === "perenes" ? perennial[id] : kinds[id] === state.tipo)) return false;
+        if (state.tipo && !(row.culturas || []).some((id) => state.tipo === "perenes" ? perennial[id] : state.tipo === "vinha" ? VINHA.includes(id) : kinds[id] === state.tipo)) return false;
         // Palavras curtas e sem o «s» final do plural, para «lesmas» apanhar «lesma» e vice-versa.
         const terms = normalize(state.q).split(/\s+/).filter((term) => term.length > 2).map((term) => term.replace(/s$/, ""));
         if (!terms.length) return true;
