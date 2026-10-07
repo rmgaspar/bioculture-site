@@ -713,8 +713,8 @@
             const titles = [item?.pt?.titulo, item?.en?.titulo].filter(Boolean).join(" ");
             return /calor|heat|onda[s]? de|vaga[s]? de|sec[ao]\b|drought|incêndi|wildfire|\bfire|cheia|inunda|flood|el ni[ñn]o|temperatura|extrem|tufão|typhoon|ciclone|cyclone|furacão|hurricane|tempestade|storm/i.test(titles) ? "adapt" : "mitigate";
         },
-        related(item) {
-            const english = !!window.BioCultureI18n?.isEnglish;
+        // Temas (chaves de `relatedPages`) a que uma notícia pertence, o principal primeiro; «clima» e «terra» fecham a lista.
+        themes(item) {
             const primary = { agua: "agua", ar: "ar", solo: "solo", biodiversidade: "biodiversidade", energia: "energia", mineracao: "mineracao", "impacto-digital": "impacto-digital", agricultura: "agricultura", conhecimento: "agricultura" }[item?.categoria_id];
             const keys = [];
             const climate = ["clima", "oceanos"].includes(item?.categoria_id);
@@ -726,6 +726,11 @@
             }
             if (climate || !keys.length) keys.push(climate || !item?.categoria_id ? "clima" : "terra");
             if (climate && keys.length > 1) keys.push(keys.splice(keys.indexOf("clima"), 1)[0]);
+            return keys;
+        },
+        related(item) {
+            const english = !!window.BioCultureI18n?.isEnglish;
+            const keys = this.themes(item);
             const seen = new Set();
             const out = [];
             const push = (kind, [href, pt, en]) => {
@@ -910,8 +915,8 @@
                 .then((response) => response.ok ? response.json() : {})
                 .catch(() => ({}));
             fullLoading = Promise.all([
-                read(`/assets/lang/auto/${lang}.json?v=50`),
-                read(`/assets/lang/${lang}.json?v=15`),
+                read(`/assets/lang/auto/${lang}.json?v=51`),
+                read(`/assets/lang/${lang}.json?v=16`),
                 read(`/assets/lang/display/${lang}.json?v=37`),
             ]).then(([auto, structured, display]) => {
                 dictionary = auto;
