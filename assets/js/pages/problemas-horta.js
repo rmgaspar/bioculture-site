@@ -15,11 +15,12 @@
     const esc = (value) => String(value ?? "").replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch]);
     const el = (id) => document.getElementById(id);
     const GROUPS = [["sementeira", "Sementes que não nascem", "Seeds that won't come up"], ["pragas", "Pragas", "Pests"], ["doencas", "Doenças", "Diseases"], ["outros", "Outros", "Other"]];
-    const INITIAL = 12; // quadrados visíveis sem pesquisa nem filtros
+    const INITIAL = 12; // quadrados visíveis de cada vez
     const STEP = 12; // quantos mais cada «Ver mais» acrescenta
     const CROP_CHIPS = 8; // culturas visíveis sem expandir
 
     const TIPOS = [["", "Todas as culturas", "All crops"], ["horticolas", "Hortícolas", "Vegetables"], ["fruteiras", "Árvores e plantas de fruto", "Fruit trees and plants"], ["aromaticas", "Aromáticas", "Herbs"], ["perenes", "Culturas perenes", "Perennial crops"]];
+    let lastSignature = "";
     const state = { grupo: "", cultura: "", tipo: "", q: "", shown: INITIAL, allCrops: false, open: "" };
     let rows = [];
     let names = { cultura: {}, tecnica: {}, praga: {} };
@@ -43,7 +44,6 @@
         // A pesquisa casa com o início das palavras («roma» não apanha «aromáticas»).
         return terms.every((term) => new RegExp(`(?:^|[^a-z0-9])${term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}`).test(text));
     }
-    const filtered = () => !!(state.grupo || state.cultura || state.tipo || state.q.trim());
 
     function render() {
         const groupChips = [["", tr("Tudo", "All"), rows.filter((row) => matches(row, "grupo")).length]]
@@ -78,8 +78,10 @@
             const ofCrop = (row) => (row.culturas || []).some((id) => terms.every((term) => normalize(names.cultura[id]).startsWith(term)));
             all = all.map((row, i) => [ofCrop(row) ? 0 : whole(row) ? 1 : 2, i, row]).sort((x, y) => x[0] - y[0] || x[1] - y[1]).map((x) => x[2]);
         }
-        const limited = !filtered();
-        const shown = limited ? all.slice(0, state.shown) : all;
+        // Sempre aos poucos: ao mudar de filtro ou pesquisa volta aos primeiros quadrados.
+        const signature = [state.grupo, state.cultura, state.tipo, state.q].join("|");
+        if (signature !== lastSignature) { lastSignature = signature; state.shown = INITIAL; }
+        const shown = all.slice(0, state.shown);
         const groupLabel = (row) => tr(...(GROUPS.find(([key]) => key === row.grupo)?.slice(1) || ["", ""]));
         shown_ = shown;
         el("problemas-lista").innerHTML = shown.length
@@ -88,13 +90,13 @@
         placePanel(false);
         el("problemas-contagem").textContent = all.length === 1 ? tr("1 resposta", "1 answer") : tr(`${all.length} respostas`, `${all.length} answers`);
 
-        // «Ver mais» (mais algumas) e «Ver menos» (volta ao início); só sem pesquisa nem filtros.
+        // «Ver mais» (mais algumas) e «Ver menos» (volta ao início); também com filtros e pesquisa.
         const remaining = all.length - shown.length;
         const more = el("problemas-mais");
-        more.hidden = !limited || remaining <= 0;
+        more.hidden = remaining <= 0;
         more.textContent = tr(`Ver mais respostas (${remaining} restantes)`, `Show more answers (${remaining} more)`);
         const fewer = el("problemas-menos");
-        fewer.hidden = !limited || state.shown <= INITIAL;
+        fewer.hidden = state.shown <= INITIAL;
         fewer.textContent = tr("Ver menos", "Show fewer");
     }
 
@@ -118,6 +120,7 @@
         if (!rows.some((row) => row.id === id)) return;
         const position = rows.findIndex((row) => row.id === id);
         Object.assign(state, { grupo: "", cultura: "", tipo: "", q: "", open: id, allCrops: true, shown: Math.max(state.shown, Math.ceil((position + 1) / STEP) * STEP) });
+        lastSignature = "|||";
         el("problemas-busca").value = "";
         el("problemas-tipo").value = "";
         render();
