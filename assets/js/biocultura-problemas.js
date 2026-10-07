@@ -49,23 +49,45 @@
     const content = (row) => (isEnglish() ? row.en : row.pt) || row.pt;
     const list = (items) => `<ul>${items.map((item) => `<li>${esc(item)}</li>`).join("")}</ul>`;
 
-    // `skipKind` evita ligar de volta à ficha em que o cartão já está (ex.: a própria cultura).
-    function card(row, names, { open = false, skipKind = "", skipId = "" } = {}) {
+    // Corpo da resposta (causas, o que fazer, evitar, ligações e fontes), comum ao cartão e ao painel.
+    function body(row, names, { skipKind = "", skipId = "" } = {}) {
         const c = content(row);
         const links = (row.ver || []).filter(([kind, id]) => !(kind === skipKind && id === skipId))
             .map(([kind, id]) => `<a href="${LINKS[kind](id)}"><small>${esc(tr(...KIND[kind]))}</small> ${esc(names[kind][id] || id)} →</a>`).join("");
         const sources = (row.fontes || []).map((source) => `<a href="${esc(source.url)}" target="_blank" rel="noopener noreferrer">${esc(source.titulo)} ↗</a>`).join(" · ");
-        return `<details class="problema" id="problema-${esc(row.id)}"${open ? " open" : ""}>
-            <summary><span class="problema-titulo">${esc(c.titulo)}</span><span class="problema-resumo">${esc(c.resumo)}</span></summary>
-            <div class="problema-corpo">
+        return `<div class="problema-corpo">
                 <div class="problema-col"><h3>${tr("O que costuma ser", "What it usually is")}</h3>${list(c.causas)}</div>
                 <div class="problema-col problema-fazer"><h3>${tr("O que fazer", "What to do")}</h3><ol>${c.fazer.map((step) => `<li>${esc(step)}</li>`).join("")}</ol></div>
                 <div class="problema-col"><h3>${tr("Evitar", "Avoid")}</h3>${list(c.evitar)}</div>
             </div>
             ${links ? `<p class="problema-links">${links}</p>` : ""}
-            ${sources ? `<p class="problema-fontes">${tr("Fontes", "Sources")}: ${sources}</p>` : ""}
+            ${sources ? `<p class="problema-fontes">${tr("Fontes", "Sources")}: ${sources}</p>` : ""}`;
+    }
+
+    // `skipKind` evita ligar de volta à ficha em que o cartão já está (ex.: a própria cultura).
+    function card(row, names, { open = false, skipKind = "", skipId = "" } = {}) {
+        const c = content(row);
+        return `<details class="problema" id="problema-${esc(row.id)}"${open ? " open" : ""}>
+            <summary><span class="problema-titulo">${esc(c.titulo)}</span><span class="problema-resumo">${esc(c.resumo)}</span></summary>
+            ${body(row, names, { skipKind, skipId })}
         </details>`;
     }
 
-    window.BioCulturaProblemas = { load, card, content };
+    // Quadrado discreto da grelha do hub: só o título e o grupo; a resposta abre num painel por baixo da linha.
+    function tile(row, tag, { active = false } = {}) {
+        const c = content(row);
+        return `<button type="button" class="problema-quadro${active ? " is-active" : ""}" data-problema="${esc(row.id)}" aria-expanded="${active}" aria-controls="problema-${esc(row.id)}">
+            <span class="problema-quadro-titulo">${esc(c.titulo)}</span><small>${esc(tag)}</small></button>`;
+    }
+
+    function panel(row, names) {
+        const c = content(row);
+        return `<section class="problema-painel" id="problema-${esc(row.id)}" aria-label="${esc(c.titulo)}">
+            <button type="button" class="problema-fechar" data-fechar="1" aria-label="${esc(tr("Fechar resposta", "Close answer"))}">×</button>
+            <h3 class="problema-painel-titulo">${esc(c.titulo)}</h3><p class="problema-painel-resumo">${esc(c.resumo)}</p>
+            ${body(row, names)}
+        </section>`;
+    }
+
+    window.BioCulturaProblemas = { load, card, tile, panel, content };
 })();

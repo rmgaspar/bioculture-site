@@ -15,8 +15,8 @@
     const esc = (value) => String(value ?? "").replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch]);
     const el = (id) => document.getElementById(id);
     const GROUPS = [["sementeira", "Sementes que não nascem", "Seeds that won't come up"], ["pragas", "Pragas", "Pests"], ["doencas", "Doenças", "Diseases"], ["outros", "Outros", "Other"]];
-    const INITIAL = 6; // respostas visíveis sem pesquisa nem filtros
-    const STEP = 6; // quantas mais cada «Ver mais» acrescenta
+    const INITIAL = 12; // quadrados visíveis sem pesquisa nem filtros
+    const STEP = 12; // quantos mais cada «Ver mais» acrescenta
     const CROP_CHIPS = 8; // culturas visíveis sem expandir
 
     const TIPOS = [["", "Todas as culturas", "All crops"], ["horticolas", "Hortícolas", "Vegetables"], ["fruteiras", "Árvores e plantas de fruto", "Fruit trees and plants"], ["aromaticas", "Aromáticas", "Herbs"], ["perenes", "Culturas perenes", "Perennial crops"]];
@@ -25,6 +25,7 @@
     let names = { cultura: {}, tecnica: {}, praga: {} };
     let images = {};
     let kinds = {};
+    let shown_ = [];
     let perennial = {};
 
     const searchable = (row) => {
@@ -72,9 +73,12 @@
         }
         const limited = !filtered();
         const shown = limited ? all.slice(0, state.shown) : all;
+        const groupLabel = (row) => tr(...(GROUPS.find(([key]) => key === row.grupo)?.slice(1) || ["", ""]));
+        shown_ = shown;
         el("problemas-lista").innerHTML = shown.length
-            ? shown.map((row) => SHARED.card(row, names, { open: state.open === row.id })).join("")
+            ? shown.map((row) => SHARED.tile(row, groupLabel(row), { active: state.open === row.id })).join("")
             : `<p class="problemas-vazio">${tr("Ainda não temos uma resposta curta para isso. Tenta outras palavras (por exemplo «lesmas», «amarelas», «não nascem») ou ", "We do not have a short answer for that yet. Try other words (for example “slugs”, “yellow”, “won't come up”) or ")}<a href="/contactos.html">${tr("diz-nos o que se passa", "tell us what is happening")}</a>.</p>`;
+        placePanel(false);
         el("problemas-contagem").textContent = all.length === 1 ? tr("1 resposta", "1 answer") : tr(`${all.length} respostas`, `${all.length} answers`);
 
         // «Ver mais» (mais algumas) e «Ver menos» (volta ao início); só sem pesquisa nem filtros.
@@ -87,6 +91,20 @@
         fewer.textContent = tr("Ver menos", "Show fewer");
     }
 
+    // O painel da resposta aberta fica a toda a largura, logo por baixo da linha de quadrados a que pertence.
+    function placePanel(scroll) {
+        const list = el("problemas-lista");
+        list.querySelector(".problema-painel")?.remove();
+        const row = rows.find((item) => item.id === state.open);
+        const index = shown_.findIndex((item) => item.id === state.open);
+        if (!row || index < 0) return;
+        const tiles = [...list.querySelectorAll(".problema-quadro")];
+        const columns = Math.max(1, getComputedStyle(list).gridTemplateColumns.split(" ").length);
+        const last = Math.min(tiles.length - 1, (Math.floor(index / columns) + 1) * columns - 1);
+        tiles[last].insertAdjacentHTML("afterend", SHARED.panel(row, names));
+        if (scroll) list.querySelector(".problema-painel").scrollIntoView({ block: "nearest", behavior: "smooth" });
+    }
+
     function openFromHash() {
         if (!location.hash.startsWith("#problema-")) return;
         const id = decodeURIComponent(location.hash.replace(/^#problema-/, ""));
@@ -96,7 +114,7 @@
         el("problemas-busca").value = "";
         el("problemas-tipo").value = "";
         render();
-        el(`problema-${id}`)?.scrollIntoView({ block: "start" });
+        el(`problema-${id}`)?.scrollIntoView({ block: "center" });
     }
 
     // Texto fixo do bloco.
@@ -146,6 +164,22 @@
         state.open = "";
         render();
     });
+    el("problemas-lista").addEventListener("click", (event) => {
+        if (event.target.closest("[data-fechar]")) {
+            const anterior = state.open;
+            state.open = "";
+            render();
+            el("problemas-lista").querySelector(`[data-problema="${anterior}"]`)?.focus();
+            return;
+        }
+        const tile = event.target.closest("button[data-problema]");
+        if (!tile) return;
+        state.open = state.open === tile.dataset.problema ? "" : tile.dataset.problema;
+        render();
+        if (state.open) placePanel(true);
+    });
+    let resizeTimer = 0;
+    window.addEventListener("resize", () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(() => placePanel(false), 150); });
     el("problemas-mais").addEventListener("click", () => {
         state.shown += STEP;
         render();

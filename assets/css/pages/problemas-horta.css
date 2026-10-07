@@ -71,3 +71,18 @@
 }
 
 @media (max-width: 760px) { .problemas-linha { grid-template-columns: 1fr; } }
+
+/* Grelha de quadrados discretos (hub): o problema e o grupo; a resposta abre num painel a toda a largura por baixo da linha. */
+.problemas-grelha { grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: .55rem; }
+.problemas-grelha .problemas-vazio { grid-column: 1 / -1; }
+.problemas .problema-quadro { display: flex; flex-direction: column; justify-content: space-between; gap: .55em; min-height: 5.4em; height: auto; padding: .75em .9em; border: 1px solid var(--line, #e1e8e2); border-radius: 12px; background: #fbfcfb; color: var(--ink, #1d2922); font: inherit; letter-spacing: 0; text-align: left; text-transform: none; box-shadow: none; cursor: pointer; transition: border-color .15s, background-color .15s; }
+.problemas .problema-quadro:hover { border-color: var(--forest, #536b57); background: #fff; }
+.problemas .problema-quadro.is-active { border-color: var(--forest, #536b57); background: var(--pale, #f1f5f1); }
+.problema-quadro-titulo { display: -webkit-box; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 3; font: 700 .9em/1.3 "Source Sans Pro", sans-serif; }
+.problemas .problema-quadro small { color: var(--forest, #536b57); font: 800 max(11px, .66em)/1 "Source Sans Pro", sans-serif; letter-spacing: .12em; text-transform: uppercase; opacity: .85; }
+.problema-painel { position: relative; grid-column: 1 / -1; border: 1px solid var(--forest, #536b57); border-radius: 14px; background: #fff; box-shadow: 0 10px 28px rgba(36, 55, 43, .07); padding-top: 1.1rem; }
+.problema-painel-titulo { margin: 0; padding: 0 3.2rem 0 1.3rem; color: var(--ink, #1d2922); font: 800 1.15em/1.3 "Source Sans Pro", sans-serif; }
+.problema-painel-resumo { margin: .35rem 0 1rem; padding: 0 1.3rem; color: var(--muted, #5b665f); font-size: .95em; line-height: 1.55; }
+.problemas .problema-fechar { position: absolute; top: .55rem; right: .7rem; width: 2rem; height: 2rem; padding: 0; border: 0; border-radius: 50%; background: transparent; color: var(--forest, #536b57); font-size: 1.5em; line-height: 1; box-shadow: none; cursor: pointer; }
+.problemas .problema-fechar:hover { background: var(--pale, #f1f5f1); }
+@media (max-width: 760px) { .problemas-grelha { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
