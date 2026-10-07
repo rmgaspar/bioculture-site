@@ -17,7 +17,7 @@
 
   const traduzirNav = () => {
     if (!EN) return;
-    const M = { sumario: "Summary", clima: "Climate", energia: "Energy", ar: "Air", agua: "Water", "terra-vida": "Land and life", "portugal-mundo": "Portugal in the world", "leitura-local": "Portugal in detail", sistemas: "Pressure systems" };
+    const M = { sumario: "Summary", clima: "Climate", energia: "Energy", ar: "Air", agua: "Water", "terra-vida": "Land and life", "portugal-mundo": "Portugal in the world", "leitura-local": "Portugal in detail", "pressure-systems": "Pressure systems" };
     document.querySelectorAll('.reading-nav a[href^="#"]').forEach((a) => { const k = a.getAttribute("href").slice(1); if (M[k]) a.textContent = M[k] + " ↓"; });
   };
 
