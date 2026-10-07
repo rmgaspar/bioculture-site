@@ -44,6 +44,8 @@ jobs:
           python3 scripts/dados/ipma_clima.py || status=1
           # Emissões de gases com efeito de estufa e erosão costeira (fichas do REA da APA).
           python3 scripts/dados/apa_rea.py || status=1
+          # Séries por país do relatório «Observatório da Terra» (lê os ficheiros acabados de atualizar).
+          python3 scripts/dados/relatorio_terra.py || status=1
           # Retira das listagens as notícias com prazo terminado (histórico preservado no arquivo).
           python3 scripts/noticias/arquivar.py || status=1
           echo "falhas=$status" >> "$GITHUB_OUTPUT"

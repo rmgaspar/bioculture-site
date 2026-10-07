@@ -9,6 +9,8 @@ Fluxo: `.github/workflows/atualizar-dados.yml` (quartas-feiras, 05:43 UTC, e man
 | `ods_onu.py` | API dos Indicadores ODS da ONU (UNSD) | `water-*`, `soil-*`, `biodiversity-*` |
 | `ipma_clima.py` | IPMA — Boletim Climatológico Anual | `observatorio_terra.json` (temperatura, desvio e precipitação de Portugal continental; acrescenta o ano novo quando o boletim sai, normalmente em janeiro ou fevereiro) |
 | `apa_rea.py` | APA — Relatório do Estado do Ambiente (fichas) | `observatorio_terra.json` e `solo_stats.json`: emissões de gases com efeito de estufa, erosão costeira e suscetibilidade à desertificação (ISD) |
+| `relatorio_terra.py` | os ficheiros acima (não chama APIs) | `observatorio-terra-relatorio.json`: séries compactas por país (ISO3) e por agregado para o relatório «Observatório da Terra»; só reorganiza valores oficiais, sem interpolar nem calcular médias |
+| `paises_iso.py` | API do Banco Mundial + tabela ISO 3166-1 (datasets/country-codes) | `paises-iso.json`: países reais (sem agregados) com ISO3, ISO2, código M49, região, rendimento e se é Estado independente. Tabela de referência, corre-se à mão |
 | `vigia_fontes.py` | APA — Relatório do Estado do Ambiente | não altera dados: abre uma notificação `dados:atualizar` (com os valores lidos da qualidade do ar) quando sai uma edição nova |
 | `validar.py` | — | valida estrutura, intervalos e valor mundial antes de publicar |
 | `../noticias/arquivar.py` | — | retira das listagens as notícias com prazo terminado |

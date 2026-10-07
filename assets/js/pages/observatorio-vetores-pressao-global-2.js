@@ -19,167 +19,6 @@
             const getSource = (data, id) => data.fontes.find((item) => item.id === id);
             const highlight = (data, id) => data.destaques.find((item) => item.id === id);
 
-            function renderSummary(data) {
-                const material = highlight(data, "materiais");
-                const climate = highlight(data, "clima_2025");
-                const air = highlight(data, "ar");
-                const ewaste = highlight(data, "ewaste");
-                const dc = highlight(data, "datacenters");
-                const cards = [
-                    [
-                        isEnglish ? "Material extraction" : "Extração de materiais",
-                        `${format(material.valor)} ${isEnglish ? "billion t" : "mil milhões t"}`,
-                        isEnglish ? "Global material extraction has more than tripled since 1970." : material.leitura,
-                    ],
-                    [
-                        isEnglish ? "Global warming" : "Aquecimento global",
-                        `+${format(climate.valor, 2)} °C`,
-                        isEnglish ? `${climate.ano}, compared with 1850–1900` : `${climate.ano}, comparado com 1850–1900`,
-                    ],
-                    [
-                        isEnglish ? "Air pollution" : "Poluição do ar",
-                        `${format(air.valor)} ${isEnglish ? "million" : "milhões"}`,
-                        isEnglish ? "attributable premature deaths per year" : "de mortes prematuras atribuídas por ano",
-                    ],
-                    [
-                        isEnglish ? "Electronic waste" : "Resíduos eletrónicos",
-                        `${format(ewaste.valor, 0)} ${isEnglish ? "million t" : "milhões t"}`,
-                        isEnglish ? `${ewaste.ano}; only 22.3% had documented recycling` : `${ewaste.ano}; só 22,3% teve reciclagem documentada`,
-                    ],
-                    [
-                        isEnglish ? "Data centres" : "Centros de dados",
-                        `${dc.intervalo[0]}–${dc.intervalo[1]} TWh`,
-                        isEnglish ? `${dc.ano}; estimated global electricity, excluding cryptocurrency mining` : `${dc.ano}; eletricidade global estimada, sem criptomoedas`,
-                    ],
-                ];
-                document.getElementById("global-summary-grid").innerHTML = cards.map(([title, value, text]) =>
-                    `<article class="summary-card"><h3>${
-                        escapeHtml(title)
-                    }</h3><span class="summary-value">${escapeHtml(value)}</span><p>${
-                        escapeHtml(text)
-                    }</p></article>`
-                ).join("");
-                document.getElementById("global-overview-text").textContent =
-                    isEnglish ? "Environmental pressure does not come from one activity. Energy, food, transport, construction and consumption require materials, occupy land and generate emissions and waste. Responses must also be integrated: a technology can reduce fossil fuels while increasing demand for minerals, electricity, water or land." : "A pressão ambiental não vem de uma única atividade. Energia, alimentação, transportes, construção e consumo exigem materiais, ocupam território e produzem emissões e resíduos. As soluções também precisam de ser integradas: uma tecnologia pode reduzir combustíveis fósseis e, ao mesmo tempo, aumentar a procura de minerais, eletricidade, água ou solo.";
-            }
-
-            function makeBarChart(canvas, labels, datasets, unit) {
-                new Chart(canvas, {
-                    type: "bar",
-                    data: { labels, datasets },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: { display: datasets.length > 1 },
-                            tooltip: {
-                                callbacks: {
-                                    label: (context) =>
-                                        `${context.dataset.label ? context.dataset.label + ": " : ""}${
-                                            format(context.parsed.y)
-                                        } ${unit}`,
-                                },
-                            },
-                        },
-                        scales: {
-                            x: { grid: { display: false }, ticks: { font: { size: 9 } } },
-                            y: {
-                                beginAtZero: true,
-                                ticks: { font: { size: 9 }, callback: (value) => format(value) },
-                            },
-                        },
-                    },
-                });
-            }
-
-            function renderCharts(data) {
-                const sea = data.series.subida_nivel_mar;
-                const forest = data.series.floresta_global;
-                const waste = data.series.residuos_eletronicos;
-                const cards = [
-                    [
-                        isEnglish ? "Average rate of global mean sea-level rise" : sea.titulo,
-                        isEnglish ? "consolidated observation" : sea.natureza,
-                        isEnglish ? "The average rate almost doubled between the two periods. These are period averages, not annual values." : "A taxa média quase duplicou entre os dois períodos. São médias, não valores de cada ano.",
-                        sea.fonte_id,
-                    ],
-                    [
-                        isEnglish ? "Net forest-area loss" : "Perda líquida de área florestal",
-                        isEnglish ? "global assessment" : forest.natureza,
-                        isEnglish ? "Annual net loss slowed but remained negative. It is not equivalent to gross deforestation." : "A perda líquida anual abrandou, mas continuou negativa. Não equivale à desflorestação bruta.",
-                        forest.fonte_id,
-                    ],
-                    [
-                        isEnglish ? "Global electronic waste" : waste.titulo,
-                        isEnglish ? "global estimate" : waste.natureza,
-                        isEnglish ? "The 2030 value is a projection and is visually separated from previous estimates." : "O valor de 2030 é uma projeção e aparece visualmente separado dos valores anteriores.",
-                        waste.fonte_id,
-                    ],
-                ];
-                document.getElementById("global-chart-grid").innerHTML = cards.map((item, index) => {
-                    const link = getSource(data, item[3]);
-                    return `<article class="chart-box"><h3>${
-                        escapeHtml(item[0])
-                    }</h3><div class="chart-meta">${
-                        escapeHtml(item[1])
-                    }</div><div class="chart-container"><canvas id="pressure-chart-${index}"></canvas></div><p>${
-                        escapeHtml(item[2])
-                    }</p><a class="source-link" href="${
-                        escapeHtml(link.url)
-                    }" target="_blank" rel="noopener noreferrer">${isEnglish ? "Source" : "Fonte"}: ${
-                        escapeHtml(link.entidade)
-                    } ↗</a></article>`;
-                }).join("");
-                makeBarChart(
-                    document.getElementById("pressure-chart-0"),
-                    sea.dados.map((item) => item.periodo),
-                    [{ data: sea.dados.map((item) => item.valor), backgroundColor: colors[0] }],
-                    isEnglish ? "mm/year" : sea.unidade,
-                );
-                makeBarChart(
-                    document.getElementById("pressure-chart-1"),
-                    forest.mudanca_liquida.map((item) => item.periodo),
-                    [{
-                        data: forest.mudanca_liquida.map((item) => Math.abs(item.valor)),
-                        backgroundColor: colors[1],
-                    }],
-                    isEnglish ? "million ha/year lost" : "milhões ha/ano perdidos",
-                );
-                makeBarChart(document.getElementById("pressure-chart-2"), ["2010", "2022", "2030"], [{
-                    label: isEnglish ? "Estimated" : "Estimado",
-                    data: [waste.dados[0].valor_aproximado, waste.dados[1].valor, null],
-                    backgroundColor: colors[2],
-                }, {
-                    label: isEnglish ? "Projection" : "Projeção",
-                    data: [null, null, waste.projecoes[0].valor],
-                    backgroundColor: "#ef9a9a",
-                }], waste.unidade);
-            }
-
-            function renderVectors(data) {
-                const selected = new Set([
-                    "clima",
-                    "biodiversidade",
-                    "extracao",
-                    "agua",
-                    "alimentacao",
-                    "digital",
-                    "plasticos",
-                    "oceanos",
-                ]);
-                document.getElementById("vector-grid").innerHTML = data.vetores.filter((item) =>
-                    selected.has(item.id)
-                ).map((item) =>
-                    `<article class="vector-card"><h3>${
-                        escapeHtml(item.titulo)
-                    }</h3><p><strong>Principais causas:</strong> ${
-                        escapeHtml(item.pressao.slice(0, 3).join(", "))
-                    }.</p><p><strong>Resposta:</strong> ${
-                        escapeHtml(item.respostas.slice(0, 3).join(", "))
-                    }.</p></article>`
-                ).join("");
-            }
-
             function renderNexuses(data) {
                 const english = {
                     "Alimentação–clima–natureza":["Food–climate–nature","Agricultural expansion, livestock, fertilisation and fishing connect food demand to emissions, water, nutrients and habitat conversion."],
@@ -195,17 +34,13 @@
                 if (!isEnglish) return;
                 document.documentElement.lang = "en";
                 const replacements = [
-                    ["#panorama-global .overview h2", "The global picture in a few words"],
-                    ["#system-chain .chapter", "01 · Material cycle"], ["#system-chain h2", "Pressure begins before the product"],
+                    ["#sistemas h2", "Pressure systems"], ["#system-chain .chapter", "Material cycle"], ["#system-chain h2", "Pressure begins before the product"],
                     ["#system-chain .pressure-heading p", "Following the whole chain prevents impacts from disappearing between borders, suppliers and life-cycle stages."],
-                    ["#pressure-systems .chapter", "02 · Systems"], ["#pressure-systems h2", "The great machines of transformation"],
+                    ["#pressure-systems .chapter", "Systems"], ["#pressure-systems h2", "The great machines of transformation"],
                     ["#pressure-systems .pressure-heading p", "Filter by environmental dimension. Each card shows the dominant mechanism and links to the specialised observatory when available."],
-                    ["#global-signals .chapter", "03 · Global signals"], ["#global-signals h2", "Magnitudes that do not fit one unit"],
-                    ["#global-signals .pressure-heading p", "Cards keep climate, materials, health, waste and energy separate to avoid a false universal score."],
-                    ["#method .chapter", "05 · Method"], ["#method h2", "How not to lose the planet in the numbers"],
+                    ["#method .chapter", "Method"], ["#method h2", "How not to lose the planet in the numbers"],
                     ["#pressure-news .chapter", "Latest"], ["#pressure-news h2", "Pressures in motion"],
                     ["#pressure-news .pressure-heading p", "Selected news on decisions, projects and chains that alter pressure on living systems."],
-                    [".comparison-heading h2", "Comparisons supported by data"], [".comparison-heading p", "We do not draw false annual curves when only period averages or a few observations exist."],
                     [".reading-box h3", "How to interpret this data"], ["#connections h2", "How pressures connect"], ["#connections p", "Simple explanations of mechanisms; additional detail remains collapsed."]
                 ];
                 replacements.forEach(([selector, html]) => { const node = document.querySelector(selector); if (node) node.innerHTML = html; });
@@ -260,18 +95,14 @@
                     if (!data.destaques || !data.series || !data.vetores) {
                         throw new Error("O ficheiro não contém dados utilizáveis.");
                     }
-                    renderSummary(data);
-                    renderCharts(data);
                     renderNexuses(data);
                     renderPressureArchitecture(architecture);
                     renderPressureSources(data);
                     renderPressureNews();
                 } catch (error) {
                     console.error("Erro ao carregar os vetores globais:", error);
-                    document.getElementById("global-summary-grid").innerHTML =
-                        `<div class="data-error"><strong>Não foi possível carregar os indicadores.</strong><br>${
-                            escapeHtml(error.message)
-                        }</div>`;
+                    const chain = document.getElementById("chain-grid");
+                    if (chain) chain.innerHTML = `<div class="data-error"><strong>${isEnglish ? "The indicators could not be loaded." : "Não foi possível carregar os indicadores."}</strong><br>${escapeHtml(error.message)}</div>`;
                 }
             }
             loadData();

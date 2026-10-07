@@ -91,12 +91,45 @@ def validar(nome, chave_indicador, chave_geo, codigo_mundo):
         falha(f"{nome}: não há série do Mundo ({codigo_mundo})")
 
 
+def validar_relatorio_terra():
+    """O ficheiro de séries por país do relatório «Observatório da Terra» tem de estar completo e dentro dos intervalos."""
+    import relatorio_terra
+
+    dados = comum.ler("observatorio-terra-relatorio.json")
+    for chave, (_f, _ci, _cg, indicador, _un, _fonte) in relatorio_terra.INDICADORES.items():
+        bloco = dados["indicadores"].get(chave)
+        if not bloco:
+            falha(f"relatório da Terra: falta o indicador {chave}")
+            continue
+        series = bloco["series"]
+        for obrigatorio in ("WLD", "PRT"):
+            if obrigatorio not in series:
+                falha(f"relatório da Terra: {chave} sem {obrigatorio}")
+        if len(series) < 120:
+            falha(f"relatório da Terra: {chave} só tem {len(series)} geografias")
+        limites = INTERVALOS.get(indicador)
+        for codigo, serie in series.items():
+            for i, valor in enumerate(serie["v"]):
+                if valor is None:
+                    continue
+                if not valido(valor) or (limites and not (limites[0] <= valor <= limites[1])):
+                    falha(f"relatório da Terra: {chave} {codigo} {serie['a'] + i}: {valor!r}")
+                    break
+    for codigo in dados["paises"]:
+        if codigo not in comum.ler("paises-iso.json")["paises"]:
+            falha(f"relatório da Terra: país desconhecido {codigo}")
+
+
 def main():
     for nome, (indicador, geo, mundo) in CONJUNTOS.items():
         try:
             validar(nome, indicador, geo, mundo)
         except (KeyError, ValueError, TypeError) as erro:
             falha(f"{nome}: estrutura inesperada ({erro!r})")
+    try:
+        validar_relatorio_terra()
+    except (KeyError, ValueError, TypeError) as erro:
+        falha(f"relatório da Terra: estrutura inesperada ({erro!r})")
     if erros:
         for erro in erros:
             print(f"ERRO: {erro}", file=sys.stderr)
