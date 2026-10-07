@@ -57,7 +57,13 @@
             `<button type="button" class="${images[id] ? "has-img" : ""}" data-cultura="${esc(id)}" aria-pressed="${state.cultura === id}">${images[id] ? `<img src="${esc(images[id])}" alt="" loading="lazy" onerror="this.remove()">` : ""}${esc(names.cultura[id] || id)}<small>${count}</small></button>`).join("")
             + (hiddenCrops ? `<button type="button" data-mais-culturas="1" aria-label="${esc(tr("Mostrar todas as culturas", "Show all crops"))}">+${hiddenCrops} ${esc(tr("culturas", "crops"))}</button>` : "");
 
-        const all = rows.filter((row) => matches(row));
+        let all = rows.filter((row) => matches(row));
+        // Com pesquisa, as palavras inteiras («esca») vêm antes das que só começam assim («escaravelho»).
+        const terms = normalize(state.q).split(/\s+/).filter((term) => term.length > 2).map((term) => term.replace(/s$/, ""));
+        if (terms.length) {
+            const whole = (row) => terms.every((term) => new RegExp(`(?:^|[^a-z0-9])${term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?:s|es)?(?![a-z0-9])`).test(row.__text));
+            all = all.map((row, i) => [whole(row) ? 0 : 1, i, row]).sort((x, y) => x[0] - y[0] || x[1] - y[1]).map((x) => x[2]);
+        }
         const limited = !filtered();
         const shown = limited ? all.slice(0, state.shown) : all;
         el("problemas-lista").innerHTML = shown.length
