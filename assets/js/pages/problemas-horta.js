@@ -57,11 +57,18 @@
         rows.filter((row) => matches(row, "cultura")).forEach((row) => (row.culturas || []).forEach((id) => { crops[id] = (crops[id] || 0) + 1; }));
         if (state.cultura && !crops[state.cultura]) crops[state.cultura] = 0;
         let cropList = Object.entries(crops).sort((a, b) => b[1] - a[1] || String(names.cultura[a[0]]).localeCompare(String(names.cultura[b[0]])));
-        const hiddenCrops = !state.allCrops && !filtered() && cropList.length > CROP_CHIPS ? cropList.length - CROP_CHIPS : 0;
-        if (hiddenCrops) cropList = cropList.slice(0, CROP_CHIPS);
+        const tooMany = cropList.length > CROP_CHIPS;
+        let hiddenCrops = 0;
+        if (tooMany && !state.allCrops) {
+            hiddenCrops = cropList.length - CROP_CHIPS;
+            const visible = cropList.slice(0, CROP_CHIPS);
+            if (state.cultura && !visible.some((entry) => entry[0] === state.cultura)) visible.push(cropList.find((entry) => entry[0] === state.cultura));
+            cropList = visible;
+        }
         el("problemas-culturas").innerHTML = cropList.map(([id, count]) =>
             `<button type="button" class="${images[id] ? "has-img" : ""}" data-cultura="${esc(id)}" aria-pressed="${state.cultura === id}">${images[id] ? `<img src="${esc(images[id])}" alt="" loading="lazy" onerror="this.remove()">` : ""}${esc(names.cultura[id] || id)}<small>${count}</small></button>`).join("")
-            + (hiddenCrops ? `<button type="button" data-mais-culturas="1" aria-label="${esc(tr("Mostrar todas as culturas", "Show all crops"))}">+${hiddenCrops} ${esc(tr("culturas", "crops"))}</button>` : "");
+            + (hiddenCrops ? `<button type="button" data-mais-culturas="1" aria-label="${esc(tr("Mostrar todas as culturas", "Show all crops"))}">+${hiddenCrops} ${esc(tr("culturas", "crops"))}</button>` : "")
+            + (tooMany && state.allCrops ? `<button type="button" data-menos-culturas="1">${esc(tr("Ver menos culturas", "Show fewer crops"))}</button>` : "");
 
         let all = rows.filter((row) => matches(row));
         // Com pesquisa: primeiro as respostas da cultura com esse nome («castanhas»), depois as palavras inteiras («esca») e só no fim as que começam assim («escaravelho»).
@@ -145,12 +152,14 @@
     });
     el("problemas-tipo").addEventListener("change", (event) => {
         state.tipo = event.target.value;
+        state.allCrops = false;
         state.cultura = "";
         state.open = "";
         render();
     });
     el("problemas-culturas").addEventListener("click", (event) => {
         if (event.target.closest("button[data-mais-culturas]")) { state.allCrops = true; render(); return; }
+        if (event.target.closest("button[data-menos-culturas]")) { state.allCrops = false; render(); return; }
         const chip = event.target.closest("button[data-cultura]");
         if (!chip) return;
         state.cultura = state.cultura === chip.dataset.cultura ? "" : chip.dataset.cultura;
