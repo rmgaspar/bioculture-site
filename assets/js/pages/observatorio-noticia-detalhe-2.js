@@ -9,6 +9,7 @@
                 "Energia Ética": "#f1c40f",
             };
 
+           const semIndexar = () => { if (document.querySelector('meta[name="robots"]')) return; const m = document.createElement("meta"); m.name = "robots"; m.content = "noindex"; document.head.appendChild(m); };
            async function carregarNoticia() {
                 const urlParams = new URLSearchParams(window.location.search);
                 const noticiaId = urlParams.get("id");
@@ -17,6 +18,7 @@
                 if (!lang || lang === "undefined" || lang === "null") lang = "pt";
 
                 if (!noticiaId) {
+                    semIndexar();
                     window.location.href = "../index.html";
                     return;
                 }
@@ -159,11 +161,13 @@
                         }
 
                     } else {
+                        semIndexar();
                         document.getElementById("loading").classList.add("error-state");
                         document.getElementById("loading").innerHTML = 
-                            window.BioCultureI18n?.t('news_not_found') || "<strong>Notícia não encontrada.</strong>";
+                            lang === "en" ? "<strong>News item not found.</strong>" : "<strong>Notícia não encontrada.</strong>";
                     }
                 } catch (e) {
+                    semIndexar();
                     console.error("Erro técnico:", e);
                     document.getElementById("loading").classList.add("error-state");
                     document.getElementById("loading").innerHTML = "<strong>Erro ao carregar.</strong>";

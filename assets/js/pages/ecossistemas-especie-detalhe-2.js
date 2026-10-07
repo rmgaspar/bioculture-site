@@ -332,9 +332,11 @@
                     sintese: fauna.descricao || fauna.impacto };
                 return base;
             }
+            const semIndexar = () => { if (document.querySelector('meta[name="robots"]')) return; const m = document.createElement("meta"); m.name = "robots"; m.content = "noindex"; document.head.appendChild(m); };
             async function load() {
                 const id = new URLSearchParams(location.search).get("id");
                 if (!id) {
+                    semIndexar();
                     document.getElementById("species").innerHTML =
                         '<div class="error">Espécie não indicada.</div>';
                     return;
@@ -366,6 +368,7 @@
                         if (target) requestAnimationFrame(() => target.scrollIntoView({ block: "start" }));
                     }
                 } catch (e) {
+                    semIndexar();
                     document.getElementById("species").innerHTML =
                         '<div class="error"><strong>Espécie não encontrada.</strong><br><a href="biodiversidade.html">Voltar</a></div>';
                 }

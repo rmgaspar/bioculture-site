@@ -258,9 +258,11 @@
                     ? `<article class="detail-panel"><h3>${esc(title)}</h3><p>${html}</p></article>`
                     : "";
             }
+            const semIndexar = () => { if (document.querySelector('meta[name="robots"]')) return; const m = document.createElement("meta"); m.name = "robots"; m.content = "noindex"; document.head.appendChild(m); };
             async function carregar() {
                 const id = new URLSearchParams(window.location.search).get("id");
                 if (!id) {
+                    semIndexar();
                     window.location.href = "calendario.html";
                     return;
                 }
@@ -278,6 +280,7 @@
                     const item = master[id];
 
                     if (!item) {
+                        semIndexar();
                         document.getElementById("render-horta").innerHTML =
                             "<p>Produto não encontrado.</p>";
                         return;
