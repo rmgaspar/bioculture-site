@@ -7,7 +7,7 @@
                 horticolasDB = {},
                 infoGlobal = null,
                 weatherNow = null;
-            let viewedDate = new Date(), showMorePests = false, showMoreFlora = false, catalogLimit = 12, pestCatalogLimit = 12;
+            let viewedDate = new Date(), showMorePests = false, showMoreFlora = false, catalogLimit = 12, pestCatalogLimit = 12, catalogFilter = "all";
             const PEST_GROUPS = [
                 { id: "all", pt: "Todos", en: "All" },
                 { id: "horticolas", pt: "Hortícolas", en: "Vegetable garden" },
@@ -315,35 +315,53 @@
                 return "horticolas";
             }
 
+            const CATALOG_KINDS = [
+                ["all", "Tudo", "All"],
+                ["horticolas", "Hortícolas", "Vegetables"],
+                ["fruteiras", "Árvores e frutos", "Fruit trees and fruit"],
+                ["aromaticas", "Aromáticas", "Herbs"],
+                ["perenes", "Perenes", "Perennials"]
+            ];
+
+            function catalogMatches(id, item, query, filter) {
+                const haystack = normalize(`${id} ${item.nome || ""} ${item.nome_cientifico || ""} ${item.categoria || ""}`);
+                const kind = catalogKind(item);
+                const filterMatch = filter === "all" || filter === kind || filter === "perenes" && normalize(item.ciclo).includes("perene");
+                return filterMatch && (!query || haystack.includes(query));
+            }
+
             function renderCatalog(reset = false) {
                 if (reset) catalogLimit = 12;
-                const query = normalize(document.getElementById("catalog-search")?.value),
-                    filter = document.getElementById("catalog-filter")?.value || "all";
-                const entries = Object.entries(horticolasDB).filter(([id, item]) => {
-                    const haystack = normalize(`${id} ${item.nome || ""} ${item.nome_cientifico || ""} ${item.categoria || ""}`);
-                    const kind = catalogKind(item);
-                    const filterMatch = filter === "all" || filter === kind || filter === "perenes" && normalize(item.ciclo).includes("perene");
-                    return filterMatch && (!query || haystack.includes(query));
-                }).sort((a, b) => {
+                const query = normalize(document.getElementById("catalog-search")?.value);
+                const all = Object.entries(horticolasDB);
+                // Tipos à vista, com a contagem de cada um para a pesquisa atual.
+                document.getElementById("catalog-chips").innerHTML = CATALOG_KINDS.map(([key, pt, en]) =>
+                    `<button type="button" data-kind="${key}" aria-pressed="${catalogFilter === key}">${isEn() ? en : pt}<small>${
+                        all.filter(([id, item]) => catalogMatches(id, item, query, key)).length
+                    }</small></button>`
+                ).join("");
+                const entries = all.filter(([id, item]) => catalogMatches(id, item, query, catalogFilter)).sort((a, b) => {
                     const label = (entry) => String(isEn() && window.BioCultureDisplayTranslate
                         ? window.BioCultureDisplayTranslate(entry[1].nome || entry[0])
                         : entry[1].nome || entry[0]);
                     return label(a).localeCompare(label(b), isEn() ? "en" : "pt");
                 });
                 document.getElementById("catalog-summary").textContent = isEn()
-                    ? `${format(entries.length)} crops found · ${format(Object.keys(horticolasDB).length)} complete records in the catalogue`
-                    : `${format(entries.length)} culturas encontradas · ${format(Object.keys(horticolasDB).length)} fichas completas no catálogo`;
+                    ? `${format(entries.length)} crops`
+                    : `${format(entries.length)} culturas`;
                 document.getElementById("catalog-grid").innerHTML = entries.slice(0, catalogLimit).map(([id, item]) =>
-                    `<a class="catalog-card" href="/calendario/horticola-detalhe.html?id=${encodeURIComponent(id)}"><img src="${
+                    `<a class="catalog-card catalog-card--compact" title="${escapeHtml(item.categoria || catalogKind(item))}" href="/calendario/horticola-detalhe.html?id=${encodeURIComponent(id)}"><img src="${
                         escapeHtml(item.imagem && item.imagem !== "-" ? item.imagem : "/images/cultura-placeholder.svg")
-                    }" alt="${escapeHtml(item.nome || "Cultura")}" loading="lazy" onerror="this.onerror=null;this.src='/images/cultura-placeholder.svg'"><div class="catalog-card-body"><small>${
-                        escapeHtml(item.categoria || catalogKind(item))
-                    }</small><h3>${escapeHtml(item.nome || id)}</h3><p>${
+                    }" alt="" width="44" height="44" loading="lazy" onerror="this.onerror=null;this.src='/images/cultura-placeholder.svg'"><div class="catalog-card-body"><h3>${
+                        escapeHtml(item.nome || id)
+                    }</h3><p>${
                         escapeHtml(item.nome_cientifico || item.ciclo || "Consultar ficha de cultivo")
                     }</p></div></a>`
                 ).join("") || '<div class="empty">Não foram encontradas culturas com estes critérios.</div>';
                 const more = document.getElementById("catalog-more");
-                more.hidden = entries.length <= catalogLimit;
+                const remaining = entries.length - catalogLimit;
+                more.hidden = remaining <= 0;
+                more.textContent = isEn() ? `Show more crops (${remaining} more)` : `Ver mais culturas (${remaining} restantes)`;
                 more.onclick = () => { catalogLimit += 12; renderCatalog(); };
             }
 
@@ -654,7 +672,12 @@
                     if (PEST_GROUPS.some((g) => g.id === requestedGroup)) pestFilter.value = requestedGroup;
                     renderPestCatalog();
                     document.getElementById("catalog-search").addEventListener("input", () => renderCatalog(true));
-                    document.getElementById("catalog-filter").addEventListener("change", () => renderCatalog(true));
+                    document.getElementById("catalog-chips").addEventListener("click", (event) => {
+                        const button = event.target.closest("button[data-kind]");
+                        if (!button) return;
+                        catalogFilter = button.dataset.kind;
+                        renderCatalog(true);
+                    });
                     document.getElementById("pest-catalog-search").addEventListener("input", () => renderPestCatalog(true));
                     pestFilter.addEventListener("change", () => renderPestCatalog(true));
                     document.getElementById("guide-location-button").onclick = () => {
