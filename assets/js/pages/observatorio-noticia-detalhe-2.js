@@ -123,18 +123,6 @@
                             nextBox.hidden = true;
                         }
 
-                        // Nota editorial: como o texto foi feito e canal para corrigir.
-                        const writtenWithAi = !!n.capturado_em;
-                        document.getElementById("editorial-note-title").textContent = english ? "How this text was made" : "Como este texto foi feito";
-                        document.getElementById("editorial-note-text").textContent = english
-                            ? `${writtenWithAi ? "Summary text prepared by bioCulture with the help of artificial intelligence, based on the source named here." : "Editorial text by bioCulture, based on the source named here."} Facts, figures and quotations belong to the source; we summarise and add context without adding data, and the original prevails if the two differ. Spotted an error or something out of date?`
-                            : `${writtenWithAi ? "Texto de síntese elaborado pelo bioCulture, com apoio de inteligência artificial, a partir da fonte indicada." : "Texto editorial do bioCulture, a partir da fonte indicada."} Os factos, números e citações pertencem à fonte; resumimos e contextualizamos sem acrescentar dados, e o original prevalece se houver diferenças. Encontraste um erro ou algo desatualizado?`;
-                        const correction = document.getElementById("editorial-note-link");
-                        correction.textContent = english ? "Suggest a correction" : "Sugerir correção";
-                        const subject = `${english ? "Correction" : "Correção"}: ${content.titulo || n.id}`;
-                        const bodyText = `${english ? "Page" : "Página"}: ${location.origin}/observatorio/noticia-detalhe.html?id=${encodeURIComponent(n.id)}\n\n${english ? "What should be corrected (and a source, if possible):" : "O que deve ser corrigido (e uma fonte, se possível):"}\n`;
-                        correction.href = `mailto:geral@bioculture.pt?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(bodyText)}`;
-                        document.getElementById("editorial-note").hidden = false;
 
                         document.getElementById("source-name-top").innerText = n.fonte || "";
                         

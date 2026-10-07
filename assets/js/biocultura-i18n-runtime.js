@@ -880,6 +880,14 @@
         return data;
     }
 
+    // Declarados antes do ramo em português: `updateDOM()` e `t()` podem ser chamados por qualquer página
+    // (em português saem antes de os dicionários existirem) e liam estas variáveis ainda por inicializar.
+    let dictionary = null;
+    let structuredDictionary = null;
+    let displayDictionary = {};
+    let loading = null;
+    let fullLoading = null;
+
     if (!supported.has(lang)) {
         const portugueseFetch = window.fetch.bind(window);
         window.fetch = async function (...args) {
@@ -893,13 +901,9 @@
         return;
     }
 
-    let dictionary = null;
-    let structuredDictionary = null;
     /* Traduções só de apresentação: aplicam-se ao texto já desenhado na página,
        mas nunca aos dados JSON, porque o código das páginas (calendário, filtros,
        cruzamentos) lê valores em português como "março–maio" ou "fruteira". */
-    let displayDictionary = {};
-    let loading = null;
     const originalFetch = window.fetch.bind(window);
 
     function normalise(value) {
@@ -908,7 +912,6 @@
 
     /* Um único carregamento partilhado: quem chega depois espera por todos os
        dicionários (automático, estruturado e de apresentação). */
-    let fullLoading = null;
     async function loadDictionary() {
         if (!fullLoading) {
             const read = (url) => originalFetch(url, { cache: "no-cache" })
