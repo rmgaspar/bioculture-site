@@ -19,10 +19,13 @@
     const STEP = 6; // quantas mais cada «Ver mais» acrescenta
     const CROP_CHIPS = 8; // culturas visíveis sem expandir
 
-    const state = { grupo: "", cultura: "", q: "", shown: INITIAL, allCrops: false, open: "" };
+    const TIPOS = [["", "Todas as culturas", "All crops"], ["horticolas", "Hortícolas", "Vegetables"], ["fruteiras", "Árvores e plantas de fruto", "Fruit trees and plants"], ["aromaticas", "Aromáticas", "Herbs"], ["perenes", "Culturas perenes", "Perennial crops"]];
+    const state = { grupo: "", cultura: "", tipo: "", q: "", shown: INITIAL, allCrops: false, open: "" };
     let rows = [];
     let names = { cultura: {}, tecnica: {}, praga: {} };
     let images = {};
+    let kinds = {};
+    let perennial = {};
 
     const searchable = (row) => {
         const c = SHARED.content(row);
@@ -31,6 +34,7 @@
     function matches(row, skip) {
         if (skip !== "grupo" && state.grupo && row.grupo !== state.grupo) return false;
         if (skip !== "cultura" && state.cultura && !(row.culturas || []).includes(state.cultura)) return false;
+        if (state.tipo && !(row.culturas || []).some((id) => state.tipo === "perenes" ? perennial[id] : kinds[id] === state.tipo)) return false;
         // Palavras curtas e sem o «s» final do plural, para «lesmas» apanhar «lesma» e vice-versa.
         const terms = normalize(state.q).split(/\s+/).filter((term) => term.length > 2).map((term) => term.replace(/s$/, ""));
         if (!terms.length) return true;
@@ -38,7 +42,7 @@
         // A pesquisa casa com o início das palavras («roma» não apanha «aromáticas»).
         return terms.every((term) => new RegExp(`(?:^|[^a-z0-9])${term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}`).test(text));
     }
-    const filtered = () => !!(state.grupo || state.cultura || state.q.trim());
+    const filtered = () => !!(state.grupo || state.cultura || state.tipo || state.q.trim());
 
     function render() {
         const groupChips = [["", tr("Tudo", "All"), rows.filter((row) => matches(row, "grupo")).length]]
@@ -88,8 +92,9 @@
         const id = decodeURIComponent(location.hash.replace(/^#problema-/, ""));
         if (!rows.some((row) => row.id === id)) return;
         const position = rows.findIndex((row) => row.id === id);
-        Object.assign(state, { grupo: "", cultura: "", q: "", open: id, allCrops: true, shown: Math.max(state.shown, Math.ceil((position + 1) / STEP) * STEP) });
+        Object.assign(state, { grupo: "", cultura: "", tipo: "", q: "", open: id, allCrops: true, shown: Math.max(state.shown, Math.ceil((position + 1) / STEP) * STEP) });
         el("problemas-busca").value = "";
+        el("problemas-tipo").value = "";
         render();
         el(`problema-${id}`)?.scrollIntoView({ block: "start" });
     }
@@ -100,11 +105,15 @@
     el("problemas-intro").textContent = tr("Escolhe o problema ou escreve o que vês. Respostas curtas, de agricultura biológica, sem pesticidas.", "Pick the problem or type what you see. Short answers, organic, no pesticides.");
     el("problemas-busca").placeholder = tr("Ex.: cenouras não nascem, lesmas, folhas amarelas…", "E.g. carrots won't come up, slugs, yellow leaves…");
     el("problemas-busca").setAttribute("aria-label", tr("Descrever o problema", "Describe the problem"));
+    el("problemas-tipo").innerHTML = TIPOS.map(([key, pt, en]) => `<option value="${key}">${esc(tr(pt, en))}</option>`).join("");
+    el("problemas-tipo").setAttribute("aria-label", tr("Tipo de cultura", "Crop type"));
 
     SHARED.load().then((data) => {
         rows = data.rows;
         names = data.names;
         images = data.images || {};
+        kinds = data.kinds || {};
+        perennial = data.perennial || {};
         render();
         openFromHash();
     }).catch(() => {
@@ -115,6 +124,12 @@
     el("problemas-busca").addEventListener("input", (event) => {
         clearTimeout(timer);
         timer = setTimeout(() => { state.q = event.target.value; state.open = ""; render(); }, 150);
+    });
+    el("problemas-tipo").addEventListener("change", (event) => {
+        state.tipo = event.target.value;
+        state.cultura = "";
+        state.open = "";
+        render();
     });
     el("problemas-culturas").addEventListener("click", (event) => {
         if (event.target.closest("button[data-mais-culturas]")) { state.allCrops = true; render(); return; }

@@ -13,6 +13,14 @@
     };
     const KIND = { cultura: ["Ficha da cultura", "Crop guide"], tecnica: ["Técnica", "Technique"], praga: ["Ficha completa", "Full guide"] };
 
+    const plain = (value) => String(value || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+    function cropKind(item) {
+        const value = plain(item.categoria);
+        if (value.includes("aromatica")) return "aromaticas";
+        if (/fruteira|citrino|pequeno fruto|casca rija|trepadeira frutifera/.test(value)) return "fruteiras";
+        return "horticolas";
+    }
+
     let loading = null;
     function load() {
         if (!loading) {
@@ -28,6 +36,9 @@
                     tecnica: Object.fromEntries(tips.map((item) => [item.id, item.titulo])),
                     praga: Object.fromEntries(pests.map((item) => [item.id, item.nome_comum])),
                 },
+                // Tipo de cada cultura (como no catálogo de cultivo): hortícola, fruteira ou aromática; e se é perene.
+                kinds: Object.fromEntries(Object.entries(crops).map(([id, item]) => [id, cropKind(item)])),
+                perennial: Object.fromEntries(Object.entries(crops).filter(([, item]) => plain(item.ciclo).includes("perene")).map(([id]) => [id, true])),
                 // Fotografia (ou ilustração) de cada cultura, para os chips com ícone.
                 images: Object.fromEntries(Object.entries(crops).filter(([, item]) => item.imagem && item.imagem !== "-").map(([id, item]) => [id, item.imagem])),
             }));
