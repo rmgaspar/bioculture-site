@@ -76,7 +76,7 @@
     // Quadrado discreto da grelha do hub: só o título e o grupo; a resposta abre num painel por baixo da linha.
     function tile(row, tag, { active = false } = {}) {
         const c = content(row);
-        return `<button type="button" class="problema-quadro${active ? " is-active" : ""}" data-problema="${esc(row.id)}" aria-expanded="${active}" aria-controls="problema-${esc(row.id)}">
+        return `<button type="button" class="problema-quadro${active ? " is-active" : ""}" data-grupo="${esc(row.grupo)}" data-problema="${esc(row.id)}" aria-expanded="${active}" aria-controls="problema-${esc(row.id)}">
             <span class="problema-quadro-titulo">${esc(c.titulo)}</span><small>${esc(tag)}</small></button>`;
     }
 
