@@ -50,16 +50,19 @@
                     if (!mine.length) return;
                     const INITIAL = 3;
                     const wanted = location.hash.startsWith("#problema-") ? decodeURIComponent(location.hash.slice(10)) : "";
-                    let expanded = mine.length <= INITIAL || mine.some((row, index) => row.id === wanted && index >= INITIAL);
+                    const position = mine.findIndex((row) => row.id === wanted);
+                    let shownCount = Math.max(INITIAL, position >= 0 ? Math.ceil((position + 1) / INITIAL) * INITIAL : 0);
                     const draw = () => {
-                        const shown = expanded ? mine : mine.slice(0, INITIAL);
+                        const shown = mine.slice(0, shownCount);
+                        const remaining = mine.length - shown.length;
                         box.innerHTML = `<div class="crop-problemas-head"><span>${tr("Problemas frequentes", "Common problems")}</span><h2>${esc(cropName)}: ${tr("o que fazer quando algo corre mal", "what to do when something goes wrong")}</h2><p>${tr("Respostas curtas, de agricultura biológica, sem pesticidas.", "Short answers, organic, no pesticides.")}</p></div><div class="crop-problemas-lista">${
                             shown.map((row) => shared.card(row, names, { open: row.id === wanted, skipKind: "cultura", skipId: cropId })).join("")
-                        }</div>${mine.length > INITIAL ? `<div class="problemas-controls"><button class="problemas-mais crop-problemas-mais" type="button" aria-expanded="${expanded}">${
-                            expanded ? tr("Ver menos", "Show fewer") : tr(`Ver mais respostas (${mine.length - INITIAL} restantes)`, `Show more answers (${mine.length - INITIAL} more)`)
-                        }</button></div>` : ""}`;
+                        }</div><div class="problemas-controls">${
+                            remaining > 0 ? `<button class="problemas-mais" data-act="more" type="button">${tr(`Ver mais respostas (${remaining} restantes)`, `Show more answers (${remaining} more)`)}</button>` : ""
+                        }${shownCount > INITIAL ? `<button class="problemas-mais" data-act="less" type="button">${tr("Ver menos", "Show fewer")}</button>` : ""}</div>`;
                         box.hidden = false;
-                        box.querySelector(".crop-problemas-mais")?.addEventListener("click", () => { expanded = !expanded; draw(); if (!expanded) box.scrollIntoView({ block: "start" }); });
+                        box.querySelector('[data-act="more"]')?.addEventListener("click", () => { shownCount += INITIAL; draw(); });
+                        box.querySelector('[data-act="less"]')?.addEventListener("click", () => { shownCount = INITIAL; draw(); box.scrollIntoView({ block: "start" }); });
                     };
                     draw();
                     const nav = document.querySelector(".crop-nav");

@@ -1,5 +1,6 @@
 /* «O que se passa na tua horta?»: respostas curtas para os problemas mais comuns (data/problemas-horta.json).
-   Mostra as primeiras e «Ver mais» abre as restantes; pesquisa e filtros mostram todas as que correspondem.
+   Mostra as primeiras; «Ver mais» acrescenta mais algumas de cada vez e «Ver menos» volta ao início.
+   Pesquisa e filtros mostram todas as que correspondem.
    Os cartões vêm de assets/js/biocultura-problemas.js (partilhado com as fichas das culturas).
    #problema-<id> abre uma resposta diretamente. */
 (function () {
@@ -15,9 +16,10 @@
     const el = (id) => document.getElementById(id);
     const GROUPS = [["sementeira", "Sementes que não nascem", "Seeds that won't come up"], ["pragas", "Pragas", "Pests"], ["doencas", "Doenças", "Diseases"], ["outros", "Outros", "Other"]];
     const INITIAL = 6; // respostas visíveis sem pesquisa nem filtros
+    const STEP = 6; // quantas mais cada «Ver mais» acrescenta
     const CROP_CHIPS = 8; // culturas visíveis sem expandir
 
-    const state = { grupo: "", cultura: "", q: "", expanded: false, open: "" };
+    const state = { grupo: "", cultura: "", q: "", shown: INITIAL, allCrops: false, open: "" };
     let rows = [];
     let names = { cultura: {}, tecnica: {}, praga: {} };
     let images = {};
@@ -49,36 +51,36 @@
         rows.filter((row) => matches(row, "cultura")).forEach((row) => (row.culturas || []).forEach((id) => { crops[id] = (crops[id] || 0) + 1; }));
         if (state.cultura && !crops[state.cultura]) crops[state.cultura] = 0;
         let cropList = Object.entries(crops).sort((a, b) => b[1] - a[1] || String(names.cultura[a[0]]).localeCompare(String(names.cultura[b[0]])));
-        const hiddenCrops = !state.expanded && !filtered() && cropList.length > CROP_CHIPS ? cropList.length - CROP_CHIPS : 0;
+        const hiddenCrops = !state.allCrops && !filtered() && cropList.length > CROP_CHIPS ? cropList.length - CROP_CHIPS : 0;
         if (hiddenCrops) cropList = cropList.slice(0, CROP_CHIPS);
         el("problemas-culturas").innerHTML = cropList.map(([id, count]) =>
             `<button type="button" class="${images[id] ? "has-img" : ""}" data-cultura="${esc(id)}" aria-pressed="${state.cultura === id}">${images[id] ? `<img src="${esc(images[id])}" alt="" loading="lazy" onerror="this.remove()">` : ""}${esc(names.cultura[id] || id)}<small>${count}</small></button>`).join("")
             + (hiddenCrops ? `<button type="button" data-mais-culturas="1" aria-label="${esc(tr("Mostrar todas as culturas", "Show all crops"))}">+${hiddenCrops} ${esc(tr("culturas", "crops"))}</button>` : "");
 
         const all = rows.filter((row) => matches(row));
-        const limited = !state.expanded && !filtered();
-        const shown = limited ? all.slice(0, INITIAL) : all;
+        const limited = !filtered();
+        const shown = limited ? all.slice(0, state.shown) : all;
         el("problemas-lista").innerHTML = shown.length
             ? shown.map((row) => SHARED.card(row, names, { open: state.open === row.id })).join("")
             : `<p class="problemas-vazio">${tr("Ainda não temos uma resposta curta para isso. Tenta outras palavras (por exemplo «lesmas», «amarelas», «não nascem») ou ", "We do not have a short answer for that yet. Try other words (for example “slugs”, “yellow”, “won't come up”) or ")}<a href="/contactos.html">${tr("diz-nos o que se passa", "tell us what is happening")}</a>.</p>`;
         el("problemas-contagem").textContent = all.length === 1 ? tr("1 resposta", "1 answer") : tr(`${all.length} respostas`, `${all.length} answers`);
 
-        // «Ver mais» / «Ver menos» (só quando não há pesquisa nem filtros).
+        // «Ver mais» (mais algumas) e «Ver menos» (volta ao início); só sem pesquisa nem filtros.
+        const remaining = all.length - shown.length;
         const more = el("problemas-mais");
-        if (filtered() || all.length <= INITIAL) {
-            more.hidden = true;
-        } else {
-            more.hidden = false;
-            more.textContent = state.expanded ? tr("Ver menos", "Show fewer") : tr(`Ver mais respostas (${all.length - INITIAL} restantes)`, `Show more answers (${all.length - INITIAL} more)`);
-            more.setAttribute("aria-expanded", String(state.expanded));
-        }
+        more.hidden = !limited || remaining <= 0;
+        more.textContent = tr(`Ver mais respostas (${remaining} restantes)`, `Show more answers (${remaining} more)`);
+        const fewer = el("problemas-menos");
+        fewer.hidden = !limited || state.shown <= INITIAL;
+        fewer.textContent = tr("Ver menos", "Show fewer");
     }
 
     function openFromHash() {
         if (!location.hash.startsWith("#problema-")) return;
         const id = decodeURIComponent(location.hash.replace(/^#problema-/, ""));
         if (!rows.some((row) => row.id === id)) return;
-        Object.assign(state, { grupo: "", cultura: "", q: "", open: id, expanded: true });
+        const position = rows.findIndex((row) => row.id === id);
+        Object.assign(state, { grupo: "", cultura: "", q: "", open: id, allCrops: true, shown: Math.max(state.shown, Math.ceil((position + 1) / STEP) * STEP) });
         el("problemas-busca").value = "";
         render();
         el(`problema-${id}`)?.scrollIntoView({ block: "start" });
@@ -107,7 +109,7 @@
         timer = setTimeout(() => { state.q = event.target.value; state.open = ""; render(); }, 150);
     });
     el("problemas-culturas").addEventListener("click", (event) => {
-        if (event.target.closest("button[data-mais-culturas]")) { state.expanded = true; render(); return; }
+        if (event.target.closest("button[data-mais-culturas]")) { state.allCrops = true; render(); return; }
         const chip = event.target.closest("button[data-cultura]");
         if (!chip) return;
         state.cultura = state.cultura === chip.dataset.cultura ? "" : chip.dataset.cultura;
@@ -122,9 +124,15 @@
         render();
     });
     el("problemas-mais").addEventListener("click", () => {
-        state.expanded = !state.expanded;
+        state.shown += STEP;
         render();
-        if (!state.expanded) el("problemas").scrollIntoView({ block: "start" });
+    });
+    el("problemas-menos").addEventListener("click", () => {
+        state.shown = INITIAL;
+        state.allCrops = false;
+        state.open = "";
+        render();
+        el("problemas").scrollIntoView({ block: "start" });
     });
     window.addEventListener("hashchange", openFromHash);
 })();
