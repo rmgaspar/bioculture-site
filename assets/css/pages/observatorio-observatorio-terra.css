@@ -331,25 +331,6 @@
                 }
             }
 
-/* Ligação ao relatório «Produção agrícola mundial». */
-.report-link {
-    display: grid;
-    gap: 0.35em;
-    margin: 0 0 2em;
-    padding: 1.6em 2em;
-    border: 1px solid #dfe5dc !important;
-    border-radius: 15px;
-    background: #fbfcf9;
-    color: #1c2a22 !important;
-    text-decoration: none;
-    transition: border-color 0.2s, transform 0.2s;
-}
-.report-link:hover { border-color: #7b684d !important; transform: translateY(-2px); }
-.report-link-label { font-size: max(11px, 0.62em); font-weight: 900; letter-spacing: 0.14em; text-transform: uppercase; color: #627066; }
-.report-link strong { font-family: "Roboto Slab", serif; font-size: 1.35em; color: #1c2a22; }
-.report-link-text { font-size: 0.86em; line-height: 1.6; color: #4d5c53; max-width: 70ch; }
-.report-link-cta { font-size: max(11px, 0.68em); font-weight: 900; letter-spacing: 0.1em; text-transform: uppercase; color: #7b684d; }
-
 /* Barra «Nesta página» do relatório: sempre numa linha; se não couber, desliza na horizontal e o «↑ Topo» fica preso à direita. */
 html body #main nav.reading-nav.terra-nav {
     flex-wrap: nowrap !important;
@@ -372,3 +353,49 @@ html body #main nav.reading-nav.terra-nav.bio-nav-pinned .bio-nav-top {
     background: #fff !important;
     box-shadow: -16px 0 12px -6px #fff, 16px 0 0 0 #fff !important;
 }
+
+/* Cada tema tem a sua cor: na barra fixa (ponto e, ao estar ativo, fundo) e no título do capítulo. */
+html body #main nav.reading-nav.terra-nav a { --hero-accent: #2f6147; }
+html body #main nav.reading-nav.terra-nav a::before {
+    content: "";
+    display: inline-block;
+    width: 0.55em;
+    height: 0.55em;
+    margin-right: 0.55em;
+    border-radius: 50%;
+    background: var(--hero-accent);
+    vertical-align: 0.05em;
+}
+html body #main nav.reading-nav.terra-nav a:is(:hover, .bio-nav-active)::before { background: #fff; }
+html body #main nav.reading-nav.terra-nav a[href="/observatorio/producao-agricola.html"]::before { display: none; }
+html body #main nav.reading-nav.terra-nav a[href="#clima"] { --hero-accent: #b4472f; }
+html body #main nav.reading-nav.terra-nav a[href="#energia"] { --hero-accent: #b87a0c; }
+html body #main nav.reading-nav.terra-nav a[href="#ar"] { --hero-accent: #5b8aa6; }
+html body #main nav.reading-nav.terra-nav a[href="#agua"] { --hero-accent: #2a6fb0; }
+html body #main nav.reading-nav.terra-nav a[href="#terra-vida"] { --hero-accent: #7d5a36; }
+html body #main nav.reading-nav.terra-nav a[href="#portugal-mundo"],
+html body #main nav.reading-nav.terra-nav a[href="#leitura-local"] { --hero-accent: #8f3b3b; }
+html body #main nav.reading-nav.terra-nav a[href="#sistemas"] { --hero-accent: #5d4c8d; }
+html body #main nav.reading-nav.terra-nav a[href="#pressure-news"] { --hero-accent: #2f7a78; }
+html body #main nav.reading-nav.terra-nav a[href="/observatorio/producao-agricola.html"] { --hero-accent: #6b7a24; }
+
+#relatorio-terra #clima { --cap: #b4472f; }
+#relatorio-terra #energia { --cap: #b87a0c; }
+#relatorio-terra #ar { --cap: #4f7f9e; }
+#relatorio-terra #agua { --cap: #2a6fb0; }
+#relatorio-terra #terra-vida { --cap: #7d5a36; }
+#relatorio-terra :is(#portugal-mundo, #leitura-local) { --cap: #8f3b3b; }
+#relatorio-terra :is(#clima, #energia, #ar, #agua, #terra-vida, #portugal-mundo, #leitura-local) .sec-head .eyebrow { color: var(--cap); }
+#relatorio-terra :is(#clima, #energia, #ar, #agua, #terra-vida, #portugal-mundo, #leitura-local) .sec-head .eyebrow::before {
+    content: "";
+    display: inline-block;
+    width: 0.6em;
+    height: 0.6em;
+    margin-right: 0.6em;
+    border-radius: 50%;
+    background: var(--cap);
+}
+
+/* Os destinos fora do relatório também ficam por baixo da barra fixa, não escondidos atrás dela. */
+html body #main :is(#sistemas, #pressure-news, #panorama-global) { scroll-margin-top: 6.5rem; }
+html body #main nav.reading-nav.terra-nav a.bio-nav-top::before { display: none; }
