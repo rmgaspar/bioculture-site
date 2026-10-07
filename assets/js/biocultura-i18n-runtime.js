@@ -669,6 +669,64 @@
         },
         // Temas dos hubs: palavras do título (e categorias principais) que fazem uma notícia pertencer a cada tema.
         topics: {"agua": {"words": ["água*", "aguas", "water", "seca*", "drought*", "rio", "river", "aquífer*", "aquifer*", "hídric*", "hydro*", "inunda*", "flood*", "cheia*", "albufeira*", "reservoir*", "salinização", "salinity", "lago", "lake"], "categories": ["agua"]}, "ar": {"words": ["qualidade do ar", "air quality", "poluição", "pollution", "poluent*", "pollutant*", "emissões", "emissions", "atmosfer*", "atmospher*", "pm2*", "pm10", "ozono", "ozone", "fumo", "smoke", "incêndio*", "incendi*", "wildfire*", "fogo*", "fires", "poeira", "dust", "respirat*", "mega-incêndio*"], "categories": ["ar", "poluicao"]}, "solo": {"words": ["solo*", "soil*", "erosão", "erosion", "desertific*", "degradação", "land degradation", "land restoration", "restauro do solo", "compost*", "húmus", "humus", "pastagem*", "pasture*", "rangeland*"], "categories": ["solo"]}, "biodiversidade": {"words": ["biodivers*", "espécies ameaçadas", "threatened species", "endangered species", "invasor*", "invasive", "habitat*", "wildlife", "vida selvagem", "extinção", "extinction", "conservação", "conservation", "ecossistema*", "ecosystem*", "floresta*", "forest*", "polinizador*", "pollinator*", "orangotango*", "orangutan*", "tartaruga*", "turtle*", "aves", "birds", "gannet*", "alcatraz*"], "categories": ["biodiversidade", "conservacao"]}, "mineracao": {"words": ["mineração", "mineiro*", "mina", "minas", "mining", "mine", "minério*", "mineral*", "lítio", "lithium", "ouro", "gold", "cobre", "copper", "carvão", "coal", "níquel", "nickel", "cobalto", "cobalt", "caulino", "kaolin", "pedreira*", "quarry", "rejeitado*", "baldios"], "categories": ["mineracao"]}, "energia": {"words": ["energia", "energy", "renovável*", "renováveis", "renewable*", "solar", "eólic*", "wind", "elétric*", "eletric*", "electric*", "eficiência", "efficiency", "rede elétrica", "grid", "autoconsumo", "self-consumption", "nuclear", "hidroelétric*", "fotovolta*", "photovoltaic*", "bateria*", "battery", "armazenamento", "storage"], "categories": ["energia"]}, "impacto-digital": {"words": ["centro de dados", "centros de dados", "data cent*", "datacenter*", "inteligência artificial", "artificial intelligence", "IA", "AI", "chips", "semicondutor*", "semiconductor*", "cloud", "nuvem"], "categories": ["impacto-digital"]}, "pecuaria": {"words": ["pecuári*", "pecuaria", "livestock", "suinicultur*", "suíno*", "aviário*", "bovin*", "gado", "cattle", "pig*", "porco*", "efluente*", "estrume", "chorume", "bem-estar animal", "animal welfare", "carne", "meat", "leite", "dairy", "laticíni*"], "categories": ["pecuaria"]}, "agricultura": {"words": ["agricultur*", "agrícola*", "agroecolog*", "biológic*", "organic", "orgânic*", "vinha*", "vinho*", "vindima*", "viticultur*", "vineyard*", "wine*", "winemak*", "horta*", "hortícola*", "cultiv*", "crop*", "semente*", "seed*", "colheita*", "harvest*", "cereais", "cereal*", "alimentar*", "alimento*", "food", "fertiliz*", "fertilidade", "compost*", "pesticida*", "pesticide*", "polinizador*", "pollinator*", "produtor*", "regenerativ*", "regenerative", "rega", "irrigation"], "categories": ["agricultura"]}},
+        // Selo do tipo de conteúdo (facto noticiado, estudo, comunicado, opinião…), mostrado ao leitor.
+        typeLabels: {
+            "noticia": ["Notícia", "News"],
+            "noticia-ciencia": ["Notícia de ciência", "Science news"],
+            "estudo": ["Artigo científico", "Scientific paper"],
+            "relatorio": ["Relatório", "Report"],
+            "comunicado": ["Comunicado", "Press release"],
+            "opiniao": ["Opinião", "Opinion"],
+            "opiniao-especialista": ["Opinião de especialista", "Expert opinion"],
+            "explicador": ["Explicador", "Explainer"],
+            "observacao-da-terra": ["Observação da Terra", "Earth observation"],
+            "fonte-primaria": ["Fonte primária", "Primary source"],
+            "sintese-documental": ["Síntese documental", "Documentary summary"],
+            "entrevista": ["Entrevista", "Interview"],
+        },
+        typeLabel(item) {
+            const label = this.typeLabels[item?.tipo_conteudo];
+            return label ? label[window.BioCultureI18n?.isEnglish ? 1 : 0] : "";
+        },
+        // «Continuar no bioCulture»: páginas de leitura e de ação (técnicas, calendário) ligadas ao tema de cada notícia.
+        // [href, título PT, título EN]
+        relatedPages: {
+            agua: { read: [["/recursos/agua.html", "Água no mundo e em Portugal", "Water in the world and in Portugal"]], act: [["/services/servicos.html#chuva", "Captar a água da chuva", "Harvest rainwater"], ["/services/servicos.html?categoria=%C3%81gua%20e%20irriga%C3%A7%C3%A3o#catalogo-tecnicas", "Técnicas de água e irrigação", "Water and irrigation techniques"]] },
+            solo: { read: [["/recursos/solo.html", "Solo no mundo e em Portugal", "Soil in the world and in Portugal"]], act: [["/services/servicos.html#compostagem", "Compostagem como ciclo", "Composting as a cycle"], ["/services/servicos.html#solo", "Cobrir o solo (mulching)", "Covering the soil (mulching)"]] },
+            ar: { read: [["/recursos/ar.html", "Qualidade do ar no mundo e em Portugal", "Air quality in the world and in Portugal"], ["/energia/energia.html", "Energia consciente", "Conscious energy"]], act: [] },
+            biodiversidade: { read: [["/ecossistemas/biodiversidade.html", "Biodiversidade no mundo e em Portugal", "Biodiversity in the world and in Portugal"]], act: [["/services/servicos.html?categoria=Biodiversidade%20funcional#catalogo-tecnicas", "Biodiversidade funcional: técnicas", "Functional biodiversity: techniques"], ["/services/servicos.html#agrofloresta", "Agrofloresta", "Agroforestry"]] },
+            agricultura: { read: [["/calendario/conhecimento-cuidar.html", "Conhecimento para cuidar", "Knowledge to care"]], act: [["/calendario/calendario.html", "Calendário de regeneração: o que fazer agora", "Regeneration calendar: what to do now"], ["/services/servicos.html?categoria=Preven%C3%A7%C3%A3o%20sem%20pesticidas#catalogo-tecnicas", "Prevenção sem pesticidas", "Prevention without pesticides"]] },
+            energia: { read: [["/energia/energia.html", "Energia consciente", "Conscious energy"], ["/energia/renewables-and-territory.html", "Renováveis e território", "Renewables and territory"]], act: [["/services/servicos.html#solar", "Fotovoltaico para autoconsumo", "Solar PV for self-consumption"]] },
+            mineracao: { read: [["/energia/mineracao.html", "Mineração no mundo e em Portugal", "Mining in the world and in Portugal"]], act: [] },
+            "impacto-digital": { read: [["/energia/digital.html", "Impacto digital e IA", "Digital impact and AI"]], act: [] },
+            pecuaria: { read: [["/energia/pecuaria.html", "Pecuária industrial no mundo e em Portugal", "Industrial livestock farming in the world and in Portugal"]], act: [] },
+            terra: { read: [["/observatorio/observatorio-terra.html", "Observatório da Terra", "Earth Observatory"], ["/observatorio/pressoes-humanas.html", "Vetores de pressão", "Pressure vectors"]], act: [] },
+        },
+        related(item) {
+            const english = !!window.BioCultureI18n?.isEnglish;
+            const primary = { agua: "agua", ar: "ar", solo: "solo", biodiversidade: "biodiversidade", energia: "energia", mineracao: "mineracao", "impacto-digital": "impacto-digital", agricultura: "agricultura", conhecimento: "agricultura" }[item?.categoria_id];
+            const keys = [];
+            if (primary) keys.push(primary);
+            for (const [key, topic] of Object.entries(this.topics)) {
+                const secondary = !item?.capturado_em && (item?.categorias || []).some((category) => (topic.categories || []).includes(category));
+                if (!keys.includes(key) && (secondary || this.about(item, topic.words, topic.categories || []))) keys.push(key);
+            }
+            if (!keys.length) keys.push("terra");
+            const seen = new Set();
+            const out = [];
+            const push = (kind, [href, pt, en]) => {
+                if (seen.has(href) || out.length >= 5) return;
+                seen.add(href);
+                out.push({ kind, href, title: english ? en : pt });
+            };
+            keys.slice(0, 2).forEach((key, index) => {
+                const pages = this.relatedPages[key];
+                if (!pages) return;
+                pages.read.forEach((page) => push("read", page));
+                if (index === 0) pages.act.forEach((page) => push("act", page));
+            });
+            return out;
+        },
         // Cartão de notícia no formato dos hubs (imagem, data, título, excerto, fonte). Usa as classes hub-latest-*.
         cardHtml(item) {
             const esc = (value) => String(value ?? "").replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch]);
@@ -680,7 +738,7 @@
             const alt = image === fallback ? (i18n?.isEnglish ? "bioCulture editorial illustration" : "Ilustração editorial bioCulture") : "";
             const href = `/observatorio/noticia-detalhe.html?id=${encodeURIComponent(item?.id)}`;
             const summary = c.resumo_biocultura || c.resumo || "";
-            return `<a href="${esc(href)}"><div class="news-media"><img class="hub-latest-thumb" src="${esc(image)}" alt="${esc(alt)}" loading="lazy" onerror="this.onerror=null;this.src='${fallback}'"></div><div class="hub-latest-card-body"><small>${esc(i18n?.date(item?.data) || item?.data || item?.categoria || "")}</small><h3>${esc(c.titulo || "")}</h3>${summary ? `<p>${esc(summary)}</p>` : ""}<span>${esc(item?.fonte || "bioCulture")} →</span></div></a>`;
+            return `<a href="${esc(href)}"><div class="news-media"><img class="hub-latest-thumb" src="${esc(image)}" alt="${esc(alt)}" loading="lazy" onerror="this.onerror=null;this.src='${fallback}'"></div><div class="hub-latest-card-body"><small>${esc(i18n?.date(item?.data) || item?.data || item?.categoria || "")}${this.typeLabel(item) ? ` · ${esc(this.typeLabel(item))}` : ""}</small><h3>${esc(c.titulo || "")}</h3>${summary ? `<p>${esc(summary)}</p>` : ""}<span>${esc(item?.fonte || "bioCulture")} →</span></div></a>`;
         },
         rank(items) {
             const rows = Array.isArray(items) ? items : [];

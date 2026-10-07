@@ -120,7 +120,7 @@
                         esc(imageAlt)
                     }" loading="lazy" onerror="this.src='/images/noticias-sem-imagem.webp'"><div class="news-body"><small>${
                         esc(scope)
-                    } · ${esc(window.BioCultureI18n?.date(n.data) || n.data)} · ${esc(n.fonte)}</small><h3>${esc(c.titulo)}</h3>${
+                    } · ${esc(window.BioCultureI18n?.date(n.data) || n.data)} · ${esc(n.fonte)}${window.BioCultureNews?.typeLabel(n) ? ` · ${esc(window.BioCultureNews.typeLabel(n))}` : ""}</small><h3>${esc(c.titulo)}</h3>${
                         summary ? `<p>${esc(summary)}</p>` : ""
                     }</div></a>`;
                     }).join("") || `<p class="empty">${isEnglish ? "No news available at this time." : "Sem notícias disponíveis neste momento."}</p>`;

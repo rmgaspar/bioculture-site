@@ -399,12 +399,29 @@ def make_news(item: dict, source_cfg: dict, matches: list[tuple[str, str, int]],
         "imagem_credito_en": source if image else IMAGES["credito_en"],
         "fonte": source,
         "tipo_fonte": source_cfg.get("tipo", "desconhecida"),
+        "tipo_conteudo": content_type(item["title"], resolved_url, source_cfg.get("tipo", ""), source),
         "logo": "",
         "url": canonical_url(resolved_url),
         "tags": categories,
         "relevancia_detalhe": {"pontuacao": points, "razoes": reasons, "revisao_humana": True},
         "pt": {"titulo": item["title"], "resumo_biocultura": summary, "corpo": body},
     }
+
+
+def content_type(title: str, url: str, source_type: str, source: str) -> str:
+    """Tipo de conteúdo mostrado ao leitor (selo): distingue facto noticiado, estudo, comunicado e opinião."""
+    low = f"{title} {url}".lower()
+    if re.search(r"/commentisfree/|/opinion/|/opiniao/|\bop-ed\b|\(comentário\)|\(commentary\)|\(opinion\)", low):
+        return "opiniao"
+    if re.search(r"\bexplainer\b|\bexplicador\b", low):
+        return "explicador"
+    if source_type == "ciencia":
+        return "estudo"
+    if source_type == "fonte-primaria":
+        return "observacao-da-terra" if "nasa" in source.lower() else "fonte-primaria"
+    if source_type in ("organizacao-internacional", "agencia-publica") and source != "UN News":
+        return "comunicado"
+    return "noticia"
 
 
 def reassess(pending: list[dict], config: dict, today: dt.date) -> tuple[list[dict], list[tuple[dict, str]]]:
