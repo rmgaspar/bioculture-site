@@ -66,4 +66,5 @@ de detalhe; o histórico não é apagado.
 - Cada notícia tem `tipo_conteudo` (notícia, estudo, comunicado, opinião, explicador, observação da Terra…). Nas automáticas é atribuído em `content_type()` (`atualizar.py`) pela fonte e pelo título/URL (opinião e explicador); corrige à mão em `data/noticias.json` se for preciso. O selo aparece na página da notícia e nos cartões.
 - A página da notícia mostra «Continuar no bioCulture»: páginas de leitura e de ação ligadas ao tema (`BioCultureNews.relatedPages` e `related()` no runtime). Para ligar um tema a novas páginas, edita `relatedPages`.
 - A nota «Como este texto foi feito» diz que as notícias automáticas têm texto de síntese com apoio de IA e inclui o botão «Sugerir correção» (e-mail para geral@bioculture.pt com a página já preenchida).
+- Notícias de clima sem tema próprio recebem ações de **adaptação** (calor, seca, fogo, cheias, El Niño: cobrir o solo, agrofloresta, captar chuva) ou de **redução de emissões** (fotovoltaico, compostagem, energia consciente), escolhidas em `BioCultureNews.climateKind()` pelas palavras do título; as listas estão em `climateActions`.
 

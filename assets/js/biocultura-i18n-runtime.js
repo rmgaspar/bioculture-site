@@ -701,30 +701,45 @@
             "impacto-digital": { read: [["/energia/digital.html", "Impacto digital e IA", "Digital impact and AI"]], act: [] },
             pecuaria: { read: [["/energia/pecuaria.html", "Pecuária industrial no mundo e em Portugal", "Industrial livestock farming in the world and in Portugal"]], act: [] },
             terra: { read: [["/observatorio/observatorio-terra.html", "Observatório da Terra", "Earth Observatory"], ["/observatorio/pressoes-humanas.html", "Vetores de pressão", "Pressure vectors"]], act: [] },
+            // Notícias de clima sem tema próprio: leitura do clima e ações de adaptação (calor, seca, fogo, cheias) ou de redução de emissões.
+            clima: { read: [["/observatorio/observatorio-terra.html", "Observatório da Terra", "Earth Observatory"], ["/observatorio/limitar-ultrapassagem-1-5.html", "Depois de 1,5 °C: limitar a ultrapassagem", "After 1.5°C: limiting the overshoot"]], act: [] },
+        },
+        climateActions: {
+            adapt: [["/services/servicos.html#solo", "Cobrir o solo (mulching): menos evaporação e calor", "Cover the soil (mulching): less evaporation and heat"], ["/services/servicos.html#agrofloresta", "Agrofloresta: sombra, microclima e solo protegido", "Agroforestry: shade, microclimate and protected soil"], ["/services/servicos.html#chuva", "Captar a água da chuva para o verão", "Harvest rainwater for the summer"]],
+            mitigate: [["/services/servicos.html#solar", "Fotovoltaico para autoconsumo", "Solar PV for self-consumption"], ["/services/servicos.html#compostagem", "Compostagem: devolver carbono ao solo", "Composting: returning carbon to the soil"], ["/energia/energia.html", "Energia consciente", "Conscious energy"]],
+        },
+        // Calor, seca, fogo, cheias e fenómenos extremos pedem adaptação; o resto (emissões, política, gelo, mar) pede redução de emissões.
+        climateKind(item) {
+            const titles = [item?.pt?.titulo, item?.en?.titulo].filter(Boolean).join(" ");
+            return /calor|heat|onda[s]? de|vaga[s]? de|sec[ao]\b|drought|incêndi|wildfire|\bfire|cheia|inunda|flood|el ni[ñn]o|temperatura|extrem|tufão|typhoon|ciclone|cyclone|furacão|hurricane|tempestade|storm/i.test(titles) ? "adapt" : "mitigate";
         },
         related(item) {
             const english = !!window.BioCultureI18n?.isEnglish;
             const primary = { agua: "agua", ar: "ar", solo: "solo", biodiversidade: "biodiversidade", energia: "energia", mineracao: "mineracao", "impacto-digital": "impacto-digital", agricultura: "agricultura", conhecimento: "agricultura" }[item?.categoria_id];
             const keys = [];
+            const climate = ["clima", "oceanos"].includes(item?.categoria_id);
             if (primary) keys.push(primary);
             for (const [key, topic] of Object.entries(this.topics)) {
                 const secondary = !item?.capturado_em && (item?.categorias || []).some((category) => (topic.categories || []).includes(category));
-                if (!keys.includes(key) && (secondary || this.about(item, topic.words, topic.categories || []))) keys.push(key);
+                // Notícias de clima: só um tema secundário assumido à mão conta; as palavras do título («poluição», «carbono») levavam tudo para o ar e a energia.
+                if (!keys.includes(key) && (secondary || (!climate && this.about(item, topic.words, topic.categories || [])))) keys.push(key);
             }
-            if (!keys.length) keys.push("terra");
+            if (climate || !keys.length) keys.push(climate || !item?.categoria_id ? "clima" : "terra");
+            if (climate && keys.length > 1) keys.push(keys.splice(keys.indexOf("clima"), 1)[0]);
             const seen = new Set();
             const out = [];
             const push = (kind, [href, pt, en]) => {
-                if (seen.has(href) || out.length >= 5) return;
+                if (seen.has(href) || out.length >= 6) return;
                 seen.add(href);
                 out.push({ kind, href, title: english ? en : pt });
             };
-            keys.slice(0, 2).forEach((key, index) => {
-                const pages = this.relatedPages[key];
-                if (!pages) return;
-                pages.read.forEach((page) => push("read", page));
-                if (index === 0) pages.act.forEach((page) => push("act", page));
-            });
+            const chosen = keys.slice(0, 2);
+            chosen.forEach((key) => (this.relatedPages[key]?.read || []).forEach((page) => push("read", page)));
+            // As ações vêm do primeiro tema que as tenha (o clima escolhe entre adaptação e redução de emissões).
+            for (const key of chosen) {
+                const acts = key === "clima" ? this.climateActions[this.climateKind(item)] : (this.relatedPages[key]?.act || []);
+                if (acts.length) { acts.forEach((page) => push("act", page)); break; }
+            }
             return out;
         },
         // Cartão de notícia no formato dos hubs (imagem, data, título, excerto, fonte). Usa as classes hub-latest-*.
