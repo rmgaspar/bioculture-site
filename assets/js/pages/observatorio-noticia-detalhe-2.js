@@ -45,9 +45,13 @@
                         document.getElementById("corpo").innerHTML = content.corpo || "Conteúdo não disponível.";
                         document.title = (content.titulo || "bioCulture") + " — bioCulture";
 
-                        const bioTxt = content.resumo_biocultura || "";
+                        // «O que importa para o território»: excerto próprio (`importa`) ou, nas notícias à mão, o resumo.
+                        // Se não houver texto próprio e o corpo só repetir o resumo, a caixa esconde-se para não duplicar.
+                        const plain = (html) => String(html || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+                        const bioTxt = content.importa || content.resumo_biocultura || "";
+                        const repeatsBody = !content.importa && plain(content.corpo).startsWith(plain(bioTxt).slice(0, 120));
                         const bioBox = document.getElementById("biocultura-box");
-                        if (bioTxt) {
+                        if (bioTxt && !repeatsBody) {
                             bioBox.style.display = "block";
                             document.getElementById("biocultura-txt").innerHTML = bioTxt;
                         } else {
