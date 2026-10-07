@@ -35,7 +35,8 @@
         const terms = normalize(state.q).split(/\s+/).filter((term) => term.length > 2).map((term) => term.replace(/s$/, ""));
         if (!terms.length) return true;
         const text = row.__text || (row.__text = searchable(row));
-        return terms.every((term) => text.includes(term));
+        // A pesquisa casa com o início das palavras («roma» não apanha «aromáticas»).
+        return terms.every((term) => new RegExp(`(?:^|[^a-z0-9])${term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}`).test(text));
     }
     const filtered = () => !!(state.grupo || state.cultura || state.q.trim());
 
