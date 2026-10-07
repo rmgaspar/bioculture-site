@@ -5,7 +5,7 @@
         "/calendario/regeneration-calendar.html": {
             source: "/calendario/calendario.html",
             stylesheet: "/assets/css/pages/calendario-calendario.css?v=4",
-            script: "/assets/js/pages/calendario-calendario-2.js?v=3",
+            script: "/assets/js/pages/calendario-calendario-2.js?v=22",
             label: "Portugal em detalhe",
             title: "Calendário territorial de Portugal",
             intro: "Região, mês, culturas, plano semanal, pragas e flora invasora passam a fazer parte do calendário global.",
@@ -148,14 +148,20 @@
         mount.querySelector(".portugal-layer-loading")?.remove();
     }
 
-    function loadLegacyScript() {
+    function loadScript(src) {
         return new Promise((resolve, reject) => {
             const script = document.createElement("script");
-            script.src = config.script;
+            script.src = src;
             script.onload = resolve;
             script.onerror = reject;
             document.body.appendChild(script);
         });
+    }
+
+    // O calendário usa a lógica sazonal partilhada (também usada no início): carrega-se antes do seu script.
+    async function loadLegacyScript() {
+        if (config.calendar && !window.BioCulturaSeasonal) await loadScript("/assets/js/biocultura-seasonal.js?v=2");
+        return loadScript(config.script);
     }
 
     async function init() {

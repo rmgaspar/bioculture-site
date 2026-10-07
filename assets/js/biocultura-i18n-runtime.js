@@ -422,7 +422,7 @@
         consolidationStyle.rel = "stylesheet";
         consolidationStyle.href = "/assets/css/territorial-consolidation.css?v=8";
         document.head.appendChild(consolidationStyle);
-        import("/assets/js/territorial-consolidation.js?v=8").catch((error) => {
+        import("/assets/js/territorial-consolidation.js?v=10").catch((error) => {
             console.error("Não foi possível carregar a leitura territorial.", error);
         });
     }

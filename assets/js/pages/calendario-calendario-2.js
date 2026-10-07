@@ -97,40 +97,24 @@
                 "July", "August", "September", "October", "November", "December",
             ];
 
-            // Fronteiras astronómicas aproximadas (equinócios/solstícios, hemisfério norte).
+            // A chave da estação vem do módulo partilhado (assets/js/biocultura-seasonal.js); aqui só ficam os textos.
             function seasonFor(month, day = 15) {
                 const en = isEn();
-                const md = month * 100 + day;
-                const SPRING = 2 * 100 + 20; // 20 março
-                const SUMMER = 5 * 100 + 21; // 21 junho
-                const AUTUMN = 8 * 100 + 23; // 23 setembro
-                const WINTER = 11 * 100 + 21; // 21 dezembro
-                if (md >= WINTER || md < SPRING) {
-                    return en
-                        ? { key: "inverno", name: "Winter", emoji: "❄️", cue: "typically cold",
-                            note: "Plan, protect the soil and make the most of the right windows for woody plantings." }
-                        : { key: "inverno", name: "Inverno", emoji: "❄️", cue: "tipicamente frio",
-                            note: "Planear, proteger o solo e aproveitar os períodos adequados para plantações lenhosas." };
-                }
-                if (md < SUMMER) {
-                    return en
-                        ? { key: "primavera", name: "Spring", emoji: "🌱", cue: "temperatures rising",
-                            note: "Fast growth season: sow in stages, watch young plants and support pollinators." }
-                        : { key: "primavera", name: "Primavera", emoji: "🌱", cue: "temperaturas a subir",
-                            note: "Época de crescimento rápido: semear por etapas, vigiar jovens plantas e favorecer polinizadores." };
-                }
-                if (md < AUTUMN) {
-                    return en
-                        ? { key: "verao", name: "Summer", emoji: "☀️", cue: "typically hot and dry",
-                            note: "Manage water, shade and cover; harvest often and watch for signs of stress." }
-                        : { key: "verao", name: "Verão", emoji: "☀️", cue: "tipicamente quente e seco",
-                            note: "Gerir água, sombra e cobertura; colher com frequência e observar sinais de stress." };
-                }
-                return en
-                    ? { key: "outono", name: "Autumn", emoji: "🍂", cue: "temperatures falling",
-                        note: "Harvest, save seeds, start cover crops and prepare the soil without leaving it bare." }
-                    : { key: "outono", name: "Outono", emoji: "🍂", cue: "temperaturas a descer",
-                        note: "Colher, guardar sementes, iniciar coberturas e preparar o solo sem o deixar exposto." };
+                const key = window.BioCulturaSeasonal.seasonKey(month, day);
+                const texts = en
+                    ? {
+                        inverno: { name: "Winter", emoji: "❄️", cue: "typically cold", note: "Plan, protect the soil and make the most of the right windows for woody plantings." },
+                        primavera: { name: "Spring", emoji: "🌱", cue: "temperatures rising", note: "Fast growth season: sow in stages, watch young plants and support pollinators." },
+                        verao: { name: "Summer", emoji: "☀️", cue: "typically hot and dry", note: "Manage water, shade and cover; harvest often and watch for signs of stress." },
+                        outono: { name: "Autumn", emoji: "🍂", cue: "temperatures falling", note: "Harvest, save seeds, start cover crops and prepare the soil without leaving it bare." },
+                    }
+                    : {
+                        inverno: { name: "Inverno", emoji: "❄️", cue: "tipicamente frio", note: "Planear, proteger o solo e aproveitar os períodos adequados para plantações lenhosas." },
+                        primavera: { name: "Primavera", emoji: "🌱", cue: "temperaturas a subir", note: "Época de crescimento rápido: semear por etapas, vigiar jovens plantas e favorecer polinizadores." },
+                        verao: { name: "Verão", emoji: "☀️", cue: "tipicamente quente e seco", note: "Gerir água, sombra e cobertura; colher com frequência e observar sinais de stress." },
+                        outono: { name: "Outono", emoji: "🍂", cue: "temperaturas a descer", note: "Colher, guardar sementes, iniciar coberturas e preparar o solo sem o deixar exposto." },
+                    };
+                return { key, ...texts[key] };
             }
 
             function moonInfo(date) {
@@ -268,47 +252,9 @@
                 renderPests();
             }
 
-            function periodMatches(text, month) {
-                const source = normalize(text).replace(/[–—]/g, "-");
-                if (!source) return false;
-                if (/todo o ano|durante todo o ano|sempre/.test(source)) return true;
-                const normalizedMonths = months.map(normalize);
-                return source.split(/\s+e\s+|;/).some((segment) => {
-                    const found = normalizedMonths.map((name, index) =>
-                        segment.includes(name) ? index : -1
-                    ).filter((index) => index >= 0);
-                    if (!found.length) return false;
-                    if (found.includes(month)) return true;
-                    if (found.length >= 2) {
-                        const start = found[0], end = found.at(-1);
-                        return start <= end
-                            ? month >= start && month <= end
-                            : month >= start || month <= end;
-                    }
-                    return false;
-                });
-            }
-
-            function phMatches(item) {
-                const local = parseFloat(infoGlobal?.biomas?.ph_solo);
-                if (!Number.isFinite(local)) return true;
-                const nums =
-                    String(item.ph_solo || "").replace(",", ".").match(/\d+(?:\.\d+)?/g)?.map(Number) ||
-                    [];
-                return nums.length < 2 || local >= nums[0] - .3 && local <= nums[1] + .3;
-            }
-
-            function cropsFor(field, month) {
-                const matching = Object.entries(horticolasDB).filter(([, item]) =>
-                    periodMatches(item[field], month)
-                ).sort((a, b) => Number(phMatches(b[1])) - Number(phMatches(a[1])));
-                const unique = new Map();
-                matching.forEach((entry) => {
-                    const key = normalize(entry[1].nome || entry[0]);
-                    if (key && !unique.has(key)) unique.set(key, entry);
-                });
-                return [...unique.values()].slice(0, 6);
-            }
+            const periodMatches = (text, month) => window.BioCulturaSeasonal.periodMatches(text, month);
+            const localPh = () => parseFloat(infoGlobal?.biomas?.ph_solo);
+            const cropsFor = (field, month) => window.BioCulturaSeasonal.cropsFor(horticolasDB, field, month, localPh());
             function cropMarkup(entries, field) {
                 return entries.length
                     ? entries.map(([id, item]) =>
@@ -467,46 +413,7 @@
                 }).join("");
             }
 
-            function practiceIdsFor(month) {
-                if ([11, 0, 1].includes(month)) {
-                    return [
-                        "rotacao-culturas",
-                        "teste-germinacao",
-                        "sebe-viva",
-                        "abrigo-insetos",
-                        "higiene-ferramentas",
-                        "composto-frio",
-                    ];
-                }
-                if ([2, 3, 4].includes(month)) {
-                    return [
-                        "sementeira-direta",
-                        "sementeira-sucessiva",
-                        "consociacao",
-                        "corredor-floral",
-                        "monitorizacao-pragas",
-                        "rega-gota-a-gota",
-                    ];
-                }
-                if ([5, 6, 7].includes(month)) {
-                    return [
-                        "mulching-organico",
-                        "rega-profunda",
-                        "olla",
-                        "guardar-sementes",
-                        "faixa-nao-cortada",
-                        "registos-horta",
-                    ];
-                }
-                return [
-                    "adubo-verde",
-                    "solo-sempre-com-raiz",
-                    "folhas-molde",
-                    "captacao-chuva",
-                    "composto-superficie",
-                    "zonas-tampao",
-                ];
-            }
+            const practiceIdsFor = (month) => window.BioCulturaSeasonal.practiceIds(month);
             function renderPractices() {
                 const selected = practiceIdsFor(viewedDate.getMonth()).map((id) =>
                     dicasDB.find((item) => item.id === id)
@@ -530,19 +437,7 @@
                 }).join("");
             }
 
-            function seasonalPests(month) {
-                const season = seasonFor(month).key,
-                    keywords = {
-                        inverno: ["inverno", "todo o ano", "protegidas"],
-                        primavera: ["primavera", "tempo ameno", "rebentos"],
-                        verao: ["verao", "tempo quente", "calor", "seco"],
-                        outono: ["outono", "humidade", "chuva"],
-                    }[season].map(normalize);
-                return pragasDB.filter((item) => {
-                    const text = normalize(`${item.sazonalidade_portugal || ""} ${item.quando || ""}`);
-                    return keywords.some((key) => text.includes(key)) || periodMatches(text, month);
-                });
-            }
+            const seasonalPests = (month) => window.BioCulturaSeasonal.seasonalPests(pragasDB, month);
             function pestCardHTML(item) {
                 return `<a class="catalog-card" href="/ecossistemas/especie-detalhe.html?id=${
                     encodeURIComponent(item.id)
