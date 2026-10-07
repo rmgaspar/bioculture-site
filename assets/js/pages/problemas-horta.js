@@ -17,7 +17,7 @@
     };
     const KIND = { cultura: ["Ficha da cultura", "Crop guide"], tecnica: ["Técnica", "Technique"], praga: ["Ficha completa", "Full guide"] };
 
-    const state = { grupo: "", q: "" };
+    const state = { grupo: "", cultura: "", q: "" };
     let rows = [];
     let names = { cultura: {}, tecnica: {}, praga: {} };
 
@@ -26,6 +26,7 @@
 
     function matches(row, skip) {
         if (skip !== "grupo" && state.grupo && row.grupo !== state.grupo) return false;
+        if (skip !== "cultura" && state.cultura && !(row.culturas || []).includes(state.cultura)) return false;
         // Palavras curtas e sem o «s» final do plural, para «lesmas» apanhar «lesma» e vice-versa.
         const terms = normalize(state.q).split(/\s+/).filter((term) => term.length > 2).map((term) => term.replace(/s$/, ""));
         if (!terms.length) return true;
@@ -55,6 +56,12 @@
             .concat(GROUPS.map(([key, pt, en]) => [key, tr(pt, en), rows.filter((row) => row.grupo === key && matches({ ...row, grupo: "" }, "grupo")).length]).filter((entry) => entry[2] > 0 || state.grupo === entry[0]));
         document.getElementById("problemas-chips").innerHTML = chips.map(([key, label, count]) =>
             `<button type="button" data-grupo="${key}" aria-pressed="${state.grupo === key}">${esc(label)}<small>${count}</small></button>`).join("");
+        // Culturas com respostas (as mais citadas primeiro), contadas com os outros filtros aplicados.
+        const crops = {};
+        rows.filter((row) => matches(row, "cultura")).forEach((row) => (row.culturas || []).forEach((id) => { crops[id] = (crops[id] || 0) + 1; }));
+        if (state.cultura && !crops[state.cultura]) crops[state.cultura] = 0;
+        document.getElementById("problemas-culturas").innerHTML = Object.entries(crops).sort((a, b) => b[1] - a[1] || String(names.cultura[a[0]]).localeCompare(String(names.cultura[b[0]])))
+            .map(([id, count]) => `<button type="button" data-cultura="${esc(id)}" aria-pressed="${state.cultura === id}">${esc(names.cultura[id] || id)}<small>${count}</small></button>`).join("");
         const shown = rows.filter((row) => matches(row));
         document.getElementById("problemas-lista").innerHTML = shown.length
             ? shown.map(card).join("")
@@ -65,7 +72,7 @@
     function openFromHash() {
         const id = decodeURIComponent(location.hash.replace(/^#problema-/, ""));
         if (!location.hash.startsWith("#problema-") || !rows.some((row) => row.id === id)) return;
-        state.grupo = ""; state.q = ""; state.open = id;
+        state.grupo = ""; state.cultura = ""; state.q = ""; state.open = id;
         document.getElementById("problemas-busca").value = "";
         render();
         document.getElementById(`problema-${id}`)?.scrollIntoView({ block: "start" });
@@ -100,6 +107,13 @@
     document.getElementById("problemas-busca").addEventListener("input", (event) => {
         clearTimeout(timer);
         timer = setTimeout(() => { state.q = event.target.value; state.open = ""; render(); }, 150);
+    });
+    document.getElementById("problemas-culturas").addEventListener("click", (event) => {
+        const chip = event.target.closest("button[data-cultura]");
+        if (!chip) return;
+        state.cultura = state.cultura === chip.dataset.cultura ? "" : chip.dataset.cultura;
+        state.open = "";
+        render();
     });
     document.getElementById("problemas-chips").addEventListener("click", (event) => {
         const chip = event.target.closest("button[data-grupo]");
