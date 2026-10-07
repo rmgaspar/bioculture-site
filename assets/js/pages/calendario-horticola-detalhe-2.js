@@ -37,6 +37,36 @@
                     }</p></div></div><div class="detail-grid">${content}</div></div>`
                     : "";
             }
+            // «Problemas frequentes» desta cultura: respostas curtas de data/problemas-horta.json (as mesmas do hub
+            // Conhecimento para cuidar), só as primeiras e «Ver mais» para as restantes.
+            function mountProblems(cropId, cropName) {
+                const shared = window.BioCulturaProblemas;
+                const box = document.getElementById("problemas");
+                if (!shared || !box) return;
+                const english = !!window.BioCultureI18n?.isEnglish;
+                const tr = (pt, en) => (english ? en : pt);
+                shared.load().then(({ rows, names }) => {
+                    const mine = rows.filter((row) => (row.culturas || []).includes(cropId));
+                    if (!mine.length) return;
+                    const INITIAL = 3;
+                    const wanted = location.hash.startsWith("#problema-") ? decodeURIComponent(location.hash.slice(10)) : "";
+                    let expanded = mine.length <= INITIAL || mine.some((row, index) => row.id === wanted && index >= INITIAL);
+                    const draw = () => {
+                        const shown = expanded ? mine : mine.slice(0, INITIAL);
+                        box.innerHTML = `<div class="crop-problemas-head"><span>${tr("Problemas frequentes", "Common problems")}</span><h2>${esc(cropName)}: ${tr("o que fazer quando algo corre mal", "what to do when something goes wrong")}</h2><p>${tr("Respostas curtas, de agricultura biológica, sem pesticidas.", "Short answers, organic, no pesticides.")}</p></div><div class="crop-problemas-lista">${
+                            shown.map((row) => shared.card(row, names, { open: row.id === wanted, skipKind: "cultura", skipId: cropId })).join("")
+                        }</div>${mine.length > INITIAL ? `<div class="problemas-controls"><button class="problemas-mais crop-problemas-mais" type="button" aria-expanded="${expanded}">${
+                            expanded ? tr("Ver menos", "Show fewer") : tr(`Ver mais respostas (${mine.length - INITIAL} restantes)`, `Show more answers (${mine.length - INITIAL} more)`)
+                        }</button></div>` : ""}`;
+                        box.hidden = false;
+                        box.querySelector(".crop-problemas-mais")?.addEventListener("click", () => { expanded = !expanded; draw(); if (!expanded) box.scrollIntoView({ block: "start" }); });
+                    };
+                    draw();
+                    const nav = document.querySelector(".crop-nav");
+                    if (nav && !nav.querySelector('a[href="#problemas"]')) nav.insertAdjacentHTML("afterbegin", `<a href="#problemas">${tr("Problemas", "Problems")}</a>`);
+                    if (wanted) document.getElementById(`problema-${wanted}`)?.scrollIntoView({ block: "start" });
+                }).catch(() => {});
+            }
             function cropNav(sections) {
                 const items = sections.filter(([, , content]) => content);
                 return items.length
@@ -336,6 +366,7 @@
                             ["vigilancia", "Vigilância", protection],
                         ])
                     }
+                    <section class="crop-problemas" id="problemas" hidden></section>
                     ${
                         section(
                             "Lugar",
@@ -397,6 +428,7 @@
                     }
                 `;
                     document.title = item.nome + " — bioCulture";
+                    mountProblems(id, item.nome);
                     const stickyNav = document.createElement("script");
                     stickyNav.src = "/assets/js/biocultura-sticky-nav.js?v=6";
                     document.body.appendChild(stickyNav);

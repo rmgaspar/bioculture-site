@@ -1,29 +1,30 @@
 /* «O que se passa na tua horta?»: respostas curtas para os problemas mais comuns (data/problemas-horta.json).
-   Pesquisa por palavras, filtro por tipo e cartões que abrem no próprio sítio; #problema-<id> abre um diretamente. */
+   Mostra as primeiras e «Ver mais» abre as restantes; pesquisa e filtros mostram todas as que correspondem.
+   Os cartões vêm de assets/js/biocultura-problemas.js (partilhado com as fichas das culturas).
+   #problema-<id> abre uma resposta diretamente. */
 (function () {
     "use strict";
 
     const root = document.getElementById("problemas");
-    if (!root) return;
+    const SHARED = window.BioCulturaProblemas;
+    if (!root || !SHARED) return;
     const isEnglish = !!window.BioCultureI18n?.isEnglish;
     const tr = (pt, en) => (isEnglish ? en : pt);
     const normalize = (value) => String(value || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
     const esc = (value) => String(value ?? "").replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch]);
+    const el = (id) => document.getElementById(id);
     const GROUPS = [["sementeira", "Sementes que não nascem", "Seeds that won't come up"], ["pragas", "Pragas", "Pests"], ["doencas", "Doenças", "Diseases"], ["outros", "Outros", "Other"]];
-    const LINKS = {
-        cultura: (id) => `/calendario/horticola-detalhe.html?id=${encodeURIComponent(id)}`,
-        tecnica: (id) => `/services/servicos.html#tecnica-${encodeURIComponent(id)}`,
-        praga: (id) => `/ecossistemas/especie-detalhe.html?id=${encodeURIComponent(id)}`,
-    };
-    const KIND = { cultura: ["Ficha da cultura", "Crop guide"], tecnica: ["Técnica", "Technique"], praga: ["Ficha completa", "Full guide"] };
+    const INITIAL = 6; // respostas visíveis sem pesquisa nem filtros
+    const CROP_CHIPS = 8; // culturas visíveis sem expandir
 
-    const state = { grupo: "", cultura: "", q: "" };
+    const state = { grupo: "", cultura: "", q: "", expanded: false, open: "" };
     let rows = [];
     let names = { cultura: {}, tecnica: {}, praga: {} };
 
-    const content = (row) => (isEnglish ? row.en : row.pt) || row.pt;
-    const searchable = (row) => normalize([content(row).titulo, content(row).resumo, row.pt.titulo, ...(row.palavras || [])].join(" "));
-
+    const searchable = (row) => {
+        const c = SHARED.content(row);
+        return normalize([c.titulo, c.resumo, row.pt.titulo, ...(row.palavras || [])].join(" "));
+    };
     function matches(row, skip) {
         if (skip !== "grupo" && state.grupo && row.grupo !== state.grupo) return false;
         if (skip !== "cultura" && state.cultura && !(row.culturas || []).includes(state.cultura)) return false;
@@ -33,94 +34,95 @@
         const text = row.__text || (row.__text = searchable(row));
         return terms.every((term) => text.includes(term));
     }
-
-    const list = (items) => `<ul>${items.map((item) => `<li>${esc(item)}</li>`).join("")}</ul>`;
-    function card(row) {
-        const c = content(row);
-        const links = (row.ver || []).map(([kind, id]) => `<a href="${LINKS[kind](id)}"><small>${esc(tr(...KIND[kind]))}</small> ${esc(names[kind][id] || id)} →</a>`).join("");
-        const sources = (row.fontes || []).map((source) => `<a href="${esc(source.url)}" target="_blank" rel="noopener noreferrer">${esc(source.titulo)} ↗</a>`).join(" · ");
-        return `<details class="problema" id="problema-${esc(row.id)}"${state.open === row.id ? " open" : ""}>
-            <summary><span class="problema-titulo">${esc(c.titulo)}</span><span class="problema-resumo">${esc(c.resumo)}</span></summary>
-            <div class="problema-corpo">
-                <div class="problema-col"><h3>${tr("O que costuma ser", "What it usually is")}</h3>${list(c.causas)}</div>
-                <div class="problema-col problema-fazer"><h3>${tr("O que fazer", "What to do")}</h3><ol>${c.fazer.map((step) => `<li>${esc(step)}</li>`).join("")}</ol></div>
-                <div class="problema-col"><h3>${tr("Evitar", "Avoid")}</h3>${list(c.evitar)}</div>
-            </div>
-            ${links ? `<p class="problema-links">${links}</p>` : ""}
-            ${sources ? `<p class="problema-fontes">${tr("Fontes", "Sources")}: ${sources}</p>` : ""}
-        </details>`;
-    }
+    const filtered = () => !!(state.grupo || state.cultura || state.q.trim());
 
     function render() {
-        const chips = [["", tr("Tudo", "All"), rows.filter((row) => matches(row, "grupo")).length]]
-            .concat(GROUPS.map(([key, pt, en]) => [key, tr(pt, en), rows.filter((row) => row.grupo === key && matches({ ...row, grupo: "" }, "grupo")).length]).filter((entry) => entry[2] > 0 || state.grupo === entry[0]));
-        document.getElementById("problemas-chips").innerHTML = chips.map(([key, label, count]) =>
+        const groupChips = [["", tr("Tudo", "All"), rows.filter((row) => matches(row, "grupo")).length]]
+            .concat(GROUPS.map(([key, pt, en]) => [key, tr(pt, en), rows.filter((row) => row.grupo === key && matches({ ...row, grupo: "" }, "grupo")).length])
+                .filter((entry) => entry[2] > 0 || state.grupo === entry[0]));
+        el("problemas-chips").innerHTML = groupChips.map(([key, label, count]) =>
             `<button type="button" data-grupo="${key}" aria-pressed="${state.grupo === key}">${esc(label)}<small>${count}</small></button>`).join("");
-        // Culturas com respostas (as mais citadas primeiro), contadas com os outros filtros aplicados.
+
+        // Culturas com respostas (as mais citadas primeiro); só as primeiras até se expandir ou filtrar.
         const crops = {};
         rows.filter((row) => matches(row, "cultura")).forEach((row) => (row.culturas || []).forEach((id) => { crops[id] = (crops[id] || 0) + 1; }));
         if (state.cultura && !crops[state.cultura]) crops[state.cultura] = 0;
-        document.getElementById("problemas-culturas").innerHTML = Object.entries(crops).sort((a, b) => b[1] - a[1] || String(names.cultura[a[0]]).localeCompare(String(names.cultura[b[0]])))
-            .map(([id, count]) => `<button type="button" data-cultura="${esc(id)}" aria-pressed="${state.cultura === id}">${esc(names.cultura[id] || id)}<small>${count}</small></button>`).join("");
-        const shown = rows.filter((row) => matches(row));
-        document.getElementById("problemas-lista").innerHTML = shown.length
-            ? shown.map(card).join("")
+        let cropList = Object.entries(crops).sort((a, b) => b[1] - a[1] || String(names.cultura[a[0]]).localeCompare(String(names.cultura[b[0]])));
+        const hiddenCrops = !state.expanded && !filtered() && cropList.length > CROP_CHIPS ? cropList.length - CROP_CHIPS : 0;
+        if (hiddenCrops) cropList = cropList.slice(0, CROP_CHIPS);
+        el("problemas-culturas").innerHTML = cropList.map(([id, count]) =>
+            `<button type="button" data-cultura="${esc(id)}" aria-pressed="${state.cultura === id}">${esc(names.cultura[id] || id)}<small>${count}</small></button>`).join("")
+            + (hiddenCrops ? `<button type="button" data-mais-culturas="1" aria-label="${esc(tr("Mostrar todas as culturas", "Show all crops"))}">+${hiddenCrops} ${esc(tr("culturas", "crops"))}</button>` : "");
+
+        const all = rows.filter((row) => matches(row));
+        const limited = !state.expanded && !filtered();
+        const shown = limited ? all.slice(0, INITIAL) : all;
+        el("problemas-lista").innerHTML = shown.length
+            ? shown.map((row) => SHARED.card(row, names, { open: state.open === row.id })).join("")
             : `<p class="problemas-vazio">${tr("Ainda não temos uma resposta curta para isso. Tenta outras palavras (por exemplo «lesmas», «amarelas», «não nascem») ou ", "We do not have a short answer for that yet. Try other words (for example “slugs”, “yellow”, “won't come up”) or ")}<a href="/contactos.html">${tr("diz-nos o que se passa", "tell us what is happening")}</a>.</p>`;
-        document.getElementById("problemas-contagem").textContent = shown.length === 1 ? tr("1 resposta", "1 answer") : tr(`${shown.length} respostas`, `${shown.length} answers`);
+        el("problemas-contagem").textContent = all.length === 1 ? tr("1 resposta", "1 answer") : tr(`${all.length} respostas`, `${all.length} answers`);
+
+        // «Ver mais» / «Ver menos» (só quando não há pesquisa nem filtros).
+        const more = el("problemas-mais");
+        if (filtered() || all.length <= INITIAL) {
+            more.hidden = true;
+        } else {
+            more.hidden = false;
+            more.textContent = state.expanded ? tr("Ver menos", "Show fewer") : tr(`Ver mais respostas (${all.length - INITIAL} restantes)`, `Show more answers (${all.length - INITIAL} more)`);
+            more.setAttribute("aria-expanded", String(state.expanded));
+        }
     }
 
     function openFromHash() {
+        if (!location.hash.startsWith("#problema-")) return;
         const id = decodeURIComponent(location.hash.replace(/^#problema-/, ""));
-        if (!location.hash.startsWith("#problema-") || !rows.some((row) => row.id === id)) return;
-        state.grupo = ""; state.cultura = ""; state.q = ""; state.open = id;
-        document.getElementById("problemas-busca").value = "";
+        if (!rows.some((row) => row.id === id)) return;
+        Object.assign(state, { grupo: "", cultura: "", q: "", open: id, expanded: true });
+        el("problemas-busca").value = "";
         render();
-        document.getElementById(`problema-${id}`)?.scrollIntoView({ block: "start" });
+        el(`problema-${id}`)?.scrollIntoView({ block: "start" });
     }
 
     // Texto fixo do bloco.
-    document.getElementById("problemas-eyebrow").textContent = tr("Problemas na horta", "Garden problems");
-    document.getElementById("problemas-title").textContent = tr("O que se passa na tua horta?", "What is going on in your garden?");
-    document.getElementById("problemas-intro").textContent = tr("Escolhe o problema ou escreve o que vês. Respostas curtas, de agricultura biológica, sem pesticidas.", "Pick the problem or type what you see. Short answers, organic, no pesticides.");
-    document.getElementById("problemas-busca").placeholder = tr("Ex.: cenouras não nascem, lesmas, folhas amarelas…", "E.g. carrots won't come up, slugs, yellow leaves…");
-    document.getElementById("problemas-busca").setAttribute("aria-label", tr("Descrever o problema", "Describe the problem"));
+    el("problemas-eyebrow").textContent = tr("Problemas na horta", "Garden problems");
+    el("problemas-title").textContent = tr("O que se passa na tua horta?", "What is going on in your garden?");
+    el("problemas-intro").textContent = tr("Escolhe o problema ou escreve o que vês. Respostas curtas, de agricultura biológica, sem pesticidas.", "Pick the problem or type what you see. Short answers, organic, no pesticides.");
+    el("problemas-busca").placeholder = tr("Ex.: cenouras não nascem, lesmas, folhas amarelas…", "E.g. carrots won't come up, slugs, yellow leaves…");
+    el("problemas-busca").setAttribute("aria-label", tr("Descrever o problema", "Describe the problem"));
 
-    Promise.all([
-        fetch("/data/problemas-horta.json").then((response) => response.json()),
-        fetch("/data/horticolas_master.json").then((response) => response.json()).catch(() => ({})),
-        fetch("/data/dicas.json").then((response) => response.json()).catch(() => []),
-        fetch("/data/pragas.json").then((response) => response.json()).catch(() => []),
-    ]).then(([data, crops, tips, pests]) => {
-        rows = data.problemas;
-        names = {
-            cultura: Object.fromEntries(Object.entries(crops).map(([id, item]) => [id, item.nome])),
-            tecnica: Object.fromEntries(tips.map((item) => [item.id, item.titulo])),
-            praga: Object.fromEntries(pests.map((item) => [item.id, item.nome_comum])),
-        };
+    SHARED.load().then((data) => {
+        rows = data.rows;
+        names = data.names;
         render();
         openFromHash();
     }).catch(() => {
-        document.getElementById("problemas-lista").innerHTML = `<p class="problemas-vazio">${tr("Não foi possível carregar as respostas.", "The answers could not be loaded.")}</p>`;
+        el("problemas-lista").innerHTML = `<p class="problemas-vazio">${tr("Não foi possível carregar as respostas.", "The answers could not be loaded.")}</p>`;
     });
 
     let timer = 0;
-    document.getElementById("problemas-busca").addEventListener("input", (event) => {
+    el("problemas-busca").addEventListener("input", (event) => {
         clearTimeout(timer);
         timer = setTimeout(() => { state.q = event.target.value; state.open = ""; render(); }, 150);
     });
-    document.getElementById("problemas-culturas").addEventListener("click", (event) => {
+    el("problemas-culturas").addEventListener("click", (event) => {
+        if (event.target.closest("button[data-mais-culturas]")) { state.expanded = true; render(); return; }
         const chip = event.target.closest("button[data-cultura]");
         if (!chip) return;
         state.cultura = state.cultura === chip.dataset.cultura ? "" : chip.dataset.cultura;
         state.open = "";
         render();
     });
-    document.getElementById("problemas-chips").addEventListener("click", (event) => {
+    el("problemas-chips").addEventListener("click", (event) => {
         const chip = event.target.closest("button[data-grupo]");
         if (!chip) return;
         state.grupo = state.grupo === chip.dataset.grupo ? "" : chip.dataset.grupo;
         state.open = "";
         render();
+    });
+    el("problemas-mais").addEventListener("click", () => {
+        state.expanded = !state.expanded;
+        render();
+        if (!state.expanded) el("problemas").scrollIntoView({ block: "start" });
     });
     window.addEventListener("hashchange", openFromHash);
 })();
