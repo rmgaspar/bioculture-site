@@ -28,6 +28,8 @@
                     tecnica: Object.fromEntries(tips.map((item) => [item.id, item.titulo])),
                     praga: Object.fromEntries(pests.map((item) => [item.id, item.nome_comum])),
                 },
+                // Fotografia (ou ilustração) de cada cultura, para os chips com ícone.
+                images: Object.fromEntries(Object.entries(crops).filter(([, item]) => item.imagem && item.imagem !== "-").map(([id, item]) => [id, item.imagem])),
             }));
         }
         return loading;

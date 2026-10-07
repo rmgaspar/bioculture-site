@@ -20,6 +20,7 @@
     const state = { grupo: "", cultura: "", q: "", expanded: false, open: "" };
     let rows = [];
     let names = { cultura: {}, tecnica: {}, praga: {} };
+    let images = {};
 
     const searchable = (row) => {
         const c = SHARED.content(row);
@@ -51,7 +52,7 @@
         const hiddenCrops = !state.expanded && !filtered() && cropList.length > CROP_CHIPS ? cropList.length - CROP_CHIPS : 0;
         if (hiddenCrops) cropList = cropList.slice(0, CROP_CHIPS);
         el("problemas-culturas").innerHTML = cropList.map(([id, count]) =>
-            `<button type="button" data-cultura="${esc(id)}" aria-pressed="${state.cultura === id}">${esc(names.cultura[id] || id)}<small>${count}</small></button>`).join("")
+            `<button type="button" class="${images[id] ? "has-img" : ""}" data-cultura="${esc(id)}" aria-pressed="${state.cultura === id}">${images[id] ? `<img src="${esc(images[id])}" alt="" loading="lazy" onerror="this.remove()">` : ""}${esc(names.cultura[id] || id)}<small>${count}</small></button>`).join("")
             + (hiddenCrops ? `<button type="button" data-mais-culturas="1" aria-label="${esc(tr("Mostrar todas as culturas", "Show all crops"))}">+${hiddenCrops} ${esc(tr("culturas", "crops"))}</button>` : "");
 
         const all = rows.filter((row) => matches(row));
@@ -93,6 +94,7 @@
     SHARED.load().then((data) => {
         rows = data.rows;
         names = data.names;
+        images = data.images || {};
         render();
         openFromHash();
     }).catch(() => {
