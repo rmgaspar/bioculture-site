@@ -49,7 +49,7 @@
                 <article><small>${tr("Vigiar", "Watch")}</small>${list(watch.map((item) => `<li><a href="/ecossistemas/especie-detalhe.html?id=${encodeURIComponent(item.id)}"><strong>${esc(item.nome_comum)}</strong><small>${esc(item.tipo || "")}</small></a></li>`))}${invasive.length ? `<p class="month-plan-local">${tr("Invasoras na tua zona", "Invasive plants in your area")}: ${esc(invasive.join(", "))}</p>` : ""}</article>
                 <article><small>${tr("Práticas do mês", "This month's practices")}</small>${list(tips.map((item) => `<li><a href="/services/servicos.html#tecnica-${encodeURIComponent(item.id)}"><strong>${esc(item.titulo)}</strong><small>${esc(item.categoria || "")}</small></a></li>`))}</article>
             </div>
-            <p class="month-plan-caption">${esc(place)} <a href="/calendario/calendario.html">${tr("Ver o calendário completo →", "See the full calendar →")}</a></p>`;
+            <p class="month-plan-caption">${esc(place)} <a href="/calendario/calendario.html">${tr("Ver o calendário completo →", "See the full calendar →")}</a> <a href="/calendario/conhecimento-cuidar.html#problemas">${tr("Problema na horta? Vê as respostas →", "Garden problem? See the answers →")}</a></p>`;
         root.hidden = false;
     }
 

@@ -211,7 +211,17 @@
                 }).join("");
                 return `<div class="section-block"><div class="section-head"><span class="eyebrow">Comparar</span><div><h2>Espécies semelhantes</h2><p>A semelhança visual não confirma uma identificação. Observa forma, habitat, época e caracteres distintivos.</p></div></div><div class="similar">${links}</div></div>`;
             }
-            function render(esp, master, guidance, horticolas, solucoesCatalogo) {
+            // «Resposta rápida»: o essencial de data/problemas-horta.json antes das secções longas da ficha.
+            function quickAnswer(esp, problemas) {
+                const rows = (problemas || []).filter((row) => ["pragas", "doencas"].includes(row.grupo) && (row.ver || []).some(([kind, id]) => kind === "praga" && id === esp.id)).slice(0, 2);
+                if (!rows.length) return "";
+                const pick = (row) => (english() ? row.en : row.pt) || row.pt;
+                return rows.map((row) => {
+                    const c = pick(row);
+                    return `<section class="quick-answer" id="resposta-rapida-${esc(row.id)}"><span class="eyebrow">${tr("Resposta rápida", "Quick answer")}</span><h2>${esc(c.titulo)}</h2><p>${esc(c.resumo)}</p><ol>${c.fazer.slice(0, 4).map((step) => `<li>${esc(step)}</li>`).join("")}</ol><a href="/calendario/conhecimento-cuidar.html#problema-${encodeURIComponent(row.id)}">${tr("Ver a resposta completa →", "See the full answer →")}</a></section>`;
+                }).join("");
+            }
+            function render(esp, master, guidance, horticolas, solucoesCatalogo, problemas) {
                 const isPest = esp.grupo === "Sanidade Vegetal";
                 const isInvasive = esp.grupo === "Flora Invasora" || esp.grupo === "Fauna Invasora";
                 const tax = arr(esp.taxonomia_completa).join(" › ");
@@ -260,6 +270,8 @@
                 }</b></div></div></div><div class="hero-image" data-initial="${
                     esc(String(esp.nome || "?").charAt(0))
                 }">${image}</div></div>${backLink}${
+                    quickAnswer(esp, problemas)
+                }${
                     managementNav(esp, guidance)
                 }${pestSections(esp, horticolas)}${invasiveSections(esp)}${
                     practicalSections(esp, guidance, solucoesCatalogo)
@@ -328,7 +340,7 @@
                     return;
                 }
                 try {
-                    const [master, pests, invasives, faunas, guidance, horticolas, solucoesCatalogo] = await Promise.all([
+                    const [master, pests, invasives, faunas, guidance, horticolas, solucoesCatalogo, problemas] = await Promise.all([
                         ...["especies-indice", "pragas", "flora_invasora", "fauna_invasora"].map((f) =>
                             fetch(`/data/${f}.json`).then((r) => {
                                 if (!r.ok) throw Error(`HTTP ${r.status}`);
@@ -340,11 +352,12 @@
                         }).catch(() => null),
                         fetch("/data/horticolas_master.json").then((r) => r.json()).catch(() => null),
                         fetch("/data/solucoes-catalogo.json").then((r) => r.json()).catch(() => null),
+                        fetch("/data/problemas-horta.json").then((r) => r.json()).then((data) => data.problemas).catch(() => []),
                     ]);
                     const record = await window.BioCulturaSpecies.record(id).catch(() => undefined);
                     const esp = resolveSpecies(id, { [id]: record }, pests, invasives, faunas);
                     if (!esp) throw Error("not-found");
-                    render(esp, master, guidance, horticolas, solucoesCatalogo);
+                    render(esp, master, guidance, horticolas, solucoesCatalogo, problemas);
                     const stickyNav = document.createElement("script");
                     stickyNav.src = "/assets/js/biocultura-sticky-nav.js?v=6";
                     document.body.appendChild(stickyNav);
