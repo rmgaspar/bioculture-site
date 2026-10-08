@@ -2,7 +2,7 @@
    e da produção agrícola mundial (FAOSTAT) e as práticas regenerativas que lhes respondem. Serve três páginas, escolhidas
    por data-contexto no <section id="fatores">: conhecimento (seis fatores), calendario (quatro), vinha (cinco, com a uva),
    pecuaria e mineracao (seis cada, com fatores próprios a partir de livestock-global, pecuaria_industrial, mining-global e mineracao),
-   digital (centros de dados) e energia (acesso, renováveis, ar, clima, território).
+   digital (centros de dados), energia (acesso, renováveis, ar, clima, território) e os recursos agua, ar e solo.
    Nada é escrito à mão: os valores saem de /data/observatorio-terra-relatorio.json, observatorio_global.json,
    vetores_pressao_global.json, observatorio_terra.json e agriculture-global.json. */
 (function () {
@@ -498,6 +498,28 @@
     const mortW = t.wl("mortalidade_ar"), mortP = t.pt("mortalidade_ar");
     const CPT = { India: "Índia", Kenya: "Quénia", Morocco: "Marrocos", "United Kingdom": "Reino Unido" };
     const pc = (c) => (EN ? c : CPT[c] || c);
+    const AR_SHARED = {
+        id: "ar", c: "#4f7f9e", nome: tr("Ar", "Air"),
+        v: fmt(W.pm.v, 1) + " µg/m³", k: tr("exposição média mundial a partículas finas PM2.5 (guia da OMS: " + t.D1.PM_GUIDE + ")", "average world exposure to fine particles PM2.5 (WHO guideline: " + t.D1.PM_GUIDE + ")"),
+        titulo: tr("O ar é o preço visível da combustão", "Air is the visible price of combustion"),
+        fig: [{
+          t: tr("Partículas finas PM2.5", "Fine particles PM2.5"),
+          d: tr("Exposição média anual (µg/m³), ano mais recente.", "Average annual exposure (µg/m³), latest year."),
+          src: R.indicadores.pm25.fonte,
+          html: miniBars([{ l: nm("WLD"), v: W.pm.v, t: fmt(W.pm.v, 1), c: css("--s1") }, { l: nm("PRT"), v: t.pt("pm25").v, t: fmt(t.pt("pm25").v, 1), c: css("--s2"), hl: true }, { l: tr("Guia OMS", "WHO guideline"), v: t.D1.PM_GUIDE, t: String(t.D1.PM_GUIDE), c: css("--s3") }].concat(pmTop.slice(0, 3).map((r) => ({ l: nm(r.c), v: r.v, t: fmt(r.v, 1), c: css("--s8") }))), { ref: t.D1.PM_GUIDE })
+        }],
+        factos: [
+          tr(`<b>${t.pmAbove} de ${t.pmRows.length} Estados ultrapassam o valor-guia da OMS para PM2.5.</b> A exposição média mundial é ${fmt(W.pm.v, 1)} µg/m³, ${fmt(W.pm.v / t.D1.PM_GUIDE, 1)} vezes o guia.`, `<b>${t.pmAbove} of ${t.pmRows.length} states exceed the WHO guideline for PM2.5.</b> World average exposure is ${fmt(W.pm.v, 1)} µg/m³, ${fmt(W.pm.v / t.D1.PM_GUIDE, 1)} times the guideline.`),
+          tr(`<b>${fmt(mortW.v, 0)} mortes por 100 000 habitantes no mundo são atribuídas à poluição do ar</b> (${mortW.y}); em Portugal, ${fmt(mortP.v, 0)}.`, `<b>${fmt(mortW.v, 0)} deaths per 100,000 people worldwide are attributed to air pollution</b> (${mortW.y}); in Portugal, ${fmt(mortP.v, 0)}.`),
+          tr(`<b>A exposição em Portugal é ${fmt(t.pt("pm25").v, 1)} µg/m³</b> (${t.pt("pm25").y}), ${fmt(t.pt("pm25").v / t.D1.PM_GUIDE, 1)} vezes o guia da OMS.`, `<b>Exposure in Portugal is ${fmt(t.pt("pm25").v, 1)} µg/m³</b> (${t.pt("pm25").y}), ${fmt(t.pt("pm25").v / t.D1.PM_GUIDE, 1)} times the WHO guideline.`)
+        ],
+        praticas: [
+          [tr("Menos combustão", "Less combustion"), tr("Cada quilowatt-hora poupado e cada deslocação a pé, de bicicleta ou em transporte público evita emissões na origem.", "Every kilowatt-hour saved and every trip on foot, by bike or by public transport avoids emissions at source.")],
+          [tr("Aquecimento limpo", "Clean heating"), tr("Isolar a casa e usar bombas de calor ou lenha em equipamento eficiente reduz partículas.", "Insulating the home and using heat pumps or wood in efficient equipment reduces particles.")],
+          [tr("Nada de queimas", "No open burning"), tr("Queimar restos agrícolas ao ar livre liberta partículas e traz risco de incêndio; compostar ou triturar é melhor.", "Burning farm waste in the open releases particles and brings fire risk; composting or chipping is better.")]
+        ],
+        links: [[tr("Ar no Observatório da Terra", "Air in the Earth Observatory"), "/observatorio/observatorio-terra.html#ar"], [tr("Página do ar", "Air page"), "/recursos/ar.html"]]
+      };
     const ENER = EN7 && RP ? {
       acesso: {
         id: "acesso", c: COR.alimento, nome: tr("Acesso à eletricidade", "Access to electricity"),
@@ -521,28 +543,7 @@
         ],
         links: [[tr("Energia no Observatório da Terra", "Energy in the Earth Observatory"), "/observatorio/observatorio-terra.html#energia"]]
       },
-      ar: {
-        id: "ar", c: "#4f7f9e", nome: tr("Ar", "Air"),
-        v: fmt(W.pm.v, 1) + " µg/m³", k: tr("exposição média mundial a partículas finas PM2.5 (guia da OMS: " + t.D1.PM_GUIDE + ")", "average world exposure to fine particles PM2.5 (WHO guideline: " + t.D1.PM_GUIDE + ")"),
-        titulo: tr("O ar é o preço visível da combustão", "Air is the visible price of combustion"),
-        fig: [{
-          t: tr("Partículas finas PM2.5", "Fine particles PM2.5"),
-          d: tr("Exposição média anual (µg/m³), ano mais recente.", "Average annual exposure (µg/m³), latest year."),
-          src: R.indicadores.pm25.fonte,
-          html: miniBars([{ l: nm("WLD"), v: W.pm.v, t: fmt(W.pm.v, 1), c: css("--s1") }, { l: nm("PRT"), v: t.pt("pm25").v, t: fmt(t.pt("pm25").v, 1), c: css("--s2"), hl: true }, { l: tr("Guia OMS", "WHO guideline"), v: t.D1.PM_GUIDE, t: String(t.D1.PM_GUIDE), c: css("--s3") }].concat(pmTop.slice(0, 3).map((r) => ({ l: nm(r.c), v: r.v, t: fmt(r.v, 1), c: css("--s8") }))), { ref: t.D1.PM_GUIDE })
-        }],
-        factos: [
-          tr(`<b>${t.pmAbove} de ${t.pmRows.length} Estados ultrapassam o valor-guia da OMS para PM2.5.</b> A exposição média mundial é ${fmt(W.pm.v, 1)} µg/m³, ${fmt(W.pm.v / t.D1.PM_GUIDE, 1)} vezes o guia.`, `<b>${t.pmAbove} of ${t.pmRows.length} states exceed the WHO guideline for PM2.5.</b> World average exposure is ${fmt(W.pm.v, 1)} µg/m³, ${fmt(W.pm.v / t.D1.PM_GUIDE, 1)} times the guideline.`),
-          tr(`<b>${fmt(mortW.v, 0)} mortes por 100 000 habitantes no mundo são atribuídas à poluição do ar</b> (${mortW.y}); em Portugal, ${fmt(mortP.v, 0)}.`, `<b>${fmt(mortW.v, 0)} deaths per 100,000 people worldwide are attributed to air pollution</b> (${mortW.y}); in Portugal, ${fmt(mortP.v, 0)}.`),
-          tr(`<b>A exposição em Portugal é ${fmt(t.pt("pm25").v, 1)} µg/m³</b> (${t.pt("pm25").y}), ${fmt(t.pt("pm25").v / t.D1.PM_GUIDE, 1)} vezes o guia da OMS.`, `<b>Exposure in Portugal is ${fmt(t.pt("pm25").v, 1)} µg/m³</b> (${t.pt("pm25").y}), ${fmt(t.pt("pm25").v / t.D1.PM_GUIDE, 1)} times the WHO guideline.`)
-        ],
-        praticas: [
-          [tr("Menos combustão", "Less combustion"), tr("Cada quilowatt-hora poupado e cada deslocação a pé, de bicicleta ou em transporte público evita emissões na origem.", "Every kilowatt-hour saved and every trip on foot, by bike or by public transport avoids emissions at source.")],
-          [tr("Aquecimento limpo", "Clean heating"), tr("Isolar a casa e usar bombas de calor ou lenha em equipamento eficiente reduz partículas.", "Insulating the home and using heat pumps or wood in efficient equipment reduces particles.")],
-          [tr("Nada de queimas", "No open burning"), tr("Queimar restos agrícolas ao ar livre liberta partículas e traz risco de incêndio; compostar ou triturar é melhor.", "Burning farm waste in the open releases particles and brings fire risk; composting or chipping is better.")]
-        ],
-        links: [[tr("Ar no Observatório da Terra", "Air in the Earth Observatory"), "/observatorio/observatorio-terra.html#ar"], [tr("Página do ar", "Air page"), "/recursos/ar.html"]]
-      },
+      ar: AR_SHARED,
       projetos: {
         id: "projetos", c: COR.floresta, nome: tr("Território das renováveis", "Territory of renewables"),
         v: String(RP.projects.length), k: tr("grandes projetos renováveis analisados no mundo, com a área que ocupam", "large renewable projects analysed worldwide, with the area they occupy"),
@@ -674,6 +675,222 @@
           [tr("Entregar em recolha certificada", "Hand in at certified collection"), tr("Só o que é formalmente recolhido entra na reciclagem.", "Only what is formally collected enters recycling.")]
         ],
         links: [[tr("Mineração", "Mining"), "/energia/mineracao.html"], [tr("Vetores de pressão", "Pressure vectors"), "/observatorio/vetores-pressao-global.html"]]
+      }
+    } : {};
+
+
+    /* ---------- água (só em Água) ---------- */
+    const WO = X["water-overview"];
+    const wHead = (id) => (WO ? WO.headline_metrics.find((m) => m.indicator_id === id) : null);
+    const wJmp = (id) => (WO ? WO.jmp_report_context.find((m) => m.indicator === id) : null);
+    const wSafe = wHead("sdg_6_1_1_safely_managed_drinking_water"), wNoSafe = wJmp("people_without_safely_managed_drinking_water"), wN160 = wJmp("countries_with_safely_managed_drinking_water_estimates");
+    const dwP = t.pt("agua_potavel");
+    const wsSorted = t.wsRows.slice().sort((a, b) => b.v - a.v);
+    const dwLowRows = t.dwRows.slice().sort((a, b) => a.v - b.v).slice(0, 3);
+    const wsSer = ser("stress_hidrico", "WLD"), wsYears = []; for (let y = wsSer.a; y <= ws.y; y++) wsYears.push(y);
+    const WAT = WO && wSafe && wNoSafe ? {
+      escassez: {
+        id: "escassez", c: COR.agua, nome: tr("Escassez", "Scarcity"),
+        v: String(wsCrit), k: tr("Estados captam mais água doce do que a que se renova (stress acima de 100%)", "states withdraw more freshwater than is renewed (stress above 100%)"),
+        titulo: tr("Onde a água já não chega para o que se tira", "Where water no longer covers what is taken"),
+        fig: [{
+          t: tr("Estados com maior stress hídrico", "States with the highest water stress"),
+          d: tr("Percentagem da água doce renovável que é captada. As barras cortam nos 300%; a marca a tracejado é 100% (capta-se tudo o que se renova).", "Share of renewable freshwater that is withdrawn. Bars are cut at 300%; the dashed mark is 100% (everything that renews is withdrawn)."),
+          src: R.indicadores.stress_hidrico.fonte,
+          draw: (el) => hbars(el, wsSorted.slice(0, 7).map((r) => ({ l: nm(r.c), v: Math.min(r.v, 300), t: fmt(r.v, 0) + "%", c: css("--s8") })).concat([{ l: nm("PRT") + " " + wsP.y, v: wsP.v, t: fmt(wsP.v, 1) + "%", hl: true, c: css("--s2") }, { l: nm("WLD") + " " + ws.y, v: ws.v, t: fmt(ws.v, 1) + "%", c: css("--s1") }]), { max: 300, ref: 100, unit: "%", table: [tr("Estado", "State"), "%"] })
+        }, {
+          t: tr("Mundo e Portugal ao longo do tempo", "World and Portugal over time"),
+          d: tr("Stress hídrico (% dos recursos renováveis), " + wsYears[0] + "–" + ws.y + ".", "Water stress (% of renewable resources), " + wsYears[0] + "–" + ws.y + "."),
+          src: R.indicadores.stress_hidrico.fonte,
+          draw: (el) => line(el, { x: wsYears, series: [["WLD", "--s1"], ["PRT", "--s2"]].map(([c, v]) => ({ n: nm(c), c: css(v), v: wsYears.map((y) => at("stress_hidrico", c, y)) })), zero: true, ref: 25, refLabel: tr("25%: início do stress", "25%: start of stress"), yf: (v) => fmt(v, 0) + "%", tf: (se, i) => fmt(se.v[i], 1) + "%", endLabels: true, aria: tr("Stress hídrico", "Water stress"), table: true, tableEvery: 5 })
+        }],
+        factos: [
+          tr(`<b>${wsCrit} Estados captam mais água doce do que a que se renova</b> (stress acima de 100%).`, `<b>${wsCrit} states withdraw more freshwater than is renewed</b> (stress above 100%).`),
+          tr(`<b>A média mundial é ${fmt(ws.v, 1)}% e a de Portugal ${fmt(wsP.v, 1)}%</b> (${ws.y}). Acima de 25% já há stress (classes do ODS 6.4.2); a média nacional esconde regiões e estações mais secas.`, `<b>The world average is ${fmt(ws.v, 1)}% and Portugal’s ${fmt(wsP.v, 1)}%</b> (${ws.y}). Above 25% there is already stress (SDG 6.4.2 classes); the national average hides drier regions and seasons.`),
+          tr(`<b>Em Portugal o stress hídrico passou de ${fmt(at("stress_hidrico", "PRT", wsYears[0]), 1)}% em ${wsYears[0]} para ${fmt(wsP.v, 1)}% em ${wsP.y}</b>, enquanto a média mundial ficou quase igual (${fmt(at("stress_hidrico", "WLD", wsYears[0]), 1)}% para ${fmt(ws.v, 1)}%).`, `<b>In Portugal water stress went from ${fmt(at("stress_hidrico", "PRT", wsYears[0]), 1)}% in ${wsYears[0]} to ${fmt(wsP.v, 1)}% in ${wsP.y}</b>, while the world average stayed almost the same (${fmt(at("stress_hidrico", "WLD", wsYears[0]), 1)}% to ${fmt(ws.v, 1)}%).`)
+        ],
+        praticas: [
+          [tr("Medir o que gastas", "Measure what you use"), tr("Ler o contador e a fatura mostra onde está o consumo, em casa e na parcela.", "Reading the meter and the bill shows where the consumption is, at home and on the plot.")],
+          [tr("Regar ao amanhecer", "Water at dawn"), tr("Gota a gota, de manhã cedo ou ao fim do dia, perde-se menos por evaporação.", "Drip irrigation, early morning or evening, loses less to evaporation.")],
+          [tr("Reutilizar e captar", "Reuse and harvest"), tr("Águas cinzentas tratadas e água da chuva guardada servem a rega e à limpeza.", "Treated greywater and stored rainwater serve irrigation and cleaning.")],
+          [tr("Culturas à medida da água", "Crops matched to water"), tr("Variedades de sequeiro ou de ciclo curto nos meses e zonas mais secos.", "Dryland or short-cycle varieties in the driest months and zones.")]
+        ],
+        links: [[tr("Água no Observatório da Terra", "Water in the Earth Observatory"), "/observatorio/observatorio-terra.html#agua"], [tr("Sistemas de captação de água", "Water harvesting systems"), "/services/servicos.html#catalogo-tecnicas"]]
+      },
+      potavel: {
+        id: "potavel", c: COR.agua, nome: tr("Água potável", "Drinking water"),
+        v: fmt(wNoSafe.value, 1) + tr(" mil M", " bn"), k: tr("de pessoas sem água potável gerida em segurança (" + wNoSafe.year + ")", "people without safely managed drinking water (" + wNoSafe.year + ")"),
+        titulo: tr("Beber em segurança ainda não é para todos", "Safe drinking is still not for everyone"),
+        fig: [{
+          t: tr("População com água potável gerida em segurança", "Population with safely managed drinking water"),
+          d: tr("Percentagem da população, ano mais recente. Estados com menos acesso em vermelho.", "Share of the population, latest year. States with least access in red."),
+          src: R.indicadores.agua_potavel.fonte,
+          html: miniBars([{ l: nm("WLD") + " " + wSafe.year, v: wSafe.value, t: fmt(wSafe.value, 1) + "%", c: css("--s1") }, { l: nm("PRT") + " " + dwP.y, v: dwP.v, t: fmt(dwP.v, 1) + "%", c: css("--s2"), hl: true }].concat(dwLowRows.map((r) => ({ l: nm(r.c) + " " + r.y, v: r.v, t: fmt(r.v, 1) + "%", c: css("--s8") }))), { max: 100 })
+        }],
+        factos: [
+          tr(`<b>${fmt(wSafe.value, 1)}% da população mundial usa água potável gerida em segurança</b> (${wSafe.year}); em Portugal, ${fmt(dwP.v, 1)}%.`, `<b>${fmt(wSafe.value, 1)}% of the world’s population uses safely managed drinking water</b> (${wSafe.year}); in Portugal, ${fmt(dwP.v, 1)}%.`),
+          tr(`<b>${fmt(wNoSafe.value, 1)} mil milhões de pessoas ainda não têm água potável gerida em segurança</b> (${wNoSafe.year}, OMS e UNICEF).`, `<b>${fmt(wNoSafe.value, 1)} billion people still lack safely managed drinking water</b> (${wNoSafe.year}, WHO and UNICEF).`),
+          tr(`<b>${t.dwLow} Estados têm menos de metade da população com água potável gerida em segurança.</b> ${nm(dwLowRows[0].c)} tem ${fmt(dwLowRows[0].v, 1)}%.`, `<b>${t.dwLow} states have fewer than half of their population with safely managed drinking water.</b> ${nm(dwLowRows[0].c)} has ${fmt(dwLowRows[0].v, 1)}%.`),
+          tr(`<b>${wN160.value} países têm estimativas</b> de água potável gerida em segurança (JMP).`, `<b>${wN160.value} countries have estimates</b> of safely managed drinking water (JMP).`)
+        ],
+        praticas: [
+          [tr("Conhecer a origem", "Know the source"), tr("Saber de onde vem a água de casa, do furo ou do poço e quem a controla.", "Know where the water at home, from the borehole or well comes from and who monitors it.")],
+          [tr("Analisar furos e poços", "Test boreholes and wells"), tr("Análises periódicas mostram contaminação que não se vê nem se cheira.", "Regular tests reveal contamination that cannot be seen or smelled.")],
+          [tr("Proteger nascentes e lençóis", "Protect springs and aquifers"), tr("Fossas bem feitas, menos nutrientes e pesticidas na terra e zonas de recarga livres de contaminação.", "Well-built septic systems, fewer nutrients and pesticides on the land and recharge zones free of contamination.")]
+        ],
+        links: [[tr("Água no Observatório da Terra", "Water in the Earth Observatory"), "/observatorio/observatorio-terra.html#agua"]]
+      },
+      ciclo: {
+        id: "ciclo", c: COR.agua, nome: tr("Ciclo da água", "Water cycle"),
+        v: tr("1 em 3", "1 in 3"), k: tr("bacias hidrográficas com condições normais em 2024 (OMM)", "river basins with normal conditions in 2024 (WMO)"),
+        titulo: tr("Chuva irregular, bacias fora do normal", "Irregular rain, basins out of the normal"),
+        fig: [{
+          t: tr("Chuva em Portugal continental", "Rainfall in mainland Portugal"),
+          d: tr("Precipitação anual (mm). A média esconde os extremos.", "Annual precipitation (mm). The average hides the extremes."),
+          src: "IPMA, boletins climatológicos anuais",
+          html: miniBars([{ l: "2024", v: pr24, t: fmt(pr24, 0) + " mm", c: css("--s4") }, { l: "2025", v: pr25, t: fmt(pr25, 0) + " mm", c: css("--s1"), hl: true }], { max: 1200 })
+        }],
+        factos: [
+          tr(`<b>Só um terço das bacias hidrográficas do mundo teve condições normais em 2024</b> (OMM).`, `<b>Only a third of the world’s river basins had normal conditions in 2024</b> (WMO).`),
+          tr(`<b>Todas as regiões de glaciares do mundo registaram perdas por degelo pelo terceiro ano seguido</b> (OMM, 2024).`, `<b>All glacier regions worldwide reported melt losses for a third consecutive year</b> (WMO, 2024).`),
+          tr(`<b>Em Portugal continental choveu ${fmt(pr24, 0)} mm em 2024 e ${fmt(pr25, 0)} mm em 2025</b> (IPMA): dois anos seguidos muito diferentes.`, `<b>Mainland Portugal had ${fmt(pr24, 0)} mm of rain in 2024 and ${fmt(pr25, 0)} mm in 2025</b> (IPMA): two very different consecutive years.`),
+          tr(`<b>Secas e cheias fazem parte do mesmo ciclo:</b> ${flood} áreas de risco potencial significativo de inundação (ciclo 2022–2027) e ${fmt(semi.variacao_percent, 0)}% mais área semiárida entre ${semi.de} e ${semi.ate}.`, `<b>Droughts and floods are part of the same cycle:</b> ${flood} areas of significant potential flood risk (2022–2027 cycle) and ${fmt(semi.variacao_percent, 0)}% more semi-arid area between ${semi.de} and ${semi.ate}.`)
+        ],
+        praticas: [
+          [tr("Guardar a chuva", "Store the rain"), tr("Cisternas, tanques e telhados ligados à horta guardam a água do inverno para o verão.", "Cisterns, tanks and roofs connected to the garden store winter water for summer.")],
+          [tr("Deixar a água infiltrar", "Let water soak in"), tr("Solo coberto, valas em nível e pavimentos permeáveis reduzem a escorrência e as cheias a jusante.", "Covered soil, contour swales and permeable paving reduce runoff and downstream floods.")],
+          [tr("Proteger as ribeiras", "Protect streams"), tr("Galerias ripícolas seguram as margens, filtram a água e guardam humidade.", "Riparian strips hold the banks, filter water and keep moisture.")]
+        ],
+        links: [[tr("Clima no Observatório da Terra", "Climate in the Earth Observatory"), "/observatorio/observatorio-terra.html#clima"]]
+      }
+    } : {};
+
+    /* ---------- ar (só em Ar) ---------- */
+    const QA = X.qualidade_ar, QN = QA ? QA.estado_nacional_2024 : null;
+    const qnum = (m) => (m ? parseFloat(String(m[1]).replace(",", ".")) : null);
+    const qMax = QN ? QN.tendencia_2002_2024.match(/máximo de (\d+,\d+)% em (\d{4})/) : null;
+    const qGuiaNo2 = QA ? QA.referencias_oms_2021.no2.anual : null;
+    const qEp = (id) => (QA ? QA.episodios_especiais.find((e) => e.id === id) : null);
+    const AIR = QN && qMax ? {
+      qualar: {
+        id: "qualar", c: "#4f7f9e", nome: tr("Portugal em 2024", "Portugal in 2024"),
+        v: fmt(QN.dias_fraco_ou_mau_percent, 1) + "%", k: tr("dos dias de 2024 com qualidade do ar Fraca ou Má em Portugal", "of days in 2024 with Poor or Bad air quality in Portugal"),
+        titulo: tr("O ar em Portugal melhorou, mas não é igual em todo o lado", "Air in Portugal has improved, but it is not the same everywhere"),
+        fig: [{
+          t: tr("Dias com qualidade do ar Fraca ou Má", "Days with Poor or Bad air quality"),
+          d: tr("Percentagem dos dias do ano, índice QualAr.", "Share of days in the year, QualAr index."),
+          src: QN.fonte.nome,
+          html: miniBars([{ l: qMax[2], v: qnum([0, qMax[1]]), t: fmt(qnum([0, qMax[1]]), 1) + "%", c: css("--s8") }, { l: "2024", v: QN.dias_fraco_ou_mau_percent, t: fmt(QN.dias_fraco_ou_mau_percent, 1) + "%", c: css("--s3"), hl: true }], { max: 20 })
+        }, {
+          t: tr("Dióxido de azoto (NO₂) nas aglomerações", "Nitrogen dioxide (NO₂) in urban areas"),
+          d: tr("Média anual 2024 (µg/m³) face ao limite de referência e ao guia da OMS.", "2024 annual mean (µg/m³) against the reference limit and the WHO guideline."),
+          src: QN.fonte.nome + "; " + QA.referencias_oms_2021.fonte.nome,
+          html: miniBars(QN.no2.excedencias_anuais.map((e) => ({ l: e.aglomeracao, v: e.valor, t: String(e.valor), c: css("--s8") })).concat([{ l: tr("Limite anual", "Annual limit"), v: QN.no2.limite_anual_referencia_2024, t: String(QN.no2.limite_anual_referencia_2024), c: css("--s4") }, { l: tr("Guia OMS", "WHO guideline"), v: qGuiaNo2, t: String(qGuiaNo2), c: css("--s3") }]), { max: 50 })
+        }],
+        factos: [
+          tr(`<b>Em 2024 a classe dominante foi «${QN.classe_dominante_iqar}»</b> e só ${fmt(QN.dias_fraco_ou_mau_percent, 1)}% dos dias foram Fracos ou Maus, contra o máximo de ${qMax[1]}% em ${qMax[2]} (APA).`, `<b>In 2024 the dominant class was “Good”</b> and only ${fmt(QN.dias_fraco_ou_mau_percent, 1)}% of days were Poor or Bad, against the peak of ${qMax[1].replace(",", ".")}% in ${qMax[2]} (APA).`),
+          tr(`<b>O NO₂ continuou acima do limite anual de ${QN.no2.limite_anual_referencia_2024} µg/m³</b> em ${QN.no2.excedencias_anuais.map((e) => `${e.aglomeracao} (${e.valor})`).join(" e ")}; o guia da OMS é ${qGuiaNo2}.`, `<b>NO₂ stayed above the annual limit of ${QN.no2.limite_anual_referencia_2024} µg/m³</b> in ${QN.no2.excedencias_anuais.map((e) => `${e.aglomeracao} (${e.valor})`).join(" and ")}; the WHO guideline is ${qGuiaNo2}.`),
+          tr(`<b>Uma melhoria anual não elimina o risco crónico:</b> a média nacional não representa a exposição junto a vias de tráfego, áreas industriais ou episódios regionais.`, `<b>One year’s improvement does not remove chronic risk:</b> the national average does not represent exposure near traffic routes, industrial areas or regional episodes.`)
+        ],
+        praticas: [
+          [tr("Consultar o QualAr", "Check QualAr"), tr("Antes de esforço intenso ao ar livre, ver a qualidade do ar da tua zona.", "Before intense outdoor effort, check the air quality in your area.")],
+          [tr("Afastar-te do tráfego", "Move away from traffic"), tr("Percursos a pé e de bicicleta longe das vias mais carregadas reduzem a exposição.", "Walking and cycling routes away from the busiest roads reduce exposure.")],
+          [tr("Ventilar na hora certa", "Ventilate at the right time"), tr("Abrir janelas quando o exterior está melhor e fechar em picos de tráfego ou fumo.", "Open windows when outdoor air is better and close them at traffic or smoke peaks.")]
+        ],
+        links: [[tr("Ar no Observatório da Terra", "Air in the Earth Observatory"), "/observatorio/observatorio-terra.html#ar"], [tr("Aplicação prática", "Practical use"), "#aplicacao-pratica"]]
+      },
+      ozono: {
+        id: "ozono", c: "#4f7f9e", nome: tr("Ozono e culturas", "Ozone and crops"),
+        v: String(QN.ozono.ocorrencias_limiar_informacao), k: tr("ocorrências do limiar de informação do ozono em 2024 (" + fmt(QN.ozono.variacao_ocorrencias_face_2023_percent, 1).replace("-", "−") + "% face a 2023)", "occurrences of the ozone information threshold in 2024 (" + fmt(QN.ozono.variacao_ocorrencias_face_2023_percent, 1).replace("-", "−") + "% vs 2023)"),
+        titulo: tr("O ozono não fica na cidade: chega ao campo", "Ozone does not stay in the city: it reaches the countryside"),
+        fig: [],
+        factos: [
+          tr(`<b>Houve ${QN.ozono.ocorrencias_limiar_informacao} ocorrências do limiar de informação e ${QN.ozono.ocorrencias_limiar_alerta} do limiar de alerta</b> em ${QN.ozono.estacoes_monitorizacao} estações (2024, APA).`, `<b>There were ${QN.ozono.ocorrencias_limiar_informacao} occurrences of the information threshold and ${QN.ozono.ocorrencias_limiar_alerta} of the alert threshold</b> at ${QN.ozono.estacoes_monitorizacao} stations (2024, APA).`),
+          tr(`<b>Persistiram níveis acima do objetivo de longo prazo</b> (${QN.ozono.objetivo_longo_prazo} µg/m³, máximo diário da média de 8 horas); o ozono varia muito com a meteorologia e a região.`, `<b>Levels above the long-term objective persisted</b> (${QN.ozono.objetivo_longo_prazo} µg/m³, daily maximum 8-hour mean); ozone varies strongly with weather and region.`),
+          tr(`<b>O ozono forma-se na atmosfera e pode atingir zonas rurais.</b> Além da saúde, reduz a fotossíntese, a produtividade agrícola e o crescimento florestal (APA).`, `<b>Ozone forms in the atmosphere and can reach rural areas.</b> Besides health, it reduces photosynthesis, farm productivity and forest growth (APA).`)
+        ],
+        praticas: [
+          [tr("Cuidado nos dias de calor", "Care on hot days"), tr("Reduzir esforço intenso ao ar livre nas horas de pico, normalmente à tarde.", "Reduce intense outdoor effort in peak hours, usually in the afternoon.")],
+          [tr("Menos precursores", "Fewer precursors"), tr("Tráfego, combustão e solventes alimentam a formação de ozono: menos de cada um ajuda.", "Traffic, combustion and solvents feed ozone formation: less of each helps.")],
+          [tr("Observar as culturas", "Observe the crops"), tr("Manchas nas folhas em dias de calor podem ter várias causas, uma delas o ozono; regista e confirma antes de tratar.", "Leaf spots on hot days can have several causes, one of them ozone; record and confirm before treating.")]
+        ],
+        links: [[tr("Ar no Observatório da Terra", "Air in the Earth Observatory"), "/observatorio/observatorio-terra.html#ar"]]
+      },
+      fogo: {
+        id: "fogo-ar", c: COR.clima, nome: tr("Fumo e poeira", "Smoke and dust"),
+        v: fmt(fire[fireYears.at(-1)] / 1000, 0) + tr(" mil ha", "k ha"), k: tr("ardidos em Portugal continental em " + fireYears.at(-1) + " (provisório)", "burned in mainland Portugal in " + fireYears.at(-1) + " (provisional)"),
+        titulo: tr("Quando o ar vem do fogo ou do deserto", "When the air comes from fire or desert"),
+        fig: [F.find((f) => f.id === "floresta").fig[0]],
+        factos: [
+          tr(`<b>O fumo de incêndios rurais traz ${qEp("incendios").poluentes.join(", ")}.</b> Sinais: ${qEp("incendios").sinais.join(", ")}.`, `<b>Rural-fire smoke carries PM2.5, PM10, CO, NO₂ and volatile organic compounds.</b> Signs: smell of smoke, reduced visibility, rapid rise in particles.`),
+          tr(`<b>A distância ao incêndio não determina sozinha a exposição:</b> vento, estabilidade atmosférica e topografia controlam a pluma.`, `<b>Distance from the fire alone does not determine exposure:</b> wind, atmospheric stability and topography control the plume.`),
+          tr(`<b>A poeira do Norte de África</b> faz subir sobretudo o PM10, e o PM2,5 em fração variável; também deve ser assinalada como episódio.`, `<b>North African dust</b> raises mainly PM10, and PM2.5 in a variable fraction; it should also be flagged as an episode.`),
+          tr(`<b>A área ardida varia muito:</b> ${fmt(fire[2017], 0)} ha em 2017 e ${fmt(fire[fireYears.at(-1)], 0)} ha em ${fireYears.at(-1)} (provisório, ICNF).`, `<b>Burned area varies a lot:</b> ${fmt(fire[2017], 0)} ha in 2017 and ${fmt(fire[fireYears.at(-1)], 0)} ha in ${fireYears.at(-1)} (provisional, ICNF).`)
+        ],
+        praticas: [
+          [tr("Seguir os avisos", "Follow the warnings"), tr("Proteção Civil, QualAr e direção do vento dizem se a pluma chega onde estás.", "Civil Protection, QualAr and wind direction tell whether the plume reaches you.")],
+          [tr("Reduzir esforço", "Reduce effort"), tr("Evitar esforço intenso ao ar livre durante a passagem do fumo.", "Avoid intense outdoor effort while the smoke passes.")],
+          [tr("Fechar e voltar a ventilar", "Close, then ventilate again"), tr("Fechar entradas durante a pluma quando o exterior está pior e ventilar quando melhorar.", "Close openings during the plume when outdoor air is worse and ventilate when it improves.")],
+          [tr("Prevenir à origem", "Prevent at source"), tr("Gestão de combustível e mosaicos agrícolas reduzem o fogo e, com ele, o fumo.", "Fuel management and farm mosaics reduce fire and with it the smoke.")]
+        ],
+        links: [[tr("Qualidade do ar", "Air quality"), "#aplicacao-pratica"], [tr("Solo e vida no Observatório da Terra", "Land and life in the Earth Observatory"), "/observatorio/observatorio-terra.html#terra-vida"]]
+      }
+    } : {};
+
+    /* ---------- solo (só em Solo) ---------- */
+    const SS = X.solo_stats;
+    const sDest = (id) => (SS ? SS.destaques.find((d) => d.id === id) : null);
+    const sArt = sDest("artificializacao"), sMud = sDest("mudanca_ocupacao"), sOcu = SS ? SS.ocupacao_solo_continente_2018 : null;
+    const CLS_EN = { Florestas: "Forests", Agricultura: "Agriculture", Matos: "Scrub", Pastagens: "Pastures", "Sistemas agroflorestais": "Agroforestry systems", "Territórios artificializados": "Artificial land", "Outras classes": "Other classes" };
+    const AM_EN = {
+      erosao_hidrica: ["gullies, rills, exposed roots, cloudy water downstream", "permanent cover, contour sowing, vegetated strips, riparian restoration, reduced tillage"],
+      perda_carbono: ["fragile aggregates, surface crust, low infiltration", "rotations, cover crops, mature compost, agroforestry, less disturbance"],
+      compactacao: ["ponding, deformed roots, hardened layer, low infiltration", "controlled traffic, avoiding operations on saturated soil, decompacting roots, adaptive grazing"],
+      incendio: ["water repellency, mobilised ash, accelerated erosion", "protect the soil without turning it, retain sediment, restore native vegetation, monitor watercourses"]
+    };
+    const amOf = (id) => SS.ameacas.find((a) => a.id === id);
+    const amFact = (id) => { const a = amOf(id); return tr(`<b>${a.nome}:</b> sinais — ${a.sinais.join(", ")}. Respostas — ${a.respostas.join(", ")}.`, `<b>${{ erosao_hidrica: "Water erosion", perda_carbono: "Loss of organic carbon", compactacao: "Compaction", incendio: "Post-fire degradation" }[id]}:</b> signs — ${AM_EN[id][0]}. Responses — ${AM_EN[id][1]}.`); };
+    const SOL = SS && sArt && sOcu ? {
+      artificializacao: {
+        id: "artificializacao", c: COR.solo, nome: tr("Solo selado", "Sealed soil"),
+        v: "+" + fmt(sArt.variacao_percentual, 0) + "%", k: tr("de território artificializado em Portugal continental, " + sArt.ano_inicial + "–" + sArt.ano_final, "of artificial land in mainland Portugal, " + sArt.ano_inicial + "–" + sArt.ano_final),
+        titulo: tr("Cada hectare selado deixa de ser solo", "Every sealed hectare stops being soil"),
+        fig: [{
+          t: tr("Território artificializado", "Artificial land"),
+          d: tr("Hectares em Portugal continental.", "Hectares in mainland Portugal."),
+          src: "DGT, COS e COSc",
+          html: miniBars([{ l: String(sArt.ano_inicial), v: sArt.valor_inicial, t: fmt(sArt.valor_inicial, 0) + " ha", c: css("--bar-dim") }, { l: String(sArt.ano_final), v: sArt.valor_final, t: fmt(sArt.valor_final, 0) + " ha", c: COR.solo, hl: true }])
+        }, {
+          t: tr("Ocupação do solo em Portugal continental", "Land cover in mainland Portugal"),
+          d: tr("Percentagem do território, 2018 (valores cartográficos arredondados).", "Share of the territory, 2018 (rounded map values)."),
+          src: "DGT, COS 2018",
+          draw: (el) => hbars(el, sOcu.classes.map((c, i) => ({ l: EN ? CLS_EN[c.classe] || c.classe : c.classe, v: c.valor, t: c.valor + "%", c: css(SER[i % SER.length]) })), { unit: "%", table: [tr("Classe", "Class"), "%"] })
+        }],
+        factos: [
+          tr(`<b>O território artificializado cresceu ${fmt(sArt.variacao_absoluta_ha, 0)} ha</b> (${fmt(sArt.variacao_percentual, 1)}%) entre ${sArt.ano_inicial} e ${sArt.ano_final} (DGT).`, `<b>Artificial land grew by ${fmt(sArt.variacao_absoluta_ha, 0)} ha</b> (${fmt(sArt.variacao_percentual, 1)}%) between ${sArt.ano_inicial} and ${sArt.ano_final} (DGT).`),
+          tr(`<b>${fmt(sMud.valor, 0)}% do território continental mudou de classe de ocupação</b> entre 1995 e 2018, cerca de 1 milhão de hectares (DGT).`, `<b>${fmt(sMud.valor, 0)}% of mainland territory changed land-cover class</b> between 1995 and 2018, about 1 million hectares (DGT).`),
+          tr(`<b>A impermeabilização reduz infiltração, armazenamento de carbono, produção biológica e regulação térmica.</b> O indicador mede ocupação artificial, não apenas edifícios.`, `<b>Sealing reduces infiltration, carbon storage, biological production and thermal regulation.</b> The indicator measures artificial land cover, not only buildings.`)
+        ],
+        praticas: [
+          [tr("Reabilitar antes de construir", "Rehabilitate before building"), tr("Reutilizar edifícios e terrenos já artificializados poupa solo vivo.", "Reusing buildings and already-sealed land saves living soil.")],
+          [tr("Manter o solo permeável", "Keep soil permeable"), tr("Jardins, canteiros e pavimentos drenantes deixam a água infiltrar.", "Gardens, beds and drainage paving let water soak in.")],
+          [tr("Proteger o solo agrícola bom", "Protect good farmland"), tr("Respeitar a Reserva Agrícola Nacional e os solos de melhor aptidão.", "Respect the National Agricultural Reserve and the best-suited soils.")]
+        ],
+        links: [[tr("Solo no Observatório da Terra", "Soil in the Earth Observatory"), "/observatorio/observatorio-terra.html#terra-vida"]]
+      },
+      ameacas: {
+        id: "ameacas", c: COR.solo, nome: tr("Ameaças", "Threats"),
+        v: String(SS.ameacas.length), k: tr("ameaças ao solo acompanhadas, da erosão à contaminação", "soil threats followed, from erosion to contamination"),
+        titulo: tr("Sinais no terreno e respostas que funcionam", "Signs in the field and responses that work"),
+        fig: [],
+        factos: ["erosao_hidrica", "perda_carbono", "compactacao", "incendio"].map(amFact),
+        praticas: [
+          [tr("Controlar tráfego e pisoteio", "Control traffic and trampling"), tr("Concentrar passagens, reduzir cargas e não entrar em solo encharcado.", "Concentrate passes, reduce loads and do not enter saturated soil.")],
+          [tr("Árvores, sebes e faixas ripícolas", "Trees, hedges and riparian strips"), tr("Protegem do vento, criam habitat e interceptam a escorrência.", "They protect from wind, create habitat and intercept runoff.")],
+          [tr("Irrigar segundo solo e cultura", "Irrigate according to soil and crop"), tr("Sensores ou balanço hídrico reduzem o desperdício e limitam a salinização.", "Sensors or a water balance reduce waste and limit salinisation.")],
+          [tr("Analisar antes de corrigir", "Test before correcting"), tr("Carbono orgânico, pH e textura dizem o que o solo precisa de facto.", "Organic carbon, pH and texture say what the soil actually needs.")]
+        ],
+        links: [[tr("Teste caseiro do solo", "Home soil test"), "#teste-caseiro"], [tr("Problemas na horta", "Garden problems"), "/calendario/conhecimento-cuidar.html#problemas"]]
       }
     } : {};
 
@@ -813,6 +1030,69 @@
           ] }
         }
       },
+      agua: {
+        ids: ["escassez", "potavel", "ciclo", { id: "rega", from: "agua" }, { id: "solo-agua", from: "solo" }], extra: [WAT.escassez, WAT.potavel, WAT.ciclo].filter(Boolean), rotulo: tr("Em casa e na parcela", "At home and on the plot"),
+        hub: [tr("Ver o Observatório da Terra", "See the Earth Observatory"), "/observatorio/observatorio-terra.html#agua"],
+        eyebrow: tr("Dos dados à água", "From data to water"),
+        h2: tr("Cinco frentes onde a água se mede", "Five fronts where water is measured"),
+        intro: tr("Os números vêm do Observatório da Terra, da FAO, da OMS e UNICEF, da OMM e do IPMA. Escolhe uma frente para ver o que os dados mostram e o que se pode fazer em casa e na parcela.", "The numbers come from the Earth Observatory, FAO, WHO and UNICEF, WMO and IPMA. Pick a front to see what the data show and what can be done at home and on the plot."),
+        over: {
+          rega: { nome: tr("Rega", "Irrigation"), titulo: tr("A terra regada mais do que duplicou", "Irrigated land has more than doubled"), fig: "primeira", factos: "rega", praticas: [
+            [tr("Regar segundo o solo e a cultura", "Irrigate by soil and crop"), tr("Sensores ou balanço hídrico mostram quando e quanto regar, em vez de regar por hábito.", "Sensors or a water balance show when and how much to irrigate, instead of watering by habit.")],
+            [tr("Gota a gota", "Drip"), tr("Leva a água à raiz e perde menos por evaporação e deriva.", "Takes water to the root and loses less to evaporation and drift.")],
+            [tr("Verificar a qualidade da água", "Check water quality"), tr("Água salobra ou contaminada degrada o solo e a cultura; convém analisá-la.", "Brackish or contaminated water degrades soil and crop; it should be tested.")],
+            [tr("Cobrir o solo", "Cover the soil"), tr("Cobertura morta e matéria orgânica retêm a água entre regas.", "Mulch and organic matter hold water between waterings.")]
+          ] },
+          "solo-agua": { nome: tr("Solo", "Soil"), titulo: tr("O solo é a primeira esponja", "Soil is the first sponge"), fig: "primeira", praticas: [
+            [tr("Manter o solo coberto", "Keep the soil covered"), tr("Reduz o impacto da chuva, limita a evaporação e alimenta a vida do solo.", "Reduces rain impact, limits evaporation and feeds soil life.")],
+            [tr("Reduzir a perturbação", "Reduce disturbance"), tr("Protege os agregados e os fungos que deixam a água infiltrar.", "Protects the aggregates and fungi that let water soak in.")],
+            [tr("Composto maduro", "Mature compost"), tr("Devolve matéria orgânica, que ajuda a guardar água.", "Returns organic matter, which helps store water.")],
+            [tr("Árvores e sebes", "Trees and hedges"), tr("Interceptam a escorrência e aumentam a diversidade de raízes.", "Intercept runoff and increase root diversity.")]
+          ] }
+        }
+      },
+      ar: {
+        ids: ["ar", "qualar", "ozono", "fogo-ar", { id: "rede-ar", from: "rede" }], extra: [AR_SHARED, AIR.qualar, AIR.ozono, AIR.fogo, REDE].filter(Boolean), rotulo: tr("O que fazer", "What to do"),
+        hub: [tr("Ver o Observatório da Terra", "See the Earth Observatory"), "/observatorio/observatorio-terra.html#ar"],
+        eyebrow: tr("Dos dados ao ar", "From data to air"),
+        h2: tr("Cinco frentes onde o ar se mede", "Five fronts where air is measured"),
+        intro: tr("Os números vêm do Observatório da Terra, da OMS e da APA. Uma média anual não elimina o risco crónico nem os episódios locais: escolhe uma frente para ver o que os dados mostram e o que fazer.", "The numbers come from the Earth Observatory, WHO and APA. An annual average does not remove chronic risk or local episodes: pick a front to see what the data show and what to do."),
+        over: {
+          ar: { nome: tr("Exposição mundial", "World exposure"), titulo: tr("O ar que o mundo respira e o preço da combustão", "The air the world breathes and the price of combustion") },
+          "rede-ar": { nome: tr("Combustão e energia", "Combustion and energy"), titulo: tr("Menos combustão, ar mais limpo", "Less combustion, cleaner air"), praticas: [
+            [tr("Poupar energia", "Save energy"), tr("Cada quilowatt-hora que não se gasta evita emissões, onde quer que seja produzido.", "Every kilowatt-hour not used avoids emissions, wherever it is produced.")],
+            [tr("Aquecer sem fumo", "Heat without smoke"), tr("Isolar a casa e usar bombas de calor ou equipamento eficiente reduz partículas.", "Insulating the home and using heat pumps or efficient equipment reduces particles.")],
+            [tr("Mover-se de outra forma", "Move differently"), tr("Andar a pé, de bicicleta ou em transporte público tira carros das ruas.", "Walking, cycling or taking public transport takes cars off the streets.")]
+          ] }
+        }
+      },
+      solo: {
+        ids: ["solo", "artificializacao", "ameacas", "floresta", "vida"], extra: [SOL.artificializacao, SOL.ameacas].filter(Boolean), rotulo: tr("Na parcela", "On the plot"),
+        hub: [tr("Ver o Observatório da Terra", "See the Earth Observatory"), "/observatorio/observatorio-terra.html#terra-vida"],
+        eyebrow: tr("Dos dados ao solo", "From data to soil"),
+        h2: tr("Cinco frentes onde o solo se mede", "Five fronts where soil is measured"),
+        intro: tr("Os números vêm do Observatório da Terra, da APA, da DGT e do INFOSOLO. Suscetibilidade não é desertificação já ocorrida: escolhe uma frente para ver o que os dados mostram e que práticas regeneram o solo.", "The numbers come from the Earth Observatory, APA, DGT and INFOSOLO. Susceptibility is not desertification that has already happened: pick a front to see what the data show and which practices regenerate soil."),
+        over: {
+          solo: { titulo: tr("Suscetibilidade, degradação e o que se pode fazer", "Susceptibility, degradation and what can be done"), praticas: [
+            [tr("Manter o solo coberto", "Keep the soil covered"), tr("Cobertura viva, restolho ou mulch reduzem o impacto da chuva, limitam a evaporação e alimentam a biologia.", "Living cover, stubble or mulch reduce rain impact, limit evaporation and feed biology.")],
+            [tr("Rotações e diversidade", "Rotations and diversity"), tr("Alternar famílias e incluir leguminosas quebra ciclos de pragas e diversifica raízes.", "Alternating families and including legumes breaks pest cycles and diversifies roots.")],
+            [tr("Reduzir a perturbação", "Reduce disturbance"), tr("Mínima mobilização compatível com o solo e a cultura protege agregados e fungos.", "Minimum tillage compatible with soil and crop protects aggregates and fungi.")],
+            [tr("Composto maduro quando necessário", "Mature compost when needed"), tr("Dose baseada em análise do solo e do composto; devolve matéria orgânica.", "Dose based on soil and compost analysis; returns organic matter.")]
+          ] },
+          floresta: { nome: tr("Fogo e erosão", "Fire and erosion"), v: fmt(fire[fireYears.at(-1)] / 1000, 0) + tr(" mil ha", "k ha"), k: tr("ardidos em Portugal continental em " + fireYears.at(-1) + " (provisório)", "burned in mainland Portugal in " + fireYears.at(-1) + " (provisional)"), titulo: tr("Depois do fogo, o solo fica à chuva", "After fire, the soil is left to the rain"), fig: "primeira", factos: "solo-fogo", praticas: [
+            [tr("Proteger sem revolver", "Protect without turning"), tr("Cobrir o solo ardido e não o mobilizar reduz a erosão acelerada.", "Covering burned soil and not tilling it reduces accelerated erosion.")],
+            [tr("Reter sedimentos", "Retain sediment"), tr("Barreiras de ramos e faixas vegetadas seguram a terra nas encostas.", "Brush barriers and vegetated strips hold soil on slopes.")],
+            [tr("Recuperar com plantas locais", "Recover with native plants"), tr("A vegetação autóctone refaz a cobertura e a vida do solo.", "Native vegetation rebuilds cover and soil life.")],
+            [tr("Vigiar as linhas de água", "Watch the watercourses"), tr("Cinzas e sedimentos mobilizados chegam às ribeiras com a primeira chuva forte.", "Mobilised ash and sediment reach streams with the first heavy rain.")]
+          ] },
+          vida: { nome: tr("Solo vivo", "Living soil"), v: fmt(org / agri * 100, 1) + "%", k: tr("da terra agrícola mundial em agricultura biológica (em Portugal, " + fmt(ptl["6671"] / ptl["6610"] * 100, 1) + "%)", "of the world’s agricultural land is organic (in Portugal, " + fmt(ptl["6671"] / ptl["6610"] * 100, 1) + "%)"), titulo: tr("Solo vivo, vida acima do chão", "Living soil, life above ground"), fig: "segunda", factos: "solo-vida", praticas: [
+            [tr("Alimentar o solo", "Feed the soil"), tr("Restos vegetais, composto e raízes vivas dão alimento a quem faz o solo.", "Plant residues, compost and living roots feed those who build the soil.")],
+            [tr("Cobrir e diversificar", "Cover and diversify"), tr("Várias espécies e raízes diferentes sustentam mais organismos.", "Several species and different roots sustain more organisms.")],
+            [tr("Evitar mexer sem necessidade", "Avoid unnecessary disturbance"), tr("Cada mobilização expõe e consome matéria orgânica.", "Every tillage exposes and burns up organic matter.")],
+            [tr("Sebes e bordaduras", "Hedges and edges"), tr("Abrigo e alimento para auxiliares que trabalham o solo e as culturas.", "Shelter and food for beneficial species that work soil and crops.")]
+          ] }
+        }
+      },
       vinha: {
         ids: ["clima", "agua", "solo", "vida", "uva"], extra: [UVA], rotulo: tr("Na vinha", "In the vineyard"),
         eyebrow: tr("Dos dados à vinha", "From data to the vineyard"),
@@ -849,7 +1129,7 @@
     const cx = CTX[contexto] || CTX.conhecimento;
     F.push(...(cx.extra || []));
     const here = location.pathname.replace(/\.html$/, "");
-    const FS = cx.ids.map((id) => F.find((f) => f.id === id)).filter(Boolean).map((f) => {
+    const FS = cx.ids.map((e) => { const id = typeof e === "string" ? e : e.id, from = typeof e === "string" ? e : e.from, b = F.find((f) => f.id === from); return b ? Object.assign({}, b, { id }) : null; }).filter(Boolean).map((f) => {
       const ov = (cx.over || {})[f.id] || {}, base = f.factos;
       /* Textos de números que dependem dos factos já calculados do fator (indicados por chave nos contextos). */
       const FX = {
@@ -858,18 +1138,21 @@
         "mining-solo": () => [tr(`<b>${cn(comm("gold"))}:</b> ${cp(comm("gold"))}`, `<b>${cn(comm("gold"))}:</b> ${cp(comm("gold"))}`), tr(`<b>${cn(comm("coal"))}:</b> ${cp(comm("coal"))}`, `<b>${cn(comm("coal"))}:</b> ${cp(comm("coal"))}`), base[0], base[2]],
         "mining-floresta": () => [tr(`<b>${cn(comm("nickel-cobalt"))}:</b> ${cp(comm("nickel-cobalt"))}`, `<b>${cn(comm("nickel-cobalt"))}:</b> ${cp(comm("nickel-cobalt"))}`), tr(`<b>${cn(comm("iron-bauxite"))}:</b> ${cp(comm("iron-bauxite"))}`, `<b>${cn(comm("iron-bauxite"))}:</b> ${cp(comm("iron-bauxite"))}`), base[0], base[3]],
         "mining-vida": () => [base[0], base[1], base[2]],
+        "rega": () => [base[1], base[2]],
+        "solo-fogo": () => [base[3], amFact("incendio"), tr(`<b>O incêndio é um dos fatores da erosão hídrica</b>, a par do solo descoberto, do declive, da chuva intensa e da mobilização no sentido do declive.`, `<b>Fire is one of the drivers of water erosion</b>, along with bare soil, slope, intense rain and tillage along the slope.`)],
+        "solo-vida": () => [base[3], base[0], base[1]],
         "energia-clima": () => [base[0], base[1], tr(`<b>Portugal emitiu ${fmt(ghg[ghgY.at(-1)], 1)} Mt CO₂e em ${ghgY.at(-1)}</b> (${fmt(ghg[ghgY[0]], 1)} em ${ghgY[0]}), sem uso do solo e florestas (APA). O inventário é revisto todos os anos.`, `<b>Portugal emitted ${fmt(ghg[ghgY.at(-1)], 1)} Mt CO₂e in ${ghgY.at(-1)}</b> (${fmt(ghg[ghgY[0]], 1)} in ${ghgY[0]}), excluding land use and forests (APA). The inventory is revised every year.`), base[2]]
       };
       const o = Object.assign({}, f);
       Object.keys(ov).forEach((k) => {
         const v = ov[k];
         if (k === "factos") o.factos = FX[v] ? FX[v]() : v;
-        else if (k === "fig") o.fig = v === "stress" ? [f.fig[1]] : v === "primeira" ? [f.fig[0]] : v;
+        else if (k === "fig") o.fig = v === "stress" ? [f.fig[1]] : v === "primeira" ? [f.fig[0]] : v === "segunda" ? [f.fig[1]] : v;
         else o[k] = v;
       });
       if (contexto !== "conhecimento") {
         /* Fora da página de conhecimento: só âncoras que existem nesta página e nenhuma ligação para ela própria; no fim, ligação ao conjunto. */
-        o.links = o.links.filter(([, h]) => (h.startsWith("#") ? !!document.getElementById(h.slice(1)) : true) && h.split("#")[0].replace(/\.html$/, "") !== here).concat([cx.hub || HUB]);
+        o.links = o.links.filter(([, h]) => (h.startsWith("#") ? !!document.getElementById(h.slice(1)) : true) && h.split("#")[0].replace(/\.html$/, "") !== here).concat([cx.hub || HUB]).filter(([, h], i, arr) => arr.findIndex(([, x]) => x === h) === i);
       }
       return o;
     });
@@ -928,7 +1211,7 @@
   let feito = false;
   const iniciar = () => {
     if (feito) return; feito = true;
-    const EXTRA = { pecuaria: ["livestock-global", "pecuaria_industrial"], mineracao: ["mining-global", "mineracao"], digital: ["ai-data-centres-overview", "ai-data-centres-pressures", "impacto_digital"], energia: ["energy-overview", "renewable-projects"] }[contexto] || [];
+    const EXTRA = { pecuaria: ["livestock-global", "pecuaria_industrial"], mineracao: ["mining-global", "mineracao"], digital: ["ai-data-centres-overview", "ai-data-centres-pressures", "impacto_digital"], energia: ["energy-overview", "renewable-projects"], agua: ["water-overview"], ar: ["qualidade_ar"], solo: ["solo_stats"] }[contexto] || [];
     Promise.all([T.load(), get("/data/agriculture-global.json"), Promise.all(EXTRA.map((n) => get("/data/" + n + ".json")))])
       .then(([{ R, CLIMA, VET, PT }, A, ex]) => {
         const X = {}; EXTRA.forEach((n, i) => { X[n] = ex[i]; });

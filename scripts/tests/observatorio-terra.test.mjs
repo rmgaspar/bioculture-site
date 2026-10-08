@@ -16,7 +16,7 @@ for (const script of ['assets/js/biocultura-graficos.js', 'assets/js/biocultura-
 }
 // Cartões do Observatório nas páginas temáticas: cada página liga os scripts e os ids pedidos existem.
 new vm.Script(read('assets/js/biocultura-terra-cartoes.js'));
-const cartoes = { 'recursos/agua.html': ['stress', 'agua'], 'recursos/ar.html': ['ar'], 'recursos/solo.html': ['solo'], 'ecossistemas/biodiversidade.html': ['vida'], 'energia/transicao-etica.html': ['renovaveis'], 'observatorio/limitar-ultrapassagem-1-5.html': ['clima', 'co2', 'mar'] };
+const cartoes = { 'ecossistemas/biodiversidade.html': ['vida'], 'energia/transicao-etica.html': ['renovaveis'], 'observatorio/limitar-ultrapassagem-1-5.html': ['clima', 'co2', 'mar'] };
 const conclusoes = read('assets/js/biocultura-terra-dados.js');
 for (const [pagina, ids] of Object.entries(cartoes)) {
   const h = read(pagina);
@@ -49,7 +49,7 @@ console.log('Observatório da Terra: página sem IDs repetidos, scripts válidos
 
 // «Dos dados à parcela»: o módulo compila e cada página liga o contexto, o módulo e os scripts de que depende.
 new vm.Script(read('assets/js/biocultura-fatores.js'));
-const fatores = { 'calendario/conhecimento-cuidar.html': 'conhecimento', 'calendario/calendario.html': 'calendario', 'calendario/enologia.html': 'vinha', 'energia/pecuaria.html': 'pecuaria', 'energia/mineracao.html': 'mineracao', 'energia/digital.html': 'digital', 'energia/energia.html': 'energia' };
+const fatores = { 'calendario/conhecimento-cuidar.html': 'conhecimento', 'calendario/calendario.html': 'calendario', 'calendario/enologia.html': 'vinha', 'energia/pecuaria.html': 'pecuaria', 'energia/mineracao.html': 'mineracao', 'energia/digital.html': 'digital', 'energia/energia.html': 'energia', 'recursos/agua.html': 'agua', 'recursos/ar.html': 'ar', 'recursos/solo.html': 'solo' };
 for (const [pagina, contexto] of Object.entries(fatores)) {
   const h = read(pagina);
   assert(h.includes('id="fatores"') && h.includes('data-contexto="' + contexto + '"'), pagina + ': falta a secção de fatores');
