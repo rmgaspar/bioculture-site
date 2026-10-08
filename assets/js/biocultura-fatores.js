@@ -1,6 +1,7 @@
 /* «Dos dados à parcela»: fatores que mudam o que se pode cultivar, cada um com os números do Observatório da Terra
    e da produção agrícola mundial (FAOSTAT) e as práticas regenerativas que lhes respondem. Serve três páginas, escolhidas
-   por data-contexto no <section id="fatores">: conhecimento (seis fatores), calendario (quatro) e vinha (cinco, com a uva).
+   por data-contexto no <section id="fatores">: conhecimento (seis fatores), calendario (quatro), vinha (cinco, com a uva),
+   pecuaria e mineracao (seis cada, com fatores próprios a partir de livestock-global, pecuaria_industrial, mining-global e mineracao).
    Nada é escrito à mão: os valores saem de /data/observatorio-terra-relatorio.json, observatorio_global.json,
    vetores_pressao_global.json, observatorio_terra.json e agriculture-global.json. */
 (function () {
@@ -9,7 +10,7 @@
   const host = document.getElementById("fatores");
   if (!G || !T || !host) return;
   const contexto = host.dataset.contexto || "conhecimento";
-  const { tr, fmt, esc, css, hbars, line, legend, miniBars, miniStack, EN } = G;
+  const { tr, fmt, esc, css, SER, hbars, line, legend, miniBars, miniStack, EN } = G;
   const lang = new URLSearchParams(location.search).get("lang");
   const L = (href) => {
     if (!lang) return href;
@@ -20,7 +21,7 @@
 
   const COR = { clima: "#b4472f", agua: "#2a6fb0", solo: "#7d5a36", floresta: "#3d7a4a", vida: "#7a5aa6", alimento: "#b87a0c" };
 
-  function construir(R, CLIMA, VET, PT, A) {
+  function construir(R, CLIMA, VET, PT, A, X) {
     const t = T.create(R, CLIMA, VET);
     const { last, at, ser, nm, W, tmp, co2, co2L, co2F, dest, rli, wsCrit } = t;
     const yr = (o, y) => (o && o.valores ? o.valores[String(y)] : null);
@@ -277,6 +278,187 @@
       links: [[tr("Castas da Vinha Viva", "Living Vineyard varieties"), "#castas"], [tr("Produção agrícola mundial", "World agricultural production"), "/observatorio/producao-agricola.html"]]
     };
 
+
+    /* ---------- pecuária (só em Pecuária) ---------- */
+    const LV = X["livestock-global"], PL = X.pecuaria_industrial;
+    const hv = (re) => (LV ? LV.headline.find((h) => re.test(h.label_en)) : null);
+    const hnum = (h) => (h ? parseFloat(String(h.value).replace(/[^0-9.]/g, "")) : null);
+    const hEm = hv(/Anthropogenic/), hGt = hv(/Livestock-system/), hCh = hv(/methane/i);
+    const sysOf = (id) => (LV ? LV.systems.find((x) => x.id === id) : null);
+    const grp = (id) => A.world_groups.series.find((g) => g.id === id);
+    const meatG = grp(1765), milkG = grp(1780);
+    const contMeat = A.meat_continent;
+    const CONT_EN = { 5300: "Asia", 5200: "Americas", 5400: "Europe", 5100: "Africa", 5500: "Oceania" };
+    const contShare = (id, i) => { const tot = contMeat.series.reduce((a, x) => a + x.mt[i], 0); return contMeat.series.find((x) => x.id === id).mt[i] / tot * 100; };
+    const pastMax = ls("6655").reduce((m, v, i) => (v != null && v > m.v ? { v, y: land.years[i] } : m), { v: 0, y: 0 });
+    const carne = PT.temas.consumo_carne_peixe.indicador_atual, pp = (carne.match(/(\d+),(\d+)/) || [])[0];
+    const tipoCount = (re) => (PL || []).filter((c) => re.test(c.tipo)).length;
+    const ptEfl = (PL || []).filter((c) => (c.pressoes_ambientais_potenciais || []).some((x) => /chorume|efluente|nitrato|estrume/i.test(x))).length;
+    const PEC = LV && PL ? {
+      metano: {
+        id: "metano", c: COR.clima, nome: tr("Clima e metano", "Climate and methane"),
+        v: fmt(hnum(hEm), 0) + "%", k: tr("das emissões humanas de gases com efeito de estufa vêm dos sistemas pecuários (" + hEm.context + ")", "of human greenhouse-gas emissions come from livestock systems (" + hEm.context + ")"),
+        titulo: tr("Metano, escala e concentração", "Methane, scale and concentration"),
+        fig: [{
+          t: tr("O peso da pecuária no clima", "Livestock’s weight in the climate"),
+          d: tr("Percentagem das emissões humanas (em CO₂ equivalente) e do metano de origem humana.", "Share of human emissions (in CO₂ equivalent) and of human-caused methane."),
+          src: hEm.context + "; " + hCh.context,
+          html: miniBars([{ l: tr("Emissões humanas (CO₂e)", "Human emissions (CO₂e)"), v: hnum(hEm), t: fmt(hnum(hEm), 0) + "%", c: css("--s8"), hl: true }, { l: tr("Metano de origem humana", "Human-caused methane"), v: hnum(hCh), t: "≈" + fmt(hnum(hCh), 0) + "%", c: css("--s4") }], { max: 50 })
+        }, {
+          t: tr("Instalações pecuárias documentadas em Portugal", "Livestock facilities documented in Portugal"),
+          d: tr("Casos acompanhados pelo bioCulture, por espécie principal. Não são todas as que existem.", "Cases followed by bioCulture, by main species. They are not all that exist."),
+          src: tr("bioCulture, casos documentados (AIA e inspeções ambientais)", "bioCulture, documented cases (EIA and environmental inspections)"),
+          draw: (el) => hbars(el, [[tr("Aves", "Poultry"), tipoCount(/^Aves/)], [tr("Suínos", "Pigs"), tipoCount(/^Suínos/)], [tr("Bovinos de leite", "Dairy cattle"), tipoCount(/^Bovinos/)]].map(([l, n], i) => ({ l, v: n, t: String(n), c: css(SER[(i + 1) % SER.length]) })), { unit: "n", table: [tr("Espécie", "Species"), "n"] })
+        }],
+        factos: [
+          tr(`<b>Os sistemas pecuários emitem ${fmt(hnum(hGt), 1)} Gt CO₂e por ano</b>, ${fmt(hnum(hEm), 0)}% das emissões humanas (${hEm.context}).`, `<b>Livestock systems emit ${fmt(hnum(hGt), 1)} Gt CO₂e a year</b>, ${fmt(hnum(hEm), 0)}% of human emissions (${hEm.context}).`),
+          tr(`<b>Cerca de ${fmt(hnum(hCh), 0)}% do metano de origem humana</b> está ligado à pecuária (${hCh.context}).`, `<b>About ${fmt(hnum(hCh), 0)}% of human-caused methane</b> is linked to livestock (${hCh.context}).`),
+          tr(`<b>Bovinos:</b> ${sysOf("cattle").methane_pt}`, `<b>Cattle:</b> ${sysOf("cattle").methane_en}`),
+          tr(`<b>O bioCulture documenta ${PL.length} instalações pecuárias em Portugal:</b> ${tipoCount(/^Aves/)} de aves, ${tipoCount(/^Suínos/)} de suínos e ${tipoCount(/^Bovinos/)} de bovinos de leite. Risco potencial não é dano comprovado.`, `<b>bioCulture documents ${PL.length} livestock facilities in Portugal:</b> ${tipoCount(/^Aves/)} poultry, ${tipoCount(/^Suínos/)} pig and ${tipoCount(/^Bovinos/)} dairy-cattle. Potential risk is not proven harm.`)
+        ],
+        praticas: [
+          [tr("Animais saudáveis e bem alimentados", "Healthy, well-fed animals"), tr("Desperdiçam menos alimento e tendem a emitir menos por litro de leite ou quilo de carne.", "They waste less feed and tend to emit less per litre of milk or kilo of meat.")],
+          [tr("Gerir bem o estrume", "Manage manure well"), tr("Armazenar coberto, compostar e aplicar ao solo em doses medidas tende a reduzir perdas de metano, amoníaco e nutrientes.", "Covered storage, composting and spreading on the soil in measured doses tend to reduce losses of methane, ammonia and nutrients.")],
+          [tr("Escala à medida do território", "Scale matched to the territory"), tr("Menos animais por hectare e mais perto da terra que os alimenta evitam concentrar efluentes num só sítio.", "Fewer animals per hectare and closer to the land that feeds them avoid concentrating effluents in one place.")],
+          [tr("Medir o balanço", "Measure the balance"), tr("Registar efetivos, alimento comprado, estrume produzido e aplicado mostra para onde vão os nutrientes.", "Recording herd size, purchased feed, manure produced and applied shows where the nutrients go.")]
+        ],
+        links: [[tr("Instalações documentadas", "Documented facilities"), "#instalacoes"], [tr("Clima no Observatório da Terra", "Climate in the Earth Observatory"), "/observatorio/observatorio-terra.html#clima"]]
+      },
+      pasto: {
+        id: "pasto", c: COR.floresta, nome: tr("Terra e pasto", "Land and pasture"),
+        v: fmt(past / agri * 100, 0) + "%", k: tr("da terra agrícola mundial são pastagens (" + ly + ")", "of the world’s agricultural land is pasture (" + ly + ")"),
+        titulo: tr("Pasto: o maior uso agrícola da terra", "Pasture: the largest agricultural use of land"),
+        fig: [{
+          t: tr("Como se usa a terra emersa do mundo", "How the world’s land is used"),
+          d: tr("Percentagem da área terrestre, " + ly + ".", "Share of land area, " + ly + "."),
+          src: "FAOSTAT, uso do solo (RL)",
+          html: miniStack([{ l: tr("Floresta", "Forest"), v: forest / landA * 100, c: COR.floresta }, { l: tr("Pastagens", "Pasture"), v: past / landA * 100, c: css("--s3") }, { l: tr("Cultivo", "Cropland"), v: crop / landA * 100, c: css("--s4") }, { l: tr("Resto", "Other"), v: 100 - (forest + past + crop) / landA * 100, c: css("--bar-dim") }])
+        }, {
+          t: tr("E em Portugal", "And in Portugal"),
+          d: tr("Percentagem do território, " + ptl.year + ".", "Share of territory, " + ptl.year + "."),
+          src: "FAOSTAT, uso do solo (RL)",
+          html: miniStack([{ l: tr("Floresta", "Forest"), v: ptl["6646"] / ptl["6601"] * 100, c: COR.floresta }, { l: tr("Pastagens", "Pasture"), v: ptl["6655"] / ptl["6601"] * 100, c: css("--s3") }, { l: tr("Cultivo", "Cropland"), v: ptl["6620"] / ptl["6601"] * 100, c: css("--s4") }, { l: tr("Resto", "Other"), v: 100 - (ptl["6646"] + ptl["6655"] + ptl["6620"]) / ptl["6601"] * 100, c: css("--bar-dim") }])
+        }],
+        factos: [
+          tr(`<b>As pastagens ocupam ${fmt(past, 0)} milhões de hectares</b>: ${fmt(past / landA * 100, 0)}% das terras emersas e ${fmt(past / agri * 100, 0)}% da terra agrícola (FAOSTAT, ${ly}).`, `<b>Pasture covers ${fmt(past, 0)} million hectares</b>: ${fmt(past / landA * 100, 0)}% of the world’s land and ${fmt(past / agri * 100, 0)}% of agricultural land (FAOSTAT, ${ly}).`),
+          tr(`<b>Desde o máximo de ${pastMax.y} (${fmt(pastMax.v, 0)} Mha), as pastagens recuaram ${fmt((1 - past / pastMax.v) * 100, 1)}%</b> (FAOSTAT).`, `<b>Since the peak of ${pastMax.y} (${fmt(pastMax.v, 0)} Mha), pasture has shrunk ${fmt((1 - past / pastMax.v) * 100, 1)}%</b> (FAOSTAT).`),
+          tr(`<b>Em Portugal, as pastagens ocupam ${fmt(ptl["6655"] / 1000, 2)} milhões de hectares</b>, ${fmt(ptl["6655"] / ptl["6601"] * 100, 0)}% do território (${ptl.year}).`, `<b>In Portugal, pasture covers ${fmt(ptl["6655"] / 1000, 2)} million hectares</b>, ${fmt(ptl["6655"] / ptl["6601"] * 100, 0)}% of the territory (${ptl.year}).`),
+          tr(`<b>A pastagem é só uma parte da conta:</b> a terra cultivada (${fmt(crop / agri * 100, 0)}% da terra agrícola) também alimenta animais, porque parte dos cereais e das oleaginosas vai para ração.`, `<b>Pasture is only part of the account:</b> cropland (${fmt(crop / agri * 100, 0)}% of agricultural land) also feeds animals, because part of the cereals and oilseeds goes to feed.`)
+        ],
+        praticas: [
+          [tr("Pastoreio rotativo", "Rotational grazing"), tr("Dividir o pasto em parcelas e dar tempo de descanso para a erva recuperar mantém o solo coberto e produtivo.", "Dividing the pasture into plots and giving the grass time to recover keeps the soil covered and productive.")],
+          [tr("Árvores no pasto", "Trees in the pasture"), tr("Sistemas silvopastoris dão sombra e abrigo aos animais e ao solo, como o montado.", "Silvopastoral systems give shade and shelter to animals and soil, as in the montado.")],
+          [tr("Pastagens diversas", "Diverse pastures"), tr("Misturas com leguminosas fixam azoto e dão alimento mais equilibrado ao longo do ano.", "Mixtures with legumes fix nitrogen and give more balanced feed through the year.")],
+          [tr("Carga animal à medida", "Stocking matched to the land"), tr("Ajustar o número de animais ao que o terreno suporta em cada estação evita o sobrepastoreio.", "Matching the number of animals to what the land can carry in each season avoids overgrazing.")]
+        ],
+        links: [[tr("Solo e vida no Observatório da Terra", "Land and life in the Earth Observatory"), "/observatorio/observatorio-terra.html#terra-vida"], [tr("Produção agrícola mundial", "World agricultural production"), "/observatorio/producao-agricola.html#terra"]]
+      },
+      escala: {
+        id: "escala", c: COR.alimento, nome: tr("Carne e leite", "Meat and milk"),
+        v: "×" + fmt(meatG.mt.at(-1) / meatG.mt[0], 1), k: tr("de carne produzida no mundo desde " + A.world_groups.years[0], "of meat produced worldwide since " + A.world_groups.years[0]),
+        titulo: tr("Mais carne e leite: o que mudou e o que Portugal importa", "More meat and milk: what changed and what Portugal imports"),
+        fig: [{
+          t: tr("Carne produzida no mundo, por continente", "Meat produced worldwide, by continent"),
+          d: tr("Milhões de toneladas por ano, " + contMeat.years[0] + "–" + contMeat.years.at(-1) + ".", "Million tonnes per year, " + contMeat.years[0] + "–" + contMeat.years.at(-1) + "."),
+          src: "FAOSTAT, produção (QCL)",
+          draw: (el) => line(el, { x: contMeat.years, series: contMeat.series.map((x, i) => ({ n: EN ? CONT_EN[x.id] : x.name, c: css(SER[i % SER.length]), v: x.mt })), zero: true, yf: (v) => fmt(v, 0), tf: (se, i) => fmt(se.v[i], 0) + " Mt", endLabels: true, aria: tr("Carne por continente", "Meat by continent"), table: true })
+        }, {
+          t: tr("Quanto Portugal produz do que consome", "How much of what it consumes Portugal produces"),
+          d: tr("Produção ÷ consumo aparente, média " + ptWheat.years[0] + "–" + ptWheat.years.at(-1) + ". 100% = autossuficiente.", "Production ÷ apparent consumption, " + ptWheat.years[0] + "–" + ptWheat.years.at(-1) + " average. 100% = self-sufficient."),
+          src: "FAOSTAT, produção e comércio",
+          html: miniBars([[ssr(1058), tr("Frango", "Chicken")], [ssr(1035), tr("Porco", "Pork")], [ssr(882), tr("Leite de vaca", "Cow milk")], [ptMaize, tr("Milho", "Maize")], [ssr(236), tr("Soja", "Soya")]].map(([r, l]) => ({ l, v: Math.min(r.ssr, 150), t: fmt(r.ssr, 0) + "%", hl: r.ssr >= 100 })), { max: 150, ref: 100 })
+        }],
+        factos: [
+          tr(`<b>A produção mundial de carne passou de ${fmt(meatG.mt[0], 0)} para ${fmt(meatG.mt.at(-1), 0)} milhões de toneladas</b> (${A.world_groups.years[0]}–${A.world_groups.years.at(-1)}), e a de leite ×${fmt(milkG.mt.at(-1) / milkG.mt[0], 1)} (FAOSTAT).`, `<b>World meat production went from ${fmt(meatG.mt[0], 0)} to ${fmt(meatG.mt.at(-1), 0)} million tonnes</b> (${A.world_groups.years[0]}–${A.world_groups.years.at(-1)}), and milk ×${fmt(milkG.mt.at(-1) / milkG.mt[0], 1)} (FAOSTAT).`),
+          tr(`<b>A Ásia produz ${fmt(contShare(5300, contMeat.years.length - 1), 0)}% da carne do mundo</b>; em ${contMeat.years[0]} a Europa liderava, com ${fmt(contShare(5400, 0), 0)}%.`, `<b>Asia produces ${fmt(contShare(5300, contMeat.years.length - 1), 0)}% of the world’s meat</b>; in ${contMeat.years[0]} Europe led, with ${fmt(contShare(5400, 0), 0)}%.`),
+          tr(`<b>Portugal produz ${fmt(ssr(1058).ssr, 0)}% do frango e ${fmt(ssr(1035).ssr, 0)}% da carne de porco que consome</b>, mas só ${fmt(ptMaize.ssr, 0)}% do milho e ${ssr(236).ssr < 1 ? "praticamente nenhuma soja" : fmt(ssr(236).ssr, 0) + "% da soja"}, matérias-primas habituais das rações.`, `<b>Portugal produces ${fmt(ssr(1058).ssr, 0)}% of the chicken and ${fmt(ssr(1035).ssr, 0)}% of the pork it consumes</b>, but only ${fmt(ptMaize.ssr, 0)}% of the maize and ${ssr(236).ssr < 1 ? "practically no soya" : fmt(ssr(236).ssr, 0) + "% of the soya"}, usual feed raw materials.`),
+          tr(`<b>Em 2024, a disponibilidade de carne, pescado e ovos excedeu em ${pp} pontos percentuais a proporção recomendada pela Roda dos Alimentos</b> (INE).`, `<b>In 2024, the availability of meat, fish and eggs exceeded the proportion recommended by the Portuguese Food Wheel by ${(pp || "").replace(",", ".")} percentage points</b> (INE).`)
+        ],
+        praticas: [
+          [tr("Comer menos, e melhor", "Eat less, and better"), tr("Carne de pastoreio e de produção local, em menor quantidade, pesa menos no clima, na água e no território.", "Pasture-raised and locally produced meat, in smaller amounts, weighs less on climate, water and territory.")],
+          [tr("Rações com menos importação", "Feed with fewer imports"), tr("Forragens e leguminosas da própria exploração reduzem a dependência de soja e milho vindos de fora.", "Forages and legumes from the farm itself reduce dependence on soya and maize from abroad.")],
+          [tr("Aproveitar tudo", "Use everything"), tr("Estrume, sobras e subprodutos voltam ao solo como fertilidade em vez de resíduo.", "Manure, leftovers and by-products go back to the soil as fertility instead of waste.")],
+          [tr("Conhecer a origem", "Know the origin"), tr("Perguntar onde e como foi criado o animal permite escolher sistemas menos concentrados.", "Asking where and how the animal was raised makes it possible to choose less concentrated systems.")]
+        ],
+        links: [[tr("Produção agrícola mundial", "World agricultural production"), "/observatorio/producao-agricola.html"], [tr("Portugal na produção agrícola", "Portugal in agricultural production"), "/observatorio/producao-agricola.html#portugal"]]
+      }
+    } : {};
+
+    /* ---------- mineração (só em Mineração) ---------- */
+    const MG = X["mining-global"], MP = X.mineracao;
+    const comm = (id) => (MG ? MG.commodities.find((c) => c.id === id) : null);
+    const cn = (c) => tr(c.name_pt, c.name_en);
+    const cp = (c) => tr(c.pressure_pt, c.pressure_en);
+    const mat = dest.materiais, ew = dest.ewaste;
+    const ewPct = ew ? (ew.leitura.match(/(\d+),(\d+)/) || [])[0] : null;
+    const fontes = (id) => (t.fonte[id] ? t.fonte[id].titulo : id);
+    const casesBy = (id) => (MG ? MG.cases.filter((c) => c.commodity === id).length : 0);
+    const mpLit = (MP || []).filter((m) => /l[íi]tio|lepidolite/i.test(m.mineral)).length;
+    const mpExp = (MP || []).filter((m) => /^Em exploração/.test(m.status)).length;
+    const mpEnc = (MP || []).filter((m) => /^Encerrada/.test(m.status)).length;
+    const mpGrp = (st) => st.split(" — ")[0].replace(/ desde.*/, "");
+    const tons = (c) => { const v = c.production_2024; return v >= 1e6 ? fmt(v / 1e6, 0) + tr(" milhões de t", " million t") : v >= 1e4 ? fmt(v / 1e3, 0) + tr(" mil t", " thousand t") : fmt(v, 0) + " t"; };
+    const MIN = MG && MP && mat && ew ? {
+      materiais: {
+        id: "materiais", c: COR.solo, nome: tr("Materiais", "Materials"),
+        v: "×" + fmt(mat.valor / mat.referencia.valor, 1), k: tr("extração mundial de materiais desde " + mat.referencia.ano, "world material extraction since " + mat.referencia.ano),
+        titulo: tr("Cada telemóvel, painel e estrada começa numa mina", "Every phone, panel and road starts in a mine"),
+        fig: [{
+          t: tr("Extração mundial de materiais", "World material extraction"),
+          d: tr("Mil milhões de toneladas por ano.", "Billion tonnes per year."),
+          src: fontes(mat.fonte_id),
+          html: miniBars([{ l: String(mat.referencia.ano), v: mat.referencia.valor, t: fmt(mat.referencia.valor, 0), c: css("--bar-dim") }, { l: String(mat.ano), v: mat.valor, t: fmt(mat.valor, 1), c: COR.solo, hl: true }])
+        }, {
+          t: tr("Casos globais acompanhados, por matéria", "Global cases followed, by commodity"),
+          d: tr("Inventário curado do bioCulture; não representa todas as minas do mundo.", "Curated bioCulture inventory; it does not represent every mine in the world."),
+          src: tr("bioCulture, inventário curado (não exaustivo)", "bioCulture, curated inventory (not exhaustive)"),
+          draw: (el) => hbars(el, MG.commodities.map((c, i) => ({ l: cn(c), v: casesBy(c.id), t: String(casesBy(c.id)), c: css(SER[i % SER.length]) })).sort((a, b) => b.v - a.v), { unit: "n", table: [tr("Matéria", "Commodity"), "n"] })
+        }],
+        factos: [
+          tr(`<b>A extração global de materiais passou de ${fmt(mat.referencia.valor, 0)} para ${fmt(mat.valor, 1)} mil milhões de toneladas</b> (${mat.referencia.ano}–${mat.ano}), mais do que o triplo (UNEP).`, `<b>Global material extraction rose from ${fmt(mat.referencia.valor, 0)} to ${fmt(mat.valor, 1)} billion tonnes</b> (${mat.referencia.ano}–${mat.ano}), more than triple (UNEP).`),
+          tr(`<b>Em 2024 produziram-se cerca de ${tons(comm("copper"))} de cobre, ${tons(comm("lithium"))} de lítio e ${tons(comm("gold"))} de ouro</b> (USGS). As unidades diferem e não se somam.`, `<b>In 2024 about ${tons(comm("copper"))} of copper, ${tons(comm("lithium"))} of lithium and ${tons(comm("gold"))} of gold were produced</b> (USGS). Units differ and cannot be added.`),
+          tr(`<b>Geraram-se ${fmt(ew.valor, 0)} milhões de toneladas de resíduos eletrónicos em ${ew.ano}</b>: só ${ewPct}% foram formalmente recolhidos e reciclados (ITU).`, `<b>${fmt(ew.valor, 0)} million tonnes of electronic waste were generated in ${ew.ano}</b>: only ${(ewPct || "").replace(",", ".")}% were formally collected and recycled (ITU).`),
+          tr(`<b>Produção anual dá escala, não impacto:</b> teor do minério, método, resíduos, água, energia e ecossistema mudam completamente cada caso.`, `<b>Annual output gives scale, not impact:</b> ore grade, method, waste, water, energy and ecosystem change each case completely.`)
+        ],
+        praticas: [
+          [tr("Reparar, reutilizar, reciclar", "Repair, reuse, recycle"), tr("Cada aparelho que dura mais anos evita extrair materiais novos.", "Every device that lasts more years avoids extracting new materials.")],
+          [tr("Entregar os eletrónicos certos", "Hand in electronics properly"), tr("Pilhas, baterias e equipamentos em pontos de recolha certificados entram no circuito de reciclagem.", "Batteries and equipment at certified collection points enter the recycling chain.")],
+          [tr("Ler o processo", "Read the process"), tr("Estudos de impacte ambiental, RECAPE e relatórios públicos dizem o que se mede e o que fica por medir.", "Environmental impact studies, RECAPE and public reports say what is measured and what is not.")],
+          [tr("Participar", "Take part"), tr("As consultas públicas são o momento legal para pedir dados e deixar objeções fundamentadas.", "Public consultations are the legal moment to ask for data and file well-founded objections.")]
+        ],
+        links: [[tr("Casos globais e portugueses", "Global and Portuguese cases"), "#casos"], [tr("Participação pública", "Public participation"), "/index.html#participacao-publica"], [tr("Vetores de pressão", "Pressure vectors"), "/observatorio/vetores-pressao-global.html"]]
+      },
+      transicao: {
+        id: "transicao", c: COR.alimento, nome: tr("Transição e Portugal", "Transition and Portugal"),
+        v: mpLit + " " + tr("de", "of") + " " + MP.length, k: tr("casos mineiros portugueses acompanhados envolvem lítio", "Portuguese mining cases followed involve lithium"),
+        titulo: tr("A transição energética também se mede nas minas", "The energy transition is also measured in mines"),
+        fig: [{
+          t: tr("Casos mineiros portugueses, por situação", "Portuguese mining cases, by status"),
+          d: tr("Concessão ou licença não significa mina em atividade.", "A concession or licence does not mean an active mine."),
+          src: tr("bioCulture, casos documentados (DGEG, APA e processos de AIA)", "bioCulture, documented cases (DGEG, APA and EIA procedures)"),
+          draw: (el) => { const c = {}; MP.forEach((m) => { const g = mpGrp(m.status); c[g] = (c[g] || 0) + 1; }); hbars(el, Object.entries(c).sort((a, b) => b[1] - a[1]).map(([l, n], i) => ({ l, v: n, t: String(n), c: css(SER[i % SER.length]) })), { unit: "n", table: [tr("Situação", "Status"), "n"] }); }
+        }, {
+          t: tr("Eletricidade renovável", "Renewable electricity"),
+          d: tr("Percentagem da produção de eletricidade, ano mais recente.", "Share of electricity output, latest year."),
+          src: R.indicadores.eletricidade_renovavel.fonte,
+          html: miniBars([{ l: nm("WLD"), v: W.re.v, t: fmt(W.re.v, 1) + "%", c: css("--s1") }, { l: nm("EUU"), v: t.eu("eletricidade_renovavel").v, t: fmt(t.eu("eletricidade_renovavel").v, 1) + "%", c: css("--s3") }, { l: nm("PRT"), v: t.pt("eletricidade_renovavel").v, t: fmt(t.pt("eletricidade_renovavel").v, 1) + "%", c: css("--s2"), hl: true }], { max: 100 })
+        }],
+        factos: [
+          tr(`<b>Dos ${MP.length} casos mineiros portugueses acompanhados, ${mpLit} envolvem lítio, ${mpExp} estão em exploração e ${mpEnc} são passivos históricos em remediação.</b>`, `<b>Of the ${MP.length} Portuguese mining cases followed, ${mpLit} involve lithium, ${mpExp} are in operation and ${mpEnc} are historical liabilities under remediation.</b>`),
+          tr(`<b>${fmt(W.re.v, 1)}% da eletricidade mundial é renovável; em Portugal, ${fmt(t.pt("eletricidade_renovavel").v, 1)}%</b>.`, `<b>${fmt(W.re.v, 1)}% of world electricity is renewable; in Portugal, ${fmt(t.pt("eletricidade_renovavel").v, 1)}%</b>.`),
+          tr(`<b>${cn(comm("lithium"))}:</b> ${cp(comm("lithium"))}`, `<b>${cn(comm("lithium"))}:</b> ${cp(comm("lithium"))}`),
+          tr(`<b>${cn(comm("rare-earths"))}:</b> ${cp(comm("rare-earths"))}`, `<b>${cn(comm("rare-earths"))}:</b> ${cp(comm("rare-earths"))}`)
+        ],
+        praticas: [
+          [tr("Poupar energia primeiro", "Save energy first"), tr("A energia que não se gasta é a que não exige nem painel, nem bateria, nem mina.", "The energy not used is the one that needs no panel, battery or mine.")],
+          [tr("Baterias com segunda vida", "Batteries with a second life"), tr("Reutilizar e reciclar baterias reduz a pressão sobre o lítio, o níquel e o cobalto.", "Reusing and recycling batteries reduces pressure on lithium, nickel and cobalt.")],
+          [tr("Distinguir prospeção de exploração", "Tell prospecting from mining"), tr("Prospeção procura e caracteriza recursos; só uma exploração aprovada extrai.", "Prospecting looks for and characterises resources; only an approved operation extracts.")],
+          [tr("Exigir medição antes, durante e depois", "Demand measurement before, during and after"), tr("Água, solo, ar e biodiversidade medidos antes da obra permitem provar o que mudou.", "Water, soil, air and biodiversity measured before works make it possible to prove what changed.")]
+        ],
+        links: [[tr("Casos e estado dos processos", "Cases and procedure status"), "#casos"], [tr("Energia no Observatório da Terra", "Energy in the Earth Observatory"), "/observatorio/observatorio-terra.html#energia"], [tr("Renováveis e território", "Renewables and territory"), "/energia/transicao-etica.html"]]
+      }
+    } : {};
+
     /* ---------- contextos: que fatores, com que título e práticas, em cada página ---------- */
     const HUB = [tr("Ver os fatores todos", "See all the factors"), "/calendario/conhecimento-cuidar.html#fatores"];
     const CTX = {
@@ -318,6 +500,66 @@
           ] }
         }
       },
+      pecuaria: {
+        ids: ["metano", "pasto", "agua", "solo", "floresta", "escala"], extra: Object.values(PEC), rotulo: tr("Na exploração", "On the farm"),
+        hub: [tr("Ver o Observatório da Terra", "See the Earth Observatory"), "/observatorio/observatorio-terra.html"],
+        eyebrow: tr("Dos dados à pecuária", "From data to livestock"),
+        h2: tr("Seis frentes onde a escala pecuária se mede", "Six fronts where livestock scale is measured"),
+        intro: tr("Os números vêm do Observatório da Terra, da FAO e dos casos documentados no bioCulture. Escolhe uma frente para ver o que os dados mostram e o que sistemas menos concentrados fazem de diferente.", "The numbers come from the Earth Observatory, FAO and the cases documented by bioCulture. Pick a front to see what the data show and what less concentrated systems do differently."),
+        over: {
+          agua: { nome: tr("Água e efluentes", "Water and effluents"), titulo: tr("Água e efluentes: o que se mede à saída", "Water and effluents: what is measured at the outlet"), fig: "stress", factos: "pec-agua", praticas: [
+            [tr("Efluentes na dose certa", "Effluents in the right dose"), tr("Chorume e estrume aplicados segundo as necessidades do solo, não em excesso, evitam nitratos nas águas.", "Slurry and manure applied according to the soil’s needs, not in excess, avoid nitrates in water.")],
+            [tr("Separar a água limpa da suja", "Keep clean water apart from dirty water"), tr("Desviar a água da chuva dos currais e das nitreiras reduz o volume de efluente a tratar.", "Diverting rainwater away from pens and manure pits reduces the volume of effluent to treat.")],
+            [tr("Animais longe das linhas de água", "Animals away from watercourses"), tr("Vedar ribeiras e manter galerias ripícolas protege a água e a margem.", "Fencing streams and keeping riparian strips protects water and banks.")],
+            [tr("Bebedouros sem perdas", "Drinkers without losses"), tr("Reparar fugas e usar bebedouros bem regulados poupa água todos os dias.", "Fixing leaks and using well-set drinkers saves water every day.")]
+          ] },
+          solo: { titulo: tr("Solo: o gado pode degradá-lo ou regenerá-lo", "Soil: livestock can degrade it or regenerate it"), praticas: [
+            [tr("Descanso do pasto", "Rest for the pasture"), tr("Dar tempo à erva para recuperar mantém o solo coberto e a raiz viva.", "Giving the grass time to recover keeps the soil covered and the roots alive.")],
+            [tr("Estrume compostado", "Composted manure"), tr("Devolve matéria orgânica e nutrientes ao solo de forma mais estável.", "It returns organic matter and nutrients to the soil in a more stable form.")],
+            [tr("Evitar compactação", "Avoid compaction"), tr("Menos pisoteio em solo encharcado e zonas de passagem protege a infiltração.", "Less trampling on waterlogged soil and in gateways protects infiltration.")],
+            [tr("Cobertura permanente", "Permanent cover"), tr("Pasto vivo todo o ano segura o solo contra a chuva forte e o vento.", "Living pasture all year holds the soil against heavy rain and wind.")]
+          ] },
+          floresta: { titulo: tr("Floresta, pasto e fogo", "Forest, pasture and fire"), praticas: [
+            [tr("Árvores e sombra", "Trees and shade"), tr("Sistemas silvopastoris protegem animais e solo do calor.", "Silvopastoral systems protect animals and soil from heat.")],
+            [tr("Pastoreio como gestão do mato", "Grazing as scrub management"), tr("Gado bem conduzido pode reduzir o combustível em faixas e zonas críticas.", "Well-managed livestock can reduce fuel in strips and critical zones.")],
+            [tr("Mosaicos com pasto verde", "Mosaics with green pasture"), tr("Pastagens entre manchas de mato e floresta quebram a continuidade do fogo.", "Pastures between patches of scrub and forest break the continuity of fire.")],
+            [tr("Proteger as linhas de água", "Protect watercourses"), tr("Galerias ripícolas mantêm humidade e vida junto às ribeiras.", "Riparian strips keep moisture and life along streams.")]
+          ] }
+        }
+      },
+      mineracao: {
+        ids: ["materiais", "transicao", "agua", "solo", "floresta", "vida"], extra: Object.values(MIN), rotulo: tr("O que fazer", "What to do"),
+        hub: [tr("Ver o Observatório da Terra", "See the Earth Observatory"), "/observatorio/observatorio-terra.html"],
+        eyebrow: tr("Dos dados à mineração", "From data to mining"),
+        h2: tr("Seis frentes onde a mineração se mede", "Six fronts where mining is measured"),
+        intro: tr("Os números vêm do Observatório da Terra, da USGS, da UNEP e dos casos documentados no bioCulture. Produção anual dá escala, não impacto: escolhe uma frente para ver o que se deve medir e o que cada pessoa pode fazer.", "The numbers come from the Earth Observatory, USGS, UNEP and the cases documented by bioCulture. Annual output gives scale, not impact: pick a front to see what should be measured and what each person can do."),
+        over: {
+          agua: { nome: tr("Água", "Water"), titulo: tr("Água: o primeiro ponto a medir", "Water: the first thing to measure"), fig: "stress", factos: "mining-agua", praticas: [
+            [tr("Pedir o balanço hídrico", "Ask for the water balance"), tr("Captação, armazenamento, recirculação e descarga devem estar escritas no estudo e na licença.", "Abstraction, storage, recirculation and discharge should be written in the study and the licence.")],
+            [tr("Medir antes, durante e depois", "Measure before, during and after"), tr("Nascentes, furos e ribeiras monitorizados desde antes da obra permitem provar o que mudou.", "Springs, boreholes and streams monitored from before the works make it possible to prove what changed.")],
+            [tr("Proteger nascentes e linhas de água", "Protect springs and watercourses"), tr("Zonas de recarga e cabeceiras de ribeiras são difíceis de repor depois de alteradas.", "Recharge zones and stream headwaters are hard to restore once altered.")],
+            [tr("Perguntar pelos rejeitados", "Ask about tailings"), tr("O local, a impermeabilização e a vigilância da escombreira ou da barragem de rejeitados contam tanto como a cava.", "The location, lining and monitoring of the waste dump or tailings dam count as much as the pit.")]
+          ] },
+          solo: { nome: tr("Solo e rejeitados", "Soil and tailings"), titulo: tr("Solo: rejeitados, cavas e o que se repõe", "Soil: tailings, pits and what is restored"), factos: "mining-solo", praticas: [
+            [tr("Guardar e repor o solo vivo", "Keep and restore living soil"), tr("A camada superficial separada e conservada durante a obra volta a ser a base da recuperação.", "The topsoil set aside and kept during works becomes the base of restoration again.")],
+            [tr("Plano de recuperação com garantia", "Restoration plan with a guarantee"), tr("Recuperação paisagística e caução financeira definidas à partida evitam passivos para as gerações seguintes.", "Landscape restoration and a financial bond defined up front avoid liabilities for later generations.")],
+            [tr("Medir a drenagem ácida", "Measure acid drainage"), tr("Rochas com sulfuretos podem acidificar as águas: convém monitorizar pH e metais.", "Rocks with sulphides can acidify water: pH and metals should be monitored.")],
+            [tr("Ver os passivos históricos", "Look at historical liabilities"), tr("Os casos encerrados mostram quanto tempo dura a remediação.", "Closed cases show how long remediation lasts.")]
+          ] },
+          floresta: { nome: tr("Floresta e acessos", "Forest and access"), titulo: tr("Floresta: cavas, acessos e fogo", "Forest: pits, access roads and fire"), factos: "mining-floresta", praticas: [
+            [tr("Evitar primeiro", "Avoid first"), tr("Antes de compensar, perguntar se o projeto pode evitar floresta, montado e áreas protegidas.", "Before compensating, ask whether the project can avoid forest, oak woodland and protected areas.")],
+            [tr("Contar acessos e infraestruturas", "Count access roads and infrastructure"), tr("Estradas, linhas, poeiras e escombreiras alteram mais paisagem do que a cava.", "Roads, power lines, dust and waste dumps alter more landscape than the pit.")],
+            [tr("Prevenir o fogo", "Prevent fire"), tr("Faixas de gestão de combustível e meios de combate previstos desde o início.", "Fuel-management strips and firefighting means planned from the start.")],
+            [tr("Compensar com medição", "Offset with measurement"), tr("A compensação só vale se for medida e verificada durante décadas.", "Compensation is only worth something if it is measured and verified for decades.")]
+          ] },
+          vida: { nome: tr("Vida e áreas sensíveis", "Life and sensitive areas"), titulo: tr("Vida: evitar primeiro, compensar depois", "Life: avoid first, offset later"), factos: "mining-vida", fig: "primeira", praticas: [
+            [tr("Ver a sobreposição", "Check the overlap"), tr("Confirmar se a área do projeto toca em áreas protegidas, Rede Natura ou habitats sensíveis.", "Check whether the project area touches protected areas, Natura 2000 or sensitive habitats.")],
+            [tr("Estado de referência", "Baseline"), tr("Inventários de espécies e habitats antes da obra, por pessoas independentes quando possível.", "Inventories of species and habitats before works, by independent people when possible.")],
+            [tr("Monitorizar e publicar", "Monitor and publish"), tr("Resultados públicos permitem a quem vive no território acompanhar o que acontece.", "Public results let people who live in the territory follow what happens.")],
+            [tr("Dar voz a quem vive lá", "Give a voice to those who live there"), tr("Comunidades e agricultores locais conhecem o que a carta e o estudo não mostram.", "Local communities and farmers know what the map and the study do not show.")]
+          ] }
+        }
+      },
       vinha: {
         ids: ["clima", "agua", "solo", "vida", "uva"], extra: [UVA], rotulo: tr("Na vinha", "In the vineyard"),
         eyebrow: tr("Dos dados à vinha", "From data to the vineyard"),
@@ -355,10 +597,25 @@
     F.push(...(cx.extra || []));
     const here = location.pathname.replace(/\.html$/, "");
     const FS = cx.ids.map((id) => F.find((f) => f.id === id)).filter(Boolean).map((f) => {
-      const o = Object.assign({}, f, (cx.over || {})[f.id] || {});
+      const ov = (cx.over || {})[f.id] || {}, base = f.factos;
+      /* Textos de números que dependem dos factos já calculados do fator (indicados por chave nos contextos). */
+      const FX = {
+        "pec-agua": () => [base[0], base[1], tr(`<b>${ptEfl} das ${(PL || []).length} instalações documentadas têm efluentes, estrume ou nitratos entre as pressões potenciais a medir.</b> Pressão potencial não é dano comprovado.`, `<b>${ptEfl} of the ${(PL || []).length} documented facilities have effluents, manure or nitrates among the potential pressures to measure.</b> Potential pressure is not proven harm.`)],
+        "mining-agua": () => [base[0], tr(`<b>${cn(comm("copper"))}:</b> ${cp(comm("copper"))}`, `<b>${cn(comm("copper"))}:</b> ${cp(comm("copper"))}`), tr(`<b>${cn(comm("lithium"))}:</b> ${cp(comm("lithium"))}`, `<b>${cn(comm("lithium"))}:</b> ${cp(comm("lithium"))}`)],
+        "mining-solo": () => [tr(`<b>${cn(comm("gold"))}:</b> ${cp(comm("gold"))}`, `<b>${cn(comm("gold"))}:</b> ${cp(comm("gold"))}`), tr(`<b>${cn(comm("coal"))}:</b> ${cp(comm("coal"))}`, `<b>${cn(comm("coal"))}:</b> ${cp(comm("coal"))}`), base[0], base[2]],
+        "mining-floresta": () => [tr(`<b>${cn(comm("nickel-cobalt"))}:</b> ${cp(comm("nickel-cobalt"))}`, `<b>${cn(comm("nickel-cobalt"))}:</b> ${cp(comm("nickel-cobalt"))}`), tr(`<b>${cn(comm("iron-bauxite"))}:</b> ${cp(comm("iron-bauxite"))}`, `<b>${cn(comm("iron-bauxite"))}:</b> ${cp(comm("iron-bauxite"))}`), base[0], base[3]],
+        "mining-vida": () => [base[0], base[1], base[2]]
+      };
+      const o = Object.assign({}, f);
+      Object.keys(ov).forEach((k) => {
+        const v = ov[k];
+        if (k === "factos") o.factos = FX[v] ? FX[v]() : v;
+        else if (k === "fig") o.fig = v === "stress" ? [f.fig[1]] : v === "primeira" ? [f.fig[0]] : v;
+        else o[k] = v;
+      });
       if (contexto !== "conhecimento") {
-        /* Fora da página de conhecimento: sem ligações para âncoras que não existem aqui nem para a própria página; com ligação ao conjunto. */
-        o.links = o.links.filter(([, h]) => (h === "#castas" ? contexto === "vinha" : !h.startsWith("#")) && h.split("#")[0].replace(/\.html$/, "") !== here).concat([HUB]);
+        /* Fora da página de conhecimento: só âncoras que existem nesta página e nenhuma ligação para ela própria; no fim, ligação ao conjunto. */
+        o.links = o.links.filter(([, h]) => (h.startsWith("#") ? !!document.getElementById(h.slice(1)) : true) && h.split("#")[0].replace(/\.html$/, "") !== here).concat([cx.hub || HUB]);
       }
       return o;
     });
@@ -417,9 +674,11 @@
   let feito = false;
   const iniciar = () => {
     if (feito) return; feito = true;
-    Promise.all([T.load(), get("/data/agriculture-global.json")])
-      .then(([{ R, CLIMA, VET, PT }, A]) => {
-        construir(R, CLIMA, VET, PT, A);
+    const EXTRA = { pecuaria: ["livestock-global", "pecuaria_industrial"], mineracao: ["mining-global", "mineracao"] }[contexto] || [];
+    Promise.all([T.load(), get("/data/agriculture-global.json"), Promise.all(EXTRA.map((n) => get("/data/" + n + ".json")))])
+      .then(([{ R, CLIMA, VET, PT }, A, ex]) => {
+        const X = {}; EXTRA.forEach((n, i) => { X[n] = ex[i]; });
+        construir(R, CLIMA, VET, PT, A, X);
         if (location.hash === "#fatores") setTimeout(() => host.scrollIntoView({ block: "start" }), 60);
       })
       .catch(() => { host.hidden = true; });
