@@ -9,10 +9,20 @@ assert.equal(ids.length, new Set(ids).size, 'IDs repetidos na página do Observa
 for (const id of ['relatorio-terra', 'relatorio-fontes', 'panorama-global', 'sistemas', 'pressure-news', 'sidebar']) assert(ids.includes(id), `falta #${id}`);
 assert.equal((html.match(/<h1\b/g) || []).length, 1);
 
-for (const script of ['assets/js/biocultura-graficos.js', 'assets/js/pages/observatorio-terra-relatorio.js', 'assets/js/pages/observatorio-vetores-pressao-global-2.js']) {
+for (const script of ['assets/js/biocultura-graficos.js', 'assets/js/biocultura-terra-dados.js', 'assets/js/pages/observatorio-terra-relatorio.js', 'assets/js/pages/observatorio-vetores-pressao-global-2.js']) {
   assert(existsSync(script), script);
   new vm.Script(read(script));
   assert(new RegExp(script.replace(/[.*+?^${}()|[\]\\\/]/g, '\\$&') + '\\?v=\\d+').test(html), `${script} tem de ser carregado com versão`);
+}
+// Cartões do Observatório nas páginas temáticas: cada página liga os scripts e os ids pedidos existem.
+new vm.Script(read('assets/js/biocultura-terra-cartoes.js'));
+const cartoes = { 'recursos/agua.html': ['stress', 'agua'], 'recursos/ar.html': ['ar'], 'recursos/solo.html': ['solo'], 'ecossistemas/biodiversidade.html': ['vida'], 'energia/energia.html': ['renovaveis', 'acesso'], 'energia/transicao-etica.html': ['renovaveis'], 'observatorio/limitar-ultrapassagem-1-5.html': ['clima', 'co2', 'mar'] };
+const conclusoes = read('assets/js/biocultura-terra-dados.js');
+for (const [pagina, ids] of Object.entries(cartoes)) {
+  const h = read(pagina);
+  assert(h.includes('data-terra-cartoes="' + ids.join(',') + '"'), pagina + ': falta o bloco de cartões');
+  for (const f of ['biocultura-graficos.js', 'biocultura-terra-dados.js', 'biocultura-terra-cartoes.js']) assert(h.includes(f), pagina + ': falta ' + f);
+  ids.forEach((id) => assert(conclusoes.includes('"' + id + '"'), 'conclusão inexistente: ' + id));
 }
 // A barra fixa só pode ser ligada depois de os capítulos existirem.
 assert(!html.includes('biocultura-sticky-nav.js'), 'a barra fixa é ligada pelo relatório, depois de construído');

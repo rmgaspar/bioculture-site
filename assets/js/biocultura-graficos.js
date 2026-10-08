@@ -10,7 +10,9 @@
   const esc = (v) => String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const SER = ["--s1", "--s2", "--s3", "--s4", "--s5", "--s6", "--s7", "--s8"];
   const root = () => document.querySelector(".agri-report") || document.documentElement;
-  const css = (v) => getComputedStyle(root()).getPropertyValue(v).trim();
+  /* Fora de um .agri-report (cartões noutras páginas) os tokens não existem: valores por defeito iguais aos do CSS. */
+  const TOKENS = { "--s1": "#2a78d6", "--s2": "#eb6834", "--s3": "#1baf7a", "--s4": "#eda100", "--s5": "#e87ba4", "--s6": "#008300", "--s7": "#4a3aa7", "--s8": "#e34948", "--bar": "#4f7a5e", "--bar-dim": "#b9cbbd", "--ink": "#1c2a22", "--muted": "#626f67", "--surface": "#fcfcfb", "--pos": "#2a78d6", "--neg": "#e34948" };
+  const css = (v) => getComputedStyle(root()).getPropertyValue(v).trim() || TOKENS[v] || "";
 
   /* dica flutuante */
   let tip = document.getElementById("agri-tip");
