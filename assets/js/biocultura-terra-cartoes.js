@@ -11,19 +11,20 @@
     clima: [tr("Clima", "Climate"), "#b4472f"], energia: [tr("Energia", "Energy"), "#b87a0c"], ar: [tr("Ar", "Air"), "#4f7f9e"],
     agua: [tr("Água", "Water"), "#2a6fb0"], "terra-vida": [tr("Solo e vida", "Land and life"), "#7d5a36"]
   };
+  const TEMA = { agua: ["a água", "water"], ar: ["o ar", "air"], solo: ["o solo", "soil"], biodiversidade: ["a biodiversidade", "biodiversity"], energia: ["a energia", "energy"], renovaveis: ["as renováveis", "renewables"], clima: ["o clima", "climate"] };
   const lang = new URLSearchParams(location.search).get("lang");
   let all = null;
   const compute = () => (all ? Promise.resolve(all) : T.load().then(({ R, CLIMA, VET }) => (all = T.create(R, CLIMA, VET).findings())));
 
   function render(box) {
-    const ids = box.dataset.terraCartoes.split(",").map((s) => s.trim()), cap = box.dataset.cap, info = CAP[cap] || CAP.clima;
+    const ids = box.dataset.terraCartoes.split(",").map((s) => s.trim()), cap = box.dataset.cap, info = CAP[cap] || CAP.clima, tema = TEMA[box.dataset.tema] || [info[0].toLowerCase(), info[0].toLowerCase()];
     compute().then((list) => {
       const sel = ids.map((id) => list.find((f) => f.id === id)).filter(Boolean);
       if (!sel.length) return;
       box.innerHTML = `<div class="agri-report terra-cartoes" style="--cap:${info[1]}">
         <div class="sec-head"><span class="eyebrow">${tr("Do Observatório da Terra", "From the Earth Observatory")} · ${esc(info[0])}</span></div>
-        <ol class="findings tc">${sel.map((f) => `<li><span class="n"><i class="tc-dot"></i></span><div class="ftxt">${f.html}</div>${f.mini}</li>`).join("")}</ol>
-        <a class="tc-link" href="/observatorio/observatorio-terra.html${lang ? "?lang=" + encodeURIComponent(lang) : ""}#${esc(cap)}">${tr(`Ver o capítulo «${info[0]}» no Observatório da Terra`, `See the “${info[0]}” chapter in the Earth Observatory`)} →</a>
+        <ol class="findings tc">${sel.map((f) => `<li><div class="ftxt">${f.html}</div>${f.mini}</li>`).join("")}</ol>
+        <a class="tc-link" href="/observatorio/observatorio-terra.html${lang ? "?lang=" + encodeURIComponent(lang) : ""}#${esc(cap)}">${tr(`Ver ${tema[0]} em detalhe no Observatório da Terra`, `See ${tema[1]} in detail in the Earth Observatory`)} →</a>
       </div>`;
     }).catch(() => { box.hidden = true; });
   }
