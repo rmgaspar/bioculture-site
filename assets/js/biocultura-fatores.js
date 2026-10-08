@@ -1,7 +1,8 @@
 /* «Dos dados à parcela»: fatores que mudam o que se pode cultivar, cada um com os números do Observatório da Terra
    e da produção agrícola mundial (FAOSTAT) e as práticas regenerativas que lhes respondem. Serve três páginas, escolhidas
    por data-contexto no <section id="fatores">: conhecimento (seis fatores), calendario (quatro), vinha (cinco, com a uva),
-   pecuaria e mineracao (seis cada, com fatores próprios a partir de livestock-global, pecuaria_industrial, mining-global e mineracao).
+   pecuaria e mineracao (seis cada, com fatores próprios a partir de livestock-global, pecuaria_industrial, mining-global e mineracao),
+   digital (centros de dados) e energia (acesso, renováveis, ar, clima, território).
    Nada é escrito à mão: os valores saem de /data/observatorio-terra-relatorio.json, observatorio_global.json,
    vetores_pressao_global.json, observatorio_terra.json e agriculture-global.json. */
 (function () {
@@ -459,6 +460,223 @@
       }
     } : {};
 
+
+    /* ---------- eletricidade renovável (Digital e Energia) ---------- */
+    const reW = t.wl("eletricidade_renovavel"), reE = t.eu("eletricidade_renovavel"), reP = t.pt("eletricidade_renovavel");
+    const rfW = t.wl("renovavel_final"), rfP = t.pt("renovavel_final"), rfE = t.eu("renovavel_final");
+    const inW = t.wl("intensidade_energetica"), inP = t.pt("intensidade_energetica");
+    const reSer = ser("eletricidade_renovavel", "WLD"), reYears = []; for (let y = Math.max(reSer.a, 2000); y <= reW.y; y++) reYears.push(y);
+    const ghg = ST.emissoes_gases_efeito_estufa.valores, ghgY = Object.keys(ghg).map(Number).sort((a, b) => a - b);
+    const REDE = {
+      id: "rede", c: COR.alimento, nome: tr("Rede renovável", "Renewable grid"),
+      v: fmt(reP.v, 1) + "%", k: tr("da eletricidade em Portugal é renovável (" + reP.y + "); no mundo, " + fmt(reW.v, 1) + "%", "of electricity in Portugal is renewable (" + reP.y + "); worldwide, " + fmt(reW.v, 1) + "%"),
+      titulo: tr("De onde vem a eletricidade", "Where electricity comes from"),
+      fig: [{
+        t: tr("Eletricidade renovável", "Renewable electricity"),
+        d: tr("Percentagem da produção de eletricidade, " + reYears[0] + "–" + reW.y + ".", "Share of electricity output, " + reYears[0] + "–" + reW.y + "."),
+        src: R.indicadores.eletricidade_renovavel.fonte,
+        draw: (el) => line(el, { x: reYears, series: [["WLD", "--s1"], ["EUU", "--s3"], ["PRT", "--s2"]].map(([c, v]) => ({ n: nm(c), c: css(v), v: reYears.map((y) => at("eletricidade_renovavel", c, y)) })), zero: true, yf: (v) => fmt(v, 0) + "%", tf: (se, i) => fmt(se.v[i], 1) + "%", endLabels: true, aria: tr("Eletricidade renovável", "Renewable electricity"), table: true, tableEvery: 5 })
+      }, {
+        t: tr("Eletricidade não é toda a energia", "Electricity is not all energy"),
+        d: tr("Quota de renováveis na energia final (calor, transportes e eletricidade), ano mais recente.", "Share of renewables in final energy (heat, transport and electricity), latest year."),
+        src: R.indicadores.renovavel_final.fonte,
+        html: miniBars([{ l: nm("WLD") + " " + rfW.y, v: rfW.v, t: fmt(rfW.v, 1) + "%", c: css("--s1") }, { l: nm("EUU") + " " + rfE.y, v: rfE.v, t: fmt(rfE.v, 1) + "%", c: css("--s3") }, { l: nm("PRT") + " " + rfP.y, v: rfP.v, t: fmt(rfP.v, 1) + "%", c: css("--s2"), hl: true }], { max: 100 })
+      }],
+      factos: [
+        tr(`<b>${fmt(reW.v, 1)}% da eletricidade mundial é renovável; em Portugal, ${fmt(reP.v, 1)}%</b> e na União Europeia ${fmt(reE.v, 1)}%.`, `<b>${fmt(reW.v, 1)}% of world electricity is renewable; in Portugal, ${fmt(reP.v, 1)}%</b> and in the European Union ${fmt(reE.v, 1)}%.`),
+        tr(`<b>Na energia final, as renováveis são só ${fmt(rfW.v, 1)}% no mundo</b> (${rfW.y}) e ${fmt(rfP.v, 1)}% em Portugal: calor e transportes ainda dependem sobretudo de outras fontes.`, `<b>In final energy, renewables are only ${fmt(rfW.v, 1)}% worldwide</b> (${rfW.y}) and ${fmt(rfP.v, 1)}% in Portugal: heat and transport still depend mostly on other sources.`),
+        tr(`<b>Cada dólar de atividade económica usa ${fmt(inW.v, 2)} MJ de energia no mundo</b> (${inW.y}) e ${fmt(inP.v, 2)} MJ em Portugal: um valor mais baixo significa menos energia por unidade produzida.`, `<b>Each dollar of economic activity uses ${fmt(inW.v, 2)} MJ of energy worldwide</b> (${inW.y}) and ${fmt(inP.v, 2)} MJ in Portugal: a lower value means less energy per unit produced.`)
+      ],
+      praticas: [],
+      links: [[tr("Energia no Observatório da Terra", "Energy in the Earth Observatory"), "/observatorio/observatorio-terra.html#energia"]]
+    };
+
+    /* ---------- energia ---------- */
+    const EN7 = X["energy-overview"], RP = X["renewable-projects"];
+    const lowAcc = t.accRows.slice().sort((a, b) => a.v - b.v).slice(0, 4);
+    const pmTop = t.pmRows.slice().sort((a, b) => b.v - a.v).slice(0, 6);
+    const mortW = t.wl("mortalidade_ar"), mortP = t.pt("mortalidade_ar");
+    const CPT = { India: "Índia", Kenya: "Quénia", Morocco: "Marrocos", "United Kingdom": "Reino Unido" };
+    const pc = (c) => (EN ? c : CPT[c] || c);
+    const ENER = EN7 && RP ? {
+      acesso: {
+        id: "acesso", c: COR.alimento, nome: tr("Acesso à eletricidade", "Access to electricity"),
+        v: fmt(100 - W.acc.v, 1) + "%", k: tr("da população mundial ainda não tem eletricidade (" + W.acc.y + ")", "of the world’s population still has no electricity (" + W.acc.y + ")"),
+        titulo: tr("Antes de transitar, é preciso chegar a todos", "Before transitioning, power must reach everyone"),
+        fig: [{
+          t: tr("Estados com menos acesso", "States with the least access"),
+          d: tr("População com acesso a eletricidade, ano mais recente.", "Population with access to electricity, latest year."),
+          src: R.indicadores.acesso_eletricidade.fonte,
+          html: miniBars([{ l: nm("WLD"), v: W.acc.v, t: fmt(W.acc.v, 1) + "%", c: css("--s1") }].concat(lowAcc.map((r, i) => ({ l: nm(r.c), v: r.v, t: fmt(r.v, 1) + "%", hl: i === 0 }))), { max: 100 })
+        }],
+        factos: [
+          tr(`<b>${fmt(100 - W.acc.v, 1)}% da população mundial ainda não tem eletricidade</b>, e ${t.accLow} Estados têm menos de 50% de acesso.`, `<b>${fmt(100 - W.acc.v, 1)}% of the world’s population still has no electricity</b>, and ${t.accLow} states have less than 50% access.`),
+          tr(`<b>${nm(lowAcc[0].c)} tem ${fmt(lowAcc[0].v, 1)}% de acesso</b> (${lowAcc[0].y}), o valor mais baixo entre os Estados com dados recentes.`, `<b>${nm(lowAcc[0].c)} has ${fmt(lowAcc[0].v, 1)}% access</b> (${lowAcc[0].y}), the lowest among states with recent data.`),
+          tr(`<b>Acesso não é consumo:</b> ter ligação à rede não diz quanta eletricidade chega, quando, nem a que preço.`, `<b>Access is not consumption:</b> a grid connection does not say how much electricity arrives, when, or at what price.`)
+        ],
+        praticas: [
+          [tr("Soluções descentralizadas", "Decentralised solutions"), tr("Solar com bateria e microrredes chegam onde a rede ainda não chega.", "Solar with batteries and mini-grids reach where the grid does not yet.")],
+          [tr("Eficiência primeiro", "Efficiency first"), tr("Equipamentos eficientes fazem a mesma coisa com menos energia, o que torna o acesso mais barato.", "Efficient equipment does the same with less energy, which makes access cheaper.")],
+          [tr("Energia para o que importa", "Energy for what matters"), tr("Saúde, água, escolas e agricultura são usos que mudam vidas.", "Health, water, schools and farming are uses that change lives.")]
+        ],
+        links: [[tr("Energia no Observatório da Terra", "Energy in the Earth Observatory"), "/observatorio/observatorio-terra.html#energia"]]
+      },
+      ar: {
+        id: "ar", c: "#4f7f9e", nome: tr("Ar", "Air"),
+        v: fmt(W.pm.v, 1) + " µg/m³", k: tr("exposição média mundial a partículas finas PM2.5 (guia da OMS: " + t.D1.PM_GUIDE + ")", "average world exposure to fine particles PM2.5 (WHO guideline: " + t.D1.PM_GUIDE + ")"),
+        titulo: tr("O ar é o preço visível da combustão", "Air is the visible price of combustion"),
+        fig: [{
+          t: tr("Partículas finas PM2.5", "Fine particles PM2.5"),
+          d: tr("Exposição média anual (µg/m³), ano mais recente.", "Average annual exposure (µg/m³), latest year."),
+          src: R.indicadores.pm25.fonte,
+          html: miniBars([{ l: nm("WLD"), v: W.pm.v, t: fmt(W.pm.v, 1), c: css("--s1") }, { l: nm("PRT"), v: t.pt("pm25").v, t: fmt(t.pt("pm25").v, 1), c: css("--s2"), hl: true }, { l: tr("Guia OMS", "WHO guideline"), v: t.D1.PM_GUIDE, t: String(t.D1.PM_GUIDE), c: css("--s3") }].concat(pmTop.slice(0, 3).map((r) => ({ l: nm(r.c), v: r.v, t: fmt(r.v, 1), c: css("--s8") }))), { ref: t.D1.PM_GUIDE })
+        }],
+        factos: [
+          tr(`<b>${t.pmAbove} de ${t.pmRows.length} Estados ultrapassam o valor-guia da OMS para PM2.5.</b> A exposição média mundial é ${fmt(W.pm.v, 1)} µg/m³, ${fmt(W.pm.v / t.D1.PM_GUIDE, 1)} vezes o guia.`, `<b>${t.pmAbove} of ${t.pmRows.length} states exceed the WHO guideline for PM2.5.</b> World average exposure is ${fmt(W.pm.v, 1)} µg/m³, ${fmt(W.pm.v / t.D1.PM_GUIDE, 1)} times the guideline.`),
+          tr(`<b>${fmt(mortW.v, 0)} mortes por 100 000 habitantes no mundo são atribuídas à poluição do ar</b> (${mortW.y}); em Portugal, ${fmt(mortP.v, 0)}.`, `<b>${fmt(mortW.v, 0)} deaths per 100,000 people worldwide are attributed to air pollution</b> (${mortW.y}); in Portugal, ${fmt(mortP.v, 0)}.`),
+          tr(`<b>A exposição em Portugal é ${fmt(t.pt("pm25").v, 1)} µg/m³</b> (${t.pt("pm25").y}), ${fmt(t.pt("pm25").v / t.D1.PM_GUIDE, 1)} vezes o guia da OMS.`, `<b>Exposure in Portugal is ${fmt(t.pt("pm25").v, 1)} µg/m³</b> (${t.pt("pm25").y}), ${fmt(t.pt("pm25").v / t.D1.PM_GUIDE, 1)} times the WHO guideline.`)
+        ],
+        praticas: [
+          [tr("Menos combustão", "Less combustion"), tr("Cada quilowatt-hora poupado e cada deslocação a pé, de bicicleta ou em transporte público evita emissões na origem.", "Every kilowatt-hour saved and every trip on foot, by bike or by public transport avoids emissions at source.")],
+          [tr("Aquecimento limpo", "Clean heating"), tr("Isolar a casa e usar bombas de calor ou lenha em equipamento eficiente reduz partículas.", "Insulating the home and using heat pumps or wood in efficient equipment reduces particles.")],
+          [tr("Nada de queimas", "No open burning"), tr("Queimar restos agrícolas ao ar livre liberta partículas e traz risco de incêndio; compostar ou triturar é melhor.", "Burning farm waste in the open releases particles and brings fire risk; composting or chipping is better.")]
+        ],
+        links: [[tr("Ar no Observatório da Terra", "Air in the Earth Observatory"), "/observatorio/observatorio-terra.html#ar"], [tr("Página do ar", "Air page"), "/recursos/ar.html"]]
+      },
+      projetos: {
+        id: "projetos", c: COR.floresta, nome: tr("Território das renováveis", "Territory of renewables"),
+        v: String(RP.projects.length), k: tr("grandes projetos renováveis analisados no mundo, com a área que ocupam", "large renewable projects analysed worldwide, with the area they occupy"),
+        titulo: tr("Renováveis também ocupam território", "Renewables also occupy territory"),
+        fig: [{
+          t: tr("Área publicada de cada projeto", "Published area of each project"),
+          d: tr("Hectares do projeto, concessão ou envolvente de planeamento. Não é pegada impermeabilizada.", "Hectares of the project, lease or planning envelope. It is not sealed footprint."),
+          src: tr("bioCulture, casos curados (Global Energy Monitor e registos oficiais)", "bioCulture, curated cases (Global Energy Monitor and official records)"),
+          draw: (el) => hbars(el, RP.projects.map((p, i) => ({ l: p.name + " · " + pc(p.country), v: p.area_ha, t: fmt(p.area_ha, 0) + " ha · " + fmt(p.capacity_mw, 0) + " MW", c: css(SER[i % SER.length]) })), { unit: "ha", table: [tr("Projeto", "Project"), "ha · MW"] })
+        }],
+        factos: [
+          tr(`<b>Uma central solar de ${fmt(RP.projects[0].capacity_mw, 0)} MW na ${pc(RP.projects[0].country)} ocupa ${fmt(RP.projects[0].area_ha, 0)} ha</b> (${RP.projects[0].name}); a eólica terrestre do ${pc(RP.projects[3].country)} ocupa ${fmt(RP.projects[3].area_ha, 0)} ha para ${fmt(RP.projects[3].capacity_mw, 0)} MW.`, `<b>A ${fmt(RP.projects[0].capacity_mw, 0)} MW solar plant in ${RP.projects[0].country} occupies ${fmt(RP.projects[0].area_ha, 0)} ha</b> (${RP.projects[0].name}); the onshore wind farm in ${RP.projects[3].country} occupies ${fmt(RP.projects[3].area_ha, 0)} ha for ${fmt(RP.projects[3].capacity_mw, 0)} MW.`),
+          tr(`<b>Área do projeto não é pegada direta:</b> a área publicada é a do projeto, da concessão ou da envolvente de planeamento, não a que fica impermeabilizada.`, `<b>Project area is not direct footprint:</b> the published area is that of the project, lease or planning envelope, not the sealed area.`),
+          tr(`<b>Sem valor não é «nenhuma»:</b> quando falta o número de sobreposição com áreas protegidas, significa «não verificado», não «zero».`, `<b>No value is not “none”:</b> when the protected-area overlap figure is missing, it means “not verified”, not “zero”.`)
+        ],
+        praticas: [
+          [tr("Escolher onde", "Choose where"), tr("Telhados, parques de estacionamento, zonas industriais e terrenos já artificializados primeiro.", "Rooftops, car parks, industrial zones and already-sealed land first.")],
+          [tr("Evitar floresta e áreas sensíveis", "Avoid forest and sensitive areas"), tr("Evitar montado, floresta e áreas protegidas antes de pensar em compensar.", "Avoid oak woodland, forest and protected areas before thinking about offsetting.")],
+          [tr("Agrovoltaico com critério", "Agrivoltaics with criteria"), tr("A produção agrícola só conta se se mantiver e for medida.", "Farm production only counts if it is kept and measured.")],
+          [tr("Participar", "Take part"), tr("As consultas públicas são o momento para pedir a área real e as medidas de proteção.", "Public consultations are the moment to ask for the real area and the protection measures.")]
+        ],
+        links: [[tr("Renováveis e território", "Renewables and territory"), "/energia/transicao-etica.html"], [tr("Participação pública", "Public participation"), "/index.html#participacao-publica"]]
+      }
+    } : {};
+
+    /* ---------- digital ---------- */
+    const DG = X["ai-data-centres-overview"], DP = X["ai-data-centres-pressures"], DC = X.impacto_digital;
+    const dpr = (id) => (DP ? DP.pressures.find((x) => x.id === id) : null), dsy = (id) => (DP ? DP.systems.find((x) => x.id === id) : null);
+    const gm = DG ? DG.global_metrics : null;
+    const seriesY = DG ? DG.electricity_series.map((x) => x.year) : [];
+    const sines = DC ? DC.find((c) => c.id === "dc-sines-sin01") : null;
+    const capRows = DC ? DC.filter((c) => typeof c.capacidade_ti_mw === "number") : [];
+    const concelhos = DC ? new Set(DC.map((c) => c.concelho)).size : 0;
+    const DIGI = DG && DP && DC ? {
+      consumo: {
+        id: "consumo", c: COR.alimento, nome: tr("Eletricidade", "Electricity"),
+        v: fmt(gm.electricity_2024_twh, 0) + " TWh", k: tr("consumo estimado dos centros de dados em 2024, " + fmt(gm.electricity_2024_global_share_pct, 1) + "% da eletricidade mundial", "estimated data-centre consumption in 2024, " + fmt(gm.electricity_2024_global_share_pct, 1) + "% of world electricity"),
+        titulo: tr("Quanta eletricidade pedem os centros de dados", "How much electricity data centres ask for"),
+        fig: [{
+          t: tr("Centros de dados: eletricidade por ano", "Data centres: electricity per year"),
+          d: tr("TWh por ano. A linha tracejada é uma projeção (cenário-base da IEA), não consumo observado.", "TWh per year. The dashed line is a projection (IEA base case), not observed consumption."),
+          src: "IEA, Energy and AI",
+          draw: (el) => line(el, { x: seriesY, series: [{ n: tr("Histórico e estimativa", "Historical and estimate"), c: css("--s3"), v: DG.electricity_series.map((x) => (x.kind === "projection" ? null : x.twh)), w: 2.4 }, { n: tr("Projeção (cenário-base)", "Projection (base case)"), c: css("--s2"), dash: true, v: DG.electricity_series.map((x) => (x.kind === "projection" || x.year === 2024 ? x.twh : null)), w: 2.4 }], zero: true, yf: (v) => fmt(v, 0), tf: (se, i) => fmt(se.v[i], 0) + " TWh", points: true, aria: tr("Eletricidade dos centros de dados", "Data-centre electricity"), table: true })
+        }],
+        factos: [
+          tr(`<b>Os centros de dados consumiram cerca de ${fmt(gm.electricity_2024_twh, 0)} TWh em 2024</b>, ${fmt(gm.electricity_2024_global_share_pct, 1)}% da eletricidade mundial (estimativa da IEA).`, `<b>Data centres consumed about ${fmt(gm.electricity_2024_twh, 0)} TWh in 2024</b>, ${fmt(gm.electricity_2024_global_share_pct, 1)}% of world electricity (IEA estimate).`),
+          tr(`<b>O cenário-base da IEA aponta para ${fmt(gm.electricity_2030_twh_base_case, 0)} TWh em 2030</b>, ${fmt(gm.annual_growth_2024_2030_pct, 0)}% ao ano. É uma projeção, não consumo observado nem destino inevitável.`, `<b>The IEA base case points to ${fmt(gm.electricity_2030_twh_base_case, 0)} TWh in 2030</b>, ${fmt(gm.annual_growth_2024_2030_pct, 0)}% a year. It is a projection, neither observed consumption nor an inevitable outcome.`),
+          tr(`<b>Entre ${DG.electricity_series[0].year} e 2024 o consumo passou de ${fmt(DG.electricity_series[0].twh, 0)} para ${fmt(gm.electricity_2024_twh, 0)} TWh</b>, ×${fmt(gm.electricity_2024_twh / DG.electricity_series[0].twh, 1)}.`, `<b>Between ${DG.electricity_series[0].year} and 2024 consumption went from ${fmt(DG.electricity_series[0].twh, 0)} to ${fmt(gm.electricity_2024_twh, 0)} TWh</b>, ×${fmt(gm.electricity_2024_twh / DG.electricity_series[0].twh, 1)}.`),
+          tr(`<b>Calor rejeitado:</b> ${dsy("heat").body_pt}`, `<b>Rejected heat:</b> ${dsy("heat").body_en}`)
+        ],
+        praticas: [
+          [tr("Usar menos, melhor", "Use less, better"), tr("Apagar o que não precisas, evitar transmissões e armazenamento inúteis e usar modelos e serviços do tamanho da tarefa.", "Delete what you do not need, avoid useless streaming and storage, and use models and services sized to the task.")],
+          [tr("Pedir números", "Ask for numbers"), tr("Consumo real, PUE, WUE e origem da energia publicados pelo operador permitem comparar.", "Real consumption, PUE, WUE and energy source published by the operator make comparison possible.")],
+          [tr("Aproveitar o calor", "Reuse the heat"), tr("O calor dos servidores pode alimentar redes térmicas, estufas ou edifícios próximos.", "Server heat can feed heat networks, greenhouses or nearby buildings.")],
+          [tr("Exigir medição pública", "Demand public measurement"), tr("Antes de novos campus, consumo, água, área e rede elétrica devem estar no processo de licenciamento.", "Before new campuses, consumption, water, area and grid connection should be in the licensing file.")]
+        ],
+        links: [[tr("Casos em Portugal", "Cases in Portugal"), "#casos"], [tr("Vetores de pressão", "Pressure vectors"), "/observatorio/vetores-pressao-global.html"]]
+      },
+      agua: {
+        id: "dig-agua", c: COR.agua, nome: tr("Água", "Water"),
+        v: tr("sem padrão", "no standard"), k: tr("global para medir a água dos centros de dados", "worldwide to measure data-centre water"),
+        titulo: tr("A água dos centros de dados ainda não se compara", "Data-centre water cannot yet be compared"),
+        fig: [{
+          t: tr("Stress hídrico", "Water stress"),
+          d: tr("Percentagem dos recursos de água doce renováveis que é captada (ano mais recente). Acima de 25% já há stress.", "Share of renewable freshwater resources that is withdrawn (latest year). Above 25% there is already stress."),
+          src: "FAO AQUASTAT, ODS 6.4.2",
+          html: miniBars([{ l: nm("WLD") + " " + ws.y, v: ws.v, t: fmt(ws.v, 1) + "%", c: css("--s1") }, { l: nm("PRT") + " " + wsP.y, v: wsP.v, t: fmt(wsP.v, 1) + "%", c: css("--s2"), hl: true }, { l: tr("Limite «sem stress»", "“No stress” limit"), v: 25, t: "25%", c: css("--s3") }], { max: 100 })
+        }],
+        factos: [
+          tr(`<b>Sem padrão global:</b> ${dpr("water").detail_pt}`, `<b>No global standard:</b> ${dpr("water").detail_en}`),
+          tr(`<b>${dsy("water").title_pt}:</b> ${dsy("water").body_pt}`, `<b>${dsy("water").title_en}:</b> ${dsy("water").body_en}`),
+          tr(`<b>Em Portugal, o campus de Sines declara arrefecimento primário com água do mar e WUE 0</b>; os volumes de captação e descarga marinha não estão na página pública do operador.`, `<b>In Portugal, the Sines campus declares primary cooling with seawater and WUE 0</b>; seawater intake and discharge volumes are not on the operator’s public page.`),
+          tr(`<b>O stress hídrico de Portugal é ${fmt(wsP.v, 1)}%</b> (${wsP.y}); a média nacional esconde regiões e estações mais secas.`, `<b>Portugal’s water stress is ${fmt(wsP.v, 1)}%</b> (${wsP.y}); the national average hides drier regions and seasons.`)
+        ],
+        praticas: [
+          [tr("Perguntar «captação ou consumo?»", "Ask “withdrawal or consumption?”"), tr("São medidas diferentes: uma é a água que entra, a outra a que não volta.", "They are different measures: one is the water that comes in, the other the water that does not return.")],
+          [tr("Preferir água reutilizada ou do mar", "Prefer reclaimed or sea water"), tr("Reduz a pressão sobre a água potável, mas não elimina impactos locais.", "It reduces pressure on drinking water, but does not remove local impacts.")],
+          [tr("Olhar para a seca", "Look at drought"), tr("Em anos secos e ondas de calor a refrigeração pode competir com o abastecimento.", "In dry years and heatwaves cooling can compete with supply.")]
+        ],
+        links: [[tr("Água no Observatório da Terra", "Water in the Earth Observatory"), "/observatorio/observatorio-terra.html#agua"]]
+      },
+      territorio: {
+        id: "territorio", c: COR.solo, nome: tr("Território e calor", "Territory and heat"),
+        v: String(DC.length), k: tr("instalações em " + concelhos + " concelhos documentadas em Portugal", "facilities in " + concelhos + " municipalities documented in Portugal"),
+        titulo: tr("Cada campus tem terreno, rede e vizinhança", "Each campus has land, grid and neighbours"),
+        fig: [{
+          t: tr("Capacidade de TI dos campus em Portugal", "IT capacity of campuses in Portugal"),
+          d: tr("MW de capacidade de TI publicada. Não é consumo; operacional, em construção e planeado misturam-se, por isso lê o estado.", "MW of published IT capacity. It is not consumption; operational, under construction and planned are mixed, so read the status."),
+          src: tr("bioCulture, casos documentados (operadores e processos públicos)", "bioCulture, documented cases (operators and public procedures)"),
+          draw: (el) => hbars(el, capRows.map((c) => ({ l: c.nome.replace(/^.*— /, "") + " · " + c.concelho + " (" + c.status.split(/[ ;/]/)[0].toLowerCase() + ")", v: c.capacidade_ti_mw, t: fmt(c.capacidade_ti_mw, 1) + " MW", c: /^Operacional/.test(c.status) ? css("--s3") : /construção/.test(c.status) ? css("--s4") : css("--s5") })), { unit: "MW", table: [tr("Campus", "Campus"), "MW"] })
+        }],
+        factos: [
+          tr(`<b>O bioCulture documenta ${DC.length} instalações em ${concelhos} concelhos</b> (Sines, Vila Franca de Xira, Oeiras, Loures e Covilhã).`, `<b>bioCulture documents ${DC.length} facilities in ${concelhos} municipalities</b> (Sines, Vila Franca de Xira, Oeiras, Loures and Covilhã).`),
+          tr(`<b>Sines tem ${fmt(sines.capacidade_ti_mw, 1)} MW de TI em operação e prevê ${fmt(sines.capacidade_futura_campus_mw, 0)} MW no campus.</b> O consumo elétrico anual efetivo não está publicado.`, `<b>Sines has ${fmt(sines.capacidade_ti_mw, 1)} MW of IT in operation and plans ${fmt(sines.capacidade_futura_campus_mw, 0)} MW on the campus.</b> Actual annual electricity consumption is not published.`),
+          tr(`<b>Solo e ecossistemas:</b> ${dpr("land").detail_pt}`, `<b>Land and ecosystems:</b> ${dpr("land").detail_en}`),
+          tr(`<b>Em Sines, o EIA das fases seguintes identifica a ZEC Costa Sudoeste dentro de parte da área de estudo</b>; impactos concretos dependem da AIA e da monitorização.`, `<b>In Sines, the EIA for the following phases identifies the Costa Sudoeste SAC within part of the study area</b>; concrete impacts depend on the EIA conditions and monitoring.`)
+        ],
+        praticas: [
+          [tr("Medir antes de construir", "Measure before building"), tr("Estado de referência do solo, da água e da biodiversidade permite provar o que mudou.", "A baseline of soil, water and biodiversity makes it possible to prove what changed.")],
+          [tr("Contar linhas e subestações", "Count lines and substations"), tr("A área do campus é só parte do território afetado: acessos, linhas e geradores contam.", "The campus area is only part of the affected territory: access roads, lines and generators count.")],
+          [tr("Preferir terreno já artificializado", "Prefer already-sealed land"), tr("Zonas industriais e antigas centrais pesam menos sobre solo agrícola e floresta.", "Industrial zones and former power plants weigh less on farmland and forest.")],
+          [tr("Participar nas consultas", "Take part in consultations"), tr("As consultas públicas são o momento para pedir dados e deixar objeções fundamentadas.", "Public consultations are the moment to ask for data and file well-founded objections.")]
+        ],
+        links: [[tr("Casos em Portugal", "Cases in Portugal"), "#casos"], [tr("Participação pública", "Public participation"), "/index.html#participacao-publica"]]
+      },
+      equipamento: {
+        id: "equipamento", c: COR.solo, nome: tr("Equipamento", "Equipment"),
+        v: fmt(ew.valor, 0) + " Mt", k: tr("de resíduos eletrónicos gerados no mundo em " + ew.ano, "of electronic waste generated worldwide in " + ew.ano),
+        titulo: tr("Servidores e telemóveis também acabam", "Servers and phones end too"),
+        fig: [{
+          t: tr("Resíduos eletrónicos", "Electronic waste"),
+          d: tr("Milhões de toneladas, " + ew.ano + ".", "Million tonnes, " + ew.ano + "."),
+          src: fontes(ew.fonte_id),
+          html: miniBars([{ l: tr("Gerados", "Generated"), v: ew.valor, t: fmt(ew.valor, 0), c: css("--s8") }, { l: tr("Recolhidos e reciclados", "Collected and recycled"), v: ew.valor * parseFloat(String(ewPct).replace(",", ".")) / 100, t: fmt(ew.valor * parseFloat(String(ewPct).replace(",", ".")) / 100, 1), c: css("--s3"), hl: true }])
+        }, {
+          t: tr("Extração mundial de materiais", "World material extraction"),
+          d: tr("Mil milhões de toneladas por ano.", "Billion tonnes per year."),
+          src: fontes(mat.fonte_id),
+          html: miniBars([{ l: String(mat.referencia.ano), v: mat.referencia.valor, t: fmt(mat.referencia.valor, 0), c: css("--bar-dim") }, { l: String(mat.ano), v: mat.valor, t: fmt(mat.valor, 1), c: COR.solo, hl: true }])
+        }],
+        factos: [
+          tr(`<b>Geraram-se ${fmt(ew.valor, 0)} milhões de toneladas de resíduos eletrónicos em ${ew.ano}</b>: só ${ewPct}% foram formalmente recolhidos e reciclados (ITU).`, `<b>${fmt(ew.valor, 0)} million tonnes of electronic waste were generated in ${ew.ano}</b>: only ${(ewPct || "").replace(",", ".")}% were formally collected and recycled (ITU).`),
+          tr(`<b>A extração global de materiais passou de ${fmt(mat.referencia.valor, 0)} para ${fmt(mat.valor, 1)} mil milhões de toneladas</b> (${mat.referencia.ano}–${mat.ano}), mais do triplo (UNEP).`, `<b>Global material extraction rose from ${fmt(mat.referencia.valor, 0)} to ${fmt(mat.valor, 1)} billion tonnes</b> (${mat.referencia.ano}–${mat.ano}), more than triple (UNEP).`),
+          tr(`<b>Cada equipamento tem uma origem mineira:</b> a cadeia dos centros de dados começa em minas e acaba em resíduos.`, `<b>Every device has a mining origin:</b> the data-centre chain starts in mines and ends in waste.`)
+        ],
+        praticas: [
+          [tr("Prolongar a vida", "Extend life"), tr("Usar o equipamento mais anos é a forma mais eficaz de reduzir resíduos e extração.", "Using equipment for more years is the most effective way to reduce waste and extraction.")],
+          [tr("Reparar e recondicionar", "Repair and refurbish"), tr("Peças substituíveis e aparelhos recondicionados mantêm o material em uso.", "Replaceable parts and refurbished devices keep material in use.")],
+          [tr("Entregar em recolha certificada", "Hand in at certified collection"), tr("Só o que é formalmente recolhido entra na reciclagem.", "Only what is formally collected enters recycling.")]
+        ],
+        links: [[tr("Mineração", "Mining"), "/energia/mineracao.html"], [tr("Vetores de pressão", "Pressure vectors"), "/observatorio/vetores-pressao-global.html"]]
+      }
+    } : {};
+
     /* ---------- contextos: que fatores, com que título e práticas, em cada página ---------- */
     const HUB = [tr("Ver os fatores todos", "See all the factors"), "/calendario/conhecimento-cuidar.html#fatores"];
     const CTX = {
@@ -560,6 +778,41 @@
           ] }
         }
       },
+      digital: {
+        ids: ["consumo", "rede", "dig-agua", "territorio", "equipamento"], extra: [DIGI.consumo, REDE, DIGI.agua, DIGI.territorio, DIGI.equipamento].filter(Boolean), rotulo: tr("O que fazer", "What to do"),
+        hub: [tr("Ver o Observatório da Terra", "See the Earth Observatory"), "/observatorio/observatorio-terra.html"],
+        eyebrow: tr("Dos dados ao digital", "From data to digital"),
+        h2: tr("Cinco frentes onde a infraestrutura digital se mede", "Five fronts where digital infrastructure is measured"),
+        intro: tr("Os números vêm da IEA, do Observatório da Terra e dos casos documentados no bioCulture. Projeção não é consumo observado: escolhe uma frente para ver o que se mede, o que falta medir e o que cada pessoa pode fazer.", "The numbers come from the IEA, the Earth Observatory and the cases documented by bioCulture. A projection is not observed consumption: pick a front to see what is measured, what is missing and what each person can do."),
+        over: {
+          rede: { titulo: tr("Que eletricidade alimenta a nuvem", "What electricity powers the cloud"), praticas: [
+            [tr("Renovável adicional", "Additional renewables"), tr("Contratos que financiam nova produção renovável contam mais do que certificados que só redistribuem a que já existe.", "Contracts that fund new renewable output count more than certificates that only reshuffle what already exists.")],
+            [tr("Perfil horário", "Hourly profile"), tr("Saber quando o campus consome mostra se a energia renovável coincide com a hora de uso.", "Knowing when the campus consumes shows whether renewable energy matches the hour of use.")],
+            [tr("Eficiência primeiro", "Efficiency first"), tr("Menos energia por tarefa (melhor PUE, equipamento e software) é o que menos pesa na rede.", "Less energy per task (better PUE, equipment and software) is what weighs least on the grid.")]
+          ] }
+        }
+      },
+      energia: {
+        ids: ["acesso", "rede", "clima", "ar", "projetos"], extra: [ENER.acesso, REDE, ENER.ar, ENER.projetos].filter(Boolean), rotulo: tr("O que fazer", "What to do"),
+        hub: [tr("Ver o Observatório da Terra", "See the Earth Observatory"), "/observatorio/observatorio-terra.html"],
+        eyebrow: tr("Dos dados à energia", "From data to energy"),
+        h2: tr("Cinco frentes onde a energia se mede", "Five fronts where energy is measured"),
+        intro: tr("Os números vêm do Observatório da Terra, dos indicadores do ODS 7 e dos projetos analisados no bioCulture. Escolhe uma frente para ver o que os dados mostram e o que pode fazer-se em casa, na exploração e no território.", "The numbers come from the Earth Observatory, the SDG 7 indicators and the projects analysed by bioCulture. Pick a front to see what the data show and what can be done at home, on the farm and in the territory."),
+        over: {
+          rede: { praticas: [
+            [tr("Poupar primeiro", "Save first"), tr("Isolamento, equipamentos eficientes e hábitos simples são a energia mais barata e mais limpa.", "Insulation, efficient equipment and simple habits are the cheapest and cleanest energy.")],
+            [tr("Eletrificar com renovável", "Electrify with renewables"), tr("Bombas de calor, mobilidade elétrica e indução fazem sentido quando a eletricidade é cada vez mais renovável.", "Heat pumps, electric mobility and induction make sense when electricity is increasingly renewable.")],
+            [tr("Autoconsumo e armazenamento", "Self-consumption and storage"), tr("Produzir e guardar perto de onde se usa alivia a rede e dá resiliência.", "Producing and storing close to where it is used eases the grid and gives resilience.")],
+            [tr("Calor e transportes", "Heat and transport"), tr("São onde a quota renovável ainda é menor; também aí há trabalho a fazer.", "That is where the renewable share is still lowest; there is work to do there too.")]
+          ] },
+          clima: { nome: tr("Clima", "Climate"), titulo: tr("A energia que usamos e o clima que medimos", "The energy we use and the climate we measure"), factos: "energia-clima", praticas: [
+            [tr("Medir a fatura", "Measure the bill"), tr("Saber quanto se gasta, e em quê, é o primeiro passo para reduzir.", "Knowing how much is spent, and on what, is the first step to reduce it.")],
+            [tr("Casa e exploração eficientes", "Efficient home and farm"), tr("Isolar, sombrear e escolher equipamentos eficientes reduz o consumo sem perder conforto.", "Insulating, shading and choosing efficient equipment cut consumption without losing comfort.")],
+            [tr("Sombra e abrigo", "Shade and shelter"), tr("Árvores, sebes e coberto vegetal arrefecem edifícios e terrenos.", "Trees, hedges and plant cover cool buildings and land.")],
+            [tr("Ler o inventário", "Read the inventory"), tr("Os valores nacionais de emissões são revistos todos os anos: compara sempre a mesma edição.", "National emission figures are revised every year: always compare the same edition.")]
+          ] }
+        }
+      },
       vinha: {
         ids: ["clima", "agua", "solo", "vida", "uva"], extra: [UVA], rotulo: tr("Na vinha", "In the vineyard"),
         eyebrow: tr("Dos dados à vinha", "From data to the vineyard"),
@@ -604,7 +857,8 @@
         "mining-agua": () => [base[0], tr(`<b>${cn(comm("copper"))}:</b> ${cp(comm("copper"))}`, `<b>${cn(comm("copper"))}:</b> ${cp(comm("copper"))}`), tr(`<b>${cn(comm("lithium"))}:</b> ${cp(comm("lithium"))}`, `<b>${cn(comm("lithium"))}:</b> ${cp(comm("lithium"))}`)],
         "mining-solo": () => [tr(`<b>${cn(comm("gold"))}:</b> ${cp(comm("gold"))}`, `<b>${cn(comm("gold"))}:</b> ${cp(comm("gold"))}`), tr(`<b>${cn(comm("coal"))}:</b> ${cp(comm("coal"))}`, `<b>${cn(comm("coal"))}:</b> ${cp(comm("coal"))}`), base[0], base[2]],
         "mining-floresta": () => [tr(`<b>${cn(comm("nickel-cobalt"))}:</b> ${cp(comm("nickel-cobalt"))}`, `<b>${cn(comm("nickel-cobalt"))}:</b> ${cp(comm("nickel-cobalt"))}`), tr(`<b>${cn(comm("iron-bauxite"))}:</b> ${cp(comm("iron-bauxite"))}`, `<b>${cn(comm("iron-bauxite"))}:</b> ${cp(comm("iron-bauxite"))}`), base[0], base[3]],
-        "mining-vida": () => [base[0], base[1], base[2]]
+        "mining-vida": () => [base[0], base[1], base[2]],
+        "energia-clima": () => [base[0], base[1], tr(`<b>Portugal emitiu ${fmt(ghg[ghgY.at(-1)], 1)} Mt CO₂e em ${ghgY.at(-1)}</b> (${fmt(ghg[ghgY[0]], 1)} em ${ghgY[0]}), sem uso do solo e florestas (APA). O inventário é revisto todos os anos.`, `<b>Portugal emitted ${fmt(ghg[ghgY.at(-1)], 1)} Mt CO₂e in ${ghgY.at(-1)}</b> (${fmt(ghg[ghgY[0]], 1)} in ${ghgY[0]}), excluding land use and forests (APA). The inventory is revised every year.`), base[2]]
       };
       const o = Object.assign({}, f);
       Object.keys(ov).forEach((k) => {
@@ -674,7 +928,7 @@
   let feito = false;
   const iniciar = () => {
     if (feito) return; feito = true;
-    const EXTRA = { pecuaria: ["livestock-global", "pecuaria_industrial"], mineracao: ["mining-global", "mineracao"] }[contexto] || [];
+    const EXTRA = { pecuaria: ["livestock-global", "pecuaria_industrial"], mineracao: ["mining-global", "mineracao"], digital: ["ai-data-centres-overview", "ai-data-centres-pressures", "impacto_digital"], energia: ["energy-overview", "renewable-projects"] }[contexto] || [];
     Promise.all([T.load(), get("/data/agriculture-global.json"), Promise.all(EXTRA.map((n) => get("/data/" + n + ".json")))])
       .then(([{ R, CLIMA, VET, PT }, A, ex]) => {
         const X = {}; EXTRA.forEach((n, i) => { X[n] = ex[i]; });
