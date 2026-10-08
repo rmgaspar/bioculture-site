@@ -152,13 +152,26 @@ html body.reading-header-compact #main .reading-divider {
     }
 }
 
-/* Ao saltar para "No mundo" ou "Portugal e ilhas", o título aterra abaixo da barra fixa. */
-html body #panorama-global,
-html body #leitura-local {
-    scroll-margin-top: 5.5rem;
+/* Ao saltar para um separador da barra fixa, o título do bloco aterra sempre à mesma distância, logo abaixo da barra. */
+html body :is(#panorama-global, #leitura-local, #fatores, #aplicacao-pratica, #atualidade, #catalogo, #instalacoes, #consultas, #casos, #castas, #praticas, #vigilancia, #noticias) {
+    scroll-margin-top: 6rem;
 }
 
-/* Ligações adicionais da barra: o início de cada bloco aterra abaixo da barra fixa. */
-html body :is(#aplicacao-pratica, #atualidade, #catalogo, #instalacoes, #consultas, #casos, #castas, #praticas, #vigilancia, #noticias) {
-    scroll-margin-top: 6rem;
+/* Barra «Nesta página» das páginas temáticas: sempre numa linha; se não couber, desliza na horizontal e o «↑ Topo» fica preso à direita. */
+html body #main nav.reading-nav:not(.terra-nav):not(.services-nav) {
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    scrollbar-width: none;
+}
+html body #main nav.reading-nav:not(.terra-nav):not(.services-nav)::-webkit-scrollbar { display: none; }
+html body #main nav.reading-nav:not(.terra-nav):not(.services-nav) > a,
+html body #main nav.reading-nav:not(.terra-nav):not(.services-nav) > span { flex: 0 0 auto !important; }
+html body #main nav.reading-nav:not(.terra-nav):not(.services-nav).bio-nav-pinned .bio-nav-top {
+    position: sticky;
+    right: 0;
+    z-index: 1;
+    padding-left: 14px !important;
+    background: #fff !important;
+    box-shadow: -16px 0 12px -6px #fff, 16px 0 0 0 #fff !important;
 }
