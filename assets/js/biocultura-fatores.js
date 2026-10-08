@@ -1,5 +1,6 @@
-/* «Dos dados à parcela» (Conhecimento para cuidar): seis fatores que mudam o que se pode cultivar, cada um com
-   os números do Observatório da Terra e do relatório de produção agrícola e as práticas regenerativas que lhes respondem.
+/* «Dos dados à parcela»: fatores que mudam o que se pode cultivar, cada um com os números do Observatório da Terra
+   e da produção agrícola mundial (FAOSTAT) e as práticas regenerativas que lhes respondem. Serve três páginas, escolhidas
+   por data-contexto no <section id="fatores">: conhecimento (seis fatores), calendario (quatro) e vinha (cinco, com a uva).
    Nada é escrito à mão: os valores saem de /data/observatorio-terra-relatorio.json, observatorio_global.json,
    vetores_pressao_global.json, observatorio_terra.json e agriculture-global.json. */
 (function () {
@@ -7,6 +8,7 @@
   const G = window.BioCulturaGraficos, T = window.BioCulturaTerra;
   const host = document.getElementById("fatores");
   if (!G || !T || !host) return;
+  const contexto = host.dataset.contexto || "conhecimento";
   const { tr, fmt, esc, css, hbars, line, legend, miniBars, miniStack, EN } = G;
   const lang = new URLSearchParams(location.search).get("lang");
   const L = (href) => {
@@ -232,6 +234,135 @@
       }
     ];
 
+
+    /* ---------- a uva e o vinho (só na Vinha Viva) ---------- */
+    let DNr; try { DNr = new Intl.DisplayNames(EN ? ["en-GB", "en"] : ["pt-PT", "pt"], { type: "region" }); } catch (e) { DNr = null; }
+    const an = (code) => {
+      const a = A.areas[String(code)]; if (!a) return String(code);
+      if (a.iso2 === "CN") return "China";
+      if (a.iso2 === "US") return tr("Estados Unidos", "United States");
+      if (a.iso2 && DNr) { try { const n = DNr.of(a.iso2); if (n && n !== a.iso2) return n; } catch (e) { /* usa o nome inglês */ } }
+      return a.en || String(code);
+    };
+    const uvas = A.key.find((k) => k.id === 560), vinho = A.key.find((k) => k.id === 564);
+    const rk = (r) => tr(`${r.rank}.º de ${r.n} países`, `rank ${r.rank} of ${r.n} countries`);
+    const top5 = uvas.top.slice(0, 5).map((r) => an(r.a)).join(", ");
+    const UVA = {
+      id: "uva", c: "#8a3b5c", nome: tr("A uva e o vinho", "Grapes and wine"),
+      v: fmt(uvas.world_mt, 1) + " Mt", k: tr("de uvas colhidas no mundo em " + uvas.year, "of grapes harvested worldwide in " + uvas.year),
+      titulo: tr("Uma cultura concentrada em poucos países", "A crop concentrated in a few countries"),
+      fig: [{
+        t: tr("Uvas colhidas no mundo", "Grapes harvested worldwide"),
+        d: tr("Milhões de toneladas por ano, " + uvas.world_ts.y0 + "–" + uvas.year + ".", "Million tonnes per year, " + uvas.world_ts.y0 + "–" + uvas.year + "."),
+        src: "FAOSTAT, produção (QCL)",
+        draw: (el) => line(el, { x: uvas.world_ts.mt.map((_, i) => uvas.world_ts.y0 + i), series: [{ n: tr("Uvas", "Grapes"), c: css("--s7"), v: uvas.world_ts.mt, w: 2.2 }], zero: false, yf: (v) => fmt(v, 0), tf: (se, i) => fmt(se.v[i], 1) + " Mt", aria: tr("Uvas colhidas no mundo", "Grapes harvested worldwide"), table: true, tableEvery: 10 })
+      }, {
+        t: tr("Quem mais colhe uvas", "Who harvests the most grapes"),
+        d: tr("Milhões de toneladas, " + uvas.year + ". Portugal a laranja.", "Million tonnes, " + uvas.year + ". Portugal in orange."),
+        src: "FAOSTAT, produção (QCL)",
+        draw: (el) => hbars(el, uvas.top.slice(0, 8).map((r) => ({ l: an(r.a), v: r.t / 1e6, t: fmt(r.t / 1e6, 1) + " Mt" })).concat([{ l: "Portugal · " + rk(uvas.pt), v: uvas.pt.t / 1e6, t: fmt(uvas.pt.t / 1e6, 2) + " Mt", hl: true }]), { unit: "Mt", table: [tr("País", "Country"), "Mt"] })
+      }],
+      factos: [
+        tr(`<b>O mundo colhe ${fmt(uvas.world_mt, 1)} milhões de toneladas de uvas</b> (${uvas.year}), contra ${fmt(uvas.world_ts.mt[0], 1)} em ${uvas.world_ts.y0} (FAOSTAT).`, `<b>The world harvests ${fmt(uvas.world_mt, 1)} million tonnes of grapes</b> (${uvas.year}), against ${fmt(uvas.world_ts.mt[0], 1)} in ${uvas.world_ts.y0} (FAOSTAT).`),
+        tr(`<b>Cinco países colhem ${fmt(uvas.top5_share, 0)}% das uvas</b>: ${top5}.`, `<b>Five countries harvest ${fmt(uvas.top5_share, 0)}% of the grapes</b>: ${top5}.`),
+        tr(`<b>Portugal colhe ${fmt(uvas.pt.t / 1000, 0)} mil toneladas de uvas</b> (${rk(uvas.pt)}) e produz ${fmt(vinho.pt.t / 1000, 0)} mil toneladas de vinho (${rk(vinho.pt)}, ${vinho.year}).`, `<b>Portugal harvests ${fmt(uvas.pt.t / 1000, 0)} thousand tonnes of grapes</b> (${rk(uvas.pt)}) and makes ${fmt(vinho.pt.t / 1000, 0)} thousand tonnes of wine (${rk(vinho.pt)}, ${vinho.year}).`),
+        tr(`<b>O vinho mundial ronda ${fmt(vinho.world_mt, 1)} milhões de toneladas</b> (${vinho.year}); cinco países fazem ${fmt(vinho.top5_share, 0)}%.`, `<b>World wine output is about ${fmt(vinho.world_mt, 1)} million tonnes</b> (${vinho.year}); five countries make ${fmt(vinho.top5_share, 0)}%.`)
+      ],
+      praticas: [
+        [tr("A casta certa no sítio certo", "The right variety in the right place"), tr("Casta, porta-enxerto, exposição e solo escolhidos em conjunto dão uma vinha mais equilibrada em cada clima.", "Variety, rootstock, aspect and soil chosen together give a more balanced vineyard in each climate.")],
+        [tr("Guardar castas tradicionais", "Keep traditional varieties"), tr("As castas locais guardam características de resistência e de sabor que podem fazer falta noutro clima.", "Local varieties hold traits of resilience and flavour that may be needed in a different climate.")],
+        [tr("Qualidade antes de volume", "Quality before volume"), tr("Uma vinha viva trabalha a identidade do lugar, em vez de competir pela quantidade com os maiores produtores.", "A living vineyard works on the identity of the place instead of competing on quantity with the biggest producers.")],
+        [tr("Registar cada ano", "Record each year"), tr("Datas de abrolhamento, floração e vindima por parcela mostram como o clima mexe na tua vinha.", "Dates of budburst, flowering and harvest per plot show how the climate is moving in your vineyard.")]
+      ],
+      links: [[tr("Castas da Vinha Viva", "Living Vineyard varieties"), "#castas"], [tr("Produção agrícola mundial", "World agricultural production"), "/observatorio/producao-agricola.html"]]
+    };
+
+    /* ---------- contextos: que fatores, com que título e práticas, em cada página ---------- */
+    const HUB = [tr("Ver os fatores todos", "See all the factors"), "/calendario/conhecimento-cuidar.html#fatores"];
+    const CTX = {
+      conhecimento: {
+        ids: ["clima", "agua", "solo", "floresta", "vida", "alimento"], rotulo: tr("Na parcela", "On the plot"),
+        eyebrow: tr("Dos dados à parcela", "From data to the plot"),
+        h2: tr("Seis forças que mudam o que se pode cultivar", "Six forces that change what can be grown"),
+        intro: tr("Os números vêm do Observatório da Terra e do relatório de produção agrícola. Escolhe um fator para ver o que os dados mostram e o que a agricultura regenerativa pode fazer na tua parcela.", "The numbers come from the Earth Observatory and the agricultural production report. Pick a factor to see what the data show and what regenerative agriculture can do on your plot.")
+      },
+      calendario: {
+        ids: ["clima", "agua", "solo", "floresta"], rotulo: tr("No calendário", "In the calendar"),
+        eyebrow: tr("Dos dados ao calendário", "From data to the calendar"),
+        h2: tr("Quatro sinais que mexem nas janelas do calendário", "Four signals that move the calendar’s windows"),
+        intro: tr("As janelas de sementeira, rega e colheita são referências. Os números do Observatório da Terra mostram porque convém confirmá-las no terreno, ano a ano, e que práticas ajudam a ajustá-las.", "The sowing, watering and harvest windows are references. The Earth Observatory numbers show why they should be checked on the ground, year by year, and which practices help adjust them."),
+        over: {
+          clima: { titulo: tr("As datas do calendário são hipóteses, não promessas", "Calendar dates are hypotheses, not promises"), praticas: [
+            [tr("Sementeira por janela", "Sow by window"), tr("Usa a data do calendário como ponto de partida e ajusta pela temperatura do solo e pela previsão desse ano.", "Use the calendar date as a starting point and adjust to soil temperature and that year’s forecast.")],
+            [tr("Escalonar", "Stagger"), tr("Semear em várias datas reparte o risco de um ano fora do normal.", "Sowing on several dates spreads the risk of an unusual year.")],
+            [tr("Proteger do calor e do frio", "Protect from heat and cold"), tr("Sombra, cobertura do solo e rega ao amanhecer no verão; abrigo contra geadas tardias no fim do inverno.", "Shade, ground cover and dawn watering in summer; shelter from late frosts at the end of winter.")],
+            [tr("Registar", "Record"), tr("Anotar datas e resultados todos os anos mostra a janela que funciona no teu terreno.", "Noting dates and results every year shows the window that works on your land.")]
+          ] },
+          agua: { titulo: tr("Chuva irregular, rega com critério", "Irregular rain, watering with judgement"), praticas: [
+            [tr("No outono e na primavera", "In autumn and spring"), tr("Preparar o solo para guardar a chuva: cobertura, matéria orgânica e valas em nível.", "Prepare the soil to hold rain: cover, organic matter and contour swales.")],
+            [tr("No verão", "In summer"), tr("Regar de manhã cedo, gota a gota, e só depois de ver a humidade do solo.", "Water early in the morning, by drip, and only after checking soil moisture.")],
+            [tr("No inverno", "In winter"), tr("Captar e guardar a água da chuva para os meses secos.", "Collect and store rainwater for the dry months.")],
+            [tr("Nos meses secos", "In the dry months"), tr("Preferir culturas e variedades de sequeiro ou de ciclo curto.", "Prefer dryland or short-cycle crops and varieties.")]
+          ] },
+          solo: { titulo: tr("Antes de semear, olha para o solo", "Before sowing, look at the soil"), praticas: [
+            [tr("Cobrir antes dos extremos", "Cover before the extremes"), tr("Cobertura morta ou plantas de cobertura antes do verão e das chuvas fortes de outono.", "Mulch or cover crops before summer and the heavy autumn rains.")],
+            [tr("Adubos verdes", "Green manures"), tr("Semeados no outono ou no pousio, alimentam o solo e protegem-no até à cultura seguinte.", "Sown in autumn or fallow, they feed the soil and protect it until the next crop.")],
+            [tr("Compostar todo o ano", "Compost all year"), tr("Restos da horta e da poda voltam ao solo como matéria orgânica.", "Garden and pruning residues go back to the soil as organic matter.")],
+            [tr("Rodar as culturas", "Rotate crops"), tr("Alternar famílias e incluir leguminosas mantém a fertilidade e quebra ciclos de pragas.", "Alternating families and including legumes keeps fertility and breaks pest cycles.")]
+          ] },
+          floresta: { titulo: tr("Do verão ao outono, o fogo faz parte do calendário", "From summer to autumn, fire is part of the calendar"), praticas: [
+            [tr("Antes do verão", "Before summer"), tr("Faixas limpas à volta de casas, caminhos e parcelas, e mato cortado ou pastado nas zonas críticas.", "Cleared strips around houses, tracks and plots, and scrub cut or grazed in critical zones.")],
+            [tr("Em dias de risco", "On risk days"), tr("Evitar trabalhos que façam faísca ou fogo e seguir os avisos de risco de incêndio.", "Avoid work that makes sparks or fire and follow the fire-risk warnings.")],
+            [tr("Mosaicos", "Mosaics"), tr("Parcelas agrícolas e pastagens verdes entre manchas de mato e floresta quebram a continuidade do combustível.", "Farmland and green pastures between patches of scrub and forest break the continuity of fuel.")],
+            [tr("Árvores na parcela", "Trees on the plot"), tr("Sistemas agroflorestais dão sombra e abrigo, com cuidado na gestão do mato por baixo.", "Agroforestry gives shade and shelter, with care in managing the scrub underneath.")]
+          ] }
+        }
+      },
+      vinha: {
+        ids: ["clima", "agua", "solo", "vida", "uva"], extra: [UVA], rotulo: tr("Na vinha", "In the vineyard"),
+        eyebrow: tr("Dos dados à vinha", "From data to the vineyard"),
+        h2: tr("O que o clima, o solo e a vida pedem à videira", "What climate, soil and life ask of the vine"),
+        intro: tr("Os números vêm do Observatório da Terra e da produção agrícola mundial (FAOSTAT). Escolhe um fator para ver o que os dados mostram e o que uma vinha viva pode fazer na parcela.", "The numbers come from the Earth Observatory and world agricultural production (FAOSTAT). Pick a factor to see what the data show and what a living vineyard can do on the plot."),
+        over: {
+          clima: { titulo: tr("Cada ano pede uma vinha diferente", "Each year asks for a different vineyard"), praticas: [
+            [tr("Sombra funcional no cacho", "Functional shade on the bunch"), tr("Desfolha prudente na zona dos cachos protege do sol forte e mantém o arejamento.", "Careful leaf removal in the bunch zone protects from strong sun and keeps air moving.")],
+            [tr("Casta e porta-enxerto ao clima", "Variety and rootstock for the climate"), tr("Escolher variedades e porta-enxertos adaptados ao calor e à seca da zona.", "Choose varieties and rootstocks adapted to the heat and drought of the area.")],
+            [tr("Cobertura entre linhas", "Cover between rows"), tr("Mantém o solo mais fresco e protege-o do sol e da chuva forte.", "Keeps the soil cooler and protects it from sun and heavy rain.")],
+            [tr("Colher uma parcela, não uma média", "Harvest a plot, not an average"), tr("Seguir a maturação de cada parcela, porque o ano muda o ponto de colheita.", "Follow the ripening of each plot, because the year changes the harvest point.")]
+          ] },
+          agua: { titulo: tr("Guardar, medir, regar só se faltar", "Store, measure, irrigate only if short"), praticas: [
+            [tr("Cobertura e matéria orgânica", "Cover and organic matter"), tr("Retêm água entre chuvas; em anos secos, ceifar a tempo para o coberto não competir com a videira.", "They hold water between rains; in dry years, mow in time so the cover does not compete with the vine.")],
+            [tr("Rega só com défice confirmado", "Irrigate only with a confirmed deficit"), tr("Gota a gota, depois de medir a humidade do solo e observar o estado da videira.", "By drip, after measuring soil moisture and observing the state of the vine.")],
+            [tr("Reter a água na encosta", "Hold water on the slope"), tr("Linhas em nível, socalcos e muros de pedra abrandam a escorrência.", "Contour lines, terraces and stone walls slow the runoff.")],
+            [tr("Drenar onde é preciso", "Drain where needed"), tr("Em solos pesados e anos de chuva forte, drenagem e infiltração evitam o encharcamento e a doença.", "In heavy soils and heavy-rain years, drainage and infiltration prevent waterlogging and disease.")]
+          ] },
+          solo: { titulo: tr("O solo é parte do terroir", "Soil is part of the terroir"), praticas: [
+            [tr("Enrelvamento", "Grass cover"), tr("Coberto vivo entre linhas protege da erosão e alimenta a vida do solo.", "A living cover between rows protects against erosion and feeds soil life.")],
+            [tr("Mexer o menos possível", "Disturb as little as possible"), tr("Mobilização mínima e tráfego controlado preservam a estrutura e a infiltração.", "Minimum tillage and controlled traffic preserve structure and infiltration.")],
+            [tr("Compostar bagaço e poda", "Compost pomace and prunings"), tr("Devolver à vinha a matéria orgânica que ela própria produz.", "Return to the vineyard the organic matter it produces itself.")],
+            [tr("Travar a erosão nas encostas", "Stop erosion on slopes"), tr("Socalcos, muros e linhas em nível seguram a terra.", "Terraces, walls and contour lines hold the soil.")]
+          ] },
+          vida: { titulo: tr("Uma vinha viva trabalha com auxiliares", "A living vineyard works with beneficial species"), praticas: [
+            [tr("Sebes e bordaduras", "Hedges and edges"), tr("Abrigo e alimento para aves, morcegos e insetos auxiliares.", "Shelter and food for birds, bats and beneficial insects.")],
+            [tr("Flores entre linhas", "Flowers between rows"), tr("Coberto diversificado com flores alimenta polinizadores e predadores de pragas.", "A diverse flowering cover feeds pollinators and pest predators.")],
+            [tr("Diagnosticar antes de tratar", "Diagnose before treating"), tr("Clima, sintomas e monitorização definem o risco; tratar sem diagnóstico mata também os auxiliares.", "Climate, symptoms and monitoring define the risk; treating without a diagnosis also kills the beneficial species.")],
+            [tr("Abrigos para a fauna", "Shelters for wildlife"), tr("Caixas-ninho, pedras e áreas não mobilizadas dão casa a quem come insetos.", "Nest boxes, stones and undisturbed areas give a home to those who eat insects.")]
+          ] }
+        }
+      }
+    };
+    const cx = CTX[contexto] || CTX.conhecimento;
+    F.push(...(cx.extra || []));
+    const here = location.pathname.replace(/\.html$/, "");
+    const FS = cx.ids.map((id) => F.find((f) => f.id === id)).filter(Boolean).map((f) => {
+      const o = Object.assign({}, f, (cx.over || {})[f.id] || {});
+      if (contexto !== "conhecimento") {
+        /* Fora da página de conhecimento: sem ligações para âncoras que não existem aqui nem para a própria página; com ligação ao conjunto. */
+        o.links = o.links.filter(([, h]) => (h === "#castas" ? contexto === "vinha" : !h.startsWith("#")) && h.split("#")[0].replace(/\.html$/, "") !== here).concat([HUB]);
+      }
+      return o;
+    });
+
     /* ---------- desenho ---------- */
     const ficheira = (f) => f.fig.map((g, i) => `<figure class="ft-fig"><figcaption><span class="t">${esc(g.t)}</span><span class="d">${esc(g.d)}</span></figcaption>${g.html ? `<div class="ft-mini">${g.html}</div>` : `<div class="chart" id="ft-${f.id}-${i}"></div>`}<span class="src">${tr("Fonte", "Source")}: ${esc(g.src)}</span></figure>`).join("");
     const painel = (f) => `<div class="ft-painel" style="--cap:${f.c}" role="tabpanel" id="ft-painel" aria-labelledby="ft-tab-${f.id}">
@@ -243,7 +374,7 @@
           <ul class="ft-factos">${f.factos.map((x) => `<li>${x}</li>`).join("")}</ul>
         </div>
         <div class="ft-pratica">
-          <span class="ft-rotulo">${tr("Na parcela", "On the plot")}</span>
+          <span class="ft-rotulo">${cx.rotulo}</span>
           <ul class="ft-praticas">${f.praticas.map(([a, b]) => `<li><b>${esc(a)}.</b> ${esc(b)}</li>`).join("")}</ul>
           <div class="ft-links">${f.links.map(([a, h]) => `<a href="${esc(h.startsWith("#") ? h : L(h))}">${esc(a)} →</a>`).join("")}</div>
         </div>
@@ -252,18 +383,18 @@
 
     host.innerHTML = `<div class="agri-report fatores">
       <div class="sec-head">
-        <span class="eyebrow">${tr("Dos dados à parcela", "From data to the plot")}</span>
-        <h2>${tr("Seis forças que mudam o que se pode cultivar", "Six forces that change what can be grown")}</h2>
-        <p>${tr("Os números vêm do Observatório da Terra e do relatório de produção agrícola. Escolhe um fator para ver o que os dados mostram e o que a agricultura regenerativa pode fazer na tua parcela.", "The numbers come from the Earth Observatory and the agricultural production report. Pick a factor to see what the data show and what regenerative agriculture can do on your plot.")}</p>
+        <span class="eyebrow">${cx.eyebrow}</span>
+        <h2>${cx.h2}</h2>
+        <p>${cx.intro}</p>
       </div>
-      <div class="ft-tabs" role="tablist" aria-label="${tr("Fatores", "Factors")}">${F.map((f, i) => `<button type="button" class="ft-tab" role="tab" id="ft-tab-${f.id}" data-id="${f.id}" aria-selected="${i === 0}" aria-controls="ft-painel" style="--cap:${f.c}"><span class="ft-n">${esc(f.nome)}</span><span class="ft-v">${esc(f.v)}</span><span class="ft-k">${esc(f.k)}</span></button>`).join("")}</div>
+      <div class="ft-tabs" role="tablist" style="--n:${FS.length}" aria-label="${tr("Fatores", "Factors")}">${FS.map((f, i) => `<button type="button" class="ft-tab" role="tab" id="ft-tab-${f.id}" data-id="${f.id}" aria-selected="${i === 0}" aria-controls="ft-painel" style="--cap:${f.c}"><span class="ft-n">${esc(f.nome)}</span><span class="ft-v">${esc(f.v)}</span><span class="ft-k">${esc(f.k)}</span></button>`).join("")}</div>
       <div id="ft-area"></div>
       <p class="ft-nota">${tr("As práticas são orientações gerais de agricultura regenerativa, não receitas: o conhecimento orienta, o território confirma. Cada valor tem a fonte indicada junto ao gráfico e os dados são atualizados automaticamente uma vez por semana.", "The practices are general regenerative-agriculture guidance, not recipes: knowledge guides, the land confirms. Each value has its source next to the chart, and the data are updated automatically once a week.")}</p>
     </div>`;
 
     const area = host.querySelector("#ft-area"), tabs = [...host.querySelectorAll(".ft-tab")];
     const mostrar = (id, foco) => {
-      const f = F.find((x) => x.id === id) || F[0];
+      const f = FS.find((x) => x.id === id) || FS[0];
       tabs.forEach((b) => { const on = b.dataset.id === f.id; b.setAttribute("aria-selected", on); b.tabIndex = on ? 0 : -1; });
       area.innerHTML = painel(f);
       f.fig.forEach((g, i) => { if (g.draw) g.draw(area.querySelector("#ft-" + f.id + "-" + i)); });
@@ -280,7 +411,7 @@
         if (d) { e.preventDefault(); mostrar(tabs[(i + d + tabs.length) % tabs.length].dataset.id, true); }
       });
     });
-    mostrar(F[0].id);
+    mostrar(FS[0].id);
   }
 
   let feito = false;
