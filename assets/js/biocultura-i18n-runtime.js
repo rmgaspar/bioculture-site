@@ -943,9 +943,9 @@
                 .then((response) => response.ok ? response.json() : {})
                 .catch(() => ({}));
             fullLoading = Promise.all([
-                read(`/assets/lang/auto/${lang}.json?v=54`),
+                read(`/assets/lang/auto/${lang}.json?v=55`),
                 read(`/assets/lang/${lang}.json?v=17`),
-                read(`/assets/lang/display/${lang}.json?v=37`),
+                read(`/assets/lang/display/${lang}.json?v=38`),
             ]).then(([auto, structured, display]) => {
                 dictionary = auto;
                 structuredDictionary = structured;
