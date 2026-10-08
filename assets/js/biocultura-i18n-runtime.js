@@ -1,3 +1,28 @@
+/* Estatísticas sem as visitas do próprio dono (Cloudflare Web Analytics não tem esta opção).
+   Abrir uma vez, em cada browser, /?analytics=off para deixar de contar; /?analytics=on volta a contar.
+   Com o aviso guardado neste browser, os envios do contador da Cloudflare são descartados antes de saírem. */
+(function () {
+    try {
+        const pedido = new URLSearchParams(location.search).get("analytics");
+        if (pedido === "off") { localStorage.setItem("bio_sem_analitica", "1"); console.info("bioCulture: neste browser as visitas deixam de contar nas estatísticas."); }
+        if (pedido === "on") { localStorage.removeItem("bio_sem_analitica"); console.info("bioCulture: neste browser as visitas voltam a contar nas estatísticas."); }
+        if (localStorage.getItem("bio_sem_analitica") !== "1") return;
+    } catch (_) { return; }
+    const contador = (alvo) => /cloudflareinsights\.com|\/cdn-cgi\/rum/.test(String((alvo && alvo.url) || alvo || ""));
+    if (navigator.sendBeacon) {
+        const original = navigator.sendBeacon.bind(navigator);
+        navigator.sendBeacon = (alvo, dados) => (contador(alvo) ? true : original(alvo, dados));
+    }
+    if (window.fetch) {
+        const original = window.fetch;
+        window.fetch = function (alvo) { return contador(alvo) ? Promise.resolve(new Response(null, { status: 204 })) : original.apply(this, arguments); };
+    }
+    if (window.XMLHttpRequest) {
+        const abrir = XMLHttpRequest.prototype.open;
+        XMLHttpRequest.prototype.open = function (metodo, alvo) { if (contador(alvo)) arguments[1] = "data:,"; return abrir.apply(this, arguments); };
+    }
+})();
+
 (function () {
     "use strict";
 
