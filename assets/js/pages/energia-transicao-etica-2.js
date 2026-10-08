@@ -105,7 +105,7 @@
                     if (!x.alerta_qualidade) {
                         const shared = Math.max(0, ...(x.municipios || []).map((m) => byMunicipality[m] - 1));
                         if (shared > 0) out.push(["cumulative", tr(`+${shared} no mesmo concelho`, `+${shared} in the same municipality`)]);
-                        if (typeof x.participacoes === "number" && x.participacoes < 50) {
+                        if (typeof x.participacoes === "number" && x.participacoes < 50 && !(x.inicio && (Date.now() - new Date(x.inicio)) / 864e5 < 7)) { // só depois de uma semana de prazo
                             out.push(["low", tr("Pouca participação", "Low participation")]);
                         }
                     }
@@ -152,6 +152,10 @@
                                 ? `<p>${
                                     Number(x.participacoes).toLocaleString(isEn() ? "en-GB" : "pt-PT")
                                 } ${x.participacoes === 1 ? tr("participação", "submission") : tr("participações", "submissions")}</p>`
+                                : ""
+                        }${
+                            x.resumo_projeto
+                                ? `<p>${esc(isEn() ? x.resumo_projeto_en || x.resumo_projeto : x.resumo_projeto)}</p>`
                                 : ""
                         }${
                             x.alerta_qualidade
