@@ -147,17 +147,19 @@
 
             function getPortalMarkImage(title) {
                 const imageMap = {
-                    "Planeta e pressões": "/images/observatorio-planeta-v2.webp",
-                    "Recursos vitais": "/images/recursos.webp",
-                    "Biodiversidade": "/images/biodiversidade-teia-viva.webp",
-                    "Pressões humanas": "/images/energia_pressao.webp",
-                    "Portugal em detalhe": "/images/pressoes-portugal.webp",
-                    "Conhecimento para cuidar": "/images/calendario_regeneracao.webp",
-                    "Pragas e invasoras": "/images/categoria-pragas-v1.jpg",
-                    "Soluções naturais": "/images/controlo-biologico-pragas-v1.webp",
+                    "terra": "/images/observatorio-planeta-v2.webp",
+                    "recursos": "/images/recursos.webp",
+                    "biodiversidade": "/images/biodiversidade-teia-viva.webp",
+                    "pressoes": "/images/pressoes-globais.webp",
+                    "humanas": "/images/energia_pressao.webp",
+                    "agricola": "/images/observatorio-regeneracao.webp",
+                    "portugal": "/images/pressoes-portugal.webp",
+                    "conhecimento": "/images/calendario_regeneracao.webp",
+                    "pragas": "/images/categoria-pragas-v1.jpg",
+                    "solucoes": "/images/controlo-biologico-pragas-v1.webp",
                 };
                 const src = imageMap[title] || "/images/placeholder.jpg";
-                return `<img src="${src}" alt="${title}" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;">`;
+                return `<img src="${src}" alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;">`;
             }
 
             const fmt = (v, digits = 1) =>
@@ -210,9 +212,10 @@
                 return `<div class="portal-chart percent-chart">${rows}${note ? `<p class="chart-note">${esc(note)}</p>` : ""}</div>`;
             }
 
-            function conhecimentoChartHTML(pragas) {
+            function conhecimentoChartHTML(pragas, problemas) {
                 const vinhaPests = (pragas || []).filter((p) => (p.grupos || []).includes("vinha")).length;
                 const items = [
+                    { label: isEnglish ? "Answers to garden problems" : "Respostas a problemas na horta", val: (problemas?.problemas || []).length, color: "#3f7373" },
                     { label: isEnglish ? "Growing guides (crops)" : "Fichas de cultivo (hortícolas)", val: 94, color: "#81966e" },
                     { label: isEnglish ? "Grape varieties documented" : "Castas de videira documentadas", val: 60, color: "#7d3350" },
                 ];
@@ -220,7 +223,7 @@
                     label: isEnglish ? "Vineyard pests mapped" : "Pragas de videira mapeadas",
                     val: vinhaPests, color: "#c9762f",
                 });
-                return countBars(items);
+                return countBars(items.filter((i) => i.val));
             }
 
             function growthChart(items) {
@@ -409,40 +412,104 @@
                 return items.length ? percentBars(items, badges) : "";
             }
 
-            function atlasContent(pragas, flora, fauna, solucoes, vetores, water, air, soil, bio, ai, energy, livestock, terra) {
-                const portals = isEnglish ? [
-                        ["Planet and pressures","Planeta e pressões","Global pressure indicators are not standing still — material extraction, sea levels and e-waste keep climbing.",[["Planetary state","/observatorio/observatorio-terra.html?lang=en#clima"],["Pressure systems","/observatorio/observatorio-terra.html?lang=en#pressure-systems"],["Method","/observatorio/observatorio-terra.html?lang=en#method"]]],
-                        ["Vital resources","Recursos vitais","The three material foundations of life are already under measurable stress — water, air and soil, read without separating their relationships.",[["Water","/recursos/agua.html?lang=en"],["Air","/recursos/ar.html?lang=en"],["Soil","/recursos/solo.html?lang=en"]]],
-                        ["Biodiversity","Biodiversidade","Species, habitats, extinction risk and ecological relationships — the Red List Index has been falling for three decades.",[["Global","/ecossistemas/biodiversidade.html?lang=en"],["Portugal","/ecossistemas/biodiversidade.html?lang=en"]]],
-                        ["Human pressures","Pressões humanas","Energy, AI infrastructure and livestock systems keep expanding the chains of extraction and production that transform territory.",[["Energy","/energia/energy.html?lang=en"],["Territory","/energia/transicao-etica.html?lang=en"],["AI","/energia/digital.html?lang=en"],["Mining","/energia/mineracao.html?lang=en"],["Livestock","/energia/pecuaria.html?lang=en"],["Agricultural production","/observatorio/producao-agricola.html?lang=en"]]],
-                        ["Pests and invasive species","Pragas e invasoras","A searchable catalogue of pests, diseases and invasive flora and fauna threatening crops and ecosystems — with identification and prevention sheets.",[["Open the catalogue","/calendario/calendario.html?lang=en#pragas-catalogo"]]],
-                        ["Natural solutions","Soluções naturais","Biological practices and products organised by function, from soil fertility to integrated pest prevention.",[["Explore solutions","/services/produtos.html?lang=en"]]],
-                        ["Portugal in detail","Portugal em detalhe","Mainland Portugal, the Azores and Madeira through national, regional and local evidence — from desertification risk to coastal erosion.",[["Observatory","/observatorio/observatorio-terra.html?lang=en"],["Species","/ecossistemas/biodiversidade.html?lang=en"],["Local calendar","/calendario/calendario.html?lang=en"]]],
-                        ["Knowledge for care","Conhecimento para cuidar","Global organic practice translated into seasonal decisions for soil, water, plants and vines.",[["Regeneration calendar","/calendario/regeneration-calendar.html?lang=en"],["Living vineyard","/calendario/living-vineyard.html?lang=en"]]]
-                    ] : [
-                        ["Planeta e pressões","Planeta e pressões","Os indicadores globais de pressão não estão parados — extração de materiais, nível do mar e resíduos eletrónicos continuam a subir.",[["Estado planetário","/observatorio/observatorio-terra.html?lang=pt#clima"],["Sistemas de pressão","/observatorio/observatorio-terra.html?lang=pt#pressure-systems"],["Método","/observatorio/observatorio-terra.html?lang=pt#method"]]],
-                        ["Recursos vitais","Recursos vitais","As três bases materiais da vida já mostram sinais mensuráveis de stress — água, ar e solo, sem separar as suas relações.",[["Água","/recursos/agua.html?lang=pt"],["Ar","/recursos/ar.html?lang=pt"],["Solo","/recursos/solo.html?lang=pt"]]],
-                        ["Biodiversidade","Biodiversidade","Espécies, habitats, risco de extinção e relações ecológicas — o Índice da Lista Vermelha está a cair há três décadas.",[["Mundo","/ecossistemas/biodiversidade.html?lang=pt"],["Portugal","/ecossistemas/biodiversidade.html?lang=pt"]]],
-                        ["Pressões humanas","Pressões humanas","Energia, infraestrutura de IA e sistemas pecuários continuam a expandir as cadeias de extração e produção que transformam o território.",[["Energia","/energia/energy.html?lang=pt"],["Território","/energia/transicao-etica.html?lang=pt"],["IA","/energia/digital.html?lang=pt"],["Mineração","/energia/mineracao.html?lang=pt"],["Pecuária","/energia/pecuaria.html?lang=pt"],["Produção agrícola","/observatorio/producao-agricola.html?lang=pt"]]],
-                        ["Pragas e invasoras","Pragas e invasoras","Um catálogo pesquisável de pragas, doenças e flora e fauna invasoras que ameaçam culturas e ecossistemas — com fichas de identificação e prevenção.",[["Abrir o catálogo","/calendario/calendario.html?lang=pt#pragas-catalogo"]]],
-                        ["Soluções naturais","Soluções naturais","Práticas e produtos biológicos organizados por função, da fertilidade do solo à prevenção integrada de pragas.",[["Explorar soluções","/services/produtos.html?lang=pt"]]],
-                        ["Portugal em detalhe","Portugal em detalhe","Portugal Continental, Açores e Madeira através de evidência nacional, regional e local — do risco de desertificação à erosão costeira.",[["Observatório","/observatorio/observatorio-terra.html?lang=pt"],["Espécies","/ecossistemas/biodiversidade.html?lang=pt"],["Calendário local","/calendario/calendario.html?lang=pt"]]],
-                        ["Conhecimento para cuidar","Conhecimento para cuidar","Prática biológica global traduzida em decisões sazonais para solo, água, plantas e vinha.",[["Calendário de regeneração","/calendario/regeneration-calendar.html?lang=pt"],["Vinha viva","/calendario/living-vineyard.html?lang=pt"]]]
-                    ];
-                const charts = {
-                    "Planeta e pressões": vetoresChartHTML(vetores),
-                    "Recursos vitais": recursosChartHTML(water, air, soil),
-                    "Biodiversidade": biodiversidadeChartHTML(bio),
-                    "Pressões humanas": pressoesHumanasChartHTML(ai, energy, livestock),
-                    "Pragas e invasoras": pragasChartHTML(pragas, flora, fauna),
-                    "Soluções naturais": solucoesChartHTML(solucoes),
-                    "Portugal em detalhe": portugalChartHTML(terra),
-                    "Conhecimento para cuidar": conhecimentoChartHTML(pragas),
-                };
-                return portals.map(function(p){
-                    const chart = charts[p[1]] || "";
-                    return `<article class="portal"><a class="portal-mark" href="${p[3][0][1]}" aria-label="${esc(p[0])}">${getPortalMarkImage(p[1])}</a><div><h3>${esc(p[0])}</h3><p>${esc(p[2])}</p>${chart}<nav class="portal-links" aria-label="${esc(p[0])}">${p[3].map(function(link){return `<a href="${link[1]}">${esc(link[0])} →</a>`}).join("")}</nav></div></article>`;
+            function terraChartHTML(global, vetores) {
+                const co2 = global?.series_temporais?.co2_mauna_loa;
+                const clima = (vetores?.destaques || []).find((d) => d.id === "clima_2025");
+                if (!co2) return "";
+                const pts = co2.anos.map((y, i) => ({ y, v: co2.valores[i] })).filter((p) => p.v != null);
+                const first = pts[0], last = pts[pts.length - 1];
+                const note = clima
+                    ? (isEnglish ? `${clima.ano} was ${fmt(clima.valor, 2)} °C above the 1850–1900 level.` : `${clima.ano} esteve ${fmt(clima.valor, 2)} °C acima do nível de 1850–1900.`)
+                    : "";
+                return growthChart([{
+                    label: isEnglish ? "Atmospheric CO₂ (Mauna Loa)" : "CO₂ atmosférico (Mauna Loa)",
+                    from: { y: String(first.y), v: first.v },
+                    to: { y: String(last.y), v: last.v },
+                    unit: "ppm",
+                    color: "#b4472f",
+                    digits: 0,
+                }]) + (note ? `<p class="chart-note">${esc(note)}</p>` : "");
+            }
+
+            function agricolaChartHTML(agri) {
+                const cer = agri?.cereals, land = agri?.land;
+                if (!cer || !land) return "";
+                const li = land.years.length - 1, at = (k) => land.series[k][li];
+                const share = at("6610") / at("6601") * 100, pasture = at("6655") / at("6610") * 100;
+                return growthChart([{
+                    label: isEnglish ? "Cereals harvested worldwide" : "Cereais colhidos no mundo",
+                    from: { y: String(cer.years[0]), v: cer.prod_mt[0] },
+                    to: { y: String(cer.years[cer.years.length - 1]), v: cer.prod_mt[cer.prod_mt.length - 1] },
+                    unit: isEnglish ? "million t/year" : "milhões t/ano",
+                    color: "#b87a0c",
+                    digits: 0,
+                }]) + percentBars([{
+                    label: isEnglish ? "Agricultural land (% of the world’s land)" : "Terra agrícola (% das terras emersas)",
+                    val: share, color: "#6b7a24", digits: 0,
+                    note: isEnglish ? `${fmt(pasture, 0)}% of it is pasture` : `${fmt(pasture, 0)}% dessa área são pastagens`,
+                }]);
+            }
+
+            const PASSOS = {
+                observar: { n: "01", c: "#6b8f47", pt: "Observar", en: "Observe" },
+                compreender: { n: "02", c: "#a66f50", pt: "Compreender", en: "Understand" },
+                agir: { n: "03", c: "#3f7373", pt: "Agir", en: "Act" },
+            };
+
+            function atlasContent(pragas, flora, fauna, solucoes, vetores, water, air, soil, bio, ai, energy, livestock, terra, global, agri, problemas) {
+                const t = (pt, en) => (isEnglish ? en : pt);
+                const u = (path) => { const [p, h] = path.split("#"); return `${p}?lang=${isEnglish ? "en" : "pt"}${h ? "#" + h : ""}`; };
+                const OBS = "/observatorio/observatorio-terra.html";
+                const portals = [
+                    { id: "terra", passo: "observar", title: t("Observatório da Terra", "Earth Observatory"),
+                        text: t("Clima, energia, ar, água, solo e vida em dez conclusões, com séries por país e o lugar de Portugal no mundo.", "Climate, energy, air, water, land and life in ten findings, with country series and Portugal’s place in the world."),
+                        links: [[t("Clima", "Climate"), OBS + "#clima"], [t("Energia", "Energy"), OBS + "#energia"], [t("Ar", "Air"), OBS + "#ar"], [t("Água", "Water"), OBS + "#agua"], [t("Solo e vida", "Land and life"), OBS + "#terra-vida"], [t("Portugal no mundo", "Portugal in the world"), OBS + "#portugal-mundo"]],
+                        chart: terraChartHTML(global, vetores) },
+                    { id: "recursos", passo: "observar", title: t("Recursos vitais", "Vital resources"),
+                        text: t("As três bases materiais da vida já mostram sinais mensuráveis de stress — água, ar e solo, sem separar as suas relações.", "The three material foundations of life are already under measurable stress — water, air and soil, read without separating their relationships."),
+                        links: [[t("Água", "Water"), "/recursos/agua.html"], [t("Ar", "Air"), "/recursos/ar.html"], [t("Solo", "Soil"), "/recursos/solo.html"]],
+                        chart: recursosChartHTML(water, air, soil) },
+                    { id: "biodiversidade", passo: "observar", title: t("Biodiversidade", "Biodiversity"),
+                        text: t("Espécies, habitats, risco de extinção e relações ecológicas — o Índice da Lista Vermelha está a cair há três décadas.", "Species, habitats, extinction risk and ecological relationships — the Red List Index has been falling for three decades."),
+                        links: [[t("Mundo", "Global"), "/ecossistemas/biodiversidade.html"], [t("Portugal", "Portugal"), "/ecossistemas/biodiversidade.html"]],
+                        chart: biodiversidadeChartHTML(bio) },
+                    { id: "pressoes", passo: "compreender", title: t("Pressões e sistemas", "Pressures and systems"),
+                        text: t("As cadeias de extração, energia, alimentação e consumo que empurram os indicadores — materiais, nível do mar e resíduos continuam a subir.", "The chains of extraction, energy, food and consumption that drive the indicators — materials, sea level and waste keep climbing."),
+                        links: [[t("Vetores de pressão", "Pressure vectors"), "/observatorio/vetores-pressao-global.html"], [t("Sistemas de pressão", "Pressure systems"), OBS + "#pressure-systems"], [t("Método", "Method"), OBS + "#method"]],
+                        chart: vetoresChartHTML(vetores) },
+                    { id: "humanas", passo: "compreender", title: t("Pressões humanas", "Human pressures"),
+                        text: t("Energia, infraestrutura de IA e sistemas pecuários continuam a expandir as cadeias de extração e produção que transformam o território.", "Energy, AI infrastructure and livestock systems keep expanding the chains of extraction and production that transform territory."),
+                        links: [[t("Energia", "Energy"), "/energia/energy.html"], [t("Território", "Territory"), "/energia/transicao-etica.html"], [t("IA", "AI"), "/energia/digital.html"], [t("Mineração", "Mining"), "/energia/mineracao.html"], [t("Pecuária", "Livestock"), "/energia/pecuaria.html"]],
+                        chart: pressoesHumanasChartHTML(ai, energy, livestock) },
+                    { id: "agricola", passo: "compreender", title: t("Produção agrícola", "Agricultural production"),
+                        text: t("O que o mundo produz, onde, quem domina cada produto e o que Portugal produz do que consome — com dados da FAO e afirmações confrontadas com os números.", "What the world produces, where, who dominates each product and how much of what it consumes Portugal produces — with FAO data and common claims checked against the numbers."),
+                        links: [[t("Abrir o relatório", "Open the report"), "/observatorio/producao-agricola.html"], [t("Portugal", "Portugal"), "/observatorio/producao-agricola.html#portugal"], [t("Verificação", "Fact-check"), "/observatorio/producao-agricola.html#verificacao"]],
+                        chart: agricolaChartHTML(agri) },
+                    { id: "portugal", passo: "compreender", title: t("Portugal em detalhe", "Portugal in detail"),
+                        text: t("Portugal Continental, Açores e Madeira através de evidência nacional, regional e local — do risco de desertificação à erosão costeira.", "Mainland Portugal, the Azores and Madeira through national, regional and local evidence — from desertification risk to coastal erosion."),
+                        links: [[t("Leitura territorial", "Territorial view"), OBS + "#leitura-local"], [t("Espécies", "Species"), "/ecossistemas/biodiversidade.html"], [t("Calendário local", "Local calendar"), "/calendario/calendario.html"]],
+                        chart: portugalChartHTML(terra) },
+                    { id: "conhecimento", passo: "agir", title: t("Conhecimento para cuidar", "Knowledge for care"),
+                        text: t("Dos dados do planeta ao cuidado da parcela: problemas na horta, calendário, vinha viva e os fatores que mudam o que se pode cultivar.", "From planetary data to caring for the plot: garden problems, calendar, living vineyard and the factors that change what can be grown."),
+                        links: [[t("Problemas na horta", "Garden problems"), "/calendario/conhecimento-cuidar.html#problemas"], [t("Dos dados à parcela", "From data to the plot"), "/calendario/conhecimento-cuidar.html#fatores"], [t("Calendário", "Calendar"), "/calendario/calendario.html"], [t("Vinha viva", "Living vineyard"), "/calendario/enologia.html"]],
+                        chart: conhecimentoChartHTML(pragas, problemas) },
+                    { id: "pragas", passo: "agir", title: t("Pragas e invasoras", "Pests and invasive species"),
+                        text: t("Um catálogo pesquisável de pragas, doenças e flora e fauna invasoras que ameaçam culturas e ecossistemas — com fichas de identificação e prevenção.", "A searchable catalogue of pests, diseases and invasive flora and fauna threatening crops and ecosystems — with identification and prevention sheets."),
+                        links: [[t("Abrir o catálogo", "Open the catalogue"), "/calendario/calendario.html#pragas-catalogo"]],
+                        chart: pragasChartHTML(pragas, flora, fauna) },
+                    { id: "solucoes", passo: "agir", title: t("Soluções naturais", "Natural solutions"),
+                        text: t("Práticas e produtos biológicos organizados por função, da fertilidade do solo à prevenção integrada de pragas.", "Biological practices and products organised by function, from soil fertility to integrated pest prevention."),
+                        links: [[t("Explorar soluções", "Explore solutions"), "/services/produtos.html"]],
+                        chart: solucoesChartHTML(solucoes) },
+                ];
+                const cards = portals.map(function (p) {
+                    const passo = PASSOS[p.passo], links = p.links.map(([label, path]) => [label, u(path)]);
+                    return `<article class="portal" data-passo="${p.passo}" style="--c:${passo.c}"><a class="portal-mark" href="${links[0][1]}" aria-label="${esc(p.title)}">${getPortalMarkImage(p.id)}</a><div class="portal-body"><span class="portal-passo">${passo.n} · ${esc(isEnglish ? passo.en : passo.pt)}</span><h3>${esc(p.title)}</h3><p>${esc(p.text)}</p>${p.chart || ""}<nav class="portal-links" aria-label="${esc(p.title)}">${links.map(([label, href]) => `<a href="${href}">${esc(label)} →</a>`).join("")}</nav></div></article>`;
                 }).join("");
+                const counts = {};
+                portals.forEach((p) => { counts[p.passo] = (counts[p.passo] || 0) + 1; });
+                const chips = [["todos", t("Todos", "All"), portals.length]].concat(Object.keys(PASSOS).map((k) => [k, `${PASSOS[k].n} · ${isEnglish ? PASSOS[k].en : PASSOS[k].pt}`, counts[k]]));
+                return { cards, chips };
             }
 
             async function start() {
@@ -472,6 +539,7 @@
                         "pragas", "flora_invasora", "fauna_invasora", "solucoes-catalogo", "vetores_pressao_global",
                         "water-overview", "air-overview", "soil-overview", "biodiversity-overview",
                         "ai-data-centres-overview", "energy-overview", "livestock-global", "observatorio_terra",
+                        "observatorio_global", "agriculture-global", "problemas-horta",
                     ];
                     // O atlas fica mais abaixo e junta 13 ficheiros (inventários de pragas e invasoras incluídos):
                     // só é pedido quando o leitor se aproxima da secção, para não pesar na entrada.
@@ -479,7 +547,20 @@
                         const atlasExtras = await Promise.all(atlasNames.map((n) =>
                             fetch(`/data/${n}.json`).then((r) => (r.ok ? r.json() : null)).catch(() => null)
                         ));
-                        el("atlas-container").innerHTML = atlasContent(...atlasExtras);
+                        const { cards, chips } = atlasContent(...atlasExtras);
+                        el("atlas-container").innerHTML = cards;
+                        const filtro = el("atlas-filtro");
+                        if (filtro) {
+                            filtro.innerHTML = chips.map(([k, label, n], i) => `<button type="button" data-passo="${k}" aria-pressed="${i === 0}">${esc(label)} <small>${n}</small></button>`).join("");
+                            filtro.setAttribute("aria-label", isEnglish ? "Filter by step" : "Filtrar por passo");
+                            filtro.hidden = false;
+                            filtro.addEventListener("click", (event) => {
+                                const b = event.target.closest("button[data-passo]");
+                                if (!b) return;
+                                filtro.querySelectorAll("button").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+                                el("atlas-container").querySelectorAll(".portal").forEach((card) => { card.hidden = b.dataset.passo !== "todos" && card.dataset.passo !== b.dataset.passo; });
+                            });
+                        }
                     };
                     const atlas = el("atlas-container");
                     if (atlas && "IntersectionObserver" in window) {

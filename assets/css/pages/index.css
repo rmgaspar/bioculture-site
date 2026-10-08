@@ -275,6 +275,24 @@ html body #main :is(#structure, #inventories, #atlas, #highlights, #today, #news
 
 .atlas { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1em; }
 
+/* Filtro por passo: Observar, Compreender, Agir (as mesmas cores dos três blocos de «O que fazemos»). */
+.atlas-filtro { display: flex; flex-wrap: wrap; gap: 0.5em; margin: 0 0 1.4em; }
+.atlas-filtro[hidden] { display: none; }
+.atlas-filtro button {
+    font: inherit; font-size: max(11px, 0.7em); font-weight: 800; letter-spacing: 0.04em; line-height: 1.2;
+    padding: 0.65em 1.1em; border-radius: 999px; cursor: pointer; height: auto; text-transform: none;
+    color: var(--ink) !important; -webkit-text-fill-color: var(--ink) !important;
+    background: #fff !important; border: 1px solid var(--line) !important; box-shadow: none !important;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.atlas-filtro button small { font-size: 0.85em; font-weight: 700; color: var(--muted); -webkit-text-fill-color: var(--muted); margin-left: 0.35em; }
+.atlas-filtro button:hover { border-color: #8da58f !important; }
+.atlas-filtro button[aria-pressed="true"] { background: var(--forest) !important; border-color: var(--forest) !important; color: #fff !important; -webkit-text-fill-color: #fff !important; }
+.atlas-filtro button[aria-pressed="true"] small { color: rgba(255, 255, 255, 0.75); -webkit-text-fill-color: rgba(255, 255, 255, 0.75); }
+.atlas-filtro button[data-passo="observar"][aria-pressed="true"] { background: #6b8f47 !important; border-color: #6b8f47 !important; }
+.atlas-filtro button[data-passo="compreender"][aria-pressed="true"] { background: #a66f50 !important; border-color: #a66f50 !important; }
+.atlas-filtro button[data-passo="agir"][aria-pressed="true"] { background: #3f7373 !important; border-color: #3f7373 !important; }
+
 .portal {
     display: grid;
     grid-template-columns: 95px 1fr;
@@ -285,7 +303,9 @@ html body #main :is(#structure, #inventories, #atlas, #highlights, #today, #news
     border-radius: 16px;
     overflow: hidden;
     transition: 0.25s;
+    border-top: 3px solid var(--c, var(--line));
 }
+.portal[hidden] { display: none; }
 
 .portal:hover { transform: translateY(-3px); border-color: #b8c4b9; }
 
@@ -306,7 +326,9 @@ html body #main :is(#structure, #inventories, #atlas, #highlights, #today, #news
 .portal h3 { font-size: 1.15em; color: var(--ink); margin: 0.1em 0 0.35em; }
 .portal p { font-size: 0.86em; line-height: 1.55; color: var(--muted); margin: 0; }
 
-.portal-links { display: flex; flex-wrap: wrap; gap: 0.45em 0.9em; margin-top: 0.85em; }
+.portal-body { display: flex; flex-direction: column; min-width: 0; }
+.portal-passo { font-size: max(11px, 0.6em); font-weight: 900; letter-spacing: 0.14em; text-transform: uppercase; color: var(--c, var(--clay)); }
+.portal-links { display: flex; flex-wrap: wrap; gap: 0.45em 0.9em; margin-top: auto; padding-top: 1em; }
 .portal-links a { color: var(--forest); font-size: max(11px, 0.67em); font-weight: 800; text-decoration: none; border: 0 !important; }
 .portal-links a:hover { color: var(--clay); }
 
