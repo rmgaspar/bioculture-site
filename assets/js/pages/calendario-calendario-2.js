@@ -24,34 +24,56 @@
                 { color: "#a66f50", bg: "#f7ede4" },
                 { color: "#3f7373", bg: "#e9f3f2" },
             ];
+            /* Um desenho por tarefa (24×24, traço): lupa com rebento, rotação, abrigo, pá, rebentos em etapas, campânula, abelha,
+               regador, gota sobre o solo, palha sobre a terra, cesto, sombrinha, pacote de sementes, erva de cobertura, compostor, vala com chuva. */
             const WEEK_ICONS = {
-                eye: '<path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="3"/>',
+                observe: '<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/><path d="M10.5 13.8V9.6"/><path d="M10.5 11.2c-1.7 0-2.8-1.1-2.8-2.5 1.7 0 2.8 1.1 2.8 2.5Z"/>',
                 cycle: '<path d="M5 12a7 7 0 0 1 12-4.9"/><path d="M19 12a7 7 0 0 1-12 4.9"/><path d="M17 3.5v3.6h-3.6"/><path d="M7 20.5v-3.6h3.6"/>',
-                nest: '<path d="M4 11 12 4l8 7"/><path d="M6.5 10v8.5a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1V10"/>',
-                tool: '<path d="M15.5 6.5a3.8 3.8 0 0 0-5 5L5 17l2 2 5.5-5.5a3.8 3.8 0 0 0 5-5l-2.5 2.5-2-2Z"/>',
-                seed: '<path d="M12 21v-7"/><path d="M12 14c0-4 3-6.5 6.5-6.5C18.5 11.5 16 14 12 14Z"/><path d="M12 14c0-3-2.3-5-5.5-5C6.5 12 8.8 14 12 14Z"/>',
-                shield: '<path d="M12 3 5 5.5V11c0 4.6 3 8.3 7 9.7 4-1.4 7-5.1 7-9.7V5.5L12 3Z"/>',
-                drop: '<path d="M12 3C12 3 5.5 10.8 5.5 15A6.5 6.5 0 0 0 12 21.5 6.5 6.5 0 0 0 18.5 15C18.5 10.8 12 3 12 3Z"/>',
-                mulch: '<path d="M4 8c2.5-1.3 5 1.3 8 0s5.5-1.3 8 0"/><path d="M4 13c2.5-1.3 5 1.3 8 0s5.5-1.3 8 0"/><path d="M4 18c2.5-1.3 5 1.3 8 0s5.5-1.3 8 0"/>',
-                basket: '<path d="M5.5 10h13l-1.4 8.6a2 2 0 0 1-2 1.7H8.9a2 2 0 0 1-2-1.7L5.5 10Z"/><path d="M8.5 10V7.5a3.5 3.5 0 0 1 7 0V10"/>',
-                shade: '<path d="M4 12a8 8 0 0 1 16 0Z"/><path d="M12 12v7.5a1.8 1.8 0 0 1-3.4.8"/><path d="M12 4.5V3"/>',
-                compost: '<path d="M4.5 19c0-4.7 3.4-8 7.5-8s7.5 3.3 7.5 8"/><path d="M12 11V4"/><path d="M12 5.2c-1.8 0-3 1.4-2.8 3"/>',
+                habitat: '<path d="M4 11 12 4l8 7"/><path d="M6 10v9.5h12V10"/><circle cx="12" cy="14.2" r="2"/><path d="M8 21.5h8"/>',
+                tools: '<path d="M12 3v8"/><path d="M9 3h6"/><path d="M8 11h8v4.5c0 3-2 5-4 5.5-2-.5-4-2.5-4-5.5Z"/>',
+                stages: '<path d="M3 20.5h18"/><path d="M6 20.5v-4"/><circle cx="6" cy="14.8" r="1.6"/><path d="M12 20.5v-8"/><path d="M12 12.5c-2.3 0-3.7-1.5-3.7-3.5 2.3 0 3.7 1.5 3.7 3.5Z"/><path d="M18 20.5V8"/><path d="M18 8c-2.5 0-4-1.7-4-3.7 2.5 0 4 1.7 4 3.7Z"/><path d="M18 11c2.3 0 3.4-1.4 3.4-3.2-2.3 0-3.4 1.4-3.4 3.2Z"/>',
+                cloche: '<path d="M3 20.5h18"/><path d="M5 20.5a7 7 0 0 1 14 0"/><path d="M12 20.5v-5"/><path d="M12 15.5c-2 0-3.2-1.3-3.2-3 2 0 3.2 1.3 3.2 3Z"/><path d="M12 14.5c1.8 0 2.8-1.1 2.8-2.6-1.8 0-2.8 1.1-2.8 2.6Z"/>',
+                bee: '<ellipse cx="12" cy="14" rx="4.5" ry="3.5"/><path d="M10 10.7v6.6"/><path d="M14 10.7v6.6"/><path d="M9.5 10.5c-2.5-1.5-2.5-5 .5-5.5 1 1.5.8 3.8-.5 5.5Z"/><path d="M14.5 10.5c2.5-1.5 2.5-5-.5-5.5-1 1.5-.8 3.8.5 5.5Z"/>',
+                can: '<path d="M4.5 10.5h9.5v7.5a1.5 1.5 0 0 1-1.5 1.5H6a1.5 1.5 0 0 1-1.5-1.5Z"/><path d="M6.5 10.5c0-3 1.7-4.3 3.7-4.3s3.3 1.3 3.3 4.3"/><path d="M14 14l5.5-4"/><path d="M18.3 7.6l3 3"/><path d="M20 14.5v1.5"/><path d="M22 13v1.2"/>',
+                moisture: '<path d="M12 3s-4 4.6-4 7.2a4 4 0 0 0 8 0C16 7.6 12 3 12 3Z"/><path d="M3 15h18v6H3Z"/><circle cx="7" cy="18" r=".6"/><circle cx="12" cy="18.8" r=".6"/><circle cx="17" cy="18" r=".6"/>',
+                mulch: '<path d="M3 15.5h18V21H3Z"/><path d="M4.5 13l3-2.2M9.5 13l3-2.2M14.5 13l3-2.2M19 12.2l1.5-1.2"/><path d="M5 8l3-2.2M10 8l3-2.2M15 8l3-2.2"/>',
+                basket: '<path d="M4 11h16l-1.6 8.2a2 2 0 0 1-2 1.6H7.6a2 2 0 0 1-2-1.6Z"/><circle cx="9.5" cy="7.8" r="2.2"/><circle cx="14.8" cy="7.2" r="2.2"/><path d="M5 15.2h14"/>',
+                shade: '<path d="M3.5 13a8.5 8.5 0 0 1 17 0Z"/><path d="M12 13v6.5a2 2 0 0 1-4 0"/><path d="M12 4.5V3"/>',
+                packet: '<path d="M6.5 3.5h11v17h-11Z"/><path d="M6.5 8h11"/><path d="M12 11.2c2.2 1.6 2.2 5 0 6.6-2.2-1.6-2.2-5 0-6.6Z"/>',
+                cover: '<path d="M3 20.5h18"/><path d="M6 20.5c0-4 .5-7 2.2-10"/><path d="M12 20.5V7"/><path d="M18 20.5c0-4-.5-7-2.2-10"/><path d="M9 20.5c-.2-2.5-1-4.5-2.2-6"/><path d="M15 20.5c.2-2.5 1-4.5 2.2-6"/>',
+                compost: '<path d="M5 8h14l-1.4 12.5H6.4Z"/><path d="M4 8h16"/><path d="M8.3 12h7.4"/><path d="M8 16h8"/><path d="M12 5.2c-1.8 0-3-1.2-3-2.7 1.8 0 3 1.2 3 2.7Z"/>',
+                infiltrate: '<path d="M7 3.5s-1.7 2-1.7 3.2a1.7 1.7 0 0 0 3.4 0C8.7 5.5 7 3.5 7 3.5Z"/><path d="M12 2s-1.7 2-1.7 3.2a1.7 1.7 0 0 0 3.4 0C13.7 4 12 2 12 2Z"/><path d="M17 3.5s-1.7 2-1.7 3.2a1.7 1.7 0 0 0 3.4 0C18.7 5.5 17 3.5 17 3.5Z"/><path d="M3 13h5l2.5 6h3L16 13h5"/>',
             };
-            function weekIcon(title) {
+            /* A cor segue o assunto: azul para a água, verde para o que cresce, argila para solo e materiais, âmbar para a vida útil e a colheita, verde-azulado para observar e planear. */
+            const WEEK_TONES = {
+                blue: { color: "#2f6f9e", bg: "#eaf4fb" },
+                green: { color: "#4c7a34", bg: "#eef4e9" },
+                clay: { color: "#a66f50", bg: "#f7ede4" },
+                amber: { color: "#a8730d", bg: "#fbf2dc" },
+                teal: { color: "#3f7373", bg: "#e9f3f2" },
+            };
+            const WEEK_TONE_OF = { observe: "teal", cycle: "teal", habitat: "amber", tools: "clay", stages: "green", cloche: "green", bee: "amber", can: "blue", moisture: "blue", mulch: "clay", basket: "amber", shade: "amber", packet: "amber", cover: "green", compost: "clay", infiltrate: "blue" };
+            function weekKey(title) {
                 const t = normalize(title);
-                if (/observar/.test(t)) return WEEK_ICONS.eye;
-                if (/rotac|planear/.test(t)) return WEEK_ICONS.cycle;
-                if (/habitat|abrigo|acolher|auxiliar/.test(t)) return WEEK_ICONS.nest;
-                if (/ferramenta/.test(t)) return WEEK_ICONS.tool;
-                if (/seme(ar|nte)/.test(t)) return WEEK_ICONS.seed;
-                if (/proteger/.test(t)) return WEEK_ICONS.shield;
-                if (/rega|humidade|agua|infiltra/.test(t)) return WEEK_ICONS.drop;
-                if (/cobrir|cobertura/.test(t)) return WEEK_ICONS.mulch;
-                if (/colher/.test(t)) return WEEK_ICONS.basket;
-                if (/sombra/.test(t)) return WEEK_ICONS.shade;
-                if (/compost/.test(t)) return WEEK_ICONS.compost;
-                return WEEK_ICONS.seed;
+                if (/observar/.test(t)) return "observe";
+                if (/rotac|planear/.test(t)) return "cycle";
+                if (/habitat/.test(t)) return "habitat";
+                if (/ferramenta/.test(t)) return "tools";
+                if (/por etapas/.test(t)) return "stages";
+                if (/proteger/.test(t)) return "cloche";
+                if (/acolher|auxiliar/.test(t)) return "bee";
+                if (/verificar rega/.test(t)) return "can";
+                if (/humidade/.test(t)) return "moisture";
+                if (/infiltra/.test(t)) return "infiltrate";
+                if (/guardar sement/.test(t)) return "packet";
+                if (/coberturas/.test(t)) return "cover";
+                if (/cobrir/.test(t)) return "mulch";
+                if (/colher/.test(t)) return "basket";
+                if (/sombra/.test(t)) return "shade";
+                if (/compost/.test(t)) return "compost";
+                return "stages";
             }
+            const weekIcon = (title) => WEEK_ICONS[weekKey(title)];
             const PRACTICE_COLORS = {
                 "Solo e cobertura": "#6b8f47",
                 "Compostagem e húmus": "#8a5a3c",
@@ -351,10 +373,10 @@
                 const month = viewedDate.getMonth(), season = seasonFor(month).key;
                 const seasonal = {
                     inverno: [
-                        ["Observar o solo", "Evite trabalhar solo saturado e proteja zonas nuas."],
+                        ["Observar o solo", "Evita trabalhar solo saturado e protege zonas nuas."],
                         [
                             "Planear rotações",
-                            "Reveja famílias, necessidades e registos da campanha anterior.",
+                            "Revê famílias, necessidades e registos da campanha anterior.",
                         ],
                         [
                             "Criar habitat",
@@ -362,7 +384,7 @@
                         ],
                         [
                             "Rever ferramentas",
-                            "Limpa e repare ferramentas antes da época de crescimento.",
+                            "Limpa e repara ferramentas antes da época de crescimento.",
                         ],
                     ],
                     primavera: [
@@ -372,40 +394,40 @@
                             "Usa barreiras físicas apenas quando existe risco identificado.",
                         ],
                         ["Acolher auxiliares", "Mantém flores e água rasa com saída segura."],
-                        ["Verificar rega", "Teste linhas e emissores antes do calor."],
+                        ["Verificar rega", "Testa linhas e emissores antes do calor."],
                     ],
                     verao: [
                         [
                             "Verificar humidade",
                             "Observa a zona radicular antes de regar profundamente.",
                         ],
-                        ["Cobrir o solo", "Reponha cobertura sem a encostar aos caules."],
-                        ["Colher regularmente", "Retire frutos maduros e observa sinais de doença."],
+                        ["Cobrir o solo", "Repõe cobertura sem a encostar aos caules."],
+                        ["Colher regularmente", "Retira frutos maduros e observa sinais de doença."],
                         ["Criar sombra seletiva", "Protege culturas sensíveis sem impedir ventilação."],
                     ],
                     outono: [
                         [
                             "Guardar sementes",
-                            "Escolhe plantas saudáveis e deixe maturar completamente.",
+                            "Escolhe plantas saudáveis e deixa maturar completamente.",
                         ],
                         ["Semear coberturas", "Mantém raízes vivas entre culturas."],
                         [
                             "Compostar materiais",
-                            "Equilibre materiais secos e verdes sem enterrar resíduos.",
+                            "Equilibra materiais secos e verdes sem enterrar resíduos.",
                         ],
-                        ["Preparar infiltração", "Abrande escorrência antes da época mais chuvosa."],
+                        ["Preparar infiltração", "Abranda a escorrência antes da época mais chuvosa."],
                     ],
                 };
                 document.getElementById("week-plan").innerHTML = seasonal[season].map((
                     [title, text],
                     index,
                 ) => {
-                    const palette = WEEK_PALETTE[index % WEEK_PALETTE.length];
+                    const palette = WEEK_TONES[WEEK_TONE_OF[weekKey(title)]] || WEEK_PALETTE[index % WEEK_PALETTE.length];
                     return `<article class="week-task"><span class="week-icon" style="color:${
                         palette.color
                     };background:${
                         palette.bg
-                    }"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${
+                    }"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${
                         weekIcon(title)
                     }</svg></span><span class="task-number">0${
                         index + 1
