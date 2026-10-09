@@ -178,12 +178,14 @@ def invasoras():
     texto = descarregar(ZENODO.format("FirstRecords_dataset_public_v4.0.csv"), 300).decode("latin-1")
     por_taxon = {}
     estado = Counter()
+    mundo_por_ano = Counter()  # registos por ano em todos os países: mostra o atraso de publicação dos últimos anos
     for r in csv.DictReader(io.StringIO(texto), delimiter=";"):
-        if r["locationID"] != "202" or r["occurrenceStatus"] == "absent":
-            continue
         try:
             ano = int(float(r["firstRecordEvent"]))
         except ValueError:
+            continue
+        mundo_por_ano[ano] += 1
+        if r["locationID"] != "202" or r["occurrenceStatus"] == "absent":
             continue
         estado[r["confidenceFirstRecordEvent"]] += 1
         # um registo por espécie: o primeiro
@@ -195,13 +197,16 @@ def invasoras():
     for taxon, ano in por_taxon.items():
         grupo = GRUPOS.get(tax.get(taxon, ""), "outros")
         contagem[grupo][(ano // 10) * 10] += 1
+    pt_por_ano = Counter(por_taxon.values())
     return {
         "decadas": DECADAS,
         "por_grupo": {g: [c.get(d, 0) for d in DECADAS] for g, c in contagem.items()},
         "especies": len(por_taxon),
         "ate_1900": sum(1 for a in por_taxon.values() if a < 1900),
+        "atraso": {"ultimo_ano_pt": max(por_taxon.values()), "pt_por_ano": {str(a): pt_por_ano.get(a, 0) for a in (2000, 2010, 2015, 2019)},
+                   "mundo_por_ano": {str(a): mundo_por_ano.get(a, 0) for a in (2000, 2010, 2019)}},
         "ambito": "Portugal continental (Açores e Madeira ficam de fora desta versão)",
-        "nota": "Contam espécies pela década do primeiro registo. A década de 2020 está incompleta e os registos recentes dependem do esforço de deteção e de publicação.",
+        "nota": "Contam espécies pela década do primeiro registo. Os últimos anos ficam sempre incompletos: um primeiro registo só entra na base depois de detetado, identificado e publicado, e os registos dependem do esforço de deteção.",
         "fonte": "Truong Renard & Seebens, FirstRecords v4.0 (Zenodo, CC BY 4.0)",
         "url": "https://doi.org/10.5281/zenodo.18759840",
     }
