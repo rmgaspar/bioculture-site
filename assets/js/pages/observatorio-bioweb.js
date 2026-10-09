@@ -31,7 +31,7 @@
     if (alvo) setTimeout(() => alvo.scrollIntoView({ block: "start" }), 60);
   };
 
-  Promise.all([T.load(), get("/data/bioweb.json?v=3"), get("/data/agriculture-global.json")])
+  Promise.all([T.load(), get("/data/bioweb.json?v=4"), get("/data/agriculture-global.json")])
     .then(([{ R, CLIMA, VET }, B, A]) => { construir(T.create(R, CLIMA, VET), B, A); traduzirNav(); barraFixa(); irParaHash(); })
     .catch((e) => { console.error(e); traduzirNav(); barraFixa(); box.innerHTML = `<p class="prose">${tr("Não foi possível carregar os dados da teia.", "The web data could not be loaded.")}</p>`; });
 
