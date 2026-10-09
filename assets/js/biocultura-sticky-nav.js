@@ -17,6 +17,21 @@
             "#main .bio-nav-pinned .bio-nav-top:hover,#main .bio-nav-pinned .bio-nav-top:focus-visible{color:#315b43!important;-webkit-text-fill-color:#315b43!important}";
         document.head.appendChild(style);
     }
+    // Indício de continuação: esbatido nas pontas quando a barra desliza na horizontal e há mais links por ver.
+    if (!document.getElementById("bio-nav-fade-style")) {
+        const style = document.createElement("style");
+        style.id = "bio-nav-fade-style";
+        style.textContent =
+            "#main .bio-nav-fade{position:sticky;flex:0 0 0!important;width:0;align-self:stretch;overflow:visible;opacity:0;pointer-events:none;z-index:2;transition:opacity .2s ease}" +
+            "#main .bio-nav-fade::before{position:absolute;top:-.8em;bottom:-.8em;width:48px;display:flex;align-items:center;color:#5f7365;font:700 22px/1 system-ui,sans-serif;" +
+            "background:linear-gradient(var(--bio-fade-dir,to right),rgba(255,255,255,0),#fff 55%)}" +
+            "#main .bio-nav-fade-end{right:0}#main .bio-nav-fade-end::before{content:'\\203A';right:0;justify-content:flex-end;padding-right:8px}" +
+            "#main .bio-nav-fade-start{left:0;--bio-fade-dir:to left}#main .bio-nav-fade-start::before{content:'\\2039';left:0;padding-left:8px}" +
+            "#main .bio-nav-more-end .bio-nav-fade-end,#main .bio-nav-more-start .bio-nav-fade-start{opacity:1}" +
+            "#main .bio-nav-more-end .bio-nav-fade-end::before,#main .bio-nav-more-start .bio-nav-fade-start::before{pointer-events:auto;cursor:pointer}" +
+            "#main .bio-nav-more-end .bio-nav-fade-end:hover::before,#main .bio-nav-more-start .bio-nav-fade-start:hover::before{color:#315b43}";
+        document.head.appendChild(style);
+    }
     const topLabel = () => ((document.documentElement.lang || "").toLowerCase().startsWith("en") ? "↑ Top" : "↑ Topo");
     const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -37,7 +52,29 @@
             window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
             if (location.hash) history.replaceState(null, "", location.pathname + location.search);
         });
+        const fadeEnd = document.createElement("span");
+        fadeEnd.className = "bio-nav-fade bio-nav-fade-end";
+        fadeEnd.setAttribute("aria-hidden", "true");
+        const fadeStart = document.createElement("span");
+        fadeStart.className = "bio-nav-fade bio-nav-fade-start";
+        fadeStart.setAttribute("aria-hidden", "true");
+        navigation.prepend(fadeStart);
+        navigation.append(fadeEnd);
         navigation.append(topLink);
+        const updateMore = () => {
+            const max = navigation.scrollWidth - navigation.clientWidth;
+            const gap = parseFloat(getComputedStyle(navigation).columnGap) || 0;
+            // Os indicadores não ocupam lugar: anulam o espaço (gap) que o flex lhes daria.
+            fadeStart.style.margin = fadeEnd.style.margin = `0 ${-gap}px`;
+            fadeEnd.style.right = navigation.classList.contains("bio-nav-pinned") && topLink.offsetWidth ? `${topLink.offsetWidth}px` : "0";
+            navigation.classList.toggle("bio-nav-more-end", max > 1 && navigation.scrollLeft < max - 2);
+            navigation.classList.toggle("bio-nav-more-start", max > 1 && navigation.scrollLeft > 2);
+        };
+        navigation.addEventListener("scroll", updateMore, { passive: true });
+        // A seta ‹ / › desliza a barra para mostrar o resto dos links.
+        const slide = (direction) => navigation.scrollBy({ left: direction * navigation.clientWidth * 0.6, behavior: reduceMotion ? "auto" : "smooth" });
+        fadeEnd.addEventListener("click", () => slide(1));
+        fadeStart.addEventListener("click", () => slide(-1));
 
         const progress = document.createElement("div");
         progress.className = "bio-nav-progress";
@@ -97,6 +134,7 @@
             if (topLink.textContent !== topLabel()) topLink.textContent = topLabel();
             setActive();
             setProgress();
+            updateMore();
         };
         update();
         window.addEventListener("scroll", update, { passive: true });

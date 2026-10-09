@@ -12,7 +12,7 @@
 
   fetch("/sidebar-content.html?v=24").then((r) => (r.ok ? r.text() : "")).then((h) => { const sb = document.getElementById("sidebar"); if (h && sb) sb.innerHTML = h; }).catch(() => {});
   /* A barra fixa lê os destinos ao carregar; como os capítulos nascem aqui, só a ligamos depois de existirem. */
-  const barraFixa = () => { const el = document.createElement("script"); el.src = "/assets/js/biocultura-sticky-nav.js?v=10"; document.body.appendChild(el); };
+  const barraFixa = () => { const el = document.createElement("script"); el.src = "/assets/js/biocultura-sticky-nav.js?v=13"; document.body.appendChild(el); };
   const traduzirNav = () => {
     if (!EN) return;
     const M = { sumario: "Summary", clima: "Climate", vida: "Wildlife", invasoras: "Invasive species", pesticidas: "Pesticides", producao: "Production", teia: "The web", fontes: "Sources" };

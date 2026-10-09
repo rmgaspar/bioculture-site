@@ -507,6 +507,14 @@
         document.head.appendChild(mobileNav);
     }
 
+    // «← Voltar»: regressa ao sítio exato de onde saíste (ver biocultura-voltar.js).
+    if (!document.querySelector('script[src*="biocultura-voltar.js"]')) {
+        const voltar = document.createElement("script");
+        voltar.src = "/assets/js/biocultura-voltar.js?v=1";
+        voltar.defer = true;
+        document.head.appendChild(voltar);
+    }
+
     const supported = new Set(["en"]);
     const stored = languageStore.read();
     const lang = supported.has(stored) ? stored : "pt";
@@ -943,7 +951,7 @@
                 .then((response) => response.ok ? response.json() : {})
                 .catch(() => ({}));
             fullLoading = Promise.all([
-                read(`/assets/lang/auto/${lang}.json?v=61`),
+                read(`/assets/lang/auto/${lang}.json?v=62`),
                 read(`/assets/lang/${lang}.json?v=18`),
                 read(`/assets/lang/display/${lang}.json?v=38`),
             ]).then(([auto, structured, display]) => {
