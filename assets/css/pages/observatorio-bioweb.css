@@ -1,0 +1,93 @@
+/* A teia (bioWeb): complementa relatorio-dados.css e observatorio-observatorio-terra.css. */
+html body[data-hero-theme] .bio-banner-hero .observatory-visual.bioweb-visual,
+html body .observatory-visual.bioweb-visual { background-color: #f4f1e8 !important; background-image: url("/images/biodiversidade-teia-viva.webp") !important; background-size: cover !important; background-position: center !important; }
+html body .hero-lead { margin: 1.1em 0 0; max-width: 56ch; font-size: 1.12em; line-height: 1.6; color: #e8f0ea !important; -webkit-text-fill-color: #e8f0ea !important; }
+#relatorio-bioweb .tiles { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+@media (max-width: 1100px) { #relatorio-bioweb .tiles { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 640px) { #relatorio-bioweb .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* Barra fixa: cada capítulo com a sua cor. */
+html body #main nav.reading-nav.bioweb-nav a[href="#clima"] { --hero-accent: #b4472f; }
+html body #main nav.reading-nav.bioweb-nav a[href="#vida"] { --hero-accent: #7a5aa6; }
+html body #main nav.reading-nav.bioweb-nav a[href="#invasoras"] { --hero-accent: #8f3b3b; }
+html body #main nav.reading-nav.bioweb-nav a[href="#pesticidas"] { --hero-accent: #b87a0c; }
+html body #main nav.reading-nav.bioweb-nav a[href="#producao"] { --hero-accent: #6b7a24; }
+html body #main nav.reading-nav.bioweb-nav a[href="#teia"] { --hero-accent: #2f6147; }
+html body #main nav.reading-nav.bioweb-nav a[href="/observatorio/observatorio-terra.html"]::before { display: none; }
+html body #main :is(#sumario, #clima, #vida, #invasoras, #pesticidas, #producao, #teia, #fontes) { scroll-margin-top: 6rem; }
+
+#relatorio-bioweb #clima { --cap: #b4472f; }
+#relatorio-bioweb #vida { --cap: #7a5aa6; }
+#relatorio-bioweb #invasoras { --cap: #8f3b3b; }
+#relatorio-bioweb #pesticidas { --cap: #b87a0c; }
+#relatorio-bioweb #producao { --cap: #6b7a24; }
+#relatorio-bioweb #teia { --cap: #2f6147; }
+#relatorio-bioweb :is(#clima, #vida, #invasoras, #pesticidas, #producao, #teia) .sec-head .eyebrow { color: var(--cap); }
+#relatorio-bioweb :is(#clima, #vida, #invasoras, #pesticidas, #producao, #teia) .sec-head .eyebrow::before {
+    content: ""; display: inline-block; width: 0.6em; height: 0.6em; margin-right: 0.6em; border-radius: 50%; background: var(--cap);
+}
+#relatorio-bioweb .sub { margin: 10px 0 0; font-size: 1.05rem; }
+#relatorio-bioweb .vermais { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; max-width: none; margin: 0; }
+#relatorio-bioweb .vermais span { font-size: max(11px, 0.7rem); font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin-right: 4px; }
+#relatorio-bioweb .vermais a { font-size: 0.88rem; font-weight: 700; text-decoration: none; padding: 5px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--cap, var(--brand)); }
+#relatorio-bioweb .vermais a:hover { border-color: var(--cap, var(--brand)); }
+
+/* Factos do clima ao lado do gráfico. */
+#relatorio-bioweb .kf { display: grid; gap: 2px; padding: 14px 16px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+#relatorio-bioweb .kf b { font-family: var(--f-display); font-size: 1.6rem; line-height: 1.15; color: var(--ink); }
+#relatorio-bioweb .kf span { font-size: 0.86rem; color: var(--ink-2); line-height: 1.45; }
+
+/* Barras empilhadas por década: o total no fim da barra. */
+#relatorio-bioweb .sk .barwrap { display: flex; align-items: center; gap: 10px; min-width: 0; }
+#relatorio-bioweb .sk .bars { min-width: 0; }
+#relatorio-bioweb .sk .tot { font-size: max(11px, 0.78rem); color: var(--ink); font-variant-numeric: tabular-nums; font-weight: 700; flex: 0 0 auto; }
+#relatorio-bioweb .sk { grid-template-columns: 3.6em minmax(0, 1fr); }
+
+/* Séries alinhadas. */
+#relatorio-bioweb .alinhadas { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; }
+#relatorio-bioweb .alinhadas figure { padding: 14px 14px 8px; gap: 6px; }
+
+/* O diagrama da teia: oito pontos, cada um com o estado dos dados. */
+#relatorio-bioweb .teia { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+#relatorio-bioweb .nodo {
+    position: relative; display: grid; gap: 4px; align-content: start; padding: 16px 16px 14px; border-radius: 16px; text-decoration: none;
+    border: 1px solid color-mix(in srgb, var(--e) 28%, #ffffff); background: color-mix(in srgb, var(--e) 6%, #ffffff); color: var(--ink);
+    transition: transform 0.15s, border-color 0.15s;
+}
+#relatorio-bioweb .nodo:hover { transform: translateY(-2px); border-color: var(--e); }
+#relatorio-bioweb .nodo .n { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font-size: 0.78rem; font-weight: 800; color: #fff; background: var(--e); }
+#relatorio-bioweb .nodo b { font-family: var(--f-display); font-size: 1.02rem; line-height: 1.25; margin-top: 4px; }
+#relatorio-bioweb .nodo small { font-size: 0.84rem; color: var(--ink-2); line-height: 1.45; }
+#relatorio-bioweb .nodo em { font-style: normal; font-size: 0.7rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--e); margin-top: 4px; }
+@media (max-width: 1000px) { #relatorio-bioweb .teia { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 520px) { #relatorio-bioweb .teia { grid-template-columns: minmax(0, 1fr); } }
+
+/* Tabela de variações. */
+#relatorio-bioweb .mudancas th, #relatorio-bioweb .mudancas td { padding: 9px 12px; font-size: 0.88rem; text-align: left; border-bottom: 1px solid var(--line-2); vertical-align: top; }
+#relatorio-bioweb .mudancas th { font-size: 0.74rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+#relatorio-bioweb .mudancas td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+#relatorio-bioweb .mudancas .seta { font-size: 0.7rem; margin-right: 4px; }
+#relatorio-bioweb .mudancas .seta.up { color: #b4472f; }
+#relatorio-bioweb .mudancas .seta.down { color: #2a6fb0; }
+#relatorio-bioweb .mudancas .seta.flat { color: #7a857c; }
+
+/* Leitura honesta em três cartões. */
+#relatorio-bioweb .leitura { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+#relatorio-bioweb .leitura article { padding: 18px 20px; border-radius: 16px; border: 1px solid var(--line); background: var(--surface); display: grid; gap: 8px; align-content: start; }
+#relatorio-bioweb .leitura h3 { font-family: var(--f-display); font-size: 1.05rem; }
+#relatorio-bioweb .leitura p { font-size: 0.92rem; line-height: 1.65; color: var(--ink-2); max-width: none; }
+#relatorio-bioweb .leitura .ok { border-color: color-mix(in srgb, #2f7a4f 30%, #fff); background: color-mix(in srgb, #2f7a4f 5%, #fff); }
+#relatorio-bioweb .leitura .ok h3 { color: #2f7a4f; }
+#relatorio-bioweb .leitura .nao { border-color: color-mix(in srgb, #b87a0c 32%, #fff); background: color-mix(in srgb, #b87a0c 6%, #fff); }
+#relatorio-bioweb .leitura .nao h3 { color: #a8730d; }
+#relatorio-bioweb .leitura .falta { border-color: color-mix(in srgb, #8f3b3b 28%, #fff); background: color-mix(in srgb, #8f3b3b 5%, #fff); }
+#relatorio-bioweb .leitura .falta h3 { color: #8f3b3b; }
+@media (max-width: 900px) { #relatorio-bioweb .leitura { grid-template-columns: minmax(0, 1fr); } }
+
+/* Referências e limites. */
+#relatorio-bioweb .refs, #relatorio-bioweb .limites { list-style: none; padding: 0; margin: 0; display: grid; gap: 0; }
+#relatorio-bioweb .refs li, #relatorio-bioweb .limites li { padding: 11px 0; border-top: 1px solid var(--line-2); font-size: 0.92rem; line-height: 1.6; color: var(--ink-2); }
+#relatorio-bioweb .refs li:first-child, #relatorio-bioweb .limites li:first-child { border-top: 0; }
+#relatorio-bioweb .refs b, #relatorio-bioweb .limites b { color: var(--ink); }
+#relatorio-bioweb .refs a { display: block; font-size: 0.84rem; color: var(--brand); }
+#relatorio-bioweb .limites code { font-size: 0.85em; background: var(--line-2); padding: 1px 6px; border-radius: 4px; }

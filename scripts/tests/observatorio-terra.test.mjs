@@ -56,3 +56,15 @@ for (const [pagina, contexto] of Object.entries(fatores)) {
   for (const f of ['biocultura-graficos.js', 'biocultura-terra-dados.js', 'biocultura-fatores.js', 'fatores.css']) assert(h.includes(f), pagina + ': falta ' + f);
   assert(read('assets/js/biocultura-fatores.js').includes(contexto + ': {'), 'contexto sem configuração: ' + contexto);
 }
+
+// «A teia»: o script compila, a página liga o que precisa e os dados têm a estrutura que a página lê.
+new vm.Script(read('assets/js/pages/observatorio-bioweb.js'));
+{
+  const pagina = read('observatorio/bioweb.html');
+  for (const f of ['biocultura-graficos.js', 'biocultura-terra-dados.js', 'observatorio-bioweb.js', 'observatorio-bioweb.css']) assert(pagina.includes(f), 'bioweb.html: falta ' + f);
+  for (const id of ['sumario', 'clima', 'vida', 'invasoras', 'pesticidas', 'producao', 'teia', 'fontes']) assert(pagina.includes('href="#' + id + '"'), 'bioweb.html: falta o separador ' + id);
+  const bw = JSON.parse(read('data/bioweb.json'));
+  for (const k of ['clima', 'aves', 'pesticidas', 'invasoras']) assert(bw[k], 'bioweb.json: falta ' + k);
+  assert(bw.pesticidas.portugal_eurostat.risco.hri1.length >= 10 && bw.invasoras.especies > 800, 'bioweb.json: séries curtas');
+  assert(read('assets/js/pages/observatorio-bioweb.js').includes('/data/bioweb.json'), 'o script da teia tem de ler bioweb.json');
+}

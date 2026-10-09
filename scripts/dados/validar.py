@@ -120,6 +120,35 @@ def validar_relatorio_terra():
             falha(f"relatório da Terra: país desconhecido {codigo}")
 
 
+def validar_bioweb():
+    """A página «A teia»: séries completas, com o âmbito certo e dentro de intervalos plausíveis."""
+    d = comum.ler("bioweb.json")
+    c = d["clima"]
+    if c["a"] != 1901 or len(c["v"]) < 120 or not all(valido(v) and 5 < v < 25 for v in c["v"] if v is not None):
+        falha("teia: temperatura de Portugal fora do esperado")
+    for chave in ("agricolas", "florestais", "todas"):
+        s = d["aves"][chave]
+        if s["a"] != 1990 or s["v"][0] != 100 or len(s["v"]) < 30 or not all(valido(v) and 10 < v < 200 for v in s["v"] if v is not None):
+            falha(f"teia: índice de aves {chave} fora do esperado")
+    p = d["pesticidas"]
+    for area in ("mundo", "portugal"):
+        b = p[area]
+        n = len(b["total"])
+        if b["a"] != 1990 or n < 30 or any(len(b[k]) != n for k in ("inseticidas", "herbicidas", "fungicidas", "por_ha", "por_valor")):
+            falha(f"teia: pesticidas {area}: séries com tamanhos diferentes")
+        if not all(valido(v) and v > 0 for v in b["total"] if v is not None):
+            falha(f"teia: pesticidas {area}: valores inválidos")
+    if not (1e6 < p["mundo"]["total"][-1] < 2e7) or not (1e3 < p["portugal"]["total"][-1] < 1e5):
+        falha("teia: ordem de grandeza dos pesticidas")
+    r = p["portugal_eurostat"]["risco"]["hri1"]
+    if len(r) < 10 or not all(valido(v) and 0 < v < 400 for v in r if v is not None):
+        falha("teia: indicador harmonizado de risco fora do esperado")
+    i = d["invasoras"]
+    soma = sum(sum(g) for g in i["por_grupo"].values())
+    if i["especies"] < 800 or soma + i["ate_1900"] != i["especies"] or any(len(g) != len(i["decadas"]) for g in i["por_grupo"].values()):
+        falha("teia: primeiros registos de espécies não nativas incoerentes")
+
+
 def main():
     for nome, (indicador, geo, mundo) in CONJUNTOS.items():
         try:
@@ -130,6 +159,10 @@ def main():
         validar_relatorio_terra()
     except (KeyError, ValueError, TypeError) as erro:
         falha(f"relatório da Terra: estrutura inesperada ({erro!r})")
+    try:
+        validar_bioweb()
+    except (KeyError, ValueError, TypeError, IndexError) as erro:
+        falha(f"teia: estrutura inesperada ({erro!r})")
     if erros:
         for erro in erros:
             print(f"ERRO: {erro}", file=sys.stderr)

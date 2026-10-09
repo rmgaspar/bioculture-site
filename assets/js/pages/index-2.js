@@ -153,6 +153,7 @@
                     "pressoes": "/images/pressoes-globais.webp",
                     "humanas": "/images/energia_pressao.webp",
                     "agricola": "/images/observatorio-regeneracao.webp",
+                    "teia": "/images/instagram/02-um-planeta-milhares-de-relacoes.webp",
                     "portugal": "/images/pressoes-portugal.webp",
                     "conhecimento": "/images/calendario_regeneracao.webp",
                     "pragas": "/images/categoria-pragas-v1.jpg",
@@ -456,7 +457,17 @@
                 agir: { n: "03", c: "#3f7373", pt: "Agir", en: "Act" },
             };
 
-            function atlasContent(pragas, flora, fauna, solucoes, vetores, water, air, soil, bio, ai, energy, livestock, terra, global, agri, problemas) {
+            function teiaChartHTML(bw) {
+                const av = bw?.aves?.agricolas, p = bw?.pesticidas?.mundo;
+                if (!av || !p) return "";
+                const iA = av.v.length - 1, iP = p.total.length - 1;
+                return growthChart([
+                    { label: isEnglish ? "Farmland birds in the EU (index)" : "Aves agrícolas na UE (índice)", from: { y: String(av.a), v: av.v[0] }, to: { y: String(av.a + iA), v: av.v[iA] }, unit: isEnglish ? "1990 = 100" : "1990 = 100", color: "#7a5aa6", digits: 0 },
+                    { label: isEnglish ? "Pesticides used worldwide" : "Pesticidas usados no mundo", from: { y: String(p.a), v: p.total[0] / 1e6 }, to: { y: String(p.a + iP), v: p.total[iP] / 1e6 }, unit: isEnglish ? "million t/year" : "milhões t/ano", color: "#b87a0c", digits: 2 },
+                ]);
+            }
+
+            function atlasContent(pragas, flora, fauna, solucoes, vetores, water, air, soil, bio, ai, energy, livestock, terra, global, agri, problemas, bioweb) {
                 const t = (pt, en) => (isEnglish ? en : pt);
                 const u = (path) => { const [p, h] = path.split("#"); return `${p}?lang=${isEnglish ? "en" : "pt"}${h ? "#" + h : ""}`; };
                 const OBS = "/observatorio/observatorio-terra.html";
@@ -485,6 +496,10 @@
                         text: t("O que o mundo produz, onde, quem domina cada produto e o que Portugal produz do que consome — com dados da FAO e afirmações confrontadas com os números.", "What the world produces, where, who dominates each product and how much of what it consumes Portugal produces — with FAO data and common claims checked against the numbers."),
                         links: [[t("Abrir o relatório", "Open the report"), "/observatorio/producao-agricola.html"], [t("Portugal", "Portugal"), "/observatorio/producao-agricola.html#portugal"], [t("Verificação", "Fact-check"), "/observatorio/producao-agricola.html#verificacao"]],
                         chart: agricolaChartHTML(agri) },
+                    { id: "teia", passo: "compreender", title: t("A teia", "The web"),
+                        text: t("Clima, aves, espécies invasoras, pesticidas e produção agrícola ao longo do tempo, lado a lado: o que os dados confirmam, o que desmentem e o que ainda falta medir.", "Climate, birds, invasive species, pesticides and farm output over time, side by side: what the data confirm, what they contradict and what is still left to measure."),
+                        links: [[t("Abrir a teia", "Open the web"), "/observatorio/bioweb.html"], [t("Invasoras", "Invasive species"), "/observatorio/bioweb.html#invasoras"], [t("Pesticidas", "Pesticides"), "/observatorio/bioweb.html#pesticidas"], [t("O que falta medir", "What is left to measure"), "/observatorio/bioweb.html#teia"]],
+                        chart: teiaChartHTML(bioweb) },
                     { id: "portugal", passo: "compreender", title: t("Portugal em detalhe", "Portugal in detail"),
                         text: t("Portugal Continental, Açores e Madeira através de evidência nacional, regional e local — do risco de desertificação à erosão costeira.", "Mainland Portugal, the Azores and Madeira through national, regional and local evidence — from desertification risk to coastal erosion."),
                         links: [[t("Leitura territorial", "Territorial view"), OBS + "#leitura-local"], [t("Espécies", "Species"), "/ecossistemas/biodiversidade.html"], [t("Calendário local", "Local calendar"), "/calendario/calendario.html"]],
@@ -539,7 +554,7 @@
                         "pragas", "flora_invasora", "fauna_invasora", "solucoes-catalogo", "vetores_pressao_global",
                         "water-overview", "air-overview", "soil-overview", "biodiversity-overview",
                         "ai-data-centres-overview", "energy-overview", "livestock-global", "observatorio_terra",
-                        "observatorio_global", "agriculture-global", "problemas-horta",
+                        "observatorio_global", "agriculture-global", "problemas-horta", "bioweb",
                     ];
                     // O atlas fica mais abaixo e junta 13 ficheiros (inventários de pragas e invasoras incluídos):
                     // só é pedido quando o leitor se aproxima da secção, para não pesar na entrada.

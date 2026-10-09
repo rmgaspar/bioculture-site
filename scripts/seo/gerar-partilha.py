@@ -24,6 +24,7 @@ CARDS = {
     "index.html": ("Ler o planeta.", "Cuidar do lugar."),
     "observatorio/observatorio-terra.html": ("Observatório da Terra.", "Mundo, Portugal e ilhas."),
     "observatorio/producao-agricola.html": ("Produção agrícola.", "O que o mundo cultiva e troca."),
+    "observatorio/bioweb.html": ("A teia.", "Clima, vida, invasoras e pesticidas."),
     "observatorio/pressoes-humanas.html": ("Pressões diferentes.", "Efeitos que se cruzam."),
     "observatorio/limitar-ultrapassagem-1-5.html": ("Depois de 1,5 °C.", "Limitar o pico, acelerar a descida."),
     "observatorio/noticia-detalhe.html": ("Atualidade.", "O que muda no território."),
