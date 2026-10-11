@@ -17,7 +17,7 @@
 .tj-cenario li { color: var(--tj-ink); font-size: .95rem; line-height: 1.5; }
 .tj-cenario-fontes { margin: .7em 0 0; font-size: .85rem; color: var(--tj-muted); }
 
-.tj-mapa { position: relative; display: grid; gap: 1.6rem; padding: 1.4rem 1.2rem 1.5rem; border: 1px solid var(--tj-line); border-radius: 16px; background: #fff; }
+.tj-mapa { position: relative; display: grid; gap: 1.9rem; padding: 1.4rem 1.2rem 1.5rem; border: 1px solid var(--tj-line); border-radius: 16px; background: #fff; }
 .tj-linhas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
 .tj-liga { fill: none; stroke: #93a296; stroke-width: 1.4; opacity: .55; transition: opacity .2s, stroke .2s; }
 .tj-liga.tj-parcial { stroke-dasharray: 5 4; opacity: .45; }
@@ -29,18 +29,18 @@
 .tj-liga.is-cut { stroke: #b4472f; stroke-dasharray: 3 5; opacity: .9; }
 .tj-mapa:not(.tem-sel) .tj-liga.is-cut { opacity: .9; }
 
-.tj-nivel { position: relative; z-index: 1; display: grid; grid-template-columns: 7.5rem minmax(0, 1fr); gap: 1rem; align-items: center; }
+.tj-nivel { position: relative; z-index: 1; display: grid; gap: .7rem; }
 .tj-rotulo { color: var(--tj-muted); font: 800 .7rem/1.3 "Source Sans Pro", sans-serif; letter-spacing: .14em; text-transform: uppercase; }
-.tj-nos { display: flex; flex-wrap: wrap; justify-content: space-around; gap: 1rem .8rem; }
-.teia-jardim .tj-no { border: 1px solid var(--tj-line) !important; position: relative; display: grid; justify-items: center; gap: .3rem; width: 6.6rem; height: auto; min-height: 5.6rem; padding: .55rem .35rem .6rem; border: 1px solid var(--tj-line); border-radius: 14px; background: #fff; color: var(--tj-ink); font: 700 .8rem/1.2 "Source Sans Pro", sans-serif; letter-spacing: 0; text-transform: none; box-shadow: none; cursor: pointer; transition: opacity .2s, border-color .2s, background .2s, transform .15s; }
+.tj-nos { display: flex; flex-wrap: wrap; justify-content: space-around; gap: 1rem .6rem; }
+.teia-jardim .tj-no { border: 1px solid var(--tj-line) !important; position: relative; display: grid; justify-items: center; gap: .3rem; width: 6.5rem; height: auto; min-height: 7rem; padding: .55rem .35rem .6rem; border: 1px solid var(--tj-line); border-radius: 14px; background: #fff; color: var(--tj-ink); font: 700 .8rem/1.2 "Source Sans Pro", sans-serif; letter-spacing: 0; text-transform: none; box-shadow: none; cursor: pointer; transition: opacity .2s, border-color .2s, background .2s, transform .15s; }
 .teia-jardim .tj-no:hover { border-color: var(--tj-forest) !important; transform: translateY(-2px); }
-.tj-ico { display: grid; place-items: center; width: 2.6rem; height: 2.6rem; border-radius: 50%; background: #eef3ee; color: var(--tj-forest); }
-.tj-ico svg { width: 1.75rem; height: 1.75rem; }
+.tj-ico { display: grid; place-items: center; width: 4.3rem; height: 4.3rem; border-radius: 50%; background: #f2f6f1; }
+.tj-ico svg { width: 3.5rem; height: 3.5rem; }
 .tj-nome { text-align: center; text-wrap: balance; }
-.tj-nivel[data-nivel="topo"] .tj-ico { background: #e8eef5; color: #3d5f7d; }
-.tj-nivel[data-nivel="predadores"] .tj-ico { background: #e9f1e6; color: #2f5a3f; }
-.tj-nivel[data-nivel="consumidores"] .tj-ico { background: #f6efdc; color: #8a6511; }
-.tj-nivel[data-nivel="base"] .tj-ico { background: #efe6dc; color: #7a5038; }
+.tj-nivel[data-nivel="topo"] .tj-ico { background: #eaf0f6; }
+.tj-nivel[data-nivel="predadores"] .tj-ico { background: #eef4ea; }
+.tj-nivel[data-nivel="consumidores"] .tj-ico { background: #f8f2e0; }
+.tj-nivel[data-nivel="base"] .tj-ico { background: #f3ebe1; }
 .tj-selo { position: absolute; left: 50%; bottom: -.75rem; transform: translateX(-50%); width: max-content; max-width: 9rem; padding: .12rem .5rem; border-radius: 999px; background: #fff; border: 1px solid #ecd1c8; color: #8c3320; font: 800 .62rem/1.3 "Source Sans Pro", sans-serif; letter-spacing: .02em; text-align: center; }
 .tj-selo:empty { display: none; }
 .teia-jardim .tj-no.is-sel { border-color: var(--tj-forest) !important; background: #f3f8f3; box-shadow: 0 0 0 2px rgba(47, 90, 63, .25) !important; }
@@ -48,7 +48,8 @@
 .teia-jardim .tj-no.is-dim { opacity: .35; }
 .teia-jardim .tj-no.is-removed { border-color: #b4472f !important; background: #fbf1ed; }
 .teia-jardim .tj-no.is-removed .tj-nome { text-decoration: line-through; }
-.teia-jardim .tj-no.is-removed .tj-ico::after { content: "✕"; position: absolute; top: .35rem; right: .45rem; color: #b4472f; font-size: 1.1rem; font-weight: 900; }
+.teia-jardim .tj-no.is-removed .tj-ico { filter: grayscale(1); opacity: .6; }
+.teia-jardim .tj-no.is-removed::after { content: "✕"; position: absolute; top: .3rem; right: .5rem; color: #b4472f; font-size: 1.1rem; font-weight: 900; }
 .teia-jardim .tj-no.is-up, .teia-jardim .tj-no.is-down { border-color: #d9a441 !important; background: #fdf8ec; }
 .teia-jardim .tj-no.is-hit { border-color: #b4472f !important; background: #fbf1ed; }
 .teia-jardim .tj-no.is-indirect { border-color: #d9a441 !important; background: #fdf8ec; }
@@ -60,8 +61,8 @@
 .tj-ficha-topo > div { flex: 1 1 12rem; }
 .tj-ficha h3 { margin: 0; font-size: 1.4rem; line-height: 1.15; }
 .tj-ficha small { color: var(--tj-muted); font-style: italic; }
-.tj-ico-grande { width: 3.4rem; height: 3.4rem; background: #eef3ee; }
-.tj-ico-grande svg { width: 2.2rem; height: 2.2rem; }
+.tj-ico-grande { width: 5.2rem; height: 5.2rem; background: #f2f6f1; }
+.tj-ico-grande svg { width: 4.4rem; height: 4.4rem; }
 .tj-resumo { margin: .9rem 0 0; max-width: 52rem; color: var(--tj-ink); line-height: 1.6; }
 .tj-refs { margin-left: .3em; font-size: .78em; white-space: nowrap; }
 .tj-refs a { margin-left: .15em; color: var(--tj-forest); font-weight: 800; text-decoration: none; }
@@ -100,9 +101,10 @@
     .tj-colunas { grid-template-columns: 1fr; }
 }
 @media (max-width: 760px) {
+    .tj-ico { width: 3.6rem; height: 3.6rem; }
+    .tj-ico svg { width: 3rem; height: 3rem; }
     .tj-linhas { display: none; }
     .tj-mapa { gap: 1.2rem; padding: 1rem .8rem 1.2rem; }
-    .tj-nivel { grid-template-columns: 1fr; gap: .6rem; }
     .tj-nos { justify-content: flex-start; gap: .9rem .5rem; }
     .teia-jardim .tj-no { width: calc(33.33% - .4rem); min-width: 5.2rem; }
 }

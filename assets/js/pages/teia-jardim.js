@@ -14,26 +14,7 @@
     const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const NS = "http://www.w3.org/2000/svg";
 
-    const S = 'viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"';
-    const BIRD = '<ellipse cx="19" cy="24" rx="10" ry="8"/><circle cx="27" cy="15" r="5"/><path d="M32 15l5 1-5 2"/><path d="M10 27l-6 5M19 32v4M23 32v4"/><circle cx="28" cy="14" r=".9" fill="currentColor"/>';
-    const ICONS = {
-        plantas: '<path d="M20 35V17"/><path d="M20 24c-7 0-11-4-11-11 7 0 11 4 11 11z"/><path d="M20 19c6 0 10-3 10-9-6 0-10 3-10 9z"/>',
-        solo: '<path d="M5 26h30v9H5z"/><path d="M5 26c5-3 9 2 15-1s10 2 15-1"/><path d="M14 31h1M24 30h1M30 33h1"/><path d="M20 25v-8"/><path d="M20 20c-4 0-6-2-6-6 4 0 6 2 6 6z"/>',
-        pulgoes: '<ellipse cx="20" cy="22" rx="8" ry="7"/><path d="M14 17l-4-5M26 17l4-5M12 24l-6 2M28 24l6 2M14 28l-4 5M26 28l4 5"/><circle cx="17" cy="20" r=".8" fill="currentColor"/><circle cx="23" cy="20" r=".8" fill="currentColor"/>',
-        lagartas: '<circle cx="9" cy="26" r="4.5"/><circle cx="17" cy="23" r="4.5"/><circle cx="25" cy="23" r="4.5"/><circle cx="32" cy="26" r="4.5"/><path d="M7 21l-2-3M11 21l2-3"/>',
-        lesmas: '<path d="M5 31h27c3 0 3-4 1-5-2-1-3-2-3-5 0-3-3-5-6-4-4 1-5 5-5 8H8c-2 0-3 3-3 6z"/><path d="M29 17l-2-5M32 18l3-4"/>',
-        minhocas: '<path d="M5 28c4-9 8 6 12-1s7 6 12-1 4-5 6-5" stroke-width="4"/>',
-        joaninha: '<path d="M9 24a11 11 0 0 1 22 0c0 6-5 10-11 10S9 30 9 24z"/><path d="M20 13v21"/><circle cx="14" cy="24" r="1.6" fill="currentColor"/><circle cx="26" cy="24" r="1.6" fill="currentColor"/><circle cx="15" cy="30" r="1.4" fill="currentColor"/><circle cx="25" cy="30" r="1.4" fill="currentColor"/><path d="M16 11l-3-4M24 11l3-4"/>',
-        crisopa: '<path d="M20 20c-9-9-17-4-16 3 1 6 10 5 16-3z"/><path d="M20 20c9-9 17-4 16 3-1 6-10 5-16-3z"/><path d="M20 14v20"/><path d="M18 14l-4-6M22 14l4-6"/>',
-        tesourinha: '<path d="M20 12c-4 0-5 6-5 12 0 4 2 7 5 7s5-3 5-7c0-6-1-12-5-12z"/><path d="M17 32c-3 3-5 4-7 2M23 32c3 3 5 4 7 2"/><path d="M18 12l-3-5M22 12l3-5"/>',
-        carabideos: '<ellipse cx="20" cy="23" rx="8" ry="11"/><path d="M20 13v21"/><path d="M12 18l-6-3M12 24H5M12 30l-6 3M28 18l6-3M28 24h7M28 30l6 3"/><path d="M17 12l-2-4M23 12l2-4"/>',
-        aranha: '<circle cx="20" cy="22" r="5"/><circle cx="20" cy="14" r="3"/><path d="M15 20L5 14M15 22H4M15 25L5 32M16 28l-6 8M25 20l10-6M25 22h11M25 25l10 7M24 28l6 8"/>',
-        sapo: '<path d="M6 30c0-8 5-12 14-12s14 4 14 12c0 3-3 5-6 5H12c-3 0-6-2-6-5z"/><circle cx="12" cy="16" r="3.2"/><circle cx="28" cy="16" r="3.2"/><circle cx="12" cy="16" r=".9" fill="currentColor"/><circle cx="28" cy="16" r=".9" fill="currentColor"/><path d="M13 27c4 3 10 3 14 0"/>',
-        chapim: BIRD + '<path d="M14 22c4-1 8 1 10 5"/>',
-        melro: BIRD,
-        ourico: '<path d="M5 29c0-10 6-17 15-17s16 7 16 17z"/><path d="M12 22l-2-4M17 19l-1-5M23 18l1-5M29 21l3-4"/><circle cx="8" cy="27" r=".9" fill="currentColor"/><path d="M12 33v3M28 33v3"/>',
-    };
-    const icon = (id) => `<svg ${S}>${ICONS[id] || ""}</svg>`;
+    const icon = (id) => (window.BioCulturaTeiaIcones && window.BioCulturaTeiaIcones[id]) || "";
 
     const state = { sel: "", removed: "", pest: false };
     let data = null, nodes = {}, links = [], refNumber = {}, mapa = null, svg = null, birds = null;

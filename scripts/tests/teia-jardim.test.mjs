@@ -28,10 +28,14 @@ d.cenario.refs.forEach((r) => assert(d.referencias[r], 'fonte do cenário inexis
 // Página: bloco, separador na barra e scripts com versão; o JS é válido; as respostas ligadas existem.
 const html = read('calendario/conhecimento-cuidar.html');
 assert(html.includes('id="teia-jardim"') && html.includes('href="#teia-jardim"'));
-for (const f of ['assets/js/pages/teia-jardim.js', 'assets/css/components/teia-jardim.css']) {
+for (const f of ['assets/js/pages/teia-jardim.js', 'assets/js/pages/teia-jardim-icones.js', 'assets/css/components/teia-jardim.css']) {
   assert(existsSync(f), f);
   assert(new RegExp(f.replace(/[.*+?^${}()|[\]\\\/]/g, '\\$&') + '\\?v=\\d+').test(html), f + ' tem de ter versão');
 }
 new vm.Script(read('assets/js/pages/teia-jardim.js'));
 const problemas = new Set(JSON.parse(read('data/problemas-horta.json')).problemas.map((p) => p.id));
 for (const n of d.nos) for (const v of n.ver) if (v.t === 'prob') assert(problemas.has(v.id), 'resposta inexistente: ' + v.id);
+// Cada elo tem a sua ilustração.
+const sandbox = { window: {} };
+vm.runInNewContext(read('assets/js/pages/teia-jardim-icones.js'), sandbox);
+for (const n of d.nos) assert(/^<svg /.test(sandbox.window.BioCulturaTeiaIcones[n.id] || ''), n.id + ': falta ilustração');
