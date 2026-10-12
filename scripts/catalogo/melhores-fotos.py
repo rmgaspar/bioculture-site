@@ -44,6 +44,10 @@ vf = carregar("vf", "verificar-fotos.py")
 lf = vf.lf
 MARGEM = 12
 # Fichas cujo nome comum e nome científico se contradizem: ficam sem foto até alguém decidir qual é a espécie certa.
+# Fichas onde, depois de ver à vista, a imagem atual é melhor que a candidata (espécime em fundo preto, papel milimétrico,
+# fotomontagem…) ou a candidata é duvidosa: não mexer.
+MANTER = {"borboleta-branca-da-couve", "gorgulho-da-videira", "elodea-canadensis", "hydrilla-verticillata",
+          "myriophyllum-heterophyllum", "eryngium-pandanifolium", "egeria-densa"}
 EXCLUIR = {"terebinto", "buglossa", "trevina", "lapa-mansa", "cubres", "erva-mosca", "margaça", "sargaço-branco"}
 QID = {"Plantae": "Q756", "Fungi": "Q764", "Aves": "Q5113", "Mammalia": "Q7377", "Insecta": "Q1390", "Arachnida": "Q1358",
        "Mollusca": "Q25326", "Actinopterygii": "Q127282", "Reptilia": "Q10811", "Amphibia": "Q10908", "Animalia": "Q729",
@@ -188,6 +192,35 @@ def guardar(cache, caminho):
     caminho.write_text(json.dumps(cache, ensure_ascii=False), encoding="utf-8")
 
 
+GRUPO_VIRTUAL = {"pragas": "N/A", "flora_invasora": "Flora Invasora", "fauna_invasora": "Animalia", "horticolas_master": "Plantae"}
+
+
+def limpa_nome(nome):
+    """«Pieris brassicae e Pieris rapae» → «Pieris brassicae»; «Agrotis spp.» → «Agrotis»; «Salvia x» → como está."""
+    primeiro = re.split(r"\s+(?:e|ou)\s+|,|/|\(", nome or "")[0].strip()
+    return re.sub(r"\s+(spp|sp)\.?$", "", primeiro).strip()
+
+
+def ler_registos(args):
+    """(registos por chave, estrutura original, caminho). Para ficheiros que não o catálogo, injeta grupo e nome limpo."""
+    if not args.ficheiro:
+        caminho = RAIZ / "data" / "especies_master.json"
+        dados = json.loads(caminho.read_text(encoding="utf-8"))
+        return dados, dados, caminho
+    caminho = RAIZ / "data" / f"{args.ficheiro}.json"
+    dados = json.loads(caminho.read_text(encoding="utf-8"))
+    pares = list(dados.items()) if isinstance(dados, dict) else [(x["id"], x) for x in dados]
+    regs = {}
+    for k, v in pares:
+        w = dict(v)
+        w["grupo"] = GRUPO_VIRTUAL[args.ficheiro]
+        w["nome_cientifico_original"] = v.get("nome_cientifico")
+        w["nome_cientifico"] = limpa_nome(v.get("nome_cientifico"))
+        w["nome"] = v.get("nome") or v.get("nome_comum") or k
+        regs[k] = w
+    return regs, dados, caminho
+
+
 def registos_do_bloco(master, grupos):
     return {k: v for k, v in master.items() if v.get("grupo") in grupos and k not in EXCLUIR}
 
@@ -204,7 +237,7 @@ def candidatos(args):
     caminho = Path(args.cache)
     cache = novo_cache(caminho)
     vcache = json.loads(Path(args.cache_verificacao).read_text(encoding="utf-8"))
-    master = json.loads((RAIZ / "data" / "especies_master.json").read_text(encoding="utf-8"))
+    master, _, _ = ler_registos(args)
     print("A ler táxons…", flush=True)
     todos, por_nome = vf.ler_taxa()
     bloco = registos_do_bloco(master, args.grupos)
@@ -348,7 +381,7 @@ def analisar_imagem(url, cache):
 def escolher(args):
     cache = novo_cache(Path(args.cache))
     vcache = json.loads(Path(args.cache_verificacao).read_text(encoding="utf-8"))
-    master = json.loads((RAIZ / "data" / "especies_master.json").read_text(encoding="utf-8"))
+    master, _, _ = ler_registos(args)
     todos, por_nome = vf.ler_taxa()
     bloco = registos_do_bloco(master, args.grupos)
     plano, estados = {}, Counter()
@@ -369,6 +402,9 @@ def escolher(args):
         list(pool.map(uma, por_analisar))
     cache["im"].update(resultados)
     for k, v in bloco.items():
+        if k in MANTER:
+            estados["mantida-decisao-manual"] += 1
+            continue
         t = taxon_da_ficha(v, todos, por_nome, vcache)
         if not t:
             estados["sem-taxon"] += 1
@@ -385,8 +421,17 @@ def escolher(args):
             estados["preenchida" if escolha else "sem-candidata"] += 1
         elif t["nivel"] > 10:
             estados["mantida-nivel-acima-da-especie"] += 1
-        elif not atual_id:
+        elif not atual_id and not args.rever_tudo:
             estados["mantida-escolhida-a-vista"] += 1  # Commons/outra origem já escolhida
+        elif not atual_id:
+            destac = next((c for c in cand if c["origem"] == "inat" and c["foto"]["id"] == entrada.get("def") and c["lado"] >= 1000), None)
+            wiki = next((c for c in cand if c["origem"] == "wikidata" and c["lado"] >= 1000), None)
+            escolha = wiki or destac or (cand[0] if cand else None)
+            if escolha and escolha["origem"] == "wikidata" and escolha["ficheiro"].replace(" ", "_") in (v.get("imagem") or ""):
+                escolha = None
+                estados["mantida-ja-e-a-melhor"] += 1
+            elif escolha is None:
+                estados["mantida-sem-alternativa"] += 1
         else:
             lado = max(atual["w"], atual["h"]) if atual else 0
             e_destacada = atual_id == entrada.get("def")
@@ -418,16 +463,18 @@ def escolher(args):
 
 def aplicar(args):
     plano = json.loads(Path(args.plano).read_text(encoding="utf-8"))
-    master = json.loads((RAIZ / "data" / "especies_master.json").read_text(encoding="utf-8"))
+    regs, dados, caminho = ler_registos(args)
+    alvo = dados if not args.ficheiro else (dados if isinstance(dados, dict) else {x["id"]: x for x in dados})
     for k, p in plano.items():
-        master[k]["imagem"] = p["imagem"]
+        reg = alvo[k]
+        reg["imagem"] = p["imagem"]
         f = dict(p["foto"])
         if p["grande"] != p["imagem"] and p["origem"] == "wikidata":
             f["grande"] = p["grande"]
-        if re.search(r"['‘’]|\bcv\.|\bsubsp\.|\bvar\.", master[k].get("nome_cientifico", "")):
+        if re.search(r"['‘’]|\bcv\.|\bsubsp\.|\bvar\.", reg.get("nome_cientifico", "") or ""):
             f["da_especie"] = True
-        master[k]["foto"] = f
-    (RAIZ / "data" / "especies_master.json").write_text(json.dumps(master, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        reg["foto"] = f
+    caminho.write_text(json.dumps(dados, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(len(plano), "fichas atualizadas.")
 
 
@@ -435,6 +482,8 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("comando", choices=["candidatos", "escolher", "aplicar"])
     ap.add_argument("--grupos", nargs="+", default=[])
+    ap.add_argument("--ficheiro", choices=sorted(GRUPO_VIRTUAL), help="outro ficheiro de dados em vez do catálogo de espécies")
+    ap.add_argument("--rever-tudo", action="store_true", help="também troca imagens atuais que não vêm do iNaturalist")
     ap.add_argument("--cache", default=str(RAIZ / "scripts" / "catalogo" / ".cache-melhores.json"))
     ap.add_argument("--cache-verificacao", default=str(RAIZ / "scripts" / "catalogo" / ".cache-fotos.json"))
     ap.add_argument("--plano", default=str(RAIZ / "scripts" / "catalogo" / ".plano.json"))
