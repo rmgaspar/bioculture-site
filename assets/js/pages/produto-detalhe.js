@@ -63,10 +63,8 @@
                 }`;
                 const beneficios = listPanel(tr("Benefícios", "Benefits"),
                     arr(product.beneficios).map((b) => localized(b)));
-                const backLink = `<a class="back" href="${
-                    esc(link("/services/produtos.html#" + (solucao?.id || "")))
-                }">← ${tr("Voltar ao catálogo", "Back to the catalogue")}</a>`;
-                document.getElementById("product").innerHTML = `<div class="hero"><div><span class="eyebrow">${
+                const hub = link("/services/produtos.html#" + (solucao?.id || ""));
+                let html = `<div class="hero"><div><span class="eyebrow">${
                     esc(categoriaNome || tr("Produto", "Product"))
                 }</span><h1>${esc(localized(product.nome))}</h1>${
                     valid(product.marca) ? `<h2 class="scientific">${esc(product.marca)}</h2>` : ""
@@ -86,7 +84,7 @@
                     esc(categoriaNome || "—")
                 }</b></div></div></div><div class="hero-image" data-initial="${
                     esc(String(localized(product.nome) || "?").charAt(0))
-                }">${image}</div></div>${backLink}${
+                }">${image}</div></div><!--ficha-nav-->${
                     valid(product.descricao)
                         ? `<div class="section-block" id="descricao"><div class="section-head"><span class="eyebrow">${
                             tr("Sobre este produto", "About this product")
@@ -118,6 +116,17 @@
                         }</p><a class="order-cta" href="${esc(order)}">${tr("Contactar para encomendar →", "Contact to order →")}</a>`
                         : `<h3>${tr("Brevemente", "Coming soon")}</h3>`
                 }</div></div>`;
+                // Barra fixa: «← Voltar» (regressa ao sítio exato, ver biocultura-voltar.js) e as secções que o produto tem.
+                const secoes = [["descricao", tr("Sobre", "About")], ["aplicacao", tr("Aplicação", "Application")], ["solucoes", tr("Ligações", "Connections")], ["encomendar", tr("Encomendar", "Order")]];
+                const nav = `<nav class="management-nav" aria-label="${tr("Nesta ficha", "On this page")}"><a class="hub-back" href="${esc(hub)}" onclick="if(!this.dataset.bioHub&&history.length>1&&document.referrer.startsWith(location.origin)){event.preventDefault();history.back();}">${tr("← Voltar", "← Back")}</a>${
+                    secoes.filter(([id]) => html.includes(`id="${id}"`)).map(([id, label]) => `<a href="#${id}">${label}</a>`).join("")
+                }</nav>`;
+                document.getElementById("product").innerHTML = html.replace("<!--ficha-nav-->", nav);
+                if (!document.querySelector('script[src*="biocultura-sticky-nav"]')) {
+                    const stickyNav = document.createElement("script");
+                    stickyNav.src = "/assets/js/biocultura-sticky-nav.js?v=13";
+                    document.body.appendChild(stickyNav);
+                }
                 document.title = `${localized(product.nome)} — bioCulture`;
             }
             async function load() {
