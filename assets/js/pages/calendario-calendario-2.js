@@ -476,7 +476,7 @@
                 }" alt="${
                     escapeHtml(item.nome_comum)
                 }" loading="lazy" onerror="this.onerror=null;this.src='/images/pragas-placeholder.svg'"><div class="catalog-card-body"><small>${
-                    /^(Praga|Doença|Doenças|Organismo|Pest|Disease|Soil-borne|Nursery|Palm|Forestry|Quarantine|Regulated)/.test(item.tipo || "") ? escapeHtml(item.tipo) : tagHTML("Praga", item.tipo)
+                    item.nivel === "grupo" ? tagHTML("Grupo", item.tipo) : /^(Praga|Doença|Doenças|Organismo|Pest|Disease|Soil-borne|Nursery|Palm|Forestry|Quarantine|Regulated)/.test(item.tipo || "") ? escapeHtml(item.tipo) : tagHTML("Praga", item.tipo)
                 }</small><h3>${
                     escapeHtml(item.nome_comum)
                 }</h3>${

@@ -84,3 +84,9 @@ Cruza cada ficha de `data/pragas.json` com a **EPPO Global Database** (Organiza�
 - Mosca-da-cenoura (Psila rosae / Chamaepsila rosae) e Venturia pyrina: **sem fonte portuguesa encontrada**.
 
 Limites: a auditoria confirma que cada organismo é reconhecido e (quase sempre) que ocorre em Portugal; **não** confirma os textos das fichas (plantas afetadas, sintomas, combate), que continuam a vir da síntese feita a partir das fontes gerais da DGAV e da Comissão Europeia.
+
+## Seguimento (2026-10-12)
+
+- As 5 fichas de grupo largo (pulgoes, cochonilhas-de-escama, lesmas-e-caracois, ferrugens, tombamento-de-plantulas) mantêm-se com o campo `nivel: "grupo"` e a etiqueta «Grupo · tipo» nos cartões.
+- Ligadas às fichas (em `referencias`): circular EAD 08/2026 da Estação de Avisos do Douro (míldio da vinha, cigarrinha-verde, flavescência dourada), fichas de divulgação n.º 04 e n.º 19 da Estação de Avisos do Algarve (míldio; cigarrinha-verde, que nomeia a *Empoasca vitis*), circular 06/2023 da Estação de Avisos de Entre Douro e Minho (míldio da batateira, *Phytophthora infestans*; cópia no site do IVDP) e circular 07/2015 da mesma estação (pedrado das pomóideas; cópia no invasoras.pt, o único endereço que encontrei). Todas verificadas no texto antes de ligar.
+- Sem circular: alternariose, mosca-da-cenoura e *Venturia pyrina*.
