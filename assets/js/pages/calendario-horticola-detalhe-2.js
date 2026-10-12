@@ -291,6 +291,9 @@
                             esc(item.nome)
                         }" onerror="this.remove()">`
                         : "";
+                    const credit = valid(item.imagem) && item.foto && item.foto.licenca
+                        ? `<p class="photo-credit">${window.BioCultureI18n?.isEnglish ? "Photo" : "Foto"}: ${item.foto.autor && item.foto.autor !== "iNaturalist" ? `${esc(item.foto.autor)} · ` : ""}<a href="${esc(item.foto.licenca_url)}" target="_blank" rel="noopener noreferrer">${esc(item.foto.licenca)}</a> · <a href="${esc(item.foto.pagina)}" target="_blank" rel="noopener noreferrer">${esc(item.foto.origem || "iNaturalist")}</a></p>`
+                        : "";
                     const facts = [
                         ["Categoria", item.categoria || item.grupo],
                         ["Ciclo", item.ciclo],
@@ -362,6 +365,7 @@
                     }">
                                 ${image}
                             </div>
+                            ${credit}
                         </div>
                     </div>
                     <a href="calendario.html" class="btn-voltar-base" style="margin:0 0 2em" onclick="if(window.history.length>1){event.preventDefault();history.back();}">← VOLTAR AO CALENDÁRIO</a>
