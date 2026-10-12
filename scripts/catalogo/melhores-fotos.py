@@ -48,7 +48,7 @@ MARGEM = 12
 # fotomontagem…) ou a candidata é duvidosa: não mexer.
 MANTER = {"borboleta-branca-da-couve", "gorgulho-da-videira", "elodea-canadensis", "hydrilla-verticillata",
           "myriophyllum-heterophyllum", "eryngium-pandanifolium", "egeria-densa"}
-EXCLUIR = {"terebinto", "buglossa", "trevina", "lapa-mansa", "cubres", "erva-mosca", "margaça", "sargaço-branco"}
+EXCLUIR = {"trevina"}
 QID = {"Plantae": "Q756", "Fungi": "Q764", "Aves": "Q5113", "Mammalia": "Q7377", "Insecta": "Q1390", "Arachnida": "Q1358",
        "Mollusca": "Q25326", "Actinopterygii": "Q127282", "Reptilia": "Q10811", "Amphibia": "Q10908", "Animalia": "Q729",
        "Chromista": "Q10250"}
@@ -221,8 +221,11 @@ def ler_registos(args):
     return regs, dados, caminho
 
 
+CHAVES = set()
+
+
 def registos_do_bloco(master, grupos):
-    return {k: v for k, v in master.items() if v.get("grupo") in grupos and k not in EXCLUIR}
+    return {k: v for k, v in master.items() if v.get("grupo") in grupos and k not in EXCLUIR and (not CHAVES or k in CHAVES)}
 
 
 def taxon_da_ficha(reg, todos, por_nome, vcache):
@@ -328,7 +331,7 @@ def melhores(reg, t, cache, todos, sem_obs=False):
 def credito(c):
     if c["origem"] == "wikidata":
         m = c["m"]
-        return {"autor": m["autor"] or "Wikimedia Commons", "licenca": m["lic"], "licenca_url": m["licurl"], "pagina": m["page"], "origem": "Wikimedia Commons"}
+        return {"autor": re.sub(r"^(User|Utilizador|Benutzer):\s*", "", m["autor"]) or "Wikimedia Commons", "licenca": m["lic"], "licenca_url": m["licurl"], "pagina": m["page"], "origem": "Wikimedia Commons"}
     f = c["foto"]
     lic = lf.LICENCAS[f["lic"]]
     return {"autor": lf.autor_de(f["attr"], f["lic"]) or "iNaturalist", "licenca": lic[0], "licenca_url": lic[1],
@@ -487,5 +490,7 @@ if __name__ == "__main__":
     ap.add_argument("--cache", default=str(RAIZ / "scripts" / "catalogo" / ".cache-melhores.json"))
     ap.add_argument("--cache-verificacao", default=str(RAIZ / "scripts" / "catalogo" / ".cache-fotos.json"))
     ap.add_argument("--plano", default=str(RAIZ / "scripts" / "catalogo" / ".plano.json"))
+    ap.add_argument("--chaves", nargs="+", default=[], help="limitar a estas fichas")
     a = ap.parse_args()
+    CHAVES.update(a.chaves)
     {"candidatos": candidatos, "escolher": escolher, "aplicar": aplicar}[a.comando](a)
