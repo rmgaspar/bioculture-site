@@ -28,20 +28,6 @@
                 display: block;
                 margin-bottom: 16px;
             }
-            .back {
-                display: inline-block;
-                text-decoration: none;
-                color: #8f624a !important;
-                font-size: max(11px, 0.72em);
-                font-weight: 800;
-                text-transform: uppercase;
-                letter-spacing: 1.5px;
-                margin-bottom: 2em;
-                transition: color .18s ease;
-            }
-            .back:hover {
-                color: #7a5038 !important;
-            }
             .hero {
                 display: grid;
                 grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
@@ -276,6 +262,22 @@
 }
 .management-nav a:hover, .management-nav a:focus-visible, .management-nav a.bio-nav-active { color: var(--green); }
 .management-nav .bio-nav-anchor { width: 100%; height: 0; }
+/* «← Voltar» à esquerda da barra fixa. */
+.management-nav .hub-back {
+    display: inline-flex;
+    flex: none;
+    align-self: auto;
+    margin: 0 !important;
+    padding: 0 24px;
+    border-right: 1px solid #dde5dc !important;
+    color: #8f624a !important;
+    -webkit-text-fill-color: #9b6a50 !important;
+}
+.management-nav .hub-back:hover, .management-nav .hub-back:focus-visible {
+    color: #7a5038 !important;
+    -webkit-text-fill-color: #7a5038 !important;
+    transform: translateX(-3px);
+}
 .management-nav .bio-nav-progress {
     position: absolute;
     left: 0;
@@ -297,6 +299,10 @@
 }
 @media (max-width: 760px) {
     .management-nav, .management-nav.bio-nav-pinned { top: .65rem; }
+    /* Uma só linha que desliza na horizontal (com as setas ‹ ›), como as outras barras fixas. */
+    .management-nav { flex-wrap: nowrap; overflow-x: auto; gap: 18px; scrollbar-width: none; }
+    .management-nav::-webkit-scrollbar { display: none; }
+    .management-nav .hub-back { padding: 0 18px; }
 }
 .section-block[id] { scroll-margin-top: 6.5rem; }
 .guidance-note { margin-top: 1.2em; padding: 1.4em; background: var(--sand); border-radius: 12px }

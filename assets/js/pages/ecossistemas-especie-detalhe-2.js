@@ -209,7 +209,7 @@
                         }</i></a>`
                         : `<span>${esc(x.nome)} <i>${esc(x.nome_cientifico)}</i></span>`;
                 }).join("");
-                return `<div class="section-block"><div class="section-head"><span class="eyebrow">Comparar</span><div><h2>Espécies semelhantes</h2><p>A semelhança visual não confirma uma identificação. Observa forma, habitat, época e caracteres distintivos.</p></div></div><div class="similar">${links}</div></div>`;
+                return `<div class="section-block" id="semelhantes"><div class="section-head"><span class="eyebrow">Comparar</span><div><h2>Espécies semelhantes</h2><p>A semelhança visual não confirma uma identificação. Observa forma, habitat, época e caracteres distintivos.</p></div></div><div class="similar">${links}</div></div>`;
             }
             // «Resposta rápida»: o essencial de data/problemas-horta.json antes das secções longas da ficha.
             function quickAnswer(esp, problemas) {
@@ -260,10 +260,8 @@
                     listPanel("Habitats", esp.habitats) +
                     textPanel("Função ecológica", esp.funcao_ecologica) +
                     (tax ? textPanel("Taxonomia", tax) : "");
-                const backLink = `<a class="back" href="${
-                    isPest ? "/calendario/calendario.html#vigilancia" : "biodiversidade.html"
-                }" onclick="if(window.history.length>1){event.preventDefault();history.back();}">← Voltar</a>`;
-                document.getElementById("species").innerHTML = `<div class="hero"><div><span class="eyebrow">${
+                const hub = isPest ? "/calendario/calendario.html#vigilancia" : "biodiversidade.html";
+                let html = `<div class="hero"><div><span class="eyebrow">${
                     esc(esp.grupo || "Inventário biológico")
                 }</span><h1>${esc(esp.nome)}</h1>${
                     valid(esp.nome_cientifico)
@@ -289,25 +287,23 @@
                     esp.invasora === true ? "Sim" : "Não identificada como invasora"
                 }</b></div></div></div><div class="hero-figure"><div class="hero-image" data-initial="${
                     esc(String(esp.nome || "?").charAt(0))
-                }">${image}</div>${credit}</div></div>${backLink}${
+                }">${image}</div>${credit}</div></div><!--ficha-nav-->${
                     quickAnswer(esp, problemas)
-                }${
-                    managementNav(esp, guidance)
                 }${pestSections(esp, horticolas)}${invasiveSections(esp)}${
                     practicalSections(esp, guidance, solucoesCatalogo)
                 }${
                     !isPest && !isInvasive && (valid(esp.prevencao) || valid(esp.combate))
-                        ? `<div class="section-block"><div class="section-head"><span class="eyebrow">Gestão</span><div><h2>Prevenção e controlo responsável</h2><p>Aplicável sobretudo a invasoras e organismos de sanidade vegetal. Confirmar identificação e regras locais antes de intervir.</p></div></div><div class="grid">${
+                        ? `<div class="section-block" id="gestao"><div class="section-head"><span class="eyebrow">Gestão</span><div><h2>Prevenção e controlo responsável</h2><p>Aplicável sobretudo a invasoras e organismos de sanidade vegetal. Confirmar identificação e regras locais antes de intervir.</p></div></div><div class="grid">${
                             textPanel("Prevenção", esp.prevencao)
                         }${textPanel("Controlo", esp.combate)}</div></div>`
                         : ""
                 }${
                     ecology
-                        ? `<div class="section-block"><div class="section-head"><span class="eyebrow">Ecologia</span><div><h2>Onde vive e que papel desempenha</h2><p>São apresentados apenas os campos preenchidos no inventário; informação ausente não é substituída por generalizações.</p></div></div><div class="grid">${ecology}</div></div>`
+                        ? `<div class="section-block" id="ecologia"><div class="section-head"><span class="eyebrow">Ecologia</span><div><h2>Onde vive e que papel desempenha</h2><p>São apresentados apenas os campos preenchidos no inventário; informação ausente não é substituída por generalizações.</p></div></div><div class="grid">${ecology}</div></div>`
                         : ""
                 }${
                     conservation.length || arr(esp.ameacas).length || arr(esp.protecao_legal).length
-                        ? `<div class="section-block"><div class="section-head"><span class="eyebrow">Conservação</span><div><h2>Estado, proteção e ameaças</h2><p>O estado global e a avaliação nacional não são equivalentes. Um traço significa que o inventário ainda não possui esse dado.</p></div></div><div class="grid">${
+                        ? `<div class="section-block" id="conservacao"><div class="section-head"><span class="eyebrow">Conservação</span><div><h2>Estado, proteção e ameaças</h2><p>O estado global e a avaliação nacional não são equivalentes. Um traço significa que o inventário ainda não possui esse dado.</p></div></div><div class="grid">${
                             listPanel("Estado disponível", conservation)
                         }${listPanel("Proteção legal", esp.protecao_legal)}${
                             listPanel("Ameaças", esp.ameacas)
@@ -324,15 +320,16 @@
                         }</div>`
                         : ""
                 }`;
+                document.getElementById("species").innerHTML = html.replace("<!--ficha-nav-->", fichaNav(html, hub));
                 document.title = `${esp.nome} — bioCulture`;
             }
-            function managementNav(esp, guidance) {
-                const pest = esp.grupo === "Sanidade Vegetal";
-                if (!pest && esp.grupo !== "Flora Invasora" && esp.grupo !== "Fauna Invasora") return "";
-                const items = pest ? [["diagnostico", tr("Diagnóstico", "Diagnosis")]] : [];
-                items.push(["prevencao", tr("Prevenção", "Prevention")], ["intervencao", tr("Intervenção", "Intervention")]);
-                if (guidance?.perfis?.some((p) => p.alvos.includes(esp.id))) items.push(["solucoes", tr("Soluções práticas", "Practical solutions")]);
-                return `<nav class="management-nav" aria-label="${tr("Nesta ficha", "On this page")}">${items.map(([id, label]) => `<a href="#${id}">${label}</a>`).join("")}</nav>`;
+            // Barra fixa da ficha: «← Voltar» (regressa ao sítio exato, ver biocultura-voltar.js) e as secções que a ficha tem.
+            function fichaNav(html, hub) {
+                const secoes = [["diagnostico", tr("Diagnóstico", "Diagnosis")], ["prevencao", tr("Prevenção", "Prevention")], ["intervencao", tr("Intervenção", "Intervention")],
+                    ["solucoes", tr("Soluções práticas", "Practical solutions")], ["gestao", tr("Gestão", "Management")], ["ecologia", tr("Ecologia", "Ecology")],
+                    ["conservacao", tr("Conservação", "Conservation")], ["teia-jardim", tr("Na teia do jardim", "Garden web")], ["semelhantes", tr("Semelhantes", "Similar")]];
+                const links = secoes.filter(([id]) => html.includes(`id="${id}"`)).map(([id, label]) => `<a href="#${id}">${label}</a>`).join("");
+                return `<nav class="management-nav" aria-label="${tr("Nesta ficha", "On this page")}"><a class="hub-back" href="${hub}" onclick="if(!this.dataset.bioHub&&history.length>1&&document.referrer.startsWith(location.origin)){event.preventDefault();history.back();}">${tr("← Voltar", "← Back")}</a>${links}</nav>`;
             }
             function resolveSpecies(id, master, pests, invasives, faunas) {
                 const base = master[id];
