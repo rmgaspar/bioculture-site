@@ -45,7 +45,7 @@ for (const n of d.nos) {
   if (n.foto && n.foto.propria) assert(existsSync(n.foto.url.slice(1)), n.id + ': imagem própria inexistente');
   else if (n.foto) {
     assert(/^https:\/\//.test(n.foto.url) && n.foto.autor && /^CC/.test(n.foto.licenca) && /^https:\/\/creativecommons\.org\//.test(n.foto.licenca_url) && /^https:\/\/www\.inaturalist\.org\/photos\/\d+$/.test(n.foto.pagina), n.id + ': foto sem crédito completo');
-    assert(!/ND/.test(n.foto.licenca), n.id + ': licença sem derivações não permite recortar em círculo');
+    assert(['CC0', 'CC BY', 'CC BY-SA'].includes(n.foto.licenca), n.id + ': só licenças que permitem uso comercial e adaptação (CC0, CC BY, CC BY-SA), não ' + n.foto.licenca);
   }
   if (n.ficha) assert(indice[n.ficha], n.id + ': ficha inexistente no catálogo');
 }

@@ -272,7 +272,7 @@
         }).catch(() => {});
     }
 
-    fetch("/data/teia-jardim.json?v=4").then((r) => r.json()).then((json) => {
+    fetch("/data/teia-jardim.json?v=5").then((r) => r.json()).then((json) => {
         data = json;
         data.nos.forEach((n) => { nodes[n.id] = n; });
         links = data.ligacoes.map((l) => ({ ...l }));
