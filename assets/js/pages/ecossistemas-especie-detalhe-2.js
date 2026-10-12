@@ -235,6 +235,9 @@
                         esc(esp.nome)
                     }" onerror="this.style.display='none'">`
                     : "";
+                const credit = valid(esp.imagem) && esp.foto && esp.foto.autor
+                    ? `<p class="photo-credit">${tr("Foto", "Photo")}: ${esp.foto.autor !== "iNaturalist" ? `${esc(esp.foto.autor)} · ` : ""}<a href="${esc(esp.foto.licenca_url)}" target="_blank" rel="noopener noreferrer">${esc(esp.foto.licenca)}</a> · <a href="${esc(esp.foto.pagina)}" target="_blank" rel="noopener noreferrer">iNaturalist</a></p>`
+                    : "";
                 const ecology = textPanel("Origem", esp.origem) +
                     textPanel("Distribuição", esp.distribuicao) +
                     listPanel("Habitats", esp.habitats) +
@@ -267,9 +270,9 @@
                     )
                 }</b></div><div class="fact"><small>Invasora</small><b>${
                     esp.invasora === true ? "Sim" : "Não identificada como invasora"
-                }</b></div></div></div><div class="hero-image" data-initial="${
+                }</b></div></div></div><div class="hero-figure"><div class="hero-image" data-initial="${
                     esc(String(esp.nome || "?").charAt(0))
-                }">${image}</div></div>${backLink}${
+                }">${image}</div>${credit}</div></div>${backLink}${
                     quickAnswer(esp, problemas)
                 }${
                     managementNav(esp, guidance)
