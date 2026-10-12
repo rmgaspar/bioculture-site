@@ -86,6 +86,32 @@ def garantir_taxons(ids, cache, cache_path):
     cache_path.write_text(json.dumps(cache, ensure_ascii=False), encoding="utf-8")
 
 
+def pre_carregar_observacoes(ids, cache, cache_path):
+    """Procura em paralelo (3 pedidos de cada vez) as alternativas dos táxons sem foto permissiva."""
+    from concurrent.futures import ThreadPoolExecutor
+    faltam = []
+    for tid in sorted(ids):
+        entrada = cache["taxa"].get(str(tid))
+        fotos = ([entrada["default"]] if entrada and entrada["default"] else []) + [p for p in (entrada["fotos"] if entrada else []) if p]
+        if not any(f["lic"] in lf.PERMISSIVAS for f in fotos) and str(tid) not in cache["obs"]:
+            faltam.append(tid)
+    print(f"{len(faltam)} táxons sem foto permissiva: a procurar em observações…", flush=True)
+
+    def um(tid):
+        try:
+            return lf.procurar_observacoes(tid, cache, cache_path)
+        except Exception as erro:  # noqa: BLE001
+            print("falhou", tid, erro, file=sys.stderr)
+    feitos = 0
+    with ThreadPoolExecutor(max_workers=3) as pool:
+        for _ in pool.map(um, faltam):
+            feitos += 1
+            if feitos % 50 == 0:
+                cache_path.write_text(json.dumps(cache, ensure_ascii=False), encoding="utf-8")
+                print(f"  {feitos}/{len(faltam)}", flush=True)
+    cache_path.write_text(json.dumps(cache, ensure_ascii=False), encoding="utf-8")
+
+
 def foto_inat(tid, cache, cache_path):
     """Primeira foto permissiva do táxon (ou de uma observação), ou None."""
     entrada = cache["taxa"].get(str(tid)) if tid else None
@@ -112,15 +138,15 @@ def main(cache_path, so_relatorio, so=None):
     for nome, (_, _, pares) in todos.items():
         for chave, reg in pares:
             url = reg.get("imagem") or ""
-            if nome == "especies_master" and "wikimedia.org" not in url:
-                continue
+            if nome == "especies_master" and "wikimedia.org" not in url and "plantar.pt" not in url:
+                continue  # as fotos do iNaturalist do catálogo são tratadas por licencas-fotos.py
             if "wikimedia.org" in url:
                 nomes_commons.add(nome_ficheiro(url))
                 plano.append((nome, chave, "commons"))
             elif url and ("inaturalist" in url):
                 plano.append((nome, chave, "inat"))
-            elif url and url.startswith("http") and "invasoras.pt" not in url:
-                plano.append((nome, chave, "outra"))
+            elif url and url.startswith("http"):
+                plano.append((nome, chave, "outra"))  # Koppert, UMN, plantar.pt, invasoras.pt…
     meta = commons({n for n in nomes_commons if n})
     for nome, chave, tipo in plano:
         reg = dict(todos[nome][2])[chave]
@@ -129,6 +155,7 @@ def main(cache_path, so_relatorio, so=None):
             if tid:
                 ids_precisos.add(tid)
     garantir_taxons(ids_precisos, cache, cache_path)
+    pre_carregar_observacoes(ids_precisos, cache, cache_path)
     estados, mudancas = Counter(), []
     for nome, chave, tipo in plano:
         reg = dict(todos[nome][2])[chave]

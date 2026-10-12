@@ -236,7 +236,7 @@
                     }" onerror="this.style.display='none'">`
                     : "";
                 const credit = valid(esp.imagem) && esp.foto && esp.foto.autor
-                    ? `<p class="photo-credit">${tr("Foto", "Photo")}: ${esp.foto.autor && esp.foto.autor !== "iNaturalist" ? `${esc(esp.foto.autor)} · ` : ""}<a href="${esc(esp.foto.licenca_url)}" target="_blank" rel="noopener noreferrer">${esc(esp.foto.licenca)}</a> · <a href="${esc(esp.foto.pagina)}" target="_blank" rel="noopener noreferrer">${esc(esp.foto.origem || "iNaturalist")}</a></p>`
+                    ? `<p class="photo-credit">${tr("Foto", "Photo")}: ${esp.foto.autor && esp.foto.autor !== "iNaturalist" ? `${esc(esp.foto.autor)} · ` : ""}<a href="${esc(esp.foto.licenca_url)}" target="_blank" rel="noopener noreferrer">${esc(esp.foto.licenca)}</a> · <a href="${esc(esp.foto.pagina)}" target="_blank" rel="noopener noreferrer">${esc(esp.foto.origem || "iNaturalist")}</a>${esp.foto.da_especie ? ` · ${tr("imagem da espécie, não da variedade", "image of the species, not the cultivar")}` : ""}</p>`
                     : "";
                 const ecology = textPanel("Origem", esp.origem) +
                     textPanel("Distribuição", esp.distribuicao) +

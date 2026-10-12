@@ -29,10 +29,13 @@ const licencaOk = /^(CC BY(-SA)? \d\.\d( \w+)?|CC BY(-SA)?|CC0( 1\.0)?|Public do
 for (const nome of ['pragas', 'horticolas_master', 'fauna_invasora', 'flora_invasora']) {
   for (const [id, r] of lerLista(nome)) {
     const url = r.imagem || '';
-    assert(!/koppert|extension\.umn/.test(url), `${nome}/${id}: imagem de terceiros sem licença (${url})`);
+    assert(!/koppert|extension\.umn|plantar\.pt|invasoras\.pt/.test(url), `${nome}/${id}: imagem de terceiros sem licença (${url})`);
     if (/wikimedia\.org|inaturalist/.test(url)) {
       const f = r.foto;
       assert(f && f.autor && licencaOk.test(f.licenca) && /^https:\/\//.test(f.pagina), `${nome}/${id}: foto sem crédito ou com licença não permitida`);
     }
   }
 }
+
+// Nenhuma ficha do catálogo de espécies usa imagens do plantar.pt (© sem licença).
+for (const [id, e] of Object.entries(master)) assert(!/plantar\.pt|invasoras\.pt|koppert/.test(e.imagem || ''), `${id}: imagem de terceiros sem licença`);
