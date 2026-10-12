@@ -79,6 +79,10 @@
     };
     if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", setupBack, { once: true });
     else setupBack();
+    // Barras desenhadas depois do carregamento (conteúdo que chega por fetch) também ganham o «← Voltar» exato.
+    const late = new MutationObserver(() => { if (document.querySelector("a.hub-back:not([data-bio-voltar])")) setupBack(); });
+    const watch = () => { late.observe(document.body, { childList: true, subtree: true }); setTimeout(() => late.disconnect(), 15000); };
+    if (document.body) watch(); else document.addEventListener("DOMContentLoaded", watch, { once: true });
 
     // 3. Na página de onde saíste: centra a ligação clicada (ou, se desapareceu, volta à mesma altura).
     const saved = read(RESTORE);

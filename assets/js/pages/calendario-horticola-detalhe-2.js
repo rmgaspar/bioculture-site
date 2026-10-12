@@ -66,17 +66,19 @@
                     };
                     draw();
                     const nav = document.querySelector(".crop-nav");
-                    if (nav && !nav.querySelector('a[href="#problemas"]')) nav.insertAdjacentHTML("afterbegin", `<a href="#problemas">${tr("Problemas", "Problems")}</a>`);
+                    if (nav && !nav.querySelector('a[href="#problemas"]')) {
+                        const link = `<a href="#problemas">${window.BioCultureI18n?.isEnglish ? "Problems" : "Problemas"}</a>`, back = nav.querySelector(".hub-back");
+                        if (back) back.insertAdjacentHTML("afterend", link); else nav.insertAdjacentHTML("afterbegin", link);
+                    }
                     if (wanted) document.getElementById(`problema-${wanted}`)?.scrollIntoView({ block: "start" });
                 }).catch(() => {});
             }
             function cropNav(sections) {
                 const items = sections.filter(([, , content]) => content);
-                return items.length
-                    ? `<nav class="crop-nav" aria-label="Nesta ficha">${
-                        items.map(([id, label]) => `<a href="#${id}">${esc(label)}</a>`).join("")
-                    }</nav>`
-                    : "";
+                // «← Voltar» regressa ao sítio exato de onde vieste (biocultura-voltar.js); sem registo, segue para o calendário.
+                return `<nav class="crop-nav" aria-label="Nesta ficha"><a class="hub-back" href="calendario.html">${window.BioCultureI18n?.isEnglish ? "← Back" : "← Voltar"}</a>${
+                    items.map(([id, label]) => `<a href="#${id}">${esc(label)}</a>`).join("")
+                }</nav>`;
             }
             const normalize = (value) =>
                 String(value ?? "").normalize("NFD").replace(/[̀-ͯ]/g, "")
@@ -368,7 +370,6 @@
                             ${credit}
                         </div>
                     </div>
-                    <a href="calendario.html" class="btn-voltar-base" style="margin:0 0 2em" onclick="if(window.history.length>1){event.preventDefault();history.back();}">← VOLTAR AO CALENDÁRIO</a>
                     ${
                         cropNav([
                             ["lugar", "Lugar", place], ["calendario", "Calendário", calendar],
