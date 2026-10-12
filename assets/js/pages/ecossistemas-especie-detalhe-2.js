@@ -231,9 +231,9 @@
                     valid(esp.protegida_portugal) ? `Proteção: ${esp.protegida_portugal}` : "",
                 ].filter(Boolean);
                 const image = valid(esp.imagem)
-                    ? `<img src="${esc(esp.imagem.replace("/medium.", "/large."))}" alt="${
+                    ? `<img src="${esc((esp.foto && esp.foto.grande) || esp.imagem.replace("/medium.", "/large."))}" alt="${
                         esc(esp.nome)
-                    }" onerror="this.style.display='none'">`
+                    }" data-fallback="${esc(esp.imagem)}" onerror="if(this.dataset.fallback&&this.src!==this.dataset.fallback){this.src=this.dataset.fallback}else{this.style.display='none'}">`
                     : "";
                 const credit = valid(esp.imagem) && esp.foto && esp.foto.autor
                     ? `<p class="photo-credit">${tr("Foto", "Photo")}: ${esp.foto.autor && esp.foto.autor !== "iNaturalist" ? `${esc(esp.foto.autor)} · ` : ""}<a href="${esc(esp.foto.licenca_url)}" target="_blank" rel="noopener noreferrer">${esc(esp.foto.licenca)}</a> · <a href="${esc(esp.foto.pagina)}" target="_blank" rel="noopener noreferrer">${esc(esp.foto.origem || "iNaturalist")}</a>${esp.foto.da_especie ? ` · ${tr("imagem da espécie, não da variedade", "image of the species, not the cultivar")}` : ""}</p>`

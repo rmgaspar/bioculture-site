@@ -39,3 +39,15 @@ for (const nome of ['pragas', 'horticolas_master', 'fauna_invasora', 'flora_inva
 
 // Nenhuma ficha do catálogo de espécies usa imagens do plantar.pt (© sem licença).
 for (const [id, e] of Object.entries(master)) assert(!/plantar\.pt|invasoras\.pt|koppert/.test(e.imagem || ''), `${id}: imagem de terceiros sem licença`);
+
+// Imagens da Wikimedia Commons no catálogo de espécies (imagem principal do Wikidata): crédito completo e licença permitida.
+let commons = 0;
+for (const [id, e] of Object.entries(master)) {
+  if (!/wikimedia\.org/.test(e.imagem || '')) continue;
+  commons += 1;
+  const f = e.foto;
+  assert(f && f.autor && f.pagina && /^https:\/\/commons\.wikimedia\.org\/wiki\/File:/.test(f.pagina), `${id}: imagem da Commons sem crédito`);
+  assert(/^(CC BY(-SA)? \d\.\d( \w+)?|CC0( 1\.0)?|Public domain|PDM( 1\.0)?)$/i.test(f.licenca), `${id}: licença não permitida (${f.licenca})`);
+  if (f.grande) assert(/wikimedia\.org/.test(f.grande), `${id}: imagem grande inválida`);
+}
+assert(commons > 100, 'esperadas mais de 100 imagens da Commons no catálogo');
