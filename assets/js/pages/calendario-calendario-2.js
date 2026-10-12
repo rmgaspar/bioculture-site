@@ -14,7 +14,6 @@
                 { id: "pomares", pt: "Pomares e fruta", en: "Orchards and fruit" },
                 { id: "vinha", pt: "Vinha", en: "Vineyard" },
                 { id: "ornamentais", pt: "Plantas ornamentais e floresta", en: "Ornamentals and forestry" },
-                { id: "vertebrados", pt: "Vertebrados e outros", en: "Vertebrates and other" },
                 { id: "flora-invasora", pt: "Flora invasora", en: "Invasive flora" },
                 { id: "fauna-invasora", pt: "Fauna invasora", en: "Invasive fauna" },
             ];
