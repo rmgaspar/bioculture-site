@@ -14,7 +14,7 @@ for (const [id, especie] of Object.entries(master)) {
   const f = especie.foto;
   assert(f, `${id}: foto sem crédito`);
   assert(permitidas.has(f.licenca), `${id}: licença não permitida (${f.licenca})`);
-  assert(f.autor && /^https:\/\/creativecommons\.org\//.test(f.licenca_url) && /^https:\/\/www\.inaturalist\.org\/photos\/\d+$/.test(f.pagina), `${id}: crédito incompleto`);
+  assert(f.autor && /^https:\/\/creativecommons\.org\//.test(f.licenca_url) && (/^https:\/\/www\.inaturalist\.org\/photos\/\d+$/.test(f.pagina) || /^https:\/\/www\.gbif\.org\/occurrence\/\d+$/.test(f.pagina)), `${id}: crédito incompleto`);
   if (f.licenca !== 'CC0' && f.licenca !== 'Domínio público') assert(f.autor !== 'iNaturalist', `${id}: ${f.licenca} exige o nome do autor`);
 }
 assert(inat > 3500, 'esperadas mais de 3500 fotos do iNaturalist no catálogo');
