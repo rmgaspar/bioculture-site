@@ -460,6 +460,15 @@
             }
 
             const seasonalPests = (month) => window.BioCulturaSeasonal.seasonalPests(pragasDB, month);
+            // Etiqueta do cartão: o que é (praga, flora ou fauna invasora) e, a seguir, o subtipo.
+            function tagHTML(base, sub) {
+                return sub && sub !== base ? `<span>${escapeHtml(base)}</span> · <span>${escapeHtml(sub)}</span>` : escapeHtml(base);
+            }
+            // Nome científico por baixo do título, só quando acrescenta alguma coisa.
+            function sciLineHTML(item) {
+                const sci = (item.nome_cientifico || "").trim();
+                return sci && sci !== item.nome_comum ? `<p>${escapeHtml(sci)}</p>` : "";
+            }
             function pestCardHTML(item) {
                 return `<a class="catalog-card" href="/ecossistemas/especie-detalhe.html?id=${
                     encodeURIComponent(item.id)
@@ -468,12 +477,12 @@
                 }" alt="${
                     escapeHtml(item.nome_comum)
                 }" loading="lazy" onerror="this.onerror=null;this.src='/images/pragas-placeholder.svg'"><div class="catalog-card-body"><small>${
-                    escapeHtml(item.tipo || "Praga ou doença")
+                    /^(Praga|Doença|Doenças|Organismo|Pest|Disease|Soil-borne|Nursery|Palm|Forestry|Quarantine|Regulated)/.test(item.tipo || "") ? escapeHtml(item.tipo) : tagHTML("Praga", item.tipo)
                 }</small><h3>${
                     escapeHtml(item.nome_comum)
-                }</h3><p>${
-                    escapeHtml(item.nome_cientifico || "Consultar ficha completa")
-                }</p></div></a>`;
+                }</h3>${
+                    sciLineHTML(item)
+                }</div></a>`;
             }
 
             function floraCardHTML(item) {
@@ -484,12 +493,12 @@
                 }" alt="${
                     escapeHtml(item.nome_comum)
                 }" loading="lazy" onerror="this.onerror=null;this.src='/images/pragas-placeholder.svg'"><div class="catalog-card-body"><small>${
-                    escapeHtml(item.forma_de_vida || "Flora invasora")
+                    tagHTML("Flora invasora", item.forma_de_vida)
                 }</small><h3>${
                     escapeHtml(item.nome_comum)
-                }</h3><p>${
-                    escapeHtml(item.nome_cientifico || "Consultar ficha completa")
-                }</p></div></a>`;
+                }</h3>${
+                    sciLineHTML(item)
+                }</div></a>`;
             }
 
             function faunaCardHTML(item) {
@@ -500,12 +509,12 @@
                 }" alt="${
                     escapeHtml(item.nome_comum)
                 }" loading="lazy" onerror="this.onerror=null;this.src='/images/pragas-placeholder.svg'"><div class="catalog-card-body"><small>${
-                    escapeHtml(item.grupo_taxonomico || "Fauna invasora")
+                    tagHTML("Fauna invasora", item.grupo_taxonomico)
                 }</small><h3>${
                     escapeHtml(item.nome_comum)
-                }</h3><p>${
-                    escapeHtml(item.nome_cientifico || "Consultar ficha completa")
-                }</p></div></a>`;
+                }</h3>${
+                    sciLineHTML(item)
+                }</div></a>`;
             }
 
             function nameChipHTML(item) {
