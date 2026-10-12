@@ -17,7 +17,9 @@
     const icon = (id) => (window.BioCulturaTeiaIcones && window.BioCulturaTeiaIcones[id]) || "";
     // Fotografia (iNaturalist, licença aberta) quando existe; senão a ilustração do elo. Se a foto falhar, volta à ilustração.
     const media = (no) => (no.foto ? `<img class="tj-foto" data-id="${no.id}" src="${esc(no.foto.url)}" alt="" loading="lazy" decoding="async">` : icon(no.id));
-    const credit = (no) => (no.foto
+    const credit = (no) => (no.foto && no.foto.propria
+        ? `<figcaption>${tr("Imagem", "Image")}: bioCultura</figcaption>`
+        : no.foto
         ? `<figcaption>${tr("Foto", "Photo")}: ${esc(no.foto.autor)} · <a href="${esc(no.foto.licenca_url)}" target="_blank" rel="noopener noreferrer">${esc(no.foto.licenca)}</a> · <a href="${esc(no.foto.pagina)}" target="_blank" rel="noopener noreferrer">iNaturalist</a></figcaption>`
         : "");
 
@@ -270,7 +272,7 @@
         }).catch(() => {});
     }
 
-    fetch("/data/teia-jardim.json?v=2").then((r) => r.json()).then((json) => {
+    fetch("/data/teia-jardim.json?v=4").then((r) => r.json()).then((json) => {
         data = json;
         data.nos.forEach((n) => { nodes[n.id] = n; });
         links = data.ligacoes.map((l) => ({ ...l }));

@@ -42,7 +42,8 @@ for (const n of d.nos) assert(/^<svg /.test(sandbox.window.BioCulturaTeiaIcones[
 // Fotografias: cada uma com autor, licença aberta e ligação à origem; as fichas ligadas existem no catálogo.
 const indice = JSON.parse(read('data/especies-indice.json'));
 for (const n of d.nos) {
-  if (n.foto) {
+  if (n.foto && n.foto.propria) assert(existsSync(n.foto.url.slice(1)), n.id + ': imagem própria inexistente');
+  else if (n.foto) {
     assert(/^https:\/\//.test(n.foto.url) && n.foto.autor && /^CC/.test(n.foto.licenca) && /^https:\/\/creativecommons\.org\//.test(n.foto.licenca_url) && /^https:\/\/www\.inaturalist\.org\/photos\/\d+$/.test(n.foto.pagina), n.id + ': foto sem crédito completo');
     assert(!/ND/.test(n.foto.licenca), n.id + ': licença sem derivações não permite recortar em círculo');
   }
