@@ -1,6 +1,5 @@
-import { readFileSync, existsSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import assert from 'node:assert/strict';
-import vm from 'node:vm';
 const read = (p) => readFileSync(p, 'utf8');
 
 // «A teia do jardim»: dados coerentes (ligações entre nós existentes, fontes presentes, PT/EN completos).
@@ -23,29 +22,21 @@ for (const l of d.ligacoes) {
   l.refs.forEach((r) => assert(d.referencias[r], 'fonte inexistente ' + r));
 }
 for (const [id, r] of Object.entries(d.referencias)) assert(r.citacao && /^https:\/\//.test(r.url), 'referência sem endereço: ' + id);
-d.cenario.refs.forEach((r) => assert(d.referencias[r], 'fonte do cenário inexistente ' + r));
 
-// Página: bloco, separador na barra e scripts com versão; o JS é válido; as respostas ligadas existem.
-const html = read('calendario/conhecimento-cuidar.html');
-assert(html.includes('id="teia-jardim"') && html.includes('href="#teia-jardim"'));
-for (const f of ['assets/js/pages/teia-jardim.js', 'assets/js/pages/teia-jardim-icones.js', 'assets/css/components/teia-jardim.css']) {
-  assert(existsSync(f), f);
-  assert(new RegExp(f.replace(/[.*+?^${}()|[\]\\\/]/g, '\\$&') + '\\?v=\\d+').test(html), f + ' tem de ter versão');
-}
-new vm.Script(read('assets/js/pages/teia-jardim.js'));
+// Já não há mapa na página: a informação vive nas fichas dos elos que têm ficha (espécie ou praga).
+assert(!d.cenario && !d.nos.some((n) => n.foto), 'dados do mapa antigo (cenário, fotografias) já não são usados');
+const html = readFileSync('calendario/conhecimento-cuidar.html', 'utf8');
+assert(!html.includes('teia-jardim'), 'o mapa saiu de Conhecimento para cuidar');
 const problemas = new Set(JSON.parse(read('data/problemas-horta.json')).problemas.map((p) => p.id));
 for (const n of d.nos) for (const v of n.ver) if (v.t === 'prob') assert(problemas.has(v.id), 'resposta inexistente: ' + v.id);
-// Cada elo tem a sua ilustração.
-const sandbox = { window: {} };
-vm.runInNewContext(read('assets/js/pages/teia-jardim-icones.js'), sandbox);
-for (const n of d.nos) assert(/^<svg /.test(sandbox.window.BioCulturaTeiaIcones[n.id] || ''), n.id + ': falta ilustração');
-// Fotografias: cada uma com autor, licença aberta e ligação à origem; as fichas ligadas existem no catálogo.
 const indice = JSON.parse(read('data/especies-indice.json'));
+const pragas = new Set(JSON.parse(read('data/pragas.json')).map((p) => p.id));
+let comFicha = 0;
 for (const n of d.nos) {
-  if (n.foto && n.foto.propria) assert(existsSync(n.foto.url.slice(1)), n.id + ': imagem própria inexistente');
-  else if (n.foto) {
-    assert(/^https:\/\//.test(n.foto.url) && n.foto.autor && /^CC/.test(n.foto.licenca) && /^https:\/\/creativecommons\.org\//.test(n.foto.licenca_url) && /^https:\/\/www\.inaturalist\.org\/photos\/\d+$/.test(n.foto.pagina), n.id + ': foto sem crédito completo');
-    assert(['CC0', 'CC BY', 'CC BY-SA'].includes(n.foto.licenca), n.id + ': só licenças que permitem uso comercial e adaptação (CC0, CC BY, CC BY-SA), não ' + n.foto.licenca);
-  }
-  if (n.ficha) assert(indice[n.ficha], n.id + ': ficha inexistente no catálogo');
+  if (n.ficha) { assert(indice[n.ficha], n.id + ': ficha inexistente no catálogo'); comFicha++; }
+  if (n.praga) { assert(pragas.has(n.praga), n.id + ': praga inexistente no catálogo'); comFicha++; }
 }
+assert(comFicha >= 8, 'os elos com ficha têm de aparecer nas fichas');
+const ficha = read('assets/js/pages/ecossistemas-especie-detalhe-2.js');
+assert(ficha.includes('teiaPanel(esp, teia)') && ficha.includes('/data/teia-jardim.json'), 'a ficha tem de mostrar «Na teia do jardim»');
+console.log(`Teia do jardim validada: ${d.nos.length} elos, ${d.ligacoes.length} ligações com fonte, ${comFicha} fichas.`);

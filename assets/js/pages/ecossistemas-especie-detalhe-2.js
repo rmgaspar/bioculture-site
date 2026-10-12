@@ -221,7 +221,24 @@
                     return `<section class="quick-answer" id="resposta-rapida-${esc(row.id)}"><span class="eyebrow">${tr("Resposta rápida", "Quick answer")}</span><h2>${esc(c.titulo)}</h2><p>${esc(c.resumo)}</p><ol>${c.fazer.slice(0, 4).map((step) => `<li>${esc(step)}</li>`).join("")}</ol><a href="/calendario/conhecimento-cuidar.html#problema-${encodeURIComponent(row.id)}">${tr("Ver a resposta completa →", "See the full answer →")}</a></section>`;
                 }).join("");
             }
-            function render(esp, master, guidance, horticolas, solucoesCatalogo, problemas) {
+            // «Na teia do jardim»: quem come quem à volta deste elo, de data/teia-jardim.json (só nas fichas dos elos do mapa).
+            function teiaPanel(esp, teia) {
+                const fichaId = new URLSearchParams(location.search).get("id"),
+                    no = fichaId && teia?.nos?.find((n) => n.ficha === fichaId || n.praga === fichaId);
+                if (!no) return "";
+                const L = english() ? "en" : "pt", txt = (o) => o[L] || o.pt, byId = (id) => teia.nos.find((n) => n.id === id);
+                const rel = (rows, other) => rows.map((l) => `<li><b>${esc(txt(byId(l[other])).nome)}</b>: ${esc(txt(l))}</li>`).join("");
+                const come = teia.ligacoes.filter((l) => l.de === no.id), comido = teia.ligacoes.filter((l) => l.para === no.id);
+                const refs = [...new Set([...no.refs, ...come.flatMap((l) => l.refs), ...comido.flatMap((l) => l.refs)])].map((r) => teia.referencias[r]).filter(Boolean);
+                const ver = (no.ver || []).filter((v) => v.t === "prob").map((v) => `<a href="/calendario/conhecimento-cuidar.html#problema-${encodeURIComponent(v.id)}">${tr("Ver a resposta na horta →", "See the garden answer →")}</a>`);
+                const inner = panel(tr("Em resumo", "In short"), `<p>${esc(txt(no).resumo)}</p>${no.latim ? `<p class="source">${tr("Grupo", "Group")}: ${esc(txt(no).nome)} (<i>${esc(no.latim)}</i>)</p>` : ""}`) +
+                    (come.length ? panel(tr("Alimenta-se de", "Feeds on"), `<ul class="list">${rel(come, "para")}</ul>`) : "") +
+                    (comido.length ? panel(tr("É alimento de", "Is food for"), `<ul class="list">${rel(comido, "de")}</ul>`) : "") +
+                    panel(tr("Como ajudar", "How to help"), `<ul class="list">${txt(no).ajudar.map((a) => `<li>${esc(a)}</li>`).join("")}</ul>${ver.length ? `<p>${ver.join(" ")}</p>` : ""}`) +
+                    panel(tr("Fontes da teia", "Web sources"), `<ul class="list">${refs.map((r) => `<li><a href="${esc(r.url)}" target="_blank" rel="noopener noreferrer">${esc(r.citacao)} ↗</a></li>`).join("")}</ul>`);
+                return `<div class="section-block" id="teia-jardim"><div class="section-head"><span class="eyebrow">${tr("Na teia do jardim", "In the garden web")}</span><div><h2>${tr("Quem come quem à volta deste elo", "Who eats whom around this link")}</h2><p>${tr("Relações descritas na literatura, em esquema simplificado; não são medições do teu jardim.", "Relationships described in the literature, in a simplified scheme; not measurements of your garden.")}</p></div></div><div class="grid">${inner}</div></div>`;
+            }
+            function render(esp, master, guidance, horticolas, solucoesCatalogo, problemas, teia) {
                 const isPest = esp.grupo === "Sanidade Vegetal";
                 const isInvasive = esp.grupo === "Flora Invasora" || esp.grupo === "Fauna Invasora";
                 const tax = arr(esp.taxonomia_completa).join(" › ");
@@ -296,7 +313,7 @@
                             listPanel("Ameaças", esp.ameacas)
                         }</div></div>`
                         : ""
-                }${similarPanel(esp.especies_semelhantes, master)}${
+                }${teiaPanel(esp, teia)}${similarPanel(esp.especies_semelhantes, master)}${
                     valid(esp.observacao_responsavel)
                         ? `<div class="section-block"><div class="responsible"><h3>Observar sem perturbar</h3><p>${
                             esc(esp.observacao_responsavel)
@@ -345,7 +362,7 @@
                     return;
                 }
                 try {
-                    const [master, pests, invasives, faunas, guidance, horticolas, solucoesCatalogo, problemas] = await Promise.all([
+                    const [master, pests, invasives, faunas, guidance, horticolas, solucoesCatalogo, problemas, teia] = await Promise.all([
                         ...["especies-indice", "pragas", "flora_invasora", "fauna_invasora"].map((f) =>
                             fetch(`/data/${f}.json`).then((r) => {
                                 if (!r.ok) throw Error(`HTTP ${r.status}`);
@@ -358,11 +375,12 @@
                         fetch("/data/horticolas_master.json").then((r) => r.json()).catch(() => null),
                         fetch("/data/solucoes-catalogo.json").then((r) => r.json()).catch(() => null),
                         fetch("/data/problemas-horta.json").then((r) => r.json()).then((data) => data.problemas).catch(() => []),
+                        fetch("/data/teia-jardim.json?v=6").then((r) => r.json()).catch(() => null),
                     ]);
                     const record = await window.BioCulturaSpecies.record(id).catch(() => undefined);
                     const esp = resolveSpecies(id, { [id]: record }, pests, invasives, faunas);
                     if (!esp) throw Error("not-found");
-                    render(esp, master, guidance, horticolas, solucoesCatalogo, problemas);
+                    render(esp, master, guidance, horticolas, solucoesCatalogo, problemas, teia);
                     const stickyNav = document.createElement("script");
                     stickyNav.src = "/assets/js/biocultura-sticky-nav.js?v=6";
                     document.body.appendChild(stickyNav);
