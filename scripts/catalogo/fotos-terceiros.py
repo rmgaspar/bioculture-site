@@ -70,7 +70,9 @@ def nome_para_taxon(nome, taxa):
     """«Pieris brassicae e Pieris rapae» → Pieris brassicae; «Agrotis spp.» → Agrotis."""
     primeiro = re.split(r"\s+(?:e|ou)\s+|,|\(", nome or "")[0].strip()
     primeiro = re.sub(r"\s+(spp|sp)\.?$", "", primeiro).strip()
-    for tentativa in (primeiro, " ".join(primeiro.split()[:2]), primeiro.split()[0] if primeiro else ""):
+    # Nunca recua para o género quando a ficha é de uma espécie: a foto de um género mostra outra espécie.
+    tentativas = [primeiro] + ([" ".join(primeiro.split()[:2])] if len(primeiro.split()) > 2 else [])
+    for tentativa in tentativas:
         if tentativa in taxa:
             return taxa[tentativa]
     return None
