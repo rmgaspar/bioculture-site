@@ -15,6 +15,11 @@
     const NS = "http://www.w3.org/2000/svg";
 
     const icon = (id) => (window.BioCulturaTeiaIcones && window.BioCulturaTeiaIcones[id]) || "";
+    // Fotografia (iNaturalist, licença aberta) quando existe; senão a ilustração do elo. Se a foto falhar, volta à ilustração.
+    const media = (no) => (no.foto ? `<img class="tj-foto" data-id="${no.id}" src="${esc(no.foto.url)}" alt="" loading="lazy" decoding="async">` : icon(no.id));
+    const credit = (no) => (no.foto
+        ? `<figcaption>${tr("Foto", "Photo")}: ${esc(no.foto.autor)} · <a href="${esc(no.foto.licenca_url)}" target="_blank" rel="noopener noreferrer">${esc(no.foto.licenca)}</a> · <a href="${esc(no.foto.pagina)}" target="_blank" rel="noopener noreferrer">iNaturalist</a></figcaption>`
+        : "");
 
     const state = { sel: "", removed: "", pest: false };
     let data = null, nodes = {}, links = [], refNumber = {}, mapa = null, svg = null, birds = null;
@@ -32,7 +37,7 @@
                 <span class="tj-rotulo">${esc(pick(nivel))}</span>
                 <div class="tj-nos">${data.nos.filter((no) => no.nivel === nivel.id).map((no) => `
                     <button type="button" class="tj-no" data-id="${no.id}" aria-pressed="false">
-                        <span class="tj-ico">${icon(no.id)}</span>
+                        <span class="tj-ico${no.foto ? " tem-foto" : ""}">${media(no)}</span>
                         <span class="tj-nome">${esc(pick(no).nome)}</span>
                         <span class="tj-selo" aria-hidden="true"></span>
                     </button>`).join("")}
@@ -62,7 +67,7 @@
             </div>
             <div class="tj-painel" id="tj-painel" aria-live="polite"></div>
             <p class="tj-lei" id="tj-numeros" hidden></p>
-            <p class="tj-nota">${esc(pick(data.nota))}</p>
+            <p class="tj-nota">${esc(pick(data.nota))} ${esc(pick(data.nota_fotos))}</p>
             <details class="tj-fontes"><summary>${tr("Fontes e referências", "Sources and references")}</summary><ol class="tj-lista-fontes">${refs}</ol></details>
             <p class="tj-ver"><a href="/observatorio/bioweb.html">${tr("Ver a mesma teia à escala de Portugal: A teia →", "See the same web at Portugal's scale: The web →")}</a></p>`;
         mapa = document.getElementById("tj-mapa");
@@ -179,7 +184,8 @@
         const no = nodes[id], c = pick(no);
         const comes = links.filter((l) => l.de === id);
         const comido = links.filter((l) => l.para === id);
-        const ver = (no.ver || []).map((v) => v.t === "prob"
+        const ficha = no.ficha ? `<a href="/ecossistemas/especie-detalhe.html?id=${encodeURIComponent(no.ficha)}">${tr("Ficha no catálogo", "Catalogue entry")} →</a>` : "";
+        const ver = ficha + (no.ver || []).map((v) => v.t === "prob"
             ? `<a href="#problema-${esc(v.id)}">${tr("Ver a resposta", "See the answer")} →</a>`
             : `<a href="${esc(v.href)}">${esc(isEnglish ? v.en : v.pt)} →</a>`).join("");
         const removable = no.nivel !== "base";
@@ -187,7 +193,7 @@
         panel.innerHTML = `
             <div class="tj-ficha">
                 <div class="tj-ficha-topo">
-                    <span class="tj-ico tj-ico-grande">${icon(id)}</span>
+                    ${no.foto ? `<figure class="tj-retrato"><img class="tj-foto" data-id="${id}" src="${esc(no.foto.url)}" alt="${esc(c.nome)}" decoding="async">${credit(no)}</figure>` : `<span class="tj-ico tj-ico-grande">${icon(id)}</span>`}
                     <div><h3>${esc(c.nome)}</h3>${no.latim ? `<small>${esc(no.latim)}</small>` : ""}</div>
                     ${removable ? `<button type="button" class="tj-remover" id="tj-remover" aria-pressed="${state.removed === id}">${state.removed === id ? tr("Repor este elo", "Put this link back") : tr("Retira este elo", "Remove this link")}</button>` : ""}
                 </div>
@@ -221,6 +227,14 @@
             const button = event.target.closest(".tj-no");
             if (button) select(button.dataset.id);
         });
+        // Se uma fotografia não carregar, usa a ilustração do elo.
+        root.addEventListener("error", (event) => {
+            const img = event.target;
+            if (!img.classList || !img.classList.contains("tj-foto")) return;
+            const holder = img.closest(".tj-ico") || img.closest(".tj-retrato");
+            if (holder && holder.classList.contains("tj-ico")) { holder.classList.remove("tem-foto"); holder.innerHTML = icon(img.dataset.id); }
+            else if (holder) holder.innerHTML = `<span class="tj-ico tj-ico-grande">${icon(img.dataset.id)}</span>`;
+        }, true);
         root.addEventListener("click", (event) => {
             const chip = event.target.closest(".tj-refs a");
             if (chip) {
@@ -256,7 +270,7 @@
         }).catch(() => {});
     }
 
-    fetch("/data/teia-jardim.json?v=1").then((r) => r.json()).then((json) => {
+    fetch("/data/teia-jardim.json?v=2").then((r) => r.json()).then((json) => {
         data = json;
         data.nos.forEach((n) => { nodes[n.id] = n; });
         links = data.ligacoes.map((l) => ({ ...l }));

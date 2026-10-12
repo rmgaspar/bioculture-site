@@ -39,3 +39,12 @@ for (const n of d.nos) for (const v of n.ver) if (v.t === 'prob') assert(problem
 const sandbox = { window: {} };
 vm.runInNewContext(read('assets/js/pages/teia-jardim-icones.js'), sandbox);
 for (const n of d.nos) assert(/^<svg /.test(sandbox.window.BioCulturaTeiaIcones[n.id] || ''), n.id + ': falta ilustração');
+// Fotografias: cada uma com autor, licença aberta e ligação à origem; as fichas ligadas existem no catálogo.
+const indice = JSON.parse(read('data/especies-indice.json'));
+for (const n of d.nos) {
+  if (n.foto) {
+    assert(/^https:\/\//.test(n.foto.url) && n.foto.autor && /^CC/.test(n.foto.licenca) && /^https:\/\/creativecommons\.org\//.test(n.foto.licenca_url) && /^https:\/\/www\.inaturalist\.org\/photos\/\d+$/.test(n.foto.pagina), n.id + ': foto sem crédito completo');
+    assert(!/ND/.test(n.foto.licenca), n.id + ': licença sem derivações não permite recortar em círculo');
+  }
+  if (n.ficha) assert(indice[n.ficha], n.id + ': ficha inexistente no catálogo');
+}
