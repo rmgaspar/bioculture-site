@@ -18,3 +18,18 @@ html body figure.foto a { color: inherit; }
     section > .intro-foto { display: block !important; }
     figure.foto { margin-top: 1.2rem; }
 }
+
+/* Fotografia ao lado de um bloco (espaço <div data-foto-slot>): bloco à esquerda, foto à direita; no telemóvel, em coluna. */
+.foto-ao-lado { display: grid; grid-template-columns: minmax(0, 46rem) minmax(260px, 560px); column-gap: 2.5rem; align-items: start; }
+.foto-ao-lado > [data-foto-slot] { min-width: 0; }
+.foto-ao-lado > [data-foto-slot]:empty { display: none; }
+.hub-bridge.foto-ao-lado { grid-template-columns: minmax(0, 1fr) minmax(260px, 480px); align-items: center; }
+.hub-bridge.foto-ao-lado .hub-bridge-texto { min-width: 0; }
+.lista-com-fotos { display: grid; grid-template-columns: minmax(0, 1fr) minmax(260px, 400px); column-gap: 3rem; align-items: stretch; }
+.lista-com-fotos > .principle-grid { align-content: space-between; }
+.fotos-coluna { display: grid; gap: 1.6rem; min-width: 0; }
+.fotos-coluna > [data-foto-slot]:empty { display: none; }
+@media (max-width: 900px) {
+    .foto-ao-lado, .hub-bridge.foto-ao-lado, .lista-com-fotos { display: block; }
+    .foto-ao-lado > [data-foto-slot], .fotos-coluna { margin-top: 1.4rem; }
+}

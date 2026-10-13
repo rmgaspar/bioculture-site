@@ -12,22 +12,31 @@
     const esc = (value) => String(value ?? "").replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch]);
     let fotos = null;
 
+    function figura(f, L) {
+        const nome = (v) => (L === "en" ? (v.licenca_en || v.licenca) : v.licenca);
+        const licenca = f.licenca_url ? `<a href="${esc(f.licenca_url)}" target="_blank" rel="noopener">${esc(nome(f))}</a>` : esc(nome(f));
+        const el = document.createElement("figure");
+        el.className = "foto";
+        el.setAttribute("data-no-signature", "");
+        el.innerHTML = `<img src="/images/${esc(f.ficheiro)}" alt="${esc(f.alt[L] || f.alt.pt)}" loading="lazy" width="960" height="640"><figcaption>${esc(f.legenda[L] || f.legenda.pt)} <span class="credito">${L === "en" ? "Photo" : "Foto"}: ${esc(f.autor)} · ${licenca} · <a href="${esc(f.pagina)}" target="_blank" rel="noopener">Wikimedia Commons</a></span></figcaption>`;
+        return el;
+    }
+
     function aplicar() {
         if (!fotos) return;
         const L = isEnglish() ? "en" : "pt";
         Object.entries(fotos).forEach(([id, f]) => {
+            // Modo capítulo: a fotografia entra ao lado do cabeçalho e do primeiro bloco de texto.
             const secao = document.getElementById(id);
             const prose = secao?.querySelector(":scope > .prose");
-            if (!secao || !prose || !secao.querySelector(":scope > .sec-head") || secao.querySelector(":scope > .intro-foto")) return;
-            const licenca = f.licenca_url ? `<a href="${esc(f.licenca_url)}" target="_blank" rel="noopener">${esc(L === "en" ? (f.licenca_en || f.licenca) : f.licenca)}</a>` : esc(L === "en" ? (f.licenca_en || f.licenca) : f.licenca);
-            const figura = document.createElement("figure");
-            figura.className = "foto";
-            figura.setAttribute("data-no-signature", "");
-            figura.innerHTML = `<img src="/images/${esc(f.ficheiro)}" alt="${esc(f.alt[L] || f.alt.pt)}" loading="lazy" width="960" height="640"><figcaption>${esc(f.legenda[L] || f.legenda.pt)} <span class="credito">${L === "en" ? "Photo" : "Foto"}: ${esc(f.autor)} · ${licenca} · <a href="${esc(f.pagina)}" target="_blank" rel="noopener">Wikimedia Commons</a></span></figcaption>`;
-            const caixa = document.createElement("div");
-            caixa.className = "intro-foto";
-            prose.before(caixa);
-            caixa.append(prose, figura);
+            if (secao && prose && secao.querySelector(":scope > .sec-head") && !secao.querySelector(":scope > .intro-foto")) {
+                const caixa = document.createElement("div");
+                caixa.className = "intro-foto";
+                prose.before(caixa);
+                caixa.append(prose, figura(f, L));
+            }
+            // Modo espaço: <div data-foto-slot="id"> no HTML recebe a figura.
+            document.querySelectorAll(`[data-foto-slot="${id}"]:empty`).forEach((slot) => slot.append(figura(f, L)));
         });
     }
 
@@ -37,7 +46,7 @@
         marcado = true;
         requestAnimationFrame(() => { marcado = false; aplicar(); });
     };
-    fetch("/data/fotos-capitulos.json?v=2").then((r) => r.json()).then((dados) => {
+    fetch("/data/fotos-capitulos.json?v=3").then((r) => r.json()).then((dados) => {
         fotos = dados[pagina];
         aplicar();
         new MutationObserver(agendar).observe(document.body, { childList: true, subtree: true });
