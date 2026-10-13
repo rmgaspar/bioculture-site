@@ -17,4 +17,5 @@ for (const [, id, corpo] of entradas) {
   assert(/^(CC0|CC BY( \d\.\d)?|CC BY-SA( \d\.\d)?|domínio público)$/.test(lic), id + ': licença não permitida: ' + lic);
   assert(/alt: tr\("/.test(corpo) && /en: "/.test(corpo), id + ': falta texto alternativo ou legenda em inglês');
 }
+assert(js.includes('<figure class="foto" data-no-signature>'), 'fotos de terceiros não levam a marca bioCulture (data-no-signature)');
 console.log(`Fotografias de A teia validadas: ${entradas.length}, todas com autor, licença aberta e origem.`);

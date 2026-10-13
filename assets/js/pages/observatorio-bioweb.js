@@ -88,7 +88,7 @@
       const p = FOTOS[id];
       if (!p) return texto;
       const lic = p.licUrl ? `<a href="${p.licUrl}" target="_blank" rel="noopener">${p.lic}</a>` : p.lic;
-      return `<div class="intro-foto">${texto}<figure class="foto"><img src="/images/bioweb/${id}.webp" alt="${esc(p.alt)}" loading="lazy" width="960" height="680"><figcaption>${esc(tr(p.pt, p.en))} <span class="credito">${tr("Foto", "Photo")}: ${esc(p.autor)} · ${lic} · <a href="${p.pag}" target="_blank" rel="noopener">Wikimedia Commons</a></span></figcaption></figure></div>`;
+      return `<div class="intro-foto">${texto}<figure class="foto" data-no-signature><img src="/images/bioweb/${id}.webp" alt="${esc(p.alt)}" loading="lazy" width="960" height="680"><figcaption>${esc(tr(p.pt, p.en))} <span class="credito">${tr("Foto", "Photo")}: ${esc(p.autor)} · ${lic} · <a href="${p.pag}" target="_blank" rel="noopener">Wikimedia Commons</a></span></figcaption></figure></div>`;
     };
 
     /* ---------- sumário ---------- */
