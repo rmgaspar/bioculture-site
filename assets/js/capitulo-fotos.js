@@ -37,7 +37,7 @@
         marcado = true;
         requestAnimationFrame(() => { marcado = false; aplicar(); });
     };
-    fetch("/data/fotos-capitulos.json?v=1").then((r) => r.json()).then((dados) => {
+    fetch("/data/fotos-capitulos.json?v=2").then((r) => r.json()).then((dados) => {
         fotos = dados[pagina];
         aplicar();
         new MutationObserver(agendar).observe(document.body, { childList: true, subtree: true });
