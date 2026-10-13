@@ -83,6 +83,12 @@
                                 isBioCultureImage
                             );
                             caption.innerText = isBioCultureImage ? editorialCredit : sourceCredit;
+                            // Foto de contexto (a fonte não tem imagem): legenda do que mostra + ligação à página da foto.
+                            if (n.imagem_contexto && n.imagem_pagina && /^https:\/\/commons\.wikimedia\.org\//.test(n.imagem_pagina)) {
+                                const esc = (v) => String(v).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+                                const what = lang === "en" ? n.imagem_contexto.en : n.imagem_contexto.pt;
+                                caption.innerHTML = `${esc(what)} <a href="${esc(n.imagem_pagina)}" target="_blank" rel="noopener" style="color:inherit">${esc(sourceCredit)}</a>`;
+                            }
                             image.addEventListener("error", () => {
                                 if (image.dataset.fallbackApplied === "true") {
                                     figure.hidden = true;
