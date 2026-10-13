@@ -363,17 +363,37 @@ html body #main :is(#structure, #inventories, #atlas, #highlights, #today, #news
 
 .local, .encounter { border-radius: 18px; padding: 2em; min-height: 245px; }
 
-.local { background: #405447; color: #fff; }
+.local { position: relative; overflow: hidden; color: #fff; background: linear-gradient(135deg, #3f6b4d 0%, #5b8c4f 62%, #8aa94e 100%); }
+.local::before, .local::after { content: ""; position: absolute; border-radius: 50%; pointer-events: none; background: rgba(255, 255, 255, .09); }
+.local::before { width: 280px; height: 280px; right: -90px; top: -110px; }
+.local::after { width: 170px; height: 170px; right: 70px; bottom: -80px; background: rgba(255, 244, 190, .12); }
+.local > * { position: relative; z-index: 1; }
+.local-season { margin: 1.1em 0 1.3em; display: grid; gap: 1.1em; }
+.local-season[hidden] { display: none; }
+.season-chip { justify-self: start; padding: .3em .9em; border-radius: 99px; background: rgba(255, 255, 255, .2); color: #fff; font-size: max(11px, .68em); font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase; }
+.season-group b { display: block; margin-bottom: .55em; color: #f3f7e8; font-size: max(11px, .7em); font-weight: 800; letter-spacing: .8px; text-transform: uppercase; }
+.season-row { display: flex; flex-wrap: wrap; gap: .8em 1em; }
+.season-crop { display: grid; justify-items: center; gap: .4em; width: 74px; color: #fff !important; text-decoration: none; border: 0 !important; font-size: 1em; transition: transform .18s ease; }
+.season-crop:hover, .season-crop:focus-visible { transform: translateY(-3px); }
+.season-photo { position: relative; display: grid; place-items: center; width: 62px; height: 62px; border-radius: 50%; overflow: hidden; background: rgba(255, 255, 255, .22); box-shadow: 0 0 0 3px rgba(255, 255, 255, .85); color: #fff; font-weight: 800; }
+.season-photo::before { content: attr(data-initial); }
+.season-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.season-name { font-size: max(11px, .72em); line-height: 1.2; text-align: center; font-weight: 700; overflow-wrap: anywhere; }
+@media (max-width: 520px) {
+    .season-row { gap: .8em .55em; }
+    .season-crop { width: 62px; }
+    .season-photo { width: 54px; height: 54px; }
+}
 .local small, .encounter small { font-size: max(11px, 0.65em); text-transform: uppercase; letter-spacing: 1.2px; }
-.local small { color: #bdcbbf; }
+.local small { color: #e3ecd6; }
 .local h3 { color: #fff; font-size: 1.55em; margin: 0.35em 0; }
-.local p { color: #dce5de; line-height: 1.65; }
-.local a { color: #fff; font-size: 0.8em; }
+.local p { color: #eef3e4; line-height: 1.65; }
+.local > a { color: #fff; font-size: 0.8em; font-weight: 700; }
 
 .encounter { background: var(--sand); display: grid; grid-template-columns: 1fr 120px; gap: 1em; }
 .encounter h3 { font-size: 1.35em; margin: 0.35em 0; color: var(--ink); }
 .encounter em { display: block; color: var(--muted); font-size: 0.85em; }
-.encounter p { font-size: 0.86em; line-height: 1.55; color: var(--muted); }
+.encounter p { font-size: 0.86em; line-height: 1.55; color: var(--muted); display: -webkit-box; -webkit-line-clamp: 7; -webkit-box-orient: vertical; overflow: hidden; }
 .encounter a { color: var(--forest); font-size: 0.8em; }
 
 .species-image { width: 120px; height: 160px; border-radius: 60px; object-fit: cover; background: #e8e3d8; }

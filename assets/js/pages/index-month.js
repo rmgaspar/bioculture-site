@@ -39,6 +39,16 @@
                 `Indicative windows for mainland Portugal, ordered by the soil pH of ${region.titulo}${Number.isFinite(ph) ? ` (${region.biomas.ph_solo})` : ""}. Your plot's microclimate, altitude and exposure rule.`)
             : tr("Janelas indicativas para Portugal continental. Escolhe a tua localidade no menu para ordenar pelo pH do solo e ver as invasoras da tua zona.",
                 "Indicative windows for mainland Portugal. Choose your locality in the menu to order by soil pH and see invasive plants in your area.");
+        // Bloco verde do «Hoje»: a época e as culturas deste mês em fotografia (as listas completas estão em baixo).
+        const season = document.getElementById("local-season");
+        if (season) {
+            const bubble = ([id, item]) => `<a class="season-crop" href="/calendario/horticola-detalhe.html?id=${encodeURIComponent(id)}"><span class="season-photo" data-initial="${esc(String(item.nome || "?").charAt(0))}">${
+                item.imagem && item.imagem !== "-" ? `<img src="${esc(item.imagem)}" alt="" loading="lazy" onerror="this.remove()">` : ""
+            }</span><span class="season-name">${esc(item.nome)}</span></a>`;
+            const group = (label, rows) => rows.length ? `<div class="season-group"><b>${label}</b><div class="season-row">${rows.map(bubble).join("")}</div></div>` : "";
+            season.innerHTML = `<span class="season-chip season-${key}">${esc(tr(NAMES[key][0], NAMES[key][1]))}</span>${group(tr("Semear agora", "Sow now"), sow)}${group(tr("Colher agora", "Harvest now"), harvest)}`;
+            season.hidden = !sow.length && !harvest.length;
+        }
         const root = target();
         if (!root) return;
         root.innerHTML = `
