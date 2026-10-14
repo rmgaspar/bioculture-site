@@ -36,7 +36,12 @@
                 caixa.append(prose, figura(f, L));
             }
             // Modo espaço: <div data-foto-slot="id"> no HTML recebe a figura.
-            document.querySelectorAll(`[data-foto-slot="${id}"]:empty`).forEach((slot) => slot.append(figura(f, L)));
+            document.querySelectorAll(`[data-foto-slot="${id}"]:empty`).forEach((slot) => {
+                if (slot.hasAttribute("data-credito-apenas")) {
+                    const fig = figura(f, L);
+                    slot.append(Object.assign(document.createElement("p"), { className: "foto-credito-solo", innerHTML: fig.querySelector("figcaption").innerHTML }));
+                } else slot.append(figura(f, L));
+            });
         });
     }
 
@@ -46,7 +51,7 @@
         marcado = true;
         requestAnimationFrame(() => { marcado = false; aplicar(); });
     };
-    fetch("/data/fotos-capitulos.json?v=6").then((r) => r.json()).then((dados) => {
+    fetch("/data/fotos-capitulos.json?v=9").then((r) => r.json()).then((dados) => {
         fotos = dados[pagina];
         aplicar();
         new MutationObserver(agendar).observe(document.body, { childList: true, subtree: true });
