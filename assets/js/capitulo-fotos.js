@@ -50,7 +50,13 @@
         document.querySelectorAll("[data-credito-apenas][data-alinhar]").forEach((el) => {
             const alvo = document.querySelector(el.dataset.alinhar), caixa = el.offsetParent;
             if (!alvo || !caixa) return;
-            if (window.matchMedia("(max-width: 900px)").matches) { el.style.top = el.style.right = ""; return; }
+            if (window.matchMedia("(max-width: 900px)").matches) {
+                if (!el.hasAttribute("data-alinhar-sempre")) { el.style.top = el.style.right = el.style.left = ""; return; }
+                // O círculo sai do cartão e fica centrado: o crédito vai por baixo dele, também centrado.
+                const m = alvo.getBoundingClientRect(), k = caixa.getBoundingClientRect();
+                Object.assign(el.style, { position: "absolute", left: "0", right: "0", width: "auto", textAlign: "center", top: `${Math.round(m.bottom - k.top + 10)}px`, bottom: "auto" });
+                return;
+            }
             const a = alvo.getBoundingClientRect(), c = caixa.getBoundingClientRect();
             const direita = Math.min(a.right, document.documentElement.clientWidth - 16);
             el.style.right = `${Math.round(c.right - direita)}px`;
