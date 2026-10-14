@@ -67,7 +67,7 @@
         marcado = true;
         requestAnimationFrame(() => { marcado = false; aplicar(); alinharCreditos(); });
     };
-    fetch("/data/fotos-capitulos.json?v=10").then((r) => r.json()).then((dados) => {
+    fetch("/data/fotos-capitulos.json?v=11").then((r) => r.json()).then((dados) => {
         fotos = dados[pagina];
         aplicar();
         alinharCreditos();
