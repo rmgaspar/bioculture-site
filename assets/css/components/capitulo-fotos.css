@@ -37,7 +37,7 @@ html body figure.foto a { color: inherit; }
 
 /* Relatório da Mongólia: foto redonda do cabeçalho (só com crédito) e fotos ao lado dos números e do dzud. */
 html body.mongolia-report[data-hero-theme] .bio-banner-hero .water-hero-image { background-image: url('/images/mongolia/hero.webp') !important; background-size: cover !important; background-position: center !important; }
-.mongolia-report .hero-credito { position: absolute; right: clamp(1rem, 3vw, 3rem); bottom: -1.9rem; margin: 0; max-width: 28rem; text-align: right; }
+html body.mongolia-report .hero-credito { position: absolute; right: 0; bottom: -1.3rem; margin: 0; width: min(46rem, 100%); text-align: right; z-index: 2; }
 .foto-credito-solo { margin: 0; color: #7d8a80; font-size: .72rem; line-height: 1.4; }
 .foto-credito-solo .credito { display: inline; }
 .foto-credito-solo a { color: inherit; }
@@ -45,4 +45,22 @@ html body.mongolia-report[data-hero-theme] .bio-banner-hero .water-hero-image { 
 .scale-overview article.com-foto { display: grid; grid-template-columns: minmax(0, 1fr) minmax(260px, 440px); gap: 1.5rem 2.5rem; align-items: center; }
 .scale-overview article.com-foto .texto { min-width: 0; }
 .scale-overview article.com-foto [data-foto-slot]:empty { display: none; }
-@media (max-width: 900px) { .scale-overview article.com-foto { display: block; } .scale-overview article.com-foto [data-foto-slot] { margin-top: 1rem; } .mongolia-report .hero-credito { position: static; text-align: left; margin-top: 1rem; } }
+@media (max-width: 900px) { .scale-overview article.com-foto { display: block; } .scale-overview article.com-foto [data-foto-slot] { margin-top: 1rem; } html body.mongolia-report .hero-credito { position: absolute; right: 0; bottom: -1.3rem; margin: 0; width: min(46rem, 100%); text-align: right; z-index: 2; } }
+
+/* Mongólia: texto dos cartões um pouco maior e gráficos simples no estilo do Observatório. */
+.mongolia-report .scale-overview article small { font-size: .82rem; }
+.mongolia-report .scale-overview article strong { font-size: 1.7rem; margin-bottom: .6rem; letter-spacing: -.02em; }
+.mongolia-report .scale-overview article p { font-size: 1.06rem; line-height: 1.7; }
+.mg-grafico { display: grid; gap: .95rem; margin-top: 1.4rem; }
+.mg-linha { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: .3rem .8rem; align-items: baseline; }
+.mg-linha span { color: var(--ink, #1f2a24); font-size: .92rem; font-weight: 600; }
+.mg-linha b { font-size: 1rem; font-variant-numeric: tabular-nums; }
+.mg-linha i { grid-column: 1 / -1; display: block; height: 11px; border-radius: 99px; background: rgba(0, 0, 0, .07); position: relative; overflow: hidden; }
+.mg-linha i::after { content: ""; position: absolute; inset: 0 auto 0 0; width: calc(var(--v) * 1%); border-radius: 99px; background: #a4553b; }
+.mg-linha:nth-child(2) i::after { background: #c98b4c; }
+.mongolia-report .scale-overview article .mg-nota { margin: 0; color: #6b776f; font-size: .78rem; line-height: 1.5; }
+.mg-numeros { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .8rem; margin-top: 1.4rem; }
+.mg-numeros > div { display: grid; gap: .3rem; align-content: start; padding: .9rem 1rem; border-radius: 12px; background: rgba(255, 255, 255, .7); }
+.mg-numeros b { font-size: 1.35rem; letter-spacing: -.02em; color: #8a5a2b; }
+.mg-numeros span { color: #66716a; font-size: .8rem; line-height: 1.4; }
+@media (max-width: 900px) { .mg-numeros { grid-template-columns: 1fr; } }
