@@ -45,15 +45,32 @@
         });
     }
 
+    // Crédito «só texto» por baixo de uma imagem do cabeçalho: alinha o fim do texto ao bordo direito visível da imagem.
+    function alinharCreditos() {
+        document.querySelectorAll("[data-credito-apenas][data-alinhar]").forEach((el) => {
+            const alvo = document.querySelector(el.dataset.alinhar), caixa = el.offsetParent;
+            if (!alvo || !caixa) return;
+            if (window.matchMedia("(max-width: 900px)").matches) { el.style.top = el.style.right = ""; return; }
+            const a = alvo.getBoundingClientRect(), c = caixa.getBoundingClientRect();
+            const direita = Math.min(a.right, document.documentElement.clientWidth - 16);
+            el.style.right = `${Math.round(c.right - direita)}px`;
+            el.style.top = `${Math.round(a.bottom - c.top + 12)}px`;
+            el.style.bottom = "auto";
+        });
+    }
+    window.addEventListener("resize", alinharCreditos);
+    window.addEventListener("load", alinharCreditos);
+
     let marcado = false;
     const agendar = () => {
         if (marcado) return;
         marcado = true;
-        requestAnimationFrame(() => { marcado = false; aplicar(); });
+        requestAnimationFrame(() => { marcado = false; aplicar(); alinharCreditos(); });
     };
     fetch("/data/fotos-capitulos.json?v=9").then((r) => r.json()).then((dados) => {
         fotos = dados[pagina];
         aplicar();
+        alinharCreditos();
         new MutationObserver(agendar).observe(document.body, { childList: true, subtree: true });
     }).catch((erro) => console.error("Fotografias dos capítulos:", erro));
 })();
