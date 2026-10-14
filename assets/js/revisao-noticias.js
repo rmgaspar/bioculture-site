@@ -34,7 +34,7 @@
     return node;
   }
   function safeUrl(value) {
-    return /^(https?:\/\/|\/images\/)/i.test(value || "") ? value : "";
+    return /^(https?:\/\/|\/images\/|\/media\/)/i.test(value || "") ? value : "";
   }
 
   function pruneSent() {
