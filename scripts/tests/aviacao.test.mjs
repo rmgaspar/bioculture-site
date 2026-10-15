@@ -13,7 +13,7 @@ const hubHtml = readFileSync('observatorio/pressoes-humanas.html', 'utf8');
 
 // O tradutor do inglês passa também pelos textos dos ficheiros de dados: a página procura classes e fontes pela posição.
 assert.deepEqual(D.fatores.classes.map((c) => c.id), ['media', 'economica', 'premium', 'executiva', 'primeira']);
-assert.deepEqual(D.fontes.map((f) => f.id), ['owid', 'lee2021', 'desnz', 'icao', 'eurostat', 'ourairports', 'eurostat-rotas', 'eurostat-aquecimento', 'gistemp', 'bm-icao', 'owid-quota']);
+assert.deepEqual(D.fontes.map((f) => f.id), ['owid', 'lee2021', 'desnz', 'icao', 'eurostat', 'ourairports', 'eurostat-rotas', 'eurostat-aquecimento', 'gistemp', 'bm-icao', 'owid-quota', 'eurostat-combustivel', 'apa-ruido-lisboa', 'apa-ruido-porto', 'easa-eaer']);
 for (const f of D.fontes) {
   assert(/^https:\/\//.test(f.url), `${f.id}: sem ligação`);
   for (const k of ['nome', 'nome_en', 'usa_pt', 'usa_en']) assert(f[k], `${f.id}: falta ${k}`);
@@ -114,4 +114,24 @@ casos = {"EU sustainable aviation fuel supply exceeds 2025 ReFuelEU Aviation tar
 print(json.dumps({t: bool(a.classify(t)) and a.classify(t)[0][1] == "aviacao" for t in casos} == casos))
 `], { encoding: 'utf8' });
 if (!py.error) assert.equal(py.stdout.trim(), 'true', 'classificação de notícias de aviação: ' + py.stderr);
+// «Não é só carbono»: combustível e NOx do Eurostat, ruído da APA e da AESA; a terra é uma lacuna assumida (sem fonte aberta).
+const RC = JSON.parse(readFileSync('data/aviacao-recursos.json', 'utf8'));
+const RTP = JSON.parse(readFileSync('data/aviacao-rotas-portugal.json', 'utf8'));
+assert(html.includes('href="#recursos"') && js.includes('<section id="recursos">'), 'falta a secção «Não é só carbono»');
+for (const k of ['internacional', 'domestica']) {
+  assert(RC.combustivel_tj[k]['1990'] > 0 && RC.combustivel_tj[k]['2024'] > 0, `combustível ${k}: faltam anos`);
+  assert(RC.combustivel_tj[k]['2020'] < RC.combustivel_tj[k]['2019'], `combustível ${k}: 2020 devia cair com a pandemia`);
+}
+assert(RC.nox_kt.aviacao['2023'] > 0 && RC.nox_kt.aviacao['2023'] < RC.nox_kt.total['2023'], 'NOx da aviação tem de ser parte do total');
+// O combustível estimado pelas rotas (metade dos voos internacionais + todos os internos) fica perto do que o Eurostat regista.
+const CBM = D.combustivel;
+const estTJ = RTP.rotas.reduce((a, r) => a + (r.passageiros * r.km * CBM.co2_kg_por_pkm_media / CBM.co2_kg_por_tonelada) * CBM.pcl_kwh_por_kg * 0.0036 * (r.interna ? 1 : 0.5), 0);
+const oficial = RC.combustivel_tj.internacional[RTP.meta.ano] + RC.combustivel_tj.domestica[RTP.meta.ano];
+assert(Math.abs(estTJ / oficial - 1) < 0.1, `estimativa de combustível a mais de 10% do Eurostat: ${estTJ} vs ${oficial}`);
+const rn = D.recursos.ruido;
+assert.deepEqual(rn.aeroportos.map((a) => a.iata), ['LIS', 'OPO']);
+for (const a of rn.aeroportos) assert(a.residentes_55 > a.residentes_65 && a.residentes_65 > 0 && a.area_55_km2 > 0 && a.movimentos_2016 > a.movimentos_2021, `ruído ${a.iata}: números incoerentes`);
+assert(rn.europa.pessoas_55_2019_milhoes > rn.europa.pessoas_55_2023_milhoes && rn.europa.pessoas_55_2023_milhoes > rn.europa.pessoas_55_2005_milhoes, 'ruído europeu: 2019 > 2023 > 2005');
+assert(js.includes('Sem dado') || js.includes('"Sem dado"'), 'a caixa «Terra» tem de dizer que falta o dado');
+
 console.log('Aviação validada: fatores, fontes, aeroportos, cálculo de distância e série de Portugal.');

@@ -16,7 +16,7 @@
 Os fatores por passageiro-quilómetro (DESNZ 2025) e os textos editoriais ficam em data/aviacao.json, que este
 script não toca.
 
-  python3 scripts/dados/aviacao.py [--dry-run] [--only portugal,aeroportos,rotas,tempo]
+  python3 scripts/dados/aviacao.py [--dry-run] [--only portugal,aeroportos,rotas,tempo,recursos]
 """
 import argparse
 import csv
@@ -236,17 +236,52 @@ def tempo():
             "temperatura_global": dict(sorted(temp.items())), "quota_co2_aviacao_pct": dict(sorted(quota.items())), "portugal": pt}
 
 
+def recursos():
+    """Combustível de aviação fornecido em Portugal (Eurostat nrg_bal_c) e NOx da aviação (env_ac_ainah_r2)."""
+    base = "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/"
+    d = json.loads(obter(base + "nrg_bal_c?format=JSON&lang=EN&geo=PT&siec=O4661XR5230B&unit=TJ&nrg_bal=INTAVI&nrg_bal=FC_TRA_DAVI_E"))
+    ids, tam = d["id"], d["size"]
+    cats = {k: list(d["dimension"][k]["category"]["index"]) for k in ids}
+    comb = {}
+    for flat, v in d["value"].items():
+        flat, idx = int(flat), {}
+        for k, sz in reversed(list(zip(ids, tam))):
+            idx[k] = flat % sz
+            flat //= sz
+        comb.setdefault(cats["nrg_bal"][idx["nrg_bal"]], {})[cats["time"][idx["time"]]] = round(v, 1)
+    d = json.loads(obter(base + "env_ac_ainah_r2?format=JSON&lang=EN&geo=PT&airpol=NOX&unit=THS_T&nace_r2=H51&nace_r2=TOTAL_HH"))
+    ids, tam = d["id"], d["size"]
+    cats = {k: list(d["dimension"][k]["category"]["index"]) for k in ids}
+    nox, notas = {}, {}
+    for tabela, alvo in (("value", nox), ("status", notas)):
+        for flat, v in d.get(tabela, {}).items():
+            flat, idx = int(flat), {}
+            for k, sz in reversed(list(zip(ids, tam))):
+                idx[k] = flat % sz
+                flat //= sz
+            alvo.setdefault(cats["nace_r2"][idx["nace_r2"]], {})[cats["time"][idx["time"]]] = round(v, 2) if tabela == "value" else v
+    if len(comb.get("INTAVI", {})) < 30 or len(nox.get("H51", {})) < 25:
+        sys.exit("Eurostat devolveu poucos anos de combustível ou NOx")
+    return {"meta": {"fonte": "Eurostat: nrg_bal_c (querosene de aviação, TJ) e env_ac_ainah_r2 (NOx, kt)",
+                     "url": "https://ec.europa.eu/eurostat/databrowser/view/nrg_bal_c/default/table?lang=en",
+                     "obtido": date.today().isoformat(),
+                     "nota": "INTAVI = aviação internacional (combustível fornecido em Portugal a voos para o estrangeiro); FC_TRA_DAVI_E = aviação doméstica."},
+            "combustivel_tj": {"internacional": dict(sorted(comb["INTAVI"].items())), "domestica": dict(sorted(comb["FC_TRA_DAVI_E"].items()))},
+            "nox_kt": {"aviacao": dict(sorted(nox["H51"].items())), "total": dict(sorted(nox["TOTAL_HH"].items()))},
+            "notas_nox": notas}
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dry-run", action="store_true")
-    ap.add_argument("--only", default="portugal,aeroportos,rotas,tempo")
+    ap.add_argument("--only", default="portugal,aeroportos,rotas,tempo,recursos")
     a = ap.parse_args()
-    alvo = {"portugal": ("aviacao-portugal.json", portugal), "aeroportos": ("aeroportos.json", aeroportos), "rotas": ("aviacao-rotas-portugal.json", rotas), "tempo": ("aviacao-tempo.json", tempo)}
+    alvo = {"portugal": ("aviacao-portugal.json", portugal), "aeroportos": ("aeroportos.json", aeroportos), "rotas": ("aviacao-rotas-portugal.json", rotas), "tempo": ("aviacao-tempo.json", tempo), "recursos": ("aviacao-recursos.json", recursos)}
     for k in a.only.split(","):
         ficheiro, fn = alvo[k]
         dados = fn()
-        texto = json.dumps(dados, ensure_ascii=False, separators=(",", ":") if k in ("aeroportos", "rotas", "tempo") else None,
-                           indent=None if k in ("aeroportos", "rotas", "tempo") else 1) + "\n"
+        texto = json.dumps(dados, ensure_ascii=False, separators=(",", ":") if k in ("aeroportos", "rotas", "tempo", "recursos") else None,
+                           indent=None if k in ("aeroportos", "rotas", "tempo", "recursos") else 1) + "\n"
         print(k, len(texto), "bytes")
         if not a.dry_run:
             (RAIZ / "data" / ficheiro).write_text(texto, encoding="utf-8")
