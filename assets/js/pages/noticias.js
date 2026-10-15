@@ -28,6 +28,14 @@
     const normalize = (value) => String(value || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
     const el = (id) => document.getElementById(id);
 
+    // «Voltar»: à página de onde se veio (se for do próprio site); sem histórico, à página inicial.
+    const voltar = el("news-back");
+    if (voltar) voltar.addEventListener("click", (event) => {
+        let mesmoSite = false;
+        try { mesmoSite = document.referrer && new URL(document.referrer).origin === location.origin; } catch (e) { mesmoSite = false; }
+        if (mesmoSite && history.length > 1) { event.preventDefault(); history.back(); }
+    });
+
     // Textos da interface (o resto da página é traduzido pelo runtime).
     el("news-search").placeholder = tr("Pesquisar no título e no resumo…", "Search titles and summaries…");
     el("news-search").previousElementSibling.textContent = tr("Pesquisar notícias", "Search news");
