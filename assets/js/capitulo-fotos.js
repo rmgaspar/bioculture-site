@@ -18,6 +18,7 @@
         const el = document.createElement("figure");
         el.className = "foto";
         el.setAttribute("data-no-signature", "");
+        if (f.proporcao) el.style.setProperty("--proporcao", f.proporcao); // fotografia mais larga ou mais alta que 3:2: mostra-se inteira
         el.innerHTML = `<img src="/images/${esc(f.ficheiro)}" alt="${esc(f.alt[L] || f.alt.pt)}" loading="lazy" width="960" height="640"><figcaption>${esc(f.legenda[L] || f.legenda.pt)} <span class="credito">${L === "en" ? "Photo" : "Foto"}: ${esc(f.autor)} · ${licenca} · <a href="${esc(f.pagina)}" target="_blank" rel="noopener">Wikimedia Commons</a></span></figcaption>`;
         return el;
     }
@@ -82,7 +83,7 @@
         marcado = true;
         requestAnimationFrame(() => { marcado = false; aplicar(); alinharCreditos(); });
     };
-    fetch("/data/fotos-capitulos.json?v=14").then((r) => r.json()).then((dados) => {
+    fetch("/data/fotos-capitulos.json?v=16").then((r) => r.json()).then((dados) => {
         fotos = dados[pagina];
         aplicar();
         alinharCreditos();
