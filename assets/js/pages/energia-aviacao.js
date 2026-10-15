@@ -28,8 +28,8 @@
   const barraFixa = () => { const el = document.createElement("script"); el.src = "/assets/js/biocultura-sticky-nav.js?v=13"; document.body.appendChild(el); };
   const get = (u) => fetch(u).then((r) => { if (!r.ok) throw new Error(u + " " + r.status); return r.json(); });
 
-  Promise.all([get("/data/aviacao.json?v=1"), get("/data/aviacao-portugal.json?v=1"), get("/data/aeroportos.json?v=1"), get("/data/noticias.json").catch(() => [])])
-    .then(([D, PT, AE, NEWS]) => { build(D, PT, AE); atualidade(NEWS); barraFixa(); irParaHash(); })
+  Promise.all([get("/data/aviacao.json?v=2"), get("/data/aviacao-portugal.json?v=1"), get("/data/aeroportos.json?v=1"), get("/data/noticias.json").catch(() => []), get("/data/aviacao-rotas-portugal.json?v=1")])
+    .then(([D, PT, AE, NEWS, RT]) => { build(D, PT, AE, RT); atualidade(NEWS); barraFixa(); irParaHash(); })
     .catch((e) => { console.error(e); barraFixa(); box.innerHTML = `<p class="prose">${tr("Não foi possível carregar os dados desta página.", "The data for this page could not be loaded.")}</p>`; });
 
   const irParaHash = () => {
@@ -58,7 +58,7 @@
     document.querySelectorAll('a[href="#atualidade"]').forEach((a) => (a.hidden = false));
   }
 
-  function build(D, PT, AE) {
+  function build(D, PT, AE, RT) {
     const cols = AE.meta.campos, ix = Object.fromEntries(cols.map((c, i) => [c, i]));
     const AER = new Map(AE.aeroportos.map((a) => [a[ix.iata], a]));
     /* Em inglês o tradutor da página também passa pelos textos dos ficheiros de dados, por isso nada se procura pelo «id»:
@@ -107,8 +107,32 @@
   </figure>
 </section>
 
+<section id="voos">
+  <div class="sec-head"><span class="eyebrow">${tr("2 · Voos reais", "2 · Real flights")}</span><h2>${tr("Quanto gasta cada rota, por dia e por ano", "How much each route uses, per day and per year")}</h2></div>
+  <div class="prose">
+    <p>${tr("O Eurostat conta, por ano, os <strong>voos e os passageiros</strong> entre cada aeroporto português e os seus parceiros, nos dois sentidos e de todas as companhias. Multiplicámos os passageiros pela distância e pelo fator médio da DESNZ para estimar o <strong>combustível e o CO₂e da rota inteira</strong>, e dividimos pelo ano para chegar à média diária, semanal e mensal.", "Eurostat counts, per year, the <strong>flights and passengers</strong> between each Portuguese airport and its partners, in both directions and for all airlines. We multiplied passengers by distance and by the DESNZ average factor to estimate the <strong>fuel and CO₂e of the whole route</strong>, and divided by the year to get the daily, weekly and monthly average.")}</p>
+  </div>
+  <div class="tiles" id="av-tot"></div>
+  <figure class="calc">
+    <figcaption><span class="t">${tr("Calculadora de rotas reais", "Real routes calculator")}</span><span class="d">${tr("Escolhe uma rota de ou para Portugal: escreve a cidade ou o código IATA e escolhe na lista.", "Pick a route to or from Portugal: type the city or IATA code and choose from the list.")}</span></figcaption>
+    <div class="calc-form">
+      <label class="full">${tr("Rota", "Route")}<input id="rt-rota" list="rt-lista" autocomplete="off" spellcheck="false" placeholder="${tr("Por exemplo: Lisboa ⇄ Madrid", "For example: Lisbon ⇄ Madrid")}"></label>
+      <datalist id="rt-lista"></datalist>
+    </div>
+    <div class="chips" id="rt-chips"><span>${tr("Mais movimentadas:", "Busiest:")}</span></div>
+    <div id="rt-res" aria-live="polite"></div>
+    <div class="src"><span>${tr("Fontes: Eurostat (voos e passageiros, aquecimento e casas), DESNZ 2025 (fatores e combustível), OurAirports (distâncias).", "Sources: Eurostat (flights and passengers, heating and homes), DESNZ 2025 (factors and fuel), OurAirports (distances).")}</span></div>
+  </figure>
+  <figure>
+    <figcaption><span class="t">${tr("As 15 rotas que mais emitem, por ano", "The 15 routes that emit most, per year")}</span><span class="d">${tr("Mil toneladas de CO₂e da rota inteira, nos dois sentidos. A barra escura é só emissões diretas; a clara é o acréscimo dos efeitos não-CO₂.", "Thousand tonnes of CO₂e for the whole route, in both directions. The dark bar is direct emissions only; the light one is the addition from non-CO₂ effects.")}</span></figcaption>
+    <div class="legend" id="rt-leg"></div>
+    <div class="chart" id="rt-graf"></div>
+    <div class="src"><span>${tr("Cálculo bioCulture a partir do Eurostat (avia_par_pt) e dos fatores da DESNZ 2025; estimativa, não o combustível medido.", "bioCulture calculation from Eurostat (avia_par_pt) and DESNZ 2025 factors; an estimate, not measured fuel.")}</span></div>
+  </figure>
+</section>
+
 <section id="rotas">
-  <div class="sec-head"><span class="eyebrow">${tr("2 · Rotas", "2 · Routes")}</span><h2>${tr("A distância manda, mas não explica tudo", "Distance rules, but it does not explain everything")}</h2></div>
+  <div class="sec-head"><span class="eyebrow">${tr("3 · Rotas de exemplo", "3 · Example routes")}</span><h2>${tr("A distância manda, mas não explica tudo", "Distance rules, but it does not explain everything")}</h2></div>
   <div class="prose"><p id="av-rotas-txt"></p></div>
   <figure>
     <figcaption><span class="t">${tr("CO₂ por passageiro em classe económica, rotas de exemplo", "CO₂ per economy-class passenger, example routes")}</span><span class="d">${tr("Só ida, kg de CO₂e. A barra escura é a estimativa só com emissões diretas; a clara é o que se soma com os efeitos não-CO₂.", "One way, kg of CO₂e. The dark bar is the estimate with direct emissions only; the light one is what is added by non-CO₂ effects.")}</span></figcaption>
@@ -119,7 +143,7 @@
 </section>
 
 <section id="classes">
-  <div class="sec-head"><span class="eyebrow">${tr("3 · Classe de bilhete", "3 · Ticket class")}</span><h2>${tr("Quanto espaço ocupas, tanto pesas", "The more space you take, the more you weigh")}</h2></div>
+  <div class="sec-head"><span class="eyebrow">${tr("4 · Classe de bilhete", "4 · Ticket class")}</span><h2>${tr("Quanto espaço ocupas, tanto pesas", "The more space you take, the more you weigh")}</h2></div>
   <div class="prose"><p id="av-classes-txt"></p></div>
   <figure>
     <figcaption><span class="t">${tr("Gramas de CO₂e por passageiro e quilómetro, por classe", "Grams of CO₂e per passenger-kilometre, by class")}</span><span class="d">${tr("O avião emite o mesmo; muda a parte que é atribuída a cada passageiro, conforme o espaço que ocupa na cabine.", "The aircraft emits the same; what changes is the share assigned to each passenger, according to the cabin space they take.")}</span></figcaption>
@@ -130,7 +154,7 @@
 </section>
 
 <section id="portugal">
-  <div class="sec-head"><span class="eyebrow">${tr("4 · Portugal", "4 · Portugal")}</span><h2>${tr("O transporte aéreo português em 30 anos", "Portuguese air transport over 30 years")}</h2></div>
+  <div class="sec-head"><span class="eyebrow">${tr("5 · Portugal", "5 · Portugal")}</span><h2>${tr("O transporte aéreo português em 30 anos", "Portuguese air transport over 30 years")}</h2></div>
   <div class="prose"><p id="av-pt-txt"></p></div>
   <div class="tiles" id="av-pt-tiles"></div>
   <div class="grid2">
@@ -148,7 +172,7 @@
 </section>
 
 <section id="limites">
-  <div class="sec-head"><span class="eyebrow">${tr("5 · Limites e fontes", "5 · Limits and sources")}</span><h2>${tr("O que estes números não dizem", "What these numbers do not tell")}</h2></div>
+  <div class="sec-head"><span class="eyebrow">${tr("6 · Limites e fontes", "6 · Limits and sources")}</span><h2>${tr("O que estes números não dizem", "What these numbers do not tell")}</h2></div>
   <ol class="notes" id="av-notas"></ol>
   <div class="srcs" id="av-fontes"></div>
 </section>`;
@@ -183,6 +207,8 @@
       tr("<strong>É uma estimativa por passageiro, não a medição de um voo.</strong> O fator é uma média: a DESNZ calcula-o para voos entre aeroportos fora do Reino Unido, juntando voos curtos e longos. O consumo real depende do avião, da ocupação, da rota efetivamente voada e de haver escalas.", "<strong>It is a per-passenger estimate, not a measurement of a flight.</strong> The factor is an average: DESNZ calculates it for flights between airports outside the UK, pooling short and long flights. Real consumption depends on the aircraft, load factor, route actually flown and whether there are stopovers."),
       tr("<strong>Os efeitos não-CO₂ são incertos.</strong> Rastos de condensação, óxidos de azoto e vapor de água aquecem o clima, mas a dimensão exata ainda é discutida. Por isso mostramos sempre um intervalo: só emissões diretas, e com +70% aplicado ao CO₂, como recomenda a DESNZ.", "<strong>Non-CO₂ effects are uncertain.</strong> Contrails, nitrogen oxides and water vapour warm the climate, but the exact size is still debated. That is why we always show a range: direct emissions only, and with +70% applied to the CO₂, as DESNZ recommends."),
       tr("<strong>Comparação com o comboio.</strong> Quando o destino está na Europa e a menos de 2 000 km, mostramos o fator de comboio internacional da DESNZ como referência. Não significa que exista uma ligação ferroviária direta, e o comboio português pode ter um valor diferente.", "<strong>Comparison with rail.</strong> When the destination is in Europe and under 2,000 km away, we show DESNZ's international rail factor as a reference. It does not mean a direct rail link exists, and Portuguese rail may have a different value."),
+      tr("<strong>Voos reais: é uma estimativa, não o combustível medido.</strong> Os voos e passageiros são do Eurostat (aeroportos principais de Portugal e seus parceiros, 2024, nos dois sentidos, voos comerciais de passageiros de todas as companhias; as rotas entre aeroportos portugueses aparecem duas vezes e levam a média). O combustível e o CO₂e saem da distância em linha reta e do fator médio por passageiro da DESNZ, e incluem o percurso completo, também a parte fora de Portugal; o consumo real depende do avião, da ocupação e da rota efetivamente voada.", "<strong>Real flights: an estimate, not measured fuel.</strong> Flights and passengers are from Eurostat (main Portuguese airports and their partners, 2024, both directions, commercial passenger flights of all airlines; routes between Portuguese airports appear twice and are averaged). Fuel and CO₂e come from the straight-line distance and DESNZ's average per-passenger factor, and include the full journey, also the part outside Portugal; real consumption depends on the aircraft, load factor and route actually flown."),
+      tr("<strong>A equivalência com o aquecimento.</strong> Compara a energia que o querosene contém com a energia que as casas portuguesas gastam em aquecimento do espaço (Eurostat: 35 mil TJ em 2024, para 4,5 milhões de casas). Em Portugal esse consumo é baixo, por causa do clima ameno e de se aquecer pouco as casas, o que faz as rotas parecerem enormes. Uma casa não aquece com querosene: é só para dar escala.", "<strong>The heating equivalence.</strong> It compares the energy that jet fuel contains with the energy Portuguese homes use for space heating (Eurostat: 35 thousand TJ in 2024, for 4.5 million homes). In Portugal that consumption is low, because of the mild climate and because homes are little heated, which makes the routes look enormous. A home is not heated with jet fuel: it is only to give scale."),
       tr("<strong>Quantos aviões passam sobre uma região?</strong> Esta página não o diz. Não usamos contagens de serviços de rastreio comerciais e não encontrámos uma contagem aberta e citável para o espaço aéreo do Centro de Portugal. E sobrevoar não é emitir «ali»: a emissão pertence a quem abastece e voa, e os inventários nacionais seguem em geral o combustível abastecido no país.", "<strong>How many aircraft cross a region?</strong> This page does not say. We do not use counts from commercial tracking services and we did not find an open, citable count for the airspace over central Portugal. And overflying is not emitting “there”: emissions belong to whoever takes on fuel and flies, and national inventories generally follow fuel taken on in the country."),
       tr("<strong>Aeroportos.</strong> A lista (OurAirports) tem os aeroportos com serviço regular e código IATA; pode ter atrasos ou omissões. Os totais mundiais citados são de 2019 (e de 2018 nos efeitos não-CO₂), os anos mais recentes que as fontes citadas cobrem.", "<strong>Airports.</strong> The list (OurAirports) has airports with scheduled service and an IATA code; it may lag or have omissions. World totals cited are for 2019 (and 2018 for non-CO₂ effects), the most recent years the cited sources cover."),
       tr("<strong>Fatores da DESNZ.</strong> Vêm de um organismo oficial do Reino Unido, com licença aberta, e servem para contas de empresas. A ICAO publica um método semelhante com tabelas de combustível por tipo de avião; só consultámos a versão 8 (2015), por isso não a usamos nos cálculos.", "<strong>DESNZ factors.</strong> They come from an official UK body, under an open licence, and are meant for company accounting. ICAO publishes a similar method with fuel tables by aircraft type; we only consulted version 8 (2015), so we do not use it in the calculations.")
@@ -219,6 +245,64 @@
     });
     lin("av-pt-abs", (y) => ar(y) / 1000, (v) => fmt(v, 0), (v) => fmt(v, 2) + " Mt", css("--s2") || "#eb6834", tr("Transporte aéreo (Mt CO₂)", "Air transport (Mt CO₂)"));
     lin("av-pt-pct", (y) => quota(y), (v) => fmt(v, 0) + "%", (v) => fmt(v, 1) + "%", css("--s1") || "#2a78d6", tr("Quota no total (%)", "Share of the total (%)"));
+
+    /* ---------- voos reais por rota (Eurostat) ---------- */
+    const CB = D.combustivel, MED = CL.media, AQ = RT.aquecimento, ROT = RT.rotas;
+    const KWH_TJ = 277777.78;
+    const casaMWh = (AQ.tj * KWH_TJ) / (AQ.casas_milhares * 1000) / 1000; // MWh de aquecimento por casa e por ano
+    const aqTotalMWh = (AQ.tj * KWH_TJ) / 1000;
+    const totaisRota = (r) => {
+      const pkm = r.passageiros * r.km, co2 = pkm * CB.co2_kg_por_pkm_media;
+      const t = pkm * MED.direto / 1000, tt = pkm * MED.total / 1000; // toneladas de CO₂e
+      const comb = co2 / CB.co2_kg_por_tonelada; // toneladas de combustível
+      return { voos: r.voos, pax: r.passageiros, comb, litros: comb * CB.litros_por_tonelada, direto: t, total: tt, mwh: comb * CB.pcl_kwh_por_kg };
+    };
+    const soma = (arr) => arr.reduce((a, x) => ({ voos: a.voos + x.voos, pax: a.pax + x.pax, comb: a.comb + x.comb, litros: a.litros + x.litros, direto: a.direto + x.direto, total: a.total + x.total, mwh: a.mwh + x.mwh }), { voos: 0, pax: 0, comb: 0, litros: 0, direto: 0, total: 0, mwh: 0 });
+    const TT = totaisRota, TODAS = soma(ROT.map(TT));
+    const num = (v) => (v >= 1e6 ? fmt(v / 1e6, 1) + " M" : v >= 1e4 ? fmt(Math.round(v / 1e3)) + tr(" mil", "k") : fmt(Math.round(v)));
+    const ton = (v) => (v >= 1e6 ? fmt(v / 1e6, 1) + " Mt" : v >= 1e3 ? fmt(v / 1e3, 1) + " kt" : fmt(v, v >= 100 ? 0 : 1) + " t");
+    const nomeAero = (iata, cid) => { const a = AER.get(iata); return a ? cidade(a) : cid; };
+    const nomeRota = (r) => `${nomeAero(r.a, r.cidade_a)} ⇄ ${nomeAero(r.b, r.cidade_b)}`;
+    const rotuloRota = (r) => `${nomeAero(r.a, r.cidade_a)} (${r.a}) ⇄ ${nomeAero(r.b, r.cidade_b)} (${r.b}) · ${fmt(r.passageiros / 1e6, 1)} M ${tr("passageiros", "passengers")}`;
+    const tpl = (arr) => arr.map((t) => `<div class="tile"><span class="v">${t[0]}${t[1] ? `<small>${t[1]}</small>` : ""}</span><span class="k">${t[2]}</span><span class="s">${t[3] || ""}</span></div>`).join("");
+    document.getElementById("av-tot").innerHTML = tpl([
+      [fmt(Math.round(TODAS.voos / 365)), tr("voos/dia", "flights/day"), tr(`em média, nas ${ROT.length} rotas de e para Portugal (${RT.meta.ano}), nos dois sentidos`, `on average, on the ${ROT.length} routes to and from Portugal (${RT.meta.ano}), both directions`), tr(`${num(TODAS.pax / 365)} passageiros por dia`, `${num(TODAS.pax / 365)} passengers a day`)],
+      [fmt(Math.round(TODAS.comb / 365)), tr("t de combustível/dia", "t of fuel/day"), tr("estimativa para o percurso completo destes voos", "estimate for the full journey of these flights"), tr(`${num(TODAS.litros / 365)} litros por dia; ${num(TODAS.comb / 12)} t por mês`, `${num(TODAS.litros / 365)} litres a day; ${num(TODAS.comb / 12)} t a month`)],
+      [ton(TODAS.total), tr("CO₂e por ano", "CO₂e a year"), tr("com efeitos não-CO₂", "with non-CO₂ effects"), tr(`só emissões diretas: ${ton(TODAS.direto)}`, `direct emissions only: ${ton(TODAS.direto)}`)],
+      [fmt(TODAS.mwh / casaMWh / 1e6, 1), tr("milhões de casas", "million homes"), tr("é quantas casas portuguesas se aqueceriam um ano com a energia deste combustível", "is how many Portuguese homes could be heated for a year with the energy in this fuel"), tr(`${(TODAS.mwh / aqTotalMWh).toLocaleString("pt-PT", { maximumFractionDigits: 1 })}× o aquecimento de todas as casas`, `${(TODAS.mwh / aqTotalMWh).toLocaleString("en-GB", { maximumFractionDigits: 1 })}× the heating of all homes`)]
+    ]);
+    document.getElementById("rt-lista").innerHTML = ROT.map((r) => `<option value="${esc(rotuloRota(r))}"></option>`).join("");
+    const achaRota = (txt) => {
+      const m = (txt || "").match(/\(([A-Z0-9]{3,4})\)\s*⇄\s*.*\(([A-Z0-9]{3,4})\)/);
+      return m ? ROT.find((r) => r.a === m[1] && r.b === m[2]) : null;
+    };
+    const rtIn = document.getElementById("rt-rota"), rtRes = document.getElementById("rt-res");
+    const periodos = [[tr("Dia", "Day"), 365], [tr("Semana", "Week"), 365 / 7], [tr("Mês", "Month"), 12], [tr("Ano", "Year"), 1]];
+    const rtCalc = () => {
+      const r = achaRota(rtIn.value);
+      if (!r) { rtRes.innerHTML = `<p class="av-vazio">${tr("Escolhe uma rota da lista para ver os totais.", "Pick a route from the list to see the totals.")}</p>`; return; }
+      const t = TT(r), casas = t.mwh / casaMWh, pc = (t.mwh / aqTotalMWh) * 100;
+      const linhas = periodos.map(([n, d]) => `<tr><th>${n}</th><td>${fmt(t.voos / d, d === 1 ? 0 : 1)}</td><td>${num(t.pax / d)}</td><td>${ton(t.comb / d)}</td><td>${num(t.litros / d)}</td><td>${ton(t.direto / d)}</td><td>${ton(t.total / d)}</td><td>${fmt(t.mwh / d, t.mwh / d >= 100 ? 0 : 1)}</td></tr>`).join("");
+      rtRes.innerHTML = `
+        <div class="av-rota"><strong>${esc(nomeRota(r))}</strong><span>${fmt(r.km)} km ${tr("em linha reta", "in a straight line")} · ${RT.meta.ano} · ${tr("passageiros e voos nos dois sentidos", "passengers and flights in both directions")}</span></div>
+        <div class="tiles">${tpl([
+          [fmt(t.voos / 365, 1), tr("voos/dia", "flights/day"), tr("em média, nos dois sentidos", "on average, both directions"), tr(`${fmt(t.voos)} voos em ${RT.meta.ano}`, `${fmt(t.voos)} flights in ${RT.meta.ano}`)],
+          [fmt(Math.round(t.pax / t.voos)), tr("passageiros por voo", "passengers per flight"), (r.passageiros > r.lugares ? tr("registo de lugares incompleto (voos com escalas?)", "seat record incomplete (multi-stop flights?)") : tr(`${fmt((r.passageiros / r.lugares) * 100)}% dos lugares ocupados`, `${fmt((r.passageiros / r.lugares) * 100)}% of seats filled`)), tr(`${num(t.pax)} passageiros no ano`, `${num(t.pax)} passengers in the year`)],
+          [ton(t.comb / 365), tr("de combustível por dia", "of fuel per day"), tr(`${num(t.litros / 365)} litros por dia`, `${num(t.litros / 365)} litres a day`), tr(`${ton(t.comb / 12)} por mês`, `${ton(t.comb / 12)} a month`)],
+          [ton(t.total), tr("CO₂e por ano", "CO₂e a year"), tr("com efeitos não-CO₂", "with non-CO₂ effects"), tr(`só emissões diretas: ${ton(t.direto)}`, `direct emissions only: ${ton(t.direto)}`)]])}</div>
+        <div class="tscroll full"><table><thead><tr><th></th><th>${tr("Voos", "Flights")}</th><th>${tr("Passageiros", "Passengers")}</th><th>${tr("Combustível", "Fuel")}</th><th>${tr("Litros", "Litres")}</th><th>${tr("CO₂e direto", "Direct CO₂e")}</th><th>${tr("CO₂e com não-CO₂", "CO₂e with non-CO₂")}</th><th>${tr("Energia (MWh)", "Energy (MWh)")}</th></tr></thead><tbody>${linhas}</tbody></table></div>
+        <div class="av-signif"><strong>${tr("O que significa", "What it means")}</strong>
+          <p>${tr(`Num ano, o combustível desta rota tem a energia de <strong>${fmt(t.mwh)} MWh</strong>. Uma casa portuguesa gasta em média ${fmt(casaMWh, 1)} MWh por ano em aquecimento (${AQ.ano}). Em energia, é o aquecimento de <strong>${num(casas)} casas</strong> durante um ano, ${fmt(pc, pc < 1 ? 2 : 1)}% de tudo o que as casas portuguesas gastam a aquecer-se.`, `In a year, the fuel on this route holds <strong>${fmt(t.mwh)} MWh</strong> of energy. A Portuguese home uses on average ${fmt(casaMWh, 1)} MWh a year for heating (${AQ.ano}). In energy terms, that is the heating of <strong>${num(casas)} homes</strong> for a year, ${fmt(pc, pc < 1 ? 2 : 1)}% of everything Portuguese homes use to heat themselves.`)}</p>
+          <p class="av-nota">${tr("É uma equivalência de energia (o que o combustível contém), não de eficiência: uma casa não aquece com querosene.", "It is an energy equivalence (what the fuel contains), not an efficiency one: a home is not heated with jet fuel.")}</p></div>`;
+    };
+    rtIn.addEventListener("input", rtCalc);
+    const rtChips = document.getElementById("rt-chips");
+    ROT.slice(0, 8).forEach((r) => { const bt = document.createElement("button"); bt.type = "button"; bt.textContent = nomeRota(r); bt.addEventListener("click", () => { rtIn.value = rotuloRota(r); rtCalc(); }); rtChips.appendChild(bt); });
+    rtIn.value = rotuloRota(ROT.find((r) => r.a === "LIS" && r.b === "LHR") || ROT[0]); rtCalc();
+    legPilhas("rt-leg");
+    const topo = ROT.map((r) => ({ r, t: TT(r) })).sort((a, b) => b.t.total - a.t.total).slice(0, 15);
+    pilhas(document.getElementById("rt-graf"), topo.map(({ r, t }) => ({ l: nomeRota(r), direto: t.direto / 1000, total: t.total / 1000, t: fmt(t.total / 1000, 0) + " kt", td: fmt(t.direto / 1000, 0) + " kt", tt: fmt(t.total / 1000, 0) + " kt",
+      tip: `<div class="r"><span>${tr("Voos por dia", "Flights per day")}</span><b>${fmt(t.voos / 365, 1)}</b></div><div class="r"><span>${tr("Passageiros", "Passengers")}</span><b>${num(t.pax)}</b></div><div class="r"><span>${tr("Combustível", "Fuel")}</span><b>${ton(t.comb)}</b></div><div class="r"><span>${tr("Só diretas", "Direct only")}</span><b>${ton(t.direto)}</b></div><div class="r"><span>${tr("Com não-CO₂", "With non-CO₂")}</span><b>${ton(t.total)}</b></div>` })), "kt");
 
     /* ---------- calculadora ---------- */
     const de = document.getElementById("av-de"), para = document.getElementById("av-para"), res = document.getElementById("av-res");

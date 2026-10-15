@@ -13,7 +13,7 @@ const hubHtml = readFileSync('observatorio/pressoes-humanas.html', 'utf8');
 
 // O tradutor do inglês passa também pelos textos dos ficheiros de dados: a página procura classes e fontes pela posição.
 assert.deepEqual(D.fatores.classes.map((c) => c.id), ['media', 'economica', 'premium', 'executiva', 'primeira']);
-assert.deepEqual(D.fontes.map((f) => f.id), ['owid', 'lee2021', 'desnz', 'icao', 'eurostat', 'ourairports']);
+assert.deepEqual(D.fontes.map((f) => f.id), ['owid', 'lee2021', 'desnz', 'icao', 'eurostat', 'ourairports', 'eurostat-rotas', 'eurostat-aquecimento']);
 for (const f of D.fontes) {
   assert(/^https:\/\//.test(f.url), `${f.id}: sem ligação`);
   for (const k of ['nome', 'nome_en', 'usa_pt', 'usa_en']) assert(f[k], `${f.id}: falta ${k}`);
@@ -52,6 +52,19 @@ assert.equal(anos[0], 1995); assert(anos.at(-1) >= 2024); assert.equal(anos.leng
 for (const y of anos) assert(S.transporte_aereo[y] > 0 && S.transporte_aereo[y] < S.economia_familias[y], `série incoerente em ${y}`);
 assert(S.transporte_aereo[2020] < S.transporte_aereo[2019] / 2, 'a pandemia tem de aparecer em 2020');
 
+// Voos reais por rota (Eurostat avia_par_pt): rotas coerentes, combustível e aquecimento da mesma fonte oficial (DESNZ/Eurostat).
+const RT = JSON.parse(readFileSync('data/aviacao-rotas-portugal.json', 'utf8'));
+assert(RT.meta.ano >= 2023 && RT.rotas.length > 200, 'rotas de Portugal');
+for (const r of RT.rotas) {
+  assert(r.km > 20 && r.km < 15000 && r.voos > 0 && r.passageiros > 0 && r.lugares > 0 && r.passageiros / r.lugares < 1.3, `rota incoerente: ${r.a}-${r.b}`);
+  const porVoo = r.passageiros / r.voos; assert(porVoo > 5 && porVoo < 450, `passageiros por voo fora do normal: ${r.a}-${r.b}`);
+}
+assert.equal(RT.rotas.filter((r) => r.interna).length, new Set(RT.rotas.filter((r) => r.interna).map((r) => r.icao.join('-'))).size, 'rotas internas duplicadas');
+assert(RT.rotas.some((r) => r.a === 'LIS' && r.b === 'LHR') && RT.rotas.some((r) => r.a === 'LIS' && r.b === 'MAD'));
+assert(RT.aquecimento.tj > 20000 && RT.aquecimento.casas_milhares > 3500, 'aquecimento e casas');
+const CBS = D.combustivel;
+assert(CBS.co2_kg_por_tonelada === 3149.67 && CBS.pcl_kwh_por_kg === 12.196 && CBS.litros_por_tonelada === 1250 && CBS.co2_kg_por_pkm_media === 0.08333, 'constantes de combustível da DESNZ 2025');
+assert(js.includes('<section id="voos">') && html.includes('href="#voos"'), 'secção «Voos reais»');
 // Página: carrega os scripts, a foto do cabeçalho e os estilos; e está registada para partilha.
 for (const t of ['biocultura-graficos.js', 'energia-aviacao.js', 'data-pagina="aviacao"', 'energia-aviacao.css', 'relatorio-dados.css', 'data-hero-theme="aviation"']) assert(html.includes(t), `energia/aviacao.html: falta ${t}`);
 // Fotografias: «hero» é o espaço do topo; as restantes chaves são secções desenhadas por energia-aviacao.js.

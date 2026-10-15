@@ -4,11 +4,16 @@
   data/aviacao-portugal.json  Eurostat, contas de emissões atmosféricas (env_ac_ainah_r2): CO₂ do transporte
                               aéreo (NACE H51), da economia (TOTAL) e da economia mais famílias (TOTAL_HH), Portugal.
   data/aeroportos.json        OurAirports (domínio público): aeroportos com serviço regular e código IATA.
+  data/aviacao-rotas-portugal.json
+                              Eurostat (avia_par_pt): passageiros, voos e lugares por rota entre os aeroportos
+                              principais de Portugal e os seus parceiros, no último ano; distância em círculo máximo
+                              (coordenadas OurAirports); aquecimento das casas portuguesas (nrg_d_hhq) e número de
+                              casas (lfst_hhnhtych), para as equivalências.
 
 Os fatores por passageiro-quilómetro (DESNZ 2025) e os textos editoriais ficam em data/aviacao.json, que este
 script não toca.
 
-  python3 scripts/dados/aviacao.py [--dry-run] [--only portugal,aeroportos]
+  python3 scripts/dados/aviacao.py [--dry-run] [--only portugal,aeroportos,rotas]
 """
 import argparse
 import csv
@@ -98,17 +103,97 @@ def aeroportos():
             "aeroportos": saida}
 
 
+def haversine(a, b):
+    from math import asin, cos, radians, sin, sqrt
+    dlat, dlon = radians(b[0] - a[0]), radians(b[1] - a[1])
+    h = sin(dlat / 2) ** 2 + cos(radians(a[0])) * cos(radians(b[0])) * sin(dlon / 2) ** 2
+    return 2 * 6371 * asin(min(1, sqrt(h)))
+
+
+def estat(dataset, **q):
+    partes = [("format", "JSON"), ("lang", "EN")] + [(k, v) for k, vs in q.items() for v in (vs if isinstance(vs, list) else [vs])]
+    return json.loads(obter("https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/" + dataset + "?" + "&".join(f"{k}={v}" for k, v in partes)))
+
+
+def planas(d):
+    """Linhas {dimensão: código, 'v': valor} de uma resposta JSON-stat do Eurostat."""
+    ids, tam = d["id"], d["size"]
+    cats = {k: list(d["dimension"][k]["category"]["index"]) for k in ids}
+    for flat, v in d["value"].items():
+        flat = int(flat)
+        idx = {}
+        for k, sz in reversed(list(zip(ids, tam))):
+            idx[k] = flat % sz
+            flat //= sz
+        yield {k: cats[k][i] for k, i in idx.items()} | {"v": v}
+
+
+def rotas():
+    ano = None
+    for tentativa in (2025, 2024, 2023):
+        d = estat("avia_par_pt", freq="A", time=str(tentativa), tra_meas=["PAS_CRD", "CAF_PAS", "ST_PAS"])
+        if len(d.get("value", {})) > 200:
+            ano = tentativa
+            break
+    if ano is None:
+        sys.exit("avia_par_pt sem dados recentes")
+    por_rota = {}
+    for r in planas(d):
+        por_rota.setdefault(r["airp_pr"], {})[r["tra_meas"]] = r["v"]
+    nomes = d["dimension"]["airp_pr"]["category"]["label"]
+    # coordenadas pelo código ICAO (OurAirports: todos os aeroportos)
+    todos = {}
+    for r in csv.DictReader(io.StringIO(obter(OURAIRPORTS).decode("utf-8"))):
+        for chave in {r["icao_code"], r["gps_code"], r["ident"]}:
+            if chave and chave not in todos:
+                todos[chave] = r
+    agreg = {}
+    for cod, m in por_rota.items():
+        pais_a, icao_a, pais_b, icao_b = cod.split("_")
+        if not all(k in m for k in ("PAS_CRD", "CAF_PAS", "ST_PAS")):
+            continue
+        A, B = todos.get(icao_a), todos.get(icao_b)
+        if not A or not B:
+            continue
+        chave = tuple(sorted([icao_a, icao_b])) if pais_a == "PT" and pais_b == "PT" else (icao_a, icao_b)
+        agreg.setdefault(chave, []).append((A, B, pais_b, m))
+    saida = []
+    for chave, itens in agreg.items():
+        A, B, pais_b, _ = itens[0]
+        n = len(itens)  # rotas internas aparecem uma vez por aeroporto: média dos dois registos
+        media = lambda k: round(sum(i[3][k] for i in itens) / n)
+        km = haversine((float(A["latitude_deg"]), float(A["longitude_deg"])), (float(B["latitude_deg"]), float(B["longitude_deg"])))
+        saida.append({"a": A["iata_code"] or A["ident"], "b": B["iata_code"] or B["ident"], "icao": list(chave),
+                      "cidade_a": limpar(A["municipality"]), "cidade_b": limpar(B["municipality"]),
+                      "pais_b": B["iso_country"], "interna": pais_b == "PT",
+                      "km": round(km), "passageiros": media("PAS_CRD"), "voos": media("CAF_PAS"), "lugares": media("ST_PAS")})
+    saida.sort(key=lambda x: -x["passageiros"])
+    # aquecimento: consumo final das casas portuguesas em aquecimento do espaço (TJ) e número de casas (milhares)
+    h = estat("nrg_d_hhq", geo="PT", nrg_bal="FC_OTH_HH_E_SH", siec="TOTAL", unit="TJ")
+    aq = {r["time"]: r["v"] for r in planas(h)}
+    ano_aq = max(a for a in aq if a <= str(ano))
+    hh = estat("lfst_hhnhtych", geo="PT", phhcomp="TOTAL", agechild="TOTAL", n_child="TOTAL")
+    casas = {r["time"]: r["v"] for r in planas(hh)}
+    ano_casas = max(a for a in casas if a <= str(ano))
+    return {"meta": {"fonte": "Eurostat: avia_par_pt (rotas), nrg_d_hhq (aquecimento), lfst_hhnhtych (casas); OurAirports (coordenadas)",
+                     "url": "https://ec.europa.eu/eurostat/databrowser/view/avia_par_pt/default/table?lang=en", "ano": ano,
+                     "obtido": date.today().isoformat(),
+                     "nota": "Passageiros e voos somam os dois sentidos; as rotas entre aeroportos portugueses aparecem nos dois registos e levam a média."},
+            "aquecimento": {"ano": int(ano_aq), "tj": round(aq[ano_aq], 1), "casas_milhares": casas[ano_casas], "ano_casas": int(ano_casas)},
+            "rotas": saida}
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dry-run", action="store_true")
-    ap.add_argument("--only", default="portugal,aeroportos")
+    ap.add_argument("--only", default="portugal,aeroportos,rotas")
     a = ap.parse_args()
-    alvo = {"portugal": ("aviacao-portugal.json", portugal), "aeroportos": ("aeroportos.json", aeroportos)}
+    alvo = {"portugal": ("aviacao-portugal.json", portugal), "aeroportos": ("aeroportos.json", aeroportos), "rotas": ("aviacao-rotas-portugal.json", rotas)}
     for k in a.only.split(","):
         ficheiro, fn = alvo[k]
         dados = fn()
-        texto = json.dumps(dados, ensure_ascii=False, separators=(",", ":") if k == "aeroportos" else None,
-                           indent=None if k == "aeroportos" else 1) + "\n"
+        texto = json.dumps(dados, ensure_ascii=False, separators=(",", ":") if k in ("aeroportos", "rotas") else None,
+                           indent=None if k in ("aeroportos", "rotas") else 1) + "\n"
         print(k, len(texto), "bytes")
         if not a.dry_run:
             (RAIZ / "data" / ficheiro).write_text(texto, encoding="utf-8")
