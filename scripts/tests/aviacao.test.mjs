@@ -114,10 +114,10 @@ casos = {"EU sustainable aviation fuel supply exceeds 2025 ReFuelEU Aviation tar
 print(json.dumps({t: bool(a.classify(t)) and a.classify(t)[0][1] == "aviacao" for t in casos} == casos))
 `], { encoding: 'utf8' });
 if (!py.error) assert.equal(py.stdout.trim(), 'true', 'classificação de notícias de aviação: ' + py.stderr);
-// «Não é só carbono»: combustível e NOx do Eurostat, ruído da APA e da AESA; a terra é uma lacuna assumida (sem fonte aberta).
+// «Todos os recursos»: combustível e NOx do Eurostat, ruído da APA e da AESA; a terra é uma lacuna assumida (sem fonte aberta).
 const RC = JSON.parse(readFileSync('data/aviacao-recursos.json', 'utf8'));
 const RTP = JSON.parse(readFileSync('data/aviacao-rotas-portugal.json', 'utf8'));
-assert(html.includes('href="#recursos"') && js.includes('<section id="recursos">'), 'falta a secção «Não é só carbono»');
+assert(html.includes('href="#recursos"') && js.includes('<section id="recursos">'), 'falta a secção «Todos os recursos»');
 for (const k of ['internacional', 'domestica']) {
   assert(RC.combustivel_tj[k]['1990'] > 0 && RC.combustivel_tj[k]['2024'] > 0, `combustível ${k}: faltam anos`);
   assert(RC.combustivel_tj[k]['2020'] < RC.combustivel_tj[k]['2019'], `combustível ${k}: 2020 devia cair com a pandemia`);

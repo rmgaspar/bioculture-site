@@ -92,8 +92,14 @@
   <p class="src-line">${tr("Fontes: ", "Sources: ")}${srcLinks(0, 1, 3)}</p>
 </section>
 
+<section id="recursos">
+  <div class="sec-head"><span class="eyebrow">${tr("1 · Todos os recursos", "1 · All resources")}</span><h2>${tr("Tudo o que a construção afeta", "Everything construction affects")}</h2></div>
+  <div class="prose"><p>${tr("O carbono é só uma das pressões da construção. Cada recurso aparece na sua unidade e <strong>não se soma</strong> aos outros: carbono, energia, materiais, água, terra, resíduos e ar.", "Carbon is only one of the pressures of construction. Each resource appears in its own unit and is <strong>not added</strong> to the others: carbon, energy, materials, water, land, waste and air.")}</p></div>
+  <div class="rec-grid" id="mt-rec"></div>
+</section>
+
 <section id="calcular">
-  <div class="sec-head"><span class="eyebrow">${tr("1 · Materiais", "1 · Materials")}</span><h2>${tr("Quanto carbono tem um material?", "How much carbon is in a material?")}</h2></div>
+  <div class="sec-head"><span class="eyebrow">${tr("2 · Materiais", "2 · Materials")}</span><h2>${tr("Quanto carbono tem um material?", "How much carbon is in a material?")}</h2></div>
   <div class="prose"><p>${tr("Escolhe um material e a quantidade em toneladas. O cálculo é <strong>massa × fator da DESNZ</strong> para a produção primária, e compara com material reutilizado ou reciclado quando a tabela o tem.", "Choose a material and the amount in tonnes. The calculation is <strong>mass × DESNZ factor</strong> for primary production, and compares it with re-used or recycled material when the table has it.")}</p></div>
   <figure class="calc">
     <figcaption><span class="t">${tr("Calculadora de material", "Material calculator")}</span><span class="d">${tr("Fatores «do berço ao portão»: extração, fabrico e transporte até ao ponto de venda.", "“Cradle-to-gate” factors: extraction, manufacturing and transport to the point of sale.")}</span></figcaption>
@@ -107,7 +113,7 @@
 </section>
 
 <section id="materiais">
-  <div class="sec-head"><span class="eyebrow">${tr("2 · Comparar", "2 · Compare")}</span><h2>${tr("Por tonelada, uns materiais pesam muito mais", "Per tonne, some materials weigh much more")}</h2></div>
+  <div class="sec-head"><span class="eyebrow">${tr("3 · Comparar", "3 · Compare")}</span><h2>${tr("Por tonelada, uns materiais pesam muito mais", "Per tonne, some materials weigh much more")}</h2></div>
   <div class="prose"><p id="mt-txt"></p></div>
   <figure>
     <figcaption><span class="t">${tr("Kg de CO₂e por tonelada de material de construção", "Kg of CO₂e per tonne of construction material")}</span><span class="d">${tr("Produção primária (barra inteira) e o que sobra com material reutilizado ou reciclado.", "Primary production (whole bar) and what is left with re-used or recycled material.")}</span></figcaption>
@@ -115,12 +121,6 @@
     <div class="chart" id="mt-graf"></div>
     <div class="src"><span>${tr("Fonte: DESNZ 2025, «Material use». Quando há reutilizado e reciclado, mostra-se o reutilizado.", "Source: DESNZ 2025, “Material use”. Where both re-used and recycled exist, the re-used value is shown.")}</span></div>
   </figure>
-</section>
-
-<section id="recursos">
-  <div class="sec-head"><span class="eyebrow">${tr("3 · Todos os recursos", "3 · All resources")}</span><h2>${tr("Não é só carbono", "It is not only carbon")}</h2></div>
-  <div class="prose"><p>${tr("Cada dimensão mede-se na sua unidade e <strong>não se somam</strong>: toneladas de CO₂, joules, toneladas de pedra, metros quadrados e litros descrevem pressões diferentes. Onde não encontrámos um número aberto e citável, a caixa diz que falta, em vez de o inventar.", "Each dimension is measured in its own unit and <strong>they are not added up</strong>: tonnes of CO₂, joules, tonnes of stone, square metres and litres describe different pressures. Where we found no open, citable number, the box says it is missing instead of making one up.")}</p></div>
-  <div class="rec-grid" id="mt-rec"></div>
 </section>
 
 <section id="portugal">
@@ -208,11 +208,11 @@
         rec(tr("Carbono", "Carbon"), pct(qC(y1), 1), "", tr(`do CO₂ da economia e das famílias em Portugal vem da construção e dos produtos minerais (${y1}).`, `of Portuguese economy and household CO₂ comes from construction and mineral products (${y1}).`), tr("A nível mundial, 37% do CO₂ de energia e de processos (2022).", "Worldwide, 37% of energy and process CO₂ (2022)."), [0, 2]),
         rec(tr("Energia", "Energy"), "34", "%", tr("da procura mundial de energia vem dos edifícios (2022).", "of world energy demand comes from buildings (2022)."), tr(`Em Portugal, a construção e os produtos minerais não metálicos usaram ${fmt((eC + eM) / 1000, 0)} PJ em ${yE}, ${pct(((eC + eM) / eT) * 100, 1)} da energia usada pela economia e pelas famílias.`, `In Portugal, construction and non-metallic mineral products used ${fmt((eC + eM) / 1000, 0)} PJ in ${yE}, ${pct(((eC + eM) / eT) * 100, 1)} of the energy used by the economy and households.`), [0, 5]),
         rec(tr("Materiais", "Materials"), fmt(MAT.PT.MF3[yM], 1), "t", tr(`de minerais não metálicos extraídos por pessoa em Portugal em ${yM} (UE: ${fmt(MAT.EU27_2020.MF3[yM], 1)} t).`, `of non-metallic minerals extracted per person in Portugal in ${yM} (EU: ${fmt(MAT.EU27_2020.MF3[yM], 1)} t).`), tr(`Areia e gravilha: ${fmt(MAT.PT.MF38[yM], 1)} t contra ${fmt(MAT.EU27_2020.MF38[yM], 1)} t. Os minerais não metálicos são ${pct((MAT.PT.MF3[yM] / MAT.PT.TOTAL[yM]) * 100)} de tudo o que se extrai em Portugal.`, `Sand and gravel: ${fmt(MAT.PT.MF38[yM], 1)} t against ${fmt(MAT.EU27_2020.MF38[yM], 1)} t. Non-metallic minerals are ${pct((MAT.PT.MF3[yM] / MAT.PT.TOTAL[yM]) * 100)} of everything extracted in Portugal.`), [6]),
-        rec(tr("Água", "Water"), tr("Sem dado", "No data"), "", tr("O Eurostat não tem a água usada pela construção em Portugal (só a publica para alguns países, como a Alemanha e a França). Por isso não mostramos um número.", "Eurostat does not have the water used by construction in Portugal (it only publishes it for some countries, such as Germany and France). That is why we show no number."), "", [8], true),
+        rec(tr("Água", "Water"), tr("Sem dado", "No data"), "", tr("Sem número para Portugal: o Eurostat só publica a água usada pela construção para alguns países, como a Alemanha e a França.", "No number for Portugal: Eurostat only publishes the water used by construction for some countries, such as Germany and France."), "", [8], true),
         rec(tr("Terra", "Land"), pct(SOL.PT.PC[2022], 1), "", tr(`do território português é solo artificializado (${fmt(SOL.PT.M2_HAB[2022], 0)} m² por pessoa, 2022).`, `of Portuguese territory is artificial land (${fmt(SOL.PT.M2_HAB[2022], 0)} m² per person, 2022).`), tr(`Em 2018: ${pct(SOL.PT.PC[2018], 1)} em Portugal e ${pct(SOL.EU27_2020.PC[2018], 1)} na UE (${fmt(SOL.EU27_2020.M2_HAB[2018], 0)} m² por pessoa). Há um salto entre 2015 e 2018 que pode refletir mudanças na amostra ou no método (LUCAS): compara com cautela.`, `In 2018: ${pct(SOL.PT.PC[2018], 1)} in Portugal and ${pct(SOL.EU27_2020.PC[2018], 1)} in the EU (${fmt(SOL.EU27_2020.M2_HAB[2018], 0)} m² per person). There is a jump between 2015 and 2018 that may reflect changes in the sample or method (LUCAS): compare with care.`), [7]),
         rec(tr("Resíduos", "Waste"), pct(W.EU27_2020.quota_pct, 1), "", tr(`dos resíduos da UE vêm da construção (${W.EU27_2020.ano}); em Portugal, ${pct(W.PT.quota_pct, 1)}.`, `of EU waste comes from construction (${W.EU27_2020.ano}); in Portugal, ${pct(W.PT.quota_pct, 1)}.`), tr(`Resíduos minerais da construção e demolição, sem terras: ${fmt(RW.PT[wy.at(-1)], 0)} kg por pessoa em Portugal e ${fmt(RW.EU27_2020[wy.at(-1)], 0)} kg na UE.`, `Mineral construction and demolition waste, excluding soil: ${fmt(RW.PT[wy.at(-1)], 0)} kg per person in Portugal and ${fmt(RW.EU27_2020[wy.at(-1)], 0)} kg in the EU.`), [3]),
         rec(tr("Qualidade do ar", "Air quality"), pct(arQ("NOX"), 0), "", tr(`do NOx de Portugal vem da construção e dos produtos minerais (${yA}); nas partículas PM10 são ${pct(arQ("PM10"), 0)} e nas PM2,5 ${pct(arQ("PM2_5"), 0)}.`, `of Portugal's NOx comes from construction and mineral products (${yA}); for PM10 particles it is ${pct(arQ("PM10"), 0)} and for PM2.5 ${pct(arQ("PM2_5"), 0)}.`), tr(`O peso vem sobretudo dos produtos minerais (cimento, cal, cerâmica, vidro): ${fmt(AR.NOX.minerais_nao_metalicos[yA], 0)} dos ${fmt(arS("NOX"), 0)} kt de NOx. Em 1995 a construção e os minerais davam ${pct(arQ("NOX", 1995), 0)} do NOx do país. São as emissões declaradas por atividade (combustão e processos), não a poeira junto de cada obra.`, `The weight comes mostly from mineral products (cement, lime, ceramics, glass): ${fmt(AR.NOX.minerais_nao_metalicos[yA], 0)} of the ${fmt(arS("NOX"), 0)} kt of NOx. In 1995 construction and minerals gave ${pct(arQ("NOX", 1995), 0)} of the country's NOx. These are emissions reported by activity (combustion and processes), not the dust next to each building site.`), [2]),
-        rec(tr("Ainda por cobrir", "Not yet covered"), "—", "", tr("Poeira e qualidade do ar à volta de cada obra, ruído, perda de habitat e condições de trabalho: ainda não temos números abertos e comparáveis para Portugal.", "Dust and air quality around each building site, noise, habitat loss and working conditions: we do not yet have open, comparable numbers for Portugal."), "", null, true)
+        rec(tr("Ainda por cobrir", "Not yet covered"), "—", "", tr("Poeira e qualidade do ar à volta de cada obra, ruído, perda de habitat e condições de trabalho: sem números abertos e comparáveis para Portugal.", "Dust and air quality around each building site, noise, habitat loss and working conditions: no open, comparable numbers for Portugal."), "", null, true)
       ].join("");
       legend(document.getElementById("mt-leg-en"), [{ n: tr("Construção", "Construction"), c: COR.a }, { n: tr("Produtos minerais não metálicos", "Non-metallic mineral products"), c: COR.b }]);
       const aE = anosDe(EN_.construcao);
@@ -266,8 +266,14 @@
   <p class="src-line">${tr("Fontes: ", "Sources: ")}${srcLinks(0, 5, 6, 1, 2)}</p>
 </section>
 
+<section id="recursos">
+  <div class="sec-head"><span class="eyebrow">${tr("1 · Todos os recursos", "1 · All resources")}</span><h2>${tr("Tudo o que a moda afeta", "Everything fashion affects")}</h2></div>
+  <div class="prose"><p>${tr("O carbono é só uma das pressões da moda. Cada recurso aparece na sua unidade e <strong>não se soma</strong> aos outros: carbono, energia, matérias-primas, água, terra, resíduos, química e ar. Os valores por pessoa são estimativas da Agência Europeia do Ambiente e do Parlamento Europeu, de anos e métodos diferentes.", "Carbon is only one of the pressures of fashion. Each resource appears in its own unit and is <strong>not added</strong> to the others: carbon, energy, raw materials, water, land, waste, chemicals and air. The per-person values are estimates from the European Environment Agency and the European Parliament, from different years and methods.")}</p></div>
+  <div class="rec-grid" id="mt-rec"></div>
+</section>
+
 <section id="calcular">
-  <div class="sec-head"><span class="eyebrow">${tr("1 · A tua roupa", "1 · Your clothes")}</span><h2>${tr("Quanto carbono cabe na roupa que compras?", "How much carbon is in the clothes you buy?")}</h2></div>
+  <div class="sec-head"><span class="eyebrow">${tr("2 · A tua roupa", "2 · Your clothes")}</span><h2>${tr("Quanto carbono cabe na roupa que compras?", "How much carbon is in the clothes you buy?")}</h2></div>
   <div class="prose"><p>${tr(`Diz quantos quilos de roupa nova compras por ano (a média na UE é ${MED} kg) e quantos quilos reutilizas ou compras em segunda mão. O cálculo é <strong>quilos × fator da DESNZ</strong>.`, `Say how many kilograms of new clothing you buy a year (the EU average is ${MED} kg) and how many kilograms you re-use or buy second-hand. The calculation is <strong>kilograms × DESNZ factor</strong>.`)}</p></div>
   <figure class="calc">
     <figcaption><span class="t">${tr("Calculadora de roupa", "Clothing calculator")}</span><span class="d">${tr("Fator médio de todas as fibras e peças: berço ao portão, sem lavagens nem fim de vida.", "Average factor for all fibres and garments: cradle to gate, without washing or end of life.")}</span></figcaption>
@@ -281,7 +287,7 @@
 </section>
 
 <section id="materiais">
-  <div class="sec-head"><span class="eyebrow">${tr("2 · Comparar", "2 · Compare")}</span><h2>${tr("Por quilo, a roupa pesa mais do que o plástico", "Per kilogram, clothing weighs more than plastic")}</h2></div>
+  <div class="sec-head"><span class="eyebrow">${tr("3 · Comparar", "3 · Compare")}</span><h2>${tr("Por quilo, a roupa pesa mais do que o plástico", "Per kilogram, clothing weighs more than plastic")}</h2></div>
   <div class="prose"><p id="mt-txt"></p></div>
   <figure>
     <figcaption><span class="t">${tr("Kg de CO₂e por tonelada de material", "Kg of CO₂e per tonne of material")}</span><span class="d">${tr("Produção primária (barra inteira) e o que sobra com material reutilizado ou reciclado.", "Primary production (whole bar) and what is left with re-used or recycled material.")}</span></figcaption>
@@ -289,12 +295,6 @@
     <div class="chart" id="mt-graf"></div>
     <div class="src"><span>${tr("Fonte: DESNZ 2025, «Material use». A roupa mostra o valor reutilizado; os restantes, o reciclado em ciclo fechado.", "Source: DESNZ 2025, “Material use”. Clothing shows the re-used value; the others, closed-loop recycled.")}</span></div>
   </figure>
-</section>
-
-<section id="recursos">
-  <div class="sec-head"><span class="eyebrow">${tr("3 · Todos os recursos", "3 · All resources")}</span><h2>${tr("Não é só carbono", "It is not only carbon")}</h2></div>
-  <div class="prose"><p>${tr("Cada dimensão mede-se na sua unidade e <strong>não se somam</strong>: quilos de CO₂, litros, metros quadrados, quilos de matérias-primas e joules descrevem pressões diferentes. Onde não encontrámos um número aberto e citável, a caixa diz que falta, em vez de o inventar. Os valores por pessoa são estimativas da Agência Europeia do Ambiente e do Parlamento Europeu, de anos e métodos diferentes.", "Each dimension is measured in its own unit and <strong>they are not added up</strong>: kilograms of CO₂, litres, square metres, kilograms of raw materials and joules describe different pressures. Where we found no open, citable number, the box says it is missing instead of making one up. The per-person values are estimates from the European Environment Agency and the European Parliament, from different years and methods.")}</p></div>
-  <div class="rec-grid" id="mt-rec"></div>
 </section>
 
 <section id="portugal">
