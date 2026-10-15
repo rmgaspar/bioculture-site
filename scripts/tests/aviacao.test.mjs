@@ -76,6 +76,8 @@ for (let y = 1940; y <= 2021; y++) assert(TM.quota_co2_aviacao_pct[y] > 0 && TM.
 for (let y = 1993; y <= 2024; y++) assert(TM.portugal[y].rotas > 50 && TM.portugal[y].passageiros > 5e6, `Portugal ${y}`);
 assert(TM.portugal[2020].rotas < TM.portugal[2019].rotas && TM.portugal[2024].rotas === RT.rotas.length, 'as rotas de 2024 batem com as da calculadora');
 assert(js.includes('<section id="tempo">') && html.includes('href="#tempo"'), 'secção «Linha do tempo»');
+assert(js.includes('São estimativas, não a medição de voos') && js.includes('totais por rota') && !js.includes('É uma estimativa por passageiro, não a medição de um voo'), 'a nota de limites cobre as duas escalas (passageiro e rota)');
+assert(js.includes('a carga que viaja no avião fica de fora') && js.includes('estimativa da parte dos passageiros'), 'o combustível das rotas é a parte dos passageiros, e diz-se');
 assert(js.includes('não provam que uma causou a outra'), 'o aviso sobre correlação e causa tem de estar na página');
 // Página: carrega os scripts, a foto do cabeçalho e os estilos; e está registada para partilha.
 for (const t of ['biocultura-graficos.js', 'energia-aviacao.js', 'data-pagina="aviacao"', 'energia-aviacao.css', 'relatorio-dados.css', 'data-hero-theme="aviation"']) assert(html.includes(t), `energia/aviacao.html: falta ${t}`);
