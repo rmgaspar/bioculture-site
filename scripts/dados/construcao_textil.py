@@ -7,7 +7,7 @@
   data/moda-texteis-portugal.json         CO₂ de têxteis, vestuário, couro e calçado (C13-C15) e resíduos têxteis (W076).
 
 Fontes: env_ac_ainah_r2 (contas de emissões atmosféricas), env_wasgen (resíduos gerados), demo_pjan (população),
-env_ac_pefa04 (energia usada por atividade), env_ac_mfa (extração de materiais) e lan_lcv_art (solo artificializado, LUCAS).
+env_ac_pefa04 (energia usada por atividade), env_ac_mfa (extração de materiais), lan_lcv_art (solo artificializado, LUCAS) e, só na construção, NOx e partículas (env_ac_ainah_r2).
 Os fatores por tonelada de material (DESNZ 2025) e os textos editoriais ficam nos ficheiros data/ambiente-construido.json
 e data/moda-texteis.json, que este script não toca.
 
@@ -141,6 +141,20 @@ def terra_artificial():
     return out
 
 
+def poluentes():
+    """NOx e partículas (PM10, PM2,5), em kt, da construção (F), dos produtos minerais não metálicos (C23) e do total."""
+    chaves = {"F": "construcao", "C23": "minerais_nao_metalicos", "TOTAL_HH": "total_economia_familias"}
+    out = {}
+    for pol in ("NOX", "PM10", "PM2_5"):
+        d = obter("env_ac_ainah_r2", geo="PT", airpol=pol, unit="THS_T", nace_r2=list(chaves))
+        s, _ = series(d, "nace_r2")
+        for k in chaves:
+            if len(s.get(k, {})) < 25:
+                sys.exit(f"Eurostat devolveu poucos anos de {pol} para {k}")
+        out[pol] = {chaves[k]: {a: round(v, 2) for a, v in sorted(s[k].items())} for k in chaves}
+    return out
+
+
 def por_pessoa(res, pop):
     out = {}
     for geo, ser in res.items():
@@ -162,7 +176,7 @@ def construir(naces_chaves, cod_res, com_quota=False):
         "energia_tj": {naces_chaves[k]: en[k] for k in naces_chaves} | {"total_economia_familias": en["TOTAL_HH"]},
         "residuos_t": res,
         "residuos_kg_por_pessoa": por_pessoa(res, pop),
-    } | ({"residuos_totais_construcao": quota_construcao(), "materiais_t_por_pessoa": materiais(), "solo_artificial": terra_artificial()} if com_quota else {})
+    } | ({"residuos_totais_construcao": quota_construcao(), "materiais_t_por_pessoa": materiais(), "solo_artificial": terra_artificial(), "ar_kt": poluentes()} if com_quota else {})
 
 
 def main():
