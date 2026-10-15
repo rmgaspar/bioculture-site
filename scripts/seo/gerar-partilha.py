@@ -42,6 +42,7 @@ CARDS = {
     "energia/mineracao.html": ("Mineração.", "O território sob a matéria."),
     "energia/pecuaria.html": ("Pecuária.", "Quando a escala pesa."),
     "energia/digital.html": ("Digital.", "O peso físico da nuvem."),
+    "energia/aviacao.html": ("Aviação.", "O peso de cada viagem."),
     "calendario/conhecimento-cuidar.html": ("Observar os ciclos.", "Agir com o lugar."),
     "calendario/calendario.html": ("Calendário de", "Regeneração."),
     "calendario/enologia.html": ("Vinha viva,", "vinho com lugar."),

@@ -56,10 +56,14 @@
                 // O círculo sai do cartão e fica centrado: o crédito vai por baixo dele, também centrado.
                 const m = alvo.getBoundingClientRect(), k = caixa.getBoundingClientRect();
                 Object.assign(el.style, { position: "absolute", left: "0", right: "0", width: "auto", textAlign: "center", top: `${Math.round(m.bottom - k.top + 10)}px`, bottom: "auto" });
-                // Se o crédito passar do fim do cartão, abre espaço por baixo para não tapar o que vem a seguir.
+                // Se o crédito ficar a menos de 16 px do que vem a seguir, abre espaço por baixo do cartão (até estar livre).
                 caixa.style.removeProperty("margin-bottom");
-                const falta = el.getBoundingClientRect().bottom - caixa.getBoundingClientRect().bottom + 16;
-                if (falta > 0) caixa.style.setProperty("margin-bottom", `${Math.ceil(falta - 22)}px`, "important");
+                const seguinte = caixa.nextElementSibling;
+                for (let i = 0; seguinte && i < 3; i++) {
+                    const falta = 16 - (seguinte.getBoundingClientRect().top - el.getBoundingClientRect().bottom);
+                    if (falta <= 0) break;
+                    caixa.style.setProperty("margin-bottom", `${Math.ceil(parseFloat(getComputedStyle(caixa).marginBottom) + falta)}px`, "important");
+                }
                 return;
             }
             const a = alvo.getBoundingClientRect(), c = caixa.getBoundingClientRect();

@@ -951,7 +951,7 @@
                 .then((response) => response.ok ? response.json() : {})
                 .catch(() => ({}));
             fullLoading = Promise.all([
-                read(`/assets/lang/auto/${lang}.json?v=71`),
+                read(`/assets/lang/auto/${lang}.json?v=72`),
                 read(`/assets/lang/${lang}.json?v=18`),
                 read(`/assets/lang/display/${lang}.json?v=38`),
             ]).then(([auto, structured, display]) => {
