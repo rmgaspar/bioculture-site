@@ -22,7 +22,7 @@
   const get = (u) => fetch(u).then((r) => { if (!r.ok) throw new Error(u + " " + r.status); return r.json(); });
   const FICH = VETOR === "construcao" ? ["ambiente-construido", "ambiente-construido-portugal"] : ["moda-texteis", "moda-texteis-portugal"];
 
-  Promise.all([get(`/data/${FICH[0]}.json?v=1`), get(`/data/${FICH[1]}.json?v=1`)])
+  Promise.all([get(`/data/${FICH[0]}.json?v=2`), get(`/data/${FICH[1]}.json?v=2`)])
     .then(([D, PT]) => { build(D, PT); barraFixa(); irParaHash(); })
     .catch((e) => { console.error(e); barraFixa(); box.innerHTML = `<p class="prose">${tr("Não foi possível carregar os dados desta página.", "The data for this page could not be loaded.")}</p>`; });
 
@@ -48,6 +48,8 @@
     const COR = { a: css("--s2") || "#eb6834", b: css("--s1") || "#2a78d6", c: css("--s3") || "#1baf7a" };
     const COR_D = COR.a, COR_N = "#f4c4b0";
     const tiles = (arr) => arr.map((t) => `<div class="tile"><span class="v">${t[0]}${t[1] ? `<small>${t[1]}</small>` : ""}</span><span class="k">${t[2]}</span><span class="s">${t[3] || ""}</span></div>`).join("");
+    const rec = (dim, valor, unid, txt, nota, fonte, lacuna) => `<article class="rec${lacuna ? " lacuna" : ""}"><small>${dim}</small><strong>${valor}${unid ? `<em>${unid}</em>` : ""}</strong><p>${txt}</p>${nota ? `<p class="rec-nota">${nota}</p>` : ""}${fonte ? `<span class="rec-fonte">${tr("Fonte: ", "Source: ")}${srcLinks(...fonte)}</span>` : ""}</article>`;
+    const ultimo = (obj, ate) => Math.max(...Object.keys(obj).map(Number).filter((y) => y <= ate));
     const mundoTile = (m) => [m.valor, m.unidade, tr(m.pt, m.en), tr(m.nota_pt, m.nota_en)];
 
     /* ---------- barras empilhadas: o que fica com material reutilizado/reciclado + o que se poupa ---------- */
@@ -84,7 +86,7 @@
     [pct(qC(y1), 1), "", tr(`do CO₂ da economia portuguesa e das famílias vem da construção e dos produtos minerais (${y1})`, `of Portuguese economy and household CO₂ comes from construction and mineral products (${y1})`), tr(`Em ${y0} eram ${pct(qC(y0), 1)}`, `In ${y0} it was ${pct(qC(y0), 1)}`)]])}</div>
   <div class="prose">
     <p>${tr("Um edifício pesa duas vezes no clima: <strong>gasta energia enquanto funciona</strong> e <strong>custou carbono para existir</strong>, porque foi preciso extrair, transformar e transportar os materiais. Em 2022, o setor da construção e dos edifícios esteve ligado a 37% do CO₂ mundial de energia e de processos.", "A building weighs twice on the climate: it <strong>uses energy while it runs</strong> and it <strong>cost carbon to exist</strong>, because materials had to be extracted, processed and transported. In 2022, the buildings and construction sector was linked to 37% of world energy and process CO₂.")}</p>
-    <p>${tr("Esta página olha sobretudo para o segundo: o carbono dos <strong>materiais</strong>, o que muda quando se reutiliza ou recicla, e como a construção pesa em Portugal.", "This page looks mainly at the second: the carbon in <strong>materials</strong>, what changes when they are re-used or recycled, and how construction weighs in Portugal.")}</p>
+    <p>${tr("Esta página olha sobretudo para o segundo: o carbono dos <strong>materiais</strong> e o que muda quando se reutiliza ou recicla. E olha para além do carbono: energia, materiais, água, terra e resíduos, cada um na sua unidade, e como a construção pesa em Portugal.", "This page looks mainly at the second: the carbon in <strong>materials</strong> and what changes when they are re-used or recycled. And it looks beyond carbon: energy, materials, water, land and waste, each in its own unit, and how construction weighs in Portugal.")}</p>
   </div>
   <p class="src-line">${tr("Fontes: ", "Sources: ")}${srcLinks(0, 1, 3)}</p>
 </section>
@@ -114,8 +116,14 @@
   </figure>
 </section>
 
+<section id="recursos">
+  <div class="sec-head"><span class="eyebrow">${tr("3 · Todos os recursos", "3 · All resources")}</span><h2>${tr("Não é só carbono", "It is not only carbon")}</h2></div>
+  <div class="prose"><p>${tr("Cada dimensão mede-se na sua unidade e <strong>não se somam</strong>: toneladas de CO₂, joules, toneladas de pedra, metros quadrados e litros descrevem pressões diferentes. Onde não encontrámos um número aberto e citável, a caixa diz que falta, em vez de o inventar.", "Each dimension is measured in its own unit and <strong>they are not added up</strong>: tonnes of CO₂, joules, tonnes of stone, square metres and litres describe different pressures. Where we found no open, citable number, the box says it is missing instead of making one up.")}</p></div>
+  <div class="rec-grid" id="mt-rec"></div>
+</section>
+
 <section id="portugal">
-  <div class="sec-head"><span class="eyebrow">${tr("3 · Portugal", "3 · Portugal")}</span><h2>${tr("A construção e os seus materiais, em Portugal", "Construction and its materials in Portugal")}</h2></div>
+  <div class="sec-head"><span class="eyebrow">${tr("4 · Portugal", "4 · Portugal")}</span><h2>${tr("A construção e os seus materiais, em Portugal", "Construction and its materials in Portugal")}</h2></div>
   <div class="prose"><p id="mt-pt-txt"></p></div>
   <div class="tiles" id="mt-pt-tiles"></div>
   <div class="grid2">
@@ -132,10 +140,24 @@
       <div class="src"><span>${tr("Fonte: Eurostat, env_wasgen (W121) e demo_pjan; cálculo bioCulture.", "Source: Eurostat, env_wasgen (W121) and demo_pjan; bioCulture calculation.")}</span></div>
     </figure>
   </div>
+  <div class="grid2">
+    <figure>
+      <figcaption><span class="t">${tr("Energia usada pela construção e pelos produtos minerais", "Energy used by construction and mineral products")}</span><span class="d">${tr("Petajoules por ano (uso interno líquido de energia).", "Petajoules a year (net domestic energy use).")}</span></figcaption>
+      <div class="legend" id="mt-leg-en"></div>
+      <div class="chart" id="mt-pt-en"></div>
+      <div class="src"><span>${tr("Fonte: Eurostat, contas físicas de energia (env_ac_pefa04), NACE F e C23.", "Source: Eurostat, physical energy flow accounts (env_ac_pefa04), NACE F and C23.")}</span></div>
+    </figure>
+    <figure>
+      <figcaption><span class="t">${tr("Minerais não metálicos extraídos em Portugal", "Non-metallic minerals extracted in Portugal")}</span><span class="d">${tr("Toneladas por pessoa e por ano: extração interna.", "Tonnes per person per year: domestic extraction.")}</span></figcaption>
+      <div class="legend" id="mt-leg-mat"></div>
+      <div class="chart" id="mt-pt-mat"></div>
+      <div class="src"><span>${tr("Fonte: Eurostat, contas de fluxos de materiais (env_ac_mfa), MF3.", "Source: Eurostat, material flow accounts (env_ac_mfa), MF3.")}</span></div>
+    </figure>
+  </div>
 </section>
 
 <section id="limites">
-  <div class="sec-head"><span class="eyebrow">${tr("4 · Limites e fontes", "4 · Limits and sources")}</span><h2>${tr("O que estes números não dizem", "What these numbers do not tell")}</h2></div>
+  <div class="sec-head"><span class="eyebrow">${tr("5 · Limites e fontes", "5 · Limits and sources")}</span><h2>${tr("O que estes números não dizem", "What these numbers do not tell")}</h2></div>
   <ol class="notes" id="mt-notas"></ol>
   <div class="srcs" id="mt-fontes"></div>
 </section>`;
@@ -156,9 +178,29 @@
         tr("<strong>O funcionamento fica de fora.</strong> A quota de 37% do PNUA junta o funcionamento dos edifícios (aquecimento, arrefecimento, eletricidade) e a produção dos materiais; a calculadora desta página só toca nos materiais.", "<strong>Operation is left out.</strong> UNEP's 37% share adds the operation of buildings (heating, cooling, electricity) and the production of materials; this page's calculator only covers materials."),
         tr("<strong>Fatores de base britânica.</strong> A DESNZ calcula-os para empresas do Reino Unido; em Portugal, a eletricidade, a distância e o fabrico podem dar valores diferentes.", "<strong>UK-based factors.</strong> DESNZ calculates them for UK companies; in Portugal, electricity, distance and manufacturing can give different values."),
         tr("<strong>Eurostat.</strong> Segue o princípio da residência: conta as empresas residentes em Portugal. O CO₂ de «produtos minerais não metálicos» (C23) inclui cimento, cal, cerâmica e vidro, e nem tudo vai para a construção em Portugal. Nos resíduos, os países registam de formas diferentes.", "<strong>Eurostat.</strong> It follows the residence principle: it counts companies resident in Portugal. The CO₂ of “non-metallic mineral products” (C23) includes cement, lime, ceramics and glass, and not all of it goes into construction in Portugal. In waste, countries record in different ways."),
-        tr("<strong>Total mundial.</strong> O valor de 37% (2022) é do relatório do PNUA e da GlobalABC; consulta o original para as definições e para as edições mais recentes.", "<strong>World total.</strong> The 37% value (2022) is from the UNEP and GlobalABC report; check the original for definitions and for more recent editions.")
+        tr("<strong>Totais mundiais.</strong> Os valores de 37% do CO₂ e 34% da energia (2022) são do relatório do PNUA e da GlobalABC; consulta o original para as definições e para as edições mais recentes.", "<strong>World totals.</strong> The 37% of CO₂ and 34% of energy values (2022) are from the UNEP and GlobalABC report; check the original for definitions and for more recent editions."),
+        tr("<strong>Energia e terra em Portugal.</strong> A energia é a usada pelas atividades de construção e de produtos minerais (Eurostat), não a do funcionamento dos edifícios, que fica nas famílias e nos serviços. O solo artificializado vem de uma amostra (LUCAS) cujo desenho mudou entre 2015 e 2018.", "<strong>Energy and land in Portugal.</strong> The energy is that used by construction and mineral products activities (Eurostat), not the operation of buildings, which sits in households and services. Artificial land comes from a sample (LUCAS) whose design changed between 2015 and 2018.")
       ].map((n) => `<li>${n}</li>`).join("");
       document.getElementById("mt-fontes").innerHTML = FONTES.map((s) => `<div class="srcc"><h3>${esc(tr(s.nome, s.nome_en))}</h3><p>${tr(s.usa_pt, s.usa_en)}</p><a class="u" href="${s.url}" target="_blank" rel="noopener">${s.url}</a></div>`).join("");
+
+      /* ---------- todos os recursos ---------- */
+      const EN_ = PT.energia_tj, yE = ultimo(EN_.construcao, 2023), eC = EN_.construcao[yE], eM = EN_.minerais_nao_metalicos[yE], eT = EN_.total_economia_familias[yE];
+      const MAT = PT.materiais_t_por_pessoa, yM = ultimo(MAT.PT.MF3, 2023), SOL = PT.solo_artificial;
+      document.getElementById("mt-rec").innerHTML = [
+        rec(tr("Carbono", "Carbon"), pct(qC(y1), 1), "", tr(`do CO₂ da economia e das famílias em Portugal vem da construção e dos produtos minerais (${y1}).`, `of Portuguese economy and household CO₂ comes from construction and mineral products (${y1}).`), tr("A nível mundial, 37% do CO₂ de energia e de processos (2022).", "Worldwide, 37% of energy and process CO₂ (2022)."), [0, 2]),
+        rec(tr("Energia", "Energy"), "34", "%", tr("da procura mundial de energia vem dos edifícios (2022).", "of world energy demand comes from buildings (2022)."), tr(`Em Portugal, a construção e os produtos minerais não metálicos usaram ${fmt((eC + eM) / 1000, 0)} PJ em ${yE}, ${pct(((eC + eM) / eT) * 100, 1)} da energia usada pela economia e pelas famílias.`, `In Portugal, construction and non-metallic mineral products used ${fmt((eC + eM) / 1000, 0)} PJ in ${yE}, ${pct(((eC + eM) / eT) * 100, 1)} of the energy used by the economy and households.`), [0, 5]),
+        rec(tr("Materiais", "Materials"), fmt(MAT.PT.MF3[yM], 1), "t", tr(`de minerais não metálicos extraídos por pessoa em Portugal em ${yM} (UE: ${fmt(MAT.EU27_2020.MF3[yM], 1)} t).`, `of non-metallic minerals extracted per person in Portugal in ${yM} (EU: ${fmt(MAT.EU27_2020.MF3[yM], 1)} t).`), tr(`Areia e gravilha: ${fmt(MAT.PT.MF38[yM], 1)} t contra ${fmt(MAT.EU27_2020.MF38[yM], 1)} t. Os minerais não metálicos são ${pct((MAT.PT.MF3[yM] / MAT.PT.TOTAL[yM]) * 100)} de tudo o que se extrai em Portugal.`, `Sand and gravel: ${fmt(MAT.PT.MF38[yM], 1)} t against ${fmt(MAT.EU27_2020.MF38[yM], 1)} t. Non-metallic minerals are ${pct((MAT.PT.MF3[yM] / MAT.PT.TOTAL[yM]) * 100)} of everything extracted in Portugal.`), [6]),
+        rec(tr("Água", "Water"), tr("Sem dado", "No data"), "", tr("O Eurostat não publica a água usada pela construção em Portugal, e não encontrámos uma fonte aberta que a isole noutros países. Por isso não mostramos um número.", "Eurostat does not publish the water used by construction in Portugal, and we found no open source that isolates it elsewhere. That is why we show no number."), "", [8], true),
+        rec(tr("Terra", "Land"), pct(SOL.PT.PC[2022], 1), "", tr(`do território português é solo artificializado (${fmt(SOL.PT.M2_HAB[2022], 0)} m² por pessoa, 2022).`, `of Portuguese territory is artificial land (${fmt(SOL.PT.M2_HAB[2022], 0)} m² per person, 2022).`), tr(`Em 2018: ${pct(SOL.PT.PC[2018], 1)} em Portugal e ${pct(SOL.EU27_2020.PC[2018], 1)} na UE (${fmt(SOL.EU27_2020.M2_HAB[2018], 0)} m² por pessoa). A amostra LUCAS mudou entre 2015 e 2018: compara com cautela.`, `In 2018: ${pct(SOL.PT.PC[2018], 1)} in Portugal and ${pct(SOL.EU27_2020.PC[2018], 1)} in the EU (${fmt(SOL.EU27_2020.M2_HAB[2018], 0)} m² per person). The LUCAS sample changed between 2015 and 2018: compare with care.`), [7]),
+        rec(tr("Resíduos", "Waste"), pct(W.EU27_2020.quota_pct, 1), "", tr(`dos resíduos da UE vêm da construção (${W.EU27_2020.ano}); em Portugal, ${pct(W.PT.quota_pct, 1)}.`, `of EU waste comes from construction (${W.EU27_2020.ano}); in Portugal, ${pct(W.PT.quota_pct, 1)}.`), tr(`Resíduos minerais da construção e demolição, sem terras: ${fmt(RW.PT[wy.at(-1)], 0)} kg por pessoa em Portugal e ${fmt(RW.EU27_2020[wy.at(-1)], 0)} kg na UE.`, `Mineral construction and demolition waste, excluding soil: ${fmt(RW.PT[wy.at(-1)], 0)} kg per person in Portugal and ${fmt(RW.EU27_2020[wy.at(-1)], 0)} kg in the EU.`), [3]),
+        rec(tr("Ainda por cobrir", "Not yet covered"), "—", "", tr("Poeiras e qualidade do ar à volta das obras, ruído, perda de habitat e condições de trabalho: ainda não temos números abertos e comparáveis para Portugal.", "Dust and air quality around building sites, noise, habitat loss and working conditions: we do not yet have open, comparable numbers for Portugal."), "", null, true)
+      ].join("");
+      legend(document.getElementById("mt-leg-en"), [{ n: tr("Construção", "Construction"), c: COR.a }, { n: tr("Produtos minerais não metálicos", "Non-metallic mineral products"), c: COR.b }]);
+      const aE = anosDe(EN_.construcao);
+      lin("mt-pt-en", [{ n: tr("Construção", "Construction"), c: COR.a, v: aE.map((y) => EN_.construcao[y] / 1000) }, { n: tr("Produtos minerais não metálicos", "Non-metallic mineral products"), c: COR.b, v: aE.map((y) => EN_.minerais_nao_metalicos[y] / 1000) }], { x: aE, yf: (v) => fmt(v, 0), tf: (se, i) => fmt(se.v[i], 1) + " PJ" });
+      legend(document.getElementById("mt-leg-mat"), [{ n: "Portugal", c: COR.a }, { n: tr("UE-27", "EU-27"), c: COR.b }]);
+      const aM = anosDe(MAT.EU27_2020.MF3).filter((y) => y >= 2000 && y <= 2023);
+      lin("mt-pt-mat", [{ n: "Portugal", c: COR.a, v: aM.map((y) => MAT.PT.MF3[y]) }, { n: tr("UE-27", "EU-27"), c: COR.b, v: aM.map((y) => MAT.EU27_2020.MF3[y]) }], { x: aM, yf: (v) => fmt(v, 0), tf: (se, i) => fmt(se.v[i], 1) + " t" });
 
       legPilhas("mt-leg");
       pilhas(document.getElementById("mt-graf"), M.slice().sort((a, b) => a.primaria - b.primaria));
@@ -193,7 +235,7 @@
   <div class="tiles">${tiles(D.mundo.map(mundoTile).concat([[fmt(R.nova / 1000, 1), "kg CO₂e/kg", tr("de roupa nova, na produção primária; reutilizada: " + fmt(R.reutilizada / 1000, 2), "of new clothing in primary production; re-used: " + fmt(R.reutilizada / 1000, 2)), tr("Média de todas as fibras e peças (DESNZ 2025)", "Average across all fibres and garments (DESNZ 2025)")]]))}</div>
   <div class="prose">
     <p>${tr("Cada pessoa na UE comprou <strong>19 kg</strong> de roupa, calçado e têxteis para o lar em 2022, mais 2 kg do que em 2019. Para a Agência Europeia do Ambiente, os têxteis são a <strong>quinta maior pressão</strong> ambiental e climática do consumo das famílias, e a maior parte das emissões acontece fora da UE, onde se produz.", "Each person in the EU bought <strong>19 kg</strong> of clothing, footwear and household textiles in 2022, 2 kg more than in 2019. For the European Environment Agency, textiles are the <strong>fifth largest</strong> environmental and climate pressure of household consumption, and most emissions happen outside the EU, where the goods are made.")}</p>
-    <p>${tr("Esta página mede o carbono que vai na <strong>produção da roupa</strong>, com a incerteza à vista, e o que muda quando a roupa é reutilizada.", "This page measures the carbon that goes into <strong>producing clothing</strong>, with the uncertainty in plain sight, and what changes when clothing is re-used.")}</p>
+    <p>${tr("Esta página mede o carbono que vai na <strong>produção da roupa</strong>, com a incerteza à vista, e o que muda quando a roupa é reutilizada. E junta os outros recursos: matérias-primas, água, terra, energia, resíduos e microplásticos, cada um na sua unidade.", "This page measures the carbon that goes into <strong>producing clothing</strong>, with the uncertainty in plain sight, and what changes when clothing is re-used. And it adds the other resources: raw materials, water, land, energy, waste and microplastics, each in its own unit.")}</p>
   </div>
   <p class="src-line">${tr("Fontes: ", "Sources: ")}${srcLinks(0, 1, 2)}</p>
 </section>
@@ -223,8 +265,14 @@
   </figure>
 </section>
 
+<section id="recursos">
+  <div class="sec-head"><span class="eyebrow">${tr("3 · Todos os recursos", "3 · All resources")}</span><h2>${tr("Não é só carbono", "It is not only carbon")}</h2></div>
+  <div class="prose"><p>${tr("Cada dimensão mede-se na sua unidade e <strong>não se somam</strong>: quilos de CO₂, litros, metros quadrados, quilos de matérias-primas e joules descrevem pressões diferentes. Onde não encontrámos um número aberto e citável, a caixa diz que falta, em vez de o inventar. Os valores por pessoa são estimativas da Agência Europeia do Ambiente e do Parlamento Europeu, de anos e métodos diferentes.", "Each dimension is measured in its own unit and <strong>they are not added up</strong>: kilograms of CO₂, litres, square metres, kilograms of raw materials and joules describe different pressures. Where we found no open, citable number, the box says it is missing instead of making one up. The per-person values are estimates from the European Environment Agency and the European Parliament, from different years and methods.")}</p></div>
+  <div class="rec-grid" id="mt-rec"></div>
+</section>
+
 <section id="portugal">
-  <div class="sec-head"><span class="eyebrow">${tr("3 · Portugal", "3 · Portugal")}</span><h2>${tr("A indústria e os resíduos têxteis em Portugal", "Textile industry and waste in Portugal")}</h2></div>
+  <div class="sec-head"><span class="eyebrow">${tr("4 · Portugal", "4 · Portugal")}</span><h2>${tr("A indústria e os resíduos têxteis em Portugal", "Textile industry and waste in Portugal")}</h2></div>
   <div class="prose"><p id="mt-pt-txt"></p></div>
   <div class="tiles" id="mt-pt-tiles"></div>
   <div class="grid2">
@@ -240,10 +288,15 @@
       <div class="src"><span>${tr("Fonte: Eurostat, env_wasgen (W076) e demo_pjan; cálculo bioCulture.", "Source: Eurostat, env_wasgen (W076) and demo_pjan; bioCulture calculation.")}</span></div>
     </figure>
   </div>
+  <figure>
+    <figcaption><span class="t">${tr("Energia usada pela indústria têxtil, de vestuário, couro e calçado", "Energy used by the textile, clothing, leather and footwear industry")}</span><span class="d">${tr("Petajoules por ano (uso interno líquido de energia), Portugal.", "Petajoules a year (net domestic energy use), Portugal.")}</span></figcaption>
+    <div class="chart" id="mt-pt-en"></div>
+    <div class="src"><span>${tr("Fonte: Eurostat, contas físicas de energia (env_ac_pefa04), NACE C13–C15.", "Source: Eurostat, physical energy flow accounts (env_ac_pefa04), NACE C13–C15.")}</span></div>
+  </figure>
 </section>
 
 <section id="limites">
-  <div class="sec-head"><span class="eyebrow">${tr("4 · Limites e fontes", "4 · Limits and sources")}</span><h2>${tr("O que estes números não dizem", "What these numbers do not tell")}</h2></div>
+  <div class="sec-head"><span class="eyebrow">${tr("5 · Limites e fontes", "5 · Limits and sources")}</span><h2>${tr("O que estes números não dizem", "What these numbers do not tell")}</h2></div>
   <ol class="notes" id="mt-notas"></ol>
   <div class="srcs" id="mt-fontes"></div>
 </section>`;
@@ -251,7 +304,7 @@
       document.getElementById("mt-txt").innerHTML = tr(
         `Por quilo, a roupa nova tem um fator de <strong>${fmt(R.nova / 1000, 1)} kg CO₂e</strong>: ${fmt(R.nova / plast.primaria, 0)} vezes o do plástico médio (${fmt(plast.primaria / 1000, 1)} kg), ${fmt(R.nova / alum.primaria, 1)} vezes o do alumínio (${fmt(alum.primaria / 1000, 1)} kg) e ${fmt(R.nova / vidro.primaria, 0)} vezes o do vidro. O fator da roupa reutilizada é ${fmt(R.reutilizada / 1000, 2)} kg. O valor por quilo não diz quanto pesa uma peça: o que importa é <strong>quantos quilos se compram</strong>, e a média na UE é de ${MED} kg de roupa por pessoa.`,
         `Per kilogram, new clothing has a factor of <strong>${fmt(R.nova / 1000, 1)} kg CO₂e</strong>: ${fmt(R.nova / plast.primaria, 0)} times that of average plastic (${fmt(plast.primaria / 1000, 1)} kg), ${fmt(R.nova / alum.primaria, 1)} times that of aluminium (${fmt(alum.primaria / 1000, 1)} kg) and ${fmt(R.nova / vidro.primaria, 0)} times that of glass. The factor for re-used clothing is ${fmt(R.reutilizada / 1000, 2)} kg. The value per kilogram does not say how much a garment weighs: what matters is <strong>how many kilograms are bought</strong>, and the EU average is ${MED} kg of clothing per person.`);
-      const wu = wy.at(-1);
+      const wu = wy.at(-1), wu0 = wu;
       document.getElementById("mt-pt-txt").innerHTML = tr(
         `A indústria têxtil, de vestuário, couro e calçado (NACE C13–C15) emitiu <strong>${mt(T[y0], 2)} Mt</strong> de CO₂ em Portugal em ${y0} e <strong>${mt(T[y1], 2)} Mt</strong> em ${y1} (${fmt((T[y1] / T[y0] - 1) * 100, 0)}%), de um máximo de ${mt(Math.max(...anos.map((y) => T[y])), 2)} Mt. Pesa ${pct(q(y1), 1)} do CO₂ da economia e das famílias. Isto mede o que se <strong>produz cá</strong>, não o que os portugueses vestem: segundo a AEA, cerca de três quartos das emissões do consumo de têxteis da UE acontecem fora da UE. Nos resíduos, Portugal registou ${fmt(RW.PT[wu], 1)} kg de resíduos têxteis por pessoa em ${wu} e a UE ${fmt(RW.EU27_2020[wu], 1)} kg; são os resíduos registados como têxteis, e a AEA estima ao todo cerca de 16 kg por pessoa na UE, contando os que vão no lixo misturado. O valor de ${y1} vem sinalizado pelo Eurostat com uma nota explicativa.`,
         `The textile, clothing, leather and footwear industry (NACE C13–C15) emitted <strong>${mt(T[y0], 2)} Mt</strong> of CO₂ in Portugal in ${y0} and <strong>${mt(T[y1], 2)} Mt</strong> in ${y1} (${fmt((T[y1] / T[y0] - 1) * 100, 0)}%), from a peak of ${mt(Math.max(...anos.map((y) => T[y])), 2)} Mt. It accounts for ${pct(q(y1), 1)} of economy and household CO₂. This measures what is <strong>made here</strong>, not what the Portuguese wear: according to the EEA, about three quarters of the emissions from EU textile consumption happen outside the EU. In waste, Portugal recorded ${fmt(RW.PT[wu], 1)} kg of textile waste per person in ${wu} and the EU ${fmt(RW.EU27_2020[wu], 1)} kg; these are wastes recorded as textiles, and the EEA estimates about 16 kg per person in total in the EU, counting what goes into mixed waste. The ${y1} value is flagged by Eurostat with an explanatory note.`);
@@ -263,10 +316,25 @@
         tr("<strong>É uma média, não a tua camisola.</strong> O fator da roupa junta todas as fibras e peças (algodão, poliéster, lã…); o valor de uma peça concreta depende da fibra, do peso, de onde e como foi feita.", "<strong>It is an average, not your sweater.</strong> The clothing factor pools all fibres and garments (cotton, polyester, wool…); the value of a specific garment depends on the fibre, the weight, and where and how it was made."),
         tr("<strong>Do berço ao portão.</strong> Cobre extração, processamento, fabrico e transporte até ao ponto de venda; não inclui lavagens, secagem nem o fim de vida, e não considera emissões evitadas. O fator de roupa reutilizada é o que a DESNZ publica para a reutilização; não assumimos que cada peça em segunda mão evita uma nova.", "<strong>Cradle to gate.</strong> It covers extraction, processing, manufacturing and transport to the point of sale; it does not include washing, drying or end of life, and it does not count avoided emissions. The re-used clothing factor is what DESNZ publishes for re-use; we do not assume that each second-hand garment avoids a new one."),
         tr("<strong>Fatores de base britânica.</strong> A DESNZ calcula-os para empresas do Reino Unido; a eletricidade e o transporte de cada cadeia podem dar valores diferentes.", "<strong>UK-based factors.</strong> DESNZ calculates them for UK companies; electricity and transport in each supply chain can give different values."),
-        tr("<strong>Produção cá, consumo lá.</strong> O CO₂ da indústria em Portugal (Eurostat, princípio da residência) não é a pegada de quem veste: a Agência Europeia do Ambiente estima 654 kg de CO₂e por pessoa na UE em 2017, cerca de três quartos fora da UE.", "<strong>Produced here, consumed there.</strong> The CO₂ of industry in Portugal (Eurostat, residence principle) is not the footprint of those who wear the clothes: the European Environment Agency estimates 654 kg of CO₂e per person in the EU in 2017, about three quarters outside the EU."),
+        tr("<strong>Produção cá, consumo lá.</strong> O CO₂ da indústria em Portugal (Eurostat, princípio da residência) não é a pegada de quem veste: cerca de três quartos das emissões do consumo de têxteis da UE ocorreram fora da UE (briefing da AEA de 2019, dados de 2017).", "<strong>Produced here, consumed there.</strong> The CO₂ of industry in Portugal (Eurostat, residence principle) is not the footprint of those who wear the clothes: about three quarters of the emissions from EU textile consumption took place outside the EU (EEA 2019 briefing, 2017 data)."),
+        tr("<strong>Estimativas por pessoa de anos e métodos diferentes.</strong> A AEA publicou 654 kg de CO₂e e 104 m³ de água por pessoa (dados de 2017), depois cerca de 270 kg, 9 m³, 400 m² e 391 kg (rankings de 2020), e o Parlamento Europeu dá 355 kg, 12 m³, 323 m² e 523 kg para 2022. Não são comparáveis entre si; consulta os originais e usa-os como ordens de grandeza.", "<strong>Per-person estimates from different years and methods.</strong> The EEA published 654 kg of CO₂e and 104 m³ of water per person (2017 data), then about 270 kg, 9 m³, 400 m² and 391 kg (2020 rankings), and the European Parliament gives 355 kg, 12 m³, 323 m² and 523 kg for 2022. They are not comparable with one another; check the originals and use them as orders of magnitude."),
         tr("<strong>Resíduos.</strong> O Eurostat só regista como têxteis (W076) os resíduos recolhidos como tal; a AEA estima cerca de 16 kg por pessoa na UE em 2022, contando a roupa que vai no lixo misturado. Antes de 2010 as séries não são comparáveis e não as mostramos.", "<strong>Waste.</strong> Eurostat only records as textiles (W076) the waste collected as such; the EEA estimates about 16 kg per person in the EU in 2022, counting clothing that goes into mixed waste. Before 2010 the series are not comparable and we do not show them.")
       ].map((n) => `<li>${n}</li>`).join("");
       document.getElementById("mt-fontes").innerHTML = FONTES.map((s) => `<div class="srcc"><h3>${esc(tr(s.nome, s.nome_en))}</h3><p>${tr(s.usa_pt, s.usa_en)}</p><a class="u" href="${s.url}" target="_blank" rel="noopener">${s.url}</a></div>`).join("");
+
+      /* ---------- todos os recursos ---------- */
+      const ENG = PT.energia_tj, yE = ultimo(ENG.texteis_vestuario_couro, 2023), eT = ENG.texteis_vestuario_couro[yE], eTot = ENG.total_economia_familias[yE], eT19 = ENG.texteis_vestuario_couro[y0];
+      document.getElementById("mt-rec").innerHTML = [
+        rec(tr("Carbono", "Carbon"), "270", "kg CO₂e", tr("por pessoa na UE, no consumo de roupa, calçado e têxteis para o lar (estimativa da AEA).", "per person in the EU, from consumption of clothing, footwear and household textiles (EEA estimate)."), tr("Parlamento Europeu: cerca de 355 kg de CO₂ por pessoa em 2022. Roupa nova: 22,3 kg CO₂e por kg (DESNZ).", "European Parliament: about 355 kg of CO₂ per person in 2022. New clothing: 22.3 kg CO₂e per kg (DESNZ)."), [5, 6, 2]),
+        rec(tr("Energia", "Energy"), fmt(eT / 1000, 1), "PJ", tr(`usados pela indústria têxtil, de vestuário, couro e calçado em Portugal em ${yE}.`, `used by the textile, clothing, leather and footwear industry in Portugal in ${yE}.`), tr(`${pct((eT / eTot) * 100, 1)} da energia usada pela economia e pelas famílias; em ${y0} eram ${fmt(eT19 / 1000, 1)} PJ (${fmt((eT / eT19 - 1) * 100, 0)}%). Não encontrámos uma estimativa aberta da energia do consumo de têxteis por pessoa na UE.`, `${pct((eT / eTot) * 100, 1)} of the energy used by the economy and households; in ${y0} it was ${fmt(eT19 / 1000, 1)} PJ (${fmt((eT / eT19 - 1) * 100, 0)}%). We found no open estimate of the energy of textile consumption per person in the EU.`), [7]),
+        rec(tr("Matérias-primas", "Raw materials"), "391", "kg", tr("de matérias-primas por pessoa na UE, no consumo de têxteis (AEA).", "of raw materials per person in the EU, from textile consumption (EEA)."), tr("Parlamento Europeu, 2022: 523 kg. 5.º lugar entre 12 categorias de consumo; cerca de 85% da pressão ocorre fora da UE (briefing de 2019, dados de 2017).", "European Parliament, 2022: 523 kg. 5th place among 12 consumption categories; about 85% of the pressure occurs outside the EU (2019 briefing, 2017 data)."), [5, 6, 1]),
+        rec(tr("Água", "Water"), "9", "m³", tr("de água por pessoa na UE, no consumo de têxteis (AEA).", "of water per person in the EU, from textile consumption (EEA)."), tr("Parlamento Europeu, 2022: 12 m³. 3.º lugar nas pressões sobre a água; cerca de 92% da água é usada fora da UE (2017). Uma t-shirt de algodão pede cerca de 2 700 litros (estimativa do Parlamento Europeu, método diferente). Sem dado por setor para Portugal.", "European Parliament, 2022: 12 m³. 3rd place for pressure on water; about 92% of the water is used outside the EU (2017). A cotton T-shirt takes about 2,700 litres (European Parliament estimate, different method). No sector data for Portugal."), [5, 6, 1]),
+        rec(tr("Terra", "Land"), "400", "m²", tr("de terra por pessoa na UE, no consumo de têxteis (AEA).", "of land per person in the EU, from textile consumption (EEA)."), tr("Parlamento Europeu, 2022: 323 m². 3.º lugar nas pressões sobre a terra; cerca de 93% fora da UE (2017).", "European Parliament, 2022: 323 m². 3rd place for pressure on land; about 93% outside the EU (2017)."), [5, 6, 1]),
+        rec(tr("Resíduos", "Waste"), "16", "kg", tr("de resíduos têxteis por pessoa na UE em 2022, contando o lixo misturado (AEA).", "of textile waste per person in the EU in 2022, counting mixed waste (EEA)."), tr(`Só os registados como têxteis: ${fmt(RW.PT[wu0], 1)} kg em Portugal e ${fmt(RW.EU27_2020[wu0], 1)} kg na UE (${wu0}).`, `Only those recorded as textiles: ${fmt(RW.PT[wu0], 1)} kg in Portugal and ${fmt(RW.EU27_2020[wu0], 1)} kg in the EU (${wu0}).`), [0, 4]),
+        rec(tr("Química e microplásticos", "Chemicals and microplastics"), "700 000", tr("fibras", "fibres"), tr("podem sair de uma só máquina de roupa de poliéster (estimativa do Parlamento Europeu).", "can come out of a single load of polyester laundry (European Parliament estimate)."), tr("A AEA refere ainda PFAS em alguns têxteis e a libertação de microfibras na lavagem. Não temos números comparáveis para Portugal.", "The EEA also mentions PFAS in some textiles and the release of microfibres when washing. We have no comparable numbers for Portugal."), [5, 6])
+      ].join("");
+      const aE = anosDe(ENG.texteis_vestuario_couro);
+      lin("mt-pt-en", [{ n: tr("Têxteis, vestuário, couro e calçado", "Textiles, clothing, leather and footwear"), c: COR.a, v: aE.map((y) => ENG.texteis_vestuario_couro[y] / 1000) }], { x: aE, yf: (v) => fmt(v, 0), tf: (se, i) => fmt(se.v[i], 1) + " PJ" });
 
       legPilhas("mt-leg");
       pilhas(document.getElementById("mt-graf"), M.slice().sort((a, b) => a.primaria - b.primaria));

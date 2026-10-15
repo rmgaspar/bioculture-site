@@ -6,7 +6,8 @@
                                           construção e demolição (W121), por pessoa.
   data/moda-texteis-portugal.json         CO₂ de têxteis, vestuário, couro e calçado (C13-C15) e resíduos têxteis (W076).
 
-Fontes: env_ac_ainah_r2 (contas de emissões atmosféricas), env_wasgen (resíduos gerados) e demo_pjan (população).
+Fontes: env_ac_ainah_r2 (contas de emissões atmosféricas), env_wasgen (resíduos gerados), demo_pjan (população),
+env_ac_pefa04 (energia usada por atividade), env_ac_mfa (extração de materiais) e lan_lcv_art (solo artificializado, LUCAS).
 Os fatores por tonelada de material (DESNZ 2025) e os textos editoriais ficam nos ficheiros data/ambiente-construido.json
 e data/moda-texteis.json, que este script não toca.
 
@@ -98,6 +99,48 @@ def quota_construcao():
     return out
 
 
+def energia(naces):
+    """Uso interno líquido de energia (TJ) por atividade, Portugal."""
+    d = obter("env_ac_pefa04", geo="PT", indic_pefa="NETDOM_EUSE", nace_r2=naces, unit="TJ")
+    s, _ = series(d, "nace_r2")
+    for k in naces:
+        if len(s.get(k, {})) < 20:
+            sys.exit(f"Eurostat devolveu poucos anos de energia para {k}")
+    return {k: {a: round(v, 1) for a, v in sorted(s[k].items())} for k in naces}
+
+
+def materiais():
+    """Extração interna de minerais não metálicos (MF3), areia e gravilha (MF38) e total, em toneladas por pessoa."""
+    d = obter("env_ac_mfa", geo=["PT", "EU27_2020"], indic_env="DE", unit="T_HAB", material=["MF3", "MF38", "TOTAL"])
+    ids, tam = d["id"], d["size"]
+    cats = {k: list(d["dimension"][k]["category"]["index"]) for k in ids}
+    out = {}
+    for flat, v in d["value"].items():
+        flat = int(flat)
+        idx = {}
+        for k, sz in reversed(list(zip(ids, tam))):
+            idx[k] = flat % sz
+            flat //= sz
+        out.setdefault(cats["geo"][idx["geo"]], {}).setdefault(cats["material"][idx["material"]], {})[cats["time"][idx["time"]]] = round(v, 2)
+    return out
+
+
+def terra_artificial():
+    """Solo artificializado (LUCAS): % do território, m² por pessoa e km²."""
+    d = obter("lan_lcv_art", geo=["PT", "EU27_2020"], landcover="A00", unit=["PC", "M2_HAB", "KM2"])
+    ids, tam = d["id"], d["size"]
+    cats = {k: list(d["dimension"][k]["category"]["index"]) for k in ids}
+    out = {}
+    for flat, v in d["value"].items():
+        flat = int(flat)
+        idx = {}
+        for k, sz in reversed(list(zip(ids, tam))):
+            idx[k] = flat % sz
+            flat //= sz
+        out.setdefault(cats["geo"][idx["geo"]], {}).setdefault(cats["unit"][idx["unit"]], {})[cats["time"][idx["time"]]] = round(v, 2)
+    return out
+
+
 def por_pessoa(res, pop):
     out = {}
     for geo, ser in res.items():
@@ -107,6 +150,7 @@ def por_pessoa(res, pop):
 
 def construir(naces_chaves, cod_res, com_quota=False):
     co2s, notas = co2(list(naces_chaves) + ["TOTAL_HH"])
+    en = energia(list(naces_chaves) + ["TOTAL_HH"])
     res = residuos(cod_res)
     pop = populacao()
     return {
@@ -115,9 +159,10 @@ def construir(naces_chaves, cod_res, com_quota=False):
                  "obtido": date.today().isoformat(), "codigo_residuos": cod_res},
         "co2_kt": {naces_chaves[k]: co2s[k] for k in naces_chaves} | {"total_economia_familias": co2s["TOTAL_HH"]},
         "notas_co2": {naces_chaves.get(k, k): n for k, n in notas.items()},
+        "energia_tj": {naces_chaves[k]: en[k] for k in naces_chaves} | {"total_economia_familias": en["TOTAL_HH"]},
         "residuos_t": res,
         "residuos_kg_por_pessoa": por_pessoa(res, pop),
-    } | ({"residuos_totais_construcao": quota_construcao()} if com_quota else {})
+    } | ({"residuos_totais_construcao": quota_construcao(), "materiais_t_por_pessoa": materiais(), "solo_artificial": terra_artificial()} if com_quota else {})
 
 
 def main():

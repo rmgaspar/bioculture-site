@@ -41,6 +41,15 @@ for (const [slug, P] of Object.entries(PAGINAS)) {
   assert.equal(anos[0], 1995); assert.equal(anos.length, anos.at(-1) - 1995 + 1);
   for (const k of P.co2) for (const y of anos) assert(PT.co2_kt[k][y] > 0 && PT.co2_kt[k][y] < PT.co2_kt.total_economia_familias[y], `${slug}/${k}: série incoerente em ${y}`);
   assert.equal(PT.meta.codigo_residuos, P.res);
+  // Energia por atividade (2000–2023) e, na construção, materiais e solo artificializado.
+  for (const k of [...P.co2, 'total_economia_familias']) { const e = PT.energia_tj[k]; for (let y = 2000; y <= 2023; y++) assert(e[y] > 0, `${slug}: sem energia de ${k} em ${y}`); }
+  for (const k of P.co2) assert(PT.energia_tj[k][2023] < PT.energia_tj.total_economia_familias[2023]);
+  if (P.vetor === 'construcao') {
+    for (const geo of ['PT', 'EU27_2020']) for (const m of ['MF3', 'MF38', 'TOTAL']) for (let y = 2000; y <= 2023; y++) assert(PT.materiais_t_por_pessoa[geo][m][y] > 0, `materiais ${geo}/${m}/${y}`);
+    assert(PT.materiais_t_por_pessoa.PT.MF3[2023] < PT.materiais_t_por_pessoa.PT.TOTAL[2023]);
+    for (const y of [2018, 2022]) assert(PT.solo_artificial.PT.PC[y] > 1 && PT.solo_artificial.PT.PC[y] < 30, 'solo artificializado de Portugal');
+    assert(PT.solo_artificial.EU27_2020.PC[2018] > 1 && PT.solo_artificial.EU27_2020.M2_HAB[2018] > 100);
+  }
   for (const geo of ['PT', 'EU27_2020']) for (const y of [2010, 2022]) assert(PT.residuos_kg_por_pessoa[geo][y] > 0, `${slug}: sem resíduos ${geo} ${y}`);
   if (P.vetor === 'construcao') for (const geo of ['PT', 'EU27_2020']) assert(PT.residuos_totais_construcao[geo].quota_pct > 5, 'quota de resíduos da construção');
 
@@ -48,6 +57,10 @@ for (const [slug, P] of Object.entries(PAGINAS)) {
   for (const t of [`data-vetor="${P.vetor}"`, 'energia-materiais.js', 'energia-materiais.css', 'relatorio-dados.css', 'topic-reading.css', `data-pagina="${slug}"`, 'data-foto-slot="hero"', 'biocultura-graficos.js']) assert(html.includes(t), `${slug}: falta ${t}`);
   assert(/class="observatory-visual"\s+data-no-signature/.test(html), `${slug}: o topo leva data-no-signature`);
   assert(existsSync(`images/partilha/energia-${slug}.jpg`) && existsSync(`images/${slug}/miniatura.webp`) && existsSync(`images/${slug}/hero.webp`));
+  // «Todos os recursos»: secção e ligação na barra; cada caixa cita fontes que existem.
+  assert(js.includes('<section id="recursos">') && html.includes('href="#recursos"'), `${slug}: secção «recursos»`);
+  assert(D.fontes.length >= (P.vetor === 'moda' ? 8 : 9), `${slug}: faltam as fontes dos recursos`);
+  for (const m of js.matchAll(/\[([0-9, ]+)\]\)(?:,|\s*\])/g)) for (const i of m[1].split(',').map(Number)) assert(D.fontes[i], `${slug}: índice de fonte ${i} inexistente`);
   for (const id of Object.keys(fotos[slug]).filter((k) => k !== 'hero')) assert(js.includes(`<section id="${id}">`), `${slug}: a secção ${id} não existe`);
   assert(config[`energia/${slug}.html`], `${slug}: sem registo em config/paginas.json`);
   assert(hub.includes(`/energia/${slug}.html`) && new RegExp(`class="hub-thumb"\\s+data-no-signature\\s+style="[^"]*${slug}\\/miniatura`).test(hub), `${slug}: cartão do hub`);
