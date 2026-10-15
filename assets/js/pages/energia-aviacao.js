@@ -108,27 +108,8 @@
   </div>
 </section>
 
-<section id="calcular">
-  <div class="sec-head"><span class="eyebrow">${tr("2 · A tua viagem", "2 · Your trip")}</span><h2>${tr("Quanto CO₂ cabe numa viagem?", "How much CO₂ is in a trip?")}</h2></div>
-  <div class="prose"><p>${tr("Escolhe o aeroporto de partida e o de chegada, em qualquer parte do mundo. A estimativa é <strong>distância × fator por passageiro e quilómetro</strong>, e o fator já inclui o desvio das rotas reais face à linha reta.", "Choose the departure and arrival airports anywhere in the world. The estimate is <strong>distance × factor per passenger-kilometre</strong>, and the factor already includes the detour of real routes compared with a straight line.")}</p></div>
-  <figure class="calc">
-    <figcaption><span class="t">${tr("Calculadora de rota", "Route calculator")}</span><span class="d">${tr("Escreve a cidade ou o código IATA (por exemplo, Lisboa ou LIS) e escolhe na lista.", "Type the city or IATA code (for example, Lisbon or LIS) and pick from the list.")}</span></figcaption>
-    <div class="calc-form">
-      <label>${tr("De", "From")}<input id="av-de" list="av-lista" autocomplete="off" spellcheck="false" placeholder="${tr("Cidade ou código IATA", "City or IATA code")}"></label>
-      <label>${tr("Para", "To")}<input id="av-para" list="av-lista" autocomplete="off" spellcheck="false" placeholder="${tr("Cidade ou código IATA", "City or IATA code")}"></label>
-      <label>${tr("Classe", "Class")}<select id="av-classe">${["economica", "premium", "executiva", "primeira"].map((k) => `<option value="${k}"${k === "economica" ? " selected" : ""}>${tr(CL[k].pt, CL[k].en)}</option>`).join("")}</select></label>
-      <label>${tr("Viagens por ano", "Trips per year")}<input id="av-n" type="number" min="1" max="100" value="1" inputmode="numeric"></label>
-      <div class="seg" id="av-ida" role="group" aria-label="${tr("Tipo de viagem", "Trip type")}"><button aria-pressed="true" data-v="1">${tr("Só ida", "One way")}</button><button aria-pressed="false" data-v="2">${tr("Ida e volta", "Round trip")}</button></div>
-      <datalist id="av-lista">${AE.aeroportos.map((a) => `<option value="${esc(rotulo(a))}"></option>`).join("")}</datalist>
-    </div>
-    <div class="chips" id="av-chips"><span>${tr("Exemplos:", "Examples:")}</span></div>
-    <div id="av-res" aria-live="polite"></div>
-    <div class="src"><span>${tr("Fatores: DESNZ 2025, voos entre aeroportos fora do Reino Unido. Aeroportos: OurAirports.", "Factors: DESNZ 2025, flights between non-UK airports. Airports: OurAirports.")}</span></div>
-  </figure>
-</section>
-
 <section id="voos">
-  <div class="sec-head"><span class="eyebrow">${tr("3 · Voos reais", "3 · Real flights")}</span><h2>${tr("Quanto gasta cada rota, por dia e por ano", "How much each route uses, per day and per year")}</h2></div>
+  <div class="sec-head"><span class="eyebrow">${tr("2 · Voos reais", "2 · Real flights")}</span><h2>${tr("Quanto gasta cada rota, por dia e por ano", "How much each route uses, per day and per year")}</h2></div>
   <div class="prose">
     <p>${tr("O Eurostat conta, por ano, os <strong>voos e os passageiros</strong> entre cada aeroporto português e os seus parceiros, nos dois sentidos e de todas as companhias. Multiplicámos os passageiros pela distância e pelo fator médio da DESNZ para estimar o <strong>combustível e o CO₂e da rota inteira</strong>, e dividimos pelo ano para chegar à média diária, semanal e mensal.", "Eurostat counts, per year, the <strong>flights and passengers</strong> between each Portuguese airport and its partners, in both directions and for all airlines. We multiplied passengers by distance and by the DESNZ average factor to estimate the <strong>fuel and CO₂e of the whole route</strong>, and divided by the year to get the daily, weekly and monthly average.")}</p>
   </div>
@@ -148,6 +129,24 @@
     <div class="legend" id="rt-leg"></div>
     <div class="chart" id="rt-graf"></div>
     <div class="src"><span>${tr("Cálculo bioCulture a partir do Eurostat (avia_par_pt) e dos fatores da DESNZ 2025; estimativa, não o combustível medido.", "bioCulture calculation from Eurostat (avia_par_pt) and DESNZ 2025 factors; an estimate, not measured fuel.")}</span></div>
+  </figure>
+</section>
+
+<section id="calcular">
+  <div class="sec-head"><span class="eyebrow">${tr("3 · A tua viagem", "3 · Your trip")}</span><h2>${tr("Quanto CO₂ cabe numa viagem?", "How much CO₂ is in a trip?")}</h2></div>
+  <div class="prose"><p>${tr("Escolhe o aeroporto de partida e o de chegada, em qualquer parte do mundo. A estimativa é <strong>distância × fator médio por passageiro e quilómetro</strong> (média de todas as classes), e o fator já inclui o desvio das rotas reais face à linha reta.", "Choose the departure and arrival airports anywhere in the world. The estimate is <strong>distance × factor per passenger-kilometre</strong>, and the factor already includes the detour of real routes compared with a straight line.")}</p></div>
+  <figure class="calc">
+    <figcaption><span class="t">${tr("Calculadora de rota", "Route calculator")}</span><span class="d">${tr("Escreve a cidade ou o código IATA (por exemplo, Lisboa ou LIS) e escolhe na lista.", "Type the city or IATA code (for example, Lisbon or LIS) and pick from the list.")}</span></figcaption>
+    <div class="calc-form">
+      <label>${tr("De", "From")}<input id="av-de" list="av-lista" autocomplete="off" spellcheck="false" placeholder="${tr("Cidade ou código IATA", "City or IATA code")}"></label>
+      <label>${tr("Para", "To")}<input id="av-para" list="av-lista" autocomplete="off" spellcheck="false" placeholder="${tr("Cidade ou código IATA", "City or IATA code")}"></label>
+      <label>${tr("Viagens por ano", "Trips per year")}<input id="av-n" type="number" min="1" max="100" value="1" inputmode="numeric"></label>
+      <div class="seg" id="av-ida" role="group" aria-label="${tr("Tipo de viagem", "Trip type")}"><button aria-pressed="true" data-v="1">${tr("Só ida", "One way")}</button><button aria-pressed="false" data-v="2">${tr("Ida e volta", "Round trip")}</button></div>
+      <datalist id="av-lista">${AE.aeroportos.map((a) => `<option value="${esc(rotulo(a))}"></option>`).join("")}</datalist>
+    </div>
+    <div class="chips" id="av-chips"><span>${tr("Exemplos:", "Examples:")}</span></div>
+    <div id="av-res" aria-live="polite"></div>
+    <div class="src"><span>${tr("Fatores: DESNZ 2025, voos entre aeroportos fora do Reino Unido. Aeroportos: OurAirports.", "Factors: DESNZ 2025, flights between non-UK airports. Airports: OurAirports.")}</span></div>
   </figure>
 </section>
 
@@ -418,7 +417,7 @@
 
     /* ---------- calculadora ---------- */
     const de = document.getElementById("av-de"), para = document.getElementById("av-para"), res = document.getElementById("av-res");
-    const sel = document.getElementById("av-classe"), nIn = document.getElementById("av-n"), idaBox = document.getElementById("av-ida");
+    const nIn = document.getElementById("av-n"), idaBox = document.getElementById("av-ida");
     let ida = 1;
     const achar = (txt) => {
       const t = (txt || "").trim(); if (!t) return null;
@@ -429,7 +428,7 @@
       const A = achar(de.value), B = achar(para.value);
       if (!A || !B) { res.innerHTML = `<p class="av-vazio">${tr("Escolhe os dois aeroportos na lista para ver a estimativa.", "Pick both airports from the list to see the estimate.")}</p>`; return; }
       if (A === B) { res.innerHTML = `<p class="av-vazio">${tr("A partida e a chegada são o mesmo aeroporto.", "Departure and arrival are the same airport.")}</p>`; return; }
-      const cls = CL[sel.value], n = Math.max(1, Math.min(100, Math.round(+nIn.value) || 1));
+      const cls = CL.media, n = Math.max(1, Math.min(100, Math.round(+nIn.value) || 1));
       const km = gcd([A[ix.lat], A[ix.lon]], [B[ix.lat], B[ix.lon]]), v = viagem(km, cls), troços = ida;
       const porViagem = { d: v.direto * troços, t: v.total * troços };
       const anual = { d: porViagem.d * n, t: porViagem.t * n };
@@ -446,7 +445,6 @@
         <p class="av-nota">${tr("Estimativa por passageiro: o valor de um voo concreto depende do avião, da ocupação e da rota efetiva. O intervalo vai das emissões diretas à soma com os efeitos não-CO₂.", "Per-passenger estimate: the value of a specific flight depends on the aircraft, load factor and actual route. The range runs from direct emissions to the sum with non-CO₂ effects.")}</p>`;
     };
     [de, para, nIn].forEach((x) => x.addEventListener("input", calcular));
-    sel.addEventListener("change", calcular);
     seg(idaBox, (v) => { ida = +v; calcular(); });
     const chips = document.getElementById("av-chips");
     D.rotas.forEach(([a, b]) => {
