@@ -953,7 +953,7 @@
                 .catch(() => ({}));
             fullLoading = Promise.all([
                 read(`/assets/lang/auto/${lang}.json?v=73`),
-                read(`/assets/lang/${lang}.json?v=18`),
+                read(`/assets/lang/${lang}.json?v=19`),
                 read(`/assets/lang/display/${lang}.json?v=38`),
             ]).then(([auto, structured, display]) => {
                 dictionary = auto;
