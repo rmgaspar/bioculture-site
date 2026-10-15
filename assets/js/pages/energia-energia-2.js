@@ -172,3 +172,10 @@
     document.getElementById('solar-results-area').style.display = 'block';
     document.getElementById('solar-results-area').scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
+
+            // «Voltar»: à página de onde se veio (se for do próprio site); sem histórico, à página inicial.
+            document.getElementById("energia-voltar")?.addEventListener("click", (event) => {
+                let mesmoSite = false;
+                try { mesmoSite = !!document.referrer && new URL(document.referrer).origin === location.origin; } catch (e) { mesmoSite = false; }
+                if (mesmoSite && history.length > 1) { event.preventDefault(); history.back(); }
+            });
