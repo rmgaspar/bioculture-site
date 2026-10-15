@@ -52,6 +52,10 @@ assert(S.transporte_aereo[2020] < S.transporte_aereo[2019] / 2, 'a pandemia tem 
 
 // Página: carrega os scripts, a foto do cabeçalho e os estilos; e está registada para partilha.
 for (const t of ['biocultura-graficos.js', 'energia-aviacao.js', 'data-pagina="aviacao"', 'energia-aviacao.css', 'relatorio-dados.css', 'data-hero-theme="aviation"']) assert(html.includes(t), `energia/aviacao.html: falta ${t}`);
+// Fotografias: «hero» é o espaço do topo; as restantes chaves são secções desenhadas por energia-aviacao.js.
+const fotos = JSON.parse(readFileSync('data/fotos-capitulos.json', 'utf8')).aviacao;
+assert(html.includes('data-foto-slot="hero"'));
+for (const id of Object.keys(fotos).filter((k) => k !== 'hero')) assert(js.includes(`<section id="${id}">`), `aviacao: a secção ${id} não existe`);
 assert(existsSync('images/aviacao/hero.webp') && existsSync('images/partilha/energia-aviacao.jpg'));
 // As imagens são de terceiros (NASA): o runtime não lhes pode pôr a marca bioCulture.
 assert(/class="observatory-visual"\s+data-no-signature/.test(html), 'o topo da página leva data-no-signature');
