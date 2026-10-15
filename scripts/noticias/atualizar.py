@@ -32,6 +32,8 @@ PROPOSALS_PATH = ROOT / "data" / "noticias_propostas.json"
 REJECTED_PATH = ROOT / "data" / "noticias_rejeitadas.json"
 CONFIG_PATH = ROOT / "config" / "noticias_fontes.json"
 
+import foto_contexto  # noqa: E402  (mesma pasta; sys.path acima)
+
 IMAGES = json.loads((Path(__file__).resolve().parents[2] / "config" / "noticias_imagens.json").read_text(encoding="utf-8"))
 
 CATEGORIES = {
@@ -448,11 +450,27 @@ def reassess(pending: list[dict], config: dict, today: dt.date) -> tuple[list[di
     return keep, dropped
 
 
+def fotos_de_contexto(noticias: list[dict], descarregar: bool = True) -> int:
+    """Regra editorial: se a fonte não deu imagem, foto de contexto da Wikimedia Commons (ver foto_contexto.py) e só se
+    nada servir fica a ilustração bioCulture. Corre depois do corte por relevância, para só descarregar o que fica."""
+    feitas = 0
+    for noticia in noticias:
+        if noticia.get("imagem_credito_pt") != IMAGES["credito_pt"]:
+            continue
+        if foto_contexto.aplicar(noticia, descarregar):
+            feitas += 1
+            print(f"  foto de contexto: {noticia['pt']['titulo'][:60]} → {noticia['imagem_contexto']['pt']}")
+        else:
+            print(f"  sem foto de contexto (fica a ilustração): {noticia['pt']['titulo'][:60]}")
+    return feitas
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--reparar-resumos", action="store_true", help="vai buscar à fonte o resumo das propostas cujo resumo é só o título")
     parser.add_argument("--reavaliar", action="store_true", help="só reaplica os critérios à fila existente, sem ir às fontes")
+    parser.add_argument("--fotos", action="store_true", help="põe foto de contexto nas propostas da fila que ainda têm a ilustração bioCulture")
     parser.add_argument("--config", type=Path, default=CONFIG_PATH)
     args = parser.parse_args()
     config = json.loads(args.config.read_text(encoding="utf-8"))
@@ -480,6 +498,12 @@ def main() -> int:
         print(f"Resumos reparados: {fixed}.")
         if not args.dry_run:
             PROPOSALS_PATH.write_text(json.dumps(pending, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        return 0
+    if args.fotos:
+        feitas = fotos_de_contexto(pending, descarregar=not args.dry_run)
+        if not args.dry_run:
+            PROPOSALS_PATH.write_text(json.dumps(pending, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        print(f"Fotos de contexto: {feitas}.")
         return 0
     if args.reavaliar:
         print(f"Fila: {len(pending)} proposta(s) mantida(s), {len(dropped)} retirada(s).")
@@ -524,6 +548,7 @@ def main() -> int:
         proposals.extend(from_source[: int(source.get("limite_por_execucao", config.get("limite_por_fonte", 3)))])
     proposals.sort(key=lambda n: (n["relevancia"], n["publicado_em"]), reverse=True)
     proposals = proposals[: int(config["limite_por_execucao"])]
+    fotos_de_contexto(proposals, descarregar=not args.dry_run)
     if failures:
         print("Fontes temporariamente indisponíveis:", *failures, sep="\n- ", file=sys.stderr)
     if skipped:

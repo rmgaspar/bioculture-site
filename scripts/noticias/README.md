@@ -25,7 +25,15 @@ aplicar os critérios à fila existente e retira o que expirou.
 
 Antes de aprovar, confirma sempre a ligação original, a data, o resumo, a
 categoria e a pontuação. O processo não copia o artigo completo; usa a imagem da
-fonte original e, só se não existir, uma imagem local da categoria.
+fonte original e, se a fonte não tiver imagem utilizável, uma **foto de contexto** da Wikimedia
+Commons (`foto_contexto.py`): licença CC0, CC BY, CC BY-SA ou domínio público, em JPEG
+horizontal, nunca repetida, escolhida pelo tema do título (tabela `TEMAS`; sem tema, pela
+categoria). Fica em `media/noticias/` com crédito, ligação à ficha da foto e legenda do tema em
+PT e EN. A escolha é automática e só lê o texto, por isso **olha sempre para a foto antes de
+aprovar** (a ficha pode mostrar outro lugar ou época; a legenda só promete o tema). Se nada
+servir (sem rede, sem resultado, sem ImageMagick), fica a ilustração bioCulture. As fotos das
+propostas recusadas ficam em `media/noticias/` (ficheiros pequenos). Para pôr fotos nas
+propostas já na fila: `python3 scripts/noticias/atualizar.py --fotos`.
 
 Ao aprovar, o prazo da notícia nunca fica abaixo de 30 dias a contar do dia da
 aprovação (o prazo original conta desde a publicação na fonte).
