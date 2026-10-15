@@ -22,7 +22,7 @@
   const get = (u) => fetch(u).then((r) => { if (!r.ok) throw new Error(u + " " + r.status); return r.json(); });
   const FICH = VETOR === "construcao" ? ["ambiente-construido", "ambiente-construido-portugal"] : ["moda-texteis", "moda-texteis-portugal"];
 
-  Promise.all([get(`/data/${FICH[0]}.json?v=3`), get(`/data/${FICH[1]}.json?v=4`)])
+  Promise.all([get(`/data/${FICH[0]}.json?v=3`), get(`/data/${FICH[1]}.json?v=5`)])
     .then(([D, PT]) => { build(D, PT); barraFixa(); irParaHash(); })
     .catch((e) => { console.error(e); barraFixa(); box.innerHTML = `<p class="prose">${tr("Não foi possível carregar os dados desta página.", "The data for this page could not be loaded.")}</p>`; });
 
@@ -251,6 +251,8 @@
     function moda() {
       const T = S.texteis_vestuario_couro, RW = PT.residuos_kg_por_pessoa, R = D.roupa, MED = D.media_ue_roupa_kg;
       const q = (y) => (T[y] / tot[y]) * 100;
+      const AR = PT.ar_kt, yA = ultimo(AR.NOX.texteis_vestuario_couro, 2024);
+      const arQ = (p, y = yA) => (AR[p].texteis_vestuario_couro[y] / AR[p].total_economia_familias[y]) * 100;
       const wy = Object.keys(RW.PT).map(Number).filter((y) => y >= 2010).sort((a, b) => a - b);
       const plast = M[4], alum = M[1], vidro = M[5];
       box.innerHTML = `
@@ -259,7 +261,7 @@
   <div class="tiles">${tiles(D.mundo.map(mundoTile).concat([[fmt(R.nova / 1000, 1), "kg CO₂e/kg", tr("de roupa nova, na produção primária; reutilizada: " + fmt(R.reutilizada / 1000, 2), "of new clothing in primary production; re-used: " + fmt(R.reutilizada / 1000, 2)), tr("Média de todas as fibras e peças (DESNZ 2025)", "Average across all fibres and garments (DESNZ 2025)")]]))}</div>
   <div class="prose">
     <p>${tr("Cada pessoa na UE comprou <strong>19 kg</strong> de roupa, calçado e têxteis para o lar em 2022, mais 2 kg do que em 2019. Para a Agência Europeia do Ambiente, os têxteis são a <strong>quinta maior pressão</strong> ambiental e climática do consumo das famílias, e, segundo a AEA, cerca de três quartos das emissões do consumo de têxteis da UE ocorreram fora da UE (dados de 2017).", "Each person in the EU bought <strong>19 kg</strong> of clothing, footwear and household textiles in 2022, 2 kg more than in 2019. For the European Environment Agency, textiles are the <strong>fifth largest</strong> environmental and climate pressure of household consumption, and, according to the EEA, about three quarters of the emissions from EU textile consumption took place outside the EU (2017 data).")}</p>
-    <p>${tr("Esta página mede o carbono que vai na <strong>produção da roupa</strong>, com a incerteza à vista, e o que muda quando a roupa é reutilizada. E junta os outros recursos: matérias-primas, água, terra, energia, resíduos e microplásticos, cada um na sua unidade.", "This page measures the carbon that goes into <strong>producing clothing</strong>, with the uncertainty in plain sight, and what changes when clothing is re-used. And it adds the other resources: raw materials, water, land, energy, waste and microplastics, each in its own unit.")}</p>
+    <p>${tr("Esta página mede o carbono que vai na <strong>produção da roupa</strong>, com a incerteza à vista, e o que muda quando a roupa é reutilizada. E junta os outros recursos: matérias-primas, água, terra, energia, resíduos, microplásticos e qualidade do ar, cada um na sua unidade.", "This page measures the carbon that goes into <strong>producing clothing</strong>, with the uncertainty in plain sight, and what changes when clothing is re-used. And it adds the other resources: raw materials, water, land, energy, waste, microplastics and air quality, each in its own unit.")}</p>
   </div>
   <p class="src-line">${tr("Fontes: ", "Sources: ")}${srcLinks(0, 5, 6, 1, 2)}</p>
 </section>
@@ -317,6 +319,19 @@
     <div class="chart" id="mt-pt-en"></div>
     <div class="src"><span>${tr("Fonte: Eurostat, contas físicas de energia (env_ac_pefa04), NACE C13–C15.", "Source: Eurostat, physical energy flow accounts (env_ac_pefa04), NACE C13–C15.")}</span></div>
   </figure>
+  <div class="grid2">
+    <figure>
+      <figcaption><span class="t">${tr("Quanto pesa no ar do país", "How much it weighs in the country's air")}</span><span class="d">${tr("Percentagem do NOx e das partículas emitidos em Portugal pela indústria têxtil, de vestuário, couro e calçado.", "Percentage of the NOx and particles emitted in Portugal by the textile, clothing, leather and footwear industry.")}</span></figcaption>
+      <div class="legend" id="mt-leg-ar"></div>
+      <div class="chart" id="mt-pt-ar"></div>
+      <div class="src"><span>${tr("Fonte: Eurostat, contas de emissões atmosféricas (env_ac_ainah_r2), NACE C13–C15; cálculo bioCulture.", "Source: Eurostat, air emissions accounts (env_ac_ainah_r2), NACE C13–C15; bioCulture calculation.")}</span></div>
+    </figure>
+    <figure>
+      <figcaption><span class="t">${tr("NOx da indústria têxtil, de vestuário, couro e calçado", "NOx from the textile, clothing, leather and footwear industry")}</span><span class="d">${tr("Milhares de toneladas por ano, empresas residentes em Portugal.", "Thousand tonnes a year, companies resident in Portugal.")}</span></figcaption>
+      <div class="chart" id="mt-pt-nox"></div>
+      <div class="src"><span>${tr("Fonte: Eurostat, contas de emissões atmosféricas (env_ac_ainah_r2), poluente NOX.", "Source: Eurostat, air emissions accounts (env_ac_ainah_r2), pollutant NOX.")}</span></div>
+    </figure>
+  </div>
 </section>
 
 <section id="limites">
@@ -342,6 +357,7 @@
         tr("<strong>Fatores de base britânica.</strong> A DESNZ calcula-os para empresas do Reino Unido; a eletricidade e o transporte de cada cadeia podem dar valores diferentes.", "<strong>UK-based factors.</strong> DESNZ calculates them for UK companies; electricity and transport in each supply chain can give different values."),
         tr("<strong>Produção cá, consumo lá.</strong> O CO₂ da indústria em Portugal (Eurostat, princípio da residência) não é a pegada de quem veste: cerca de três quartos das emissões do consumo de têxteis da UE ocorreram fora da UE (briefing da AEA de 2019, dados de 2017).", "<strong>Produced here, consumed there.</strong> The CO₂ of industry in Portugal (Eurostat, residence principle) is not the footprint of those who wear the clothes: about three quarters of the emissions from EU textile consumption took place outside the EU (EEA 2019 briefing, 2017 data)."),
         tr("<strong>Estimativas por pessoa de anos e métodos diferentes.</strong> A AEA publicou 654 kg de CO₂e e 104 m³ de água por pessoa (dados de 2017), depois cerca de 270 kg, 9 m³, 400 m² e 391 kg (rankings de 2020), e o Parlamento Europeu dá 355 kg, 12 m³, 323 m² e 523 kg para 2022. Não são comparáveis entre si; consulta os originais e usa-os como ordens de grandeza.", "<strong>Per-person estimates from different years and methods.</strong> The EEA published 654 kg of CO₂e and 104 m³ of water per person (2017 data), then about 270 kg, 9 m³, 400 m² and 391 kg (2020 rankings), and the European Parliament gives 355 kg, 12 m³, 323 m² and 523 kg for 2022. They are not comparable with one another; check the originals and use them as orders of magnitude."),
+        tr("<strong>Qualidade do ar.</strong> O NOx e as partículas vêm das contas de emissões do Eurostat (empresas residentes em Portugal) para a indústria têxtil, de vestuário, couro e calçado (NACE C13–C15). Medem o que a indústria emite em Portugal, não a roupa que aqui se compra e é feita noutros países, nem a poluição da água, nem o que as pessoas respiram. Os valores são pequenos (menos de 1% do total do país), e poluentes diferentes nunca se somam entre si nem com o CO₂.", "<strong>Air quality.</strong> NOx and particles come from Eurostat's emissions accounts (companies resident in Portugal) for the textile, clothing, leather and footwear industry (NACE C13–C15). They measure what the industry emits in Portugal, not the clothes bought here and made in other countries, nor water pollution, nor what people breathe. The values are small (under 1% of the country's total), and different pollutants are never added to each other or to CO₂."),
         tr("<strong>Resíduos.</strong> O Eurostat só regista como têxteis (W076) os resíduos recolhidos como tal; a AEA estima cerca de 16 kg por pessoa na UE em 2022, contando a roupa que vai no lixo misturado. Antes de 2010 os valores mudam bruscamente (por exemplo, 92 kg por pessoa em Portugal em 2004) e não os mostramos.", "<strong>Waste.</strong> Eurostat only records as textiles (W076) the waste collected as such; the EEA estimates about 16 kg per person in the EU in 2022, counting clothing that goes into mixed waste. Before 2010 the values change abruptly (for example, 92 kg per person in Portugal in 2004) and we do not show them.")
       ].map((n) => `<li>${n}</li>`).join("");
       document.getElementById("mt-fontes").innerHTML = FONTES.map((s) => `<div class="srcc"><h3>${esc(tr(s.nome, s.nome_en))}</h3><p>${tr(s.usa_pt, s.usa_en)}</p><a class="u" href="${s.url}" target="_blank" rel="noopener">${s.url}</a></div>`).join("");
@@ -355,8 +371,13 @@
         rec(tr("Água", "Water"), "9", "m³", tr("de água por pessoa na UE, no consumo de têxteis (AEA).", "of water per person in the EU, from textile consumption (EEA)."), tr("Parlamento Europeu, 2022: 12 m³. 3.º lugar nas pressões sobre a água; cerca de 92% da água é usada fora da UE (2017). Uma t-shirt de algodão pede cerca de 2 700 litros (estimativa do Parlamento Europeu, método diferente). Sem dado por setor para Portugal.", "European Parliament, 2022: 12 m³. 3rd place for pressure on water; about 92% of the water is used outside the EU (2017). A cotton T-shirt takes about 2,700 litres (European Parliament estimate, different method). No sector data for Portugal."), [5, 6, 1]),
         rec(tr("Terra", "Land"), "400", "m²", tr("de terra por pessoa na UE, no consumo de têxteis (AEA).", "of land per person in the EU, from textile consumption (EEA)."), tr("Parlamento Europeu, 2022: 323 m². 3.º lugar nas pressões sobre a terra; cerca de 93% fora da UE (2017).", "European Parliament, 2022: 323 m². 3rd place for pressure on land; about 93% outside the EU (2017)."), [5, 6, 1]),
         rec(tr("Resíduos", "Waste"), "16", "kg", tr("de resíduos têxteis por pessoa na UE em 2022, contando o lixo misturado (AEA).", "of textile waste per person in the EU in 2022, counting mixed waste (EEA)."), tr(`Só os registados como têxteis: ${fmt(RW.PT[wu0], 1)} kg em Portugal e ${fmt(RW.EU27_2020[wu0], 1)} kg na UE (${wu0}).`, `Only those recorded as textiles: ${fmt(RW.PT[wu0], 1)} kg in Portugal and ${fmt(RW.EU27_2020[wu0], 1)} kg in the EU (${wu0}).`), [0, 4]),
+        rec(tr("Qualidade do ar", "Air quality"), pct(arQ("NOX"), 1), "", tr(`do NOx de Portugal vem da indústria têxtil, de vestuário, couro e calçado (${yA}); nas partículas, PM10 e PM2,5 são ${pct(arQ("PM10"), 1)} cada.`, `of Portugal's NOx comes from the textile, clothing, leather and footwear industry (${yA}); for particles, PM10 and PM2.5 are ${pct(arQ("PM10"), 1)} each.`), tr(`É pouco: ${fmt(AR.NOX.texteis_vestuario_couro[yA], 1)} kt de NOx em ${yA}, contra ${fmt(AR.NOX.texteis_vestuario_couro[1995], 1)} kt em 1995. As contas seguem só a indústria residente em Portugal: não contam o fabrico, noutros países, da roupa que aqui se compra, nem o que a indústria deita para a água.`, `It is little: ${fmt(AR.NOX.texteis_vestuario_couro[yA], 1)} kt of NOx in ${yA}, against ${fmt(AR.NOX.texteis_vestuario_couro[1995], 1)} kt in 1995. The accounts follow only industry resident in Portugal: they do not count the manufacture, in other countries, of the clothes bought here, nor what the industry discharges into water.`), [3]),
         rec(tr("Química e microplásticos", "Chemicals and microplastics"), "700 000", tr("fibras", "fibres"), tr("podem sair de uma só máquina de roupa de poliéster (estimativa do Parlamento Europeu).", "can come out of a single load of polyester laundry (European Parliament estimate)."), tr("A AEA refere ainda PFAS em alguns têxteis e a libertação de microfibras na lavagem. Não temos números comparáveis para Portugal.", "The EEA also mentions PFAS in some textiles and the release of microfibres when washing. We have no comparable numbers for Portugal."), [5, 6])
       ].join("");
+      const aA = anosDe(AR.NOX.texteis_vestuario_couro).filter((y) => AR.PM10.texteis_vestuario_couro[y] != null && AR.PM2_5.texteis_vestuario_couro[y] != null);
+      legend(document.getElementById("mt-leg-ar"), [{ n: "NOx", c: COR.a }, { n: "PM10", c: COR.b }, { n: "PM2,5", c: COR.c }]);
+      lin("mt-pt-ar", [{ n: "NOx", c: COR.a, v: aA.map((y) => arQ("NOX", y)) }, { n: "PM10", c: COR.b, v: aA.map((y) => arQ("PM10", y)) }, { n: "PM2,5", c: COR.c, v: aA.map((y) => arQ("PM2_5", y)) }], { x: aA, yf: (v) => fmt(v, 1) + "%", tf: (se, i) => fmt(se.v[i], 2) + "%" });
+      lin("mt-pt-nox", [{ n: "NOx", c: COR.a, v: aA.map((y) => AR.NOX.texteis_vestuario_couro[y]) }], { x: aA, yf: (v) => fmt(v, 1), tf: (se, i) => fmt(se.v[i], 2) + " kt" });
       const aE = anosDe(ENG.texteis_vestuario_couro);
       lin("mt-pt-en", [{ n: tr("Têxteis, vestuário, couro e calçado", "Textiles, clothing, leather and footwear"), c: COR.a, v: aE.map((y) => ENG.texteis_vestuario_couro[y] / 1000) }], { x: aE, yf: (v) => fmt(v, 0), tf: (se, i) => fmt(se.v[i], 1) + " PJ" });
 

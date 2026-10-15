@@ -47,10 +47,13 @@ for (const [slug, P] of Object.entries(PAGINAS)) {
   if (P.vetor === 'construcao') {
     for (const geo of ['PT', 'EU27_2020']) for (const m of ['MF3', 'MF38', 'TOTAL']) for (let y = 2000; y <= 2023; y++) assert(PT.materiais_t_por_pessoa[geo][m][y] > 0, `materiais ${geo}/${m}/${y}`);
     assert(PT.materiais_t_por_pessoa.PT.MF3[2023] < PT.materiais_t_por_pessoa.PT.TOTAL[2023]);
-    for (const pol of ['NOX', 'PM10', 'PM2_5']) for (const k of ['construcao', 'minerais_nao_metalicos', 'total_economia_familias']) assert(Object.keys(PT.ar_kt[pol][k]).length >= 25, `ar_kt ${pol}/${k}: poucos anos`);
-    for (const pol of ['NOX', 'PM10', 'PM2_5']) assert(PT.ar_kt[pol].construcao[2023] + PT.ar_kt[pol].minerais_nao_metalicos[2023] < PT.ar_kt[pol].total_economia_familias[2023], `ar_kt ${pol}: as duas atividades têm de ser parte do total`);
     for (const y of [2018, 2022]) assert(PT.solo_artificial.PT.PC[y] > 1 && PT.solo_artificial.PT.PC[y] < 30, 'solo artificializado de Portugal');
     assert(PT.solo_artificial.EU27_2020.PC[2018] > 1 && PT.solo_artificial.EU27_2020.M2_HAB[2018] > 100);
+  }
+  // Qualidade do ar (NOx e partículas): as atividades da página são parte do total do país.
+  for (const pol of ['NOX', 'PM10', 'PM2_5']) {
+    for (const k of [...P.co2, 'total_economia_familias']) assert(Object.keys(PT.ar_kt[pol][k]).length >= 25, `${slug}: ar_kt ${pol}/${k} com poucos anos`);
+    assert(P.co2.reduce((a, k) => a + PT.ar_kt[pol][k][2023], 0) < PT.ar_kt[pol].total_economia_familias[2023], `${slug}: ar_kt ${pol}: as atividades têm de ser parte do total`);
   }
   for (const geo of ['PT', 'EU27_2020']) for (const y of [2010, 2022]) assert(PT.residuos_kg_por_pessoa[geo][y] > 0, `${slug}: sem resíduos ${geo} ${y}`);
   if (P.vetor === 'construcao') for (const geo of ['PT', 'EU27_2020']) assert(PT.residuos_totais_construcao[geo].quota_pct > 5, 'quota de resíduos da construção');
