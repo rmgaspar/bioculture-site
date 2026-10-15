@@ -44,7 +44,7 @@ CATEGORIES = {
     "mineracao": ("Mineração", ["mineracao", "mining", "litio", "lithium", "minas", "extracao mineral"]),
     "impacto-digital": ("Impacto Digital & IA", ["inteligencia artificial", "artificial intelligence", "data center", "centro de dados", "digitalizacao"]),
     "pecuaria": ("Pecuária", ["pecuaria", "livestock", "suinicultura", "aviario", "gado", "metano"]),
-    "aviacao": ("Aviação", ["aviacao", "aviation", "aeroporto*", "airport*", "airline*", "companhia aerea", "companhias aereas", "voo*", "flight", "aeronave*", "aircraft", "combustivel de aviacao", "jet fuel", "sustainable aviation fuel", "contrail*", "rastos de condensacao", "refueleu", "corsia", "trafego aereo", "air traffic", "viagem aerea", "viagens aereas", "air travel"]),
+    "aviacao": ("Aviação", ["aviacao", "aviation", "aeroporto*", "airport*", "airline*", "companhia aerea", "companhias aereas", "voo*", "flight", "combustivel de aviacao", "jet fuel", "sustainable aviation fuel", "contrail*", "rastos de condensacao", "refueleu", "corsia", "trafego aereo", "air traffic", "viagem aerea", "viagens aereas", "air travel"]),
     "enologia": ("Enologia", ["vinha", "vinho", "viticultura", "vineyard", "wine"]),
     "agricultura": ("Agricultura biológica", ["agricultura", "agriculture", "organic farming", "agroecolog*", "crop", "semente", "seed"]),
     "oceanos": ("Oceanos", ["oceano", "ocean", "marinho", "marine", "sea level", "algal", "eutrofiza*"]),
