@@ -9,11 +9,14 @@
                               principais de Portugal e os seus parceiros, no último ano; distância em círculo máximo
                               (coordenadas OurAirports); aquecimento das casas portuguesas (nrg_d_hhq) e número de
                               casas (lfst_hhnhtych), para as equivalências.
+  data/aviacao-tempo.json     Linha do tempo: passageiros e partidas de voos no mundo (Banco Mundial/ICAO, 1970–),
+                              temperatura global (NASA GISTEMP, 1880–), quota da aviação no CO₂ (Our World in Data,
+                              1940–2021) e número de rotas e de voos nos aeroportos portugueses (Eurostat, 1993–).
 
 Os fatores por passageiro-quilómetro (DESNZ 2025) e os textos editoriais ficam em data/aviacao.json, que este
 script não toca.
 
-  python3 scripts/dados/aviacao.py [--dry-run] [--only portugal,aeroportos,rotas]
+  python3 scripts/dados/aviacao.py [--dry-run] [--only portugal,aeroportos,rotas,tempo]
 """
 import argparse
 import csv
@@ -21,6 +24,7 @@ import io
 import json
 import re
 import sys
+import urllib.error
 import urllib.request
 from datetime import date
 from pathlib import Path
@@ -46,8 +50,16 @@ CIDADES_PT = {
 
 
 def obter(url):
-    with urllib.request.urlopen(urllib.request.Request(url, headers={"User-Agent": UA}), timeout=120) as r:
-        return r.read()
+    try:
+        with urllib.request.urlopen(urllib.request.Request(url, headers={"User-Agent": UA}), timeout=120) as r:
+            return r.read()
+    except urllib.error.URLError:
+        # Alguns servidores (p. ex. a NASA) recusam o TLS do Python do sistema: o curl lê-os sem problema.
+        import subprocess
+        r = subprocess.run(["curl", "-sfL", "-m", "120", "-A", UA, url], capture_output=True)
+        if r.returncode:
+            raise
+        return r.stdout
 
 
 def serie_eurostat(nace):
@@ -183,17 +195,58 @@ def rotas():
             "rotas": saida}
 
 
+def tempo():
+    # Banco Mundial (ICAO): passageiros transportados e partidas de companhias registadas, mundo
+    def bm(ind):
+        d = json.loads(obter(f"https://api.worldbank.org/v2/country/WLD/indicator/{ind}?format=json&per_page=100"))
+        return {int(x["date"]): round(x["value"]) for x in d[1] if x["value"] is not None}
+    pax, part = bm("IS.AIR.PSGR"), bm("IS.AIR.DPRT")
+    # NASA GISTEMP v4: anomalia anual (J-D), °C face a 1951-1980
+    temp = {}
+    for linha in obter("https://data.giss.nasa.gov/gistemp/tabledata_v4/GLB.Ts+dSST.csv").decode().splitlines()[2:]:
+        c = linha.split(",")
+        if len(c) > 13 and c[0].isdigit():
+            try:
+                temp[int(c[0])] = float(c[13])
+            except ValueError:
+                pass
+    # Our World in Data: quota da aviação no CO₂ de combustíveis fósseis e uso do solo (Lee et al., Bergero et al., GCP)
+    quota = {}
+    for r in csv.DictReader(io.StringIO(obter("https://ourworldindata.org/grapher/aviation-share-co2.csv?v=1&csvType=full&useColumnShortNames=false").decode())):
+        if r["Entity"] == "World":
+            quota[int(r["Year"])] = float(r["Fossil and land use emissions"])
+    # Eurostat: rotas com passageiros e voos nos aeroportos principais de Portugal (rotas internas contadas uma vez)
+    d = estat("avia_par_pt", freq="A", tra_meas=["PAS_CRD", "CAF_PAS"], unit=["PAS", "FLIGHT"])
+    por_ano = {}
+    for r in planas(d):
+        pa, ia, pb, ib = r["airp_pr"].split("_")
+        chave = tuple(sorted([ia, ib])) if pa == "PT" and pb == "PT" else (ia, ib)
+        por_ano.setdefault(int(r["time"]), {}).setdefault(chave, {}).setdefault(r["tra_meas"], []).append(r["v"])
+    pt = {}
+    for ano, rotas_ in sorted(por_ano.items()):
+        ativas = {k: v for k, v in rotas_.items() if v.get("PAS_CRD") and sum(v["PAS_CRD"]) > 0}
+        voos = sum(sum(v["CAF_PAS"]) / len(v["CAF_PAS"]) for v in ativas.values() if v.get("CAF_PAS"))
+        pt[ano] = {"rotas": len(ativas), "passageiros": round(sum(sum(v["PAS_CRD"]) / len(v["PAS_CRD"]) for v in ativas.values())), "voos": round(voos) if voos > 0 else None}
+    if len(pax) < 40 or len(temp) < 130 or len(quota) < 70 or len(pt) < 25:
+        sys.exit("linha do tempo com poucos dados")
+    return {"meta": {"fontes": ["Banco Mundial (ICAO): IS.AIR.PSGR e IS.AIR.DPRT", "NASA GISS GISTEMP v4", "Our World in Data: aviation-share-co2", "Eurostat: avia_par_pt"],
+                     "obtido": date.today().isoformat(),
+                     "nota": "Voos com valor 0 no Eurostat são anos sem registo (null). As rotas internas aparecem nos dois aeroportos e contam uma vez."},
+            "mundo": {"passageiros": dict(sorted(pax.items())), "partidas": dict(sorted(part.items()))},
+            "temperatura_global": dict(sorted(temp.items())), "quota_co2_aviacao_pct": dict(sorted(quota.items())), "portugal": pt}
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dry-run", action="store_true")
-    ap.add_argument("--only", default="portugal,aeroportos,rotas")
+    ap.add_argument("--only", default="portugal,aeroportos,rotas,tempo")
     a = ap.parse_args()
-    alvo = {"portugal": ("aviacao-portugal.json", portugal), "aeroportos": ("aeroportos.json", aeroportos), "rotas": ("aviacao-rotas-portugal.json", rotas)}
+    alvo = {"portugal": ("aviacao-portugal.json", portugal), "aeroportos": ("aeroportos.json", aeroportos), "rotas": ("aviacao-rotas-portugal.json", rotas), "tempo": ("aviacao-tempo.json", tempo)}
     for k in a.only.split(","):
         ficheiro, fn = alvo[k]
         dados = fn()
-        texto = json.dumps(dados, ensure_ascii=False, separators=(",", ":") if k in ("aeroportos", "rotas") else None,
-                           indent=None if k in ("aeroportos", "rotas") else 1) + "\n"
+        texto = json.dumps(dados, ensure_ascii=False, separators=(",", ":") if k in ("aeroportos", "rotas", "tempo") else None,
+                           indent=None if k in ("aeroportos", "rotas", "tempo") else 1) + "\n"
         print(k, len(texto), "bytes")
         if not a.dry_run:
             (RAIZ / "data" / ficheiro).write_text(texto, encoding="utf-8")

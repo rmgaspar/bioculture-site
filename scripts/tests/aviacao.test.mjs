@@ -13,7 +13,7 @@ const hubHtml = readFileSync('observatorio/pressoes-humanas.html', 'utf8');
 
 // O tradutor do inglês passa também pelos textos dos ficheiros de dados: a página procura classes e fontes pela posição.
 assert.deepEqual(D.fatores.classes.map((c) => c.id), ['media', 'economica', 'premium', 'executiva', 'primeira']);
-assert.deepEqual(D.fontes.map((f) => f.id), ['owid', 'lee2021', 'desnz', 'icao', 'eurostat', 'ourairports', 'eurostat-rotas', 'eurostat-aquecimento']);
+assert.deepEqual(D.fontes.map((f) => f.id), ['owid', 'lee2021', 'desnz', 'icao', 'eurostat', 'ourairports', 'eurostat-rotas', 'eurostat-aquecimento', 'gistemp', 'bm-icao', 'owid-quota']);
 for (const f of D.fontes) {
   assert(/^https:\/\//.test(f.url), `${f.id}: sem ligação`);
   for (const k of ['nome', 'nome_en', 'usa_pt', 'usa_en']) assert(f[k], `${f.id}: falta ${k}`);
@@ -65,6 +65,18 @@ assert(RT.aquecimento.tj > 20000 && RT.aquecimento.casas_milhares > 3500, 'aquec
 const CBS = D.combustivel;
 assert(CBS.co2_kg_por_tonelada === 3149.67 && CBS.pcl_kwh_por_kg === 12.196 && CBS.litros_por_tonelada === 1250 && CBS.co2_kg_por_pkm_media === 0.08333, 'constantes de combustível da DESNZ 2025');
 assert(js.includes('<section id="voos">') && html.includes('href="#voos"'), 'secção «Voos reais»');
+// Linha do tempo: séries completas e coerentes com as fontes.
+const TM = JSON.parse(readFileSync('data/aviacao-tempo.json', 'utf8'));
+for (let y = 1970; y <= 2023; y++) if (y !== 1972) assert(TM.mundo.passageiros[y] > 0 && TM.mundo.partidas[y] > 0, `mundo ${y}`); // o Banco Mundial não tem 1972
+assert(!(1972 in TM.mundo.passageiros), '1972 não se inventa');
+assert(TM.mundo.passageiros[2023] > TM.mundo.passageiros[1970] * 10 && TM.mundo.partidas[2023] > TM.mundo.partidas[1970] * 3, 'crescimento do voo desde 1970');
+for (let y = 1880; y <= 2025; y++) assert(Math.abs(TM.temperatura_global[y]) < 3, `temperatura ${y}`);
+assert(TM.temperatura_global[2024] > 1 && TM.temperatura_global[1900] < 0.1, 'anomalia GISTEMP face a 1951–1980');
+for (let y = 1940; y <= 2021; y++) assert(TM.quota_co2_aviacao_pct[y] > 0 && TM.quota_co2_aviacao_pct[y] < 5, `quota ${y}`);
+for (let y = 1993; y <= 2024; y++) assert(TM.portugal[y].rotas > 50 && TM.portugal[y].passageiros > 5e6, `Portugal ${y}`);
+assert(TM.portugal[2020].rotas < TM.portugal[2019].rotas && TM.portugal[2024].rotas === RT.rotas.length, 'as rotas de 2024 batem com as da calculadora');
+assert(js.includes('<section id="tempo">') && html.includes('href="#tempo"'), 'secção «Linha do tempo»');
+assert(js.includes('não provam que uma causou a outra'), 'o aviso sobre correlação e causa tem de estar na página');
 // Página: carrega os scripts, a foto do cabeçalho e os estilos; e está registada para partilha.
 for (const t of ['biocultura-graficos.js', 'energia-aviacao.js', 'data-pagina="aviacao"', 'energia-aviacao.css', 'relatorio-dados.css', 'data-hero-theme="aviation"']) assert(html.includes(t), `energia/aviacao.html: falta ${t}`);
 // Fotografias: «hero» é o espaço do topo; as restantes chaves são secções desenhadas por energia-aviacao.js.

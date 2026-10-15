@@ -28,8 +28,8 @@
   const barraFixa = () => { const el = document.createElement("script"); el.src = "/assets/js/biocultura-sticky-nav.js?v=13"; document.body.appendChild(el); };
   const get = (u) => fetch(u).then((r) => { if (!r.ok) throw new Error(u + " " + r.status); return r.json(); });
 
-  Promise.all([get("/data/aviacao.json?v=2"), get("/data/aviacao-portugal.json?v=1"), get("/data/aeroportos.json?v=1"), get("/data/noticias.json").catch(() => []), get("/data/aviacao-rotas-portugal.json?v=1")])
-    .then(([D, PT, AE, NEWS, RT]) => { build(D, PT, AE, RT); atualidade(NEWS); barraFixa(); irParaHash(); })
+  Promise.all([get("/data/aviacao.json?v=3"), get("/data/aviacao-portugal.json?v=1"), get("/data/aeroportos.json?v=1"), get("/data/noticias.json").catch(() => []), get("/data/aviacao-rotas-portugal.json?v=1"), get("/data/aviacao-tempo.json?v=1")])
+    .then(([D, PT, AE, NEWS, RT, TM]) => { build(D, PT, AE, RT, TM); atualidade(NEWS); barraFixa(); irParaHash(); })
     .catch((e) => { console.error(e); barraFixa(); box.innerHTML = `<p class="prose">${tr("Não foi possível carregar os dados desta página.", "The data for this page could not be loaded.")}</p>`; });
 
   const irParaHash = () => {
@@ -58,7 +58,7 @@
     document.querySelectorAll('a[href="#atualidade"]').forEach((a) => (a.hidden = false));
   }
 
-  function build(D, PT, AE, RT) {
+  function build(D, PT, AE, RT, TM) {
     const cols = AE.meta.campos, ix = Object.fromEntries(cols.map((c, i) => [c, i]));
     const AER = new Map(AE.aeroportos.map((a) => [a[ix.iata], a]));
     /* Em inglês o tradutor da página também passa pelos textos dos ficheiros de dados, por isso nada se procura pelo «id»:
@@ -171,8 +171,38 @@
   </div>
 </section>
 
+<section id="tempo">
+  <div class="sec-head"><span class="eyebrow">${tr("6 · Linha do tempo", "6 · Timeline")}</span><h2>${tr("O voo cresceu, e o clima aqueceu: o que isso prova?", "Flying grew and the climate warmed: what does that prove?")}</h2></div>
+  <div class="prose"><p id="tp-txt"></p><p id="tp-aviso"></p></div>
+  <div class="grid2">
+    <figure>
+      <figcaption><span class="t">${tr("Voos e passageiros no mundo", "Flights and passengers worldwide")}</span><span class="d">${tr("Índice, 1970 = 100: partidas de voos e passageiros transportados.", "Index, 1970 = 100: flight departures and passengers carried.")}</span></figcaption>
+      <div class="legend" id="tp-leg-a"></div>
+      <div class="chart" id="tp-a"></div>
+      <div class="src"><span>${tr("Fonte: Banco Mundial, com dados da ICAO (IS.AIR.DPRT e IS.AIR.PSGR); cálculo bioCulture.", "Source: World Bank, with ICAO data (IS.AIR.DPRT and IS.AIR.PSGR); bioCulture calculation.")}</span></div>
+    </figure>
+    <figure>
+      <figcaption><span class="t">${tr("Temperatura global", "Global temperature")}</span><span class="d">${tr("Anomalia anual da temperatura à superfície, °C face a 1951–1980.", "Annual surface temperature anomaly, °C against 1951–1980.")}</span></figcaption>
+      <div class="chart" id="tp-b"></div>
+      <div class="src"><span>${tr("Fonte: NASA GISS, GISTEMP v4.", "Source: NASA GISS, GISTEMP v4.")}</span></div>
+    </figure>
+  </div>
+  <div class="grid2">
+    <figure>
+      <figcaption><span class="t">${tr("Quanto pesa a aviação no CO₂ mundial", "How much aviation weighs in world CO₂")}</span><span class="d">${tr("Percentagem do CO₂ de combustíveis fósseis e uso do solo, desde 1940, sem os efeitos não-CO₂.", "Percentage of CO₂ from fossil fuels and land use, since 1940, without non-CO₂ effects.")}</span></figcaption>
+      <div class="chart" id="tp-c"></div>
+      <div class="src"><span>${tr("Fonte: Our World in Data, a partir de Lee et al., Bergero et al. e Global Carbon Project.", "Source: Our World in Data, from Lee et al., Bergero et al. and the Global Carbon Project.")}</span></div>
+    </figure>
+    <figure>
+      <figcaption><span class="t">${tr("Rotas com passageiros em Portugal", "Routes with passengers in Portugal")}</span><span class="d">${tr("Número de rotas entre os aeroportos principais e os seus parceiros, por ano.", "Number of routes between the main airports and their partners, per year.")}</span></figcaption>
+      <div class="chart" id="tp-d"></div>
+      <div class="src"><span>${tr("Fonte: Eurostat (avia_par_pt); cálculo bioCulture, rotas internas contadas uma vez.", "Source: Eurostat (avia_par_pt); bioCulture calculation, domestic routes counted once.")}</span></div>
+    </figure>
+  </div>
+</section>
+
 <section id="limites">
-  <div class="sec-head"><span class="eyebrow">${tr("6 · Limites e fontes", "6 · Limits and sources")}</span><h2>${tr("O que estes números não dizem", "What these numbers do not tell")}</h2></div>
+  <div class="sec-head"><span class="eyebrow">${tr("7 · Limites e fontes", "7 · Limits and sources")}</span><h2>${tr("O que estes números não dizem", "What these numbers do not tell")}</h2></div>
   <ol class="notes" id="av-notas"></ol>
   <div class="srcs" id="av-fontes"></div>
 </section>`;
@@ -209,6 +239,7 @@
       tr("<strong>Comparação com o comboio.</strong> Quando o destino está na Europa e a menos de 2 000 km, mostramos o fator de comboio internacional da DESNZ como referência. Não significa que exista uma ligação ferroviária direta, e o comboio português pode ter um valor diferente.", "<strong>Comparison with rail.</strong> When the destination is in Europe and under 2,000 km away, we show DESNZ's international rail factor as a reference. It does not mean a direct rail link exists, and Portuguese rail may have a different value."),
       tr("<strong>Voos reais: é uma estimativa, não o combustível medido.</strong> Os voos e passageiros são do Eurostat (aeroportos principais de Portugal e seus parceiros, 2024, nos dois sentidos, voos comerciais de passageiros de todas as companhias; as rotas entre aeroportos portugueses aparecem duas vezes e levam a média). O combustível e o CO₂e saem da distância em linha reta e do fator médio por passageiro da DESNZ, e incluem o percurso completo, também a parte fora de Portugal; o consumo real depende do avião, da ocupação e da rota efetivamente voada.", "<strong>Real flights: an estimate, not measured fuel.</strong> Flights and passengers are from Eurostat (main Portuguese airports and their partners, 2024, both directions, commercial passenger flights of all airlines; routes between Portuguese airports appear twice and are averaged). Fuel and CO₂e come from the straight-line distance and DESNZ's average per-passenger factor, and include the full journey, also the part outside Portugal; real consumption depends on the aircraft, load factor and route actually flown."),
       tr("<strong>A equivalência com o aquecimento.</strong> Compara a energia que o querosene contém com a energia que as casas portuguesas gastam em aquecimento do espaço (Eurostat: 35 mil TJ em 2024, para 4,5 milhões de casas). Em Portugal esse consumo é baixo, por causa do clima ameno e de se aquecer pouco as casas, o que faz as rotas parecerem enormes. Uma casa não aquece com querosene: é só para dar escala.", "<strong>The heating equivalence.</strong> It compares the energy that jet fuel contains with the energy Portuguese homes use for space heating (Eurostat: 35 thousand TJ in 2024, for 4.5 million homes). In Portugal that consumption is low, because of the mild climate and because homes are little heated, which makes the routes look enormous. A home is not heated with jet fuel: it is only to give scale."),
+      tr("<strong>Linha do tempo: o que mede e o que não mede.</strong> Não existe uma série aberta do número de rotas no mundo; usamos as partidas de voos e os passageiros das companhias aéreas registadas em cada país (Banco Mundial, com dados da ICAO, desde 1970; sem dado para 1972, e a linha liga 1971 a 1973) e, para Portugal, o número de rotas nos aeroportos principais (Eurostat, desde 1993, cuja cobertura de aeroportos muda com os anos). Antes de 1970 só temos a quota da aviação no CO₂ (desde 1940, calculada pela Our World in Data). A temperatura é a anomalia global da NASA; não temos uma série longa e comparável para Portugal.", "<strong>Timeline: what it measures and what it does not.</strong> There is no open series for the number of routes worldwide; we use flight departures and passengers of airlines registered in each country (World Bank, with ICAO data, since 1970; no data for 1972, so the line joins 1971 to 1973) and, for Portugal, the number of routes at the main airports (Eurostat, since 1993, whose airport coverage changes over the years). Before 1970 we only have aviation's share of CO₂ (since 1940, calculated by Our World in Data). Temperature is NASA's global anomaly; we do not have a long, comparable series for Portugal."),
       tr("<strong>Quantos aviões passam sobre uma região?</strong> Esta página não o diz. Não usamos contagens de serviços de rastreio comerciais e não encontrámos uma contagem aberta e citável para o espaço aéreo do Centro de Portugal. E sobrevoar não é emitir «ali»: a emissão pertence a quem abastece e voa, e os inventários nacionais seguem em geral o combustível abastecido no país.", "<strong>How many aircraft cross a region?</strong> This page does not say. We do not use counts from commercial tracking services and we did not find an open, citable count for the airspace over central Portugal. And overflying is not emitting “there”: emissions belong to whoever takes on fuel and flies, and national inventories generally follow fuel taken on in the country."),
       tr("<strong>Aeroportos.</strong> A lista (OurAirports) tem os aeroportos com serviço regular e código IATA; pode ter atrasos ou omissões. Os totais mundiais citados são de 2019 (e de 2018 nos efeitos não-CO₂), os anos mais recentes que as fontes citadas cobrem.", "<strong>Airports.</strong> The list (OurAirports) has airports with scheduled service and an IATA code; it may lag or have omissions. World totals cited are for 2019 (and 2018 for non-CO₂ effects), the most recent years the cited sources cover."),
       tr("<strong>Fatores da DESNZ.</strong> Vêm de um organismo oficial do Reino Unido, com licença aberta, e servem para contas de empresas. A ICAO publica um método semelhante com tabelas de combustível por tipo de avião; só consultámos a versão 8 (2015), por isso não a usamos nos cálculos.", "<strong>DESNZ factors.</strong> They come from an official UK body, under an open licence, and are meant for company accounting. ICAO publishes a similar method with fuel tables by aircraft type; we only consulted version 8 (2015), so we do not use it in the calculations.")
@@ -303,6 +334,27 @@
     const topo = ROT.map((r) => ({ r, t: TT(r) })).sort((a, b) => b.t.total - a.t.total).slice(0, 15);
     pilhas(document.getElementById("rt-graf"), topo.map(({ r, t }) => ({ l: nomeRota(r), direto: t.direto / 1000, total: t.total / 1000, t: fmt(t.total / 1000, 0) + " kt", td: fmt(t.direto / 1000, 0) + " kt", tt: fmt(t.total / 1000, 0) + " kt",
       tip: `<div class="r"><span>${tr("Voos por dia", "Flights per day")}</span><b>${fmt(t.voos / 365, 1)}</b></div><div class="r"><span>${tr("Passageiros", "Passengers")}</span><b>${num(t.pax)}</b></div><div class="r"><span>${tr("Combustível", "Fuel")}</span><b>${ton(t.comb)}</b></div><div class="r"><span>${tr("Só diretas", "Direct only")}</span><b>${ton(t.direto)}</b></div><div class="r"><span>${tr("Com não-CO₂", "With non-CO₂")}</span><b>${ton(t.total)}</b></div>` })), "kt");
+
+    /* ---------- linha do tempo ---------- */
+    const mw = TM.mundo, tg = TM.temperatura_global, qc = TM.quota_co2_aviacao_pct, ptT = TM.portugal;
+    const aA = Object.keys(mw.passageiros).map(Number).sort((a, b) => a - b), a0 = aA[0], a1 = aA.at(-1);
+    const idx = (o) => aA.map((y) => (o[y] / o[a0]) * 100);
+    const media = (o, de, ate) => { const v = []; for (let y = de; y <= ate; y++) if (o[y] != null) v.push(o[y]); return v.reduce((a, b) => a + b, 0) / v.length; };
+    const yT1 = Math.max(...Object.keys(tg).map(Number));
+    const subida = media(tg, yT1 - 4, yT1) - media(tg, a0, a0 + 4);
+    const aT = Object.keys(tg).map(Number).filter((y) => y >= a0).sort((a, b) => a - b);
+    const aQ = Object.keys(qc).map(Number).sort((a, b) => a - b), aP = Object.keys(ptT).map(Number).sort((a, b) => a - b);
+    document.getElementById("tp-txt").innerHTML = tr(
+      `Desde ${a0}, as partidas de voos no mundo multiplicaram-se por <strong>${fmt(mw.partidas[a1] / mw.partidas[a0], 1)}</strong> e os passageiros por <strong>${fmt(mw.passageiros[a1] / mw.passageiros[a0], 1)}</strong> (até ${a1}); cada voo leva, em média, mais passageiros. No mesmo período, a temperatura global subiu cerca de <strong>${fmt(subida, 1)} °C</strong> (média de ${yT1 - 4}–${yT1} contra ${a0}–${a0 + 4}). Em Portugal, o número de rotas nos aeroportos principais passou de <strong>${ptT[aP[0]].rotas}</strong> em ${aP[0]} para <strong>${ptT[2019].rotas}</strong> em 2019, caiu para ${ptT[2020].rotas} em 2020 e chegou a <strong>${ptT[aP.at(-1)].rotas}</strong> em ${aP.at(-1)}.`,
+      `Since ${a0}, flight departures worldwide have multiplied by <strong>${fmt(mw.partidas[a1] / mw.partidas[a0], 1)}</strong> and passengers by <strong>${fmt(mw.passageiros[a1] / mw.passageiros[a0], 1)}</strong> (to ${a1}); each flight carries more passengers on average. Over the same period, global temperature rose by about <strong>${fmt(subida, 1)} °C</strong> (average of ${yT1 - 4}–${yT1} against ${a0}–${a0 + 4}). In Portugal, the number of routes at the main airports went from <strong>${ptT[aP[0]].rotas}</strong> in ${aP[0]} to <strong>${ptT[2019].rotas}</strong> in 2019, fell to ${ptT[2020].rotas} in 2020 and reached <strong>${ptT[aP.at(-1)].rotas}</strong> in ${aP.at(-1)}.`);
+    document.getElementById("tp-aviso").innerHTML = tr(
+      `<strong>Mas as duas curvas a subir não provam que uma causou a outra</strong>: quaisquer duas séries que crescem ao longo do tempo parecem ligadas. A aviação pesa cerca de <strong>${fmt(qc[2019], 1)}%</strong> do CO₂ mundial (2019, contra ${fmt(qc[1940], 1)}% em 1940) e é responsável por cerca de <strong>4% do aquecimento</strong> até hoje (Klöwer et al., 2021, citado pela Our World in Data). O resto vem sobretudo da queima de combustíveis fósseis em geral. Estes gráficos servem para ver as escalas, não para atribuir causa.`,
+      `<strong>But two rising curves do not prove that one caused the other</strong>: any two series that grow over time look linked. Aviation accounts for about <strong>${fmt(qc[2019], 1)}%</strong> of world CO₂ (2019, against ${fmt(qc[1940], 1)}% in 1940) and for about <strong>4% of warming</strong> to date (Klöwer et al., 2021, cited by Our World in Data). The rest comes mostly from burning fossil fuels in general. These charts are for seeing scales, not for assigning cause.`);
+    legend(document.getElementById("tp-leg-a"), [{ n: tr("Partidas de voos", "Flight departures"), c: COR_D }, { n: tr("Passageiros", "Passengers"), c: "#2a78d6" }]);
+    line(document.getElementById("tp-a"), { x: aA, series: [{ n: tr("Partidas de voos", "Flight departures"), c: COR_D, v: idx(mw.partidas) }, { n: tr("Passageiros", "Passengers"), c: "#2a78d6", v: idx(mw.passageiros) }], zero: false, yf: (v) => fmt(v, 0), tf: (se, i) => fmt(se.v[i], 0), aria: tr("Índice de voos e passageiros", "Index of flights and passengers"), table: true, tableEvery: 10 });
+    line(document.getElementById("tp-b"), { x: aT, series: [{ n: tr("Anomalia (°C)", "Anomaly (°C)"), c: "#a43a32", v: aT.map((y) => tg[y]) }], zero: true, yf: (v) => fmt(v, 1), tf: (se, i) => fmt(se.v[i], 2) + " °C", aria: tr("Temperatura global", "Global temperature"), table: true, tableEvery: 10 });
+    line(document.getElementById("tp-c"), { x: aQ, series: [{ n: tr("Quota da aviação (%)", "Aviation share (%)"), c: COR_D, v: aQ.map((y) => qc[y]) }], zero: true, yf: (v) => fmt(v, 1) + "%", tf: (se, i) => fmt(se.v[i], 2) + "%", aria: tr("Quota da aviação no CO₂", "Aviation share of CO₂"), table: true, tableEvery: 10 });
+    line(document.getElementById("tp-d"), { x: aP, series: [{ n: tr("Rotas com passageiros", "Routes with passengers"), c: "#1baf7a", v: aP.map((y) => ptT[y].rotas) }], zero: true, yf: (v) => fmt(v, 0), tf: (se, i) => fmt(se.v[i], 0) + tr(" rotas", " routes"), aria: tr("Rotas em Portugal", "Routes in Portugal"), table: true, tableEvery: 5 });
 
     /* ---------- calculadora ---------- */
     const de = document.getElementById("av-de"), para = document.getElementById("av-para"), res = document.getElementById("av-res");
