@@ -28,6 +28,8 @@
     const normalize = (value) => String(value || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
     const el = (id) => document.getElementById(id);
 
+    el("news-nav-filtros").textContent = tr("Filtros ↓", "Filters ↓");
+    el("news-nav-lista").textContent = tr("Notícias ↓", "News ↓");
     // «Voltar»: à página de onde se veio (se for do próprio site); sem histórico, à página inicial.
     const voltar = el("news-back");
     if (voltar) voltar.addEventListener("click", (event) => {
