@@ -89,7 +89,7 @@
             async function loadData() {
                 try {
                     translatePressureShell();
-                    const [response, architectureResponse] = await Promise.all([fetch("/data/vetores_pressao_global.json?v=3"), fetch("/data/pressure-systems-global.json?v=1")]);
+                    const [response, architectureResponse] = await Promise.all([fetch("/data/vetores_pressao_global.json?v=3"), fetch("/data/pressure-systems-global.json?v=2")]);
                     if (!response.ok || !architectureResponse.ok) throw new Error(`HTTP ${response.status}/${architectureResponse.status}`);
                     const [data, architecture] = await Promise.all([response.json(), architectureResponse.json()]);
                     if (!data.destaques || !data.series || !data.vetores) {

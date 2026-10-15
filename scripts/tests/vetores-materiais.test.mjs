@@ -1,0 +1,57 @@
+import { readFileSync, existsSync } from 'node:fs';
+import assert from 'node:assert/strict';
+
+// Páginas «Ambiente construído» e «Moda e têxteis» (energia-materiais.js): dados com fontes, posições fixas, séries do Eurostat,
+// fotografias das secções e registo nos hubs.
+const js = readFileSync('assets/js/pages/energia-materiais.js', 'utf8');
+const lerJ = (f) => JSON.parse(readFileSync(f, 'utf8'));
+const fotos = lerJ('data/fotos-capitulos.json');
+const config = lerJ('config/paginas.json').paginas;
+const hub = readFileSync('observatorio/pressoes-humanas.html', 'utf8');
+const sistemas = lerJ('data/pressure-systems-global.json').systems;
+
+const PAGINAS = {
+  'ambiente-construido': { vetor: 'construcao', dados: 'ambiente-construido', pt: 'ambiente-construido-portugal', co2: ['construcao', 'minerais_nao_metalicos'], res: 'W121',
+    posicoes: { 0: 'Agregados', 2: 'Betão', 5: 'Madeira', 7: 'Isolamentos', 8: 'Metais' }, sistema: 'built' },
+  'moda-texteis': { vetor: 'moda', dados: 'moda-texteis', pt: 'moda-texteis-portugal', co2: ['texteis_vestuario_couro'], res: 'W076',
+    posicoes: { 1: 'Alumínio', 4: 'Plástico', 5: 'Vidro' }, sistema: 'fashion' }
+};
+
+for (const [slug, P] of Object.entries(PAGINAS)) {
+  const D = lerJ(`data/${P.dados}.json`), PT = lerJ(`data/${P.pt}.json`);
+  const html = readFileSync(`energia/${slug}.html`, 'utf8');
+
+  // O tradutor do inglês passa pelos textos dos ficheiros de dados: a página procura materiais e fontes pela posição.
+  for (const [i, inicio] of Object.entries(P.posicoes)) assert(D.materiais[i].pt.startsWith(inicio), `${slug}: materiais[${i}] devia ser «${inicio}»`);
+  for (const m of D.materiais) {
+    assert(m.pt && m.en && m.primaria > 0, `${slug}: material incompleto`);
+    for (const k of ['reutilizado', 'reciclado']) assert(m[k] === null || (m[k] > 0 && m[k] <= m.primaria), `${slug}/${m.pt}: ${k} fora do intervalo`);
+  }
+  for (const f of D.fontes) { assert(/^https:\/\//.test(f.url)); for (const k of ['nome', 'nome_en', 'usa_pt', 'usa_en']) assert(f[k], `${slug}: fonte sem ${k}`); }
+  if (P.vetor === 'moda') {
+    assert(D.roupa.nova === 22310 && D.roupa.reutilizada === 152.25, 'fatores de roupa da DESNZ 2025');
+    for (const t of D.mundo) assert(t.pt && t.en && t.nota_pt && t.nota_en && D.fontes[t.fonte]);
+  } else {
+    assert.equal(D.materiais[8].primaria, 3824.09335); assert.equal(D.materiais[2].primaria, 118.79306);
+    assert(D.mundo[0].valor === '37' && D.fontes[D.mundo[0].fonte]);
+  }
+
+  // Eurostat: 1995–2024 sem falhas; resíduos por pessoa de 2010 em diante para Portugal e UE-27.
+  const anos = Object.keys(PT.co2_kt.total_economia_familias).map(Number).sort((a, b) => a - b);
+  assert.equal(anos[0], 1995); assert.equal(anos.length, anos.at(-1) - 1995 + 1);
+  for (const k of P.co2) for (const y of anos) assert(PT.co2_kt[k][y] > 0 && PT.co2_kt[k][y] < PT.co2_kt.total_economia_familias[y], `${slug}/${k}: série incoerente em ${y}`);
+  assert.equal(PT.meta.codigo_residuos, P.res);
+  for (const geo of ['PT', 'EU27_2020']) for (const y of [2010, 2022]) assert(PT.residuos_kg_por_pessoa[geo][y] > 0, `${slug}: sem resíduos ${geo} ${y}`);
+  if (P.vetor === 'construcao') for (const geo of ['PT', 'EU27_2020']) assert(PT.residuos_totais_construcao[geo].quota_pct > 5, 'quota de resíduos da construção');
+
+  // Página: scripts, tema, dados e foto do topo sem a marca bioCulture; secções com foto desenhadas pelo script.
+  for (const t of [`data-vetor="${P.vetor}"`, 'energia-materiais.js', 'energia-materiais.css', 'relatorio-dados.css', 'topic-reading.css', `data-pagina="${slug}"`, 'data-foto-slot="hero"', 'biocultura-graficos.js']) assert(html.includes(t), `${slug}: falta ${t}`);
+  assert(/class="observatory-visual"\s+data-no-signature/.test(html), `${slug}: o topo leva data-no-signature`);
+  assert(existsSync(`images/partilha/energia-${slug}.jpg`) && existsSync(`images/${slug}/miniatura.webp`) && existsSync(`images/${slug}/hero.webp`));
+  for (const id of Object.keys(fotos[slug]).filter((k) => k !== 'hero')) assert(js.includes(`<section id="${id}">`), `${slug}: a secção ${id} não existe`);
+  assert(config[`energia/${slug}.html`], `${slug}: sem registo em config/paginas.json`);
+  assert(hub.includes(`/energia/${slug}.html`) && new RegExp(`class="hub-thumb"\\s+data-no-signature\\s+style="[^"]*${slug}\\/miniatura`).test(hub), `${slug}: cartão do hub`);
+  const sis = sistemas.find((s) => s.id === P.sistema);
+  assert.equal(sis.status, 'live'); assert.equal(sis.href, `/energia/${slug}.html`);
+}
+console.log('Ambiente construído e Moda e têxteis validados: fatores DESNZ, séries do Eurostat, fotografias e registo nos hubs.');
