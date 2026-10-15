@@ -44,6 +44,7 @@ CATEGORIES = {
     "mineracao": ("Mineração", ["mineracao", "mining", "litio", "lithium", "minas", "extracao mineral"]),
     "impacto-digital": ("Impacto Digital & IA", ["inteligencia artificial", "artificial intelligence", "data center", "centro de dados", "digitalizacao"]),
     "pecuaria": ("Pecuária", ["pecuaria", "livestock", "suinicultura", "aviario", "gado", "metano"]),
+    "aviacao": ("Aviação", ["aviacao", "aviation", "aeroporto*", "airport*", "airline*", "companhia aerea", "companhias aereas", "voo*", "flight", "aeronave*", "aircraft", "combustivel de aviacao", "jet fuel", "sustainable aviation fuel", "contrail*", "rastos de condensacao", "refueleu", "corsia", "trafego aereo", "air traffic", "viagem aerea", "viagens aereas", "air travel"]),
     "enologia": ("Enologia", ["vinha", "vinho", "viticultura", "vineyard", "wine"]),
     "agricultura": ("Agricultura biológica", ["agricultura", "agriculture", "organic farming", "agroecolog*", "crop", "semente", "seed"]),
     "oceanos": ("Oceanos", ["oceano", "ocean", "marinho", "marine", "sea level", "algal", "eutrofiza*"]),
@@ -158,7 +159,8 @@ def classify(text: str) -> list[tuple[int, str, str]]:
     for category_id, (label, words) in CATEGORIES.items():
         count = sum(1 for word in words if has_word(word, value))
         matches.append((count, category_id, label))
-    return sorted((m for m in matches if m[0] > 0), reverse=True)
+    # Em caso de empate, a aviação ganha às categorias gerais («contrails» e «aquecimento» não são só clima).
+    return sorted((m for m in matches if m[0] > 0), key=lambda m: (m[0], m[1] == "aviacao", m[1]), reverse=True)
 
 
 def distinct_terms(text: str) -> int:

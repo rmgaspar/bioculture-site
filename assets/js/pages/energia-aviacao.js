@@ -28,8 +28,8 @@
   const barraFixa = () => { const el = document.createElement("script"); el.src = "/assets/js/biocultura-sticky-nav.js?v=13"; document.body.appendChild(el); };
   const get = (u) => fetch(u).then((r) => { if (!r.ok) throw new Error(u + " " + r.status); return r.json(); });
 
-  Promise.all([get("/data/aviacao.json?v=1"), get("/data/aviacao-portugal.json?v=1"), get("/data/aeroportos.json?v=1")])
-    .then(([D, PT, AE]) => { build(D, PT, AE); barraFixa(); irParaHash(); })
+  Promise.all([get("/data/aviacao.json?v=1"), get("/data/aviacao-portugal.json?v=1"), get("/data/aeroportos.json?v=1"), get("/data/noticias.json").catch(() => [])])
+    .then(([D, PT, AE, NEWS]) => { build(D, PT, AE); atualidade(NEWS); barraFixa(); irParaHash(); })
     .catch((e) => { console.error(e); barraFixa(); box.innerHTML = `<p class="prose">${tr("Não foi possível carregar os dados desta página.", "The data for this page could not be loaded.")}</p>`; });
 
   const irParaHash = () => {
@@ -40,6 +40,23 @@
 
   const kgTxt = (kg) => (kg >= 1000 ? fmt(kg / 1000, 1) + " t" : fmt(Math.round(kg)) + " kg");
   const mt = (kt) => fmt(kt / 1000, 1);
+
+  /* Notícias sobre aviação: as aprovadas em data/noticias.json cujo título fala do tema (palavras do tema «aviacao» no
+     runtime) ou cuja categoria é «aviacao». Sem nenhuma, o bloco e a ligação da barra ficam escondidos. */
+  function atualidade(items) {
+    const News = window.BioCultureNews, topic = News?.topics?.aviacao, grid = document.getElementById("av-news");
+    if (!News || !topic || !grid || !Array.isArray(items)) return;
+    const selecionadas = News.rank(items).filter((n) => n.estado !== "proposta" && News.about(n, topic.words, topic.categories)).slice(0, 6);
+    if (!selecionadas.length) return;
+    grid.innerHTML = selecionadas.map((n) => News.cardHtml(n)).join("");
+    grid.querySelectorAll(".hub-latest-thumb").forEach((img) => img.addEventListener("error", () => {
+      if (img.dataset.fallbackApplied === "true") return;
+      img.dataset.fallbackApplied = "true";
+      img.src = "/images/noticias-sem-imagem.webp";
+    }));
+    document.getElementById("atualidade").hidden = false;
+    document.querySelectorAll('a[href="#atualidade"]').forEach((a) => (a.hidden = false));
+  }
 
   function build(D, PT, AE) {
     const cols = AE.meta.campos, ix = Object.fromEntries(cols.map((c, i) => [c, i]));

@@ -1,5 +1,6 @@
 import { readFileSync, existsSync } from 'node:fs';
 import vm from 'node:vm';
+import { spawnSync } from 'node:child_process';
 import assert from 'node:assert/strict';
 
 // Página «Aviação» (energia/aviacao.html): dados com fontes, fatores coerentes, cálculo de distância e séries do Eurostat.
@@ -8,6 +9,7 @@ const PT = JSON.parse(readFileSync('data/aviacao-portugal.json', 'utf8'));
 const AE = JSON.parse(readFileSync('data/aeroportos.json', 'utf8'));
 const html = readFileSync('energia/aviacao.html', 'utf8');
 const js = readFileSync('assets/js/pages/energia-aviacao.js', 'utf8');
+const hubHtml = readFileSync('observatorio/pressoes-humanas.html', 'utf8');
 
 // O tradutor do inglês passa também pelos textos dos ficheiros de dados: a página procura classes e fontes pela posição.
 assert.deepEqual(D.fatores.classes.map((c) => c.id), ['media', 'economica', 'premium', 'executiva', 'primeira']);
@@ -62,4 +64,27 @@ assert(/class="observatory-visual"\s+data-no-signature/.test(html), 'o topo da p
 assert(/class="hub-thumb"\s+data-no-signature\s+style="[^"]*aviacao\/miniatura/.test(readFileSync('observatorio/pressoes-humanas.html', 'utf8')), 'o cartão do hub leva data-no-signature');
 assert(JSON.parse(readFileSync('config/paginas.json', 'utf8')).paginas['energia/aviacao.html']);
 assert(readFileSync('observatorio/pressoes-humanas.html', 'utf8').includes('/energia/aviacao.html'), 'o hub dos vetores liga à página');
+// Ligação às notícias: categoria no pipeline, fontes, tema e ligação no runtime, filtro da página de notícias, hub e bloco da página.
+const runtime = readFileSync('assets/js/biocultura-i18n-runtime.js', 'utf8');
+const topics = JSON.parse(runtime.match(/topics: (\{.*\}),?\n/)[1]);
+assert(topics.aviacao && topics.aviacao.categories[0] === 'aviacao' && topics.aviacao.words.includes('contrail*') && topics.aviacao.words.includes('SAF'), 'tema «aviacao» no runtime');
+assert(runtime.includes('aviacao: { read: [["/energia/aviacao.html"') && runtime.includes('aviacao: "aviacao"'), 'ligação «Continuar no bioCulture» e tema principal');
+assert(readFileSync('assets/js/pages/noticias.js', 'utf8').includes('["aviacao", "Aviação", "Aviation"]'), 'filtro por tema na página de notícias');
+assert(hubHtml.includes('data-news-categories="energia,impacto-digital,mineracao,pecuaria,aviacao"'), 'o hub junta as notícias de aviação');
+assert(html.includes('id="atualidade"') && html.includes('news-cards.css') && js.includes('BioCultureNews'), 'bloco de notícias na página');
+const fontes = JSON.parse(readFileSync('config/noticias_fontes.json', 'utf8')).fontes.map((f) => f.id);
+for (const id of ['easa', 'icct', 'transport-environment']) assert(fontes.includes(id), `fonte de notícias em falta: ${id}`);
+const py = spawnSync('python3', ['-c', `
+import sys, json
+sys.path.insert(0, 'scripts/noticias')
+import atualizar as a
+casos = {"EU sustainable aviation fuel supply exceeds 2025 ReFuelEU Aviation target": True,
+ "Tackling contrails could avoid 10 years of aviation-related climate warming": True,
+ "EU takes half-hearted step towards taxing international flights": True,
+ "Oferta de combustível sustentável de aviação na União Europeia supera meta": True,
+ "Flightless birds are declining on islands, study finds": False,
+ "Wildfire smoke worsens air quality across Europe": False}
+print(json.dumps({t: bool(a.classify(t)) and a.classify(t)[0][1] == "aviacao" for t in casos} == casos))
+`], { encoding: 'utf8' });
+if (!py.error) assert.equal(py.stdout.trim(), 'true', 'classificação de notícias de aviação: ' + py.stderr);
 console.log('Aviação validada: fatores, fontes, aeroportos, cálculo de distância e série de Portugal.');

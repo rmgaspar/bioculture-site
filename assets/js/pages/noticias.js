@@ -21,7 +21,7 @@
     const THEMES = [
         ["agua", "Água", "Water"], ["ar", "Ar", "Air"], ["solo", "Solo", "Soil"], ["biodiversidade", "Biodiversidade", "Biodiversity"],
         ["agricultura", "Agricultura e alimentação", "Farming and food"], ["energia", "Energia", "Energy"], ["mineracao", "Mineração", "Mining"],
-        ["impacto-digital", "Impacto digital e IA", "Digital impact and AI"], ["pecuaria", "Pecuária", "Livestock"],
+        ["impacto-digital", "Impacto digital e IA", "Digital impact and AI"], ["pecuaria", "Pecuária", "Livestock"], ["aviacao", "Aviação", "Aviation"],
         ["clima", "Clima e oceanos", "Climate and oceans"], ["terra", "Território e outros", "Territory and other"],
     ];
     const SCOPES = [["portugal", "Portugal", "Portugal"], ["mundo", "Mundo", "World"]];

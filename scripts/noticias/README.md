@@ -35,6 +35,12 @@ primárias e científicas recebem maior autoridade editorial; jornalismo de
 referência é usado para atualidade e contexto. Google News deixa de ser a via
 normal sempre que existe um RSS/Atom direto e estável.
 
+**Aviação.** A categoria `aviacao` (palavras em `CATEGORIES`, em `atualizar.py`) apanha as notícias sobre voos,
+aeroportos, combustível sustentável de aviação, rastos de condensação e CORSIA nas fontes gerais, e três fontes
+dedicadas (`easa`, `icct`, `transport-environment`, esta via Google Notícias restrito ao site) alimentam a fila.
+O tema `aviacao` do runtime (`topics`) decide o que aparece em «Atualidade» na página da Aviação e no hub dos
+vetores; as publicações técnicas da EASA (regras, acordos de trabalho) estão em `bloquear_titulos`.
+
 **Fontes.** A lista está organizada por organização: ONU (Notícias, PNUA, FAO, UNFCCC,
 UNCCD, UNDRR), WMO, IPCC, IPBES, IUCN, IEA, IRENA, EEA, Copernicus, Comissão Europeia,
 NASA, NOAA, ESA, Nature, Science e jornalismo de referência. Quando uma organização não
