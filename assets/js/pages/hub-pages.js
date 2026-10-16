@@ -6,7 +6,7 @@
         script.src = "/assets/js/bioculture-news-return.js?v=2";
         document.head.appendChild(script);
     }
-    fetch("/sidebar-content.html?v=24")
+    fetch("/sidebar-content.html?v=25")
         .then((response) => response.ok ? response.text() : "")
         .then((html) => { if (html) document.getElementById("sidebar").innerHTML = html; })
         .catch(() => {});

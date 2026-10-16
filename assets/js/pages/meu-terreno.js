@@ -137,7 +137,7 @@
     document.querySelectorAll("[data-en-label]").forEach((n) => n.setAttribute("aria-label", n.dataset.enLabel));
     document.title = "My plot — bioCulture";
   }
-  fetch("/sidebar-content.html?v=24").then((r) => (r.ok ? r.text() : "")).then((h) => { const sb = document.getElementById("sidebar"); if (h && sb) sb.innerHTML = h; }).catch(() => {});
+  fetch("/sidebar-content.html?v=25").then((r) => (r.ok ? r.text() : "")).then((h) => { const sb = document.getElementById("sidebar"); if (h && sb) sb.innerHTML = h; }).catch(() => {});
   const barraFixa = () => { const el = document.createElement("script"); el.src = "/assets/js/biocultura-sticky-nav.js?v=17"; document.body.appendChild(el); };
   const langQ = new URLSearchParams(location.search).get("lang");
   const comLang = (href) => (langQ ? href + (href.includes("?") ? "&" : "?") + "lang=" + encodeURIComponent(langQ) : href);
@@ -280,6 +280,7 @@
     tr("<strong>As camadas do IFAP cobrem o continente.</strong> Nos Açores, na Madeira e fora de Portugal tens o tempo e o solo, mas não as parcelas, o uso do solo nem o fogo.", "<strong>IFAP layers cover mainland Portugal.</strong> In the Azores, Madeira and abroad you get weather and soil, but not parcels, land use or fire hazard."),
     tr("<strong>Privacidade.</strong> O desenho e os terrenos guardados ficam só no teu browser. Para os dados, o browser pede às fontes abaixo o ponto ou a zona que vês (o IFAP, o ISRIC, a Open-Meteo, o OpenStreetMap, a DGT, o Earth Search e a AWS); nós não recebemos nada.", "<strong>Privacy.</strong> The drawing and saved plots stay in your browser only. For the data, your browser asks the sources below for the point or area you are viewing (IFAP, ISRIC, Open-Meteo, OpenStreetMap, DGT, Earth Search and AWS); we receive nothing."),
     tr("<strong>O NDVI é do satélite, com pixéis de 10 m.</strong> Só contam os pixéis que a máscara da ESA dá como limpos (sem nuvens, sombras nem neve); por isso há semanas sem imagem, e um terreno muito pequeno fica com poucos pixéis. Não é o mesmo que a saúde da cultura: mostra o verde, e o verde muda com a estação e com a cultura.", "<strong>NDVI comes from the satellite, with 10 m pixels.</strong> Only pixels the ESA mask calls clear (no clouds, shadows or snow) count; so some weeks have no image, and a very small plot gets few pixels. It is not the same as crop health: it shows greenness, and greenness changes with the season and the crop."),
+    tr(`<strong>Termos técnicos.</strong> NDVI, pixel, ET₀, balanço hídrico, textura ou pH estão explicados no <a href="${comLang("/glossario.html")}">Glossário</a>.`, `<strong>Technical terms.</strong> NDVI, pixel, ET₀, water balance, texture or pH are explained in the <a href="${comLang("/glossario.html")}">Glossary</a>.`),
     tr("<strong>As imagens são lidas no teu browser.</strong> Pedimos só a janela do terreno às bandas vermelha e infravermelha de cada imagem (ficheiros públicos na AWS) e calculamos aqui o índice; não passa por nenhum servidor nosso. Contém dados modificados do Copernicus Sentinel.", "<strong>Images are read in your browser.</strong> We ask only for the plot’s window of each image’s red and near-infrared bands (public files on AWS) and compute the index here; nothing goes through a server of ours. Contains modified Copernicus Sentinel data.")
   ].map((t) => `<li>${t}</li>`).join("");
 
