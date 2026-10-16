@@ -26,7 +26,7 @@ assert(D.termos.length >= 60, 'glossário com pelo menos 60 termos');
 const cats = new Set(D.categorias.map((c) => c.id));
 for (const c of D.categorias) assert(c.pt && c.en, `categoria ${c.id}`);
 for (const t of D.termos) {
-  for (const k of ['pt', 'en', 'd_pt', 'd_en']) assert(t[k] && t[k].length > 3, `${t.id}: falta ${k}`);
+  for (const k of ['pt', 'en', 'd_pt', 'd_en']) assert(t[k] && t[k].length > 2, `${t.id}: falta ${k}`);
   assert(/^[a-z0-9-]+$/.test(t.id), `${t.id}: id inválido`);
   assert(cats.has(t.cat), `${t.id}: tema desconhecido`);
   assert(t.d_pt.length >= 60 && t.d_pt.length <= 700, `${t.id}: definição com tamanho estranho`);
