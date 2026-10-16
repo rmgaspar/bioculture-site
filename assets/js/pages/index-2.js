@@ -41,34 +41,8 @@
                 ).join("");
             }
 
-            function showToday(regions, species) {
-                const months = isEnglish ? ["January","February","March","April","May","June","July","August","September","October","November","December"] : [
-                        "janeiro",
-                        "fevereiro",
-                        "março",
-                        "abril",
-                        "maio",
-                        "junho",
-                        "julho",
-                        "agosto",
-                        "setembro",
-                        "outubro",
-                        "novembro",
-                        "dezembro",
-                    ],
-                    now = new Date();
-                el("month").textContent = months[now.getMonth()];
-
-                const saved = localStorage.getItem("biocultura_region"),
-                    region = regions.find((x) => String(x.id) === String(saved));
-
-                if (region) {
-                    el("place").firstChild.textContent = `${region.titulo} · `;
-                    el("place-copy").textContent =
-                        `${isEnglish ? "A starting point for connecting calendars, species and pressures with" : "Um ponto de entrada para relacionar calendário, espécies e pressões com"} ${
-                            region.concelho || region.regiao || (isEnglish ? "the selected territory" : "o território selecionado")
-                        }.`;
-                }
+            function showToday(species) {
+                const now = new Date();
 
                 // Só entra no sorteio diário quem tem uma síntese real (lista pré-calculada em
                 // scripts/gerar-especies.mjs). Em inglês, a ficha só serve se já estiver traduzida.
@@ -202,21 +176,18 @@
                             "biodiversity-global-catalogue",
                             "crops-global-summary",
                             "grape-varieties-global",
-                            "bioregioes",
                             "noticias",
                         ],
                         data = await Promise.all(names.map((n) =>
-                            n === "bioregioes"
-                                ? window.BioCultureRegion.load({ fallback: false })
-                                : fetch(`/data/${n}.json`).then((r) => {
-                                    if (!r.ok) throw Error(n);
-                                    return r.json();
-                                })
+                            fetch(`/data/${n}.json`).then((r) => {
+                                if (!r.ok) throw Error(n);
+                                return r.json();
+                            })
                         ));
 
                     showPulse(data[1], data[2], data[3]);
-                    showToday(data[4], data[0]);
-                    showNews(data[5]);
+                    showToday(data[0]);
+                    showNews(data[4]);
 
                     el("atlas-container").innerHTML = atlasContent();
                     showDestaques();

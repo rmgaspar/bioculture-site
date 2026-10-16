@@ -23,7 +23,14 @@
     const localPh = (region) => parseFloat(region?.biomas?.ph_solo);
 
     const list = (rows) => `<ul>${rows.join("") || `<li class="empty">${tr("Sem entradas claras para este mês.", "No clear entries for this month.")}</li>`}</ul>`;
-    const crop = ([id, item], field) => `<li><a href="/calendario/horticola-detalhe.html?id=${encodeURIComponent(id)}"><strong>${esc(item.nome)}</strong><small>${esc(item[field] || "")}</small></a></li>`;
+
+    const MONTHS = [["janeiro", "January"], ["fevereiro", "February"], ["março", "March"], ["abril", "April"], ["maio", "May"], ["junho", "June"],
+        ["julho", "July"], ["agosto", "August"], ["setembro", "September"], ["outubro", "October"], ["novembro", "November"], ["dezembro", "December"]];
+    const COR = { sow: "#6b8f47", harvest: "#a66f50", watch: "#3f7373", tips: "#526b57" };
+    const sob = (label, cor, body) => `<article style="--c:${cor}"><small class="mp-label">${label}</small>${body}</article>`;
+    // Culturas com fotografia redonda (como no resto do site); sem fotografia fica a inicial.
+    const foto = (item) => `<span class="mp-foto" data-initial="${esc(String(item.nome || "?").charAt(0))}">${item.imagem && item.imagem !== "-" ? `<img src="${esc(item.imagem)}" alt="" loading="lazy" onerror="this.remove()">` : ""}</span>`;
+    const cultura = ([id, item], field) => `<li><a href="/calendario/horticola-detalhe.html?id=${encodeURIComponent(id)}">${foto(item)}<span><strong>${esc(item.nome)}</strong>${item[field] ? `<small>${esc(item[field])}</small>` : ""}</span></a></li>`;
 
     function render(crops, practices, pests, region) {
         const now = new Date();
@@ -39,25 +46,17 @@
                 `Indicative windows for mainland Portugal, ordered by the soil pH of ${region.titulo}${Number.isFinite(ph) ? ` (${region.biomas.ph_solo})` : ""}. Your plot's microclimate, altitude and exposure rule.`)
             : tr("Janelas indicativas para Portugal continental. Escolhe a tua localidade no menu para ordenar pelo pH do solo e ver as invasoras da tua zona.",
                 "Indicative windows for mainland Portugal. Choose your locality in the menu to order by soil pH and see invasive plants in your area.");
-        // Bloco verde do «Hoje»: a época e as culturas deste mês em fotografia (as listas completas estão em baixo).
-        const season = document.getElementById("local-season");
-        if (season) {
-            const bubble = ([id, item]) => `<a class="season-crop" href="/calendario/horticola-detalhe.html?id=${encodeURIComponent(id)}"><span class="season-photo" data-initial="${esc(String(item.nome || "?").charAt(0))}">${
-                item.imagem && item.imagem !== "-" ? `<img src="${esc(item.imagem)}" alt="" loading="lazy" onerror="this.remove()">` : ""
-            }</span><span class="season-name">${esc(item.nome)}</span></a>`;
-            const group = (label, rows) => rows.length ? `<div class="season-group"><b>${label}</b><div class="season-row">${rows.map(bubble).join("")}</div></div>` : "";
-            season.innerHTML = `<span class="season-chip season-${key}">${esc(tr(NAMES[key][0], NAMES[key][1]))}</span>${group(tr("Semear agora", "Sow now"), sow)}${group(tr("Colher agora", "Harvest now"), harvest)}`;
-            season.hidden = !sow.length && !harvest.length;
-        }
+        // Linha por baixo do título: onde, quando e o que a estação pede (uma só vez; antes repetia-se em três sítios).
+        const linha = document.getElementById("today-line");
+        if (linha) linha.innerHTML = `<strong>${esc(region?.titulo || "Portugal")} · ${esc(tr(MONTHS[month][0], MONTHS[month][1]))} · ${esc(tr(NAMES[key][0], NAMES[key][1]))}</strong> — ${esc(NOTES[key]())}`;
         const root = target();
         if (!root) return;
         root.innerHTML = `
-            <p class="month-plan-note"><strong>${esc(tr(NAMES[key][0], NAMES[key][1]))}:</strong> ${esc(NOTES[key]())}</p>
             <div class="month-plan-grid">
-                <article><small>${tr("Semear", "Sow")}</small>${list(sow.map((entry) => crop(entry, "sementeira")))}</article>
-                <article><small>${tr("Colher", "Harvest")}</small>${list(harvest.map((entry) => crop(entry, "colheita")))}</article>
-                <article><small>${tr("Vigiar", "Watch")}</small>${list(watch.map((item) => `<li><a href="/ecossistemas/especie-detalhe.html?id=${encodeURIComponent(item.id)}"><strong>${esc(item.nome_comum)}</strong><small>${esc(item.tipo || "")}</small></a></li>`))}${invasive.length ? `<p class="month-plan-local">${tr("Invasoras na tua zona", "Invasive plants in your area")}: ${esc(invasive.join(", "))}</p>` : ""}</article>
-                <article><small>${tr("Práticas do mês", "This month's practices")}</small>${list(tips.map((item) => `<li><a href="/services/servicos.html#tecnica-${encodeURIComponent(item.id)}"><strong>${esc(item.titulo)}</strong><small>${esc(item.categoria || "")}</small></a></li>`))}</article>
+                ${sob(tr("Semear agora", "Sow now"), COR.sow, list(sow.map((entry) => cultura(entry, "sementeira"))))}
+                ${sob(tr("Colher agora", "Harvest now"), COR.harvest, list(harvest.map((entry) => cultura(entry, "colheita"))))}
+                ${sob(tr("Vigiar", "Watch"), COR.watch, list(watch.map((item) => `<li><a href="/ecossistemas/especie-detalhe.html?id=${encodeURIComponent(item.id)}"><span><strong>${esc(item.nome_comum)}</strong><small>${esc(item.tipo || "")}</small></span></a></li>`)) + (invasive.length ? `<p class="month-plan-local">${tr("Invasoras na tua zona", "Invasive plants in your area")}: ${esc(invasive.join(", "))}</p>` : ""))}
+                ${sob(tr("Práticas do mês", "This month's practices"), COR.tips, list(tips.map((item) => `<li><a href="/services/servicos.html#tecnica-${encodeURIComponent(item.id)}"><span><strong>${esc(item.titulo)}</strong><small>${esc(item.categoria || "")}</small></span></a></li>`)))}
             </div>
             <p class="month-plan-caption">${esc(place)} <a href="/calendario/calendario.html">${tr("Ver o calendário completo →", "See the full calendar →")}</a> <a href="/calendario/conhecimento-cuidar.html#problemas">${tr("Problema na horta? Vê as respostas →", "Garden problem? See the answers →")}</a></p>`;
         root.hidden = false;
