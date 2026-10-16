@@ -98,6 +98,7 @@
   <div class="cc-chips" id="cc-obj" role="group" aria-label="${tr("O que mais importa", "What matters most")}"><button type="button" data-o="todos" aria-pressed="true">${tr("Todas", "All")}</button>${D.objetivos.map((o) => `<button type="button" data-o="${o.id}" aria-pressed="false">${esc(EN ? o.en : o.pt)}</button>`).join("")}</div>
   <p class="cc-conta" id="cc-conta" aria-live="polite"></p>
   <div class="cc-grelha" id="cc-lista"></div>
+  <p class="cc-nota">${tr("Para planear o que vais ter para vender ao longo do ano, vê o ", "To plan what you will have to sell through the year, see the ")}<a href="${comLang("/calendario/planeador-horta.html")}">${tr("Planeador de horta", "Garden planner")}</a>.</p>
   <p class="cc-nota">${tr("Fonte de todos os cartões: ", "Source of all cards: ")}${S("guia")}${tr(" (secção II). Se vendes em grupo, o PEPAC tem concursos para criar agrupamentos e organizações de produtores: vê-os em ", " (section II). If you sell as a group, the CAP Plan has calls for creating producer groups and organisations: see them in ")}<a href="${comLang("/calendario/apoios.html#concursos")}">${tr("Apoios", "Supports")}</a>.</p>
 </section>
 

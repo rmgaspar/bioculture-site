@@ -88,7 +88,7 @@ assert.equal(T.vizinhos(['tomate'], M).length, 0);
 for (const id of ['horta', 'ano', 'rotacao', 'fichas', 'limites']) assert(html.includes(`href="#${id}"`) && js.includes(`id="${id}"`), `âncora #${id}`);
 assert(/class="hub-back" id="planeador-voltar" href="\/calendario\/conhecimento-cuidar\.html"/.test(html), '«Voltar» só na barra fixa');
 assert(html.includes('biocultura-seasonal.js') && html.indexOf('biocultura-seasonal.js') < html.indexOf('planeador-horta.js'), 'seasonal.js antes do planeador');
-assert(hub.includes('href="/calendario/planeador-horta.html"') && hub.includes('href="#planeador"'));
+assert(hub.includes('href="/calendario/planeador-horta.html"') && hub.includes('href="#ferramentas"'));
 assert(cfg.paginas['calendario/planeador-horta.html']?.desc && existsSync('images/partilha/calendario-planeador-horta.jpg'));
 for (const f of Object.values(P.fontes)) assert(/^https:\/\//.test(f.url) && f.nome && f.nome_en && f.usa_pt && f.usa_en);
 assert(P.fontes.rhs.url === 'https://www.rhs.org.uk/vegetables/crop-rotation');

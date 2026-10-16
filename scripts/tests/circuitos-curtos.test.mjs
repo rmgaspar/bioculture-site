@@ -62,7 +62,7 @@ assert(!/\b(30|60|65|100)\s*(kg|litros)\b/.test(js.replace(/80 litros/g, '').rep
 // A página: âncoras, hub, SEO, glossário, privacidade.
 for (const id of ['sumario', 'caminhos', 'legal', 'preco', 'comprar', 'limites']) assert(html.includes(`href="#${id}"`) && js.includes(`id="${id}"`), `âncora #${id}`);
 assert(/class="hub-back" id="circuitos-voltar" href="\/calendario\/conhecimento-cuidar\.html"/.test(html), '«Voltar» só na barra fixa');
-assert(hub.includes('href="/calendario/circuitos-curtos.html"') && hub.includes('href="#circuitos"'));
+assert(hub.includes('href="/calendario/circuitos-curtos.html"') && hub.includes('href="#ferramentas"'));
 assert(cfg.paginas['calendario/circuitos-curtos.html']?.desc && existsSync('images/partilha/calendario-circuitos-curtos.jpg'));
 for (const id of ['circuito-curto', 'cabaz', 'mercado-local-produtores']) assert(G.termos.some((t) => t.id === id), `glossário: ${id}`);
 assert(js.includes('/glossario.html#circuito-curto'));

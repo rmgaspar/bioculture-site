@@ -86,7 +86,7 @@ assert.equal(py.stdout.trim(), 'ok', py.stderr || py.stdout);
 assert(html.includes('id="relatorio-apoios"') && html.includes('data-hero-theme="calendar"'));
 for (const id of ['sumario', 'comecar', 'apoios', 'concursos', 'calendario', 'limites']) assert(html.includes(`href="#${id}"`) && js.includes(`id="${id}"`), `âncora #${id}`);
 assert(/class="hub-back" id="apoios-voltar" href="\/calendario\/conhecimento-cuidar\.html"/.test(html), '«Voltar» só na barra fixa');
-assert(hub.includes('href="/calendario/apoios.html"') && hub.includes('href="#apoios"'), 'o hub liga à página');
+assert(hub.includes('href="/calendario/apoios.html"') && hub.includes('href="#ferramentas"'), 'o hub liga à página');
 assert(cfg.paginas['calendario/apoios.html']?.desc && existsSync('images/partilha/calendario-apoios.jpg'));
 assert(wf.includes('scripts/dados/pepac_concursos.py'), 'atualização semanal dos concursos');
 assert(!/https?:\/\/[^'"`\s]+\.json/.test(js), 'a página só lê ficheiros do próprio site');

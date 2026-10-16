@@ -82,7 +82,7 @@ assert(html.includes('id="relatorio-terreno"') && html.includes('data-hero-theme
 for (const id of ['mapa', 'ficha', 'limites']) assert(html.includes(`href="#${id}"`) && js.includes(`id="${id}"`), `âncora #${id}`);
 assert(/class="hub-back" id="terreno-voltar" href="\/calendario\/conhecimento-cuidar\.html"/.test(html), '«Voltar» só na barra fixa');
 assert(!/class="hub-back"[^>]*>[\s\S]{0,80}<section class="hero/.test(html), '«Voltar» nunca no topo');
-assert(hub.includes('href="/calendario/meu-terreno.html"') && hub.includes('href="#terreno"'), 'o hub liga à página');
+assert(hub.includes('href="/calendario/meu-terreno.html"') && hub.includes('href="#ferramentas"'), 'o hub liga à página');
 assert(cfg.paginas['calendario/meu-terreno.html']?.desc, 'config/paginas.json tem a página');
 assert(existsSync('images/partilha/calendario-meu-terreno.jpg'), 'imagem de partilha');
 for (const f of ['assets/vendor/leaflet/leaflet.js', 'assets/vendor/leaflet/leaflet.css', 'assets/vendor/leaflet/LICENSE.txt']) assert(existsSync(f), f);

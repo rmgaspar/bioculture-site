@@ -270,11 +270,13 @@
                 }
 
                 try {
-                    const [master, pragas, solucoesCatalogo] = await Promise.all([
+                    const [master, pragas, solucoesCatalogo, planeador] = await Promise.all([
                         fetch("/data/horticolas_master.json").then((r) => r.json()),
                         fetch("/data/pragas.json").then((r) => r.json()).catch(() => []),
                         fetch("/data/solucoes-catalogo.json").then((r) => r.json()).catch(() => null),
+                        fetch("/data/planeador-horta.json?v=1").then((r) => r.json()).catch(() => null),
                     ]);
+                    const planeavel = new Set((planeador?.culturas || []).map((c) => c.id));
                     const pestIndex = buildPestIndex(pragas);
                     const solutionIds = new Set(
                         (solucoesCatalogo?.solucoes || []).flatMap((s) => (s.fichas || []).map((f) => f.id)),
@@ -318,6 +320,9 @@
                     const ecology = listPanel("Consociações favoráveis", item.consociacoes_favoraveis) +
                         listPanel("Evitar consociar", item.evitar_consociar) +
                         textPanelHtml("Rotação", item.rotacao, linkifyTechniques(item.rotacao)) +
+                        (planeavel.has(id)
+                            ? `<article class="detail-panel"><h3>Planear</h3><p><a href="/calendario/planeador-horta.html?c=${encodeURIComponent(id)}">Ver as épocas e a rotação desta cultura no Planeador de horta →</a></p></article>`
+                            : "") +
                         listPanel("Culturas semelhantes", item.culturas_semelhantes);
                     const mentionedPests = [
                         ...pestsMentionedIn(item.problemas_comuns, pestIndex, id, item.nome),
