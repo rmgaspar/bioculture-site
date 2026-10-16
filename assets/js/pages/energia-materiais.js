@@ -18,7 +18,7 @@
     if (document.body.dataset.tituloEn) document.title = document.body.dataset.tituloEn;
   }
   fetch("/sidebar-content.html?v=24").then((r) => (r.ok ? r.text() : "")).then((h) => { const sb = document.getElementById("sidebar"); if (h && sb) sb.innerHTML = h; }).catch(() => {});
-  const barraFixa = () => { const el = document.createElement("script"); el.src = "/assets/js/biocultura-sticky-nav.js?v=13"; document.body.appendChild(el); };
+  const barraFixa = () => { const el = document.createElement("script"); el.src = "/assets/js/biocultura-sticky-nav.js?v=14"; document.body.appendChild(el); };
   const get = (u) => fetch(u).then((r) => { if (!r.ok) throw new Error(u + " " + r.status); return r.json(); });
   const FICH = VETOR === "construcao" ? ["ambiente-construido", "ambiente-construido-portugal"] : ["moda-texteis", "moda-texteis-portugal"];
 

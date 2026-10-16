@@ -17,6 +17,14 @@
             "#main .bio-nav-pinned .bio-nav-top:hover,#main .bio-nav-pinned .bio-nav-top:focus-visible{color:#315b43!important;-webkit-text-fill-color:#315b43!important}";
         document.head.appendChild(style);
     }
+    // Véu branco por cima da barra fixa: só quando a barra está presa no cimo do ecrã, para não ficarem conteúdos a espreitar por cima dela.
+    if (!document.getElementById("bio-nav-veil-style")) {
+        const style = document.createElement("style");
+        style.id = "bio-nav-veil-style";
+        style.textContent = ".bio-nav-veil{position:fixed;top:0;right:0;height:0;background:#fff;pointer-events:none;opacity:0;transition:opacity .15s ease}" +
+            ".bio-nav-veil.is-on{opacity:1}";
+        document.head.appendChild(style);
+    }
     // Indício de continuação: esbatido nas pontas quando a barra desliza na horizontal e há mais links por ver.
     if (!document.getElementById("bio-nav-fade-style")) {
         const style = document.createElement("style");
@@ -117,6 +125,19 @@
             progress.style.width = `${pct}%`;
         };
 
+        // O véu cobre a faixa acima da barra fixa, da coluna principal até à margem direita (a barra lateral fica de fora).
+        const veil = document.querySelector(".bio-nav-veil") || document.body.appendChild(Object.assign(document.createElement("div"), { className: "bio-nav-veil", ariaHidden: "true" }));
+        const updateVeil = () => {
+            const pinned = document.querySelector(".bio-nav-pinned");
+            if (!pinned) { veil.classList.remove("is-on"); return; }
+            const cs = getComputedStyle(pinned), main = document.getElementById("main");
+            const z = parseInt(cs.zIndex, 10);
+            veil.style.left = `${main ? Math.max(0, main.getBoundingClientRect().left) : 0}px`;
+            veil.style.height = `${(parseFloat(cs.top) || 28) + 4}px`;
+            veil.style.zIndex = Number.isFinite(z) ? String(z - 1) : "39";
+            veil.classList.add("is-on");
+        };
+
         const update = () => {
             const top = window.innerWidth <= 760 ? 10 : 28;
             const shouldPin = anchor.getBoundingClientRect().top <= top;
@@ -132,6 +153,7 @@
                 anchor.style.height = "0";
             }
             if (topLink.textContent !== topLabel()) topLink.textContent = topLabel();
+            updateVeil();
             setActive();
             setProgress();
             updateMore();
