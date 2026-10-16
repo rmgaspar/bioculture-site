@@ -60,7 +60,7 @@ assert(Math.abs(T.distanciaKm([38.7223, -9.1393], [41.1579, -8.6291]) - 274) < 8
 
 // Classes oficiais: as 36 siglas do quadro 4.1 do Manual de Conceitos e Regras de Delimitação do IFAP (fev. 2021), todas com PT e EN.
 const SIGLAS = ['CTP-CA', 'TCR-FL', 'PPE-PP', 'PPE-QU', 'PPE-PM', 'PPE-OL', 'PPE-MX', 'PPE-AR', 'PPE-PL', 'POM-PM', 'VIN-VN', 'OLI-OL', 'MXP-MX', 'OUT-PE', 'SOB-CO', 'CAB-CP', 'CPR-OA',
-  'FFL-FL', 'SAR-FL', 'FBQ-FL', 'ACE-ON', 'ZPC-ON', 'GRP-FL', 'SAS-AS', 'VIA-AS', 'IMP-AI', 'MAG-ON', 'ZPH-ON', 'OUT-ON', 'OPC-ON', 'CSS-ON', 'ARV-EC', 'FBQ-EP', 'GRP-EP', 'LAG-EL', 'ORI-EL', 'SCV-EL', 'TLD-EL'];
+  'FFL-FL', 'SAR-FL', 'FBQ-FL', 'ACE-ON', 'ZPC-ON', 'GRP-FL', 'SAS-AS', 'VIA-AS', 'IMP-AI', 'MAG-ON', 'ZPH-ON', 'OUT-ON', 'OPC-ON', 'CSS-ON', 'ARV-EC', 'CHL-EP', 'FBQ-EP', 'GRP-EP', 'LAG-EL', 'ORI-EL', 'SCV-EL', 'TLD-EL'];
 for (const s of SIGLAS) assert(T.OCUPACAO[s] && T.OCUPACAO[s][0] && T.OCUPACAO[s][1], `ocupação sem nome: ${s}`);
 assert.equal(Object.keys(T.OCUPACAO).length, SIGLAS.length, 'sem siglas inventadas');
 assert.equal(T.FOGO.length, 6, 'perigosidade: classe 0 e cinco classes');

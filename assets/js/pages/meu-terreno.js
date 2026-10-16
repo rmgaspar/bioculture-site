@@ -79,7 +79,7 @@
     ["Sem classe", "No class"], ["Muito baixa", "Very low"], ["Baixa", "Low"], ["Média", "Medium"], ["Alta", "High"], ["Muito alta", "Very high"]
   ];
 
-  /* Classes de ocupação do solo do parcelário (IFAP, Manual de Conceitos e Regras de Delimitação, fev. 2021, quadro 4.1). */
+  /* Classes de ocupação do solo do parcelário (IFAP, Manual de Conceitos e Regras de Delimitação, fev. 2021, quadro 4.1; CHL-EP vem do anexo XIV da Portaria 54-E/2023, «Lagoas e charcas»). */
   const OCUPACAO = {
     "CTP-CA": ["Cultura temporária", "Annual crop"], "TCR-FL": ["Talhadia de curta duração", "Short-rotation coppice"],
     "PPE-PP": ["Pastagem permanente", "Permanent grassland"], "PPE-QU": ["Pastagem sob coberto de quercíneas", "Grassland under oaks"],
@@ -95,7 +95,8 @@
     "OPC-ON": ["Ocupação por classificar", "Unclassified"], "CSS-ON": ["Cultura sem contacto com o solo", "Crops without soil contact"],
     "ARV-EC": ["Árvores ou culturas permanentes por classificar", "Trees or permanent crops to classify"], "FBQ-EP": ["Bosquete (elemento da paisagem)", "Small wood (landscape feature)"],
     "GRP-EP": ["Galeria ripícola (elemento da paisagem)", "Riparian gallery (landscape feature)"], "LAG-EL": ["Linha de água", "Watercourse"],
-    "ORI-EL": ["Elemento linear em orizicultura", "Linear feature in rice growing"], "SCV-EL": ["Sebe ou corta-vento", "Hedge or windbreak"], "TLD-EL": ["Talude ou muro de suporte da vinha", "Vineyard bank or retaining wall"]
+    "ORI-EL": ["Elemento linear em orizicultura", "Linear feature in rice growing"], "SCV-EL": ["Sebe ou corta-vento", "Hedge or windbreak"], "TLD-EL": ["Talude ou muro de suporte da vinha", "Vineyard bank or retaining wall"],
+    "CHL-EP": ["Lagoa ou charca (elemento da paisagem)", "Pond or pool (landscape feature)"]
   };
 
   /* Balanço simples: chuva menos evapotranspiração de referência (mm) nos dias dados. */
@@ -615,6 +616,7 @@ ${s.map((c, i) => `<tr><th>${nomes[i]}</th><td>${faixa(c, "phh2o", 1)}</td><td>$
     if (ctx.pH != null && (ctx.pH < 5.6 || ctx.pH > 7.3)) out.push([tr(`pH estimado de ${dec(ctx.pH, 1)} (${phClasse(ctx.pH)}): é uma estimativa de 250 m. Confirma com uma análise antes de pensar em corrigir.`, `Estimated pH of ${dec(ctx.pH, 1)} (${phClasse(ctx.pH)}): it is a 250 m estimate. Confirm with a lab analysis before thinking of correcting it.`), "/calendario/conhecimento-cuidar.html#fatores", tr("Dos dados à parcela →", "From data to the plot →")]);
     if (ctx.ndvi && ctx.ndvi.n >= 6 && ctx.ndvi.abaixo / ctx.ndvi.n >= 0.5) out.push([tr(`Em ${ctx.ndvi.abaixo} das ${ctx.ndvi.n} imagens limpas do último ano o NDVI médio ficou abaixo de 0,3 (solo nu ou vegetação rala): o solo fica pouco coberto durante boa parte do ano. Cobertura viva ou morta nesses meses protege-o do sol e da chuva.`, `In ${ctx.ndvi.abaixo} of the ${ctx.ndvi.n} clear images of the past year the mean NDVI was below 0.3 (bare soil or sparse vegetation): the soil stays poorly covered for much of the year. Living or dead cover in those months shields it from sun and rain.`), "/services/servicos.html?categoria=Solo%20e%20cobertura#catalogo-tecnicas", tr("Técnicas de solo e cobertura →", "Soil and cover techniques →")]);
     if (ctx.fogo != null && ctx.fogo >= 4) out.push([tr("Perigosidade de incêndio alta ou muito alta: descontinuar o combustível (faixas limpas, pastoreio, culturas e árvores de menor combustibilidade) pesa mais do que qualquer outra escolha.", "High or very high fire hazard: breaking up fuel continuity (clear strips, grazing, lower-flammability crops and trees) weighs more than any other choice."), "/recursos/vida-e-recursos.html", tr("Vida e recursos →", "Life and resources →")]);
+    out.push([tr("Há apoios do PEPAC para quem cuida da terra de forma biológica ou regenerativa, e um Pedido Único por ano: vê o que cada um pede e quais aceitam candidatos novos.", "There are CAP Plan supports for those who farm organically or regeneratively, and one Single Application a year: see what each asks for and which accept new applicants."), "/calendario/apoios.html", tr("Apoios →", "Supports →")]);
     out.push([tr("Vê o que semear e plantar neste lugar, mês a mês, e as espécies da região.", "See what to sow and plant at this place, month by month, and the region’s species."), "/ecossistemas/biodiversidade.html", tr("Espécies da região →", "Species of the region →")]);
     const alvo = document.getElementById("t-pistas");
     document.getElementById("t-leitura").hidden = false;
