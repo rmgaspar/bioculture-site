@@ -273,91 +273,21 @@ html body #main :is(#structure, #inventories, #atlas, #highlights, #today, #news
 .reading-route h3 { margin: .6em 0 .4em; font-size: 1em; color: var(--ink); }
 .reading-route p { margin: 0; color: var(--muted); font-size: max(11px, .74em); line-height: 1.55; }
 
-.atlas { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1em; }
-
-/* Filtro por passo: Observar, Compreender, Agir (as mesmas cores dos três blocos de «O que fazemos»). */
-.atlas-filtro { display: flex; flex-wrap: wrap; gap: 0.5em; margin: 0 0 1.4em; }
-.atlas-filtro[hidden] { display: none; }
-.atlas-filtro button {
-    font: inherit; font-size: max(11px, 0.7em); font-weight: 800; letter-spacing: 0.04em; line-height: 1.2;
-    padding: 0.65em 1.1em; border-radius: 999px; cursor: pointer; height: auto; text-transform: none;
-    color: var(--ink) !important; -webkit-text-fill-color: var(--ink) !important;
-    background: #fff !important; border: 1px solid var(--line) !important; box-shadow: none !important;
-    transition: background 0.15s, border-color 0.15s, color 0.15s;
-}
-.atlas-filtro button small { font-size: 0.85em; font-weight: 700; color: var(--muted); -webkit-text-fill-color: var(--muted); margin-left: 0.35em; }
-.atlas-filtro button:hover { border-color: #8da58f !important; }
-.atlas-filtro button[aria-pressed="true"] { background: var(--forest) !important; border-color: var(--forest) !important; color: #fff !important; -webkit-text-fill-color: #fff !important; }
-.atlas-filtro button[aria-pressed="true"] small { color: rgba(255, 255, 255, 0.75); -webkit-text-fill-color: rgba(255, 255, 255, 0.75); }
-.atlas-filtro button[data-passo="observar"][aria-pressed="true"] { background: #6b8f47 !important; border-color: #6b8f47 !important; }
-.atlas-filtro button[data-passo="compreender"][aria-pressed="true"] { background: #a66f50 !important; border-color: #a66f50 !important; }
-.atlas-filtro button[data-passo="agir"][aria-pressed="true"] { background: #3f7373 !important; border-color: #3f7373 !important; }
-
-.portal {
-    display: grid;
-    grid-template-columns: 95px 1fr;
-    gap: 1.2em;
-    padding: 1.5em;
-    color: inherit;
-    border: 1px solid var(--line);
-    border-radius: 16px;
-    overflow: hidden;
-    transition: 0.25s;
-    border-top: 3px solid var(--c, var(--line));
-}
-.portal[hidden] { display: none; }
-
-.portal:hover { transform: translateY(-3px); border-color: #b8c4b9; }
-
-.portal-mark {
-    width: 95px;
-    aspect-ratio: 1;
-    overflow: hidden;
-    border: 0 !important;
-    border-radius: 14px;
-    display: grid;
-    place-items: center;
-    font-size: 1.7em;
-    background: var(--pale);
-    color: var(--forest);
-}
-
-.portal:nth-child(2n) .portal-mark { background: var(--sand); color: var(--clay); }
-.portal h3 { font-size: 1.15em; color: var(--ink); margin: 0.1em 0 0.35em; }
-.portal p { font-size: 0.86em; line-height: 1.55; color: var(--muted); margin: 0; }
-
-.portal-body { display: flex; flex-direction: column; min-width: 0; }
-.portal-passo { font-size: max(11px, 0.6em); font-weight: 900; letter-spacing: 0.14em; text-transform: uppercase; color: var(--c, var(--clay)); }
-.portal-links { display: flex; flex-wrap: wrap; gap: 0.45em 0.9em; margin-top: auto; padding-top: 1em; }
-.portal-links a { color: var(--forest); font-size: max(11px, 0.67em); font-weight: 800; text-decoration: none; border: 0 !important; }
-.portal-links a:hover { color: var(--clay); }
-
-.portal-chart { margin: 0.9em 0 0.15em; }
-
-.stack-track { display: flex; height: 13px; border-radius: 8px; overflow: hidden; background: var(--pale); }
-.stack-track span { height: 100%; transition: width .3s; box-shadow: inset 0 0 0 1px rgba(0,0,0,.1); }
-
-.chart-legend { display: flex; flex-wrap: wrap; gap: 0.35em 0.9em; margin-top: 0.55em; }
-.chart-legend-item { font-size: max(11px, 0.66em); color: var(--muted); display: inline-flex; align-items: center; gap: 0.4em; }
-.chart-legend-item b { color: var(--ink); font-weight: 800; }
-.dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; flex: 0 0 auto; }
-
-.chart-note { font-size: max(11px, 0.66em); color: var(--muted); line-height: 1.5; margin: 0.55em 0 0; }
-
-.growth-chart { display: flex; flex-direction: column; gap: 0.9em; }
-.growth-row { display: grid; grid-template-columns: 1fr; gap: 0.2em; }
-.growth-label { font-size: max(11px, 0.68em); font-weight: 800; letter-spacing: 0.2px; }
-.bar-row { display: flex; align-items: center; gap: 0.5em; }
-.bar-year { flex: 0 0 auto; min-width: 4.6em; font-size: max(11px, 0.62em); color: var(--muted); white-space: nowrap; }
-.bar-track { flex: 1 1 auto; height: 7px; background: var(--pale); border-radius: 5px; overflow: hidden; }
-.bar-fill { display: block; height: 100%; border-radius: 5px; box-shadow: inset 0 0 0 1px rgba(0,0,0,.1); }
-.bar-value { flex: 0 0 auto; min-width: 3.4em; text-align: right; font-size: max(11px, 0.7em); color: var(--ink); }
-.growth-unit { font-size: max(11px, 0.6em); color: var(--muted); }
-
-.percent-chart { display: flex; flex-direction: column; gap: 0.7em; }
-.percent-row { display: grid; grid-template-columns: 1fr; gap: 0.2em; }
-.percent-label { font-size: max(11px, 0.68em); font-weight: 800; letter-spacing: 0.2px; }
-.percent-note { font-size: max(11px, 0.6em); color: var(--muted); }
+/* Mapa «Explorar»: três colunas (Observar, Compreender, Agir), uma linha por entrada. A cor de cada passo é a dos três blocos de «O que fazemos». */
+.atlas-mapa { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2.4em; }
+.atlas-passo { border-top: 3px solid var(--c); padding-top: 1.1em; }
+.atlas-passo h3 { display: flex; align-items: baseline; gap: 0.7em; margin: 0 0 0.6em; font-size: max(12px, 0.72em); font-weight: 900; letter-spacing: 0.16em; text-transform: uppercase; color: var(--c); }
+.atlas-passo h3 b { font-weight: 900; opacity: 0.55; }
+.atlas-passo ul { list-style: none; margin: 0; padding: 0; }
+.atlas-passo li { margin: 0; padding: 0; border-bottom: 1px solid var(--line); }
+.atlas-passo li:last-child { border-bottom: 0; }
+.atlas-passo a { position: relative; display: grid; gap: 0.2em; padding: 1em 1.8em 1em 0; text-decoration: none; border-bottom: 0 !important; color: var(--ink); }
+.atlas-passo a strong { font-family: var(--f-display, inherit); font-size: 1.08em; font-weight: 700; line-height: 1.25; color: var(--ink); transition: color 0.15s; }
+.atlas-passo a span { font-size: 0.84em; line-height: 1.45; color: var(--muted); }
+.atlas-passo a::after { content: "→"; position: absolute; right: 0.1em; top: 1.05em; color: var(--c); opacity: 0; transform: translateX(-6px); transition: opacity 0.15s, transform 0.15s; }
+.atlas-passo a:hover strong, .atlas-passo a:focus-visible strong { color: var(--c); }
+.atlas-passo a:hover::after, .atlas-passo a:focus-visible::after { opacity: 1; transform: none; }
+@media (hover: none) { .atlas-passo a::after { opacity: 0.55; transform: none; } }
 
 .today { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 1em; }
 
@@ -476,11 +406,9 @@ html body #main :is(#structure, #inventories, #atlas, #highlights, #today, #news
 @media (max-width: 760px) {
     .inner { padding: 1.7em 1.4em 0 !important; }
     .head { grid-template-columns: 1fr; gap: 0.7em; }
-    .path, .pulse, .atlas, .today, .news { grid-template-columns: 1fr; }
+    .path, .pulse, .atlas-mapa, .today, .news { grid-template-columns: 1fr; }
     .news a { min-height: 112px; padding-left: 92px; }
     .news-thumb, .news a > .bioculture-image-signature-frame { width: 92px; }
-    .portal { grid-template-columns: 70px 1fr; }
-    .portal-mark { width: 70px; }
     .encounter { grid-template-columns: 1fr; }
     .species-image { width: 100%; height: 210px; border-radius: 12px; }
     .manifesto { grid-template-columns: 1fr; padding: 2em; }
