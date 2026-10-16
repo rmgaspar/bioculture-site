@@ -45,10 +45,10 @@ for (const c of D.categorias) assert(D.termos.some((t) => t.cat === c.id), `tema
 for (const [id, f] of Object.entries(D.fontes)) assert(/^https:\/\//.test(f.url) && f.nome && f.nome_en, `fonte ${id}`);
 for (const id of Object.keys(D.fontes)) assert(D.termos.some((t) => t.fonte === id), `fonte sem uso: ${id}`);
 // Termos que as outras páginas usam têm de estar lá.
-for (const id of ['ndvi', 'sentinel-2', 'pixel', 'mascara-nuvens', 'soilgrids', 'et0', 'balanco-hidrico', 'isip', 'pu', 'ecorregime', 'agroambientais', 'arb-ppa', 'condicionalidade', 'oc', 'co2e', 'efeitos-nao-co2', 'agricultura-regenerativa', 'cobertura-solo']) assert(ids.includes(id), `falta o termo ${id}`);
+for (const id of ['et0', 'ph', 'textura', 'isip', 'pu', 'ecorregime', 'agroambientais', 'arb-ppa', 'condicionalidade', 'oc', 'co2e', 'efeitos-nao-co2', 'agricultura-regenerativa', 'cobertura-solo']) assert(ids.includes(id), `falta o termo ${id}`);
 // Os números das definições batem com o que o site diz noutras páginas.
 const t = (id) => D.termos.find((x) => x.id === id);
-assert(t('ph').d_pt.includes('5,6') && t('ph').d_pt.includes('6,5') && t('ph').d_pt.includes('7,3'), 'classes de pH iguais às de «O meu terreno»');
+assert(t('ph').d_pt.includes('5,6') && t('ph').d_pt.includes('6,5') && t('ph').d_pt.includes('7,3'), 'classes de pH');
 assert(t('unidades').d_pt.includes('3,6 megajoules') && t('unidades').d_pt.includes('278 000'));
 assert(t('sementeira-direta').d_pt.includes('3 ha') && t('agroambientais').d_pt.includes('2, 3 ou 5'));
 assert(t('efeitos-nao-co2').d_pt.includes('70 %'), 'o acréscimo da DESNZ é o da página da Aviação');
@@ -56,7 +56,7 @@ assert(t('efeitos-nao-co2').d_pt.includes('70 %'), 'o acréscimo da DESNZ é o d
 // Pesquisa: por acento, por idioma e por tema.
 assert(filtrar(D.termos, 'todos', 'materia organica').some((x) => x.id === 'materia-organica'));
 assert(filtrar(D.termos, 'todos', 'organic matter').some((x) => x.id === 'materia-organica'), 'a pesquisa vê o termo em inglês');
-assert(filtrar(D.termos, 'apoios', 'ndvi').length === 0 && filtrar(D.termos, 'dados', 'ndvi').length >= 1);
+assert(filtrar(D.termos, 'solo', 'matéria').length >= 1 && filtrar(D.termos, 'apoios', 'matéria').length === 0);
 assert.equal(filtrar(D.termos, 'todos', '').length, D.termos.length);
 
 // Página, barra lateral, SEO e build.

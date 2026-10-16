@@ -35,7 +35,7 @@
   const voltar = document.getElementById("glossario-voltar");
   if (voltar) voltar.setAttribute("href", comLang("/"));
 
-  fetch("/data/glossario.json?v=3").then((r) => { if (!r.ok) throw new Error("glossario " + r.status); return r.json(); })
+  fetch("/data/glossario.json?v=4").then((r) => { if (!r.ok) throw new Error("glossario " + r.status); return r.json(); })
     .then((D) => { build(D); barraFixa(); })
     .catch((e) => { console.error(e); barraFixa(); box.innerHTML = `<p class="prose">${tr("Não foi possível carregar o glossário.", "The glossary could not be loaded.")}</p>`; });
 
@@ -52,7 +52,7 @@
 <section id="procurar">
   <div class="sec-head"><span class="eyebrow">${tr("1 · Procurar", "1 · Search")}</span><h2>${tr("Procura um termo", "Look up a term")}</h2></div>
   <div class="gl-barra">
-    <input type="search" id="gl-busca" autocomplete="off" placeholder="${tr("Ex.: NDVI, ecorregime, matéria orgânica…", "E.g. NDVI, eco-scheme, organic matter…")}" aria-label="${tr("Procurar no glossário", "Search the glossary")}">
+    <input type="search" id="gl-busca" autocomplete="off" placeholder="${tr("Ex.: ecorregime, matéria orgânica, cabaz…", "E.g. eco-scheme, organic matter, box scheme…")}" aria-label="${tr("Procurar no glossário", "Search the glossary")}">
     <div class="gl-chips" id="gl-temas" role="group" aria-label="${tr("Filtrar por tema", "Filter by topic")}">
       <button type="button" data-t="todos" aria-pressed="true">${tr("Todos", "All")}</button>
       ${D.categorias.map((c) => `<button type="button" data-t="${c.id}" aria-pressed="false">${esc(EN ? c.en : c.pt)}</button>`).join("")}
