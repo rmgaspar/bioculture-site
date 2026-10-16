@@ -195,7 +195,7 @@
     function pintar() {
       const ids = culturas.map((c) => c.id).filter((id) => estado.sel.has(id));
       document.querySelectorAll(".pl-chips button").forEach((b) => b.setAttribute("aria-pressed", String(estado.sel.has(b.dataset.id))));
-      $("pl-conta").textContent = ids.length ? tr(`${ids.length} culturas no plano`, `${ids.length} crops in the plan`) : tr("Ainda não escolheste nenhuma cultura.", "You have not picked any crop yet.");
+      $("pl-conta").textContent = ids.length ? tr(ids.length === 1 ? "1 cultura no plano" : `${ids.length} culturas no plano`, ids.length === 1 ? "1 crop in the plan" : `${ids.length} crops in the plan`) : tr("Ainda não escolheste nenhuma cultura.", "You have not picked any crop yet.");
       pintarAno(ids); pintarRotacao(ids); pintarFichas(ids);
       guardar();
     }
