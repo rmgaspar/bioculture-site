@@ -125,7 +125,7 @@
             progress.style.width = `${pct}%`;
         };
 
-        // O véu cobre a faixa acima da barra fixa, da coluna principal até à margem direita (a barra lateral fica de fora).
+        // O véu cobre a faixa do cimo do ecrã até ao fundo da barra fixa, da coluna principal até à margem direita (a barra lateral fica de fora): tapa o que espreitava por cima e pelos cantos redondos.
         const veil = document.querySelector(".bio-nav-veil") || document.body.appendChild(Object.assign(document.createElement("div"), { className: "bio-nav-veil", ariaHidden: "true" }));
         const updateVeil = () => {
             const pinned = document.querySelector(".bio-nav-pinned");
@@ -133,10 +133,45 @@
             const cs = getComputedStyle(pinned), main = document.getElementById("main");
             const z = parseInt(cs.zIndex, 10);
             veil.style.left = `${main ? Math.max(0, main.getBoundingClientRect().left) : 0}px`;
-            veil.style.height = `${(parseFloat(cs.top) || 28) + 4}px`;
+            veil.style.height = `${Math.ceil(pinned.getBoundingClientRect().bottom)}px`;
             veil.style.zIndex = Number.isFinite(z) ? String(z - 1) : "39";
             veil.classList.add("is-on");
         };
+
+        // Ao carregar numa ligação da barra, o conteúdo do bloco (não o seu espaço em branco) fica logo por baixo da barra fixa.
+        const FOLGA = 22;
+        const primeiroVisivel = (bloco) => [...bloco.children].find((c) => c.getBoundingClientRect().height > 0 && getComputedStyle(c).position !== "absolute") || bloco;
+        const alinhar = (alvo) => {
+            const topo = window.innerWidth <= 760 ? 10 : 28;
+            const delta = primeiroVisivel(alvo).getBoundingClientRect().top - (topo + navigation.getBoundingClientRect().height + FOLGA);
+            window.scrollTo({ top: Math.max(0, window.scrollY + delta), behavior: "auto" });
+        };
+        const alvoDe = (link) => {
+            if (!link || link.classList.contains("bio-nav-top") || link.classList.contains("hub-back")) return null;
+            const url = new URL(link.href, location.href);
+            if (url.pathname !== location.pathname || url.hash.length < 2) return null;
+            return document.getElementById(decodeURIComponent(url.hash.slice(1)));
+        };
+        navigation.addEventListener("click", (event) => {
+            const link = event.target.closest("a[href*='#']");
+            const alvo = alvoDe(link);
+            if (!alvo || event.defaultPrevented || event.metaKey || event.ctrlKey || event.shiftKey) return;
+            event.preventDefault();
+            history.replaceState(null, "", new URL(link.href, location.href).hash);
+            alinhar(alvo);
+            setTimeout(() => alinhar(alvo), 160); // a barra muda de altura ao ficar presa: acerta-se uma segunda vez
+        });
+        // Abrir a página já com #bloco: o mesmo alinhamento, depois de o conteúdo assentar.
+        if (location.hash.length > 1 && !window.__bioNavHashDone) {
+            const link = [...navigation.querySelectorAll("a[href*='#']")].find((a) => new URL(a.href, location.href).hash === location.hash);
+            const alvo = alvoDe(link);
+            if (alvo) {
+                window.__bioNavHashDone = true;
+                const inicial = () => { if (alvo.isConnected) alinhar(alvo); };
+                window.addEventListener("load", () => setTimeout(inicial, 350), { once: true });
+                if (document.readyState === "complete") setTimeout(inicial, 350);
+            }
+        }
 
         const update = () => {
             const top = window.innerWidth <= 760 ? 10 : 28;
@@ -144,8 +179,9 @@
             if (shouldPin && !navigation.classList.contains("bio-nav-pinned")) {
                 const rect = navigation.getBoundingClientRect();
                 const margin = parseFloat(getComputedStyle(navigation).marginBottom) || 0;
-                navigation.style.setProperty("--bio-nav-left", `${rect.left}px`);
-                navigation.style.setProperty("--bio-nav-width", `${rect.width}px`);
+                const esquerda = Math.round(rect.left), direita = Math.round(rect.right);
+                navigation.style.setProperty("--bio-nav-left", `${esquerda}px`);
+                navigation.style.setProperty("--bio-nav-width", `${direita - esquerda}px`);
                 anchor.style.height = `${rect.height + margin}px`;
                 navigation.classList.add("bio-nav-pinned");
             } else if (!shouldPin && navigation.classList.contains("bio-nav-pinned")) {

@@ -25,7 +25,7 @@
     document.title = "Aviation: the weight of every trip — bioCulture";
   }
   fetch("/sidebar-content.html?v=24").then((r) => (r.ok ? r.text() : "")).then((h) => { const sb = document.getElementById("sidebar"); if (h && sb) sb.innerHTML = h; }).catch(() => {});
-  const barraFixa = () => { const el = document.createElement("script"); el.src = "/assets/js/biocultura-sticky-nav.js?v=14"; document.body.appendChild(el); };
+  const barraFixa = () => { const el = document.createElement("script"); el.src = "/assets/js/biocultura-sticky-nav.js?v=17"; document.body.appendChild(el); };
   const get = (u) => fetch(u).then((r) => { if (!r.ok) throw new Error(u + " " + r.status); return r.json(); });
 
   Promise.all([get("/data/aviacao.json?v=4"), get("/data/aviacao-portugal.json?v=1"), get("/data/aeroportos.json?v=1"), get("/data/noticias.json").catch(() => []), get("/data/aviacao-rotas-portugal.json?v=1"), get("/data/aviacao-tempo.json?v=1"), get("/data/aviacao-recursos.json?v=1")])
