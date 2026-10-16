@@ -70,7 +70,7 @@ body.terreno-page[data-hero-theme="calendar"] .bio-banner-hero .regen-hero-image
 .agri-report .t-grelha { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; align-items: start; }
 @media (max-width: 980px) { .agri-report .t-grelha { grid-template-columns: minmax(0, 1fr); } }
 .agri-report .t-cartao { border: 1px solid var(--line); border-radius: 12px; background: var(--surface); padding: 16px 18px 18px; display: grid; gap: 12px; min-width: 0; align-content: start; }
-.agri-report .t-cartao.t-agua { grid-column: 1 / -1; }
+.agri-report .t-cartao.t-agua, .agri-report .t-cartao.t-ndvi { grid-column: 1 / -1; }
 .agri-report .t-cartao h3 { font-size: 1rem; }
 .agri-report .t-corpo { display: grid; gap: 12px; min-width: 0; }
 .agri-report .t-carga, .agri-report .t-sem { margin: 0; color: var(--muted); font-size: 0.9rem; }
@@ -97,3 +97,13 @@ body.terreno-page[data-hero-theme="calendar"] .bio-banner-hero .regen-hero-image
 /* Barras do uso do solo: nomes longos podem quebrar a linha */
 .agri-report .t-cartao .hb { grid-template-columns: minmax(120px, 42%) minmax(0, 1fr) auto; }
 .agri-report .t-cartao .hb .l { white-space: normal; overflow: visible; text-overflow: clip; line-height: 1.3; }
+
+/* NDVI */
+.agri-report .t-ndvi-tiles { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+@media (max-width: 640px) { .agri-report .t-ndvi-tiles { grid-template-columns: minmax(0, 1fr); } }
+.agri-report .t-ndvi-ctl { display: flex; flex-wrap: wrap; gap: 10px 20px; align-items: center; }
+.agri-report .t-rampa { display: flex; align-items: center; gap: 8px; font-size: 0.78rem; color: var(--muted); }
+.agri-report .t-rampa i { display: block; width: 11rem; max-width: 40vw; height: 10px; border-radius: 5px; border: 1px solid var(--line); }
+.agri-report .t-pt:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+/* Pixéis nítidos na imagem do NDVI (cada quadrado é um pixel de 10 m) */
+.leaflet-ndvi-pane img { image-rendering: pixelated; image-rendering: crisp-edges; }

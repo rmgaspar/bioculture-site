@@ -277,8 +277,9 @@
     tr("<strong>O solo é uma estimativa de 250 m</strong> (SoilGrids), com os intervalos de incerteza à vista; em Portugal o carbono orgânico, em particular, varia muito de campo para campo. Não substitui uma análise de laboratório.", "<strong>Soil is a 250 m estimate</strong> (SoilGrids), with its uncertainty ranges shown; in Portugal organic carbon in particular varies a lot from field to field. It does not replace a laboratory analysis."),
     tr("<strong>A perigosidade de incêndio é estrutural</strong> (carta 2020–2030, de cinco classes, da muito baixa à muito alta): diz como o território arde, não o risco de hoje, que é o do IPMA.", "<strong>Fire hazard is structural</strong> (2020–2030 map, five classes from very low to very high): it says how the land burns, not today’s risk, which is IPMA’s."),
     tr("<strong>As camadas do IFAP cobrem o continente.</strong> Nos Açores, na Madeira e fora de Portugal tens o tempo e o solo, mas não as parcelas, o uso do solo nem o fogo.", "<strong>IFAP layers cover mainland Portugal.</strong> In the Azores, Madeira and abroad you get weather and soil, but not parcels, land use or fire hazard."),
-    tr("<strong>Privacidade.</strong> O desenho e os terrenos guardados ficam só no teu browser. Para os dados, o browser pede às fontes abaixo o ponto ou a zona que vês (o IFAP, o ISRIC, a Open-Meteo, o OpenStreetMap, a DGT); nós não recebemos nada.", "<strong>Privacy.</strong> The drawing and saved plots stay in your browser only. For the data, your browser asks the sources below for the point or area you are viewing (IFAP, ISRIC, Open-Meteo, OpenStreetMap, DGT); we receive nothing."),
-    tr("<strong>Falta o satélite.</strong> Esta é a primeira fase: ainda não há o índice de vegetação (NDVI) do terreno, que virá a seguir com imagens Sentinel-2.", "<strong>No satellite yet.</strong> This is the first phase: the plot’s vegetation index (NDVI) is not here yet and will come next, from Sentinel-2 imagery.")
+    tr("<strong>Privacidade.</strong> O desenho e os terrenos guardados ficam só no teu browser. Para os dados, o browser pede às fontes abaixo o ponto ou a zona que vês (o IFAP, o ISRIC, a Open-Meteo, o OpenStreetMap, a DGT, o Earth Search e a AWS); nós não recebemos nada.", "<strong>Privacy.</strong> The drawing and saved plots stay in your browser only. For the data, your browser asks the sources below for the point or area you are viewing (IFAP, ISRIC, Open-Meteo, OpenStreetMap, DGT, Earth Search and AWS); we receive nothing."),
+    tr("<strong>O NDVI é do satélite, com pixéis de 10 m.</strong> Só contam os pixéis que a máscara da ESA dá como limpos (sem nuvens, sombras nem neve); por isso há semanas sem imagem, e um terreno muito pequeno fica com poucos pixéis. Não é o mesmo que a saúde da cultura: mostra o verde, e o verde muda com a estação e com a cultura.", "<strong>NDVI comes from the satellite, with 10 m pixels.</strong> Only pixels the ESA mask calls clear (no clouds, shadows or snow) count; so some weeks have no image, and a very small plot gets few pixels. It is not the same as crop health: it shows greenness, and greenness changes with the season and the crop."),
+    tr("<strong>As imagens são lidas no teu browser.</strong> Pedimos só a janela do terreno às bandas vermelha e infravermelha de cada imagem (ficheiros públicos na AWS) e calculamos aqui o índice; não passa por nenhum servidor nosso. Contém dados modificados do Copernicus Sentinel.", "<strong>Images are read in your browser.</strong> We ask only for the plot’s window of each image’s red and near-infrared bands (public files on AWS) and compute the index here; nothing goes through a server of ours. Contains modified Copernicus Sentinel data.")
   ].map((t) => `<li>${t}</li>`).join("");
 
   const FONTES = [
@@ -287,6 +288,7 @@
     ["Open-Meteo · Tempo e geocodificação", "Open-Meteo · Weather and geocoding", "Temperatura, chuva, evapotranspiração de referência e humidade do solo modelada, em grelha. Dados CC BY 4.0, para uso não comercial.", "Temperature, rain, reference evapotranspiration and modelled soil moisture, gridded. Data CC BY 4.0, for non-commercial use.", "https://open-meteo.com/"],
     ["ISRIC · SoilGrids 2.0", "ISRIC · SoilGrids 2.0", "Propriedades do solo previstas a 250 m (pH, carbono orgânico, azoto, areia, silte, argila), com intervalos de incerteza. CC BY 4.0.", "Soil properties predicted at 250 m (pH, organic carbon, nitrogen, sand, silt, clay), with uncertainty ranges. CC BY 4.0.", "https://www.isric.org/explore/soilgrids"],
     ["DGT · Ortofotomapa 2025", "DGT · Orthophoto map 2025", "Ortofotos RGB e infravermelho de Portugal continental (Direção-Geral do Território), serviço WMS aberto.", "RGB and infrared orthophotos of mainland Portugal (Directorate-General for Territory), open WMS service.", "https://www.dgterritorio.gov.pt/"],
+    ["Copernicus Sentinel-2 · Imagens e NDVI", "Copernicus Sentinel-2 · Images and NDVI", "Imagens Sentinel-2 L2A de 10 m (ESA/Copernicus, dados abertos), pesquisadas no catálogo Earth Search (Element 84) e lidas dos ficheiros COG públicos na AWS com geotiff.js. Contém dados modificados do Copernicus Sentinel.", "10 m Sentinel-2 L2A images (ESA/Copernicus, open data), searched in the Earth Search catalogue (Element 84) and read from the public COG files on AWS with geotiff.js. Contains modified Copernicus Sentinel data.", "https://registry.opendata.aws/sentinel-2-l2a-cogs/"],
     ["OpenStreetMap · Fundo do mapa", "OpenStreetMap · Map background", "© contribuidores do OpenStreetMap (ODbL). Mapa interativo com Leaflet (BSD-2).", "© OpenStreetMap contributors (ODbL). Interactive map with Leaflet (BSD-2).", "https://www.openstreetmap.org/copyright"]
   ];
   document.getElementById("t-fontes").innerHTML = FONTES.map((f) => `<div class="srcc"><h3>${tr(f[0], f[1])}</h3><p>${tr(f[2], f[3])}</p><span class="u"><a href="${f[4]}" target="_blank" rel="noopener">${f[4]}</a></span></div>`).join("");
@@ -303,6 +305,8 @@
   let baseAtual = "osm";
   bases.osm.addTo(map);
   const parcelasWms = L.tileLayer.wms(IFAP_WMS, { layers: "isip.data:parcelas.atual", format: "image/png", transparent: true, version: "1.3.0", minZoom: 14, maxZoom: 19, attribution: "Parcelário © IFAP" }).addTo(map);
+  map.createPane("ndvi").style.zIndex = 350; // por cima das parcelas e da ortofoto, por baixo do contorno
+  let camadaNdvi = null;
   const camadaSel = L.layerGroup().addTo(map);
   const camadaDes = L.layerGroup().addTo(map);
 
@@ -428,6 +432,7 @@
     const id = ++ficheiro;
     atual = t;
     camadaSel.clearLayers();
+    if (camadaNdvi) { map.removeLayer(camadaNdvi); camadaNdvi = null; }
     if (t.pols.length) {
       const poly = L.polygon(t.pols.map((p) => p.map((r) => r)), { color: "#2f8035", weight: 3, fillColor: "#2f8035", fillOpacity: 0.18 }).addTo(camadaSel);
       map.fitBounds(poly.getBounds(), { maxZoom: 17, padding: [30, 30] });
@@ -459,6 +464,7 @@
 <div class="t-tiles tiles" id="t-tiles"></div>
 <div class="t-grelha">
   ${celula("t-agua", tr("Tempo e balanço da água", "Weather and water balance"), `<div id="t-agua">${aCarregar()}</div>`)}
+  ${celula("t-ndvi", tr("Vegetação vista do espaço (NDVI)", "Vegetation seen from space (NDVI)"), `<div id="t-ndvi">${aCarregar()}</div>`)}
   ${celula("t-solo", tr("Solo", "Soil"), `<div id="t-solo">${aCarregar()}</div>`)}
   ${celula("t-fogo", tr("Perigo de incêndio", "Fire hazard"), `<div id="t-fogo">${aCarregar()}</div>`)}
   ${celula("t-uso", tr("Uso do solo no parcelário", "Land use in the parcel register"), `<div id="t-uso">${aCarregar()}</div>`)}
@@ -494,6 +500,8 @@
       if (!vivo()) return;
       ctx.fogo = g; pintarFogo(g); pistas();
     }).catch(() => { if (vivo()) document.getElementById("t-fogo").innerHTML = semDado(tr("Sem resposta do IFAP, ou fora do continente.", "No answer from IFAP, or outside the mainland.")); });
+
+    pintarNdvi(t, ctx, vivo, pistas);
 
     if (t.tipo === "parcela" && t.id) {
       ocupacaoDe(t).then((o) => { if (vivo()) pintarUso(o); }).catch(() => { if (vivo()) document.getElementById("t-uso").innerHTML = semDado(tr("O IFAP não respondeu. Tenta daqui a pouco.", "IFAP did not respond. Try again shortly.")); });
@@ -605,11 +613,93 @@ ${s.map((c, i) => `<tr><th>${nomes[i]}</th><td>${faixa(c, "phh2o", 1)}</td><td>$
       else if (["clay", "silty_clay", "sandy_clay", "clay_loam", "silty_clay_loam"].includes(T.classe)) out.push([tr("Textura pesada: guarda água mas encharca e compacta. Evita mexer quando molhado; raízes profundas e matéria orgânica abrem o solo.", "Heavy texture: it holds water but waterlogs and compacts. Avoid working it wet; deep roots and organic matter open the soil."), "/services/servicos.html?categoria=Solo%20e%20cobertura#catalogo-tecnicas", tr("Técnicas de solo e cobertura →", "Soil and cover techniques →")]);
     }
     if (ctx.pH != null && (ctx.pH < 5.6 || ctx.pH > 7.3)) out.push([tr(`pH estimado de ${dec(ctx.pH, 1)} (${phClasse(ctx.pH)}): é uma estimativa de 250 m. Confirma com uma análise antes de pensar em corrigir.`, `Estimated pH of ${dec(ctx.pH, 1)} (${phClasse(ctx.pH)}): it is a 250 m estimate. Confirm with a lab analysis before thinking of correcting it.`), "/calendario/conhecimento-cuidar.html#fatores", tr("Dos dados à parcela →", "From data to the plot →")]);
+    if (ctx.ndvi && ctx.ndvi.n >= 6 && ctx.ndvi.abaixo / ctx.ndvi.n >= 0.5) out.push([tr(`Em ${ctx.ndvi.abaixo} das ${ctx.ndvi.n} imagens limpas do último ano o NDVI médio ficou abaixo de 0,3 (solo nu ou vegetação rala): o solo fica pouco coberto durante boa parte do ano. Cobertura viva ou morta nesses meses protege-o do sol e da chuva.`, `In ${ctx.ndvi.abaixo} of the ${ctx.ndvi.n} clear images of the past year the mean NDVI was below 0.3 (bare soil or sparse vegetation): the soil stays poorly covered for much of the year. Living or dead cover in those months shields it from sun and rain.`), "/services/servicos.html?categoria=Solo%20e%20cobertura#catalogo-tecnicas", tr("Técnicas de solo e cobertura →", "Soil and cover techniques →")]);
     if (ctx.fogo != null && ctx.fogo >= 4) out.push([tr("Perigosidade de incêndio alta ou muito alta: descontinuar o combustível (faixas limpas, pastoreio, culturas e árvores de menor combustibilidade) pesa mais do que qualquer outra escolha.", "High or very high fire hazard: breaking up fuel continuity (clear strips, grazing, lower-flammability crops and trees) weighs more than any other choice."), "/recursos/vida-e-recursos.html", tr("Vida e recursos →", "Life and resources →")]);
     out.push([tr("Vê o que semear e plantar neste lugar, mês a mês, e as espécies da região.", "See what to sow and plant at this place, month by month, and the region’s species."), "/ecossistemas/biodiversidade.html", tr("Espécies da região →", "Species of the region →")]);
     const alvo = document.getElementById("t-pistas");
     document.getElementById("t-leitura").hidden = false;
     alvo.innerHTML = out.map((p) => `<li>${p[0]}${p[1] ? ` <a href="${comLang(p[1])}">${p[2]}</a>` : ""}</li>`).join("");
+  }
+
+  /* ---------- NDVI (Sentinel-2) ---------- */
+  const carregarScript = (src) => new Promise((ok, ko) => { const e = document.createElement("script"); e.src = src; e.onload = ok; e.onerror = () => ko(new Error(src)); document.body.appendChild(e); });
+  let ndviPronto = null;
+  const prepararNdvi = () => (ndviPronto = ndviPronto || (window.GeoTIFF ? Promise.resolve() : carregarScript("/assets/vendor/geotiff/geotiff.js?v=1")).then(() => (window.BioCulturaNDVI ? 0 : carregarScript("/assets/js/ndvi-sentinel.js?v=1"))).then(() => window.BioCulturaNDVI).catch((e) => { ndviPronto = null; throw e; }));
+  const dataLonga = (iso) => { const p = iso.split("-"); return p[2] + "/" + p[1] + "/" + p[0]; };
+  const ndviTxt = (v) => dec(v, 2);
+
+  function graficoNdvi(el, serie, selData, aoEscolher, U) {
+    const W = Math.max(300, el.clientWidth), H = 230, M = { t: 14, r: 12, b: 28, l: 38 };
+    const fim = Date.now(), ini = fim - 365 * 86400000, X = (d) => M.l + ((Date.parse(d) - ini) / (fim - ini)) * (W - M.l - M.r);
+    const lo = Math.min(0, ...serie.map((s) => s.media)), Y = (v) => M.t + (1 - (v - lo) / (1 - lo)) * (H - M.t - M.b);
+    let s = `<svg viewBox="0 0 ${W} ${H}" role="group" aria-label="${esc(tr("NDVI médio do terreno em cada imagem limpa do último ano", "Mean NDVI of the plot in each clear image of the past year"))}">`;
+    [0, 0.2, 0.4, 0.6, 0.8, 1].filter((v) => v >= lo - 1e-9).forEach((v) => { s += `<line x1="${M.l}" x2="${W - M.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="#dfe5dc"/><text x="${M.l - 6}" y="${Y(v) + 4}" text-anchor="end" font-size="11" fill="#626f67">${dec(v, 1)}</text>`; });
+    s += `<line x1="${M.l}" x2="${W - M.r}" y1="${Y(0.3)}" y2="${Y(0.3)}" stroke="#9a5a3c" stroke-dasharray="4 4"/>`;
+    const mes = new Date(ini); mes.setDate(1); mes.setMonth(mes.getMonth() + 1);
+    const nomes = EN ? ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"] : ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
+    for (let k = 0; k < 13; k++) { const d = new Date(mes.getFullYear(), mes.getMonth() + k, 1); if (d.getTime() > fim) break; if (k % 2 === 0 || W > 560) s += `<text x="${X(d.toISOString().slice(0, 10))}" y="${H - 8}" text-anchor="middle" font-size="11" fill="#626f67">${nomes[d.getMonth()]}</text>`; }
+    s += `<path d="${serie.map((q, i) => (i ? "L" : "M") + X(q.data).toFixed(1) + "," + Y(q.media).toFixed(1)).join("")}" fill="none" stroke="#9aa39d" stroke-width="1.5"/>`;
+    serie.forEach((q) => {
+      const c = U.cor(q.media), on = q.data === selData;
+      s += `<circle class="t-pt" data-d="${q.data}" tabindex="0" role="button" aria-label="${dataLonga(q.data)}: NDVI ${ndviTxt(q.media)}" cx="${X(q.data).toFixed(1)}" cy="${Y(q.media).toFixed(1)}" r="${on ? 7 : 5}" fill="rgb(${c.join(",")})" stroke="${on ? "#1c2a22" : "#fff"}" stroke-width="${on ? 2.5 : 1.5}" style="cursor:pointer"><title>${dataLonga(q.data)} · NDVI ${ndviTxt(q.media)}</title></circle>`;
+    });
+    el.innerHTML = s + "</svg>";
+    el.querySelectorAll(".t-pt").forEach((c) => { const f = () => aoEscolher(c.dataset.d); c.addEventListener("click", f); c.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); f(); } }); });
+  }
+
+  async function pintarNdvi(t, ctx, vivo, pistas) {
+    const alvo = document.getElementById("t-ndvi");
+    if (!t.pols.length) { alvo.innerHTML = semDado(tr("Precisas de uma parcela ou de um contorno para ler a vegetação.", "You need a parcel or an outline to read the vegetation.")); return; }
+    const pts = t.pols.flat(2), la = pts.map((p) => p[0]), lo = pts.map((p) => p[1]);
+    if ((Math.max(...la) - Math.min(...la)) * 111.2 > 4.5 || (Math.max(...lo) - Math.min(...lo)) * 111.2 * Math.cos(rad(la[0])) > 4.5) { alvo.innerHTML = semDado(tr("O terreno é grande demais para ler o NDVI (limite de cerca de 4,5 km de lado). Desenha só uma parte.", "The plot is too large to read NDVI (limit of about 4.5 km across). Draw only part of it.")); return; }
+    const estado = (txt) => { const e = document.getElementById("t-ndvi-prog") || document.getElementById("t-ndvi-estado"); if (e) e.textContent = txt; };
+    alvo.innerHTML = `<p class="t-carga" id="t-ndvi-estado">${tr("A procurar imagens do satélite Sentinel-2…", "Looking for Sentinel-2 satellite images…")}</p>`;
+    let U, lista;
+    try { U = await prepararNdvi(); lista = await U.cenas(t.pols, 365); } catch (e) { if (vivo()) alvo.innerHTML = semDado(tr("Não consegui falar com o catálogo de imagens Sentinel-2 agora. Tenta daqui a pouco.", "Could not reach the Sentinel-2 image catalogue right now. Try again shortly.")); return; }
+    if (!vivo()) return;
+    if (!lista.length) { alvo.innerHTML = semDado(tr("Não há imagens Sentinel-2 com poucas nuvens para este lugar no último ano.", "There are no low-cloud Sentinel-2 images for this place in the past year.")); return; }
+    let selData = null, escolhido = false, mostrar = true;
+    const porData = (rs) => { const m = new Map(); rs.forEach((r) => { if (r.ndvi && (!m.has(r.data) || r.valido > m.get(r.data).valido)) m.set(r.data, r); }); return [...m.values()].sort((a, b) => (a.data < b.data ? -1 : 1)); };
+    const aplicarMapa = (r) => {
+      if (camadaNdvi) { map.removeLayer(camadaNdvi); camadaNdvi = null; }
+      if (!mostrar || !r) return;
+      const im = U.imagem(r);
+      camadaNdvi = L.imageOverlay(im.url, im.limites, { pane: "ndvi", opacity: 0.95, interactive: false }).addTo(map);
+    };
+    const gradiente = `linear-gradient(90deg, ${U.RAMPA.map((q) => `rgb(${q[1].join(",")}) ${Math.round(((q[0] + 0.1) / 0.9) * 100)}%`).join(", ")})`;
+    const desenhar = (rs, fim) => {
+      const serie = porData(rs);
+      if (!serie.length) { if (fim) alvo.innerHTML = semDado(tr("Nenhuma imagem do último ano mostra este terreno com o céu limpo. Tenta mais tarde ou com um terreno maior.", "No image from the past year shows this plot under a clear sky. Try later or with a larger plot.")); return; }
+      const sel = (escolhido && serie.find((q) => q.data === selData)) || serie[serie.length - 1]; selData = sel.data;
+      ctx.ndvi = { n: serie.length, abaixo: serie.filter((q) => q.media < 0.3).length };
+      alvo.innerHTML = `
+<div class="tiles t-ndvi-tiles">
+  <div class="tile"><span class="v">${ndviTxt(sel.media)}<small>NDVI</small></span><span class="k">${tr("médio na imagem de", "mean in the image of")} ${dataLonga(sel.data)}</span><span class="s">${tr(`${sel.n} pixéis de 10 m, ${dec(sel.valido * 100, 0)}% do terreno com céu limpo`, `${sel.n} pixels of 10 m, ${dec(sel.valido * 100, 0)}% of the plot under a clear sky`)}</span></div>
+  <div class="tile"><span class="v">${ndviTxt(sel.p10)}–${ndviTxt(sel.p90)}</span><span class="k">${tr("90% dos pixéis estão neste intervalo", "90% of pixels fall in this range")}</span><span class="s">${tr("quanto mais largo, mais desigual é o terreno", "the wider, the more uneven the plot")}</span></div>
+  <div class="tile"><span class="v">${serie.length}<small>${tr("imagens", "images")}</small></span><span class="k">${tr("limpas no último ano", "clear in the past year")}</span><span class="s">${tr(`${ctx.ndvi.abaixo} com NDVI médio abaixo de 0,3`, `${ctx.ndvi.abaixo} with mean NDVI below 0.3`)}</span></div>
+</div>
+<div class="t-ndvi-ctl"><div class="seg"><button type="button" id="t-ndvi-mapa" aria-pressed="${mostrar}">${tr("NDVI no mapa", "NDVI on the map")}</button></div><div class="t-rampa"><span>${tr("solo nu", "bare soil")}</span><i style="background:${gradiente}"></i><span>${tr("vegetação densa", "dense vegetation")}</span></div></div>
+<div class="chart" id="t-graf-ndvi"></div>
+<p class="t-nota" id="t-ndvi-estado"><span id="t-ndvi-prog">${fim ? "" : tr("A ler mais imagens… ", "Reading more images… ")}</span> ${tr("Carrega num ponto para ver essa data no mapa. A linha tracejada marca 0,3.", "Press a point to see that date on the map. The dashed line marks 0.3.")}</p>
+<p class="t-nota">${tr("NDVI mede o verde da vegetação a partir da luz que ela reflete: perto de 0, solo nu ou rocha; entre 0,2 e 0,4, pastagem seca ou vegetação rala; acima de 0,6, vegetação densa e vigorosa. Varia com a estação e com o tipo de cultura: compara o terreno com ele próprio na mesma época, não com outras culturas.", "NDVI measures vegetation greenness from the light it reflects: near 0, bare soil or rock; between 0.2 and 0.4, dry grassland or sparse vegetation; above 0.6, dense, vigorous vegetation. It varies with the season and crop type: compare the plot with itself at the same time of year, not with other crops.")} <a href="https://earthobservatory.nasa.gov/features/MeasuringVegetation" target="_blank" rel="noopener">NASA</a></p>`;
+      graficoNdvi(document.getElementById("t-graf-ndvi"), serie, selData, (d) => { selData = d; escolhido = true; desenhar(rs, fim); }, U);
+      document.getElementById("t-ndvi-mapa").addEventListener("click", (e) => { mostrar = e.currentTarget.getAttribute("aria-pressed") !== "true"; e.currentTarget.setAttribute("aria-pressed", String(mostrar)); aplicarMapa(sel); });
+      aplicarMapa(sel);
+    };
+    try {
+      const res = await U.serie(lista.slice(0, 150), t.pols, {
+        minimo: 0.6, paralelo: 4, cancelado: () => !vivo(),
+        progresso: (feitos, total, rs) => {
+          if (!vivo()) return;
+          if (feitos === total) return;
+          if (porData(rs).length && (feitos === 1 || feitos % 12 === 0 || !document.getElementById("t-graf-ndvi"))) desenhar(rs, false);
+          else estado(tr(`A ler imagens… ${feitos} de ${total}`, `Reading images… ${feitos} of ${total}`));
+        }
+      });
+      if (!vivo()) return;
+      desenhar(res, true);
+      pistas();
+    } catch (e) { if (vivo()) alvo.innerHTML = semDado(tr("Não consegui ler as imagens agora. Tenta daqui a pouco.", "Could not read the images right now. Try again shortly.")); }
   }
 
   /* Calendário para o lugar: a localidade mais próxima (até 50 km) passa a ser o «teu território». */

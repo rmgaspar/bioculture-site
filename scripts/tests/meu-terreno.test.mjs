@@ -71,7 +71,7 @@ assert(!/NPARCELA/.test(js.replace(/p\.NPARCELA|f\.properties && f\.properties\.
 const guardar = js.match(/function guardarAtual[\s\S]*?\n  }\n/)?.[0] || '';
 assert(guardar.length > 100 && !/\.id\b|NPARCELA|BENEF/.test(guardar), 'o terreno guardado leva só o nome e as coordenadas, nunca o id da parcela');
 const hosts = [...new Set([...js.matchAll(/https:\/\/([a-z0-9.-]+)\//g)].map((m) => m[1]))].filter((h) => !/openstreetmap\.org$|leafletjs|dgterritorio\.gov\.pt$/.test(h) || /^tile\.|^cartografia\./.test(h));
-for (const h of hosts) assert(/ifap|isric|open-meteo|openstreetmap|dgterritorio/.test(h), `anfitrião não declarado: ${h}`);
+for (const h of hosts) assert(/ifap|isric|open-meteo|openstreetmap|dgterritorio|registry\.opendata\.aws|earthobservatory\.nasa\.gov/.test(h), `anfitrião não declarado: ${h}`);
 for (const nome of ['OpenStreetMap', 'IFAP', 'DGT', 'ISRIC', 'Open-Meteo']) {
   assert(priv.includes(nome), `privacidade não menciona ${nome}`);
 }
@@ -89,4 +89,12 @@ for (const f of ['assets/vendor/leaflet/leaflet.js', 'assets/vendor/leaflet/leaf
 assert(/Leaflet 1\.9\.4/.test(readFileSync('assets/vendor/leaflet/leaflet.js', 'utf8').slice(0, 300)));
 for (const ref of [/meu-terreno\.js\?v=\d+/, /meu-terreno\.css\?v=\d+/, /leaflet\.js\?v=\d+/, /leaflet\.css\?v=\d+/]) assert(ref.test(html), `versão em falta: ${ref}`);
 assert(/class="seg" role="group"[^`]*id="t-parcelas"/.test(js) || js.includes('id="t-parcelas"'), 'botão das parcelas');
+
+// NDVI: o módulo e o geotiff.js vêm do próprio site, e a privacidade diz que o browser pede o catálogo e as imagens ao Earth Search e à AWS.
+const ndvi = readFileSync('assets/js/ndvi-sentinel.js', 'utf8');
+for (const f of ['assets/vendor/geotiff/geotiff.js', 'assets/vendor/geotiff/LICENSE.txt']) assert(existsSync(f), f);
+assert(js.includes('/assets/vendor/geotiff/geotiff.js') && js.includes('/assets/js/ndvi-sentinel.js'), 'a página carrega o NDVI a pedido');
+assert([...ndvi.matchAll(/https:\/\/([a-z0-9.-]+)\//g)].every((m) => m[1] === 'earth-search.aws.element84.com'), 'o módulo só fala com o Earth Search');
+assert(priv.includes('Earth Search') && priv.includes('Amazon Web Services'), 'privacidade menciona o catálogo e a AWS');
+assert(/Copernicus Sentinel/.test(js), 'atribuição Copernicus Sentinel');
 console.log('meu-terreno: ok');
