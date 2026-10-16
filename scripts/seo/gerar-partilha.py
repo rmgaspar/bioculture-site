@@ -46,6 +46,7 @@ CARDS = {
     "energia/ambiente-construido.html": ("Ambiente construído.", "O peso do que construímos."),
     "energia/moda-texteis.html": ("Moda e têxteis.", "Quanto pesa o que vestimos."),
     "calendario/conhecimento-cuidar.html": ("Observar os ciclos.", "Agir com o lugar."),
+    "calendario/meu-terreno.html": ("O meu terreno.", "Lê-o antes de o trabalhar."),
     "calendario/calendario.html": ("Calendário de", "Regeneração."),
     "calendario/enologia.html": ("Vinha viva,", "vinho com lugar."),
     "calendario/horticola-detalhe.html": ("Hortícolas.", "Semear no tempo certo."),
