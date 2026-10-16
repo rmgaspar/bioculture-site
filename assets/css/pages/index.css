@@ -290,6 +290,20 @@ html body #main :is(#structure, #inventories, #atlas, #highlights, #today, #news
 .atlas-passo a:hover::after, .atlas-passo a:focus-visible::after { opacity: 1; transform: none; }
 @media (hover: none) { .atlas-passo a::after { opacity: 0.55; transform: none; } }
 
+/* Destaques: três ou quatro entradas, sem caixas: imagem, etiqueta, título, frase e «Ler →». */
+.destaques { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2.4em; }
+.destaques li { margin: 0; padding: 0; }
+.destaques a { display: flex; flex-direction: column; height: 100%; text-decoration: none; border-bottom: 0 !important; color: var(--ink); }
+.destaques img { display: block; width: 100%; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 14px; background: var(--pale); transition: transform 0.4s ease; }
+.destaques a > :not(img) { transition: color 0.15s; }
+.destaques .img-wrap { overflow: hidden; border-radius: 14px; }
+.destaques small { margin: 1.1em 0 0.45em; font-size: max(11px, 0.62em); font-weight: 900; letter-spacing: 0.16em; text-transform: uppercase; color: var(--clay); }
+.destaques h3 { margin: 0 0 0.45em; font-size: 1.3em; line-height: 1.2; color: var(--ink); }
+.destaques p { margin: 0; font-size: 0.88em; line-height: 1.55; color: var(--muted); }
+.destaques span { margin-top: auto; padding-top: 1em; font-size: max(11px, 0.7em); font-weight: 800; letter-spacing: 0.04em; color: var(--forest); }
+.destaques a:hover h3, .destaques a:focus-visible h3 { color: var(--forest); }
+.destaques a:hover img { transform: scale(1.015); }
+
 .today { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 1em; }
 
 .local, .encounter { border-radius: 18px; padding: 2em; min-height: 245px; }
@@ -407,7 +421,7 @@ html body #main :is(#structure, #inventories, #atlas, #highlights, #today, #news
 @media (max-width: 760px) {
     .inner { padding: 1.7em 1.4em 0 !important; }
     .head { grid-template-columns: 1fr; gap: 0.7em; }
-    .path, .pulse, .atlas-mapa, .today, .news { grid-template-columns: 1fr; }
+    .path, .pulse, .atlas-mapa, .destaques, .today, .news { grid-template-columns: 1fr; }
     .news a { min-height: 112px; padding-left: 92px; }
     .news-thumb, .news a > .bioculture-image-signature-frame { width: 92px; }
     .encounter { grid-template-columns: 1fr; }

@@ -178,6 +178,23 @@
                 }).join("");
             }
 
+            // Destaques: poucos (3 ou 4), escolhidos à mão em /data/destaques.json; para os mudar basta editar esse ficheiro.
+            async function showDestaques() {
+                const lista = el("destaques-lista");
+                if (!lista) return;
+                const L = isEnglish ? "en" : "pt";
+                el("destaques-label").textContent = isEnglish ? "Featured" : "Em destaque";
+                el("destaques-titulo").textContent = isEnglish ? "What deserves your attention" : "O que merece a tua atenção";
+                try {
+                    const itens = await fetch("/data/destaques.json?v=2").then((r) => { if (!r.ok) throw Error("destaques"); return r.json(); });
+                    const u = (path) => { const [p, h] = path.split("#"); return `${p}?lang=${L}${h ? "#" + h : ""}`; };
+                    lista.innerHTML = itens.slice(0, 4).map((d) => `<li><a href="${esc(u(d.href))}"><img src="${esc(d.imagem)}"${d.semMarca ? " data-no-signature" : ""} alt="${esc(d.alt[L] || d.alt.pt)}" loading="lazy"><small>${esc(d.tag[L] || d.tag.pt)}</small><h3>${esc(d.titulo[L] || d.titulo.pt)}</h3><p>${esc(d.texto[L] || d.texto.pt)}</p><span>${isEnglish ? "Read" : "Ler"} →</span></a></li>`).join("");
+                } catch (e) {
+                    console.error("Destaques:", e);
+                    lista.innerHTML = "";
+                }
+            }
+
             async function start() {
                 try {
                     const names = [
@@ -202,6 +219,7 @@
                     showNews(data[5]);
 
                     el("atlas-container").innerHTML = atlasContent();
+                    showDestaques();
                 } catch (e) {
                     console.error("Não foi possível carregar a entrada do observatório:", e);
                     el("pulse").innerHTML = '<p class="empty">—</p>';
