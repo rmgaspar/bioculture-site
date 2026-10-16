@@ -146,9 +146,10 @@
             }
 
             const PASSOS = {
-                observar: { n: "01", c: "#6b8f47", pt: "Observar", en: "Observe" },
-                compreender: { n: "02", c: "#a66f50", pt: "Compreender", en: "Understand" },
-                agir: { n: "03", c: "#3f7373", pt: "Agir", en: "Act" },
+                // Ícones de traço (24×24): lupa (observar), gráfico de linha (compreender), rebento (agir).
+                observar: { n: "01", c: "#6b8f47", pt: "Observar", en: "Observe", icon: '<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/>' },
+                compreender: { n: "02", c: "#a66f50", pt: "Compreender", en: "Understand", icon: '<path d="M4 4v16h16"/><path d="m7.5 15 4-5 3 3 5-7"/>' },
+                agir: { n: "03", c: "#3f7373", pt: "Agir", en: "Act", icon: '<path d="M12 21v-8"/><path d="M12 13c0-4-3-6.5-7-6.5 0 4 2.8 6.5 7 6.5z"/><path d="M12 15c0-3.2 2.4-5.5 6-5.5 0 3.4-2.3 5.5-6 5.5z"/><path d="M7 21h10"/>' },
             };
 
             // Mapa de entrada: três passos, uma linha por entrada (título e uma frase), sem gráficos nem filtros.
@@ -173,7 +174,7 @@
                     const passo = PASSOS[k];
                     const linhas = entradas.filter((e) => e[0] === k).map(([, titulo, frase, caminho]) =>
                         `<li><a href="${esc(u(caminho))}"><strong>${esc(titulo)}</strong><span>${esc(frase)}</span></a></li>`).join("");
-                    return `<section class="atlas-passo" style="--c:${passo.c}"><h3><b>${passo.n}</b>${esc(isEnglish ? passo.en : passo.pt)}</h3><ul>${linhas}</ul></section>`;
+                    return `<section class="atlas-passo" style="--c:${passo.c}"><h3><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">${passo.icon}</svg><b>${passo.n}</b>${esc(isEnglish ? passo.en : passo.pt)}</h3><ul>${linhas}</ul></section>`;
                 }).join("");
             }
 
