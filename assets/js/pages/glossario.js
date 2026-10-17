@@ -35,7 +35,7 @@
   const voltar = document.getElementById("glossario-voltar");
   if (voltar) voltar.setAttribute("href", comLang("/"));
 
-  fetch("/data/glossario.json?v=4").then((r) => { if (!r.ok) throw new Error("glossario " + r.status); return r.json(); })
+  fetch("/data/glossario.json?v=5").then((r) => { if (!r.ok) throw new Error("glossario " + r.status); return r.json(); })
     .then((D) => { build(D); barraFixa(); })
     .catch((e) => { console.error(e); barraFixa(); box.innerHTML = `<p class="prose">${tr("Não foi possível carregar o glossário.", "The glossary could not be loaded.")}</p>`; });
 

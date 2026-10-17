@@ -49,6 +49,7 @@ CARDS = {
     "glossario.html": ("Glossário.", "As palavras da terra, ditas com clareza."),
     "calendario/planeador-horta.html": ("Planeador de horta.", "O que cultivar, quando e onde."),
     "calendario/circuitos-curtos.html": ("Circuitos curtos.", "De quem cultiva a quem come."),
+    "calendario/sementes.html": ("Sementes.", "A diversidade que se guarda e se planta."),
     "calendario/apoios.html": ("Apoios.", "O que existe para cuidar da terra."),
     "calendario/calendario.html": ("Calendário de", "Regeneração."),
     "calendario/enologia.html": ("Vinha viva,", "vinho com lugar."),
