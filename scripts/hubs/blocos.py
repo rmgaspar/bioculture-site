@@ -271,6 +271,35 @@ def bloco(b, i, en_attr=False):
                     </section>
 '''
 
+NAV_VIDA = [("agua", "Água", "Water"), ("ar", "Ar", "Air"), ("solo", "Solo", "Soil"), ("biodiversidade", "Biodiversidade", "Biodiversity"), ("atualidade", "Atualidade", None)]
+NAV_VETORES = [("renovaveis", "Renováveis", "Renewables"), ("digital", "Digital", "Digital"), ("mineracao", "Mineração", "Mining"), ("pecuaria", "Pecuária", "Livestock"),
+               ("aviacao", "Aviação", "Aviation"), ("construido", "Construção", "Construction"), ("moda", "Moda", "Fashion"), ("atualidade", "Atualidade", None)]
+NAV_SOLUCOES = [("produtos", "Produtos", "Products"), ("tecnicas", "Técnicas", "Techniques"), ("problema", "Problemas", "Problems")]
+
+def barra(pagina, itens, en_attr=False):
+    """Barra fixa «Nesta página» (a mesma do hub Conhecimento para cuidar), antes do primeiro bloco; idempotente."""
+    p = ROOT / pagina; t = p.read_text(encoding="utf-8")
+    t = re.sub(r'\n *<nav aria-label="Nesta página" class="reading-nav">.*?</nav>', "", t, flags=re.S)
+    if en_attr:
+        links = "".join(f'<a href="#{i}" data-en="{esc(en)} ↓">{esc(pt)} ↓</a>' for i, pt, en in itens)
+        nav = f'<nav aria-label="Nesta página" class="reading-nav services-nav"><a class="hub-back" id="hub-voltar" href="/" data-en="← Back">← Voltar</a>{links}</nav>'
+    else:
+        links = "".join(f'<a href="#{i}">{esc(pt)} ↓</a>' for i, pt, en in itens)
+        nav = f'<nav aria-label="Nesta página" class="reading-nav"><a class="hub-back" id="hub-voltar" href="/">← Voltar</a>{links}</nav>'
+    k = t.index('<section class="hub-section"')
+    t = t[:k] + nav + "\n                    " + t[k:]
+    t = t.replace('<section aria-labelledby="hub-latest-title" class="hub-latest">', '<section aria-labelledby="hub-latest-title" class="hub-latest" id="atualidade">')
+    if "biocultura-sticky-nav.js" not in t:
+        t = re.sub(r'(\n\s*<script src="/assets/js/pages/(?:hub-pages|solutions-hub)\.js\?v=\d+"></script>)', r'\1\n        <script src="/assets/js/biocultura-sticky-nav.js?v=17"></script>', t, count=1)
+    p.write_text(t, encoding="utf-8")
+
+def dicionario_nav(*listas):
+    p = ROOT / "assets/lang/auto/en.json"; d = json.loads(p.read_text(encoding="utf-8"))
+    for itens in listas:
+        for i, pt, en in itens:
+            if en: d.setdefault(f"{pt} ↓", f"{en} ↓")
+    p.write_text(json.dumps(d, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
 def fotos(blocos):
     IMG.mkdir(parents=True, exist_ok=True)
     for b in blocos:
@@ -286,6 +315,8 @@ def fotos(blocos):
 
 def substituir(pagina, inicio, fim, novo, cabecalho=True):
     p = ROOT / pagina; t = p.read_text(encoding="utf-8")
+    if inicio not in t:
+        print(f"{pagina}: blocos já aplicados, nada a substituir"); return
     a = t.index(inicio); b = t.index(fim, a)
     t = t[:a] + novo + "\n" + " " * 20 + t[b:]
     if cabecalho and "hub-blocos.css" not in t:
@@ -320,3 +351,5 @@ if __name__ == "__main__":
     n = "".join(bloco(b, i, en_attr=True) for i, b in enumerate(SOLUCOES))
     substituir("services/services.html", '<section class="hub-grid hub-paths" aria-label="Explorar soluções">', '<footer class="footer footer-wordmark">', n.rstrip("\n"))
     print("dicionário: +", dicionario(VIDA + VETORES))
+    barra("recursos/vida-e-recursos.html", NAV_VIDA); barra("observatorio/pressoes-humanas.html", NAV_VETORES); barra("services/services.html", NAV_SOLUCOES, en_attr=True)
+    dicionario_nav(NAV_VIDA, NAV_VETORES)
