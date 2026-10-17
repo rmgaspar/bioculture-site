@@ -95,4 +95,8 @@ const plan = readFileSync('assets/js/pages/planeador-horta.js', 'utf8'), planHtm
 const ficha = readFileSync('assets/js/pages/calendario-horticola-detalhe-2.js', 'utf8'), fichaHtml = readFileSync('calendario/horticola-detalhe.html', 'utf8');
 for (const [src, pg] of [[plan, planHtml], [ficha, fichaHtml]]) { assert(src.includes('/data/sementes.json?v=') && src.includes('BioCulturaSementesResumo') && src.includes('sementes.html')); assert(/sementes-resumo\.js\?v=\d+/.test(pg)); }
 assert(js.includes('id="g-${c.id}"'), 'a linha do quadro tem a âncora que as fichas usam');
+// Fotografias ao lado do texto: ficheiros existentes, licença aberta e crédito com ligação à ficha da Commons.
+for (const f of ['variedade-de-sementes', 'espigueiros-soajo', 'sementes-guardadas', 'plantas-jovens']) assert(existsSync(`images/sementes/${f}.webp`) && js.includes(`src: "${f}"`), `foto ${f}`);
+assert((js.match(/commons\.wikimedia\.org\/wiki\/File:/g) || []).length >= 1 && /CC BY-SA/.test(js) && js.includes('data-no-signature'), 'crédito e licença nas fotos');
+assert((js.match(/\$\{duo\(/g) || []).length === 4, 'quatro secções com fotografia');
 console.log('sementes: ok');
