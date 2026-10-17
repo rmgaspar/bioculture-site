@@ -1,7 +1,7 @@
 (function () {
     const byId = (id) => document.getElementById(id);
     const isEnglish = document.documentElement.lang === "en";
-    fetch("/sidebar-content.html?v=26").then((r) => r.text()).then((html) => { byId("sidebar").innerHTML = html; });
+    fetch("/sidebar-content.html?v=27").then((r) => r.text()).then((html) => { byId("sidebar").innerHTML = html; });
 
     // Como nas restantes técnicas: título, logo a imagem, e depois vantagens e calculadora.
     const solarTool = document.querySelector(".solar-tool");

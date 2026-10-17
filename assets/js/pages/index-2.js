@@ -197,7 +197,7 @@
                 }
             }
 
-            fetch("/sidebar-content.html?v=26").then((r) => r.text()).then((h) => {
+            fetch("/sidebar-content.html?v=27").then((r) => r.text()).then((h) => {
                 el("sidebar").innerHTML = h;
                 start();
             }).catch(() => start());

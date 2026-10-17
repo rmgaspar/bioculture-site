@@ -136,3 +136,19 @@
     if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start, { once: true });
     else start();
 })();
+
+/* Ao voltar atrás (Safari e outros restauram a página com o último link carregado ainda em foco), o contorno
+   azul do foco aparecia à volta desse link. Só se mantém o foco quando a pessoa está a navegar com o teclado. */
+(function () {
+    "use strict";
+    let teclado = false;
+    window.addEventListener("keydown", (e) => { if (e.key === "Tab" || e.key.indexOf("Arrow") === 0) teclado = true; }, true);
+    window.addEventListener("mousedown", () => { teclado = false; }, true);
+    window.addEventListener("touchstart", () => { teclado = false; }, true);
+    const limpar = () => {
+        const a = document.activeElement;
+        if (!teclado && a && a !== document.body && /^(A|BUTTON|SUMMARY)$/.test(a.tagName)) a.blur();
+    };
+    window.addEventListener("pageshow", limpar);
+    window.addEventListener("popstate", limpar);
+})();
