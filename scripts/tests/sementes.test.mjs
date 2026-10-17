@@ -99,4 +99,7 @@ assert(js.includes('id="g-${c.id}"'), 'a linha do quadro tem a âncora que as fi
 for (const f of ['variedade-de-sementes', 'espigueiros-soajo', 'sementes-guardadas', 'plantas-jovens']) assert(existsSync(`images/sementes/${f}.webp`) && js.includes(`src: "${f}"`), `foto ${f}`);
 assert((js.match(/commons\.wikimedia\.org\/wiki\/File:/g) || []).length >= 1 && /CC BY-SA/.test(js) && js.includes('data-no-signature'), 'crédito e licença nas fotos');
 assert((js.match(/\$\{duo\(/g) || []).length === 4, 'quatro secções com fotografia');
+// Círculo do topo: fotografia de feijões num banco de sementes (Neil Palmer, CC BY-SA 2.0), com crédito visível.
+assert(existsSync('images/sementes/hero-feijoes.webp') && readFileSync('assets/css/pages/sementes.css', 'utf8').includes('/images/sementes/hero-feijoes.webp'));
+assert(html.includes('Neil Palmer') && html.includes('Four_bean_varieties_in_a_gene_bank.jpg') && html.includes('CC BY-SA 2.0'), 'crédito da foto do topo');
 console.log('sementes: ok');
