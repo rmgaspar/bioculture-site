@@ -551,7 +551,7 @@
         fig: [{
           t: tr("Área publicada de cada projeto", "Published area of each project"),
           d: tr("Hectares do projeto, concessão ou envolvente de planeamento. Não é pegada impermeabilizada.", "Hectares of the project, lease or planning envelope. It is not sealed footprint."),
-          src: tr("bioCulture, casos curados (Global Energy Monitor e registos oficiais)", "bioCulture, curated cases (Global Energy Monitor and official records)"),
+          src: tr("bioCulture, casos curados (registos oficiais, das empresas e Wikipédia)", "bioCulture, curated cases (official and company records, and Wikipedia)"),
           draw: (el) => hbars(el, RP.projects.map((p, i) => ({ l: p.name + " · " + pc(p.country), v: p.area_ha, t: fmt(p.area_ha, 0) + " ha · " + fmt(p.capacity_mw, 0) + " MW", c: css(SER[i % SER.length]) })), { unit: "ha", table: [tr("Projeto", "Project"), "ha · MW"] })
         }],
         factos: [
