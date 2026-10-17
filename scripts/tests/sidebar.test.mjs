@@ -26,4 +26,7 @@ assert(!/<h1>Priva/.test(contactos), 'um só h1 na página');
 assert(cfg.paginas['contactos.html'].pt.includes('privacidade') && !cfg.paginas['privacidade.html']);
 const refs = execSync("git grep -l 'privacidade.html' -- '*.html' '*.js' '*.json' '*.mjs' ':!scripts/tests' || true", { encoding: 'utf8' }).trim();
 assert.equal(refs, '', `ligações antigas à privacidade: ${refs}`);
+// Todas as páginas carregam a mesma versão do runtime i18n (o script de metadados já deixou páginas para trás).
+const versoes = new Set(execSync("git grep -ho 'biocultura-i18n-runtime.js?v=[0-9]*' -- '*.html'", { encoding: 'utf8' }).trim().split('\n'));
+assert.equal(versoes.size, 1, `versões do runtime diferentes: ${[...versoes].join(', ')}`);
 console.log('sidebar: ok');
