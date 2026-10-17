@@ -59,8 +59,7 @@ CARDS = {
     "services/produtos.html": ("Escolhas para", "um lugar mais vivo."),
     "services/produto-detalhe.html": ("Escolhas para", "um lugar mais vivo."),
     "manifesto.html": ("Não basta medir o mundo.", "É preciso voltar a pertencer-lhe."),
-    "contactos.html": ("Este observatório", "também cresce contigo."),
-    "privacidade.html": ("Privacidade.", "Sem rastreamento, sem publicidade."),
+    "contactos.html": ("Contactos e privacidade.", "Sem rastreamento, sem publicidade."),
 }
 
 

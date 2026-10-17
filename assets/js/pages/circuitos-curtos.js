@@ -34,7 +34,7 @@
     document.querySelectorAll("[data-en-label]").forEach((n) => n.setAttribute("aria-label", n.dataset.enLabel));
     document.title = "Short chains — bioCulture";
   }
-  fetch("/sidebar-content.html?v=25").then((r) => (r.ok ? r.text() : "")).then((h) => { const sb = document.getElementById("sidebar"); if (h && sb) sb.innerHTML = h; }).catch(() => {});
+  fetch("/sidebar-content.html?v=26").then((r) => (r.ok ? r.text() : "")).then((h) => { const sb = document.getElementById("sidebar"); if (h && sb) sb.innerHTML = h; }).catch(() => {});
   const barraFixa = () => { const el = document.createElement("script"); el.src = "/assets/js/biocultura-sticky-nav.js?v=17"; document.body.appendChild(el); };
   const langQ = new URLSearchParams(location.search).get("lang");
   const comLang = (href) => {
