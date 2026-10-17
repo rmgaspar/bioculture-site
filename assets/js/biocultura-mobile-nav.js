@@ -137,18 +137,19 @@
     else start();
 })();
 
-/* Ao voltar atrás (Safari e outros restauram a página com o último link carregado ainda em foco), o contorno
-   azul do foco aparecia à volta desse link. Só se mantém o foco quando a pessoa está a navegar com o teclado. */
+/* Ao voltar atrás, o browser restaura a página com o último link carregado ainda em foco e desenha à volta dele o contorno
+   azul. Retiramos o foco logo depois do clique e ao sair/regressar à página, a menos que a pessoa esteja a usar o teclado
+   (nesse caso o foco fica e o contorno aparece, na cor do site: html.bio-kb). */
 (function () {
     "use strict";
-    let teclado = false;
-    window.addEventListener("keydown", (e) => { if (e.key === "Tab" || e.key.indexOf("Arrow") === 0) teclado = true; }, true);
-    window.addEventListener("mousedown", () => { teclado = false; }, true);
-    window.addEventListener("touchstart", () => { teclado = false; }, true);
+    const raiz = document.documentElement;
+    const teclado = (v) => raiz.classList.toggle("bio-kb", v);
+    window.addEventListener("keydown", (e) => { if (e.key === "Tab" || e.key.indexOf("Arrow") === 0) teclado(true); }, true);
+    ["mousedown", "touchstart", "pointerdown"].forEach((t) => window.addEventListener(t, () => teclado(false), true));
     const limpar = () => {
         const a = document.activeElement;
-        if (!teclado && a && a !== document.body && /^(A|BUTTON|SUMMARY)$/.test(a.tagName)) a.blur();
+        if (!raiz.classList.contains("bio-kb") && a && a !== document.body && /^(A|BUTTON|SUMMARY)$/.test(a.tagName)) a.blur();
     };
-    window.addEventListener("pageshow", limpar);
-    window.addEventListener("popstate", limpar);
+    window.addEventListener("click", () => setTimeout(limpar, 0), true);
+    ["pagehide", "pageshow", "popstate", "visibilitychange"].forEach((t) => window.addEventListener(t, limpar));
 })();

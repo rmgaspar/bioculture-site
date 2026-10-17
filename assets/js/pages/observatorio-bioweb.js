@@ -10,7 +10,7 @@
   const { EN, tr, fmt, esc, css, hbars, line, legend, miniBars, tableView } = G;
   const get = (url) => fetch(url).then((r) => { if (!r.ok) throw new Error(url + " " + r.status); return r.json(); });
 
-  fetch("/sidebar-content.html?v=27").then((r) => (r.ok ? r.text() : "")).then((h) => { const sb = document.getElementById("sidebar"); if (h && sb) sb.innerHTML = h; }).catch(() => {});
+  fetch("/sidebar-content.html?v=28").then((r) => (r.ok ? r.text() : "")).then((h) => { const sb = document.getElementById("sidebar"); if (h && sb) sb.innerHTML = h; }).catch(() => {});
   /* A barra fixa lê os destinos ao carregar; como os capítulos nascem aqui, só a ligamos depois de existirem. */
   const barraFixa = () => { const el = document.createElement("script"); el.src = "/assets/js/biocultura-sticky-nav.js?v=17"; document.body.appendChild(el); };
   const traduzirNav = () => {

@@ -386,6 +386,9 @@ html, body { overflow-x:hidden; }
     #sidebar .bio-location { margin-top:.5rem; }
 }
 
-/* Sem contorno de foco depois de um clique (o do teclado mantém-se). */
-#sidebar a:focus:not(:focus-visible),
-#sidebar button:focus:not(:focus-visible) { outline: none; box-shadow: none; }
+/* Sem contorno de foco depois de um clique ou de voltar atrás; com o teclado (html.bio-kb) o foco tem contorno verde. */
+#sidebar a:focus, #sidebar button:focus, #sidebar summary:focus { outline: none; box-shadow: none; }
+html.bio-kb #sidebar a:focus-visible, html.bio-kb #sidebar button:focus-visible, html.bio-kb #sidebar summary:focus-visible { outline: 2px solid #2f6b4b; outline-offset: 2px; }
+/* O mesmo em todo o site: sem teclado, nenhum link ou botão mostra contorno de foco (ex.: ao voltar atrás). */
+html:not(.bio-kb) a:focus, html:not(.bio-kb) button:focus, html:not(.bio-kb) summary:focus { outline: none; }
+html.bio-kb a:focus-visible, html.bio-kb button:focus-visible { outline: 2px solid #2f6b4b; outline-offset: 2px; }
