@@ -251,7 +251,7 @@
                         "O regime europeu procura tornar comparáveis energia, água, calor residual e eficiência.",
                         "The European framework seeks comparable energy, water, waste heat and efficiency reporting.",
                     ),
-                    "https://energy.ec.europa.eu/topics/energy-efficiency/energy-performance-data-centres_en",
+                    "https://energy.ec.europa.eu/topics/energy-efficiency/energy-efficiency-targets-directive-and-rules/energy-efficiency-directive/energy-performance-data-centres_en",
                 ],
                 [
                     "LBNL",
