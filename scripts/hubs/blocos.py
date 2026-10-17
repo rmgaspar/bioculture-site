@@ -282,7 +282,7 @@ def barra(pagina, itens, en_attr=False):
     t = re.sub(r'\n *<nav aria-label="Nesta página" class="reading-nav">.*?</nav>', "", t, flags=re.S)
     if en_attr:
         links = "".join(f'<a href="#{i}" data-en="{esc(en)} ↓">{esc(pt)} ↓</a>' for i, pt, en in itens)
-        nav = f'<nav aria-label="Nesta página" class="reading-nav services-nav"><a class="hub-back" id="hub-voltar" href="/" data-en="← Back">← Voltar</a>{links}</nav>'
+        nav = f'<nav aria-label="Nesta página" class="reading-nav"><a class="hub-back" id="hub-voltar" href="/" data-en="← Back">← Voltar</a>{links}</nav>'
     else:
         links = "".join(f'<a href="#{i}">{esc(pt)} ↓</a>' for i, pt, en in itens)
         nav = f'<nav aria-label="Nesta página" class="reading-nav"><a class="hub-back" id="hub-voltar" href="/">← Voltar</a>{links}</nav>'
