@@ -77,4 +77,22 @@ assert(js.includes('/glossario.html#variedade-conservacao'));
 assert(js.includes('/calendario/apoios.html') && js.includes('/calendario/planeador-horta.html') && js.includes('/calendario/circuitos-curtos.html'), 'ligações às ferramentas');
 assert(!/localStorage|sessionStorage|navigator\.geolocation|fetch\("https/.test(js), 'sem serviços externos nem dados guardados');
 assert(/sementes\.js\?v=\d+/.test(html) && /sementes\.css\?v=\d+/.test(html));
+assert(readFileSync('assets/css/pages/sementes.css', 'utf8').includes('tr.sm-foco'), 'a linha ligada pelas fichas fica destacada');
+// Ligação ao Planeador e às fichas: cada cultura aponta para um só grupo do quadro e existe no Planeador.
+const P = JSON.parse(readFileSync('data/planeador-horta.json', 'utf8'));
+const planeavel = new Set(P.culturas.map((c) => c.id));
+const mapeadas = Q.flatMap((c) => c.culturas || []);
+assert.equal(mapeadas.length, 22); assert.equal(new Set(mapeadas).size, 22, 'cada cultura só num grupo');
+for (const id of mapeadas) assert(planeavel.has(id), `cultura que o Planeador não tem: ${id}`);
+for (const id of ['melancia', 'repolho', 'nabo', 'alho', 'batata', 'fava', 'feijao-frade', 'pimenta-malagueta']) assert(!mapeadas.includes(id), `${id} não está no quadro da fonte`);
+const w2 = {}; vm.runInNewContext(readFileSync('assets/js/sementes-resumo.js', 'utf8'), { window: w2 });
+const { porCultura, resumo } = w2.BioCulturaSementesResumo;
+assert.equal(porCultura(D, 'melancia'), null); assert.equal(porCultura(D, 'tomate').id, 'tomate'); assert.equal(porCultura(D, 'curgete').id, 'abobora-curgete');
+assert.deepEqual(J(resumo(q('tomate'), false)), ['Autofecundada, fácil de guardar', 'isolar ≈ 8 a 30 m', 'a semente dura 5 a 10 anos']);
+assert.deepEqual(J(resumo(q('cenoura'), true)), ['Cross-pollinated (insects), easy, but it crosses', 'isolate ≈ 450 m', 'seed lasts 2 to 3 years', 'biennial: seed in the 2nd year']);
+assert.deepEqual(J(resumo(q('cebola'), false)).slice(2), ['a semente dura 1 ano', 'bienal: dá semente no 2.º ano'], 'singular em «1 ano»');
+const plan = readFileSync('assets/js/pages/planeador-horta.js', 'utf8'), planHtml = readFileSync('calendario/planeador-horta.html', 'utf8');
+const ficha = readFileSync('assets/js/pages/calendario-horticola-detalhe-2.js', 'utf8'), fichaHtml = readFileSync('calendario/horticola-detalhe.html', 'utf8');
+for (const [src, pg] of [[plan, planHtml], [ficha, fichaHtml]]) { assert(src.includes('/data/sementes.json?v=') && src.includes('BioCulturaSementesResumo') && src.includes('sementes.html')); assert(/sementes-resumo\.js\?v=\d+/.test(pg)); }
+assert(js.includes('id="g-${c.id}"'), 'a linha do quadro tem a âncora que as fichas usam');
 console.log('sementes: ok');

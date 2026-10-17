@@ -38,13 +38,13 @@
   const voltar = document.getElementById("sementes-voltar");
   if (voltar) voltar.setAttribute("href", comLang("/calendario/conhecimento-cuidar.html"));
 
-  fetch("/data/sementes.json?v=2").then((r) => { if (!r.ok) throw new Error("sementes " + r.status); return r.json(); })
+  fetch("/data/sementes.json?v=3").then((r) => { if (!r.ok) throw new Error("sementes " + r.status); return r.json(); })
     .then((D) => { build(D); barraFixa(); irParaHash(); })
     .catch((e) => { console.error(e); barraFixa(); box.innerHTML = `<p class="prose">${tr("Não foi possível carregar os dados desta página.", "The data for this page could not be loaded.")}</p>`; });
   const irParaHash = () => {
     let alvo = null;
     try { alvo = location.hash.length > 1 ? document.getElementById(decodeURIComponent(location.hash.slice(1))) : null; } catch (e) { alvo = null; }
-    if (alvo) setTimeout(() => alvo.scrollIntoView({ block: "start" }), 60);
+    if (alvo) { if (alvo.tagName === "TR") alvo.classList.add("sm-foco"); setTimeout(() => alvo.scrollIntoView({ block: "start" }), 60); }
   };
 
   function build(D) {

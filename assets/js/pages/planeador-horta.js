@@ -98,14 +98,15 @@
   if (voltar) voltar.setAttribute("href", comLang("/calendario/conhecimento-cuidar.html"));
   const get = (u) => fetch(u).then((r) => { if (!r.ok) throw new Error(u + " " + r.status); return r.json(); });
 
-  Promise.all([get("/data/horticolas_master.json"), get("/data/planeador-horta.json?v=1")])
-    .then(([M, P]) => { build(M, P); barraFixa(); })
+  /* Os dados de sementes só enriquecem as fichas: se falharem, o planeador funciona na mesma. */
+  Promise.all([get("/data/horticolas_master.json"), get("/data/planeador-horta.json?v=1"), get("/data/sementes.json?v=3").catch(() => null)])
+    .then(([M, P, SEM]) => { build(M, P, SEM); barraFixa(); })
     .catch((e) => { console.error(e); barraFixa(); box.innerHTML = `<p class="prose">${tr("Não foi possível carregar os dados desta página.", "The data for this page could not be loaded.")}</p>`; });
 
   const MESES = EN ? ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"] : ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
   const CHAVE = "biocultura_horta";
 
-  function build(M, P) {
+  function build(M, P, SEM) {
     const culturas = P.culturas.filter((c) => M[c.id]);
     const porId = Object.fromEntries(culturas.map((c) => [c.id, c]));
     const grupo = (id) => P.grupos.find((g) => g.id === id);
@@ -246,6 +247,13 @@ ${avisos.map((a) => `<p class="pl-aviso">${a}</p>`).join("")}${tabLivres}
       $("pl-imprimir").addEventListener("click", () => window.print());
     }
 
+    /* «Semente»: o que o quadro de Sementes diz desta cultura, com ligação à linha do quadro. */
+    const R = window.BioCulturaSementesResumo;
+    const semente = (id) => {
+      const g = R && SEM ? R.porCultura(SEM, id) : null;
+      return g ? `<div><dt>${tr("Semente", "Seed")}</dt><dd>${R.resumo(g, EN).map(esc).join("<br>")}<br><a href="${comLang("/calendario/sementes.html#g-" + g.id)}">${tr("Guardar semente →", "Saving seed →")}</a></dd></div>` : "";
+    };
+
     function pintarFichas(ids) {
       if (!ids.length) { $("pl-fichas").innerHTML = vazio(tr("Sem culturas escolhidas.", "No crops chosen.")); return; }
       const pares = vizinhos(ids, M);
@@ -256,7 +264,7 @@ ${avisos.map((a) => `<p class="pl-aviso">${a}</p>`).join("")}${tabLivres}
 <div><dt>${tr("Semear", "Sow")}</dt><dd>${rot(j.S) || "–"}${j.abrigo ? ` <small>(${tr("em abrigo", "sheltered")})</small>` : ""}</dd></div>
 <div><dt>${tr("Plantar", "Plant")}</dt><dd>${rot(j.T) || tr("sementeira direta ou ver a ficha", "direct sowing or see the sheet")}</dd></div>
 <div><dt>${tr("Colher", "Harvest")}</dt><dd>${rot(j.C) || tr("ver a ficha", "see the sheet")}${j.estimada ? ` <small>(${tr("estimada", "estimated")})</small>` : ""}</dd></div>
-${c.ph_solo ? `<div><dt>pH</dt><dd>${esc(c.ph_solo)}</dd></div>` : ""}</dl>
+${c.ph_solo ? `<div><dt>pH</dt><dd>${esc(c.ph_solo)}</dd></div>` : ""}${semente(id)}</dl>
 <a href="${comLang("/calendario/horticola-detalhe.html?id=" + encodeURIComponent(id))}">${tr("Ficha completa →", "Full sheet →")}</a></article>`;
       }).join("");
       const viz = pares.length ? `<h3 class="pl-h3">${tr("Vizinhanças que as fichas indicam", "Neighbours the sheets indicate")}</h3><ul class="pl-viz">${pares.map((p) => `<li class="${p.tipo}"><b>${p.tipo === "fav" ? "✓" : "✗"}</b> ${tr(`A ficha de ${esc(nome(p.de))} ${p.tipo === "fav" ? "sugere" : "manda evitar"} ${esc(nome(p.para))} ao lado.`, `The ${esc(nome(p.de))} sheet ${p.tipo === "fav" ? "suggests" : "says to avoid"} ${esc(nome(p.para))} nearby.`)}</li>`).join("")}</ul>` : "";

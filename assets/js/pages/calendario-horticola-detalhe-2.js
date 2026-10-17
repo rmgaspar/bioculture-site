@@ -28,6 +28,13 @@
                     }</ul></article>`
                     : "";
             }
+            /* «Semente»: o que o quadro da página Sementes diz desta cultura (só as que o quadro cobre). */
+            function sementePanel(sementes, id) {
+                const R = window.BioCulturaSementesResumo, g = R && sementes ? R.porCultura(sementes, id) : null;
+                if (!g) return "";
+                const en = !!window.BioCultureI18n?.isEnglish, lang = en ? "?lang=en" : "";
+                return `<article class="detail-panel"><h3>${en ? "Seed" : "Semente"}</h3><ul>${R.resumo(g, en).map((x) => `<li>${esc(x)}</li>`).join("")}</ul><p><a href="/calendario/sementes.html${lang}#g-${encodeURIComponent(g.id)}">${en ? "Saving seed: the full chart →" : "Guardar semente: o quadro completo →"}</a></p></article>`;
+            }
             function section(label, title, note, content, id) {
                 return content
                     ? `<div class="detail-section"${id ? ` id="${esc(id)}"` : ""}><div class="section-head"><span>${
@@ -270,11 +277,12 @@
                 }
 
                 try {
-                    const [master, pragas, solucoesCatalogo, planeador] = await Promise.all([
+                    const [master, pragas, solucoesCatalogo, planeador, sementes] = await Promise.all([
                         fetch("/data/horticolas_master.json").then((r) => r.json()),
                         fetch("/data/pragas.json").then((r) => r.json()).catch(() => []),
                         fetch("/data/solucoes-catalogo.json").then((r) => r.json()).catch(() => null),
                         fetch("/data/planeador-horta.json?v=1").then((r) => r.json()).catch(() => null),
+                        fetch("/data/sementes.json?v=3").then((r) => r.json()).catch(() => null),
                     ]);
                     const planeavel = new Set((planeador?.culturas || []).map((c) => c.id));
                     const pestIndex = buildPestIndex(pragas);
@@ -323,6 +331,7 @@
                         (planeavel.has(id)
                             ? `<article class="detail-panel"><h3>Planear</h3><p><a href="/calendario/planeador-horta.html?c=${encodeURIComponent(id)}">Ver as épocas e a rotação desta cultura no Planeador de horta →</a></p></article>`
                             : "") +
+                        sementePanel(sementes, id) +
                         listPanel("Culturas semelhantes", item.culturas_semelhantes);
                     const mentionedPests = [
                         ...pestsMentionedIn(item.problemas_comuns, pestIndex, id, item.nome),
