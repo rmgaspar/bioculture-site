@@ -68,7 +68,7 @@ for (const [slug, P] of Object.entries(PAGINAS)) {
   for (const m of js.matchAll(/\[([0-9, ]+)\]\)(?:,|\s*\])/g)) for (const i of m[1].split(',').map(Number)) assert(D.fontes[i], `${slug}: índice de fonte ${i} inexistente`);
   for (const id of Object.keys(fotos[slug]).filter((k) => k !== 'hero')) assert(js.includes(`<section id="${id}">`), `${slug}: a secção ${id} não existe`);
   assert(config[`energia/${slug}.html`], `${slug}: sem registo em config/paginas.json`);
-  assert(hub.includes(`/energia/${slug}.html`) && new RegExp(`class="hub-thumb"\\s+data-no-signature\\s+style="[^"]*${slug}\\/miniatura`).test(hub), `${slug}: cartão do hub`);
+  assert(hub.includes(`/energia/${slug}.html`) && existsSync(`images/hubs/${P.vetor === 'moda' ? 'vetor-moda' : 'vetor-construido'}.webp`) && hub.includes(`/images/hubs/${P.vetor === 'moda' ? 'vetor-moda' : 'vetor-construido'}.webp`), `${slug}: cartão do hub`);
   const sis = sistemas.find((s) => s.id === P.sistema);
   assert.equal(sis.status, 'live'); assert.equal(sis.href, `/energia/${slug}.html`);
 }

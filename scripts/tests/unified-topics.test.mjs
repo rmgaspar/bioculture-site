@@ -44,7 +44,7 @@ for (const [page] of pairs) {
 const hub = read('recursos/vida-e-recursos.html');
 assert(!hub.includes('life-puzzle'), 'No SVG puzzle dependency');
 assert(!hub.includes('life-element') && !hub.includes('life-web') && !hub.includes('life-connections'), 'Mosaic pattern must not return — the four systems use the shared hub-card grid instead');
-assert.equal((hub.match(/class="hub-card"/g)||[]).length,4, 'Four systems must use the shared hub-card grid, matching other hubs');
+assert.equal((hub.match(/class="hub-tools-grid/g)||[]).length,4, 'Four systems use the shared photo-and-links blocks, like the other hubs');
 assert(read('assets/js/pages/hub-pages.js').includes('cardHtml'), 'Hub news use the shared news card');
 assert(read('assets/js/biocultura-i18n-runtime.js').includes('class="news-media"'), 'The shared news card keeps the hub markup (image, date, title, excerpt, source)');
 console.log('Eight unified topics: unique IDs, retained controls, aliases with language/hash and base path, no redirect loops, four systems on the shared hub-card grid and continuous visible reading.');

@@ -88,7 +88,7 @@ for (const id of Object.keys(fotos).filter((k) => k !== 'hero')) assert(js.inclu
 assert(existsSync('images/aviacao/hero.webp') && existsSync('images/partilha/energia-aviacao.jpg'));
 // As imagens são de terceiros (NASA): o runtime não lhes pode pôr a marca bioCulture.
 assert(/class="observatory-visual"\s+data-no-signature/.test(html), 'o topo da página leva data-no-signature');
-assert(/class="hub-thumb"\s+data-no-signature\s+style="[^"]*aviacao\/miniatura/.test(readFileSync('observatorio/pressoes-humanas.html', 'utf8')), 'o cartão do hub leva data-no-signature');
+assert(/<figure class="hub-tools-foto" data-no-signature>\s*<img src="\/images\/hubs\/vetor-aviacao\.webp"/.test(readFileSync('observatorio/pressoes-humanas.html', 'utf8')) && existsSync('images/hubs/vetor-aviacao.webp'), 'o bloco do hub leva a fotografia, com data-no-signature');
 assert(JSON.parse(readFileSync('config/paginas.json', 'utf8')).paginas['energia/aviacao.html']);
 assert(readFileSync('observatorio/pressoes-humanas.html', 'utf8').includes('/energia/aviacao.html'), 'o hub dos vetores liga à página');
 // Ligação às notícias: categoria no pipeline, fontes, tema e ligação no runtime, filtro da página de notícias, hub e bloco da página.
