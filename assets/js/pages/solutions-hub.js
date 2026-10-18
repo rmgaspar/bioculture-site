@@ -92,7 +92,7 @@
     async function services() {
         try {
             const data = await fetchJSON('/data/services.json');
-            byId('service-areas').innerHTML=data.services.map(s=>`<article class="path-card"><span class="eyebrow">${esc(s.symbol)}</span><h2>${esc(en ? s.en.titulo : s.titulo)}</h2><p>${esc(en ? s.en.descricao : s.descricao)}</p><a class="card-action" href="${esc(link(s.href))}">${tr('Explorar esta área →','Explore this area →')}</a></article>`).join('');
+            byId('service-areas').innerHTML=data.services.map(s=>`<article class="path-card" data-tom="${esc(s.id)}"><span class="eyebrow">${esc(s.symbol)}</span><h2>${esc(en ? s.en.titulo : s.titulo)}</h2><p>${esc(en ? s.en.descricao : s.descricao)}</p><a class="card-action" href="${esc(link(s.href))}">${tr('Explorar esta área →','Explore this area →')}</a></article>`).join('');
         } catch (_) {
             byId('service-areas').innerHTML=`<p class="hub-error">${tr('As áreas de apoio estão temporariamente indisponíveis. Os guias continuam disponíveis abaixo.','Support areas are temporarily unavailable. The guides remain available below.')}</p>`;
         }
