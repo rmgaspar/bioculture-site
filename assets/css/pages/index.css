@@ -211,7 +211,7 @@ html body #main :is(#structure, #inventories, #atlas, #highlights, #today, #news
 .step p { font-size: 0.9em; line-height: 1.62; color: var(--muted); }
 .step b { position: absolute; right: 1.3em; bottom: 1.1em; color: var(--forest); }
 
-.pulse { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1em; }
+.pulse { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1em; }
 
 .number {
     --accent: var(--forest);
@@ -219,9 +219,9 @@ html body #main :is(#structure, #inventories, #atlas, #highlights, #today, #news
     grid-template-rows: 3.15em auto 1fr auto;
     align-content: start;
     padding: 1.5em;
-    border: 1px solid var(--line);
-    border-top: 3px solid var(--accent);
-    border-radius: 14px;
+    border: 0;
+    border-radius: 16px;
+    background: color-mix(in srgb, var(--accent) 8%, #fff);
 }
 
 .number small { display: block; text-transform: uppercase; letter-spacing: 1.1px; color: #656f68; }
@@ -229,9 +229,17 @@ html body #main :is(#structure, #inventories, #atlas, #highlights, #today, #news
 .number span { font-size: 0.78em; color: var(--muted); }
 .number .source { display: block; margin-top: 0.7em; font-size: max(11px, 0.7em); color: var(--muted); }
 
-.pulse-notes { display: grid; gap: 0.6em; margin-top: 1.3em; }
-.pulse-notes p { margin: 0; font-size: 0.85em; line-height: 1.55; color: var(--muted); }
-.pulse-notes strong { color: var(--ink); }
+.pulse-notes { display: grid; gap: 0.8em; }
+.pulse-notes p { margin: 0; padding: 1.1em 1.3em; border-radius: 16px; background: #f6f2e9; font-size: 0.88em; line-height: 1.6; color: var(--muted); }
+.pulse-notes strong { display: block; margin-bottom: 0.2em; color: var(--ink); }
+.pulse-notes a { color: var(--forest); font-weight: 600; }
+
+/* Conhecimento vivo: números à esquerda e fotografia à direita; depois fotografia à esquerda e as três notas à direita. */
+#inventories .head h2 { text-wrap: balance; }
+.inv-linha { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 1.4em 2.2em; align-items: center; margin-top: 1.4em; }
+.inv-linha--inv { grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); }
+.inv-linha > [data-foto-slot]:empty { display: none; }
+.inv-linha > [data-foto-slot]:empty + .pulse-notes, .inv-linha > .pulse-notes:first-child { grid-column: 1 / -1; }
 
 .honesty { margin-top: 1em; font-size: 0.78em; color: #666e69; }
 
@@ -371,10 +379,10 @@ html body #main :is(#structure, #inventories, #atlas, #highlights, #today, #news
     #wrapper { padding-left: 0 !important; }
     .hero { grid-template-columns: 1fr; }
     .hero-image { max-width: 400px; }
-    .pulse { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (max-width: 1100px) {
+    .inv-linha, .inv-linha--inv { grid-template-columns: minmax(0, 1fr); }
     .portugal-note { grid-template-columns: 1fr; }
     .portugal-note a { white-space: normal; }
     .reading-route { grid-template-columns: repeat(2, 1fr); }
@@ -384,6 +392,7 @@ html body #main :is(#structure, #inventories, #atlas, #highlights, #today, #news
     .inner { padding: 1.7em 1.4em 0 !important; }
     .head { grid-template-columns: 1fr; gap: 0.7em; }
     .path, .pulse, .atlas-mapa, .destaques, .news { grid-template-columns: 1fr; }
+    .inv-linha, .inv-linha--inv { grid-template-columns: minmax(0, 1fr); }
     .news a { min-height: 112px; padding-left: 92px; }
     .news-thumb, .news a > .bioculture-image-signature-frame { width: 92px; }
     .manifesto { grid-template-columns: 1fr; padding: 2em; }
