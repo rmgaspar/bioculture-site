@@ -44,7 +44,7 @@
             intro: "Espécies, habitats, relações ecológicas e inventários aproximados à região guardada."
         },
         "/energia/energy.html": {
-            source: "/energia/energia.html", stylesheet: "/assets/css/pages/energia-energia.css?v=4", script: "/assets/js/pages/energia-energia-2.js?v=1",
+            source: "/energia/energia.html", stylesheet: "/assets/css/pages/energia-energia.css?v=4", script: "/assets/js/pages/energia-energia-2.js?v=2",
             label: "Portugal em detalhe", title: "A energia no território português",
             intro: "Produção, consumo, redes e escolhas energéticas aproximadas ao contexto português."
         },

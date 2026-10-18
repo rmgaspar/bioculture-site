@@ -510,7 +510,7 @@
     // «← Voltar»: regressa ao sítio exato de onde saíste (ver biocultura-voltar.js).
     if (!document.querySelector('script[src*="biocultura-voltar.js"]')) {
         const voltar = document.createElement("script");
-        voltar.src = "/assets/js/biocultura-voltar.js?v=2";
+        voltar.src = "/assets/js/biocultura-voltar.js?v=3";
         voltar.defer = true;
         document.head.appendChild(voltar);
     }

@@ -206,10 +206,3 @@
     });
     window.addEventListener("hashchange", openFromHash);
 })();
-
-// «Voltar»: à página de onde se veio (se for do próprio site); sem histórico, à página inicial.
-document.getElementById("cuidar-voltar")?.addEventListener("click", (event) => {
-  let mesmoSite = false;
-  try { mesmoSite = !!document.referrer && new URL(document.referrer).origin === location.origin; } catch (e) { mesmoSite = false; }
-  if (mesmoSite && history.length > 1) { event.preventDefault(); history.back(); }
-});

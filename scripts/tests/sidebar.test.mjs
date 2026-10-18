@@ -29,4 +29,10 @@ assert.equal(refs, '', `ligações antigas à privacidade: ${refs}`);
 // Todas as páginas carregam a mesma versão do runtime i18n (o script de metadados já deixou páginas para trás).
 const versoes = new Set(execSync("git grep -ho 'biocultura-i18n-runtime.js?v=[0-9]*' -- '*.html'", { encoding: 'utf8' }).trim().split('\n'));
 assert.equal(versoes.size, 1, `versões do runtime diferentes: ${[...versoes].join(', ')}`);
+// «← Voltar»: a lógica é só a do biocultura-voltar.js (regista a origem e evita ciclos); nenhuma página volta a prender o botão a history.back().
+const prendidos = execSync("git grep -ln 'getElementById(\"[a-z-]*voltar\")' -- 'assets/js/pages' || true", { encoding: 'utf8' }).trim().split('\n').filter(Boolean)
+  .filter((f) => /history\.back\(\)/.test(readFileSync(f, 'utf8')));
+assert.deepEqual(prendidos, [], `botões «Voltar» presos a history.back(): ${prendidos.join(', ')}`);
+const voltarJs = readFileSync('assets/js/biocultura-voltar.js', 'utf8');
+assert(voltarJs.includes('bio-voltar-returned'), 'ao voltar de uma página filha, o hub regressa à página anterior ao hub (sem ciclos)');
 console.log('sidebar: ok');

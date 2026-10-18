@@ -110,10 +110,3 @@
     if(page === 'services') services();
     window.BioCultureSolutions = {filterSolutions,card,productCatalogue};
 })();
-
-// «Voltar» da barra fixa: à página de onde se veio (se for do próprio site); sem histórico, à página inicial.
-(document.getElementById ? document.getElementById("hub-voltar") : null)?.addEventListener("click", (event) => {
-  let mesmoSite = false;
-  try { mesmoSite = !!document.referrer && new URL(document.referrer).origin === location.origin; } catch (e) { mesmoSite = false; }
-  if (mesmoSite && history.length > 1) { event.preventDefault(); history.back(); }
-});

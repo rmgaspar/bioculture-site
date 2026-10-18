@@ -11,6 +11,7 @@
 
     const STACK = "bio-voltar-stack";
     const RESTORE = "bio-voltar-restore";
+    const RETURNED = "bio-voltar-returned";
     const MAX_AGE = 30 * 60 * 1000;
     const norm = (p) => (p || "/").replace(/index\.html$/, "").replace(/\.html$/, "").replace(/\/+$/, "") || "/";
     const read = (key) => { try { return JSON.parse(sessionStorage.getItem(key) || "null"); } catch (_) { return null; } };
@@ -47,13 +48,19 @@
             return r.origin === location.origin ? norm(r.pathname) : "";
         } catch (_) { return ""; }
     };
+    // Chegámos aqui por um «← Voltar» (vindos de uma página filha): o referrer é a filha, mas a origem desta página é a anterior do registo.
+    const returned = () => {
+        const g = read(RETURNED);
+        return !!g && g.path === norm(location.pathname) && Date.now() - g.t < 2 * 60 * 1000;
+    };
     const origin = () => {
         const ref = referrerPath();
         if (!ref) return null;
+        const voltou = returned();
         const stack = read(STACK) || [];
         for (let i = stack.length - 1; i >= 0; i -= 1) {
             const r = stack[i];
-            if (r.to === norm(location.pathname) && norm(r.from.split("?")[0]) === ref && Date.now() - r.t < MAX_AGE) return { rec: r, index: i };
+            if (r.to === norm(location.pathname) && (voltou || norm(r.from.split("?")[0]) === ref) && Date.now() - r.t < MAX_AGE) return { rec: r, index: i };
         }
         return null;
     };
@@ -73,6 +80,7 @@
                 const stack = read(STACK) || [];
                 write(STACK, stack.slice(0, found.index));
                 write(RESTORE, { path: norm(found.rec.from.split("?")[0]), href: found.rec.href, nth: found.rec.nth, y: found.rec.y, t: Date.now() });
+                write(RETURNED, { path: norm(found.rec.from.split("?")[0]), t: Date.now() });
             });
             a.dataset.bioHub = hub;
         });
