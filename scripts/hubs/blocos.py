@@ -260,7 +260,7 @@ def bloco(b, i, en_attr=False):
                             <p class="hub-tools-lead">
                                 {esc(lead[0])}
                             </p>'''
-    return f'''                    <section class="hub-section" id="{b["id"]}">
+    return f'''                    <section class="hub-section" id="{b["id"]}" data-tom="{b["id"]}">
                         <div class="hub-section-head">
                             {cab}
                         </div>
