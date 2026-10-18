@@ -148,7 +148,7 @@
                     const passo = PASSOS[k];
                     const linhas = entradas.filter((e) => e[0] === k).map(([, titulo, frase, caminho]) =>
                         `<li><a href="${esc(u(caminho))}"><strong>${esc(titulo)}</strong><span>${esc(frase)}</span></a></li>`).join("");
-                    return `<section class="atlas-passo" style="--c:${passo.c}"><h3><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">${passo.icon}</svg><b>${passo.n}</b>${esc(isEnglish ? passo.en : passo.pt)}</h3><ul>${linhas}</ul></section>`;
+                    return `<section class="atlas-passo" style="--c:${passo.c}"><h3><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">${passo.icon}</svg><b>${passo.n}</b>${esc(isEnglish ? passo.en : passo.pt)}</h3><ul>${linhas}</ul><div data-foto-slot="explorar-${k}"></div></section>`;
                 }).join("");
             }
 

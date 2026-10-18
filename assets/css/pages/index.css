@@ -282,21 +282,30 @@ html body #main :is(#structure, #inventories, #atlas, #highlights, #today, #news
 .reading-route p { margin: 0; color: var(--muted); font-size: max(11px, .74em); line-height: 1.55; }
 
 /* Mapa «Explorar»: três colunas (Observar, Compreender, Agir), uma linha por entrada. A cor de cada passo é a dos três blocos de «O que fazemos». */
-.atlas-mapa { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2.4em; }
-.atlas-passo { border-top: 3px solid var(--c); padding-top: 1.1em; }
+.atlas-mapa { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.2em; }
+.atlas-passo { --c: var(--forest); display: flex; flex-direction: column; padding: 1.5em 1.6em 1.3em; border-radius: 16px; background: color-mix(in srgb, var(--c) 8%, #fff); }
 .atlas-passo h3 { display: flex; align-items: baseline; gap: 0.6em; margin: 0 0 0.6em; font-size: max(12px, 0.72em); font-weight: 900; letter-spacing: 0.16em; text-transform: uppercase; color: var(--c); }
 .atlas-passo h3 b { font-weight: 900; opacity: 0.55; }
 .atlas-passo h3 svg { flex: none; align-self: center; width: 2.3em; height: 2.3em; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; margin-right: 0.15em; }
 .atlas-passo ul { list-style: none; margin: 0; padding: 0; }
-.atlas-passo li { margin: 0; padding: 0; border-bottom: 1px solid var(--line); }
-.atlas-passo li:last-child { border-bottom: 0; }
-.atlas-passo a { position: relative; display: grid; gap: 0.2em; padding: 1em 1.8em 1em 0; text-decoration: none; border-bottom: 0 !important; color: var(--ink); }
+.atlas-passo li { margin: 0; padding: 0; }
+.atlas-passo a { position: relative; display: grid; gap: 0.2em; padding: 0.85em 1.8em 0.85em 0; text-decoration: none; border-bottom: 0 !important; color: var(--ink); }
 .atlas-passo a strong { font-family: var(--f-display, inherit); font-size: 1.08em; font-weight: 700; line-height: 1.25; color: var(--ink); transition: color 0.15s; }
 .atlas-passo a span { font-size: 0.84em; line-height: 1.45; color: var(--muted); }
-.atlas-passo a::after { content: "→"; position: absolute; right: 0.1em; top: 1.05em; color: var(--c); opacity: 0; transform: translateX(-6px); transition: opacity 0.15s, transform 0.15s; }
+.atlas-passo a::after { content: "→"; position: absolute; right: 0.1em; top: 0.9em; color: var(--c); opacity: 0; transform: translateX(-6px); transition: opacity 0.15s, transform 0.15s; }
 .atlas-passo a:hover strong, .atlas-passo a:focus-visible strong { color: var(--c); }
 .atlas-passo a:hover::after, .atlas-passo a:focus-visible::after { opacity: 1; transform: none; }
 @media (hover: none) { .atlas-passo a::after { opacity: 0.55; transform: none; } }
+/* Fotografia no fundo de cada coluna: a da coluna mais comprida fica curta e as outras ocupam o espaço que sobra, até à mesma altura. */
+.atlas-passo > [data-foto-slot] { flex: 1 1 auto; display: flex; flex-direction: column; margin-top: 0.9em; }
+.atlas-passo > [data-foto-slot]:empty { display: none; }
+html body .atlas-passo figure.foto { flex: 1 1 auto; display: flex; flex-direction: column; }
+html body .atlas-passo figure.foto img { flex: 1 1 0; height: 0; min-height: 120px; aspect-ratio: auto; border-radius: 12px; object-position: 50% 30%; }
+html body .atlas-passo figure.foto figcaption { margin-top: 0.5rem; font-size: 0.74rem; }
+html body .atlas-passo figure.foto .credito { font-size: 0.68rem; }
+html body .atlas-passo figure.foto a { display: inline; position: static; padding: 0; text-decoration: underline; }
+html body .atlas-passo figure.foto a::after { content: none; }
+@media (max-width: 760px) { html body .atlas-passo figure.foto img { flex: none; height: auto; min-height: 0; aspect-ratio: 3 / 2; } }
 
 /* Destaques: três ou quatro entradas, sem caixas: imagem, etiqueta, título, frase e «Ler →». */
 .destaques { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2.4em; }
