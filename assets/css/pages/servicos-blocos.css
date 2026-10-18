@@ -59,3 +59,45 @@ html body #main .reading-nav a[href$="#hortas"] { --hero-accent: #2f6b3a; }
 html body #main .reading-nav a[href$="#apicultura"] { --hero-accent: #8a6a0e; }
 html body #main .reading-nav a[href$="#aguascinzentas"] { --hero-accent: #1f6f8b; }
 html body #main .reading-nav a[href$="#pragas"] { --hero-accent: #a3472f; }
+
+/* Duas colunas: o esquema com o fluxo à esquerda, o resumo e a fotografia à direita, na mesma altura (sem brancos). */
+.blueprint .bp-duo { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); gap: 1.6rem; align-items: stretch; margin-top: 1.8rem; }
+.blueprint .bp-col { display: flex; flex-direction: column; gap: 1.2rem; min-width: 0; }
+.blueprint .bp-duo .bp-resumo { margin: 0; }
+.blueprint .bp-duo .bp-h3 { margin: .4rem 0 0; font-size: 1.25rem; }
+html body #main .blueprint .bp-duo .blueprint-figure { width: 100% !important; max-width: 100% !important; margin: 0 !important; }
+html body #main .blueprint .bp-duo .blueprint-figure img { width: 100% !important; max-height: none !important; }
+.blueprint .bp-duo .bp-fluxo { grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr); gap: .5rem; }
+.blueprint .bp-duo .bp-fluxo li { padding: .8rem .9rem; }
+.blueprint .bp-duo .bp-fluxo li strong { font-size: .98rem; }
+.blueprint .bp-duo .bp-fluxo li span { font-size: .8rem; }
+.blueprint .bp-foto { margin: 0; flex: 1; display: flex; flex-direction: column; gap: .5rem; min-height: 0; }
+.blueprint .bp-foto img { display: block; width: 100%; flex: 1; min-height: 240px; object-fit: cover; border-radius: 18px; box-shadow: 0 16px 32px -24px var(--tom); }
+.blueprint .bp-foto figcaption { font-size: .78rem; line-height: 1.55; color: var(--muted); }
+.blueprint .bp-foto figcaption span { display: block; font-size: .72rem; }
+.blueprint .bp-foto figcaption a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+@media (max-width: 980px) {
+  .blueprint .bp-duo { grid-template-columns: minmax(0, 1fr); }
+  .blueprint .bp-duo .bp-fluxo { grid-template-columns: minmax(0, 1fr); }
+  .blueprint .bp-duo .bp-fluxo .bp-seta { transform: rotate(90deg); justify-self: center; }
+  .blueprint .bp-foto img { flex: none; height: auto; min-height: 0; aspect-ratio: 4 / 3; }
+}
+.blueprint .bp-cartoes article, .blueprint .blueprint-benefits article { align-content: start; }
+.blueprint .bp-col:first-child .bp-fluxo { flex: 1; }
+.blueprint .bp-duo .bp-fluxo li { align-content: center; }
+
+/* Blocos ainda por rever (esquema + 3 vantagens): o esquema à esquerda e as vantagens empilhadas à direita, na mesma altura. */
+@media (min-width: 981px) {
+  .blueprint:has(> .blueprint-figure):has(> .blueprint-benefits):not(:has(.bp-duo)) { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); column-gap: 1.6rem; align-items: stretch; }
+  .blueprint:has(> .blueprint-figure):has(> .blueprint-benefits):not(:has(.bp-duo)) > * { grid-column: 1 / -1; }
+  .blueprint:has(> .blueprint-figure):has(> .blueprint-benefits):not(:has(.bp-duo)) > .blueprint-figure { grid-column: 1; margin: 1.8rem 0 0 !important; align-self: start; }
+  .blueprint:has(> .blueprint-figure):has(> .blueprint-benefits):not(:has(.bp-duo)) > .blueprint-benefits { grid-column: 2; grid-template-columns: minmax(0, 1fr); margin-top: 1.8rem; align-content: stretch; }
+  .blueprint:has(> .blueprint-figure):has(> .blueprint-benefits):not(:has(.bp-duo)) > .blueprint-benefits article { display: grid; align-content: center; }
+  html body #main .blueprint:has(> .blueprint-benefits):not(:has(.bp-duo)) > .blueprint-figure { width: 100% !important; max-width: 100% !important; }
+  html body #main .blueprint:has(> .blueprint-benefits):not(:has(.bp-duo)) > .blueprint-figure img { width: 100% !important; max-height: none !important; }
+  .blueprint:has(> .blueprint-figure):has(> .blueprint-benefits):not(:has(.bp-duo)) > :is(.blueprint-steps, .blueprint-note, .solar-tool, .bp-fontes, .soil-blueprint) { margin-top: 1.4rem; }
+}
+@media (min-width: 981px) {
+  html body #main :is(#chuva) .blueprint-figure { max-width: 100% !important; width: 100% !important; }
+  .blueprint:has(> .blueprint-figure):has(> .blueprint-benefits):not(:has(.bp-duo)) > .blueprint-figure { align-self: center; margin-top: 1.8rem !important; }
+}

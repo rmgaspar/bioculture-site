@@ -61,7 +61,29 @@ aviso_termo = ("Na lei e nos guias da ERSAR e da APA o que existe é a «fossa s
 eyebrow = ("01 · Água e saneamento", "01 · Water and sanitation")
 leg = ("Esquema conceptual bioCulture — a solução final depende do solo, nível freático, ocupação e regras locais.", "bioCulture conceptual diagram — the final solution depends on soil, water table, occupancy and local rules.")
 
+FOTO = dict(src="/images/tecnicas/fossa-betao.webp", alt=("Fossa sética de betão enterrada, com duas tampas de acesso à superfície", "Buried concrete septic tank with two access lids at the surface"),
+            leg=("Uma fossa sética de betão, com as tampas de acesso à superfície: é por aqui que o limpa-fossas trabalha.", "A concrete septic tank with its access lids at the surface: this is where the tanker works."),
+            autor="Nonztp", lic="CC BY-SA 4.0", licurl="https://creativecommons.org/licenses/by-sa/4.0", ficha="https://commons.wikimedia.org/wiki/File:Septic_tank_1.jpg")
+
 def bloco():
+    cartoes = "".join(f'''      <article>
+        <small>{t(c[0], c[4])}</small>
+        <h4>{t(c[1], c[5])}</h4>
+        <span class="bp-etiqueta">{t(c[2], c[6])}</span>
+        <p>{t(c[3], c[7])}</p>
+      </article>
+''' for c in casos)
+    fl = '      <li class="bp-seta" aria-hidden="true">→</li>\n'.join(f'''      <li><strong>{t(f[0], f[2])}</strong><span>{t(f[1], f[3])}</span></li>
+''' for f in fluxo)
+    ben = "".join(f'''      <article>
+        <small>{t(b[0], b[3])}</small>
+        <h3>{t(b[1], b[4])}</h3>
+        <p>{t(b[2], b[5])}</p>
+      </article>
+''' for b in beneficios)
+    pas = "".join(f'''      <li><strong>{t(p[0], p[2])}</strong><span>{t(p[1], p[3])}</span></li>
+''' for p in passos)
+    fon = " · ".join(f'<a href="{u}" target="_blank" rel="noopener">{t(n, en)}</a>' for n, u, en in fontes)
     sec = f'''  <section class="blueprint" id="biofossa" data-tom="agua">
     <div class="blueprint-heading">
       <span class="eyebrow">{t(*eyebrow)}</span>
@@ -71,52 +93,49 @@ def bloco():
         <p class="bp-termo">{t(*aviso_termo)}</p>
       </div>
     </div>
-    <div class="bp-resumo" role="note">
-      <strong>{t("Em poucas palavras", "In a nutshell")}</strong>
-      <ul>
-        {"".join(li(*r) for r in resumo)}
-      </ul>
+    <div class="bp-duo">
+      <div class="bp-col">
+        <figure class="blueprint-figure">
+          <img src="/images/biofossa-process-v2.webp" alt="{t("Circuito de depuração biológica com decantação, biodigestor, filtro, canteiro e infiltração", "Biological treatment circuit with settling, digester, filter, planted bed and infiltration")}">
+          <figcaption>{t(*leg)}</figcaption>
+        </figure>
+        <h3 class="bp-h3">{t("Como funciona o tratamento", "How the treatment works")}</h3>
+        <ol class="bp-fluxo">
+{fl}        </ol>
+      </div>
+      <div class="bp-col">
+        <div class="bp-resumo" role="note">
+          <strong>{t("Em poucas palavras", "In a nutshell")}</strong>
+          <ul>
+            {"".join(li(*r) for r in resumo)}
+          </ul>
+        </div>
+        <figure class="bp-foto" data-no-signature>
+          <img src="{FOTO["src"]}" width="1000" height="750" loading="lazy" alt="{t(*FOTO["alt"])}">
+          <figcaption>{t(*FOTO["leg"])} <span>{t("Foto", "Photo")}: {FOTO["autor"]} · <a href="{FOTO["licurl"]}" target="_blank" rel="noopener">{FOTO["lic"]}</a> · <a href="{FOTO["ficha"]}" target="_blank" rel="noopener">Wikimedia Commons</a></span></figcaption>
+        </figure>
+      </div>
     </div>
     <h3 class="bp-h3">{t("Qual é o teu caso?", "Which case is yours?")}</h3>
     <div class="bp-cartoes">
-''' + "".join(f'''      <article>
-        <small>{t(c[0], c[4])}</small>
-        <h4>{t(c[1], c[5])}</h4>
-        <span class="bp-etiqueta">{t(c[2], c[6])}</span>
-        <p>{t(c[3], c[7])}</p>
-      </article>
-''' for c in casos) + f'''    </div>
-    <h3 class="bp-h3">{t("Como funciona o tratamento", "How the treatment works")}</h3>
-    <ol class="bp-fluxo">
-''' + '      <li class="bp-seta" aria-hidden="true">→</li>\n'.join(f'''      <li><strong>{t(f[0], f[2])}</strong><span>{t(f[1], f[3])}</span></li>
-''' for f in fluxo) + f'''    </ol>
-    <figure class="blueprint-figure">
-      <img src="/images/biofossa-process-v2.webp" alt="{t("Circuito de depuração biológica com decantação, biodigestor, filtro, canteiro e infiltração", "Biological treatment circuit with settling, digester, filter, planted bed and infiltration")}">
-      <figcaption>{t(*leg)}</figcaption>
-    </figure>
+{cartoes}    </div>
     <div class="blueprint-benefits">
-''' + "".join(f'''      <article>
-        <small>{t(b[0], b[3])}</small>
-        <h3>{t(b[1], b[4])}</h3>
-        <p>{t(b[2], b[5])}</p>
-      </article>
-''' for b in beneficios) + f'''    </div>
+{ben}    </div>
     <h3 class="bp-h3">{t("Como se licencia, passo a passo", "How it is licensed, step by step")}</h3>
     <ol class="blueprint-steps bp-cinco">
-''' + "".join(f'''      <li><strong>{t(p[0], p[2])}</strong><span>{t(p[1], p[3])}</span></li>
-''' for p in passos) + f'''    </ol>
+{pas}    </ol>
     <aside class="blueprint-note">
       <strong>{t(*nota_t)}</strong>
       <p>{t(*nota)}</p>
     </aside>
-    <p class="bp-fontes"><b>{t("Fontes", "Sources")}</b>: ''' + " · ".join(f'<a href="{u}" target="_blank" rel="noopener">{t(n, en)}</a>' for n, u, en in fontes) + f'''<em>{t(*verificado)}</em></p>
+    <p class="bp-fontes"><b>{t("Fontes", "Sources")}</b>: {fon}<em>{t(*verificado)}</em></p>
   </section>
 '''
     return sec
 
 def main():
     p = ROOT / "services/servicos.html"; s = p.read_text(encoding="utf-8")
-    a = s.index('  <section class="blueprint" id="biofossa">'); b = s.index('  <section class="blueprint" id="chuva">')
+    a = s.index('  <section class="blueprint" id="biofossa"'); b = s.index('  <section class="blueprint" id="chuva"')
     s = s[:a] + bloco() + "\n" + s[b:]
     if "servicos-blocos.css" not in s:
         s = s.replace('  <link rel="stylesheet" href="/assets/css/pages/solutions-hub.css?v=16">', '  <link rel="stylesheet" href="/assets/css/pages/solutions-hub.css?v=16">\n  <link rel="stylesheet" href="/assets/css/pages/servicos-blocos.css?v=1">', 1)
