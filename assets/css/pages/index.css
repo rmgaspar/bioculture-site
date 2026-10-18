@@ -151,7 +151,7 @@ section, #header, hr, .major {
     padding: 4em 0 !important;
 }
 
-html body #main :is(#structure, #inventories, #atlas, #highlights, #today, #news-block) {
+html body #main :is(#inventories, #atlas, #highlights, #today, #news-block) {
     scroll-margin-top: 6.5rem;
 }
 
@@ -172,44 +172,6 @@ html body #main :is(#structure, #inventories, #atlas, #highlights, #today, #news
 }
 
 .head p { margin: 0; color: var(--muted); line-height: 1.72; }
-
-.path {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1px;
-    overflow: hidden;
-    border: 1px solid var(--line);
-    border-radius: 20px;
-    background: var(--line);
-}
-
-.step, .step:nth-child(2), .step:nth-child(3) {
-    padding: 1.7em;
-    min-height: 260px;
-    border-radius: 0;
-    border-top: 3px solid transparent;
-    background: #fff;
-    text-decoration: none;
-    color: inherit;
-    position: relative;
-    transition: background .2s, transform .2s;
-}
-
-.step:nth-child(1) { border-top-color: #6b8f47; }
-.step:nth-child(2) { border-top-color: #a66f50; }
-.step:nth-child(3) { border-top-color: #3f7373; }
-
-.step:hover { z-index: 2; background: #f4f7f1; transform: translateY(-3px); }
-.step:nth-child(2):hover { background: #faf3e9; }
-.step:nth-child(3):hover { background: #eef4f4; }
-
-.step small { font-size: max(11px, 0.65em); text-transform: uppercase; letter-spacing: 1.2px; color: var(--clay); }
-.step:nth-child(1) small { color: #517538; }
-.step:nth-child(2) small { color: #916146; }
-.step:nth-child(3) small { color: #3f7373; }
-.step h3 { font-size: 1.32em; margin: 0.35em 0 0.5em; color: var(--ink); }
-.step p { font-size: 0.9em; line-height: 1.62; color: var(--muted); }
-.step b { position: absolute; right: 1.3em; bottom: 1.1em; color: var(--forest); }
 
 .pulse { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1em; }
 
@@ -257,31 +219,13 @@ html body #main :is(#structure, #inventories, #atlas, #highlights, #today, #news
 .home-feature-facts dt { color:var(--forest); font-family:Georgia,"Times New Roman",serif; font-size:1.75rem; line-height:1; }
 .home-feature-facts dd { margin:0; color:var(--muted); font-size:.78rem; line-height:1.45; }
 
-.portugal-note {
-    display: grid;
-    grid-template-columns: 180px minmax(0, 1fr) auto;
-    gap: 2em;
-    align-items: center;
-    margin-top: 1.5em;
-    padding: 1.5em 1.7em;
-    border-radius: 16px;
-    background: #243d31;
-    color: #fff;
-}
-
-.portugal-note-label { display: flex; align-items: center; gap: .6em; }
-.portugal-icon { width: 22px; height: 22px; flex: 0 0 auto; fill: #7fbf9e; }
-.portugal-note span { color: #bad0c0; font-size: max(11px, .62em); font-weight: 900; letter-spacing: .15em; text-transform: uppercase; }
-.portugal-note p { margin: 0; color: #e0e9e2; font-size: .78em; line-height: 1.65; }
-.portugal-note a { color: #fff; font-size: max(11px, .68em); font-weight: 900; white-space: nowrap; }
-
-.reading-route { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1em; margin-top: 3em; }
-.reading-route article { padding-top: 1.2em; border-top: 2px solid #b7c9b9; }
+.reading-route { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.4em; margin-top: 2em; }
+.reading-route article { padding: 0; }
 .reading-route span { color: var(--clay); font-size: max(11px, .58em); font-weight: 900; }
 .reading-route h3 { margin: .6em 0 .4em; font-size: 1em; color: var(--ink); }
 .reading-route p { margin: 0; color: var(--muted); font-size: max(11px, .74em); line-height: 1.55; }
 
-/* Mapa «Explorar»: três colunas (Observar, Compreender, Agir), uma linha por entrada. A cor de cada passo é a dos três blocos de «O que fazemos». */
+/* «O que fazemos»: três colunas (Observar, Compreender, Agir), cada uma com a ideia, as entradas e uma fotografia. */
 .atlas-mapa { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.2em; }
 .atlas-passo { --c: var(--forest); display: flex; flex-direction: column; padding: 1.5em 1.6em 1.3em; border-radius: 16px; background: color-mix(in srgb, var(--c) 8%, #fff); }
 .atlas-passo h3 { display: flex; align-items: baseline; gap: 0.6em; margin: 0 0 0.6em; font-size: max(12px, 0.72em); font-weight: 900; letter-spacing: 0.16em; text-transform: uppercase; color: var(--c); }
@@ -296,6 +240,8 @@ html body #main :is(#structure, #inventories, #atlas, #highlights, #today, #news
 .atlas-passo a:hover strong, .atlas-passo a:focus-visible strong { color: var(--c); }
 .atlas-passo a:hover::after, .atlas-passo a:focus-visible::after { opacity: 1; transform: none; }
 @media (hover: none) { .atlas-passo a::after { opacity: 0.55; transform: none; } }
+.atlas-passo .atlas-titulo { margin: 0.9em 0 0.35em; font-family: var(--f-display, inherit); font-size: 1.32em; font-weight: 700; line-height: 1.25; color: var(--ink); }
+.atlas-passo .atlas-texto { margin: 0 0 0.5em; font-size: 0.9em; line-height: 1.62; color: var(--muted); }
 /* Fotografia no fundo de cada coluna: a da coluna mais comprida fica curta e as outras ocupam o espaço que sobra, até à mesma altura. */
 .atlas-passo > [data-foto-slot] { flex: 1 1 auto; display: flex; flex-direction: column; margin-top: 0.9em; }
 .atlas-passo > [data-foto-slot]:empty { display: none; }
@@ -392,22 +338,18 @@ html body .atlas-passo figure.foto a::after { content: none; }
 
 @media (max-width: 1100px) {
     .inv-linha, .inv-linha--inv { grid-template-columns: minmax(0, 1fr); }
-    .portugal-note { grid-template-columns: 1fr; }
-    .portugal-note a { white-space: normal; }
     .reading-route { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (max-width: 760px) {
     .inner { padding: 1.7em 1.4em 0 !important; }
     .head { grid-template-columns: 1fr; gap: 0.7em; }
-    .path, .pulse, .atlas-mapa, .destaques, .news { grid-template-columns: 1fr; }
+    .pulse, .atlas-mapa, .destaques, .news { grid-template-columns: 1fr; }
     .inv-linha, .inv-linha--inv { grid-template-columns: minmax(0, 1fr); }
     .news a { min-height: 112px; padding-left: 92px; }
     .news-thumb, .news a > .bioculture-image-signature-frame { width: 92px; }
     .manifesto { grid-template-columns: 1fr; padding: 2em; }
     .reading-route { grid-template-columns: 1fr; }
-    .step { min-height: 230px; }
-    .portugal-note { padding: 1.4em; }
     .home-nav { margin-bottom: 0; }
     .home-feature { grid-template-columns:1fr; }
 }

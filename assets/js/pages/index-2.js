@@ -121,9 +121,9 @@
 
             const PASSOS = {
                 // Ícones de traço (24×24): lupa (observar), gráfico de linha (compreender), rebento (agir).
-                observar: { n: "01", c: "#6b8f47", pt: "Observar", en: "Observe", icon: '<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/>' },
-                compreender: { n: "02", c: "#a66f50", pt: "Compreender", en: "Understand", icon: '<path d="M4 4v16h16"/><path d="m7.5 15 4-5 3 3 5-7"/>' },
-                agir: { n: "03", c: "#3f7373", pt: "Agir", en: "Act", icon: '<path d="M12 21v-8"/><path d="M12 13c0-4-3-6.5-7-6.5 0 4 2.8 6.5 7 6.5z"/><path d="M12 15c0-3.2 2.4-5.5 6-5.5 0 3.4-2.3 5.5-6 5.5z"/><path d="M7 21h10"/>' },
+                observar: { n: "01", tit_pt: "Ver o que está a mudar", tit_en: "See what is changing", txt_pt: "Dados de organizações de referência (NASA, NOAA, FAO, Banco Mundial, ONU, OMS, IPMA, APA) sobre clima, ar, água, solo, biodiversidade e energia, país a país.", txt_en: "Data from reference organisations (NASA, NOAA, FAO, World Bank, UN, WHO, IPMA, APA) on climate, air, water, soil, biodiversity and energy, country by country.", c: "#6b8f47", pt: "Observar", en: "Observe", icon: '<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/>' },
+                compreender: { n: "02", tit_pt: "Ler a evolução e as pressões", tit_en: "Read the trends and the pressures", txt_pt: "Séries de décadas, comparações entre países e as pressões por trás dos números (energia, alimentação, mineração, tecnologia, pecuária, aviação, construção e moda) para perceber o que cada mudança representa.", txt_en: "Decades-long series, comparisons between countries and the pressures behind the numbers (energy, food, mining, technology, livestock, aviation, construction and fashion) to see what each change represents.", c: "#a66f50", pt: "Compreender", en: "Understand", icon: '<path d="M4 4v16h16"/><path d="m7.5 15 4-5 3 3 5-7"/>' },
+                agir: { n: "03", tit_pt: "Cruzar os dados e cuidar da terra", tit_en: "Combine the data and care for the land", txt_pt: "Clima, água, solo, floresta e vida cruzados com os ciclos do ano: calendários, problemas na horta e práticas regenerativas que respondem ao que os números mostram.", txt_en: "Climate, water, soil, forests and life combined with the cycles of the year: calendars, garden problems and regenerative practices that answer what the numbers show.", c: "#3f7373", pt: "Agir", en: "Act", icon: '<path d="M12 21v-8"/><path d="M12 13c0-4-3-6.5-7-6.5 0 4 2.8 6.5 7 6.5z"/><path d="M12 15c0-3.2 2.4-5.5 6-5.5 0 3.4-2.3 5.5-6 5.5z"/><path d="M7 21h10"/>' },
             };
 
             // Mapa de entrada: três passos, uma linha por entrada (título e uma frase), sem gráficos nem filtros.
@@ -148,7 +148,7 @@
                     const passo = PASSOS[k];
                     const linhas = entradas.filter((e) => e[0] === k).map(([, titulo, frase, caminho]) =>
                         `<li><a href="${esc(u(caminho))}"><strong>${esc(titulo)}</strong><span>${esc(frase)}</span></a></li>`).join("");
-                    return `<section class="atlas-passo" style="--c:${passo.c}"><h3><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">${passo.icon}</svg><b>${passo.n}</b>${esc(isEnglish ? passo.en : passo.pt)}</h3><ul>${linhas}</ul><div data-foto-slot="explorar-${k}"></div></section>`;
+                    return `<section class="atlas-passo" style="--c:${passo.c}"><h3><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">${passo.icon}</svg><b>${passo.n}</b>${esc(isEnglish ? passo.en : passo.pt)}</h3><p class="atlas-titulo">${esc(isEnglish ? passo.tit_en : passo.tit_pt)}</p><p class="atlas-texto">${esc(isEnglish ? passo.txt_en : passo.txt_pt)}</p><ul>${linhas}</ul><div data-foto-slot="explorar-${k}"></div></section>`;
                 }).join("");
             }
 
