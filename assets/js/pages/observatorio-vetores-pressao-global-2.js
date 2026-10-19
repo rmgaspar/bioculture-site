@@ -87,11 +87,19 @@
                 });
                 drawSystems();
                 document.getElementById("pressure-scope").textContent = architecture.meta[`scope_${isEnglish ? "en" : "pt"}`];
-                document.getElementById("rule-grid").innerHTML = architecture.rules.map((item, index) => `<article><span>0${index + 1}</span><h3>${escapeHtml(pick(item))}</h3><p>${escapeHtml(pick(item, "text"))}</p></article>`).join("");
+                // Um ícone por regra (esquemas simples, a traço): unidades diferentes, lugar e cadeia, fluxo e reservatório, redução e deslocação.
+                const svg = (body) => `<svg viewBox="0 0 48 48" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${body}</svg>`;
+                const ruleIcons = [
+                    svg('<circle cx="12" cy="15" r="7"/><rect x="26" y="8" width="14" height="14" rx="2"/><path d="M10 40 18 28l8 12z"/><path d="M32 30l8 8M40 30l-8 8"/>'),
+                    svg('<path d="M24 43S11 32 11 20a13 13 0 0 1 26 0c0 12-13 23-13 23z"/><circle cx="24" cy="20" r="4.5"/>'),
+                    svg('<path d="M24 4s7 8 7 12a7 7 0 0 1-14 0c0-4 7-12 7-12z"/><path d="M10 30h28v10a3 3 0 0 1-3 3H13a3 3 0 0 1-3-3z"/><path d="M10 35h28"/>'),
+                    svg('<path d="M10 6v22m0 0-6-6m6 6 6-6"/><path d="M22 36h22m0 0-6-6m6 6-6 6"/>')
+                ];
+                document.getElementById("rule-grid").innerHTML = architecture.rules.map((item, index) => `<article><i class="rule-icon" aria-hidden="true">${ruleIcons[index] || ""}</i><h3>${escapeHtml(pick(item))}</h3><p>${escapeHtml(pick(item, "text"))}</p></article>`).join("");
             }
 
             function renderPressureSources(data) {
-                document.getElementById("pressure-sources").innerHTML = data.fontes.slice(0, 12).map(source => `<a href="${escapeHtml(source.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(source.entidade)} · ${isEnglish ? "source" : "fonte"} ↗</a>`).join("");
+                document.getElementById("pressure-sources").innerHTML = `<span class="sources-label">${isEnglish ? "Reference sources" : "Fontes de referência"}</span>` + data.fontes.slice(0, 12).map(source => `<a href="${escapeHtml(source.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(source.entidade)} · ${isEnglish ? "source" : "fonte"} ↗</a>`).join("");
             }
 
             function renderPressureNews() {
