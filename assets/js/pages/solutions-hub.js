@@ -65,7 +65,7 @@
     function barraFixa() {
         if (!document.querySelector('nav.reading-nav') || document.querySelector('script[src*="biocultura-sticky-nav"]')) return;
         const el = document.createElement('script');
-        el.src = '/assets/js/biocultura-sticky-nav.js?v=17';
+        el.src = '/assets/js/biocultura-sticky-nav.js?v=18';
         document.body.appendChild(el);
     }
     async function products() {

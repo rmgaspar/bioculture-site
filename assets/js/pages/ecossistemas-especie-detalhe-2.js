@@ -379,7 +379,7 @@
                     if (!esp) throw Error("not-found");
                     render(esp, master, guidance, horticolas, solucoesCatalogo, problemas, teia);
                     const stickyNav = document.createElement("script");
-                    stickyNav.src = "/assets/js/biocultura-sticky-nav.js?v=6";
+                    stickyNav.src = "/assets/js/biocultura-sticky-nav.js?v=18";
                     document.body.appendChild(stickyNav);
                     if (location.hash) {
                         const target = document.getElementById(location.hash.slice(1));

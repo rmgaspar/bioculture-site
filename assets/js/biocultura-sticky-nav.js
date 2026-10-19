@@ -84,6 +84,36 @@
         fadeEnd.addEventListener("click", () => slide(1));
         fadeStart.addEventListener("click", () => slide(-1));
 
+        // Com o rato perto de uma ponta da barra, ela desliza devagar para mostrar o resto das ligações; ao afastar o rato, abranda e pára.
+        // Quanto mais perto da ponta, mais depressa (sempre suave). Só com rato e sem «reduzir movimento».
+        if (!reduceMotion && window.matchMedia && window.matchMedia("(hover: hover)").matches) {
+            const ZONA = 130, VMAX = 2, SUAVIDADE = 0.06;
+            let quadro = 0, velocidade = 0, alvo = 0, posicao = 0;
+            const alvoDeVelocidade = (x) => {
+                const max = navigation.scrollWidth - navigation.clientWidth;
+                if (max <= 1) return 0;
+                const caixa = navigation.getBoundingClientRect();
+                const dir = caixa.right - x, esq = x - caixa.left;
+                if (dir >= 0 && dir < ZONA && navigation.scrollLeft < max - 1) return (1 - dir / ZONA) * VMAX;
+                if (esq >= 0 && esq < ZONA && navigation.scrollLeft > 1) return -(1 - esq / ZONA) * VMAX;
+                return 0;
+            };
+            const passo = () => {
+                velocidade += (alvo - velocidade) * SUAVIDADE;
+                if (alvo === 0 && Math.abs(velocidade) < 0.03) { quadro = 0; velocidade = 0; return; }
+                const max = navigation.scrollWidth - navigation.clientWidth;
+                posicao = Math.min(max, Math.max(0, posicao + velocidade));
+                navigation.scrollLeft = posicao;
+                if ((velocidade > 0 && posicao >= max) || (velocidade < 0 && posicao <= 0)) { alvo = 0; velocidade = 0; quadro = 0; return; }
+                quadro = requestAnimationFrame(passo);
+            };
+            navigation.addEventListener("mousemove", (event) => {
+                alvo = alvoDeVelocidade(event.clientX);
+                if (alvo !== 0 && !quadro) { posicao = navigation.scrollLeft; quadro = requestAnimationFrame(passo); }
+            }, { passive: true });
+            navigation.addEventListener("mouseleave", () => { alvo = 0; });
+        }
+
         const progress = document.createElement("div");
         progress.className = "bio-nav-progress";
         navigation.append(progress);
