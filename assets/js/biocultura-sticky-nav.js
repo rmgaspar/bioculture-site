@@ -109,9 +109,10 @@
             };
             navigation.addEventListener("mousemove", (event) => {
                 alvo = alvoDeVelocidade(event.clientX);
+                navigation.dataset.bioHover = alvo !== 0 ? "1" : "";
                 if (alvo !== 0 && !quadro) { posicao = navigation.scrollLeft; quadro = requestAnimationFrame(passo); }
             }, { passive: true });
-            navigation.addEventListener("mouseleave", () => { alvo = 0; });
+            navigation.addEventListener("mouseleave", () => { alvo = 0; navigation.dataset.bioHover = ""; });
         }
 
         const progress = document.createElement("div");
@@ -138,12 +139,18 @@
                 if (item.el.getBoundingClientRect().top - offset <= 0) current = item;
             });
             sections.forEach((item) => item.link.classList.toggle("bio-nav-active", item === current));
-            // Barras que deslizam na horizontal: mantém a secção ativa à vista (sem mexer na página).
-            if (current && current !== lastActive && navigation.scrollWidth > navigation.clientWidth + 1) {
-                const link = current.link;
-                const left = link.offsetLeft - navigation.offsetLeft;
-                const visible = left >= navigation.scrollLeft && left + link.offsetWidth <= navigation.scrollLeft + navigation.clientWidth - 90;
-                if (!visible) navigation.scrollTo({ left: Math.max(0, left - 140), behavior: reduceMotion ? "auto" : "smooth" });
+            // Barras que deslizam na horizontal: ao descer, quando a secção ativa chega perto do fim da barra, esta desliza (devagar)
+            // para mostrar as ligações seguintes; ao subir, quando chega perto do início, desliza para mostrar as anteriores.
+            // Só mexe na barra, nunca na página, e não interfere enquanto o rato está a deslizá-la.
+            if (current && current !== lastActive && navigation.scrollWidth > navigation.clientWidth + 1 && !navigation.dataset.bioHover) {
+                const caixa = navigation.getBoundingClientRect(), r = current.link.getBoundingClientRect();
+                const esq = r.left - caixa.left, dir = r.right - caixa.left, largura = navigation.clientWidth;
+                const max = navigation.scrollWidth - largura, atual = navigation.scrollLeft;
+                const RESERVA = Math.min(340, largura * 0.3);
+                let alvo = null;
+                if (dir > largura - RESERVA && atual < max - 1) alvo = atual + esq - largura * 0.2;        // perto do fim: a ligação ativa passa para o início
+                else if (esq < 150 && atual > 1) alvo = atual + esq - largura * 0.45;                       // perto do início: mostra as anteriores
+                if (alvo !== null) navigation.scrollTo({ left: Math.min(max, Math.max(0, alvo)), behavior: reduceMotion ? "auto" : "smooth" });
             }
             lastActive = current;
         };

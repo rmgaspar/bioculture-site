@@ -25,7 +25,7 @@
     document.title = "Glossary — bioCulture";
   }
   fetch("/sidebar-content.html?v=28").then((r) => (r.ok ? r.text() : "")).then((h) => { const sb = document.getElementById("sidebar"); if (h && sb) sb.innerHTML = h; }).catch(() => {});
-  const barraFixa = () => { const el = document.createElement("script"); el.src = "/assets/js/biocultura-sticky-nav.js?v=19"; document.body.appendChild(el); };
+  const barraFixa = () => { const el = document.createElement("script"); el.src = "/assets/js/biocultura-sticky-nav.js?v=20"; document.body.appendChild(el); };
   const langQ = new URLSearchParams(location.search).get("lang");
   const comLang = (href) => {
     if (!langQ) return href;
