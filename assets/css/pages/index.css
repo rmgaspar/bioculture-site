@@ -205,19 +205,34 @@ html body #main :is(#inventories, #atlas, #highlights, #today, #news-block) {
 
 .honesty { margin-top: 1em; font-size: 0.78em; color: #666e69; }
 
-.home-feature { display:grid; grid-template-columns:minmax(0,1.35fr) minmax(280px,.65fr); gap:clamp(2rem,5vw,5rem); align-items:center; padding:clamp(2.4rem,4vw,3.8rem) !important; border-radius:24px; background:var(--home-feature-bg, #f6f2e9); border-top:none !important; margin:2rem 0 !important; }
-.home-feature.theme-earth { --home-feature-bg: #f3ece0; }
-.home-feature.theme-wine { --home-feature-bg: #f7eeec; }
-.home-feature.compact { grid-template-columns: 1fr; padding:clamp(2rem,3.4vw,3rem) !important; }
-.home-feature.compact .home-feature-copy h2,
-.home-feature.compact .home-feature-copy p { max-width: none; }
-.home-feature-copy h2 { max-width:780px; margin:0 0 .45em; color:var(--ink); font-family:Georgia,"Times New Roman",serif; font-size:clamp(2.1rem,4vw,3.7rem); line-height:1; letter-spacing:-.045em; }
-.home-feature-copy p { max-width:760px; margin:0 0 1.4rem; color:var(--muted); line-height:1.7; }
+.home-feature { --tom: var(--forest); --tom-forte: var(--forest); display:grid; grid-template-columns:minmax(0,1.2fr) minmax(0,1fr); grid-template-areas:"copy foto" "facts foto" "cta foto"; column-gap:clamp(2rem,4vw,4rem); row-gap:1.4rem; align-content:center; align-items:center; padding:clamp(1.6rem,3vw,2.6rem) !important; border-radius:28px; background:var(--home-feature-bg, #f6f2e9); border-top:none !important; margin:2rem 0 !important; }
+.home-feature.theme-earth { --home-feature-bg: #f3ece0; --tom: #7a4d2b; }
+.home-feature.theme-wine { --home-feature-bg: #f7eeec; --tom: #7d3350; }
+.home-feature.theme-participa { --home-feature-bg: #edf1e8; --tom: #2f6b3a; }
+.home-feature.inverso { grid-template-columns:minmax(0,1fr) minmax(0,1.2fr); grid-template-areas:"foto copy" "foto facts" "foto cta"; }
+.home-feature .home-feature-copy { grid-area:copy; padding:clamp(.4rem,1.2vw,1.2rem) 0 0 clamp(.2rem,1vw,1rem); }
+.home-feature .home-feature-facts { grid-area:facts; padding:0 0 clamp(.4rem,1.2vw,1.2rem) clamp(.2rem,1vw,1rem); }
+.home-feature.inverso .home-feature-copy, .home-feature.inverso .home-feature-facts { padding-left:0; padding-right:clamp(.2rem,1vw,1rem); }
+.home-feature > [data-foto-slot] { grid-area:foto; align-self:stretch; display:flex; flex-direction:column; min-width:0; }
+.home-feature > [data-foto-slot]:empty { display:none; }
+.home-feature-copy .eyebrow { color:var(--tom); }
+.home-feature-copy h2 { max-width:780px; margin:0 0 .45em; color:var(--ink); font-family:Georgia,"Times New Roman",serif; font-size:clamp(1.9rem,3.2vw,3rem); line-height:1.05; letter-spacing:-.04em; }
+.home-feature-copy p { max-width:760px; margin:0 0 1.4rem; color:var(--muted); font-size:1rem; line-height:1.7; }
 .home-feature-copy a { color:var(--forest); font-size:.78rem; font-weight:900; text-decoration:none; }
-.home-feature-facts { margin:0; border-top:1px solid var(--line); }
-.home-feature-facts div { display:grid; grid-template-columns:120px 1fr; gap:1rem; align-items:baseline; padding:1.2rem 0; border-bottom:1px solid var(--line); }
-.home-feature-facts dt { color:var(--forest); font-family:Georgia,"Times New Roman",serif; font-size:1.75rem; line-height:1; }
-.home-feature-facts dd { margin:0; color:var(--muted); font-size:.78rem; line-height:1.45; }
+.home-feature > a.foco-cta { grid-area:cta; justify-self:start; margin:0 0 clamp(.4rem,1.2vw,1.2rem) clamp(.2rem,1vw,1rem); text-decoration:none; }
+.home-feature.inverso > a.foco-cta { margin-left:0; }
+.home-feature a.foco-cta { display:inline-block; margin-top:.2rem; padding:.75em 1.3em; border-radius:999px; background:var(--tom); color:#fff; font-size:.85rem; font-weight:800; letter-spacing:.01em; transition:filter .15s, transform .15s; }
+.home-feature a.foco-cta:hover { filter:brightness(1.1); transform:translateY(-1px); }
+.home-feature-facts { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:.8rem; margin:0; border-top:0; }
+.home-feature-facts div { display:block; padding:1.1rem 1.15rem 1.2rem; border:0; border-radius:16px; background:rgba(255,255,255,.72); }
+.home-feature-facts dt { margin:0 0 .5rem; color:var(--tom); font-family:Georgia,"Times New Roman",serif; font-size:clamp(1.55rem,2.4vw,2.1rem); line-height:1; letter-spacing:-.02em; }
+.home-feature-facts dd { margin:0; color:#47524b; font-size:.84rem; line-height:1.45; }
+/* Fotografia: ocupa a altura do bloco; o crédito fica por baixo, em letra pequena. */
+.home-feature figure.foto { flex:1 1 auto; display:flex; flex-direction:column; }
+html body .home-feature figure.foto img { flex:1 1 0; height:0; min-height:260px; aspect-ratio:auto; border-radius:20px; box-shadow:0 22px 40px -30px var(--tom); }
+html body .home-feature figure.foto figcaption { margin-top:.6rem; padding:0 .2rem; font-size:.74rem; }
+html body .home-feature figure.foto .credito { font-size:.68rem; }
+html body .home-feature figure.foto a { display:inline; padding:0; font-size:inherit; font-weight:inherit; text-decoration:underline; }
 
 .reading-route { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.4em; margin-top: 2em; }
 .reading-route article { padding: 0; }
@@ -350,7 +365,9 @@ html body .atlas-passo figure.foto a::after { content: none; }
     .manifesto { grid-template-columns: 1fr; padding: 2em; }
     .reading-route { grid-template-columns: 1fr; }
     .home-nav { margin-bottom: 0; }
-    .home-feature { grid-template-columns:1fr; }
+    .home-feature, .home-feature.inverso { grid-template-columns:1fr; grid-template-areas:"foto" "copy" "facts" "cta"; }
+    .home-feature-facts { grid-template-columns:1fr; }
+    html body .home-feature figure.foto img { flex:none; height:auto; min-height:0; aspect-ratio:3 / 2; }
 }
 /* hero-image dentro de bio-banner-hero: posicionamento absoluto como as outras imagens */
 body[data-hero-theme] #main .bio-banner-hero > .hero-image {
@@ -384,7 +401,6 @@ body[data-hero-theme] #main .bio-banner-hero > .hero-image {
         transform: translateX(50%) !important;
     }
 }
-.home-feature.theme-participa { --home-feature-bg: #edf1e8; }
 .participa-home-local { font-size: .86rem !important; color: var(--ink) !important; margin-top: -.6rem !important; }
 .participa-home-local a { color: var(--forest); font-weight: 700; }
 
