@@ -194,3 +194,29 @@ html body #main #moon .evidence-grid p { margin: 0; color: rgba(255, 255, 255, 0
   html body[data-hero-theme="calendar"] #main #moon .moon-orbit span::after { inset: -6px -20px -6px 30px; }
   html body #main #moon .evidence-grid { grid-template-columns: minmax(0, 1fr); }
 }
+
+/* Plano da semana e Técnicas biológicas: cartões suaves por tom, número em círculo, fotos reais com crédito, texto de 16 px, sem linhas. */
+html body #main #semana + .week-plan { gap: 1.1rem; }
+html body #main .week-task { position: relative; border: 0; background: var(--tom-suave, #eef4e9); }
+html body #main .week-task .week-icon { background: rgba(255, 255, 255, 0.7) !important; }
+html body #main .week-task .task-number { position: absolute; top: 1.2rem; right: 1.2rem; display: grid; place-items: center; width: 2.1rem; height: 2.1rem; border-radius: 50%; background: var(--tom, #4c7a34); color: #fff; font-size: 0.82rem; font-weight: 800; letter-spacing: 0; }
+html body #main .week-task h3 { color: #20342a; font-family: Georgia, serif; font-size: 1.2rem; }
+html body #main .week-task p { color: #3f4a43; font-size: 1rem; }
+html body #main #praticas + .practice-grid { gap: 1.2rem; align-items: start; }
+html body #main .practice-card { --tom: var(--practice-color, #4c7a34); border: 0; border-radius: 20px; background: color-mix(in srgb, var(--tom) 9%, #fff); transition: transform 0.2s ease, box-shadow 0.2s ease; }
+html body #main .practice-card:hover { transform: translateY(-2px); box-shadow: 0 16px 28px -22px var(--tom); }
+html body #main .practice-media { aspect-ratio: auto; background: transparent; }
+html body #main .practice-media img { height: auto; aspect-ratio: 3 / 2; }
+html body #main .practice-credito { margin: 0; padding: 0.7rem 1.3rem 0; color: #55605a; font-size: 0.8rem; line-height: 1.45; }
+html body #main .practice-credito span { display: block; margin-top: 0.15rem; color: #6a746e; }
+html body #main .practice-credito a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+html body #main .practice-body { padding: 1.1rem 1.4rem 1.6rem; }
+html body #main .practice-meta { color: var(--tom); font-size: 0.78rem; letter-spacing: 0.1em; }
+html body #main .practice-card h3 { color: #20342a; font-family: Georgia, serif; font-size: 1.3rem; line-height: 1.2; }
+html body #main .practice-card p { color: #3f4a43; font-size: 1rem; line-height: 1.6; }
+html body #main .practice-steps-label { margin-top: 1rem !important; padding-top: 0 !important; border-top: 0 !important; color: var(--tom) !important; font-size: 0.78rem !important; letter-spacing: 0.1em; }
+html body #main .practice-steps { list-style: none; counter-reset: passo; padding: 0; margin: 0.6rem 0 0; }
+html body #main .practice-steps li { counter-increment: passo; position: relative; margin: 0 0 0.55rem; padding: 0.15rem 0 0 2.2rem; color: #3f4a43; font-size: 1rem; line-height: 1.5; }
+html body #main .practice-steps li::before { content: counter(passo); position: absolute; left: 0; top: 0; display: grid; place-items: center; width: 1.5rem; height: 1.5rem; border-radius: 50%; background: var(--tom); color: #fff; font-size: 0.78rem; font-weight: 800; }
+@media (max-width: 1100px) { html body #main #praticas + .practice-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 640px) { html body #main #praticas + .practice-grid { grid-template-columns: minmax(0, 1fr); } }

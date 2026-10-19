@@ -4,6 +4,7 @@
                 floraDB = [],
                 faunaDB = [],
                 dicasDB = [],
+                dicasFotos = {},
                 horticolasDB = {},
                 infoGlobal = null,
                 weatherNow = null;
@@ -84,6 +85,9 @@
                 "Prevenção sem pesticidas": "#c9762f",
                 "Árvores e sistemas perenes": "#3f7373",
             };
+            // O texto vem traduzido em inglês, por isso a categoria é reconhecida nas duas línguas.
+            const PRACTICE_SLUG = { "Solo e cobertura": "solo", "Soil and cover": "solo","Compostagem e húmus": "compostagem", "Composting and humus": "compostagem","Planeamento e fertilidade": "planeamento", "Planning and fertility": "planeamento","Água e irrigação": "agua", "Water and irrigation": "agua","Sementeiras e propagação": "sementeiras", "Sowing and propagation": "sementeiras","Sementes e diversidade genética": "sementes", "Seeds and genetic diversity": "sementes","Biodiversidade funcional": "biodiversidade", "Functional biodiversity": "biodiversidade","Prevenção sem pesticidas": "prevencao", "Prevention without pesticides": "prevencao","Árvores e sistemas perenes": "perenes", "Trees and perennial systems": "perenes" };
+            const PRACTICE_COLOR_OF = { solo: "#6b8f47", compostagem: "#8a5a3c", planeamento: "#a66f50", agua: "#2f6f9e", sementeiras: "#4c7a34", sementes: "#7d3350", biodiversidade: "#1e8449", prevencao: "#c9762f", perenes: "#3f7373" };
             const months = [
                 "janeiro",
                 "fevereiro",
@@ -442,7 +446,7 @@
                     index,
                 ) => {
                     const palette = WEEK_TONES[WEEK_TONE_OF[weekKey(title)]] || WEEK_PALETTE[index % WEEK_PALETTE.length];
-                    return `<article class="week-task"><span class="week-icon" style="color:${
+                    return `<article class="week-task" style="--tom:${palette.color};--tom-suave:${palette.bg}"><span class="week-icon" style="color:${
                         palette.color
                     };background:${
                         palette.bg
@@ -460,8 +464,13 @@
                     dicasDB.find((item) => item.id === id)
                 ).filter(Boolean);
                 document.getElementById("practice-grid").innerHTML = selected.map((item) => {
-                    const color = PRACTICE_COLORS[item.categoria] || "#4c7a34";
-                    const image = item.imagem?.src
+                    const slug = PRACTICE_SLUG[item.categoria];
+                    const color = PRACTICE_COLORS[item.categoria] || PRACTICE_COLOR_OF[slug] || "#4c7a34";
+                    const foto = Object.values(dicasFotos).find((f) => f.ficheiro === `dicas/${slug}.webp`);
+                    const L = isEn() ? "en" : "pt";
+                    const image = foto
+                        ? `<div class="practice-media" data-no-signature><img src="/images/${escapeHtml(foto.ficheiro)}" alt="${escapeHtml(foto.alt[L])}" width="1000" height="667" loading="lazy"><p class="practice-credito">${escapeHtml(foto.legenda[L])} <span>${isEn() ? "Photo" : "Foto"}: ${escapeHtml(foto.autor)} · ${foto.licenca_url ? `<a href="${escapeHtml(foto.licenca_url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(isEn() && foto.licenca_en ? foto.licenca_en : foto.licenca)}</a>` : escapeHtml(isEn() && foto.licenca_en ? foto.licenca_en : foto.licenca)} · <a href="${escapeHtml(foto.pagina)}" target="_blank" rel="noopener noreferrer">Wikimedia Commons</a></span></p></div>`
+                        : item.imagem?.src
                         ? `<div class="practice-media"><img src="/${escapeHtml(item.imagem.src)}" alt="${
                             escapeHtml(item.imagem.alt || item.titulo)
                         }" loading="lazy"></div>`
@@ -677,6 +686,7 @@
                         "/data/fauna_invasora.json",
                         "/data/horticolas_master.json",
                         "/data/dicas.json",
+                        "/data/dicas-fotos.json",
                     ];
                     const data = await Promise.all(
                         urls.map((url) =>
@@ -688,7 +698,7 @@
                                 })
                         ),
                     );
-                    [locationsDB, pragasDB, floraDB, faunaDB, horticolasDB, dicasDB] = data;
+                    [locationsDB, pragasDB, floraDB, faunaDB, horticolasDB, dicasDB, dicasFotos] = data;
                     const saved = localStorage.getItem("biocultura_region");
                     infoGlobal = locationsDB.find((item) => String(item.id) === String(saved)) || null;
                     renderLocalProfile();
