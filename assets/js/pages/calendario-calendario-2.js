@@ -240,7 +240,14 @@
                     last = new Date(year, month + 1, 0),
                     start = (first.getDay() + 6) % 7;
                 const cells = [];
+                // Vista compacta: a semana atual, a anterior e a seguinte (noutros meses, as semanas do meio); «Ver o mês completo» mostra todas.
+                const semanas = Math.ceil((start + last.getDate()) / 7);
+                const hojeNoMes = today.getFullYear() === year && today.getMonth() === month;
+                const centro = hojeNoMes ? Math.floor((start + today.getDate() - 1) / 7) : Math.floor((start + 14) / 7);
+                const ini = Math.max(0, Math.min(centro - 1, semanas - 3));
                 for (let i = 0; i < 42; i++) {
+                    const semana = Math.floor(i / 7),
+                        fora = semana >= semanas ? "sobra" : semana < ini || semana > ini + 2 ? "fora" : "";
                     const day = i - start + 1,
                         date = new Date(year, month, day),
                         outside = date.getMonth() !== month,
@@ -252,10 +259,23 @@
                     cells.push(
                         `<div class="calendar-day ${outside ? "outside" : ""} ${
                             isToday ? "today" : ""
-                        }">${date.getDate()}${marker}</div>`,
+                        } ${fora}">${date.getDate()}${marker}</div>`,
                     );
                 }
-                document.getElementById("calendar-days").innerHTML = cells.join("");
+                const dias = document.getElementById("calendar-days");
+                dias.innerHTML = cells.join("");
+                let alternar = document.getElementById("toggle-month");
+                if (!alternar) {
+                    alternar = document.createElement("button");
+                    alternar.type = "button";
+                    alternar.id = "toggle-month";
+                    alternar.className = "calendar-toggle";
+                    alternar.onclick = () => { dias.classList.toggle("mes"); renderCalendar(); };
+                    dias.after(alternar);
+                }
+                const completo = dias.classList.contains("mes");
+                alternar.textContent = isEn() ? (completo ? "Show fewer weeks" : "Show the whole month") : (completo ? "Ver menos semanas" : "Ver o mês completo");
+                alternar.setAttribute("aria-expanded", String(completo));
                 renderConditions();
                 const sowing = cropsFor("sementeira", month).slice(0, 3);
                 document.getElementById("calendar-suggestion").innerHTML = sowing.length
@@ -531,7 +551,7 @@
                 const message = isEn()
                     ? `Choose a location at the bottom of the side menu to see the ${kind} recorded for your region.`
                     : `Escolhe uma localização na base do menu lateral para ver ${kind === "pests" ? "as pragas sazonais" : "a flora invasora"} registada${kind === "pests" ? "s" : ""} para a tua região.`;
-                return `<div class="empty">${message} <button type="button" class="link-button" onclick="document.getElementById('guide-location-button')?.click()">${
+                return `<div class="empty">${message} <button type="button" class="link-button" onclick="window.bioFocarLocalizacao && window.bioFocarLocalizacao()">${
                     isEn() ? "Choose location →" : "Escolher localização →"
                 }</button></div>`;
             }
@@ -687,7 +707,7 @@
                     document.getElementById("catalog-filter").addEventListener("change", () => renderCatalog(true));
                     document.getElementById("pest-catalog-search").addEventListener("input", () => renderPestCatalog(true));
                     pestFilter.addEventListener("change", () => renderPestCatalog(true));
-                    document.getElementById("guide-location-button").onclick = () => {
+                    window.bioFocarLocalizacao = () => {
                         const input = document.getElementById("loc-search-input");
                         if (input) {
                             input.focus();
