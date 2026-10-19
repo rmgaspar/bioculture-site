@@ -124,7 +124,7 @@
                 document.getElementById("product").innerHTML = html.replace("<!--ficha-nav-->", nav);
                 if (!document.querySelector('script[src*="biocultura-sticky-nav"]')) {
                     const stickyNav = document.createElement("script");
-                    stickyNav.src = "/assets/js/biocultura-sticky-nav.js?v=18";
+                    stickyNav.src = "/assets/js/biocultura-sticky-nav.js?v=19";
                     document.body.appendChild(stickyNav);
                 }
                 document.title = `${localized(product.nome)} — bioCulture`;

@@ -455,7 +455,7 @@
                     document.title = item.nome + " — bioCulture";
                     mountProblems(id, item.nome);
                     const stickyNav = document.createElement("script");
-                    stickyNav.src = "/assets/js/biocultura-sticky-nav.js?v=18";
+                    stickyNav.src = "/assets/js/biocultura-sticky-nav.js?v=19";
                     document.body.appendChild(stickyNav);
                     if (location.hash) {
                         const target = document.getElementById(location.hash.slice(1));
