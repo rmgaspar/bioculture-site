@@ -1,0 +1,41 @@
+/* Energia · «Do acesso à suficiência» e «O que as instituições observam»: passos e relatórios em cartões suaves, com cor e ícone,
+   sem bordas nem linhas e com texto de leitura confortável. */
+.energy-sistema .passo[data-passo="1"] { --tom: #9a6a00; --tom-suave: #f8eed2; }
+.energy-sistema .passo[data-passo="2"] { --tom: #2a7473; --tom-suave: #e1f0ef; }
+.energy-sistema .passo[data-passo="3"] { --tom: #2f6b3a; --tom-suave: #e6f0e3; }
+.energy-sistema .passo[data-passo="4"] { --tom: #7a4d2b; --tom-suave: #f1e7de; }
+.energy-relatorios .report-card[data-fonte="iea"]   { --tom: #4a6178; --tom-suave: #e6ecf1; }
+.energy-relatorios .report-card[data-fonte="irena"] { --tom: #b25a1e; --tom-suave: #f7e8dc; }
+.energy-relatorios .report-card[data-fonte="onu"]   { --tom: #1f6f8b; --tom-suave: #e2eff4; }
+
+/* Quatro passos, em sequência: uma seta entre cartões. */
+html body .energy-sistema .journey { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.4rem; margin-top: 2rem; border: 0; }
+html body .energy-sistema .journey .passo { position: relative; display: flex; flex-direction: column; min-height: 0; padding: 1.6rem 1.5rem 1.8rem; border: 0 !important; border-radius: 20px; background: var(--tom-suave); }
+html body .energy-sistema .journey .passo:not(:last-child)::after { content: "→"; position: absolute; top: 2.3rem; right: -1.15rem; z-index: 2; width: 0.9rem; color: #8d978f; font-size: 1.1rem; line-height: 1; text-align: center; }
+html body .energy-sistema .passo-icone { display: grid; place-items: center; width: 3.6rem; height: 3.6rem; margin-bottom: 1.1rem; border-radius: 50%; background: rgba(255, 255, 255, 0.82); color: var(--tom); }
+html body .energy-sistema .journey .passo b { display: block; margin: 0 0 0.55rem; color: var(--tom); font-family: Georgia, serif; font-size: 1.45rem; font-weight: 700; line-height: 1.15; letter-spacing: 0; text-transform: none; }
+html body .energy-sistema .journey .passo p { margin: 0; color: #3f4a43; font-size: 1rem; line-height: 1.6; }
+
+/* Relatórios: um cartão por instituição, com o seu tom, sem linha por baixo da etiqueta. */
+html body .energy-relatorios .report-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.4rem; margin-top: 2rem; }
+html body .energy-relatorios .report-card { display: flex; flex-direction: column; padding: 1.7rem 1.6rem 1.8rem; border: 0 !important; border-radius: 20px; background: var(--tom-suave, #f1efe9); transition: transform 0.2s ease, box-shadow 0.2s ease; }
+html body .energy-relatorios .report-card:hover { transform: translateY(-3px); box-shadow: 0 18px 34px -26px var(--tom); }
+html body .energy-relatorios .report-brand { margin: 0 0 1rem; padding: 0; border: 0 !important; }
+html body .energy-relatorios .report-brand .tag { display: inline-block; padding: 0.35rem 0.9rem; border-radius: 999px; background: var(--tom); color: #fff; font-size: 0.8rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; }
+html body .energy-relatorios .report-card strong { display: block; margin: 0 0 0.6rem; color: #20342a; font-family: Georgia, serif; font-size: 1.55rem; font-weight: 700; line-height: 1.15; }
+html body .energy-relatorios .report-card p { margin: 0 0 1.4rem; color: #3f4a43; font-size: 1rem; line-height: 1.6; }
+html body .energy-relatorios .report-card a { margin-top: auto; align-self: flex-start; padding: 0.6rem 1.1rem; border: 0 !important; border-radius: 999px; background: rgba(255, 255, 255, 0.85); color: var(--tom) !important; font-size: 0.8rem; font-weight: 800; letter-spacing: 0.06em; text-decoration: none; text-transform: uppercase; }
+html body .energy-relatorios .report-card a:hover { background: var(--tom); color: #fff !important; }
+
+@media (max-width: 1100px) {
+  html body .energy-sistema .journey { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  html body .energy-sistema .journey .passo:nth-child(2)::after { display: none; }
+  html body .energy-relatorios .report-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 700px) {
+  html body .energy-sistema .journey, html body .energy-relatorios .report-grid { grid-template-columns: minmax(0, 1fr); }
+  html body .energy-sistema .journey .passo:not(:last-child)::after { display: none; }
+}
+
+/* Sem a linha de separação por cima destes dois blocos. */
+html body #main .energy-sistema, html body #main .energy-relatorios { border-top: 0 !important; }

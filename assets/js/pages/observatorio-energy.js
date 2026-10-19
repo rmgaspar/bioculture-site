@@ -379,7 +379,7 @@
             ]
                 .map(function (x) {
                     return (
-                        '<article class="report-card"><div class="report-brand"><span class="tag">' +
+                        '<article class="report-card" data-fonte="' + x[0].toLowerCase() + '"><div class="report-brand"><span class="tag">' +
                         x[0] +
                         "</span></div><strong>" +
                         x[1] +
