@@ -1,0 +1,57 @@
+/* Calendário · Mundo: «01 · O meu lugar» e «02 · Agora». Seletores suaves, resultado do clima num painel com a cor do perfil e as quatro leituras
+   em cartões com ícone; os meses e as quatro fases em cartões coloridos. Sem bordas nem linhas; texto de 16 px. */
+html body #main #place, html body #main #today { border-top: 0 !important; }
+
+/* Seletores. */
+html body #main #place .place-controls { gap: 1.2rem; margin-top: 1.6rem; }
+html body #main #place .place-controls label { color: #2f6b3a; font-size: 0.78rem; letter-spacing: 0.12em; }
+html body #main #place .place-controls select { height: 3.4rem; margin-top: 0.55rem; padding: 0 2.6rem 0 1.2rem; border: 0; border-radius: 14px; background: #f1efe6 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'%3E%3Cpath d='m1 1 6 6 6-6' fill='none' stroke='%232f6b3a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 1.1rem center; color: #20342a; font-size: 1rem; font-weight: 600; letter-spacing: 0; text-transform: none; appearance: none; -webkit-appearance: none; cursor: pointer; }
+html body #main #place .place-controls select:focus { outline: 2px solid #2f6b3a; outline-offset: 2px; }
+
+/* Resultado: a cor depende do perfil climático escolhido. */
+#place-result { --tom: #2a7473; --tom-suave: #e1f0ef; }
+#place-result[data-clima="cool-oceanic"]     { --tom: #2a7473; --tom-suave: #e1f0ef; }
+#place-result[data-clima="mediterranean"]    { --tom: #a3472f; --tom-suave: #f6e5df; }
+#place-result[data-clima="continental"]      { --tom: #55731f; --tom-suave: #edf1dc; }
+#place-result[data-clima="humid-subtropical"] { --tom: #2f6b3a; --tom-suave: #e6f0e3; }
+#place-result[data-clima="tropical-wet-dry"] { --tom: #b25a1e; --tom-suave: #f7e8dc; }
+#place-result[data-clima="tropical-humid"]   { --tom: #1f8a6e; --tom-suave: #dcf1ea; }
+#place-result[data-clima="arid"]             { --tom: #8a6a0e; --tom-suave: #f4ecd3; }
+#place-result[data-clima="highland"]         { --tom: #4a6178; --tom-suave: #e6ecf1; }
+#place-result[data-clima="cold-short"]       { --tom: #3d7fa6; --tom-suave: #e2eff6; }
+html body #main #place .place-result { gap: 1.2rem; margin-top: 1.8rem; overflow: visible; border-radius: 24px; }
+html body #main #place .place-result > header { padding: clamp(1.6rem, 3vw, 2.4rem); border-radius: 22px; background: var(--tom-suave); color: #20342a; }
+html body #main #place .place-result > header span { color: var(--tom); font-size: 0.8rem; font-weight: 700; letter-spacing: 0.04em; }
+html body #main #place .place-result > header h3 { margin: 0.6rem 0 0.7rem; color: var(--tom); font-family: Georgia, serif; font-size: clamp(1.9rem, 3vw, 2.6rem); line-height: 1.05; }
+html body #main #place .place-result > header p { margin: 0; color: #3f4a43; font-size: 1.05rem; line-height: 1.65; text-transform: none; letter-spacing: 0; }
+html body #main #place .place-result > div { gap: 1.2rem; background: none; }
+html body #main #place .place-result article { position: relative; padding: 1.4rem 1.4rem 1.5rem 4.6rem; border-radius: 18px; background: color-mix(in srgb, var(--tom) 6%, #fff); }
+html body #main #place .place-result article::before { content: ""; position: absolute; left: 1.3rem; top: 1.3rem; width: 2.3rem; height: 2.3rem; border-radius: 50%; background-color: var(--tom); -webkit-mask: var(--ico) center / 62% no-repeat, linear-gradient(#000, #000); mask: var(--ico) center / 62% no-repeat; background-image: none; }
+html body #main #place .place-result article b { display: block; margin-bottom: 0.4rem; color: var(--tom); font-size: 0.8rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; }
+html body #main #place .place-result article p { margin: 0; color: #3f4a43; font-size: 1rem; line-height: 1.6; }
+/* Ícones das quatro leituras (máscaras simples): risco, ajuste, sistema e mudança. */
+html body #main #place .place-result article:nth-child(1) { --ico: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48' fill='none' stroke='%23000' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M24 6 4 42h40z'/%3E%3Cpath d='M24 20v10M24 36v1'/%3E%3C/svg%3E"); }
+html body #main #place .place-result article:nth-child(2) { --ico: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48' fill='none' stroke='%23000' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 14h36M6 24h36M6 34h36'/%3E%3Ccircle cx='16' cy='14' r='4' fill='%23000'/%3E%3Ccircle cx='32' cy='24' r='4' fill='%23000'/%3E%3Ccircle cx='20' cy='34' r='4' fill='%23000'/%3E%3C/svg%3E"); }
+html body #main #place .place-result article:nth-child(3) { --ico: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48' fill='none' stroke='%23000' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M24 42V24'/%3E%3Cpath d='M24 28c-8 0-12-5-12-12 8 0 12 5 12 12z'/%3E%3Cpath d='M24 24c0-6 4-10 12-10 0 6-4 10-12 10z'/%3E%3C/svg%3E"); }
+html body #main #place .place-result article:nth-child(4) { --ico: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48' fill='none' stroke='%23000' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 16h32m0 0-8-8m8 8-8 8M40 32H8m0 0 8-8m-8 8 8 8'/%3E%3C/svg%3E"); }
+
+/* 02 · Agora: meses em pílulas suaves e as quatro fases em cartões coloridos. */
+html body #main #today .month-ribbon { gap: 0.5rem; margin: 1.6rem 0 1.8rem; }
+html body #main #today .month-ribbon button { padding: 0.85rem 0.25rem !important; border: 0 !important; background: #eef2e8 !important; color: #2f4a38 !important; font-size: 0.95rem; font-weight: 700; transition: background 0.15s, transform 0.15s; }
+html body #main #today .month-ribbon button:hover { background: #dfe9d6 !important; transform: translateY(-1px); }
+html body #main #today .month-ribbon button.active { background: #2f6b3a !important; color: #fff !important; box-shadow: 0 12px 22px -16px #2f6b3a !important; }
+html body #main #today .season-grid { gap: 1.2rem; }
+html body #main #today .season-grid article { --tom: #7a4d2b; --tom-suave: #f1e7de; padding: 1.5rem 1.4rem 1.7rem; border-top: 0; border-radius: 20px; background: var(--tom-suave); }
+html body #main #today .season-grid article:nth-child(1) { --tom: #7a4d2b; --tom-suave: #f1e7de; }
+html body #main #today .season-grid article:nth-child(2) { --tom: #2f6b3a; --tom-suave: #e6f0e3; }
+html body #main #today .season-grid article:nth-child(3) { --tom: #1f6f8b; --tom-suave: #e2eff4; }
+html body #main #today .season-grid article:nth-child(4) { --tom: #9a6a00; --tom-suave: #f8eed2; }
+html body #main #today .season-grid span { display: grid; place-items: center; width: 2.8rem; height: 2.8rem; margin-bottom: 1rem; border-radius: 50%; background: var(--tom); color: #fff; font-family: Georgia, serif; font-size: 1.05rem; font-weight: 700; letter-spacing: 0; }
+html body #main #today .season-grid h3 { margin: 0 0 0.5rem; color: var(--tom); font-family: Georgia, serif; font-size: 1.4rem; line-height: 1.15; }
+html body #main #today .season-grid p { margin: 0; color: #3f4a43; font-size: 1rem; line-height: 1.6; }
+
+@media (max-width: 1100px) { html body #main #today .season-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 760px) {
+  html body #main #today .season-grid { grid-template-columns: minmax(0, 1fr); }
+  html body #main #today .month-ribbon { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
