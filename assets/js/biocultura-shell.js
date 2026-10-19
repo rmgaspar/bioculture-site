@@ -458,6 +458,36 @@ function bindInteractions() {
         event.stopImmediatePropagation();
         search(event.target.value);
     }, true);
+
+    // Ao clicar na barra, o nome da localidade guardada desaparece e fica a indicação para escolher outra;
+    // se sais sem escolher, o nome volta. Enquanto não clicas, o nome fica como está.
+    let carregaNaLista = false;
+    document.addEventListener("pointerdown", (event) => {
+        if (event.target.closest?.(".bio-dropdown")) carregaNaLista = true;
+    }, true);
+    document.addEventListener("pointerup", () => { setTimeout(() => { carregaNaLista = false; }, 600); }, true);
+    document.addEventListener("focusin", (event) => {
+        const input = event.target;
+        if (input?.id !== "loc-search-input" || input.dataset.editar || !input.value) return;
+        input.dataset.guardado = input.value;
+        input.dataset.pergunta = input.placeholder;
+        input.dataset.editar = "1";
+        input.value = "";
+        input.placeholder = state.lang === "pt" ? "Escolher outra localidade…" : "Choose another place…";
+        closeResults();
+    });
+    document.addEventListener("focusout", (event) => {
+        const input = event.target;
+        if (input?.id !== "loc-search-input" || !input.dataset.editar) return;
+        setTimeout(() => {
+            if (carregaNaLista || document.activeElement?.closest?.(".bio-location")) return;
+            input.value = input.dataset.guardado;
+            input.placeholder = input.dataset.pergunta;
+            delete input.dataset.editar; delete input.dataset.guardado; delete input.dataset.pergunta;
+            closeResults();
+            status("");
+        }, 180);
+    });
 }
 
 function observeSidebar() {
