@@ -1,0 +1,65 @@
+/* Sistemas de pressão (Observatório da Terra): cada sistema com o seu tom e uma fotografia; as dimensões ambientais com a cor do tema.
+   Cartões de fundo suave, sem bordas nem linhas, e texto de leitura confortável (16 px no corpo). */
+#pressure-systems {
+  --d-climate: #b4472f; --d-water: #1f6f8b; --d-land: #7a4d2b; --d-nature: #4f7a2b; --d-pollution: #6b6f78; --d-justice: #8a2f55;
+}
+#pressure-systems .system-card[data-system="energy"]     { --tom: #4b5563; --tom-suave: #e9ebee; }
+#pressure-systems .system-card[data-system="renewables"] { --tom: #9a6a00; --tom-suave: #f8eed2; }
+#pressure-systems .system-card[data-system="mining"]     { --tom: #8a4b32; --tom-suave: #f3e5de; }
+#pressure-systems .system-card[data-system="digital"]    { --tom: #44529a; --tom-suave: #e8eaf6; }
+#pressure-systems .system-card[data-system="food"]       { --tom: #a3472f; --tom-suave: #f6e5df; }
+#pressure-systems .system-card[data-system="built"]      { --tom: #6d675b; --tom-suave: #ecebe5; }
+#pressure-systems .system-card[data-system="fashion"]    { --tom: #9a3f72; --tom-suave: #f6e6ef; }
+#pressure-systems .system-card[data-system="mobility"]   { --tom: #4a6178; --tom-suave: #e6ecf1; }
+#pressure-systems .system-card[data-system="chemicals"]  { --tom: #6b4f8a; --tom-suave: #eee8f4; }
+
+/* Filtros por dimensão: ponto na cor do tema; o escolhido enche-se dessa cor. */
+html body #pressure-systems .dimension-filters { gap: 0.6rem; margin: 1.8rem 0 1rem; }
+html body #pressure-systems .dimension-filters button { --c: #4b5563; display: inline-flex; align-items: center; gap: 0.55rem; padding: 0.7rem 1.2rem !important; border: 0 !important; background: color-mix(in srgb, var(--c) 9%, #fff) !important; color: var(--ink, #20342a) !important; font-family: inherit !important; font-size: 0.95rem !important; font-weight: 600; letter-spacing: 0 !important; text-transform: none !important; }
+html body #pressure-systems .dimension-filters button i { width: 0.6rem; height: 0.6rem; border-radius: 50%; background: var(--c); }
+html body #pressure-systems .dimension-filters button:hover { background: color-mix(in srgb, var(--c) 18%, #fff) !important; }
+html body #pressure-systems .dimension-filters button.active { background: var(--c) !important; color: #fff !important; }
+html body #pressure-systems .dimension-filters button.active i { background: #fff; }
+html body #pressure-systems .dimension-filters button[data-dimension="climate"]   { --c: var(--d-climate); }
+html body #pressure-systems .dimension-filters button[data-dimension="water"]     { --c: var(--d-water); }
+html body #pressure-systems .dimension-filters button[data-dimension="land"]      { --c: var(--d-land); }
+html body #pressure-systems .dimension-filters button[data-dimension="nature"]    { --c: var(--d-nature); }
+html body #pressure-systems .dimension-filters button[data-dimension="pollution"] { --c: var(--d-pollution); }
+html body #pressure-systems .dimension-filters button[data-dimension="justice"]   { --c: var(--d-justice); }
+html body #pressure-systems .dimension-filters button[data-dimension="all"] i { display: none; }
+html body #pressure-systems .system-summary { margin: 0 0 1.6rem; font-size: 0.9rem; color: #5f6a64; }
+
+/* Cartões. */
+html body #pressure-systems .system-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.2rem; }
+html body #pressure-systems .system-card { position: relative; display: flex; flex-direction: column; min-height: 0; padding: 0.7rem 0.7rem 0 !important; border: 0; border-radius: 20px; background: var(--tom-suave, #f1efe9); color: var(--ink, #20342a); transition: transform 0.2s ease, box-shadow 0.2s ease; }
+html body #pressure-systems .system-card.live:hover { transform: translateY(-3px); box-shadow: 0 18px 34px -24px var(--tom); }
+html body #pressure-systems .system-card.next, html body #pressure-systems .system-card.mapped { background: var(--tom-suave, #f1efe9); }
+html body #pressure-systems .system-photo { margin: 0; }
+html body #pressure-systems .system-photo img { display: block; width: 100%; height: auto; aspect-ratio: 3 / 2; object-fit: cover; border-radius: 14px; background: #e6e1d5; }
+html body #pressure-systems .system-photo figcaption { padding: 0.4rem 0.3rem 0; font-size: 0.7rem; line-height: 1.4; color: #6a746d; }
+html body #pressure-systems .system-photo a { position: relative; z-index: 2; color: inherit; text-decoration: underline; }
+html body #pressure-systems .system-body { display: flex; flex: 1; flex-direction: column; padding: 1.1rem 0.8rem 1.4rem; }
+html body #pressure-systems .system-card small { display: block; color: var(--tom); font-size: 0.78rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
+html body #pressure-systems .system-card h3 { margin: 0.5rem 0 0.7rem; font-family: Georgia, serif !important; font-size: 1.6rem; line-height: 1.15; color: var(--ink, #20342a); }
+html body #pressure-systems .system-card p { margin: 0 0 1.1rem; color: #3f4a43; font-size: 1rem; line-height: 1.65; }
+html body #pressure-systems .system-dims { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: auto 0 1.1rem; padding: 0; list-style: none; }
+html body #pressure-systems .system-dims li { display: inline-flex; align-items: center; gap: 0.4rem; margin: 0; padding: 0.28rem 0.7rem; border-radius: 999px; background: rgba(255, 255, 255, 0.75); color: #3f4a43; font-size: 0.78rem; font-weight: 600; }
+html body #pressure-systems .system-dims li::before { content: ""; width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--dc, #999); }
+html body #pressure-systems .system-dims li[data-dim="climate"]   { --dc: var(--d-climate); }
+html body #pressure-systems .system-dims li[data-dim="water"]     { --dc: var(--d-water); }
+html body #pressure-systems .system-dims li[data-dim="land"]      { --dc: var(--d-land); }
+html body #pressure-systems .system-dims li[data-dim="nature"]    { --dc: var(--d-nature); }
+html body #pressure-systems .system-dims li[data-dim="pollution"] { --dc: var(--d-pollution); }
+html body #pressure-systems .system-dims li[data-dim="justice"]   { --dc: var(--d-justice); }
+html body #pressure-systems .system-dims li.focus { background: var(--dc); color: #fff; }
+html body #pressure-systems .system-dims li.focus::before { background: #fff; }
+html body #pressure-systems .system-cta { color: var(--tom); font-size: 0.85rem; font-weight: 800; letter-spacing: 0.08em; text-decoration: none; text-transform: uppercase; border: 0 !important; }
+html body #pressure-systems .system-card.live .system-cta::after { content: ""; position: absolute; inset: 0; border-radius: 20px; }
+html body #pressure-systems .system-card:not(.live) .system-cta { color: #6a746d; }
+html body #pressure-systems .system-card.live .system-cta:focus-visible::after { outline: 3px solid var(--tom); outline-offset: 2px; }
+
+@media (max-width: 1100px) { html body #pressure-systems .system-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 700px) {
+  html body #pressure-systems .system-grid { grid-template-columns: minmax(0, 1fr); }
+  html body #pressure-systems .system-card h3 { font-size: 1.45rem; }
+}

@@ -53,16 +53,19 @@
                 ).join("");
                 const filters = [{ id: "all", name_pt: "Todos", name_en: "All" }, ...architecture.dimensions];
                 document.getElementById("dimension-filters").innerHTML = filters.map((item, index) =>
-                    `<button type="button" class="${index === 0 ? "active" : ""}" data-dimension="${item.id}">${escapeHtml(pick(item))}</button>`
+                    `<button type="button" class="${index === 0 ? "active" : ""}" data-dimension="${item.id}"><i aria-hidden="true"></i>${escapeHtml(pick(item))}</button>`
                 ).join("");
+                const credit = (photo) => `${isEnglish ? "Photo" : "Foto"}: ${escapeHtml(photo.author)} · <a href="${escapeHtml(photo.license_url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(photo.license)}</a> · <a href="${escapeHtml(photo.page)}" target="_blank" rel="noopener noreferrer">Wikimedia Commons</a>`;
                 const drawSystems = (dimension = "all") => {
                     const systems = architecture.systems.filter(item => dimension === "all" || item.dimensions.includes(dimension));
                     document.getElementById("system-summary").textContent = `${systems.length} ${isEnglish ? "systems shown" : "sistemas apresentados"}`;
                     document.getElementById("system-grid").innerHTML = systems.map(item => {
-                        const dimensionNames = item.dimensions.map(id => pick(architecture.dimensions.find(d => d.id === id))).join(" · ");
-                        const status = item.status === "live" ? (isEnglish ? "Explore" : "Explorar") : item.status === "next" ? (isEnglish ? "Next in-depth page" : "Próximo aprofundamento") : (isEnglish ? "Mapped in this overview" : "Mapeado nesta síntese");
-                        const content = `<small>${escapeHtml(pick(item, "kicker"))}</small><h3>${escapeHtml(pick(item))}</h3><p>${escapeHtml(pick(item, "text"))}</p><div class="system-dimensions">${escapeHtml(dimensionNames)}</div><strong>${status}${item.status === "live" ? " ↗" : ""}</strong>`;
-                        return item.href && item.status === "live" ? `<a class="system-card" href="${escapeHtml(item.href)}?lang=${isEnglish ? "en" : "pt"}">${content}</a>` : `<article class="system-card ${item.status}">${content}</article>`;
+                        const dims = item.dimensions.map(id => `<li data-dim="${id}"${id === dimension ? ' class="focus"' : ""}>${escapeHtml(pick(architecture.dimensions.find(d => d.id === id)))}</li>`).join("");
+                        const live = item.status === "live" && item.href;
+                        const status = live ? (isEnglish ? "Explore" : "Explorar") : item.status === "next" ? (isEnglish ? "Next in-depth page" : "Próximo aprofundamento") : (isEnglish ? "Mapped in this overview" : "Mapeado nesta síntese");
+                        const photo = item.photo ? `<figure class="system-photo" data-no-signature><img src="/images/${escapeHtml(item.photo.file)}" alt="${escapeHtml(isEnglish ? item.photo.alt_en : item.photo.alt_pt)}" width="1000" height="667" loading="lazy"><figcaption>${credit(item.photo)}</figcaption></figure>` : "";
+                        const action = live ? `<a class="system-cta" href="${escapeHtml(item.href)}?lang=${isEnglish ? "en" : "pt"}">${status} ↗</a>` : `<span class="system-cta">${status}</span>`;
+                        return `<article class="system-card ${item.status}" data-system="${escapeHtml(item.id)}">${photo}<div class="system-body"><small>${escapeHtml(pick(item, "kicker"))}</small><h3>${escapeHtml(pick(item))}</h3><p>${escapeHtml(pick(item, "text"))}</p><ul class="system-dims">${dims}</ul>${action}</div></article>`;
                     }).join("");
                 };
                 document.getElementById("dimension-filters").addEventListener("click", event => {
@@ -89,7 +92,7 @@
             async function loadData() {
                 try {
                     translatePressureShell();
-                    const [response, architectureResponse] = await Promise.all([fetch("/data/vetores_pressao_global.json?v=3"), fetch("/data/pressure-systems-global.json?v=2")]);
+                    const [response, architectureResponse] = await Promise.all([fetch("/data/vetores_pressao_global.json?v=3"), fetch("/data/pressure-systems-global.json?v=3")]);
                     if (!response.ok || !architectureResponse.ok) throw new Error(`HTTP ${response.status}/${architectureResponse.status}`);
                     const [data, architecture] = await Promise.all([response.json(), architectureResponse.json()]);
                     if (!data.destaques || !data.series || !data.vetores) {
