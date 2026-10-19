@@ -27,7 +27,19 @@
                     "Cidade–solo–calor–cheia":["City–soil–heat–flood","Sealing and vegetation loss reduce infiltration and evapotranspiration, increasing runoff and local heat."],
                     "Clima–oceano–costas":["Climate–ocean–coasts","The ocean absorbs heat and CO₂, increasing temperature, acidification and sea level, with effects on ecosystems and coastal communities."]
                 };
-                document.getElementById("nexus-grid").innerHTML = data.nexos.map((item) => { const translated = english[item.titulo]; const caution = isEnglish ? "Interpret together with scale, location, substitution and the stated evidence boundaries." : item.cautela; return `<article class="nexus-card"><h3>${escapeHtml(isEnglish && translated ? translated[0] : item.titulo)}</h3><p>${escapeHtml(isEnglish && translated ? translated[1] : item.mecanismo)}</p><details><summary>${isEnglish ? "Important note" : "Nota importante"}</summary><p>${escapeHtml(caution)}</p></details></article>`; }).join("");
+                // Indicadores a cruzar: o ficheiro de dados está em português; aqui só se traduz o rótulo.
+                const indicatorsEn = { "mudança de cobertura": "land-cover change", "metano": "methane", "azoto": "nitrogen", "captação de água": "water abstraction", "estado de stocks": "stock status", "ciclo de vida": "life cycle", "origem mineral": "mineral origin", "reciclagem": "recycling", "fragmentação": "fragmentation", "mix elétrico": "electricity mix", "stress hídrico": "water stress", "selagem": "soil sealing", "coberto arbóreo": "tree cover", "temperatura superficial": "surface temperature", "cheia rápida": "flash flood", "calor oceânico": "ocean heat", "nível do mar": "sea level", "gelo": "ice", "exposição costeira": "coastal exposure" };
+                // Cor de cada elo do esquema, pelo tema a que pertence (as mesmas cores das dimensões e dos sistemas).
+                const nodeColor = { "alimentação": "#7a4d2b", "clima": "#b4472f", "natureza": "#4f7a2b", "energia": "#4b5563", "minerais": "#8a4b32", "território": "#7a4d2b", "digital": "#44529a", "água": "#1f6f8b", "cidade": "#6d675b", "solo": "#7a4d2b", "calor": "#b4472f", "cheia": "#1f6f8b", "oceano": "#1f6f8b", "costas": "#2a7473" };
+                document.getElementById("nexus-grid").innerHTML = data.nexos.map((item) => {
+                    const translated = english[item.titulo];
+                    const caution = isEnglish ? "Interpret together with scale, location, substitution and the stated evidence boundaries." : item.cautela;
+                    const title = isEnglish && translated ? translated[0] : item.titulo;
+                    const names = title.split("–"), keys = item.titulo.split("–");
+                    const nodes = names.map((name, i) => `<span class="nexus-node" style="--n:${nodeColor[keys[i].toLowerCase()] || "#4b5563"}"><i aria-hidden="true"></i><b>${escapeHtml(name)}</b></span>`).join('<span class="nexus-link" aria-hidden="true"></span>');
+                    const indicators = (item.indicadores_para_cruzar || []).map(name => `<li>${escapeHtml(isEnglish ? (indicatorsEn[name] || name) : name)}</li>`).join("");
+                    return `<article class="nexus-card" data-nexus="${escapeHtml(item.id)}"><div class="nexus-diagram" role="img" aria-label="${escapeHtml(title)}">${nodes}</div><h3>${escapeHtml(title)}</h3><p>${escapeHtml(isEnglish && translated ? translated[1] : item.mecanismo)}</p>${indicators ? `<div class="nexus-indicators"><span>${isEnglish ? "Indicators to cross-check" : "Indicadores a cruzar"}</span><ul>${indicators}</ul></div>` : ""}<details><summary>${isEnglish ? "Important note" : "Nota importante"}</summary><p>${escapeHtml(caution)}</p></details></article>`;
+                }).join("");
             }
 
             function translatePressureShell() {

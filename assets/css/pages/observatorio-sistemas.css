@@ -63,3 +63,34 @@ html body #pressure-systems .system-card.live .system-cta:focus-visible::after {
   html body #pressure-systems .system-grid { grid-template-columns: minmax(0, 1fr); }
   html body #pressure-systems .system-card h3 { font-size: 1.45rem; }
 }
+
+/* Como as pressões se relacionam: um esquema com os elos, o mecanismo, os indicadores a cruzar e a nota recolhida; cada relação com o seu tom. */
+.nexus-card[data-nexus="alimentos_clima_natureza"] { --tom: #4f7a2b; --tom-suave: #edf1dc; }
+.nexus-card[data-nexus="energia_minerais"]         { --tom: #9a6a00; --tom-suave: #f8eed2; }
+.nexus-card[data-nexus="digital_energia_agua"]     { --tom: #44529a; --tom-suave: #e8eaf6; }
+.nexus-card[data-nexus="cidade_solo_calor"]        { --tom: #a3472f; --tom-suave: #f6e5df; }
+.nexus-card[data-nexus="clima_oceano"]             { --tom: #1f6f8b; --tom-suave: #e2eff4; }
+
+html body #connections h2 { font-size: clamp(1.9rem, 2.8vw, 2.5rem); line-height: 1.1; }
+html body #connections p { font-size: 1rem; color: #4d5a52; }
+html body #connections + .nexus-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 1.2rem; margin-top: 1.6rem; }
+html body .nexus-grid > .nexus-card { grid-column: span 2; }
+html body .nexus-grid > .nexus-card:nth-child(n+4) { grid-column: span 3; }
+html body .nexus-card { display: flex; flex-direction: column; padding: 0.7rem !important; border: 0; border-radius: 20px; background: var(--tom-suave, #f1efe9); }
+html body .nexus-diagram { display: flex; align-items: flex-start; justify-content: center; gap: 0; padding: 1.3rem 0.6rem 1.1rem; border-radius: 14px; background: rgba(255, 255, 255, 0.72); }
+html body .nexus-node { display: flex; flex: 0 1 auto; flex-direction: column; align-items: center; gap: 0.5rem; min-width: 0; max-width: 6.4rem; text-align: center; }
+html body .nexus-node i { width: 2.4rem; height: 2.4rem; border-radius: 50%; background: var(--n); box-shadow: 0 0 0 6px color-mix(in srgb, var(--n) 16%, transparent); }
+html body .nexus-node b { color: #2f3a33; font-size: 0.82rem; font-weight: 700; line-height: 1.2; overflow-wrap: anywhere; }
+html body .nexus-link { flex: 1 1 1.4rem; min-width: 1rem; max-width: 3rem; height: 2px; margin: calc(1.2rem - 1px) 0.2rem 0; background: repeating-linear-gradient(90deg, #8d978f 0 5px, transparent 5px 9px); }
+html body .nexus-card h3 { margin: 1.2rem 0.8rem 0.5rem; font-family: Georgia, serif !important; font-size: 1.45rem; line-height: 1.15; color: var(--ink, #20342a); }
+html body .nexus-card > p { margin: 0 0.8rem 1rem; color: #3f4a43; font-size: 1rem; line-height: 1.65; }
+html body .nexus-indicators { margin: auto 0.8rem 1rem; }
+html body .nexus-indicators > span { display: block; margin-bottom: 0.5rem; color: var(--tom); font-size: 0.74rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; }
+html body .nexus-indicators ul { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0; padding: 0; list-style: none; }
+html body .nexus-indicators li { margin: 0; padding: 0.28rem 0.7rem; border-radius: 999px; background: rgba(255, 255, 255, 0.75); color: #3f4a43; font-size: 0.8rem; font-weight: 600; }
+html body .nexus-card details { margin: 0 0.8rem 1rem; padding: 0; border: 0; }
+html body .nexus-card summary { cursor: pointer; color: var(--tom); font-size: 0.8rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
+html body .nexus-card details[open] summary { margin-bottom: 0.4rem; }
+html body .nexus-card details > p { margin: 0; padding: 0.8rem 1rem; border-radius: 12px; background: rgba(255, 255, 255, 0.72); color: #3f4a43; font-size: 0.95rem; line-height: 1.6; }
+@media (max-width: 1100px) { html body #connections + .nexus-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } html body .nexus-grid > .nexus-card, html body .nexus-grid > .nexus-card:nth-child(n+4) { grid-column: auto; } html body .nexus-grid > .nexus-card:last-child:nth-child(odd) { grid-column: 1 / -1; } }
+@media (max-width: 700px) { html body #connections + .nexus-grid { grid-template-columns: minmax(0, 1fr); } html body .nexus-grid > .nexus-card:last-child:nth-child(odd) { grid-column: auto; } html body .nexus-card h3 { font-size: 1.3rem; } }
