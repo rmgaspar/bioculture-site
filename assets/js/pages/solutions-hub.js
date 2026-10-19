@@ -50,7 +50,7 @@
     function categoryGroup(category, solutions, data) {
         const items = solutions.map(s => card(s, data)).join('');
         const count = tr(`${solutions.length} soluções em estudo`,`${solutions.length} solutions under study`);
-        return `<section class="category-group" id="cat-${esc(category.id)}"><div class="category-banner"><img class="category-image" src="${categoryImageSrc(category.id)}" alt=""><div class="category-banner-body"><h2>${esc(text(category.nome))}</h2><p class="category-count">${esc(count)}</p></div></div><div class="product-grid">${items}</div></section>`;
+        return `<section class="category-group" id="cat-${esc(category.id)}" data-tom="${esc(category.id)}" data-total="${solutions.length}"><div class="category-banner"><img class="category-image" src="${categoryImageSrc(category.id)}" alt=""><div class="category-banner-body"><h2>${esc(text(category.nome))}</h2><p class="category-count">${esc(count)}</p></div></div><div class="product-grid">${items}</div></section>`;
     }
     async function fetchJSON(url) {
         const response = await fetch(url);
@@ -61,32 +61,55 @@
     function productCatalogue(raw) {
         return {...raw, solucoes: raw.solucoes.filter(s => s.tipo !== 'pratica')};
     }
+    // A barra fixa lê os destinos ao carregar; como as famílias nascem aqui, só a ligamos depois de existirem.
+    function barraFixa() {
+        if (!document.querySelector('nav.reading-nav') || document.querySelector('script[src*="biocultura-sticky-nav"]')) return;
+        const el = document.createElement('script');
+        el.src = '/assets/js/biocultura-sticky-nav.js?v=17';
+        document.body.appendChild(el);
+    }
     async function products() {
         const grid = byId('product-grid');
         try {
             const data = productCatalogue(await fetchJSON('/data/solucoes-catalogo.json'));
-            const filters = byId('category-filters'), input = byId('product-search');
-            input.placeholder = tr('Ex.: composto, micorrizas, armadilhas','E.g. compost, mycorrhizae, traps');
-            const requestedCategory = new URLSearchParams(location.search).get('categoria');
-            let selected = data.categorias.some(c => c.id === requestedCategory) ? requestedCategory : 'all';
-            const filterItems = [{id:'all',nome:{pt:'Todas as famílias',en:'All families'}},...data.categorias];
-            filters.innerHTML = filterItems.map(c => `<button type="button" data-category="${esc(c.id)}" aria-pressed="${c.id === selected}">${esc(text(c.nome))}</button>`).join('');
+            const input = byId('product-search'), nav = document.querySelector('nav.reading-nav');
+            input.placeholder = tr('Ex.: neem, micorrizas, armadilhas','E.g. neem, mycorrhizae, traps');
+            // Os grupos ficam sempre no sítio (a barra fixa guarda-os); a pesquisa só esconde cartões e grupos sem resultados.
+            grid.innerHTML = data.categorias.map(cat => categoryGroup(cat, data.solucoes.filter(s => s.categoria_id === cat.id), data)).join('')
+                + `<div class="catalogue-empty" id="product-empty" hidden>${tr('Nenhuma solução encontrada. Experimenta outro termo.','No solutions found. Try another term.')} <button type="button" id="reset-products">${tr('Limpar pesquisa','Clear search')}</button></div>`;
+            const groups = [...grid.querySelectorAll('.category-group')], cards = [...grid.querySelectorAll('.product-card')];
             const render = () => {
-                const found = filterSolutions(data, input.value, selected);
-                const groups = data.categorias.map(cat => ({cat, items: found.filter(s => s.categoria_id === cat.id)})).filter(g => g.items.length);
-                grid.innerHTML = groups.map(g => categoryGroup(g.cat, g.items, data)).join('') || `<div class="catalogue-empty">${tr('Nenhuma solução encontrada. Experimenta outro termo ou escolhe todas as famílias.','No solutions found. Try another term or select all families.')} <button type="button" id="reset-products">${tr('Limpar pesquisa','Clear search')}</button></div>`;
-                byId('product-count').textContent = tr(`${found.length} de ${data.solucoes.length} soluções em estudo`,`${found.length} of ${data.solucoes.length} solutions under study`);
-                filters.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed',String(b.dataset.category === selected)));
-                byId('reset-products')?.addEventListener('click',()=>{input.value='';selected='all';render();input.focus();});
+                const found = new Set(filterSolutions(data, input.value, 'all').map(s => s.id));
+                cards.forEach(card => { card.hidden = !found.has(card.id); });
+                groups.forEach(group => {
+                    const visible = group.querySelectorAll('.product-card:not([hidden])').length, total = Number(group.dataset.total);
+                    group.classList.toggle('is-vazio', visible === 0);
+                    group.querySelector('.category-count').textContent = visible === total ? tr(`${total} soluções em estudo`,`${total} solutions under study`) : tr(`${visible} de ${total} soluções`,`${visible} of ${total} solutions`);
+                    nav?.querySelectorAll(`a[href$="#${group.id}"]`).forEach(a => a.classList.toggle('is-vazio', visible === 0));
+                });
+                byId('product-empty').hidden = found.size > 0;
+                byId('product-count').textContent = tr(`${found.size} de ${data.solucoes.length} soluções em estudo`,`${found.size} of ${data.solucoes.length} solutions under study`);
             };
-            filters.addEventListener('click',event=>{const button=event.target.closest('button[data-category]');if(button){selected=button.dataset.category;render();}});
-            input.addEventListener('input',render);
+            input.addEventListener('input', render);
+            byId('reset-products').addEventListener('click', () => { input.value = ''; render(); input.focus(); });
+            // Um separador da barra cujo grupo ficou escondido pela pesquisa limpa a pesquisa e segue para o grupo.
+            nav?.addEventListener('click', event => {
+                const a = event.target.closest('a[href*="#cat-"]');
+                if (!a || !a.classList.contains('is-vazio')) return;
+                event.preventDefault(); event.stopImmediatePropagation();
+                input.value = ''; render();
+                setTimeout(() => a.click(), 0);
+            }, true);
             render();
+            barraFixa();
+            const requested = new URLSearchParams(location.search).get('categoria');
+            if (requested && data.categorias.some(c => c.id === requested)) setTimeout(() => byId('cat-' + requested)?.scrollIntoView(), 350);
             const id = location.hash.slice(1);
-            if (id && data.solucoes.some(s=>s.id === id)) { const entry=byId(id);entry.querySelector('details')?.setAttribute('open','');entry.scrollIntoView(); }
+            if (id && data.solucoes.some(s=>s.id === id)) byId(id)?.scrollIntoView();
         } catch (_) {
             grid.innerHTML=`<div class="hub-error" role="alert">${tr('Não foi possível carregar o catálogo.','The catalogue could not be loaded.')} <button type="button" id="retry-products">${tr('Tentar novamente','Try again')}</button></div>`;
             byId('retry-products').addEventListener('click',products);
+            barraFixa();
         }
     }
     async function services() {
