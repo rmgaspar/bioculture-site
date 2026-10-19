@@ -25,6 +25,20 @@
                     Math.cos(Number(a.lat) * r) * Math.cos(Number(b.lat) * r) * Math.sin(dLon / 2) ** 2;
                 return R * 2 * Math.atan2(Math.sqrt(q), Math.sqrt(1 - q));
             }
+            // Créditos das fotografias dos cartões «Continuar» (os cartões são ligações, por isso o crédito vai numa linha por baixo).
+            function renderCreditos() {
+                const nav = document.querySelector(".chapters");
+                if (!nav || document.querySelector(".chapters-creditos")) return;
+                const lic = { "CC BY-SA 4.0": "https://creativecommons.org/licenses/by-sa/4.0/", "CC BY-SA 3.0": "https://creativecommons.org/licenses/by-sa/3.0/", "CC BY 4.0": "https://creativecommons.org/licenses/by/4.0/" };
+                const fotos = [
+                    ["Bextrel", "CC BY-SA 4.0", "Paineis_solares_-_Bensafrim,_Lagos,_Algarve_-_Portugal_-_29.03.2023.jpg"],
+                    ["MarcoMileu", "CC BY-SA 3.0", "Nas_pedreiras_de_Estremoz_-_panoramio_(3).jpg"],
+                    ["BalticServers.com", "CC BY-SA 3.0", "BalticServers_data_center.jpg"],
+                    ["Quintin Soloviev", "CC BY 4.0", "Cattle_feedlot_south_of_Portales,_New_Mexico.jpg"],
+                ];
+                const itens = fotos.map(([autor, licenca, ficheiro]) => `${esc(autor)} · <a href="${lic[licenca]}" target="_blank" rel="noopener noreferrer">${licenca}</a> · <a href="https://commons.wikimedia.org/wiki/File:${encodeURIComponent(ficheiro).replace(/%2C/g, ",").replace(/%28/g, "(").replace(/%29/g, ")")}" target="_blank" rel="noopener noreferrer">Commons</a>`);
+                nav.insertAdjacentHTML("afterend", `<p class="chapters-creditos" data-no-signature>${isEn() ? "Photos" : "Fotos"}: ${itens.join(" &nbsp;|&nbsp; ")}</p>`);
+            }
             function renderStats(plants) {
                 const renewable = plants.filter((x) => x.renovavel === true),
                     capacity = plants.reduce((s, x) => s + num(x.potencia_mw), 0),
@@ -46,7 +60,7 @@
                 const types = {};
                 for (const x of plants) types[x.tipo] = (types[x.tipo] || 0) + 1;
                 el("mix").innerHTML = Object.entries(types).sort((a, b) => b[1] - a[1]).map(([k, v]) =>
-                    `<article class="mix-item"><b>${esc(k)}</b><span>${v} ${isEn() ? "plants" : "instalações"}</span></article>`
+                    `<article class="mix-item" data-tipo="${esc(k)}" style="--p:${(100 * v / plants.length).toFixed(1)}"><b>${esc(k)}</b><span>${v} ${isEn() ? "plants" : "instalações"}</span></article>`
                 ).join("");
             }
             function renderLocal(locations, plants) {
@@ -70,7 +84,7 @@
                     : `As seis instalações mais próximas entre os ${plants.length} registos do inventário.`;
                 el("plants").innerHTML =
                     near.map((x) =>
-                        `<article class="plant"><small>${esc(x.tipo)}</small><b>${
+                        `<article class="plant" data-tipo="${esc(x.tipo)}"><small>${esc(x.tipo)}</small><b>${
                             esc(x.nome)
                         }</b><span>${Math.round(x.distance)} km · ${
                             esc(x.potencia || `${x.potencia_mw} MW`)
@@ -103,6 +117,7 @@
                         ),
                     );
                     renderStats(plants);
+                    renderCreditos();
                     renderLocal(locations, plants);
                     renderNews(news);
                 } catch (e) {
