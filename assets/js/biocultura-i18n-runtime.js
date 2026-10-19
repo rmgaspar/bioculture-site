@@ -486,7 +486,7 @@
     function bootBioCultureShell() {
         if (biocultureShellBooted) return;
         biocultureShellBooted = true;
-        import("/assets/js/biocultura-shell.js?v=20")
+        import("/assets/js/biocultura-shell.js?v=21")
             .then((module) => module.init())
             .catch((error) => {
                 biocultureShellBooted = false;
