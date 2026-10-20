@@ -76,3 +76,25 @@ html body #main .reading-nav a[href$="#moda"] { --hero-accent: #9a3f72; }
 html body #main .reading-nav a[href$="#produtos"] { --hero-accent: #3f7a3a; }
 html body #main .reading-nav a[href$="#tecnicas"] { --hero-accent: #2a7473; }
 html body #main .reading-nav a[href$="#problema"] { --hero-accent: #b0482f; }
+
+/* Hubs: lista de ligações sem traços nem setas, alinhada com a fotografia (do topo da imagem ao fim da imagem);
+   cada ligação leva o ícone no tom do tema e, ao passar o rato, um fundo suave. */
+html body #main .hub-tools-grid { grid-template-rows: auto auto; row-gap: .6rem; align-items: stretch; }
+html body #main .hub-tools-foto { display: contents; }
+html body #main .hub-tools-foto img { grid-column: 1; grid-row: 1; width: 100%; height: 100%; min-height: 300px; max-height: none; aspect-ratio: 4 / 3; border: 0; object-fit: cover; }
+html body #main .hub-tools-foto figcaption { grid-column: 1; grid-row: 2; min-width: 0; }
+html body #main .hub-tools-lista { grid-column: 2; grid-row: 1; display: flex; flex-direction: column; justify-content: space-between; align-content: normal; gap: .4rem; }
+html body #main .hub-tools-grid--inv .hub-tools-foto img, html body #main .hub-tools-grid--inv .hub-tools-foto figcaption { grid-column: 2; }
+html body #main .hub-tools-grid--inv .hub-tools-lista { grid-column: 1; }
+html body #main .hub-tools-lista li, html body #main .hub-tools-lista li:first-child, html body #main .hub-section[data-tom] .hub-tools-lista li, html body #main .hub-section[data-tom] .hub-tools-lista li:first-child { border: 0 !important; }
+html body #main .hub-tools-lista a { grid-template-columns: auto minmax(0, 1fr); gap: 1.1rem; padding: .85rem 1rem; margin: 0 -1rem; border: 0 !important; border-radius: 18px; transition: background .2s ease; }
+html body #main .hub-tools-seta { display: none !important; }
+html body #main .hub-tools-ico { width: 3rem; height: 3rem; border-radius: 16px; }
+html body #main .hub-section[data-tom] .hub-tools-lista a:hover, html body #main .hub-section[data-tom] .hub-tools-lista a:focus-visible { background: var(--tom-suave); }
+html body #main .hub-section[data-tom] .hub-tools-lista a:hover .hub-tools-txt strong, html body #main .hub-section[data-tom] .hub-tools-lista a:focus-visible .hub-tools-txt strong { color: var(--tom); }
+@media (max-width: 900px) {
+  html body #main .hub-tools-grid { grid-template-rows: none; }
+  html body #main .hub-tools-foto { display: flex; }
+  html body #main .hub-tools-foto img { grid-column: auto; grid-row: auto; height: auto; aspect-ratio: 3 / 2; min-height: 0; }
+  html body #main .hub-tools-lista, html body #main .hub-tools-grid--inv .hub-tools-lista { grid-column: auto; grid-row: auto; }
+}
