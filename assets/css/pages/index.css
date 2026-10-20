@@ -173,7 +173,7 @@ html body #main :is(#inventories, #atlas, #highlights, #today, #news-block, #foc
 
 .head p { margin: 0; color: var(--muted); line-height: 1.72; }
 
-.pulse { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1em; }
+.pulse { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1em; }
 
 .number {
     --accent: var(--forest);
@@ -444,3 +444,20 @@ body[data-hero-theme] #main .bio-banner-hero > .hero-image {
 html body #main .home-nav a[href$="#foco-mongolia"] { --hero-accent: #7a4d2b; }
 html body #main .home-nav a[href$="#foco-douro"] { --hero-accent: #7d3350; }
 html body #main .home-nav a[href$="#participacao-publica"] { --hero-accent: #2f6b3a; }
+
+/* Conhecimento vivo: cada número com uma fotografia de um grupo representativo; depois as duas paisagens lado a lado e as três notas em colunas. */
+.number { grid-template-rows: auto 3.15em auto 1fr auto; padding: 0.9em 0.9em 1.5em; }
+.number-foto:empty { display: none; }
+.number-foto { margin-bottom: 1.1em; }
+.number-foto figure.foto img { aspect-ratio: 4 / 3; border-radius: 14px; }
+.number-foto figure.foto figcaption { margin-top: 0.4rem; font-size: 0.78rem; line-height: 1.4; }
+.number-foto figure.foto .credito { font-size: 0.7rem; }
+.number > small, .number > strong, .number > span, .number > .source { margin-left: 0.5em; margin-right: 0.5em; }
+.number > small { margin-top: 0; }
+.inv-fotos { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.4em 2.2em; align-items: start; margin-top: 1.4em; }
+.inv-fotos > [data-foto-slot]:empty { display: none; }
+.inv-linha--inv { grid-template-columns: minmax(0, 1fr); }
+.inv-linha--inv .pulse-notes { grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: stretch; }
+@media (max-width: 1100px) { .pulse { grid-template-columns: repeat(2, minmax(0, 1fr)); } .inv-linha--inv .pulse-notes { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 760px) { .pulse { grid-template-columns: minmax(0, 1fr); } .inv-fotos { grid-template-columns: minmax(0, 1fr); } }
+.inv-linha { grid-template-columns: minmax(0, 1fr); }

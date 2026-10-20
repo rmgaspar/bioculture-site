@@ -32,8 +32,9 @@
                     [isEnglish ? "Cultivated taxa" : "Táxones cultivados · Mundo", Number(cropMeta.taxon_count) || 0, isEnglish ? "taxa represented in the global catalogue" : "táxones representados no catálogo global", cropSourceLabel, cropMeta.genesys_dataset || cropMeta.source_url, "#81966e"],
                     [isEnglish ? "Grapevines" : "Castas · Mundo", grapeCount, isEnglish ? "varieties in the global grapevine catalogue" : "variedades no catálogo mundial de videira", grapeSourceLabel, grapeSource.url, "#7d3350"],
                 ];
-                el("pulse").innerHTML = rows.map((x) =>
-                    `<article class="number" style="--accent:${x[5]}"><small>${x[0]}</small><strong>${
+                const fotoDe = ["pulse-biodiversidade", "pulse-acessos", "pulse-taxones", "pulse-castas"];
+                el("pulse").innerHTML = rows.map((x, i) =>
+                    `<article class="number" style="--accent:${x[5]}"><div class="number-foto" data-foto-slot="${fotoDe[i]}"></div><small>${x[0]}</small><strong>${
                         x[1].toLocaleString(isEnglish ? "en-GB" : "pt-PT")
                     }</strong><span>${x[2]}</span>${
                         x[3] && x[4] ? `<a class="source" href="${esc(x[4])}" target="_blank" rel="noopener">${isEnglish ? "Source" : "Fonte"}: ${esc(x[3])} →</a>` : ""
