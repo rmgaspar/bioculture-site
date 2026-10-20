@@ -126,9 +126,18 @@
 
   function renderCalendar(data, hemi='north') {
     const shift=hemi==='south'?6:0;
-    $('#vine-calendar').innerHTML=data.operations.map((op,i)=>{
-      const months=ranges[i].map(m=>copy.months[(m+shift)%12]).join(' · ');
-      return `<article><div class="calendar-top"><span>${String(i+1).padStart(2,'0')} · ${copy.phase}</span><b>${months}</b></div><h3>${esc(op[`phase_${lang}`])}</h3><p>${esc(op[`work_${lang}`])}</p></article>`;
+    const stages=[
+      {slot:'cal-repouso',title:['Do repouso à rebentação','From dormancy to budburst'],phases:[0,1,2]},
+      {slot:'cal-flor',title:['Flor e vingamento','Flowering and fruit set'],phases:[3,4,5]},
+      {slot:'cal-pintor',title:['Copa, pintor e maturação','Canopy, veraison and ripening'],phases:[6,7,8]},
+      {slot:'cal-vindima',title:['Vindima e balanço','Harvest and review'],phases:[9,10,11]}
+    ];
+    const label=(i)=>ranges[i].map(m=>copy.months[(m+shift)%12]);
+    $('#vine-calendar').innerHTML=stages.map((s,n)=>{
+      const all=[...new Set(s.phases.flatMap(label))];
+      const span=all.length>1?`${all[0]} – ${all[all.length-1]}`:all[0];
+      const items=s.phases.map(i=>{const op=data.operations[i];return `<li class="fase" data-n="${i+1}"><div class="fase-top"><h4>${esc(op[`phase_${lang}`])}</h4><b>${label(i).join(' · ')}</b></div><p>${esc(op[`work_${lang}`])}</p></li>`;}).join('');
+      return `<div class="etapa" data-n="${n+1}"><div class="etapa-foto" data-foto-slot="${s.slot}"></div><div class="etapa-corpo"><span class="etapa-num">${lang==='pt'?'Etapa':'Stage'} ${n+1} · ${span}</span><h3>${esc(lang==='pt'?s.title[0]:s.title[1])}</h3><ul class="fases">${items}</ul></div></div>`;
     }).join('');
   }
 
