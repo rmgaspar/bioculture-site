@@ -135,6 +135,7 @@
   function renderManual(key) {
     document.querySelectorAll('#manual-nav button').forEach(b=>{const active=b.dataset.key===key;b.classList.toggle('active',active);b.setAttribute('aria-pressed',active)});
     const m=manual[key];
+    $('#manual-panel').dataset.key=key;
     $('#manual-panel').innerHTML=`<header><span>${tr(m.intro)}</span><h3>${tr(m.title)}</h3></header><div class="manual-cards">${m.cards.map(c=>`<article><h4>${esc(lang==='pt'?c[0]:c[2])}</h4><p>${esc(lang==='pt'?c[1]:c[3])}</p></article>`).join('')}</div>`;
   }
 
