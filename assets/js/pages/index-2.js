@@ -74,31 +74,40 @@
                 // Primeiro as principais; «Ver mais» acrescenta mais um bloco de cada vez, «Ver menos» volta ao início.
                 const INITIAL = 8, STEP = 8;
                 let shown = INITIAL;
-                const render = () => {
-                    const visible = rows.slice(0, shown);
-                    el("news").innerHTML = visible.map((n) => {
+                const SEM_IMAGEM = "/images/noticias-sem-imagem.webp";
+                const ficha = (n) => {
                     const c = window.BioCultureI18n?.content(n) || n.pt || n;
                     const scope = n.ambito === "portugal"
-                        ? (isEnglish ? "Portugal" : "Portugal")
+                        ? "Portugal"
                         : n.ambito === "regional" ? "Regional" : (isEnglish ? "World" : "Mundo");
-                    const summary = c.resumo_biocultura || c.resumo || "";
-                    const image = typeof n.imagem === "string" &&
-                            (/^https?:\/\//i.test(n.imagem) || n.imagem.startsWith("/"))
-                        ? n.imagem
-                        : "/images/noticias-sem-imagem.webp";
-                    const imageAlt = image === "/images/noticias-sem-imagem.webp"
-                        ? (isEnglish ? "bioCulture editorial illustration" : "Ilustração editorial bioCulture")
-                        : "";
-                    return `<a href="/observatorio/noticia-detalhe.html?id=${
-                        encodeURIComponent(n.id)
-                    }"><img class="news-thumb" src="${esc(image)}" alt="${
-                        esc(imageAlt)
-                    }" loading="lazy" onerror="this.src='/images/noticias-sem-imagem.webp'"><div class="news-body"><small>${
-                        esc(scope)
-                    } · ${esc(window.BioCultureI18n?.date(n.data) || n.data)} · ${esc(n.fonte)}${window.BioCultureNews?.typeLabel(n) ? ` · ${esc(window.BioCultureNews.typeLabel(n))}` : ""}</small><h3>${esc(c.titulo)}</h3>${
-                        summary ? `<p>${esc(summary)}</p>` : ""
-                    }</div></a>`;
-                    }).join("") || `<p class="empty">${isEnglish ? "No news available at this time." : "Sem notícias disponíveis neste momento."}</p>`;
+                    const real = typeof n.imagem === "string" && (/^https?:\/\//i.test(n.imagem) || n.imagem.startsWith("/")) && !/(\/metatag\/|logo|sem-imagem)/i.test(n.imagem); // logótipos e marcadores não valem como fotografia
+                    const tipo = window.BioCultureNews?.typeLabel(n);
+                    return {
+                        href: `/observatorio/noticia-detalhe.html?id=${encodeURIComponent(n.id)}`,
+                        meta: `${scope} · ${window.BioCultureI18n?.date(n.data) || n.data} · ${n.fonte}${tipo ? ` · ${tipo}` : ""}`,
+                        titulo: c.titulo,
+                        resumo: c.resumo_biocultura || c.resumo || "",
+                        imagem: real ? n.imagem : SEM_IMAGEM,
+                        real,
+                    };
+                };
+                const img = (f, cls) => !f.real ? "" : `<img class="${cls}" src="${esc(f.imagem)}" alt="${esc(f.real ? "" : (isEnglish ? "bioCulture editorial illustration" : "Ilustração editorial bioCulture"))}" loading="lazy" onerror="this.src='${SEM_IMAGEM}'">`;
+                const render = () => {
+                    const visible = rows.slice(0, shown);
+                    if (!visible.length) {
+                        el("news").innerHTML = `<p class="empty">${isEnglish ? "No news available at this time." : "Sem notícias disponíveis neste momento."}</p>`;
+                    } else {
+                        // A principal é a primeira das primeiras com fotografia verdadeira; ao lado, três só de texto; por baixo, cartões.
+                        const fichas = visible.map(ficha);
+                        let fi = fichas.slice(0, INITIAL).findIndex((f) => f.real);
+                        if (fi < 0) fi = 0;
+                        const feat = fichas.splice(fi, 1)[0];
+                        const lado = fichas.splice(0, 3);
+                        const featHtml = `<a class="news-feat" href="${esc(feat.href)}">${img(feat, "news-feat-img")}<small>${esc(feat.meta)}</small><h3>${esc(feat.titulo)}</h3>${feat.resumo ? `<p>${esc(feat.resumo)}</p>` : ""}</a>`;
+                        const ladoHtml = lado.map((f) => `<a class="news-line" href="${esc(f.href)}"><small>${esc(f.meta)}</small><h3>${esc(f.titulo)}</h3></a>`).join("");
+                        const cardsHtml = fichas.map((f) => `<a class="news-card" href="${esc(f.href)}">${img(f, "news-card-img")}<small>${esc(f.meta)}</small><h3>${esc(f.titulo)}</h3>${f.resumo ? `<p>${esc(f.resumo)}</p>` : ""}</a>`).join("");
+                        el("news").innerHTML = `<div class="news-top">${featHtml}<div class="news-side">${ladoHtml}</div></div>${cardsHtml ? `<div class="news-cards">${cardsHtml}</div>` : ""}`;
+                    }
                     const left = rows.length - visible.length;
                     const more = el("news-toggle"), less = el("news-collapse");
                     if (more) {
