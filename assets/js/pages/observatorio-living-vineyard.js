@@ -119,7 +119,9 @@
   function renderClimate(data, id) {
     document.querySelectorAll('#climate-filters button').forEach(b=>{const active=b.dataset.id===id;b.classList.toggle('active',active);b.setAttribute('aria-pressed',active)});
     const c=data.climates.find(x=>x.id===id) || data.climates[0];
-    $('#climate-panel').innerHTML=`<div class="climate-intro"><span>${esc(c.regions)}</span><h3>${esc(c[`name_${lang}`])}</h3><p>${lang==='pt'?'Perfil orientador; confirma-o com dados da parcela e conhecimento local.':'An indicative profile; verify it with site data and local knowledge.'}</p></div><div class="climate-details"><article><b>${copy.water}</b><p>${esc(c[`water_${lang}`])}</p></article><article><b>${copy.canopy}</b><p>${esc(c[`canopy_${lang}`])}</p></article><article><b>${copy.risks}</b><p>${esc(c[`risks_${lang}`])}</p></article><article><b>${copy.flora}</b><p>${esc(c[`flora_${lang}`])}</p></article></div>`;
+    const regions=String(c.regions).split(' · ').map((r)=>`<li>${esc(r)}</li>`).join('');
+    $('#climate-panel').dataset.clima=c.id;
+    $('#climate-panel').innerHTML=`<div class="climate-intro"><span>${lang==='pt'?'Perfil climático':'Climate profile'}</span><h3>${esc(c[`name_${lang}`])}</h3><ul class="climate-regions">${regions}</ul><p>${lang==='pt'?'Perfil orientador; confirma-o com dados da parcela e conhecimento local.':'An indicative profile; verify it with site data and local knowledge.'}</p></div><div class="climate-details"><article><b>${copy.water}</b><p>${esc(c[`water_${lang}`])}</p></article><article><b>${copy.canopy}</b><p>${esc(c[`canopy_${lang}`])}</p></article><article><b>${copy.risks}</b><p>${esc(c[`risks_${lang}`])}</p></article><article><b>${copy.flora}</b><p>${esc(c[`flora_${lang}`])}</p></article></div>`;
   }
 
   function renderCalendar(data, hemi='north') {
@@ -174,7 +176,7 @@
       const [data,grapes,catalogue]=await Promise.all([fetch('/data/living-vineyard-global.json').then(r=>r.json()),fetch('/data/castas.json').then(r=>r.json()),fetch('/data/grape-varieties-global.json').then(r=>r.json())]);
       const values=[catalogue.count,grapes.length,data.coverage.countries,data.coverage.climate_profiles];
       $('#vine-metrics').innerHTML=values.map((v,i)=>`<article><strong>${v}</strong> <span>${copy.metrics[i]}</span></article>`).join('');
-      $('#climate-filters').innerHTML=data.climates.map((c,i)=>`<button type="button" class="${i?'':'active'}" aria-pressed="${i?'false':'true'}" data-id="${c.id}">${esc(c[`name_${lang}`])}</button>`).join('');
+      $('#climate-filters').innerHTML=data.climates.map((c,i)=>`<button type="button" data-clima="${c.id}" class="${i?'':'active'}" aria-pressed="${i?'false':'true'}" data-id="${c.id}">${esc(c[`name_${lang}`])}</button>`).join('');
       $('#climate-filters').addEventListener('click',e=>{const b=e.target.closest('button');if(b)renderClimate(data,b.dataset.id)});
       renderClimate(data,data.climates[0].id);
       renderCalendar(data);
