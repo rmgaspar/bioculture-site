@@ -149,9 +149,9 @@
 
   const corKey = (s) => { const t=String(s||'').toLowerCase(); if(!t) return ''; if(/pink|rose|grey|gris/.test(t)) return 'rosa'; if(/white/.test(t)) return 'branco'; return 'tinto'; };
 
-  const ptTermo = (s) => lang==='pt' ? ({Black:'Tinta',White:'Branca',Red:'Vermelha',Grey:'Cinzenta',Pink:'Rosada',Rose:'Rosada',Rouge:'Vermelha','Blue-Black':'Azul-escura','Purple/Black':'Roxa-escura',Wine:'Vinho',Table:'Mesa',Raisin:'Passa',Rootstock:'Porta-enxerto'}[s]||s) : s;
+  const ptTermo = (s) => lang==='pt' ? ({Black:'Tinta',White:'Branca',Red:'Vermelha',Grey:'Cinzenta',Pink:'Rosada',Rose:'Rosada',Rouge:'Vermelha','Blue-Black':'Azul-escura','Purple/Black':'Roxa-escura',Wine:'Vinho',Table:'Mesa',Raisin:'Passa',Rootstock:'Porta-enxerto',Juice:'Sumo',Breeding:'Melhoramento',Jelly:'Compota','Table Grape':'Mesa',Winemaking:'Vinho',Canning:'Conserva',Concentrate:'Concentrado','8-Raisin':'Passa','Purple':'Roxa',Blue:'Azul'}[s]||s) : s;
 
-  function setupGlobalCatalogue(catalogue) {
+  function setupGlobalCatalogue(catalogue, grapes) {
     let active='All', limit=48;
     const normalise=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
     const labels={All:copy.catalogue[0],Wine:copy.catalogue[1],Table:copy.catalogue[2],Raisin:copy.catalogue[3],Rootstock:copy.catalogue[4]};
@@ -162,13 +162,70 @@
       const query=normalise($('#grape-search').value);
       const filtered=catalogue.varieties.filter(v=>(active==='All'||v.uses.includes(active))&&normalise(v.name).includes(query));
       $('#catalogue-results').textContent=`${filtered.length.toLocaleString(lang==='pt'?'pt-PT':'en')} ${copy.results}`;
-      $('#global-grape-grid').innerHTML=filtered.slice(0,limit).map(v=>`<a data-cor="${corKey(v.berry_color)}" href="${esc(v.profile_url)}" target="_blank" rel="noopener"><b>${esc(v.name)}</b><span>${esc([v.berry_color,...v.uses].filter(Boolean).map(ptTermo).join(' · ')||(lang==='pt'?'Registo de identificação':'Identification record'))}</span></a>`).join('')||`<p>${copy.noResults}</p>`;
+      $('#global-grape-grid').innerHTML=filtered.slice(0,limit).map(v=>`<a data-cor="${corKey(v.berry_color)}" data-global="${esc(v.id)}" href="${esc(v.profile_url)}" target="_blank" rel="noopener"><b>${esc(v.name)}</b><span>${esc([v.berry_color,...v.uses].filter(Boolean).map(ptTermo).join(' · ')||(lang==='pt'?'Registo de identificação':'Identification record'))}</span></a>`).join('')||`<p>${copy.noResults}</p>`;
       $('#catalogue-more').hidden=limit>=filtered.length;
     };
     $('#catalogue-filters').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;active=b.dataset.use;limit=48;document.querySelectorAll('#catalogue-filters button').forEach(x=>{const on=x===b;x.classList.toggle('active',on);x.setAttribute('aria-pressed',on)});draw()});
     $('#grape-search').addEventListener('input',()=>{limit=48;draw()});
     $('#catalogue-more').addEventListener('click',()=>{limit+=48;draw()});
+    $('#global-grape-grid').addEventListener('click',e=>{
+      const a=e.target.closest('a[data-global]');
+      if(!a||e.metaKey||e.ctrlKey||e.shiftKey||e.button===1)return;
+      e.preventDefault();
+      showGlobalDetail(catalogue.varieties.find(v=>v.id===a.dataset.global),catalogue,grapes);
+    });
     draw();
+  }
+
+  const paisAlias = {'Republic of Georgia':'Georgia','United States of America':'United States','Great Britain':'United Kingdom','Czechslovakia':'Czechoslovakia','former USSR':'former Soviet Union','USSR':'Soviet Union'};
+  const pais = (s) => { const k=paisAlias[s]||s; return lang==='pt' ? (paisesPt[k]||k) : k; };
+  const originText = (list) => {
+    const raw=(list||[]).join(', ');
+    if(!raw) return {text:'',short:''};
+    if(/\b(some|say|probably|perhaps|most|commonly|associated|but|region|origin|tyrol|middle|eastern)\b/i.test(raw)) return {text:lang==='pt'?'Origem discutida (ver o registo FPS)':'Origin disputed (see the FPS record)',short:lang==='pt'?'Discutida':'Disputed'};
+    const seps=/(\/\s*|\s+or\s+|\s+to\s+)/;
+    const one=(t)=>t.split(seps).map(x=>{ if(!x) return x; if(x.trim()==='or') return x.replace('or',lang==='pt'?'ou':'or'); if(x.trim()==='to') return x.replace('to',lang==='pt'?'a':'to'); if(/^\//.test(x)) return x; return pais(x.trim()); }).join('');
+    const text=(list||[]).map(one).join(', ').replace(/\s*\/\s*/g,' / ');
+    return {text,short:text.length<=24?text:pais(list[0])};
+  };
+  const speciesText = (s) => { if(!s) return ''; const t=s.replace(/^V\. vinifera$/,'Vitis vinifera'); if(lang!=='pt') return t; return t.replace(/^Interspecific cross/,'Cruzamento interespecífico').replace(/^Interspecific hybrid/,'Híbrido interespecífico'); };
+  const paisesPt = {Portugal:'Portugal',France:'França',Italy:'Itália',Spain:'Espanha',Germany:'Alemanha',Greece:'Grécia',Austria:'Áustria',Switzerland:'Suíça',Hungary:'Hungria',Romania:'Roménia',Croatia:'Croácia',Georgia:'Geórgia','United States':'Estados Unidos',USA:'Estados Unidos',Argentina:'Argentina',Chile:'Chile',Australia:'Austrália','South Africa':'África do Sul',Brazil:'Brasil',Uruguay:'Uruguai',Israel:'Israel',Lebanon:'Líbano',Turkey:'Turquia',Armenia:'Arménia',Bulgaria:'Bulgária',Serbia:'Sérvia',Slovenia:'Eslovénia',Cyprus:'Chipre',Morocco:'Marrocos',Algeria:'Argélia',Tunisia:'Tunísia',Egypt:'Egito',Syria:'Síria',Iran:'Irão',Iraq:'Iraque',Russia:'Rússia',Ukraine:'Ucrânia',Moldova:'Moldávia','Czech Republic':'Chéquia',Slovakia:'Eslováquia',Belgium:'Bélgica',Luxembourg:'Luxemburgo','United Kingdom':'Reino Unido',England:'Inglaterra',Canada:'Canadá',Mexico:'México',Peru:'Peru',Japan:'Japão',China:'China',India:'Índia',Afghanistan:'Afeganistão',Uzbekistan:'Usbequistão',Azerbaijan:'Azerbaijão',Albania:'Albânia','North Macedonia':'Macedónia do Norte',Macedonia:'Macedónia','Bosnia and Herzegovina':'Bósnia e Herzegovina',Montenegro:'Montenegro',Malta:'Malta',Jordan:'Jordânia',Palestine:'Palestina',Poland:'Polónia',Netherlands:'Países Baixos',Denmark:'Dinamarca',Sweden:'Suécia',Norway:'Noruega',Finland:'Finlândia',Ireland:'Irlanda','New Zealand':'Nova Zelândia',Kazakhstan:'Cazaquistão',Turkmenistan:'Turquemenistão',Tajikistan:'Tajiquistão',Libya:'Líbia',Kosovo:'Kosovo',Belarus:'Bielorrússia'};
+  const normalise2 = (s) => String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[’']/g,'').trim();
+  let fpsPromise = null;
+  const loadFps = () => fpsPromise || (fpsPromise = fetch('/data/grape-varieties-fps.json').then(r=>r.ok?r.json():{}).catch(()=>({})));
+
+  function deepProfileFor(v, grapes) {
+    const key=normalise2(v.name);
+    return grapes.find(g=>{
+      const full=normalise2(g.nome);
+      const parts=[full,...full.replace(/\)/g,'').split('(').map(s=>s.trim())];
+      return parts.includes(key);
+    });
+  }
+
+  async function showGlobalDetail(v, catalogue, grapes) {
+    if(!v) return;
+    const fps=(await loadFps())[v.id]||{};
+    const pt=lang==='pt';
+    const colourName=(s)=>pt?ptTermo(s):s;
+    const colourLabel=v.berry_color?colourName(v.berry_color):(pt?'Cor não registada':'Colour not recorded');
+    const uses=(v.uses||[]).map(ptTermo);
+    const usesLabel=uses.join(' · ')||(pt?'Não registada':'Not recorded');
+    const origin=originText(fps.origem);const origins=origin.text?[origin.text]:[];
+    const deep=deepProfileFor(v,grapes);
+    const key=corKey(v.berry_color);
+    const related=grapes.filter(g=>g!==deep&&((key==='tinto'&&g.cor==='Tinto')||(key==='branco'&&g.cor==='Branco')||!key)&&(origins.length?(fps.origem||[]).some(o=>pais(o)===g.origem||o===g.origem||paisesPt[o]===g.origem):true)).slice(0,4);
+    const relatedFallback=related.length?related:grapes.filter(g=>g!==deep&&((key==='tinto'&&g.cor==='Tinto')||(key==='branco'&&g.cor==='Branco'))).slice(0,4);
+    const t=(a,b)=>pt?a:b;
+    const row=(label,value)=>`<p><strong>${label}:</strong> ${esc(value||'—')}</p>`;
+    const detail=$('#casta-detail-view');
+    detail.innerHTML=`<div class="detail-hero" data-cor="${key}"><div><span class="category-label">${esc(colourLabel)} · ${esc(usesLabel)}</span><h1>${esc(v.name)}</h1><p class="detail-intro">${esc(origins.length?t(`Variedade registada no FPS Grape Registry (UC Davis), com origem indicada: ${origins.join(', ')}. Este é um esboço de identificação: reúne apenas o que a fonte regista.`,`Variety recorded in the FPS Grape Registry (UC Davis), with origin given as: ${origins.join(', ')}. This is an identification sketch: it holds only what the source records.`):t('Variedade registada no FPS Grape Registry (UC Davis). Este é um esboço de identificação: reúne apenas o que a fonte regista.','Variety recorded in the FPS Grape Registry (UC Davis). This is an identification sketch: it holds only what the source records.'))}</p><div class="profile-grid">${[[t('Cor','Colour'),colourLabel],[t('Utilização','Use'),usesLabel],[t('Origem','Origin'),origin.short||'—'],[t('Registo FPS','FPS record'),'#'+v.id]].map(([l,x])=>`<div class="profile-cell"><span>${esc(l)}</span><strong>${esc(x)}</strong></div>`).join('')}</div>${deep?`<p class="detail-deep"><button type="button" class="btn-clean" data-casta="${esc(deep.id)}">${t('Abrir a ficha aprofundada','Open the in-depth profile')}</button></p>`:''}</div><aside class="detail-panel"><h3>${t('Identidade','Identity')}</h3>${row(t('Origem','Origin'),origins.join(', '))}${row(t('Sinónimos','Synonyms'),(fps.sinonimos||[]).slice(0,14).join(', '))}${row(t('Espécie','Species'),speciesText(fps.especie))}</aside></div><span class="detail-back" id="detail-back">${t('← voltar ao catálogo','← back to the catalogue')}</span><div class="detail-columns"><article class="detail-box"><h3>${t('O que falta confirmar','Still to confirm')}</h3><p>${t('Solo, clima, exposição, rega, compasso, maturação, vigor e sensibilidades ainda não têm dados verificados para esta variedade. O atlas prefere deixar em branco a estimar.','Soil, climate, exposure, irrigation, spacing, ripening, vigour and sensitivities do not yet have verified data for this variety. The atlas prefers leaving them blank to estimating.')}</p><p>${t('Antes de plantar, confirma com um viveirista, a estação de avisos e ensaios locais.','Before planting, check with a nursery, the local advisory service and local trials.')}</p></article><article class="detail-box"><h3>${t('Como usar esta ficha','How to use this sketch')}</h3><p>${t('Começa pelo lugar: escolhe em «Começar pelo lugar» o perfil climático mais próximo da tua parcela e compara com as castas aprofundadas.','Start with place: pick the climate profile closest to your plot under “Begin with place” and compare with the in-depth profiles.')}</p></article><article class="detail-box"><h3>${t('Fichas aprofundadas para comparar','In-depth profiles to compare')}</h3><div class="card-tags">${relatedFallback.map(g=>`<button type="button" class="btn-clean related-casta" data-casta="${esc(g.id)}">${esc(g.nome)}</button>`).join('')||'—'}</div></article><article class="detail-box"><h3>${t('Fonte','Source')}</h3><p>${t('Identificação, cor, utilização, sinónimos e origem: FPS Grape Registry, UC Davis.','Identification, colour, use, synonyms and origin: FPS Grape Registry, UC Davis.')}</p><p><a href="${esc(v.profile_url)}" target="_blank" rel="noopener">${copy.source} ↗</a></p></article></div>`;
+    const list=document.getElementById('enologia-list-view');
+    const scrollBack=window.scrollY;
+    if(list) list.style.display='none';
+    detail.style.display='block';
+    window.scrollTo({top:0});
+    document.getElementById('detail-back').onclick=()=>{detail.style.display='none';if(list)list.style.display='block';window.scrollTo({top:scrollBack});};
   }
 
   function renderDiagnostics() {
@@ -188,7 +245,7 @@
       document.querySelectorAll('.hemi-controls button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.hemi-controls button').forEach(x=>{const active=x===b;x.classList.toggle('active',active);x.setAttribute('aria-pressed',active)});renderCalendar(data,b.dataset.hemi)}));
       $('#manual-nav').innerHTML=Object.entries(manual).map(([key,m],i)=>`<button type="button" class="${i?'':'active'}" aria-pressed="${i?'false':'true'}" data-key="${key}">${esc(tr(m.title))}</button>`).join('');
       $('#manual-nav').addEventListener('click',e=>{const b=e.target.closest('button');if(b)renderManual(b.dataset.key)});
-      renderManual('soil'); renderGrapes(grapes); setupGlobalCatalogue(catalogue); renderDiagnostics();
+      renderManual('soil'); renderGrapes(grapes); setupGlobalCatalogue(catalogue, grapes); renderDiagnostics();
       $('#source-links').innerHTML=data.sources.map(s=>`<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.organisation)} · ${copy.source}</a>`).join('');
     } catch(err) {
       document.querySelectorAll('#vine-metrics,#climate-panel,#vine-calendar').forEach(el=>el.innerHTML=`<p>${lang==='pt'?'Não foi possível carregar os dados.':'Data could not be loaded.'}</p>`);

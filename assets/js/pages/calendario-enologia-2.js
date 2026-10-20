@@ -269,7 +269,7 @@
                 ).slice(0, 4);
                 const profile = c.perfil || {}, tech = c.tecnico || {}, pests = vinePests();
                 document.getElementById("casta-detail-view").innerHTML =
-                    `<div class="detail-hero"><div><span class="category-label">${
+                    `<div class="detail-hero" data-cor="${c.cor === "Branco" ? "branco" : "tinto"}"><div><span class="category-label">${
                         escapeHtml(c.cor)
                     } · ${escapeHtml(c.tipo_vinho)}</span><h1>${
                         escapeHtml(c.nome)
