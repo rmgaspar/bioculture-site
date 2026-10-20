@@ -173,3 +173,30 @@ html body #main .method-grid article:nth-child(3) { --tom: #2f6b3a; --ico: url("
 html body #main .method-grid article:nth-child(4) { --tom: #a8730d; --ico: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2048%2048'%20fill='none'%20stroke='%23000'%20stroke-width='4'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Cpath%20d='M24%2024c0-6%204-10%2010-10s8%204%208%208-4%208-10%208zM24%2024c-4%204-12%204-16%200%202-6%208-8%2016%200zM24%2036V24'/%3E%3C/svg%3E"); }
 @media (max-width: 1100px) { html body #main .grape-showcase, html body #main .diagnostic-grid, html body #main .method-grid, html body #main .global-grape-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 640px) { html body #main .grape-showcase, html body #main .diagnostic-grid, html body #main .method-grid, html body #main .global-grape-grid { grid-template-columns: minmax(0, 1fr); } }
+
+/* Castas em destaque mais elegantes (sem painéis empilhados) e o ponto redondo tinto/branco do atlas; catálogo mundial sem faixa à esquerda. */
+html body #main .grape-showcase > article { --tom: #6d1b32; --ponto: #6d1b32; padding: 1.7rem 1.6rem 1.8rem; border-radius: 18px; background: color-mix(in srgb, var(--tom) 4%, #fff); box-shadow: 0 1px 2px rgba(32, 52, 42, 0.06), 0 18px 34px -30px rgba(32, 52, 42, 0.5); }
+html body #main .grape-showcase > article[data-cor="branco"] { --tom: #7d6c14; --ponto: #d7b936; }
+html body #main .grape-showcase > article:hover { transform: translateY(-2px); box-shadow: 0 1px 2px rgba(32, 52, 42, 0.06), 0 22px 38px -28px rgba(32, 52, 42, 0.55); }
+html body #main .grape-top { display: block; padding-right: 1.6rem; }
+html body #main .grape-top::before { content: none; }
+html body #main .grape-top::after { content: ""; position: absolute; top: 0.2rem; right: 0; width: 0.8rem; height: 0.8rem; border-radius: 50%; background: var(--ponto); }
+html body #main .grape-top span { padding: 0; border-radius: 0; background: none; color: var(--tom); font-size: 0.75rem; font-weight: 800; letter-spacing: 0.16em; }
+html body #main .grape-top b { margin: 0.45rem 0 0.6rem; color: #20342a; font-size: 1.55rem; letter-spacing: -0.01em; }
+html body #main .grape-showcase > article > p { color: #4a554e; font-size: 1rem; line-height: 1.65; }
+html body #main .grape-showcase dl { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem 1rem; margin: 1.3rem 0 0; }
+html body #main .grape-showcase dl div { padding: 0; border-radius: 0; background: none; }
+html body #main .grape-showcase dl div:nth-child(1), html body #main .grape-showcase dl div:nth-child(3), html body #main .grape-showcase dl div:nth-child(4) { grid-column: auto; }
+html body #main .grape-showcase dl div:nth-child(2), html body #main .grape-showcase dl div:nth-child(5) { grid-column: 1 / -1; }
+html body #main .grape-showcase dt { color: #8a8f8b; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.14em; }
+html body #main .grape-showcase dd { margin: 0.2rem 0 0; color: #20342a; font-size: 0.97rem; line-height: 1.45; }
+html body #main .global-grape-grid a { position: relative; padding: 0.85rem 2.6rem 0.85rem 1.1rem; box-shadow: none; }
+html body #main .global-grape-grid a::after { content: ""; position: absolute; top: 50%; right: 1.1rem; width: 0.8rem; height: 0.8rem; margin-top: -0.4rem; border-radius: 50%; background: var(--ponto, transparent); }
+html body #main .global-grape-grid a[data-cor="tinto"] { --ponto: #6d1b32; }
+html body #main .global-grape-grid a[data-cor="branco"] { --ponto: #d7b936; }
+html body #main .global-grape-grid a[data-cor="rosa"] { --ponto: #d98aa2; }
+html body #main .grape-showcase dl div:nth-child(2) { order: 4; }
+html body #main .grape-showcase dl div:nth-child(5) { order: 5; }
+html body #main .grape-showcase dl { row-gap: 0.9rem; }
+html body #main .grape-showcase dt, html body #main .grape-showcase dd { margin-top: 0; line-height: 1.4; }
+html body #main .grape-showcase dd { margin-top: 0.15rem; }
