@@ -75,15 +75,20 @@
     const normalize = (v) => String(v).normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
     if (byId("technique-grid")) {
         const tr = (pt, en) => (isEnglish ? en : pt);
-        fetch("/data/dicas.json").then((r) => {
+        // O texto chega traduzido em inglês, por isso a categoria é reconhecida nas duas línguas.
+        const SLUG = {"Solo e cobertura":"solo","Soil and cover":"solo","Compostagem e húmus":"compostagem","Composting and humus":"compostagem","Planeamento e fertilidade":"planeamento","Planning and fertility":"planeamento","Água e irrigação":"agua","Water and irrigation":"agua","Sementeiras e propagação":"sementeiras","Sowing and propagation":"sementeiras","Sementes e diversidade genética":"sementes","Seeds and genetic diversity":"sementes","Biodiversidade funcional":"biodiversidade","Functional biodiversity":"biodiversidade","Prevenção sem pesticidas":"prevencao","Prevention without pesticides":"prevencao","Árvores e sistemas perenes":"perenes","Trees and perennial systems":"perenes"};
+        const fotosPromise = fetch("/data/dicas-fotos.json").then((r) => (r.ok ? r.json() : {})).catch(() => ({}));
+        Promise.all([fetch("/data/dicas.json").then((r) => {
             if (!r.ok) throw Error("HTTP " + r.status);
             return r.json();
-        }).then((dicas) => {
+        }), fotosPromise]).then(([dicas, fotos]) => {
+            const fotoDe = (cat) => Object.values(fotos).find((f) => f.ficheiro === `dicas/${SLUG[cat]}.webp`);
+            const L = isEnglish ? "en" : "pt";
             const categories = [...new Set(dicas.map((d) => d.categoria))];
             const requestedCategory = new URLSearchParams(location.search).get("categoria");
             let selected = categories.includes(requestedCategory) ? requestedCategory : "all", query = "";
             byId("technique-filters").innerHTML = ["all", ...categories].map((c) =>
-                `<button type="button" data-category="${esc(c)}" aria-pressed="${c === selected}">${c === "all" ? tr("Todas", "All") : esc(c)}</button>`
+                `<button type="button" data-category="${esc(c)}" data-tom="${esc(SLUG[c] || "")}" aria-pressed="${c === selected}">${c === "all" ? tr("Todas", "All") : esc(c)}</button>`
             ).join("");
             const render = () => {
                 const term = normalize(query);
@@ -91,15 +96,22 @@
                     (selected === "all" || d.categoria === selected) &&
                     (!term || normalize(`${d.titulo} ${d.categoria} ${d.resumo}`).includes(term))
                 );
-                byId("technique-grid").innerHTML = found.map((item) =>
-                    `<article class="technique-card" id="tecnica-${esc(item.id)}">${
-                        item.imagem?.src ? `<img src="/${esc(item.imagem.src)}" alt="${esc(item.imagem.alt || "")}" loading="lazy">` : ""
-                    }<div class="technique-card-body"><span class="technique-meta">${esc(item.categoria)} · ${esc(item.nivel)}</span><h3>${esc(item.titulo)}</h3><p>${esc(item.resumo)}</p>${
+                const card = (item) =>
+                    `<article class="technique-card" id="tecnica-${esc(item.id)}"><span class="technique-meta">${esc(item.nivel)}</span><h3>${esc(item.titulo)}</h3><p>${esc(item.resumo)}</p>${
                         item.passos?.length
                             ? `<details><summary>${tr("Passos essenciais", "Key steps")}</summary><ol>${item.passos.map((s) => `<li>${esc(s)}</li>`).join("")}</ol></details>`
                             : ""
-                    }</div></article>`
-                ).join("") || `<p class="empty">${tr("Nenhuma técnica encontrada para essa pesquisa.", "No technique found for this search.")}</p>`;
+                    }</article>`;
+                // Uma fotografia por área (não por cartão): evita repetir a mesma imagem 47 vezes.
+                const groups = [...new Set(found.map((d) => d.categoria))].map((cat) => {
+                    const f = fotoDe(cat), items = found.filter((d) => d.categoria === cat);
+                    return `<div class="technique-group" data-tom="${esc(SLUG[cat] || "")}"><div class="technique-group-head">${
+                        f
+                            ? `<figure class="technique-foto" data-no-signature><img src="/images/${esc(f.ficheiro)}" alt="${esc(f.alt[L])}" width="1200" height="800" loading="lazy"><figcaption>${tr("Foto", "Photo")}: <a href="${esc(f.pagina)}" target="_blank" rel="noopener noreferrer" title="${esc(f.legenda[L])}">${esc(f.autor)} · ${esc(L === "en" && f.licenca_en ? f.licenca_en : f.licenca)}</a></figcaption></figure>`
+                            : ""
+                    }<h3>${esc(cat)}</h3><span class="technique-group-count">${items.length} ${tr(items.length === 1 ? "técnica" : "técnicas", items.length === 1 ? "technique" : "techniques")}</span></div><div class="technique-group-cards">${items.map(card).join("")}</div></div>`;
+                });
+                byId("technique-grid").innerHTML = groups.join("") || `<p class="empty">${tr("Nenhuma técnica encontrada para essa pesquisa.", "No technique found for this search.")}</p>`;
                 byId("technique-count").textContent = tr(`${found.length} de ${dicas.length} técnicas`, `${found.length} of ${dicas.length} techniques`);
                 byId("technique-filters").querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.category === selected)));
             };
