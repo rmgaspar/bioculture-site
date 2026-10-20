@@ -194,12 +194,23 @@
                 more.style.display = filtered.length > atlasLimit ? "inline-block" : "none";
             }
 
+            // Fotografia de cada prática (data/fotos-capitulos.json, página «vinha»).
+            const PRACTICE_FOTO = {
+                "adubo-verde": "adubo-verde",
+                "composto-superficie": "composto",
+                "rega-gota-a-gota": "rega",
+                "sebe-viva": "sebe",
+                "poda-seletiva": "poda",
+                "solo-sempre-com-raiz": "solo-raiz",
+            };
             function renderPractices() {
                 const selected = practiceIds.map((id) => dicasDB.find((item) => item.id === id)).filter(
                     Boolean,
                 );
                 document.getElementById("practice-grid").innerHTML = selected.map((item) =>
-                    `<article class="practice-card"><h3>${
+                    `<article class="practice-card" data-tom="${escapeHtml(PRACTICE_FOTO[item.id] || "")}"><div class="practice-foto" data-foto-slot="${
+                        escapeHtml("p-" + (PRACTICE_FOTO[item.id] || item.id))
+                    }"></div><h3>${
                         escapeHtml(item.titulo)
                     }</h3><span class="practice-meta">${escapeHtml(item.categoria)} · ${
                         escapeHtml(item.quando)
