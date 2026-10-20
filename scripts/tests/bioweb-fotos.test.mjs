@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 // Fotografias editoriais dos capítulos (data/fotos-capitulos.json): ficheiro local, autor, licença que permite uso comercial,
 // ligação à origem, texto alternativo e legenda em PT e EN; e cada página que as usa carrega o script e o estilo.
 const dados = JSON.parse(readFileSync('data/fotos-capitulos.json', 'utf8'));
-const PERMITIDAS = /^(CC0|CC BY( \d\.\d)?|CC BY-SA( \d\.\d)?|domínio público)$/;
+const PERMITIDAS = /^(CC0|CC BY( \d\.\d)?|CC BY-SA( \d\.\d)?|domínio público|Copernicus Sentinel)$/;
 const PAGINAS = { noticias: 'observatorio/noticias.html', inicio: 'index.html', conhecimento: 'calendario/conhecimento-cuidar.html', bioweb: 'observatorio/bioweb.html', 'observatorio-terra': 'observatorio/observatorio-terra.html', 'producao-agricola': 'observatorio/producao-agricola.html', biodiversidade: 'ecossistemas/biodiversidade.html', pecuaria: 'energia/pecuaria.html', servicos: 'services/services.html', mongolia: 'recursos/mongolia-solo-cop17.html', douro: 'recursos/douro-apoio-vindimas.html', clima15: 'observatorio/limitar-ultrapassagem-1-5.html', aviacao: 'energia/aviacao.html', 'ambiente-construido': 'energia/ambiente-construido.html', 'moda-texteis': 'energia/moda-texteis.html', vinha: 'calendario/enologia.html' };
 let total = 0;
 for (const [pagina, capitulos] of Object.entries(dados)) {
