@@ -37,6 +37,12 @@
                     ["Quintin Soloviev", "CC BY 4.0", "Cattle_feedlot_south_of_Portales,_New_Mexico.jpg"],
                 ];
                 const itens = fotos.map(([autor, licenca, ficheiro]) => `${esc(autor)} · <a href="${lic[licenca]}" target="_blank" rel="noopener noreferrer">${licenca}</a> · <a href="https://commons.wikimedia.org/wiki/File:${encodeURIComponent(ficheiro).replace(/%2C/g, ",").replace(/%28/g, "(").replace(/%29/g, ")")}" target="_blank" rel="noopener noreferrer">Commons</a>`);
+                // Cada cartão leva o crédito (só texto, o cartão é uma ligação) logo por baixo da sua fotografia; as ligações ficam na linha de baixo.
+                nav.querySelectorAll(".chapter").forEach((cartao, i) => {
+                    const foto = fotos[i], img = cartao.querySelector("img");
+                    if (!foto || !img || cartao.querySelector(".chapter-credito")) return;
+                    img.insertAdjacentHTML("afterend", `<span class="chapter-credito" data-no-signature>${isEn() ? "Photo" : "Foto"}: ${esc(foto[0])} · ${esc(foto[1])}</span>`);
+                });
                 nav.insertAdjacentHTML("afterend", `<p class="chapters-creditos" data-no-signature>${isEn() ? "Photos" : "Fotos"}: ${itens.join(" &nbsp;|&nbsp; ")}</p>`);
             }
             function renderStats(plants) {

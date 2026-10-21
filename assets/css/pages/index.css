@@ -489,8 +489,12 @@ html body #main .home-nav a[href$="#participacao-publica"] { --hero-accent: #2f6
 @media (max-width: 760px) { .inv-bloco { grid-template-columns: minmax(0, 1fr); } .inv-bloco .number, .inv-bloco .inv-foto { grid-column: 1 !important; } }
 
 /* Em destaque: fotografias reais com crédito por baixo do cartão. */
-.destaques li { display: flex; flex-direction: column; }
-.destaques li > a { flex: 1 1 auto; }
+/* O crédito fica logo por baixo da imagem (e não no fim do cartão): o cartão é uma grelha, a ligação deixa de ser caixa e os seus filhos entram nela. */
+.destaques li { display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto auto auto 1fr auto; }
+.destaques li > a { display: contents; }
+.destaques li > a > img { order: -2; }
+.destaques li > .destaque-credito { order: -1; }
+.destaques li > a > span { margin-top: 0; }
 .destaque-credito { margin: 0.7em 0 0; font-size: max(11px, 0.72em); color: #7d8a80; }
 .destaque-credito a { display: inline; height: auto; color: inherit; text-decoration: underline; text-underline-offset: 2px; }
 

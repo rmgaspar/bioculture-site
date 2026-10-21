@@ -172,9 +172,7 @@
                 try {
                     const itens = await fetch("/data/destaques.json?v=3").then((r) => { if (!r.ok) throw Error("destaques"); return r.json(); });
                     const u = (path) => { const [p, h] = path.split("#"); return `${p}?lang=${L}${h ? "#" + h : ""}`; };
-                    lista.innerHTML = itens.slice(0, 4).map((d) => `<li><a href="${esc(u(d.href))}"><img src="${esc(d.imagem)}"${d.semMarca ? " data-no-signature" : ""} alt="${esc(d.alt[L] || d.alt.pt)}" loading="lazy"><small>${esc(d.tag[L] || d.tag.pt)}</small><h3>${esc(d.titulo[L] || d.titulo.pt)}</h3><p>${esc(d.texto[L] || d.texto.pt)}</p><span>${isEnglish ? "Read" : "Ler"} →</span></a>${
-                        d.credito ? `<p class="destaque-credito">${isEnglish ? "Photo" : "Foto"}: <a href="${esc(d.credito.pagina)}" target="_blank" rel="noopener noreferrer" title="${esc(d.credito.legenda[L] || d.credito.legenda.pt)}">${esc(d.credito.autor)} · ${esc(isEnglish ? d.credito.licenca_en : d.credito.licenca)}</a></p>` : ""
-                    }</li>`).join("");
+                    lista.innerHTML = itens.slice(0, 4).map((d) => `<li><a href="${esc(u(d.href))}"><img src="${esc(d.imagem)}"${d.semMarca ? " data-no-signature" : ""} alt="${esc(d.alt[L] || d.alt.pt)}" loading="lazy"><small>${esc(d.tag[L] || d.tag.pt)}</small><h3>${esc(d.titulo[L] || d.titulo.pt)}</h3><p>${esc(d.texto[L] || d.texto.pt)}</p><span>${isEnglish ? "Read" : "Ler"} →</span></a><p class="destaque-credito">${d.credito ? `${isEnglish ? "Photo" : "Foto"}: <a href="${esc(d.credito.pagina)}" target="_blank" rel="noopener noreferrer" title="${esc(d.credito.legenda[L] || d.credito.legenda.pt)}">${esc(d.credito.autor)} · ${esc(isEnglish ? d.credito.licenca_en : d.credito.licenca)}</a>` : ""}</p></li>`).join("");
                 } catch (e) {
                     console.error("Destaques:", e);
                     lista.innerHTML = "";
