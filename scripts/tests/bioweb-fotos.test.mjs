@@ -5,12 +5,12 @@ import assert from 'node:assert/strict';
 // ligação à origem, texto alternativo e legenda em PT e EN; e cada página que as usa carrega o script e o estilo.
 const dados = JSON.parse(readFileSync('data/fotos-capitulos.json', 'utf8'));
 const PERMITIDAS = /^(CC0|CC BY( \d\.\d)?|CC BY-SA( \d\.\d)?|domínio público|Copernicus Sentinel)$/;
-const PAGINAS = { noticias: 'observatorio/noticias.html', inicio: 'index.html', conhecimento: 'calendario/conhecimento-cuidar.html', bioweb: 'observatorio/bioweb.html', 'observatorio-terra': 'observatorio/observatorio-terra.html', 'producao-agricola': 'observatorio/producao-agricola.html', biodiversidade: 'ecossistemas/biodiversidade.html', pecuaria: 'energia/pecuaria.html', servicos: 'services/services.html', mongolia: 'recursos/mongolia-solo-cop17.html', douro: 'recursos/douro-apoio-vindimas.html', clima15: 'observatorio/limitar-ultrapassagem-1-5.html', aviacao: 'energia/aviacao.html', 'ambiente-construido': 'energia/ambiente-construido.html', 'moda-texteis': 'energia/moda-texteis.html', vinha: 'calendario/enologia.html', manifesto: 'manifesto.html', contactos: 'contactos.html' };
+const PAGINAS = { noticias: 'observatorio/noticias.html', inicio: 'index.html', conhecimento: 'calendario/conhecimento-cuidar.html', bioweb: 'observatorio/bioweb.html', 'observatorio-terra': 'observatorio/observatorio-terra.html', 'producao-agricola': 'observatorio/producao-agricola.html', biodiversidade: 'ecossistemas/biodiversidade.html', pecuaria: 'energia/pecuaria.html', servicos: 'services/services.html', mongolia: 'recursos/mongolia-solo-cop17.html', douro: 'recursos/douro-apoio-vindimas.html', clima15: 'observatorio/limitar-ultrapassagem-1-5.html', aviacao: 'energia/aviacao.html', 'ambiente-construido': 'energia/ambiente-construido.html', 'moda-texteis': 'energia/moda-texteis.html', vinha: 'calendario/enologia.html', manifesto: 'manifesto.html', contactos: 'contactos.html', energia: 'energia/energia.html' };
 let total = 0;
 for (const [pagina, capitulos] of Object.entries(dados)) {
   const html = readFileSync(PAGINAS[pagina], 'utf8');
   assert(html.includes(`data-pagina="${pagina}"`) && html.includes('capitulo-fotos.js') && html.includes('capitulo-fotos.css'), pagina + ': falta o script ou o estilo');
-  for (const id of Object.keys(capitulos)) if (['biodiversidade', 'pecuaria', 'servicos', 'mongolia', 'douro', 'clima15', 'conhecimento'].includes(pagina)) assert(html.includes(`data-foto-slot="${id}"`), pagina + ': sem lugar para ' + id);
+  for (const id of Object.keys(capitulos)) if (['biodiversidade', 'pecuaria', 'servicos', 'mongolia', 'douro', 'clima15', 'conhecimento', 'energia'].includes(pagina)) assert(html.includes(`data-foto-slot="${id}"`), pagina + ': sem lugar para ' + id);
   for (const [id, f] of Object.entries(capitulos)) {
     total++;
     assert(existsSync(`images/${f.ficheiro}`), `${pagina}/${id}: ficheiro em falta`);
