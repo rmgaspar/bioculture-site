@@ -12,14 +12,14 @@
     const esc = (value) => String(value ?? "").replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch]);
     let fotos = null;
 
-    function figura(f, L) {
+    function figura(f, L, semLegenda) {
         const nome = (v) => (L === "en" ? (v.licenca_en || v.licenca) : v.licenca);
         const licenca = f.licenca_url ? `<a href="${esc(f.licenca_url)}" target="_blank" rel="noopener">${esc(nome(f))}</a>` : esc(nome(f));
         const el = document.createElement("figure");
         el.className = "foto";
         el.setAttribute("data-no-signature", "");
         if (f.proporcao) el.style.setProperty("--proporcao", f.proporcao); // fotografia mais larga ou mais alta que 3:2: mostra-se inteira
-        el.innerHTML = `<img src="/images/${esc(f.ficheiro)}" alt="${esc(f.alt[L] || f.alt.pt)}" loading="lazy" width="960" height="640"><figcaption>${esc(f.legenda[L] || f.legenda.pt)} <span class="credito">${L === "en" ? "Photo" : "Foto"}: ${esc(f.autor)} · ${licenca} · <a href="${esc(f.pagina)}" target="_blank" rel="noopener">Wikimedia Commons</a></span></figcaption>`;
+        el.innerHTML = `<img src="/images/${esc(f.ficheiro)}" alt="${esc(f.alt[L] || f.alt.pt)}" loading="lazy" width="960" height="640"><figcaption>${semLegenda ? "" : `${esc(f.legenda[L] || f.legenda.pt)} `}<span class="credito">${L === "en" ? "Photo" : "Foto"}: ${esc(f.autor)} · ${licenca} · <a href="${esc(f.pagina)}" target="_blank" rel="noopener">Wikimedia Commons</a></span></figcaption>`;
         return el;
     }
 
@@ -41,7 +41,7 @@
                 if (slot.hasAttribute("data-credito-apenas")) {
                     const fig = figura(f, L);
                     slot.append(Object.assign(document.createElement("p"), { className: "foto-credito-solo", innerHTML: fig.querySelector("figcaption").innerHTML }));
-                } else slot.append(figura(f, L));
+                } else slot.append(figura(f, L, slot.hasAttribute("data-sem-legenda")));
             });
         });
     }

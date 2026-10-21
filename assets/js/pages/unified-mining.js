@@ -60,7 +60,7 @@
                 .slice(0, 4)
                 .map(function (c) {
                     return (
-                        '<article class="metric-card"><small>' +
+                        '<article class="metric-card"><div class="metric-foto" data-foto-slot="' + ({ lithium: "litio", gold: "ouro", copper: "cobre", "nickel-cobalt": "niquel" }[c.id] || "") + '" data-sem-legenda></div><small>' +
                         (en ? c.name_en : c.name_pt) +
                         "</small><strong>" +
                         fmt(c.production_2024) +
