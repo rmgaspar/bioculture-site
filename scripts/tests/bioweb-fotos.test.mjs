@@ -10,7 +10,7 @@ let total = 0;
 for (const [pagina, capitulos] of Object.entries(dados)) {
   const html = readFileSync(PAGINAS[pagina], 'utf8');
   assert(html.includes(`data-pagina="${pagina}"`) && html.includes('capitulo-fotos.js') && html.includes('capitulo-fotos.css'), pagina + ': falta o script ou o estilo');
-  for (const id of Object.keys(capitulos)) if (['biodiversidade', 'pecuaria', 'servicos', 'mongolia', 'douro', 'clima15', 'conhecimento', 'energia', 'agua', 'ar', 'solo', 'renovaveis'].includes(pagina)) assert(html.includes(`data-foto-slot="${id}"`), pagina + ': sem lugar para ' + id);
+  for (const id of Object.keys(capitulos).filter((x) => !x.startsWith('cat-'))) if (['biodiversidade', 'pecuaria', 'servicos', 'mongolia', 'douro', 'clima15', 'conhecimento', 'energia', 'agua', 'ar', 'solo', 'renovaveis'].includes(pagina)) assert(html.includes(`data-foto-slot="${id}"`), pagina + ': sem lugar para ' + id);
   for (const [id, f] of Object.entries(capitulos)) {
     total++;
     assert(existsSync(`images/${f.ficheiro}`), `${pagina}/${id}: ficheiro em falta`);

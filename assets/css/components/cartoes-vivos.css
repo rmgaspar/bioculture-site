@@ -1,0 +1,38 @@
+/* Cartões vivos (assets/js/cartoes-vivos.js): listas longas dos vetores de pressão com cor por categoria, estado em etiqueta,
+   bandeiras e uma faixa de gráfico e fotografia por cima. Sem traços nem contornos: só cor suave e espaço. */
+html body #main .cv-grelha { display: grid !important; grid-template-columns: repeat(auto-fill, minmax(min(100%, 330px), 1fr)) !important; gap: 1rem !important; align-items: stretch; }
+html body #main .cv-grelha > .cv { --tom: #6b776f; display: flex; flex-direction: column; gap: .55rem; margin: 0 !important; padding: 1.15rem 1.25rem 1.2rem !important; border: 0 !important; border-radius: 18px !important; background: color-mix(in srgb, var(--tom) 8%, #fff) !important; box-shadow: none !important; min-width: 0; }
+html body #main .cv-grelha > .cv h3 { margin: 0 !important; font-size: 1.2rem; line-height: 1.2; color: color-mix(in srgb, var(--tom) 35%, #1d2922) !important; }
+html body #main .cv-grelha > .cv p, html body #main .cv-grelha > .cv dd, html body #main .cv-grelha > .cv span.place { margin: 0; font-size: .95rem; line-height: 1.55; color: #3f4a43; }
+html body #main .cv-grelha > .cv dl { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem .9rem; margin: .2rem 0 0; }
+html body #main .cv-grelha > .cv dt { margin: 0; color: var(--tom); font: 800 .68rem/1.2 "Source Sans Pro", sans-serif; letter-spacing: .12em; text-transform: uppercase; }
+html body #main .cv-grelha > .cv > a { margin-top: auto; padding-top: .4rem; color: var(--tom) !important; font-weight: 700; font-size: .9rem; text-decoration: none; border: 0 !important; }
+html body #main .cv-grelha > .cv > a:hover { text-decoration: underline; text-underline-offset: 3px; }
+html body #main .cv-grelha > .cv > small { display: flex; flex-wrap: wrap; align-items: center; gap: .35rem .5rem; margin: 0; padding: 0; background: none; color: var(--tom); font-size: .8rem; letter-spacing: 0; text-transform: none; }
+.cv-cat { color: var(--tom); font: 900 .72rem/1.2 "Source Sans Pro", sans-serif; letter-spacing: .14em; text-transform: uppercase; }
+.cv-metodo { color: #5b665f; font-size: .85rem; }
+.cv-estado { display: inline-flex; align-items: center; gap: .4em; padding: .22em .7em; border-radius: 999px; background: color-mix(in srgb, var(--cv-estado, #6b776f) 14%, #fff); color: color-mix(in srgb, var(--cv-estado, #6b776f) 70%, #1d2922); font: 700 .8rem/1.2 "Source Sans Pro", sans-serif; letter-spacing: 0; text-transform: none; }
+.cv-estado::before { content: ""; width: .5em; height: .5em; border-radius: 50%; background: var(--cv-estado, #6b776f); }
+.cv-lugares { display: flex !important; flex-wrap: wrap; gap: .3rem .9rem; }
+.cv-pais { display: inline-flex; align-items: center; gap: .35em; }
+.cv-pais i { font-style: normal; font-size: 1.25em; line-height: 1; }
+
+/* Faixa por cima da lista: gráfico de barras à esquerda e, quando há, a fotografia da categoria à direita. */
+.cv-faixa { --tom: #4f6b57; display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.1rem; align-items: stretch; margin: 0 0 1.2rem; }
+.cv-faixa[hidden] { display: none; }
+.cv-faixa.com-foto { grid-template-columns: minmax(0, 1fr) minmax(260px, 44%); align-items: center; }
+.cv-dados { padding: 1.2rem 1.4rem 1.3rem; border-radius: 18px; background: color-mix(in srgb, var(--tom) 8%, #fff); }
+.cv-dados h3 { margin: 0; font-size: 1.15rem; line-height: 1.2; color: color-mix(in srgb, var(--tom) 40%, #1d2922); }
+.cv-total { margin: .15rem 0 .9rem; color: #5b665f; font-size: .9rem; }
+.cv-barras { list-style: none; margin: 0; padding: 0; display: grid; gap: .5rem; }
+.cv-barras li { display: grid; grid-template-columns: minmax(7rem, 15rem) minmax(0, 1fr) auto; align-items: center; gap: .8rem; font-size: .92rem; }
+.cv-rotulo { display: inline-flex; align-items: center; gap: .4em; color: #2f3a33; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cv-rotulo i { font-style: normal; font-size: 1.15em; }
+.cv-pista { height: .7rem; border-radius: 999px; background: color-mix(in srgb, var(--tom) 14%, #fff); overflow: hidden; }
+.cv-pista b { display: block; height: 100%; border-radius: 999px; background: var(--tom); }
+.cv-barras em { font-style: normal; font-weight: 700; font-variant-numeric: tabular-nums; color: #2f3a33; min-width: 2.2ch; text-align: right; }
+.cv-foto { min-width: 0; }
+.cv-foto:empty { display: none; }
+.cv-foto figure.foto { height: 100%; display: flex; flex-direction: column; }
+.cv-foto figure.foto img { aspect-ratio: 16 / 10; width: 100%; height: auto; max-height: 17rem; object-fit: cover; border-radius: 18px; }
+@media (max-width: 900px) { .cv-faixa.com-foto { grid-template-columns: minmax(0, 1fr); } .cv-barras li { grid-template-columns: minmax(6rem, 9rem) minmax(0, 1fr) auto; } html body #main .cv-grelha > .cv dl { grid-template-columns: 1fr; } }
