@@ -47,7 +47,7 @@ def limpo(html):
     return re.sub(r"\s+", " ", re.sub(r"<[^>]+>", "", html or "")).strip()
 
 
-def procurar(saida, consultas, por_consulta=8, largura_min=1200):
+def procurar(saida, consultas, por_consulta=8, largura_min=1000):
     candidatos = {}
     for consulta in consultas:
         try:
