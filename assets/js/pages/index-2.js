@@ -72,7 +72,7 @@
                 const rows = window.BioCultureNews?.select(items, { context: "all", limit: Number.MAX_SAFE_INTEGER, order: "relevance" }) || [...items]
                     .sort((a, b) => window.BioCultureNews?.compare(a, b) ?? (Date.parse(b.data || "") - Date.parse(a.data || "")));
                 // Primeiro as principais; «Ver mais» acrescenta mais um bloco de cada vez, «Ver menos» volta ao início.
-                const INITIAL = 8, STEP = 8;
+                const INITIAL = 9, STEP = 8;
                 let shown = INITIAL;
                 const SEM_IMAGEM = "/images/noticias-sem-imagem.webp";
                 const ficha = (n) => {
@@ -80,7 +80,7 @@
                     const scope = n.ambito === "portugal"
                         ? "Portugal"
                         : n.ambito === "regional" ? "Regional" : (isEnglish ? "World" : "Mundo");
-                    const real = typeof n.imagem === "string" && (/^https?:\/\//i.test(n.imagem) || n.imagem.startsWith("/")) && !/(\/metatag\/|logo|sem-imagem)/i.test(n.imagem); // logótipos e marcadores não valem como fotografia
+                    const real = typeof n.imagem === "string" && (/^https?:\/\//i.test(n.imagem) || n.imagem.startsWith("/")) && !/(\/metatag\/|logo|sem-imagem)/i.test(n.imagem) && !(/^https?:/i.test(n.imagem) && /\.png(\?|$)/i.test(n.imagem)); // logótipos, gráficos (PNG remotos) e marcadores não valem como fotografia
                     const tipo = window.BioCultureNews?.typeLabel(n);
                     return {
                         href: `/observatorio/noticia-detalhe.html?id=${encodeURIComponent(n.id)}`,
@@ -102,9 +102,9 @@
                         let fi = fichas.slice(0, INITIAL).findIndex((f) => f.real);
                         if (fi < 0) fi = 0;
                         const feat = fichas.splice(fi, 1)[0];
-                        const lado = fichas.splice(0, 3);
+                        const lado = fichas.splice(0, 4);
                         const featHtml = `<a class="news-feat" href="${esc(feat.href)}">${img(feat, "news-feat-img")}<small>${esc(feat.meta)}</small><h3>${esc(feat.titulo)}</h3>${feat.resumo ? `<p>${esc(feat.resumo)}</p>` : ""}</a>`;
-                        const ladoHtml = lado.map((f) => `<a class="news-line" href="${esc(f.href)}"><small>${esc(f.meta)}</small><h3>${esc(f.titulo)}</h3></a>`).join("");
+                        const ladoHtml = lado.map((f) => `<a class="news-line${f.real ? " com-foto" : ""}" href="${esc(f.href)}">${img(f, "news-line-img")}<span class="news-line-txt"><small>${esc(f.meta)}</small><h3>${esc(f.titulo)}</h3></span></a>`).join("");
                         const cardsHtml = fichas.map((f) => `<a class="news-card" href="${esc(f.href)}">${img(f, "news-card-img")}<small>${esc(f.meta)}</small><h3>${esc(f.titulo)}</h3>${f.resumo ? `<p>${esc(f.resumo)}</p>` : ""}</a>`).join("");
                         el("news").innerHTML = `<div class="news-top">${featHtml}<div class="news-side">${ladoHtml}</div></div>${cardsHtml ? `<div class="news-cards">${cardsHtml}</div>` : ""}`;
                     }
