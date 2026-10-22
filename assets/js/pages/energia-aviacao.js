@@ -89,7 +89,7 @@
   <p class="src-line">${tr("Fontes: ", "Sources: ")}${srcLink("owid")} · ${srcLink("lee2021")}</p>
 </section>
 <div class="reading-head"><h2 class="reading-divider" id="leitura-local">${tr("Em Portugal", "In Portugal")}</h2>
-<p class="reading-scope">${tr("Continente, Açores e Madeira, sempre que a fonte os inclui.", "Mainland, Azores and Madeira, wherever the source includes them.")}</p></div>
+<p class="reading-scope">${tr("Os voos reais incluem aeroportos dos Açores e da Madeira.", "Real flights include airports in the Azores and Madeira.")}</p></div>
 <section id="voos">
   <div class="sec-head"><span class="eyebrow">${tr("1 · Voos reais", "1 · Real flights")}</span><h2>${tr("Quanto gasta cada rota, por dia e por ano", "How much each route uses, per day and per year")}</h2></div>
   <div class="prose">

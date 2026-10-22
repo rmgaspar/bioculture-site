@@ -92,7 +92,7 @@
   <p class="src-line">${tr("Fontes: ", "Sources: ")}${srcLinks(0, 1, 3)}</p>
 </section>
 <div class="reading-head"><h2 class="reading-divider" id="leitura-local">${tr("Em Portugal", "In Portugal")}</h2>
-<p class="reading-scope">${tr("Continente, Açores e Madeira, sempre que a fonte os inclui.", "Mainland, Azores and Madeira, wherever the source includes them.")}</p></div>
+</div>
 <section id="portugal">
   <div class="sec-head"><span class="eyebrow">${tr("1 · Portugal", "1 · Portugal")}</span><h2>${tr("A construção e os seus materiais, em Portugal", "Construction and its materials in Portugal")}</h2></div>
   <div class="prose"><p id="mt-pt-txt"></p></div>
@@ -264,7 +264,7 @@
   <p class="src-line">${tr("Fontes: ", "Sources: ")}${srcLinks(0, 5, 6, 1, 2)}</p>
 </section>
 <div class="reading-head"><h2 class="reading-divider" id="leitura-local">${tr("Em Portugal", "In Portugal")}</h2>
-<p class="reading-scope">${tr("Continente, Açores e Madeira, sempre que a fonte os inclui.", "Mainland, Azores and Madeira, wherever the source includes them.")}</p></div>
+</div>
 <section id="portugal">
   <div class="sec-head"><span class="eyebrow">${tr("1 · Portugal", "1 · Portugal")}</span><h2>${tr("A indústria e os resíduos têxteis em Portugal", "Textile industry and waste in Portugal")}</h2></div>
   <div class="prose"><p id="mt-pt-txt"></p></div>

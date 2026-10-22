@@ -16,7 +16,7 @@
 
   const traduzirNav = () => {
     if (!EN) return;
-    const M = { sumario: "Summary", clima: "Climate", energia: "Energy", ar: "Air", agua: "Water", "terra-vida": "Land and life", "portugal-mundo": "Portugal in the world", "leitura-local": "Portugal in detail", "em-portugal": "In Portugal", "no-mundo": "Worldwide", materia: "Materials and waste", "pressure-systems": "Pressure systems", fontes: "Sources" };
+    const M = { sumario: "Summary", clima: "Climate", energia: "Energy", ar: "Air", agua: "Water", "terra-vida": "Land and life", "leitura-local": "Land and risks", "em-portugal": "In Portugal", "no-mundo": "Worldwide", materia: "Materials and waste", "pressure-systems": "Pressure systems", fontes: "Sources" };
     document.querySelectorAll('.reading-nav a[href^="#"]').forEach((a) => { const k = a.getAttribute("href").slice(1); if (M[k]) a.textContent = M[k] + " ↓"; });
   };
 
@@ -193,7 +193,7 @@
       `</div>` +
       `<div class="srcs">${destCards}</div>`));
 
-    html.push(sec("portugal-mundo", tr("7 · Portugal no mundo", "7 · Portugal in the world"), tr("Onde Portugal está em cada indicador", "Where Portugal stands on each indicator"),
+    html.push(sec("portugal-mundo", tr("7 · Posição no mundo", "7 · Position in the world"), tr("Onde Portugal está em cada indicador", "Where Portugal stands on each indicator"),
       prose(tr("Cada linha compara o último valor de Portugal com o mundo e com a média da União Europeia, e diz em que lugar fica entre os Estados com dados. «Melhor» tem em conta o sentido de cada indicador (mais renováveis é melhor; mais poluição é pior), e a posição 1.º é a melhor. Nas renováveis na energia final, quotas muito altas em países pobres refletem muita lenha, por isso esta linha merece mais cautela. Esta ordenação não mede, por si só, o esforço nem o contexto de cada país.",
         "Each row compares Portugal’s latest value with the world and the European Union, and shows its place among states with data. “Better” takes each indicator’s direction into account (more renewables is better; more pollution is worse), and rank 1st is the best. For renewables in final energy, very high shares in poor countries reflect a lot of firewood, so that row deserves more caution. This ranking does not by itself measure each country’s effort or context.")) +
       `<figure><div class="tscroll full"><table id="tPT"></table></div><div class="src"><span>${tr("Fontes: ver «Fontes e método» no fim da página. Último ano disponível de cada série; os anos diferem entre indicadores.", "Sources: see “Sources and method” at the end of the page. Latest available year of each series; years differ between indicators.")}</span></div></figure>
@@ -207,7 +207,7 @@
     const deserts = it.suscetibilidade_desertificacao, coast = it.erosao_costeira, flood = it.areas_risco_inundacao, ghg = pv("emissoes_gases_efeito_estufa").at(-1);
     const farms = pv("exploracoes_agricolas"), sau = pv("superficie_agricola_utilizada"), fleet = pv("parque_veiculos_motorizados");
     const srcLine = (id) => (ps[id].fontes || []).map((f) => `<a href="${esc(f.url)}" target="_blank" rel="noopener noreferrer">${esc(f.nome)} ↗</a>`).join(" · ");
-    html.push(`<span id="portugal"></span>` + sec("leitura-local", tr("8 · Portugal: território e riscos", "8 · Portugal: land and risks"), tr("Continente, Açores e Madeira: fogo, desertificação, costa e campo", "Mainland, Azores and Madeira: fire, desertification, coast and farmland"),
+    html.push(`<span id="portugal"></span>` + sec("leitura-local", tr("8 · Território e riscos", "8 · Land and risks"), tr("Continente, Açores e Madeira: fogo, desertificação, costa e campo", "Mainland, Azores and Madeira: fire, desertification, coast and farmland"),
       `<div class="tiles" id="ptTiles"></div>` +
       prose(
         tr(`Os dados nacionais disponíveis mostram três pressões claras: <strong>incêndios rurais</strong> muito variáveis (${fmt(Math.max(...burned.map((b) => b.v)))} ha em ${burned.find((b) => b.v === Math.max(...burned.map((x) => x.v))).y}, o pior ano da série), <strong>${fmt(deserts.valor, 1)}%</strong> do Continente com suscetibilidade alta ou muito elevada à desertificação e <strong>${fmt(coast.costa_baixa_arenosa_em_erosao_percent)}%</strong> da costa baixa e arenosa em erosão. Açores e Madeira não são misturados com o Continente quando não existe uma série comparável.`,
@@ -226,7 +226,7 @@
     /* Estrutura uniforme: Sumário → Em Portugal → No mundo (as páginas temáticas seguem a mesma ordem). */
     const [sumario, ...capitulos] = html;
     const mundo = capitulos.slice(0, 6), portugal = capitulos.slice(6);
-    const emPortugal = `<div class="reading-head"><h2 class="reading-divider" id="em-portugal">${tr("Em Portugal", "In Portugal")}</h2><p class="reading-scope">${tr("Continente, Açores e Madeira, sempre que a fonte os inclui.", "Mainland, Azores and Madeira, wherever the source includes them.")}</p></div>`;
+    const emPortugal = `<div class="reading-head"><h2 class="reading-divider" id="em-portugal">${tr("Em Portugal", "In Portugal")}</h2></div>`;
     const noMundo = `<header class="reading-divider" id="no-mundo"><h2>${tr("No mundo", "Worldwide")}</h2></header>`;
     let numero = 0;
     const renumera = (h) => h.replace(/(<span class="eyebrow">)\d+( · )/, (m, x, y) => x + (++numero) + y);
