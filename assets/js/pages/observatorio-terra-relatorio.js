@@ -16,7 +16,7 @@
 
   const traduzirNav = () => {
     if (!EN) return;
-    const M = { sumario: "Summary", clima: "Climate", energia: "Energy", ar: "Air", agua: "Water", "terra-vida": "Land and life", "portugal-mundo": "Portugal in the world", "leitura-local": "Portugal in detail", "pressure-systems": "Pressure systems" };
+    const M = { sumario: "Summary", clima: "Climate", energia: "Energy", ar: "Air", agua: "Water", "terra-vida": "Land and life", "portugal-mundo": "Portugal in the world", "leitura-local": "Portugal in detail", "em-portugal": "In Portugal", "no-mundo": "Worldwide", materia: "Materials and waste", "pressure-systems": "Pressure systems", fontes: "Sources" };
     document.querySelectorAll('.reading-nav a[href^="#"]').forEach((a) => { const k = a.getAttribute("href").slice(1); if (M[k]) a.textContent = M[k] + " ↓"; });
   };
 
@@ -223,6 +223,15 @@
         `<strong>Coastal erosion:</strong> about ${fmt(coast.extensao_em_erosao_aproximada_km)} km of the ${fmt(coast.extensao_monitorizada_km)} km monitored are eroding, and ${fmt(coast.perda_area_1958_2023_ha)} ha of coastal area were lost between 1958 and 2023. <strong>Floods:</strong> ${flood.valor} areas of significant potential risk in the ${flood.periodo.replace(/^ciclo\s+/i, "")} cycle. Semi-arid area grew ${deserts.area_semiarida.variacao_percent}% between ${deserts.area_semiarida.de} and ${deserts.area_semiarida.ate} (${deserts.area_semiarida.fonte}).`)}</div>` +
       `<div class="claims" id="ptClaims"></div>`));
 
+    /* Estrutura uniforme: Sumário → Em Portugal → No mundo (as páginas temáticas seguem a mesma ordem). */
+    const [sumario, ...capitulos] = html;
+    const mundo = capitulos.slice(0, 6), portugal = capitulos.slice(6);
+    const emPortugal = `<div class="reading-head"><h2 class="reading-divider" id="em-portugal">${tr("Em Portugal", "In Portugal")}</h2><p class="reading-scope">${tr("Continente, Açores e Madeira, sempre que a fonte os inclui.", "Mainland, Azores and Madeira, wherever the source includes them.")}</p></div>`;
+    const noMundo = `<header class="reading-divider" id="no-mundo"><h2>${tr("No mundo", "Worldwide")}</h2></header>`;
+    let numero = 0;
+    const renumera = (h) => h.replace(/(<span class="eyebrow">)\d+( · )/, (m, x, y) => x + (++numero) + y);
+    html.length = 0;
+    html.push(sumario, emPortugal, ...portugal.map(renumera), noMundo, ...mundo.map(renumera));
     box.innerHTML = html.join("");
 
     /* «Ver também»: do capítulo para as páginas temáticas que o desenvolvem. */
