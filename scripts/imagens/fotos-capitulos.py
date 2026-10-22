@@ -72,6 +72,9 @@ def procurar(saida, consultas, por_consulta=8, largura_min=1000):
             if n >= por_consulta:
                 break
     itens = list(candidatos.items())
+    if not itens:
+        print("sem candidatos com licença aberta; tenta outras consultas")
+        return
     colunas, L, A = 5, 300, 210
     folha = Image.new("RGB", (colunas * L, ((len(itens) + colunas - 1) // colunas) * A), "white")
     desenho = ImageDraw.Draw(folha)

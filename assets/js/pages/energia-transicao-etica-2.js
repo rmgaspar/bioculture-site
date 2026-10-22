@@ -254,11 +254,22 @@
                     ).join("");
             }
             function renderCriteria(d) {
-                el("criteria").innerHTML = (d.matriz_criticidade?.dimensoes || []).map((x) =>
-                    `<article class="criterion"><small>Dimensão</small><h3>${
-                        esc(x.id.replaceAll("_", " "))
-                    }</h3><p>${esc((x.indicadores || []).slice(0, 5).join(" · "))}</p></article>`
-                ).join("");
+                const names = {
+                    biodiversidade: ["Biodiversidade", "Biodiversity", "#3f7a3a"],
+                    solo_agricultura: ["Solo e agricultura", "Soil and farming", "#8a5a2b"],
+                    agua: ["Água", "Water", "#2f78b0"],
+                    paisagem_patrimonio: ["Paisagem e património", "Landscape and heritage", "#8a4f7d"],
+                    comunidades: ["Comunidades", "Communities", "#b0553a"],
+                    rede_acessos: ["Rede e acessos", "Grid and access", "#5b6f86"],
+                    clima_circularidade: ["Clima e circularidade", "Climate and circularity", "#2a8a7a"],
+                    cumulativos: ["Efeitos cumulativos", "Cumulative effects", "#b8860b"],
+                };
+                el("criteria").innerHTML = (d.matriz_criticidade?.dimensoes || []).map((x, i) => {
+                    const n = names[x.id] || [x.id.replaceAll("_", " "), x.id.replaceAll("_", " "), "#6b776f"];
+                    return `<article class="criterion criterion-vivo" style="--tom:${n[2]}"><span class="crit-n">${String(i + 1).padStart(2, "0")}</span><h3>${isEn() ? n[1] : n[0]}</h3><ul class="crit-chips">${
+                        (x.indicadores || []).slice(0, 6).map((v) => `<li>${esc(v)}</li>`).join("")
+                    }</ul></article>`;
+                }).join("");
             }
             function renderMeasures(d) {
                 const m = d.mitigacao_e_monitorizacao || {};
