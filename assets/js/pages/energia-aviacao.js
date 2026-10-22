@@ -91,7 +91,7 @@
 <div class="reading-head"><h2 class="reading-divider" id="leitura-local">${tr("Em Portugal", "In Portugal")}</h2>
 <p class="reading-scope">${tr("Os voos reais incluem aeroportos dos Açores e da Madeira.", "Real flights include airports in the Azores and Madeira.")}</p></div>
 <section id="voos">
-  <div class="sec-head"><span class="eyebrow">${tr("1 · Voos reais", "1 · Real flights")}</span><h2>${tr("Quanto gasta cada rota, por dia e por ano", "How much each route uses, per day and per year")}</h2></div>
+  <div class="sec-head"><span class="eyebrow">${tr("Voos reais", "Real flights")}</span><h2>${tr("Quanto gasta cada rota, por dia e por ano", "How much each route uses, per day and per year")}</h2></div>
   <div class="prose">
     <p>${tr("O Eurostat conta, por ano, os <strong>voos e os passageiros</strong> entre cada aeroporto português e os seus parceiros, nos dois sentidos e de todas as companhias. Multiplicámos os passageiros pela distância e pelo fator médio da DESNZ para estimar o <strong>combustível e o CO₂e da rota inteira</strong>, e dividimos pelo ano para chegar à média diária, semanal e mensal.", "Eurostat counts, per year, the <strong>flights and passengers</strong> between each Portuguese airport and its partners, in both directions and for all airlines. We multiplied passengers by distance and by the DESNZ average factor to estimate the <strong>fuel and CO₂e of the whole route</strong>, and divided by the year to get the daily, weekly and monthly average.")}</p>
   </div>
@@ -114,7 +114,7 @@
   </figure>
 </section>
 <section id="portugal">
-  <div class="sec-head"><span class="eyebrow">${tr("2 · Em 30 anos", "2 · Over 30 years")}</span><h2>${tr("O transporte aéreo português em 30 anos", "Portuguese air transport over 30 years")}</h2></div>
+  <div class="sec-head"><span class="eyebrow">${tr("Em 30 anos", "Over 30 years")}</span><h2>${tr("O transporte aéreo português em 30 anos", "Portuguese air transport over 30 years")}</h2></div>
   <div class="prose"><p id="av-pt-txt"></p></div>
   <div class="tiles" id="av-pt-tiles"></div>
   <div class="grid2">
@@ -132,7 +132,7 @@
 </section>
 <header class="reading-divider" id="panorama-global"><h2>${tr("No mundo", "Worldwide")}</h2></header>
 <section id="recursos">
-  <div class="sec-head"><span class="eyebrow">${tr("3 · Todos os recursos", "3 · All resources")}</span><h2>${tr("Tudo o que voar afeta", "Everything flying affects")}</h2></div>
+  <div class="sec-head"><span class="eyebrow">${tr("Todos os recursos", "All resources")}</span><h2>${tr("Tudo o que voar afeta", "Everything flying affects")}</h2></div>
   <div class="prose"><p>${tr("O carbono é só uma das pressões de voar. Cada dimensão aparece na sua unidade e <strong>não se soma</strong> às outras: combustível, óxidos de azoto, ruído e terra.", "Carbon is only one of the pressures of flying. Each dimension appears in its own unit and is <strong>not added</strong> to the others: fuel, nitrogen oxides, noise and land.")}</p></div>
   <div class="rec-grid" id="av-rec"></div>
   <div class="grid2">
@@ -150,7 +150,7 @@
   </div>
 </section>
 <section id="rotas">
-  <div class="sec-head"><span class="eyebrow">${tr("4 · Rotas de exemplo", "4 · Example routes")}</span><h2>${tr("A distância manda, mas não explica tudo", "Distance rules, but it does not explain everything")}</h2></div>
+  <div class="sec-head"><span class="eyebrow">${tr("Rotas de exemplo", "Example routes")}</span><h2>${tr("A distância manda, mas não explica tudo", "Distance rules, but it does not explain everything")}</h2></div>
   <div class="prose"><p id="av-rotas-txt"></p></div>
   <figure>
     <figcaption><span class="t">${tr("CO₂ por passageiro em classe económica, rotas de exemplo", "CO₂ per economy-class passenger, example routes")}</span><span class="d">${tr("Só ida, kg de CO₂e. A barra escura é a estimativa só com emissões diretas; a clara é o que se soma com os efeitos não-CO₂.", "One way, kg of CO₂e. The dark bar is the estimate with direct emissions only; the light one is what is added by non-CO₂ effects.")}</span></figcaption>
@@ -160,7 +160,7 @@
   </figure>
 </section>
 <section id="classes">
-  <div class="sec-head"><span class="eyebrow">${tr("5 · Classe de bilhete", "5 · Ticket class")}</span><h2>${tr("Quanto espaço ocupas, tanto pesas", "The more space you take, the more you weigh")}</h2></div>
+  <div class="sec-head"><span class="eyebrow">${tr("Classe de bilhete", "Ticket class")}</span><h2>${tr("Quanto espaço ocupas, tanto pesas", "The more space you take, the more you weigh")}</h2></div>
   <div class="prose"><p id="av-classes-txt"></p></div>
   <figure>
     <figcaption><span class="t">${tr("Gramas de CO₂e por passageiro e quilómetro, por classe", "Grams of CO₂e per passenger-kilometre, by class")}</span><span class="d">${tr("O avião emite o mesmo; muda a parte que é atribuída a cada passageiro, conforme o espaço que ocupa na cabine.", "The aircraft emits the same; what changes is the share assigned to each passenger, according to the cabin space they take.")}</span></figcaption>
@@ -170,7 +170,7 @@
   </figure>
 </section>
 <section id="tempo">
-  <div class="sec-head"><span class="eyebrow">${tr("6 · Linha do tempo", "6 · Timeline")}</span><h2>${tr("O voo cresceu, e o clima aqueceu: o que isso prova?", "Flying grew and the climate warmed: what does that prove?")}</h2></div>
+  <div class="sec-head"><span class="eyebrow">${tr("Linha do tempo", "Timeline")}</span><h2>${tr("O voo cresceu, e o clima aqueceu: o que isso prova?", "Flying grew and the climate warmed: what does that prove?")}</h2></div>
   <div class="prose"><p id="tp-txt"></p><p id="tp-aviso"></p></div>
   <div class="grid2">
     <figure>
@@ -199,7 +199,7 @@
   </div>
 </section>
 <section id="calcular">
-  <div class="sec-head"><span class="eyebrow">${tr("7 · A tua viagem", "7 · Your trip")}</span><h2>${tr("Quanto CO₂ cabe numa viagem?", "How much CO₂ is in a trip?")}</h2></div>
+  <div class="sec-head"><span class="eyebrow">${tr("A tua viagem", "Your trip")}</span><h2>${tr("Quanto CO₂ cabe numa viagem?", "How much CO₂ is in a trip?")}</h2></div>
   <div class="prose"><p>${tr("Escolhe o aeroporto de partida e o de chegada, em qualquer parte do mundo. A estimativa é <strong>distância × fator médio por passageiro e quilómetro</strong> (média de todas as classes), e o fator já inclui o desvio das rotas reais face à linha reta.", "Choose the departure and arrival airports anywhere in the world. The estimate is <strong>distance × factor per passenger-kilometre</strong>, and the factor already includes the detour of real routes compared with a straight line.")}</p></div>
   <figure class="calc">
     <figcaption><span class="t">${tr("Calculadora de rota", "Route calculator")}</span><span class="d">${tr("Escreve a cidade ou o código IATA (por exemplo, Lisboa ou LIS) e escolhe na lista.", "Type the city or IATA code (for example, Lisbon or LIS) and pick from the list.")}</span></figcaption>
@@ -216,7 +216,7 @@
   </figure>
 </section>
 <section id="limites">
-  <div class="sec-head"><span class="eyebrow">${tr("8 · Limites e fontes", "8 · Limits and sources")}</span><h2>${tr("O que estes números não dizem", "What these numbers do not tell")}</h2></div>
+  <div class="sec-head"><span class="eyebrow">${tr("Limites e fontes", "Limits and sources")}</span><h2>${tr("O que estes números não dizem", "What these numbers do not tell")}</h2></div>
   <ol class="notes" id="av-notas"></ol>
   <div class="srcs" id="av-fontes"></div>
 </section>`;

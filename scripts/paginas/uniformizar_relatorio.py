@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Reordena as secções das páginas-relatório (Aviação, Moda, Construção), geradas por JavaScript:
-Sumário → Em Portugal → No mundo → ação (calculadora) → Limites e fontes, com separadores e numeração sequencial.
+Sumário → Em Portugal → No mundo → ação (calculadora) → Limites e fontes, com separadores (sem numeração nos títulos).
 
   python3 scripts/paginas/uniformizar_relatorio.py assets/js/pages/energia-aviacao.js
 """
@@ -38,9 +38,6 @@ def processa(texto, plano):
             s = por_id[i]
             if i == "sumario":
                 novas.append(s); continue
-            n += 1
-            # numeração sequencial no eyebrow (PT e EN)
-            s = re.sub(r'(<span class="eyebrow">\$\{tr\(")\d+( · [^"]*", ")\d+( · )', lambda k: f'{k.group(1)}{n}{k.group(2)}{n}{k.group(3)}', s, count=1)
             novas.append(s)
             if i == plano["portugal"][0] and False: pass
         # separadores

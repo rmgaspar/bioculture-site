@@ -94,7 +94,7 @@
 <div class="reading-head"><h2 class="reading-divider" id="leitura-local">${tr("Em Portugal", "In Portugal")}</h2>
 </div>
 <section id="portugal">
-  <div class="sec-head"><span class="eyebrow">${tr("1 · Portugal", "1 · Portugal")}</span><h2>${tr("A construção e os seus materiais, em Portugal", "Construction and its materials in Portugal")}</h2></div>
+  <div class="sec-head"><span class="eyebrow">${tr("Portugal", "Portugal")}</span><h2>${tr("A construção e os seus materiais, em Portugal", "Construction and its materials in Portugal")}</h2></div>
   <div class="prose"><p id="mt-pt-txt"></p></div>
   <div class="tiles" id="mt-pt-tiles"></div>
   <div class="grid2">
@@ -142,12 +142,12 @@
 </section>
 <header class="reading-divider" id="panorama-global"><h2>${tr("No mundo", "Worldwide")}</h2></header>
 <section id="recursos">
-  <div class="sec-head"><span class="eyebrow">${tr("2 · Todos os recursos", "2 · All resources")}</span><h2>${tr("Tudo o que a construção afeta", "Everything construction affects")}</h2></div>
+  <div class="sec-head"><span class="eyebrow">${tr("Todos os recursos", "All resources")}</span><h2>${tr("Tudo o que a construção afeta", "Everything construction affects")}</h2></div>
   <div class="prose"><p>${tr("O carbono é só uma das pressões da construção. Cada recurso aparece na sua unidade e <strong>não se soma</strong> aos outros: carbono, energia, materiais, água, terra, resíduos e ar.", "Carbon is only one of the pressures of construction. Each resource appears in its own unit and is <strong>not added</strong> to the others: carbon, energy, materials, water, land, waste and air.")}</p></div>
   <div class="rec-grid" id="mt-rec"></div>
 </section>
 <section id="materiais">
-  <div class="sec-head"><span class="eyebrow">${tr("3 · Comparar", "3 · Compare")}</span><h2>${tr("Por tonelada, uns materiais pesam muito mais", "Per tonne, some materials weigh much more")}</h2></div>
+  <div class="sec-head"><span class="eyebrow">${tr("Comparar", "Compare")}</span><h2>${tr("Por tonelada, uns materiais pesam muito mais", "Per tonne, some materials weigh much more")}</h2></div>
   <div class="prose"><p id="mt-txt"></p></div>
   <figure>
     <figcaption><span class="t">${tr("Kg de CO₂e por tonelada de material de construção", "Kg of CO₂e per tonne of construction material")}</span><span class="d">${tr("Produção primária (barra inteira) e o que sobra com material reutilizado ou reciclado.", "Primary production (whole bar) and what is left with re-used or recycled material.")}</span></figcaption>
@@ -157,7 +157,7 @@
   </figure>
 </section>
 <section id="calcular">
-  <div class="sec-head"><span class="eyebrow">${tr("4 · Materiais", "4 · Materials")}</span><h2>${tr("Quanto carbono tem um material?", "How much carbon is in a material?")}</h2></div>
+  <div class="sec-head"><span class="eyebrow">${tr("Materiais", "Materials")}</span><h2>${tr("Quanto carbono tem um material?", "How much carbon is in a material?")}</h2></div>
   <div class="prose"><p>${tr("Escolhe um material e a quantidade em toneladas. O cálculo é <strong>massa × fator da DESNZ</strong> para a produção primária, e compara com material reutilizado ou reciclado quando a tabela o tem.", "Choose a material and the amount in tonnes. The calculation is <strong>mass × DESNZ factor</strong> for primary production, and compares it with re-used or recycled material when the table has it.")}</p></div>
   <figure class="calc">
     <figcaption><span class="t">${tr("Calculadora de material", "Material calculator")}</span><span class="d">${tr("Fatores «do berço ao portão»: extração, fabrico e transporte até ao ponto de venda.", "“Cradle-to-gate” factors: extraction, manufacturing and transport to the point of sale.")}</span></figcaption>
@@ -170,7 +170,7 @@
   </figure>
 </section>
 <section id="limites">
-  <div class="sec-head"><span class="eyebrow">${tr("5 · Limites e fontes", "5 · Limits and sources")}</span><h2>${tr("O que estes números não dizem", "What these numbers do not tell")}</h2></div>
+  <div class="sec-head"><span class="eyebrow">${tr("Limites e fontes", "Limits and sources")}</span><h2>${tr("O que estes números não dizem", "What these numbers do not tell")}</h2></div>
   <ol class="notes" id="mt-notas"></ol>
   <div class="srcs" id="mt-fontes"></div>
 </section>`;
@@ -266,7 +266,7 @@
 <div class="reading-head"><h2 class="reading-divider" id="leitura-local">${tr("Em Portugal", "In Portugal")}</h2>
 </div>
 <section id="portugal">
-  <div class="sec-head"><span class="eyebrow">${tr("1 · Portugal", "1 · Portugal")}</span><h2>${tr("A indústria e os resíduos têxteis em Portugal", "Textile industry and waste in Portugal")}</h2></div>
+  <div class="sec-head"><span class="eyebrow">${tr("Portugal", "Portugal")}</span><h2>${tr("A indústria e os resíduos têxteis em Portugal", "Textile industry and waste in Portugal")}</h2></div>
   <div class="prose"><p id="mt-pt-txt"></p></div>
   <div class="tiles" id="mt-pt-tiles"></div>
   <div class="grid2">
@@ -303,12 +303,12 @@
 </section>
 <header class="reading-divider" id="panorama-global"><h2>${tr("No mundo", "Worldwide")}</h2></header>
 <section id="recursos">
-  <div class="sec-head"><span class="eyebrow">${tr("2 · Todos os recursos", "2 · All resources")}</span><h2>${tr("Tudo o que a moda afeta", "Everything fashion affects")}</h2></div>
+  <div class="sec-head"><span class="eyebrow">${tr("Todos os recursos", "All resources")}</span><h2>${tr("Tudo o que a moda afeta", "Everything fashion affects")}</h2></div>
   <div class="prose"><p>${tr("O carbono é só uma das pressões da moda. Cada recurso aparece na sua unidade e <strong>não se soma</strong> aos outros: carbono, energia, matérias-primas, água, terra, resíduos, química e ar. Os valores por pessoa são estimativas da Agência Europeia do Ambiente e do Parlamento Europeu, de anos e métodos diferentes.", "Carbon is only one of the pressures of fashion. Each resource appears in its own unit and is <strong>not added</strong> to the others: carbon, energy, raw materials, water, land, waste, chemicals and air. The per-person values are estimates from the European Environment Agency and the European Parliament, from different years and methods.")}</p></div>
   <div class="rec-grid" id="mt-rec"></div>
 </section>
 <section id="materiais">
-  <div class="sec-head"><span class="eyebrow">${tr("3 · Comparar", "3 · Compare")}</span><h2>${tr("Por quilo, a roupa pesa mais do que o plástico", "Per kilogram, clothing weighs more than plastic")}</h2></div>
+  <div class="sec-head"><span class="eyebrow">${tr("Comparar", "Compare")}</span><h2>${tr("Por quilo, a roupa pesa mais do que o plástico", "Per kilogram, clothing weighs more than plastic")}</h2></div>
   <div class="prose"><p id="mt-txt"></p></div>
   <figure>
     <figcaption><span class="t">${tr("Kg de CO₂e por tonelada de material", "Kg of CO₂e per tonne of material")}</span><span class="d">${tr("Produção primária (barra inteira) e o que sobra com material reutilizado ou reciclado.", "Primary production (whole bar) and what is left with re-used or recycled material.")}</span></figcaption>
@@ -318,7 +318,7 @@
   </figure>
 </section>
 <section id="calcular">
-  <div class="sec-head"><span class="eyebrow">${tr("4 · A tua roupa", "4 · Your clothes")}</span><h2>${tr("Quanto carbono cabe na roupa que compras?", "How much carbon is in the clothes you buy?")}</h2></div>
+  <div class="sec-head"><span class="eyebrow">${tr("A tua roupa", "Your clothes")}</span><h2>${tr("Quanto carbono cabe na roupa que compras?", "How much carbon is in the clothes you buy?")}</h2></div>
   <div class="prose"><p>${tr(`Diz quantos quilos de roupa nova compras por ano (a média na UE é ${MED} kg) e quantos quilos reutilizas ou compras em segunda mão. O cálculo é <strong>quilos × fator da DESNZ</strong>.`, `Say how many kilograms of new clothing you buy a year (the EU average is ${MED} kg) and how many kilograms you re-use or buy second-hand. The calculation is <strong>kilograms × DESNZ factor</strong>.`)}</p></div>
   <figure class="calc">
     <figcaption><span class="t">${tr("Calculadora de roupa", "Clothing calculator")}</span><span class="d">${tr("Fator médio de todas as fibras e peças: berço ao portão, sem lavagens nem fim de vida.", "Average factor for all fibres and garments: cradle to gate, without washing or end of life.")}</span></figcaption>
@@ -331,7 +331,7 @@
   </figure>
 </section>
 <section id="limites">
-  <div class="sec-head"><span class="eyebrow">${tr("5 · Limites e fontes", "5 · Limits and sources")}</span><h2>${tr("O que estes números não dizem", "What these numbers do not tell")}</h2></div>
+  <div class="sec-head"><span class="eyebrow">${tr("Limites e fontes", "Limits and sources")}</span><h2>${tr("O que estes números não dizem", "What these numbers do not tell")}</h2></div>
   <ol class="notes" id="mt-notas"></ol>
   <div class="srcs" id="mt-fontes"></div>
 </section>`;
