@@ -181,6 +181,20 @@
                                 : ""
                         }</article>`;
                     }).join("") || '<p class="empty">—</p>';
+                const dm = (v) => new Date(v + "T12:00:00").toLocaleDateString(isEn() ? "en-GB" : "pt-PT", { day: "numeric", month: "short" }),
+                    nameOf = (x) => String(x.titulo || "").replace(/\s+-\s+projeto reformulado$/i, ""),
+                    closing = (c.abertas || []).filter((x) => x.fim).slice().sort((x, y) => String(x.fim).localeCompare(String(y.fim))),
+                    justClosed = (c.em_analise || []).filter((x) => x.fim && !x.alerta_qualidade).slice().sort((x, y) => String(y.fim).localeCompare(String(x.fim))).slice(0, 3),
+                    row = (x, tag, cls) => `<li class="${cls}"><span class="pz-when">${esc(tag)}</span><a href="${esc(x.url || "#")}" target="_blank" rel="noopener">${esc(nameOf(x))}</a>${
+                        typeof x.participacoes === "number" ? `<em>${num(x.participacoes)} ${tr("participações", "submissions")}</em>` : ""
+                    }</li>`;
+                if (el("participa-prazos")) {
+                    el("participa-prazos").innerHTML = (closing.length || justClosed.length) ? `${
+                        closing.length ? `<h4>${tr("Fecham em breve", "Closing soon")}</h4><ul>${closing.map((x) => { const n = days(x.fim); return row(x, n <= 0 ? tr("Hoje", "Today") : tr(`${dm(x.fim)} · ${n} dias`, `${dm(x.fim)} · ${n} days`), "pz-open"); }).join("")}</ul>` : ""
+                    }${
+                        justClosed.length ? `<h4>${tr("Terminaram há pouco, a aguardar decisão", "Recently closed, awaiting decision")}</h4><ul>${justClosed.map((x) => row(x, tr(`Fechou a ${dm(x.fim)}`, `Closed ${dm(x.fim)}`), "pz-analysis")).join("")}</ul>` : ""
+                    }` : "";
+                }
                 const f = c.factos_participacao,
                     ps = d.pszaer?.consulta_publica || {};
                 el("participa-facts").innerHTML = f && f.consultas_projetos
@@ -244,14 +258,15 @@
             }
             function renderPlants(d) {
                 const x = d.grandes_centrais_existentes || {};
-                el("plants").innerHTML = (x.registos || []).filter((v) => !v.abaixo_limiar_observatorio)
-                    .map((v) =>
-                        `<article class="plant"><small>${esc(v.estado_operacional)}</small><h3>${
-                            esc(v.titulo)
-                        }</h3><p>${esc(v.tecnologia)} · ${v.potencia_mw ?? "—"} MW</p><p>${
-                            esc(v.municipio || v.regiao || "Localização: —")
-                        }</p></article>`
-                    ).join("");
+                const rows = (x.registos || []).filter((v) => !v.abaixo_limiar_observatorio);
+                const max = Math.max(...rows.map((v) => Number(v.potencia_mw) || 0), 1);
+                const tone = (t) => (/e[óo]lic|wind/i.test(t || "") ? "#2f78b0" : /solar|fotovolt/i.test(t || "") ? "#b88a1a" : "#2a8a7a");
+                el("plants").innerHTML = rows.map((v) => {
+                    const mw = Number(v.potencia_mw);
+                    return `<article class="plant plant-vivo" style="--tom:${tone(v.tecnologia)}"><small>${esc(v.estado_operacional)}</small><h3>${esc(v.titulo)}</h3>${
+                        mw ? `<div class="plant-mw"><strong>${mw.toLocaleString(isEn() ? "en-GB" : "pt-PT")}</strong><span>MW</span></div><div class="plant-bar"><b style="width:${Math.max(4, mw / max * 100)}%"></b></div>` : ""
+                    }<p class="plant-tec">${esc(v.tecnologia)}</p><p class="plant-local">${esc(v.municipio || v.regiao || "Localização: —")}</p></article>`;
+                }).join("");
             }
             function renderCriteria(d) {
                 const names = {
