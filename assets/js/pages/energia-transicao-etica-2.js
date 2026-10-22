@@ -86,7 +86,8 @@
                     tr = (pt, en) => (isEn() ? en : pt),
                     today = new Date(new Date().toISOString().slice(0, 10) + "T12:00:00"),
                     days = (v) => Math.round((new Date(v + "T12:00:00") - today) / 864e5),
-                    current = [...(c.abertas || []), ...(c.em_analise || []), ...(c.encerradas || [])],
+                    byEnd = (dir) => (a, b) => dir * String(a.fim || "").localeCompare(String(b.fim || "")),
+                    current = [...(c.abertas || []).slice().sort(byEnd(1)), ...(c.em_analise || []).slice().sort(byEnd(-1)), ...(c.encerradas || [])],
                     recent = current.filter((x) => !x.alerta_qualidade);
                 // Sinais de atenção: factos observáveis, sem pontuação nem juízo sobre o projeto.
                 const byMunicipality = {};
@@ -112,32 +113,43 @@
                     return out;
                 };
                 const open = (c.abertas || []).length,
+                    pool = [...(c.abertas || []), ...(c.em_analise || [])].filter((x) => !x.alerta_qualidade),
                     pending = (c.em_analise || []).filter((x) => !x.alerta_qualidade).length,
-                    total = meta.resumo_pesquisa?.consultas_renovaveis;
-                el("participa-now").innerHTML = `<div class="now-figures"><span><strong>${open}</strong>${
-                    tr(open === 1 ? "consulta aberta agora" : "consultas abertas agora", "open now")
-                }</span><span><strong>${pending}</strong>${tr("a aguardar decisão (2026)", "awaiting decision (2026)")}</span>${
-                    total ? `<span><strong>${total}</strong>${tr("consultas de renováveis no portal", "renewables consultations on the portal")}</span>` : ""
+                    withParts = pool.filter((x) => typeof x.participacoes === "number"),
+                    partSum = withParts.reduce((acc, x) => acc + x.participacoes, 0),
+                    top = [...withParts.filter((x) => /aberta/i.test(x.estado_consulta)), ...withParts.filter((x) => !/aberta/i.test(x.estado_consulta)).sort((x, y) => y.participacoes - x.participacoes)].slice(0, 8).sort((x, y) => y.participacoes - x.participacoes),
+                    shortTitle = (t) => String(t || "").replace(/^(Central Solar Fotovoltaica|Projeto Solar Fotovoltaico|Projeto|Parque Solar|Parque Eólico)\s+(de|do|da|dos|das)?\s*/i, "").replace(/\s+e\s+LMAT associadas.*$/i, "").slice(0, 60),
+                    total = meta.resumo_pesquisa?.consultas_renovaveis,
+                    closed = meta.resumo_pesquisa?.encerradas;
+                el("participa-now").innerHTML = `<div class="now-figures"><span class="is-open"><strong>${open}</strong>${
+                    tr(open === 1 ? "consulta aberta agora" : "consultas abertas agora", open === 1 ? "consultation open now" : "consultations open now")
+                }</span><span class="is-analysis"><strong>${pending}</strong>${tr("em análise: prazo terminado, a aguardar decisão (2026)", "under review: closed, awaiting decision (2026)")}</span>${
+                    partSum ? `<span class="is-parts"><strong>${num(partSum)}</strong>${tr("participações nestas consultas", "submissions in these consultations")}</span>` : ""
                 }</div>${
-                    meta.resumo_pesquisa
-                        ? miniStack([
-                            { l: tr("Abertas", "Open"), v: meta.resumo_pesquisa.abertas, c: PALETTE[2] },
-                            { l: tr("Em análise", "Under review"), v: meta.resumo_pesquisa.em_analise, c: PALETTE[3] },
-                            { l: tr("Encerradas", "Closed"), v: meta.resumo_pesquisa.encerradas, c: "#b9cbbd" },
-                        ])
+                    top.length
+                        ? `<div class="part-chart"><h4>${tr("Participações por consulta", "Submissions per consultation")}</h4>${miniBars(top.map((x) => ({
+                            l: shortTitle(x.titulo), v: x.participacoes, c: /aberta/i.test(x.estado_consulta) ? PALETTE[2] : PALETTE[3],
+                        })))}<div class="mlegend"><span><i style="background:${PALETTE[2]}"></i>${tr("Abertas", "Open")}</span><span><i style="background:${PALETTE[3]}"></i>${tr("Em análise", "Under review")}</span></div></div>`
                         : ""
                 }<p>${
                     open
                         ? tr("Ainda é possível participar nas consultas assinaladas como abertas.", "You can still take part in the consultations marked as open.")
                         : tr(
-                            "Não há nenhuma consulta de renováveis aberta neste momento. As que estão em análise aguardam decisão e, nas PDA, virá ainda a consulta do Estudo de Impacte Ambiental. Usa «Seguir» na ficha do Participa para ser avisado.",
-                            "No renewables consultation is open right now. Those under review await a decision, and scoping procedures will be followed by an EIA consultation. Use “Follow” on the Participa page to be notified.",
+                            "Não há nenhuma consulta de renováveis aberta neste momento. As que estão em análise aguardam decisão e, nas PDA, virá ainda a consulta do Estudo de Impacte Ambiental. Usa «Seguir» na ficha do projeto no Participa.pt para seres avisado.",
+                            "No renewables consultation is open right now. Those under review await a decision, and scoping procedures will be followed by an EIA consultation. Use “Follow” on the Participa page to be notified."
                         )
-                }</p><span class="now-date">${tr("Verificado no Participa.pt em", "Checked on Participa.pt on")} ${date(meta.instantaneo_em)}</span>`;
+                }</p>${
+                    total
+                        ? `<p class="now-note">${tr(
+                            `O portal tem ${num(total)} consultas de renováveis${closed ? `, das quais ${num(closed)} encerradas, quase todas de anos anteriores`: ""}; aqui seguem-se as abertas e as de 2026.`,
+                            `The portal lists ${num(total)} renewables consultations${closed ? `, ${num(closed)} of them closed, almost all from earlier years` : ""}; here we follow the open ones and those from 2026.`
+                        )}</p>`
+                        : ""
+                }<span class="now-date">${tr("Verificado no Participa.pt em", "Checked on Participa.pt on")} ${date(meta.instantaneo_em)}</span>`;
                 el("consults").innerHTML =
                     current.map((x) => {
                         const tags = signals(x);
-                        return `<article class="consult"><small class="${
+                        return `<article class="consult ${/aberta/i.test(x.estado_consulta) ? "consult-open" : "consult-analysis"}"><small class="${
                             /aberta/i.test(x.estado_consulta) ? "status-open" : "status-analysis"
                         }">${esc(stateTxt(x.estado_consulta))} · ${date(x.fim)}</small><h3>${
                             esc(x.titulo)
@@ -149,9 +161,9 @@
                             esc((x.municipios || []).join(" · ") || (isEn() ? SCOPE_EN[x.ambito] || x.ambito : x.ambito) || x.tipologia)
                         }</p>${
                             x.participacoes !== undefined
-                                ? `<p>${
+                                ? `<div class="part"><strong>${
                                     Number(x.participacoes).toLocaleString(isEn() ? "en-GB" : "pt-PT")
-                                } ${x.participacoes === 1 ? tr("participação", "submission") : tr("participações", "submissions")}</p>`
+                                }</strong><span>${x.participacoes === 1 ? tr("participação", "submission") : tr("participações", "submissions")}</span></div>`
                                 : ""
                         }${
                             x.resumo_projeto
