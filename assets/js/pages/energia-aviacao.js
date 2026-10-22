@@ -88,28 +88,10 @@
   </div>
   <p class="src-line">${tr("Fontes: ", "Sources: ")}${srcLink("owid")} · ${srcLink("lee2021")}</p>
 </section>
-
-<section id="recursos">
-  <div class="sec-head"><span class="eyebrow">${tr("1 · Todos os recursos", "1 · All resources")}</span><h2>${tr("Tudo o que voar afeta", "Everything flying affects")}</h2></div>
-  <div class="prose"><p>${tr("O carbono é só uma das pressões de voar. Cada dimensão aparece na sua unidade e <strong>não se soma</strong> às outras: combustível, óxidos de azoto, ruído e terra.", "Carbon is only one of the pressures of flying. Each dimension appears in its own unit and is <strong>not added</strong> to the others: fuel, nitrogen oxides, noise and land.")}</p></div>
-  <div class="rec-grid" id="av-rec"></div>
-  <div class="grid2">
-    <figure>
-      <figcaption><span class="t">${tr("Querosene fornecido em Portugal", "Jet fuel supplied in Portugal")}</span><span class="d">${tr("Milhares de toneladas por ano: abastecido para voos ao estrangeiro e para voos dentro do país.", "Thousand tonnes a year: taken on for flights abroad and for flights within the country.")}</span></figcaption>
-      <div class="legend" id="av-leg-comb"></div>
-      <div class="chart" id="av-rc-comb"></div>
-      <div class="src"><span>${tr("Fonte: Eurostat, balanços energéticos (nrg_bal_c); cálculo bioCulture com o poder calorífico da DESNZ (43,9 GJ por tonelada).", "Source: Eurostat, energy balances (nrg_bal_c); bioCulture calculation with DESNZ's calorific value (43.9 GJ per tonne).")}</span></div>
-    </figure>
-    <figure>
-      <figcaption><span class="t">${tr("Óxidos de azoto (NOx) da aviação", "Nitrogen oxides (NOx) from aviation")}</span><span class="d">${tr("Milhares de toneladas por ano, empresas de transporte aéreo residentes em Portugal, onde quer que voem.", "Thousand tonnes a year, air transport companies resident in Portugal, wherever they fly.")}</span></figcaption>
-      <div class="chart" id="av-rc-nox"></div>
-      <div class="src"><span>${tr("Fonte: Eurostat, contas de emissões atmosféricas (env_ac_ainah_r2), NACE H51, poluente NOX.", "Source: Eurostat, air emissions accounts (env_ac_ainah_r2), NACE H51, pollutant NOX.")}</span></div>
-    </figure>
-  </div>
-</section>
-
+<div class="reading-head"><h2 class="reading-divider" id="leitura-local">${tr("Em Portugal", "In Portugal")}</h2>
+<p class="reading-scope">${tr("Continente, Açores e Madeira, sempre que a fonte os inclui.", "Mainland, Azores and Madeira, wherever the source includes them.")}</p></div>
 <section id="voos">
-  <div class="sec-head"><span class="eyebrow">${tr("2 · Voos reais", "2 · Real flights")}</span><h2>${tr("Quanto gasta cada rota, por dia e por ano", "How much each route uses, per day and per year")}</h2></div>
+  <div class="sec-head"><span class="eyebrow">${tr("1 · Voos reais", "1 · Real flights")}</span><h2>${tr("Quanto gasta cada rota, por dia e por ano", "How much each route uses, per day and per year")}</h2></div>
   <div class="prose">
     <p>${tr("O Eurostat conta, por ano, os <strong>voos e os passageiros</strong> entre cada aeroporto português e os seus parceiros, nos dois sentidos e de todas as companhias. Multiplicámos os passageiros pela distância e pelo fator médio da DESNZ para estimar o <strong>combustível e o CO₂e da rota inteira</strong>, e dividimos pelo ano para chegar à média diária, semanal e mensal.", "Eurostat counts, per year, the <strong>flights and passengers</strong> between each Portuguese airport and its partners, in both directions and for all airlines. We multiplied passengers by distance and by the DESNZ average factor to estimate the <strong>fuel and CO₂e of the whole route</strong>, and divided by the year to get the daily, weekly and monthly average.")}</p>
   </div>
@@ -131,49 +113,8 @@
     <div class="src"><span>${tr("Cálculo bioCulture a partir do Eurostat (avia_par_pt) e dos fatores da DESNZ 2025; estimativa, não o combustível medido.", "bioCulture calculation from Eurostat (avia_par_pt) and DESNZ 2025 factors; an estimate, not measured fuel.")}</span></div>
   </figure>
 </section>
-
-<section id="calcular">
-  <div class="sec-head"><span class="eyebrow">${tr("3 · A tua viagem", "3 · Your trip")}</span><h2>${tr("Quanto CO₂ cabe numa viagem?", "How much CO₂ is in a trip?")}</h2></div>
-  <div class="prose"><p>${tr("Escolhe o aeroporto de partida e o de chegada, em qualquer parte do mundo. A estimativa é <strong>distância × fator médio por passageiro e quilómetro</strong> (média de todas as classes), e o fator já inclui o desvio das rotas reais face à linha reta.", "Choose the departure and arrival airports anywhere in the world. The estimate is <strong>distance × factor per passenger-kilometre</strong>, and the factor already includes the detour of real routes compared with a straight line.")}</p></div>
-  <figure class="calc">
-    <figcaption><span class="t">${tr("Calculadora de rota", "Route calculator")}</span><span class="d">${tr("Escreve a cidade ou o código IATA (por exemplo, Lisboa ou LIS) e escolhe na lista.", "Type the city or IATA code (for example, Lisbon or LIS) and pick from the list.")}</span></figcaption>
-    <div class="calc-form">
-      <label>${tr("De", "From")}<input id="av-de" list="av-lista" autocomplete="off" spellcheck="false" placeholder="${tr("Cidade ou código IATA", "City or IATA code")}"></label>
-      <label>${tr("Para", "To")}<input id="av-para" list="av-lista" autocomplete="off" spellcheck="false" placeholder="${tr("Cidade ou código IATA", "City or IATA code")}"></label>
-      <label>${tr("Viagens por ano", "Trips per year")}<input id="av-n" type="number" min="1" max="100" value="1" inputmode="numeric"></label>
-      <div class="seg" id="av-ida" role="group" aria-label="${tr("Tipo de viagem", "Trip type")}"><button aria-pressed="true" data-v="1">${tr("Só ida", "One way")}</button><button aria-pressed="false" data-v="2">${tr("Ida e volta", "Round trip")}</button></div>
-      <datalist id="av-lista">${AE.aeroportos.map((a) => `<option value="${esc(rotulo(a))}"></option>`).join("")}</datalist>
-    </div>
-    <div class="chips" id="av-chips"><span>${tr("Exemplos:", "Examples:")}</span></div>
-    <div id="av-res" aria-live="polite"></div>
-    <div class="src"><span>${tr("Fatores: DESNZ 2025, voos entre aeroportos fora do Reino Unido. Aeroportos: OurAirports.", "Factors: DESNZ 2025, flights between non-UK airports. Airports: OurAirports.")}</span></div>
-  </figure>
-</section>
-
-<section id="rotas">
-  <div class="sec-head"><span class="eyebrow">${tr("4 · Rotas de exemplo", "4 · Example routes")}</span><h2>${tr("A distância manda, mas não explica tudo", "Distance rules, but it does not explain everything")}</h2></div>
-  <div class="prose"><p id="av-rotas-txt"></p></div>
-  <figure>
-    <figcaption><span class="t">${tr("CO₂ por passageiro em classe económica, rotas de exemplo", "CO₂ per economy-class passenger, example routes")}</span><span class="d">${tr("Só ida, kg de CO₂e. A barra escura é a estimativa só com emissões diretas; a clara é o que se soma com os efeitos não-CO₂.", "One way, kg of CO₂e. The dark bar is the estimate with direct emissions only; the light one is what is added by non-CO₂ effects.")}</span></figcaption>
-    <div class="legend" id="av-leg-rotas"></div>
-    <div class="chart" id="av-rotas"></div>
-    <div class="src"><span>${tr("Fonte: cálculo bioCulture com fatores DESNZ 2025 e coordenadas OurAirports; as rotas são exemplos, não as mais movimentadas.", "Source: bioCulture calculation with DESNZ 2025 factors and OurAirports coordinates; the routes are examples, not the busiest.")}</span></div>
-  </figure>
-</section>
-
-<section id="classes">
-  <div class="sec-head"><span class="eyebrow">${tr("5 · Classe de bilhete", "5 · Ticket class")}</span><h2>${tr("Quanto espaço ocupas, tanto pesas", "The more space you take, the more you weigh")}</h2></div>
-  <div class="prose"><p id="av-classes-txt"></p></div>
-  <figure>
-    <figcaption><span class="t">${tr("Gramas de CO₂e por passageiro e quilómetro, por classe", "Grams of CO₂e per passenger-kilometre, by class")}</span><span class="d">${tr("O avião emite o mesmo; muda a parte que é atribuída a cada passageiro, conforme o espaço que ocupa na cabine.", "The aircraft emits the same; what changes is the share assigned to each passenger, according to the cabin space they take.")}</span></figcaption>
-    <div class="legend" id="av-leg-classes"></div>
-    <div class="chart" id="av-classes"></div>
-    <div class="src"><span>${tr("Fonte: DESNZ 2025, «International, to/from non-UK». Os fatores por classe repartem as emissões pela área que cada passageiro ocupa.", "Source: DESNZ 2025, “International, to/from non-UK”. Class factors split emissions by the area each passenger takes.")}</span></div>
-  </figure>
-</section>
-
 <section id="portugal">
-  <div class="sec-head"><span class="eyebrow">${tr("6 · Portugal", "6 · Portugal")}</span><h2>${tr("O transporte aéreo português em 30 anos", "Portuguese air transport over 30 years")}</h2></div>
+  <div class="sec-head"><span class="eyebrow">${tr("2 · Em 30 anos", "2 · Over 30 years")}</span><h2>${tr("O transporte aéreo português em 30 anos", "Portuguese air transport over 30 years")}</h2></div>
   <div class="prose"><p id="av-pt-txt"></p></div>
   <div class="tiles" id="av-pt-tiles"></div>
   <div class="grid2">
@@ -189,9 +130,47 @@
     </figure>
   </div>
 </section>
-
+<header class="reading-divider" id="panorama-global"><h2>${tr("No mundo", "Worldwide")}</h2></header>
+<section id="recursos">
+  <div class="sec-head"><span class="eyebrow">${tr("3 · Todos os recursos", "3 · All resources")}</span><h2>${tr("Tudo o que voar afeta", "Everything flying affects")}</h2></div>
+  <div class="prose"><p>${tr("O carbono é só uma das pressões de voar. Cada dimensão aparece na sua unidade e <strong>não se soma</strong> às outras: combustível, óxidos de azoto, ruído e terra.", "Carbon is only one of the pressures of flying. Each dimension appears in its own unit and is <strong>not added</strong> to the others: fuel, nitrogen oxides, noise and land.")}</p></div>
+  <div class="rec-grid" id="av-rec"></div>
+  <div class="grid2">
+    <figure>
+      <figcaption><span class="t">${tr("Querosene fornecido em Portugal", "Jet fuel supplied in Portugal")}</span><span class="d">${tr("Milhares de toneladas por ano: abastecido para voos ao estrangeiro e para voos dentro do país.", "Thousand tonnes a year: taken on for flights abroad and for flights within the country.")}</span></figcaption>
+      <div class="legend" id="av-leg-comb"></div>
+      <div class="chart" id="av-rc-comb"></div>
+      <div class="src"><span>${tr("Fonte: Eurostat, balanços energéticos (nrg_bal_c); cálculo bioCulture com o poder calorífico da DESNZ (43,9 GJ por tonelada).", "Source: Eurostat, energy balances (nrg_bal_c); bioCulture calculation with DESNZ's calorific value (43.9 GJ per tonne).")}</span></div>
+    </figure>
+    <figure>
+      <figcaption><span class="t">${tr("Óxidos de azoto (NOx) da aviação", "Nitrogen oxides (NOx) from aviation")}</span><span class="d">${tr("Milhares de toneladas por ano, empresas de transporte aéreo residentes em Portugal, onde quer que voem.", "Thousand tonnes a year, air transport companies resident in Portugal, wherever they fly.")}</span></figcaption>
+      <div class="chart" id="av-rc-nox"></div>
+      <div class="src"><span>${tr("Fonte: Eurostat, contas de emissões atmosféricas (env_ac_ainah_r2), NACE H51, poluente NOX.", "Source: Eurostat, air emissions accounts (env_ac_ainah_r2), NACE H51, pollutant NOX.")}</span></div>
+    </figure>
+  </div>
+</section>
+<section id="rotas">
+  <div class="sec-head"><span class="eyebrow">${tr("4 · Rotas de exemplo", "4 · Example routes")}</span><h2>${tr("A distância manda, mas não explica tudo", "Distance rules, but it does not explain everything")}</h2></div>
+  <div class="prose"><p id="av-rotas-txt"></p></div>
+  <figure>
+    <figcaption><span class="t">${tr("CO₂ por passageiro em classe económica, rotas de exemplo", "CO₂ per economy-class passenger, example routes")}</span><span class="d">${tr("Só ida, kg de CO₂e. A barra escura é a estimativa só com emissões diretas; a clara é o que se soma com os efeitos não-CO₂.", "One way, kg of CO₂e. The dark bar is the estimate with direct emissions only; the light one is what is added by non-CO₂ effects.")}</span></figcaption>
+    <div class="legend" id="av-leg-rotas"></div>
+    <div class="chart" id="av-rotas"></div>
+    <div class="src"><span>${tr("Fonte: cálculo bioCulture com fatores DESNZ 2025 e coordenadas OurAirports; as rotas são exemplos, não as mais movimentadas.", "Source: bioCulture calculation with DESNZ 2025 factors and OurAirports coordinates; the routes are examples, not the busiest.")}</span></div>
+  </figure>
+</section>
+<section id="classes">
+  <div class="sec-head"><span class="eyebrow">${tr("5 · Classe de bilhete", "5 · Ticket class")}</span><h2>${tr("Quanto espaço ocupas, tanto pesas", "The more space you take, the more you weigh")}</h2></div>
+  <div class="prose"><p id="av-classes-txt"></p></div>
+  <figure>
+    <figcaption><span class="t">${tr("Gramas de CO₂e por passageiro e quilómetro, por classe", "Grams of CO₂e per passenger-kilometre, by class")}</span><span class="d">${tr("O avião emite o mesmo; muda a parte que é atribuída a cada passageiro, conforme o espaço que ocupa na cabine.", "The aircraft emits the same; what changes is the share assigned to each passenger, according to the cabin space they take.")}</span></figcaption>
+    <div class="legend" id="av-leg-classes"></div>
+    <div class="chart" id="av-classes"></div>
+    <div class="src"><span>${tr("Fonte: DESNZ 2025, «International, to/from non-UK». Os fatores por classe repartem as emissões pela área que cada passageiro ocupa.", "Source: DESNZ 2025, “International, to/from non-UK”. Class factors split emissions by the area each passenger takes.")}</span></div>
+  </figure>
+</section>
 <section id="tempo">
-  <div class="sec-head"><span class="eyebrow">${tr("7 · Linha do tempo", "7 · Timeline")}</span><h2>${tr("O voo cresceu, e o clima aqueceu: o que isso prova?", "Flying grew and the climate warmed: what does that prove?")}</h2></div>
+  <div class="sec-head"><span class="eyebrow">${tr("6 · Linha do tempo", "6 · Timeline")}</span><h2>${tr("O voo cresceu, e o clima aqueceu: o que isso prova?", "Flying grew and the climate warmed: what does that prove?")}</h2></div>
   <div class="prose"><p id="tp-txt"></p><p id="tp-aviso"></p></div>
   <div class="grid2">
     <figure>
@@ -219,7 +198,23 @@
     </figure>
   </div>
 </section>
-
+<section id="calcular">
+  <div class="sec-head"><span class="eyebrow">${tr("7 · A tua viagem", "7 · Your trip")}</span><h2>${tr("Quanto CO₂ cabe numa viagem?", "How much CO₂ is in a trip?")}</h2></div>
+  <div class="prose"><p>${tr("Escolhe o aeroporto de partida e o de chegada, em qualquer parte do mundo. A estimativa é <strong>distância × fator médio por passageiro e quilómetro</strong> (média de todas as classes), e o fator já inclui o desvio das rotas reais face à linha reta.", "Choose the departure and arrival airports anywhere in the world. The estimate is <strong>distance × factor per passenger-kilometre</strong>, and the factor already includes the detour of real routes compared with a straight line.")}</p></div>
+  <figure class="calc">
+    <figcaption><span class="t">${tr("Calculadora de rota", "Route calculator")}</span><span class="d">${tr("Escreve a cidade ou o código IATA (por exemplo, Lisboa ou LIS) e escolhe na lista.", "Type the city or IATA code (for example, Lisbon or LIS) and pick from the list.")}</span></figcaption>
+    <div class="calc-form">
+      <label>${tr("De", "From")}<input id="av-de" list="av-lista" autocomplete="off" spellcheck="false" placeholder="${tr("Cidade ou código IATA", "City or IATA code")}"></label>
+      <label>${tr("Para", "To")}<input id="av-para" list="av-lista" autocomplete="off" spellcheck="false" placeholder="${tr("Cidade ou código IATA", "City or IATA code")}"></label>
+      <label>${tr("Viagens por ano", "Trips per year")}<input id="av-n" type="number" min="1" max="100" value="1" inputmode="numeric"></label>
+      <div class="seg" id="av-ida" role="group" aria-label="${tr("Tipo de viagem", "Trip type")}"><button aria-pressed="true" data-v="1">${tr("Só ida", "One way")}</button><button aria-pressed="false" data-v="2">${tr("Ida e volta", "Round trip")}</button></div>
+      <datalist id="av-lista">${AE.aeroportos.map((a) => `<option value="${esc(rotulo(a))}"></option>`).join("")}</datalist>
+    </div>
+    <div class="chips" id="av-chips"><span>${tr("Exemplos:", "Examples:")}</span></div>
+    <div id="av-res" aria-live="polite"></div>
+    <div class="src"><span>${tr("Fatores: DESNZ 2025, voos entre aeroportos fora do Reino Unido. Aeroportos: OurAirports.", "Factors: DESNZ 2025, flights between non-UK airports. Airports: OurAirports.")}</span></div>
+  </figure>
+</section>
 <section id="limites">
   <div class="sec-head"><span class="eyebrow">${tr("8 · Limites e fontes", "8 · Limits and sources")}</span><h2>${tr("O que estes números não dizem", "What these numbers do not tell")}</h2></div>
   <ol class="notes" id="av-notas"></ol>
