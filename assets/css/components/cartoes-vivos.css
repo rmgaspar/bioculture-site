@@ -60,3 +60,20 @@ html body #main .proactive-section .grey-label { display: block; margin-bottom: 
 html body #main .solutions-grid:has(> .pr-passo) { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 html body #main .sources-footer { margin-top: 1.6rem; padding-top: 0; border-top: 0 !important; }
 html body #main .sources-footer p { color: #66716a; font-size: .8rem !important; line-height: 1.5; }
+
+/* Quadros de «o que medir» (principle-grid sem números): mosaicos suaves, cada um com a sua cor e um ponto, com espaço a separar da legenda da fotografia. */
+html body #main .global-reading .principle-grid:not(:has(> .pr-passo)) { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); gap: 1rem; margin: 2rem 0 .4rem; padding: 0; counter-reset: none; }
+html body #main .global-reading .principle-grid:not(:has(> .pr-passo)) > article { --tom: #6b776f; display: grid; align-content: start; gap: .55rem; margin: 0; padding: 1.4rem 1.5rem 1.55rem; border: 0 !important; border-radius: 22px; background: color-mix(in srgb, var(--tom) 10%, #fff) !important; box-shadow: none; transition: transform .2s ease, background .2s ease; }
+html body #main .global-reading .principle-grid:not(:has(> .pr-passo)) > article:hover { transform: translateY(-2px); background: color-mix(in srgb, var(--tom) 15%, #fff) !important; }
+html body #main .global-reading .principle-grid:not(:has(> .pr-passo)) > article:nth-child(6n+1) { --tom: #2f78b0; }
+html body #main .global-reading .principle-grid:not(:has(> .pr-passo)) > article:nth-child(6n+2) { --tom: #8a5a2b; }
+html body #main .global-reading .principle-grid:not(:has(> .pr-passo)) > article:nth-child(6n+3) { --tom: #3f7a3a; }
+html body #main .global-reading .principle-grid:not(:has(> .pr-passo)) > article:nth-child(6n+4) { --tom: #b88a1a; }
+html body #main .global-reading .principle-grid:not(:has(> .pr-passo)) > article:nth-child(6n+5) { --tom: #b0553a; }
+html body #main .global-reading .principle-grid:not(:has(> .pr-passo)) > article:nth-child(6n) { --tom: #5b6f86; }
+html body #main .global-reading .principle-grid:not(:has(> .pr-passo)) > article > b { display: flex; align-items: center; gap: .6rem; color: color-mix(in srgb, var(--tom) 45%, #1d2922); font: 700 1.3rem/1.2 Georgia, "Times New Roman", serif; letter-spacing: -.01em; }
+html body #main .global-reading .principle-grid:not(:has(> .pr-passo)) > article > b::before { content: ""; flex: 0 0 auto; width: .85rem; height: .85rem; border-radius: 50%; background: var(--tom); box-shadow: 0 0 0 .3rem color-mix(in srgb, var(--tom) 18%, transparent); }
+html body #main .global-reading .principle-grid:not(:has(> .pr-passo)) > article > p { margin: 0; color: #3f4a43; font-size: 1rem; line-height: 1.6; }
+@media (min-width: 900px) { html body #main .global-reading .principle-grid:not(:has(> .pr-passo)):has(> article:nth-child(6):last-child) { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (min-width: 900px) { html body #main .global-reading .principle-grid:not(:has(> .pr-passo)):has(> article:nth-child(4):last-child) { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+@media (min-width: 900px) { html body #main .global-reading .lista-com-fotos > .principle-grid:not(:has(> .pr-passo)):not(#u), html body #main .global-reading .lista-com-fotos > .principle-grid:not(:has(> .pr-passo)):has(> article:nth-child(6):last-child) { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 0; } }
