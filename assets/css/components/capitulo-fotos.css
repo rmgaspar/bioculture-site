@@ -179,9 +179,20 @@ html body #main .foto-ao-lado > :is(.section-head, .head) { display: block !impo
 html body #main .foto-ao-lado > :is(.section-head, .head) .eyebrow { display: block; margin: 0 0 .7rem; }
 html body #main .foto-ao-lado > :is(.section-head, .head) > div { min-width: 0; }
 
-/* Abertura de bloco com fotografia: o texto fica ao centro da fotografia e esta é mais larga do que alta, para não sobrar espaço em branco. */
-html body #main .foto-ao-lado:not(.foto-ao-lado--titulo) { grid-template-columns: minmax(0, 1fr) minmax(280px, 460px); align-items: center; column-gap: clamp(1.6rem, 4vw, 3rem); }
-html body #main .foto-ao-lado:not(.foto-ao-lado--titulo) > [data-foto-slot] figure.foto img { aspect-ratio: 16 / 10; max-height: 18rem; }
-html body #main .foto-ao-lado--titulo { grid-template-columns: minmax(0, 1fr) minmax(240px, 380px); align-items: center; }
-html body #main .foto-ao-lado--titulo > [data-foto-slot] figure.foto img { aspect-ratio: 16 / 10; max-height: 14rem; }
+/* Abertura de bloco com fotografia: o título sobe ao topo da fotografia e a legenda com o crédito desce à base, ao lado dela (na coluna do texto),
+   de modo que a fotografia termina na mesma linha do texto e não sobram espaços em branco por baixo. */
+html body #main .foto-ao-lado:has(> :is(.section-head, .head, h2)) { display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, 500px); grid-template-rows: auto 1fr; align-items: start; column-gap: clamp(1.6rem, 4vw, 3rem); row-gap: .8rem; }
+html body #main .foto-ao-lado:has(> :is(.section-head, .head, h2)) > :is(.section-head, .head, h2) { grid-column: 1; grid-row: 1; align-self: start; }
+html body #main .foto-ao-lado:has(> :is(.section-head, .head, h2)) > [data-foto-slot], html body #main .foto-ao-lado:has(> :is(.section-head, .head, h2)) > [data-foto-slot] > figure.foto { display: contents; }
+html body #main .foto-ao-lado:has(> :is(.section-head, .head, h2)) > [data-foto-slot] figure.foto img { grid-column: 2; grid-row: 1 / span 2; width: 100%; aspect-ratio: 16 / 10; max-height: 20rem; object-fit: cover; align-self: start; }
+html body #main .foto-ao-lado:has(> :is(.section-head, .head, h2)) > [data-foto-slot] figure.foto figcaption { grid-column: 1; grid-row: 2; align-self: end; margin: 0; max-width: 40rem; }
+html body #main .foto-ao-lado--titulo { grid-template-columns: minmax(0, 1fr) minmax(260px, 420px); }
+html body #main .foto-ao-lado--titulo > h2.reading-divider { margin: 0 !important; padding-top: 0 !important; border-top: 0 !important; }
+html body #main .foto-ao-lado--titulo > [data-foto-slot] figure.foto img { max-height: 14rem; }
 html body #main .section-block > .foto-ao-lado, html body #main .block > .foto-ao-lado { margin-bottom: 1.2rem; }
+@media (max-width: 900px) {
+  html body #main .foto-ao-lado:has(> :is(.section-head, .head, h2)) { display: block; }
+  html body #main .foto-ao-lado:has(> :is(.section-head, .head, h2)) > [data-foto-slot] { display: block; margin-top: 1.2rem; }
+  html body #main .foto-ao-lado:has(> :is(.section-head, .head, h2)) > [data-foto-slot] > figure.foto { display: block; }
+  html body #main .foto-ao-lado:has(> :is(.section-head, .head, h2)) > [data-foto-slot] figure.foto figcaption { max-width: none; margin-top: .6rem; }
+}
