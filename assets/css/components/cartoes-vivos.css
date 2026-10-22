@@ -36,3 +36,20 @@ html body #main .cv-grelha > .cv > small { display: flex; flex-wrap: wrap; align
 .cv-foto figure.foto { height: 100%; display: flex; flex-direction: column; }
 .cv-foto figure.foto img { aspect-ratio: 16 / 10; width: 100%; height: auto; max-height: 17rem; object-fit: cover; border-radius: 18px; }
 @media (max-width: 900px) { .cv-faixa.com-foto { grid-template-columns: minmax(0, 1fr); } .cv-barras li { grid-template-columns: minmax(6rem, 9rem) minmax(0, 1fr) auto; } html body #main .cv-grelha > .cv dl { grid-template-columns: 1fr; } }
+
+/* Passos numerados («A hierarquia das decisões»): cartões suaves, selo com o número e título em serifa, sem traços. */
+html body #main .principle-grid:has(> .pr-passo) { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.1rem; }
+@media (max-width: 1100px) { html body #main .principle-grid:has(> .pr-passo) { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 640px) { html body #main .principle-grid:has(> .pr-passo) { grid-template-columns: minmax(0, 1fr); } }
+html body #main .principle-grid > .pr-passo { --tom: #2f6b3a; display: grid; grid-template-columns: auto 1fr; column-gap: 1rem; row-gap: .45rem; align-items: start; margin: 0; padding: 1.35rem 1.5rem 1.5rem; border: 0 !important; border-top: 0 !important; border-radius: 20px; background: color-mix(in srgb, var(--tom) 13%, #fff) !important; box-shadow: none; transition: transform .2s ease, background .2s ease; }
+html body #main .principle-grid > .pr-passo:hover { transform: translateY(-2px); background: color-mix(in srgb, var(--tom) 19%, #fff) !important; }
+html body #main .principle-grid > .pr-passo:nth-child(1) { --tom: #2f6b3a; }
+html body #main .principle-grid > .pr-passo:nth-child(2) { --tom: #4e7d3a; }
+html body #main .principle-grid > .pr-passo:nth-child(3) { --tom: #7a8a2c; }
+html body #main .principle-grid > .pr-passo:nth-child(4) { --tom: #2f7f6a; }
+html body #main .principle-grid > .pr-passo:nth-child(5) { --tom: #3f7089; }
+html body #main .principle-grid > .pr-passo:nth-child(6) { --tom: #5b6fa3; }
+html body #main .principle-grid > .pr-passo > b { display: contents; }
+.pr-n { grid-row: 1 / span 2; display: grid; place-items: center; width: 2.6rem; height: 2.6rem; border-radius: 50%; background: var(--tom); color: #fff; font: 800 .95rem/1 "Source Sans Pro", sans-serif; letter-spacing: .04em; }
+.pr-t { align-self: center; color: color-mix(in srgb, var(--tom) 45%, #1d2922); font: 700 1.4rem/1.2 Georgia, "Times New Roman", serif; letter-spacing: -.01em; }
+html body #main .principle-grid > .pr-passo > p { grid-column: 2; margin: 0; color: #3f4a43; font-size: 1rem; line-height: 1.6; }

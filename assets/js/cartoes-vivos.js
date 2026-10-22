@@ -150,6 +150,19 @@
             grelha.classList.add("cv-grelha");
         });
     }
+    // Os seis passos da «hierarquia das decisões» (e blocos iguais): o número sai do título e vira um selo; corre depois da tradução da página.
+    function passos() {
+        document.querySelectorAll(".principle-grid > article > b").forEach((b) => {
+            if (b.dataset.cvPasso) return;
+            const m = b.textContent.trim().match(/^(\d{1,2})\s*[·.\-–]\s*(.+)$/);
+            if (!m) return;
+            b.dataset.cvPasso = "1";
+            b.innerHTML = `<span class="pr-n">${m[1]}</span><span class="pr-t">${m[2]}</span>`;
+            b.parentElement.classList.add("pr-passo");
+        });
+    }
+    setTimeout(passos, 700);
+    window.addEventListener("load", () => setTimeout(passos, 400));
     let agendado = 0;
     const agendar = () => { clearTimeout(agendado); agendado = setTimeout(arranjar, 40); };
     arranjar();
