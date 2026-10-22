@@ -274,17 +274,20 @@
             function renderMeasures(d) {
                 const m = d.mitigacao_e_monitorizacao || {};
                 const names = {
-                    solar: "Solar",
-                    eolica: "Eólica",
-                    baterias: "Baterias",
-                    comunidade: "Comunidade",
-                    desativacao: "Desativação",
+                    solar: ["Solar", "Solar", "med-solar", "#b88a1a"],
+                    eolica: ["Eólica", "Wind", "med-eolica", "#2f78b0"],
+                    baterias: ["Baterias", "Batteries", "med-baterias", "#5b6f86"],
+                    comunidade: ["Comunidade", "Community", "med-comunidade", "#b0553a"],
+                    desativacao: ["Desativação", "Decommissioning", "med-desativacao", "#4e7d3a"],
                 };
-                el("measures").innerHTML = Object.entries(m).map(([k, v]) =>
-                    `<article class="measure"><small>Medidas</small><h3>${names[k] || k}</h3><p>${
-                        esc((v || []).slice(0, 5).join(" · "))
-                    }</p></article>`
-                ).join("");
+                el("measures").innerHTML = Object.entries(m).map(([k, v]) => {
+                    const n = names[k] || [k, k, "", "#6b776f"];
+                    return `<article class="measure measure-vivo" style="--tom:${n[3]}">${
+                        n[2] ? `<div class="measure-foto" data-foto-slot="${n[2]}" data-sem-legenda></div>` : ""
+                    }<div class="measure-corpo"><small>${isEn() ? "Measures" : "Medidas"}</small><h3>${isEn() ? n[1] : n[0]}</h3><ul class="crit-chips">${
+                        (v || []).slice(0, 8).map((x) => `<li>${esc(x)}</li>`).join("")
+                    }</ul></div></article>`;
+                }).join("");
             }
             function renderNews(items) {
                 const words = ["ZAER", "solar", "eólic*", "wind", "renew*", "renov*", "licenciamento", "licensing", "fotovolta*", "photovoltaic*", "land use", "mapa verde"];

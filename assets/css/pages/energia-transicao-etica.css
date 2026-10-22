@@ -930,3 +930,35 @@ html body #main .criterion.criterion-vivo h3 { margin: 0; color: color-mix(in sr
 @media (max-width: 1500px) { html body #main .criteria { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (max-width: 1100px) { html body #main .criteria { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 640px) { html body #main .criteria { grid-template-columns: minmax(0, 1fr); } }
+
+/* «Reduzir impactos»: cinco cartões com fotografia, cor própria e as medidas em etiquetas. */
+html body #main .measures { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 1.1rem; margin-top: 1.4rem; }
+html body #main .measures > .measure-vivo { grid-column: span 2; }
+html body #main .measures > .measure-vivo:nth-child(4):nth-last-child(2), html body #main .measures > .measure-vivo:nth-child(5):last-child { grid-column: span 3; }
+html body #main .measure.measure-vivo { --tom: #6b776f; display: flex; flex-direction: column; padding: .75rem .75rem 0; border: 0; border-radius: 22px; background: color-mix(in srgb, var(--tom) 10%, #fff); }
+.measure-foto { margin: 0; }
+.measure-foto:empty { display: none; }
+.measure-foto figure.foto img { aspect-ratio: 16 / 10; border-radius: 15px; }
+.measure-foto figure.foto figcaption { margin: .4rem .6rem 0; }
+.measure-corpo { padding: 1rem .8rem 1.4rem; display: grid; gap: .6rem; }
+html body #main .measure.measure-vivo small { color: var(--tom); font: 800 .72rem/1.2 "Source Sans Pro", sans-serif; letter-spacing: .14em; text-transform: uppercase; }
+html body #main .measure.measure-vivo h3 { margin: 0; color: color-mix(in srgb, var(--tom) 45%, #1d2922); font: 700 1.35rem/1.2 Georgia, "Times New Roman", serif; }
+@media (max-width: 1100px) { html body #main .measures { grid-template-columns: repeat(2, minmax(0, 1fr)); } html body #main .measures > .measure-vivo, html body #main .measures > .measure-vivo:nth-child(4):nth-last-child(2), html body #main .measures > .measure-vivo:nth-child(5):last-child { grid-column: auto; } }
+@media (max-width: 640px) { html body #main .measures { grid-template-columns: minmax(0, 1fr); } }
+
+/* «Continuar a investigação»: os quatro vetores em cartões com fotografia, como na página de Energia. */
+.chapter[data-tom="renovaveis"] { --tom: #9a6a00; --tom-suave: #f8eed2; }
+.chapter[data-tom="mineracao"] { --tom: #8a4b32; --tom-suave: #f3e5de; }
+.chapter[data-tom="digital"] { --tom: #44529a; --tom-suave: #e8eaf6; }
+.chapter[data-tom="pecuaria"] { --tom: #a3472f; --tom-suave: #f6e5df; }
+html body #main .chapters { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.2rem; margin-top: 1.4rem; flex-wrap: initial; }
+html body #main .chapters a.chapter { display: flex !important; flex-direction: column; align-items: stretch !important; justify-content: flex-start !important; padding: .7rem .7rem 0 !important; border: 0 !important; border-radius: 20px !important; background: var(--tom-suave) !important; color: inherit !important; font-family: inherit !important; font-size: 1rem !important; text-align: left; transition: transform .2s ease, box-shadow .2s ease; }
+html body #main .chapters a.chapter:hover { transform: translateY(-3px); box-shadow: 0 18px 34px -24px var(--tom); }
+html body #main .chapters .chapter img { display: block; width: 100%; height: auto; aspect-ratio: 3 / 2; object-fit: cover; border-radius: 14px; background: #e6e1d5; }
+html body #main .chapters .chapter-credito { display: block; margin: .6rem .8rem 0; color: #66716a; font-size: 12px; line-height: 1.5; }
+html body #main .chapters .chapter-corpo { display: block; padding: .9rem .8rem 1.5rem; }
+html body #main .chapters .chapter small { display: block; color: var(--tom); font: 800 .78rem/1.2 "Source Sans Pro", sans-serif; letter-spacing: .08em; text-transform: uppercase; }
+html body #main .chapters .chapter h3 { margin: .5rem 0 .6rem; color: #20342a; font: 700 1.4rem/1.15 Georgia, serif; }
+html body #main .chapters .chapter p { margin: 0; color: #3f4a43; font-size: 1rem; line-height: 1.6; }
+@media (max-width: 1100px) { html body #main .chapters { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 640px) { html body #main .chapters { grid-template-columns: minmax(0, 1fr); } }
