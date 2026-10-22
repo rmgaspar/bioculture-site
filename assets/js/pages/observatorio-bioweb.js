@@ -18,9 +18,8 @@
     const M = { sumario: "Summary", clima: "Climate", vida: "Wildlife", invasoras: "Invasive species", pesticidas: "Pesticides", producao: "Production", teia: "The web", fontes: "Sources" };
     document.querySelectorAll('.reading-nav a[href^="#"]').forEach((a) => { const k = a.getAttribute("href").slice(1); if (M[k]) a.textContent = M[k] + " ↓"; });
     const o = document.querySelector('.reading-nav a[href="/observatorio/observatorio-terra.html"]'); if (o) o.textContent = "Earth Observatory →";
-    const [lead, nota] = document.querySelectorAll(".hero-guide p");
-    if (lead) lead.textContent = "Climate, wildlife, invasive species, pesticides and farm output in series side by side: what the data confirm, what they refute and what we still do not know.";
-    if (nota) nota.textContent = "What happens in parallel does not prove cause; the links come from the scientific literature, cited in each chapter.";
+    const lead = document.querySelector(".hero-guide p");
+    if (lead) lead.textContent = "Climate, wildlife, invasive species, pesticides and farm output side by side: what the data confirm, what they refute and what is still unknown, without mistaking coincidence for cause.";
     const cl = document.querySelector(".category-label"); if (cl) cl.textContent = "Observatory · bioWeb";
     const h1 = document.getElementById("page-title"); if (h1) h1.textContent = "The web";
     document.title = "The web — bioCulture";
