@@ -198,6 +198,8 @@ const K = {
   ssrY: D.pt_ssr.years[0] + '–' + D.pt_ssr.years.at(-1)
 };
 document.querySelectorAll('[data-k]').forEach(n=>{ if(K[n.dataset.k]!=null) n.textContent = K[n.dataset.k]; });
+/* Se produção, terra e comércio chegam ao mesmo ano, a nota da FAO diz só «até ano». */
+{ const sp=document.querySelector('[data-k="yp"]'), pn=sp&&sp.closest('p'); if(pn&&K.yp!=null&&K.yp===K.yt) pn.textContent = EN?('Official FAO data up to '+K.yp+'.'):('Dados oficiais da FAO até '+K.yp+'.'); }
 
 /* ---------- hero tiles ---------- */
 const cer = D.cereals;
