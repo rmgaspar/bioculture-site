@@ -93,3 +93,34 @@ html body #main .dimensions > .dimension > h3 { margin: .15rem 0 0; color: color
 html body #main .dimensions > .dimension > p { margin: 0; color: #3f4a43; font-size: 1rem; line-height: 1.6; }
 @media (max-width: 1100px) { html body #main .dimensions { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 640px) { html body #main .dimensions { grid-template-columns: minmax(0, 1fr); } }
+
+/* Garantias: antes / durante / depois em cartões suaves, com a cor de cada momento. */
+html body #main .monitoring { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin: 2rem 0 .4rem; }
+html body #main .monitoring > .monitor { --tom: #6b776f; display: grid; align-content: start; gap: .55rem; padding: 1.5rem 1.6rem 1.65rem; border: 0 !important; border-radius: 22px; background: color-mix(in srgb, var(--tom) 10%, #fff) !important; transition: transform .2s ease, background .2s ease; }
+html body #main .monitoring > .monitor:hover { transform: translateY(-2px); background: color-mix(in srgb, var(--tom) 15%, #fff) !important; }
+html body #main .monitoring > .monitor:nth-child(1) { --tom: #2f78b0; }
+html body #main .monitoring > .monitor:nth-child(2) { --tom: #b88a1a; }
+html body #main .monitoring > .monitor:nth-child(3) { --tom: #3f7a3a; }
+html body #main .monitoring > .monitor > small { justify-self: start; padding: .25em .8em; border-radius: 999px; background: color-mix(in srgb, var(--tom) 16%, #fff); color: color-mix(in srgb, var(--tom) 75%, #1d2922) !important; font: 800 .7rem/1.3 "Source Sans Pro", sans-serif; letter-spacing: .12em; text-transform: uppercase; }
+html body #main .monitoring > .monitor > h3 { margin: 0; color: color-mix(in srgb, var(--tom) 45%, #1d2922); font: 700 1.35rem/1.2 Georgia, "Times New Roman", serif; }
+html body #main .monitoring > .monitor > p { margin: 0; color: #3f4a43; font-size: 1rem; line-height: 1.6; }
+@media (max-width: 1100px) { html body #main .monitoring { grid-template-columns: minmax(0, 1fr); } }
+
+/* Percurso: os vetores em cartões com fotografia e a cor de cada um (como em Renováveis e Energia). */
+.chapter[data-tom="renovaveis"] { --tom: #9a6a00; --tom-suave: #f8eed2; }
+.chapter[data-tom="energia"] { --tom: #3f7a3a; --tom-suave: #e5efdf; }
+.chapter[data-tom="mineracao"] { --tom: #8a4b32; --tom-suave: #f3e5de; }
+.chapter[data-tom="digital"] { --tom: #44529a; --tom-suave: #e8eaf6; }
+.chapter[data-tom="pecuaria"] { --tom: #a3472f; --tom-suave: #f6e5df; }
+html body #main .chapters:has(> a.chapter) { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.2rem; margin-top: 1.4rem; flex-wrap: initial; }
+html body #main .chapters a.chapter { display: flex !important; flex-direction: column; align-items: stretch !important; justify-content: flex-start !important; padding: .7rem .7rem 0 !important; border: 0 !important; border-radius: 20px !important; background: var(--tom-suave) !important; color: inherit !important; font-family: inherit !important; font-size: 1rem !important; text-align: left; transition: transform .2s ease, box-shadow .2s ease; }
+html body #main .chapters a.chapter:hover { transform: translateY(-3px); box-shadow: 0 18px 34px -24px var(--tom); }
+html body #main .chapters .chapter img { display: block; width: 100%; height: auto; aspect-ratio: 3 / 2; object-fit: cover; border-radius: 14px; background: #e6e1d5; }
+html body #main .chapters .chapter-credito { display: block; margin: .6rem .8rem 0; }
+html body #main .chapters .chapter-corpo { display: block; padding: .9rem .8rem 1.5rem; }
+html body #main .chapters .chapter small { display: block; color: var(--tom); font: 800 .78rem/1.2 "Source Sans Pro", sans-serif; letter-spacing: .08em; text-transform: uppercase; }
+html body #main .chapters .chapter h3 { margin: .5rem 0 .6rem; color: #20342a; font: 700 1.4rem/1.15 Georgia, serif; }
+html body #main .chapters .chapter p { margin: 0; color: #3f4a43; font-size: 1rem; line-height: 1.6; }
+html body #main .chapters-creditos { margin: .9rem 0 0; color: #6a746d; line-height: 1.6; }
+@media (max-width: 1100px) { html body #main .chapters:has(> a.chapter) { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 640px) { html body #main .chapters:has(> a.chapter) { grid-template-columns: minmax(0, 1fr); } }
