@@ -197,6 +197,12 @@
                 }
                 const f = c.factos_participacao,
                     ps = d.pszaer?.consulta_publica || {};
+                const span = (x) => Math.round((new Date(x.fim + "T12:00:00") - new Date(x.inicio + "T12:00:00")) / 864e5) + 1,
+                    projects = recent.filter((x) => x.inicio && x.fim && !/Estrat[ée]gias|Programas/i.test(x.tipologia || "")).map((x) => ({ x, d: span(x) })).filter((r) => r.d > 0),
+                    short = projects.sort((a, b) => a.d - b.d || (b.x.participacoes || 0) - (a.x.participacoes || 0)).slice(0, 7),
+                    maxD = Math.max(...projects.map((r) => r.d), 1),
+                    clean = (t) => String(t || "").replace(/\s+-\s+projeto reformulado$/i, "").replace(/^(PDA\s+(do\s+Projeto\s+d[aeo]\s+)?[—-]?\s*|Proposta de Definição Âmbito:\s*)/i, "").replace(/\s+e\s+LMAT associadas.*$/i, "").replace(/^Central Solar Fotovoltaica de Sophia$/i, "Central Solar de Sophia").replace(/^Central Solar Fotovoltaica/i, "Central Solar").replace(/^Parque Eólico/i, "P. Eólico"),
+                    shortest = short.length ? `<div class="part-curtas"><h4>${tr("As consultas mais curtas", "The shortest consultations")}</h4><ul>${short.map((r) => `<li class="${r.d <= 21 ? "curta" : ""}"><span class="pc-nome">${esc(clean(r.x.titulo))}</span><span class="pc-bar"><b style="width:${Math.max(6, r.d / maxD * 100)}%"></b></span><em>${r.d} ${tr("dias", "days")}${typeof r.x.participacoes === "number" ? ` · ${num(r.x.participacoes)}` : ""}</em></li>`).join("")}</ul><p>${tr("Dias de prazo e, a seguir, participações recebidas. Uma consulta de 14 dias pode ter milhares de contributos; o prazo curto não impede a participação, mas reduz o tempo para ler os documentos.", "Days allowed and, after it, submissions received. A 14-day consultation can draw thousands of submissions; a short deadline does not stop participation, but it shortens the time to read the documents.")}</p></div>` : "";
                 el("participa-facts").innerHTML = f && f.consultas_projetos
                     ? `<small>${tr("Factos sobre a participação", "Facts about participation")} · ${f.ano}</small><h3>${
                         tr(`${f.consultas_projetos} consultas de projetos de renováveis`, `${f.consultas_projetos} renewables project consultations`)
@@ -222,7 +228,7 @@
                     ])}</li></ul><p>${
                         tr("Prazos curtos e períodos de férias reduzem a possibilidade real de participar. A divulgação oficial é feita sobretudo no portal e por editais.",
                             "Short deadlines and holiday periods reduce the real chance to take part. Official notice is given mainly on the portal and through public notices.")
-                    }</p><span class="now-date">${esc(isEn() ? "Projects subject to environmental assessment; excludes national programmes and strategies. Duration in calendar days, including the first and last day." : f.nota)}</span>`
+                    }</p><span class="now-date">${esc(isEn() ? "Projects subject to environmental assessment; excludes national programmes and strategies. Duration in calendar days, including the first and last day." : f.nota)}</span>${shortest}`
                     : "";
             }
             function renderLocal(d) {
