@@ -98,7 +98,7 @@
       <div class="sec-head"><span class="eyebrow">${tr("Sumário", "Summary")}</span><h2>${tr("Dez coisas que os dados mostram", "Ten things the data show")}</h2></div>
       <ol class="findings" id="tFindings"></ol></section>`);
 
-    html.push(sec("clima", tr("1 · Clima", "1 · Climate"), tr("Um planeta mais quente, com mais gases na atmosfera e o mar a subir", "A warmer planet, more gases in the air and a rising sea"),
+    html.push(sec("clima", tr("Clima", "Climate"), tr("Um planeta mais quente, com mais gases na atmosfera e o mar a subir", "A warmer planet, more gases in the air and a rising sea"),
       prose(
         tr(`O desvio da temperatura global face a 1951–1980 passou de ${fmt(tmp.find((p) => p.a === 1950)?.v, 2)} °C em 1950 para <strong>${fmt(tmp.find((p) => p.a === 2024)?.v, 2)} °C em 2024</strong> (NASA GISTEMP). Medido contra o período 1850–1900, a OMM calcula <strong>+${fmt(dest.clima_2025.valor, 2)} °C em ${dest.clima_2025.ano}</strong> (incerteza ±${fmt(dest.clima_2025.incerteza, 2)}). São bases diferentes, por isso os dois números não se comparam diretamente.`,
           `The global temperature departure from 1951–1980 went from ${fmt(tmp.find((p) => p.a === 1950)?.v, 2)} °C in 1950 to <strong>${fmt(tmp.find((p) => p.a === 2024)?.v, 2)} °C in 2024</strong> (NASA GISTEMP). Against 1850–1900, the WMO estimates <strong>+${fmt(dest.clima_2025.valor, 2)} °C in ${dest.clima_2025.ano}</strong> (uncertainty ±${fmt(dest.clima_2025.incerteza, 2)}). The baselines differ, so the two figures cannot be compared directly.`),
@@ -115,7 +115,7 @@
       `<div class="callout">${tr("Estas cinco séries usam <strong>anos selecionados</strong> (décadas e os mais recentes) e não todos os anos: servem para ver a direção, não para calcular tendências finas. O mínimo do gelo oscila muito de ano para ano. As séries completas estão nas fontes indicadas no fim da página.",
         "These five series use <strong>selected years</strong> (decades and the most recent) rather than every year: they show direction, not fine trends. The ice minimum varies a lot from year to year. The complete series are at the sources listed at the end of the page.")}</div>`));
 
-    html.push(sec("energia", tr("2 · Energia", "2 · Energy"), tr("Eletricidade para quase todos, mas as renováveis ainda são minoria", "Electricity for almost everyone, but renewables are still a minority"),
+    html.push(sec("energia", tr("Energia", "Energy"), tr("Eletricidade para quase todos, mas as renováveis ainda são minoria", "Electricity for almost everyone, but renewables are still a minority"),
       prose(
         tr(`Em ${W.acc.y}, <strong>${fmt(W.acc.v, 1)}%</strong> da população mundial tinha acesso a eletricidade, contra ${fmt(at("acesso_eletricidade", "WLD", ser("acesso_eletricidade", "WLD").a), 1)}% em ${ser("acesso_eletricidade", "WLD").a}. Ainda assim, ${accLow} Estados ficam abaixo de 50%. Na produção de eletricidade, as renováveis eram <strong>${fmt(W.re.v, 1)}%</strong> no mundo em ${W.re.y}, <strong>${fmt(eu("eletricidade_renovavel").v, 1)}%</strong> na União Europeia e <strong>${fmt(pt("eletricidade_renovavel").v, 1)}%</strong> em Portugal.`,
           `In ${W.acc.y}, <strong>${fmt(W.acc.v, 1)}%</strong> of the world’s population had access to electricity, against ${fmt(at("acesso_eletricidade", "WLD", ser("acesso_eletricidade", "WLD").a), 1)}% in ${ser("acesso_eletricidade", "WLD").a}. Even so, ${accLow} states are below 50%. In electricity generation, renewables were <strong>${fmt(W.re.v, 1)}%</strong> worldwide in ${W.re.y}, <strong>${fmt(eu("eletricidade_renovavel").v, 1)}%</strong> in the European Union and <strong>${fmt(pt("eletricidade_renovavel").v, 1)}%</strong> in Portugal.`),
@@ -127,7 +127,7 @@
         <div class="chart" id="cEne"></div><div class="src"><span id="sEne"></span></div></figure>` +
       `<figure id="rkEne"></figure>`));
 
-    html.push(sec("ar", tr("3 · Ar", "3 · Air"), tr("Respirar: quase todos os países ultrapassam o valor-guia da OMS", "Breathing: almost every country exceeds the WHO guideline"),
+    html.push(sec("ar", tr("Ar", "Air"), tr("Respirar: quase todos os países ultrapassam o valor-guia da OMS", "Breathing: almost every country exceeds the WHO guideline"),
       prose(
         tr(`A exposição média da população mundial a partículas finas (PM2.5) foi de <strong>${fmt(W.pm.v, 1)} µg/m³ em ${W.pm.y}</strong>. O valor-guia da OMS (2021) é de <strong>${D1.PM_GUIDE} µg/m³</strong> por ano: <strong>${pmAbove} dos ${pmRows.length} Estados</strong> com dados estão acima dele. Portugal tem ${fmt(pt("pm25").v, 1)} µg/m³ (${pt("pm25").y}), ${pt("pm25").v < 10 ? "dentro" : "fora"} da meta intermédia de 10 µg/m³.`,
           `Average population exposure to fine particles (PM2.5) was <strong>${fmt(W.pm.v, 1)} µg/m³ in ${W.pm.y}</strong>. The WHO guideline (2021) is <strong>${D1.PM_GUIDE} µg/m³</strong> a year: <strong>${pmAbove} of the ${pmRows.length} states</strong> with data are above it. Portugal has ${fmt(pt("pm25").v, 1)} µg/m³ (${pt("pm25").y}), ${pt("pm25").v < 10 ? "within" : "outside"} the 10 µg/m³ interim target.`),
@@ -138,7 +138,7 @@
       fig("cArBandas", tr("Quantos países em cada faixa de PM2.5", "How many countries in each PM2.5 band"), tr("Estados por exposição média anual, " + W.pm.y + ". Metas intermédias da OMS: 35, 25, 15 e 10 µg/m³.", "States by annual mean exposure, " + W.pm.y + ". WHO interim targets: 35, 25, 15 and 10 µg/m³.")) +
       `<figure id="rkAr"></figure>`));
 
-    html.push(sec("agua", tr("4 · Água", "4 · Water"), tr("Água: pouco stress em média, muito stress onde falta", "Water: little stress on average, a lot where it is scarce"),
+    html.push(sec("agua", tr("Água", "Water"), tr("Água: pouco stress em média, muito stress onde falta", "Water: little stress on average, a lot where it is scarce"),
       prose(
         tr(`O stress hídrico compara a água doce captada com a que se renova (depois de reservar caudais para os ecossistemas). A média mundial foi de <strong>${fmt(W.ws.v, 1)}%</strong> em ${W.ws.y}, mas <strong>${wsCrit} Estados</strong> captam mais do que os recursos renováveis disponíveis (acima de 100%). Portugal: ${fmt(pt("stress_hidrico").v, 1)}% (${pt("stress_hidrico").y}). Os números nacionais escondem as diferenças dentro de cada país e entre estações do ano.`,
           `Water stress compares freshwater withdrawn with what is renewed (after reserving flows for ecosystems). The world average was <strong>${fmt(W.ws.v, 1)}%</strong> in ${W.ws.y}, but <strong>${wsCrit} states</strong> withdraw more than the renewable resources available (above 100%). Portugal: ${fmt(pt("stress_hidrico").v, 1)}% (${pt("stress_hidrico").y}). National figures hide differences within each country and between seasons.`),
@@ -151,7 +151,7 @@
       `</div>` +
       `<figure id="rkAgua"></figure>`));
 
-    html.push(sec("terra-vida", tr("5 · Solo e vida", "5 · Land and life"), tr("Terra degradada, espécies mais ameaçadas e proteção ainda abaixo da meta", "Degraded land, more threatened species and protection still below the target"),
+    html.push(sec("terra-vida", tr("Solo e vida", "Land and life"), tr("Terra degradada, espécies mais ameaçadas e proteção ainda abaixo da meta", "Degraded land, more threatened species and protection still below the target"),
       prose(
         tr(`Segundo a UNCCD, <strong>${fmt(W.dg.v, 1)}%</strong> da área terrestre estava degradada em ${W.dg.y} (${fmt(at("terra_degradada", "WLD", 2015), 1)}% em 2015). As duas datas vêm de ciclos de reporte diferentes: antes de ler a diferença como tendência, confirma a nota metodológica da UNCCD. Portugal declarou ${fmt(pt("terra_degradada").v, 1)}%.`,
           `According to UNCCD, <strong>${fmt(W.dg.v, 1)}%</strong> of land area was degraded in ${W.dg.y} (${fmt(at("terra_degradada", "WLD", 2015), 1)}% in 2015). The two dates come from different reporting cycles: before reading the difference as a trend, check the UNCCD methodological note. Portugal reported ${fmt(pt("terra_degradada").v, 1)}%.`),
@@ -182,7 +182,7 @@
       const when = d.ano || d.periodo || d.ano_referencia || "";
       return `<div class="srcc"><h3><span class="num" style="font-family:var(--f-display);font-size:1.5rem">${val}</span> <small style="color:var(--muted);font-weight:400">${esc(EN ? (UN_EN[d.unidade] || d.unidade) : d.unidade)}${when ? " · " + esc(when) : ""}</small></h3><p>${esc(EN ? LE[id] : d.leitura)}</p><span class="pill nu">${esc(EN ? (NAT[d.natureza] || d.natureza) : d.natureza)}</span><span class="u"><a href="${esc(f.url || "#")}" target="_blank" rel="noopener noreferrer">${esc(f.titulo || f.nome || d.fonte_id)} ↗</a></span></div>`;
     }).join("");
-    html.push(sec("materia", tr("6 · Matéria e resíduos", "6 · Materials and waste"), tr("O que se extrai, o que se perde e o que sobra", "What is extracted, what is lost and what is left"),
+    html.push(sec("materia", tr("Matéria e resíduos", "Materials and waste"), tr("O que se extrai, o que se perde e o que sobra", "What is extracted, what is lost and what is left"),
       prose(tr("Estas grandezas não se somam nem se comparam entre si: cada uma tem a sua unidade, o seu período e o seu grau de certeza, indicado em cada cartão. São estimativas de organizações internacionais, não séries anuais completas.",
         "These quantities cannot be added or compared with each other: each has its own unit, period and degree of certainty, shown on each card. They are estimates by international organisations, not complete annual series.")) +
       `<div class="grid2">` +
@@ -193,7 +193,7 @@
       `</div>` +
       `<div class="srcs">${destCards}</div>`));
 
-    html.push(sec("portugal-mundo", tr("7 · Posição no mundo", "7 · Position in the world"), tr("Onde Portugal está em cada indicador", "Where Portugal stands on each indicator"),
+    html.push(sec("portugal-mundo", tr("Posição no mundo", "Position in the world"), tr("Onde Portugal está em cada indicador", "Where Portugal stands on each indicator"),
       prose(tr("Cada linha compara o último valor de Portugal com o mundo e com a média da União Europeia, e diz em que lugar fica entre os Estados com dados. «Melhor» tem em conta o sentido de cada indicador (mais renováveis é melhor; mais poluição é pior), e a posição 1.º é a melhor. Nas renováveis na energia final, quotas muito altas em países pobres refletem muita lenha, por isso esta linha merece mais cautela. Esta ordenação não mede, por si só, o esforço nem o contexto de cada país.",
         "Each row compares Portugal’s latest value with the world and the European Union, and shows its place among states with data. “Better” takes each indicator’s direction into account (more renewables is better; more pollution is worse), and rank 1st is the best. For renewables in final energy, very high shares in poor countries reflect a lot of firewood, so that row deserves more caution. This ranking does not by itself measure each country’s effort or context.")) +
       `<figure><div class="tscroll full"><table id="tPT"></table></div><div class="src"><span>${tr("Fontes: ver «Fontes e método» no fim da página. Último ano disponível de cada série; os anos diferem entre indicadores.", "Sources: see “Sources and method” at the end of the page. Latest available year of each series; years differ between indicators.")}</span></div></figure>
@@ -207,7 +207,7 @@
     const deserts = it.suscetibilidade_desertificacao, coast = it.erosao_costeira, flood = it.areas_risco_inundacao, ghg = pv("emissoes_gases_efeito_estufa").at(-1);
     const farms = pv("exploracoes_agricolas"), sau = pv("superficie_agricola_utilizada"), fleet = pv("parque_veiculos_motorizados");
     const srcLine = (id) => (ps[id].fontes || []).map((f) => `<a href="${esc(f.url)}" target="_blank" rel="noopener noreferrer">${esc(f.nome)} ↗</a>`).join(" · ");
-    html.push(`<span id="portugal"></span>` + sec("leitura-local", tr("8 · Território e riscos", "8 · Land and risks"), tr("Continente, Açores e Madeira: fogo, desertificação, costa e campo", "Mainland, Azores and Madeira: fire, desertification, coast and farmland"),
+    html.push(`<span id="portugal"></span>` + sec("leitura-local", tr("Território e riscos", "Land and risks"), tr("Continente, Açores e Madeira: fogo, desertificação, costa e campo", "Mainland, Azores and Madeira: fire, desertification, coast and farmland"),
       `<div class="tiles" id="ptTiles"></div>` +
       prose(
         tr(`Os dados nacionais disponíveis mostram três pressões claras: <strong>incêndios rurais</strong> muito variáveis (${fmt(Math.max(...burned.map((b) => b.v)))} ha em ${burned.find((b) => b.v === Math.max(...burned.map((x) => x.v))).y}, o pior ano da série), <strong>${fmt(deserts.valor, 1)}%</strong> do Continente com suscetibilidade alta ou muito elevada à desertificação e <strong>${fmt(coast.costa_baixa_arenosa_em_erosao_percent)}%</strong> da costa baixa e arenosa em erosão. Açores e Madeira não são misturados com o Continente quando não existe uma série comparável.`,
@@ -228,10 +228,8 @@
     const mundo = capitulos.slice(0, 6), portugal = capitulos.slice(6);
     const emPortugal = `<div class="reading-head"><h2 class="reading-divider" id="em-portugal">${tr("Em Portugal", "In Portugal")}</h2></div>`;
     const noMundo = `<header class="reading-divider" id="no-mundo"><h2>${tr("No mundo", "Worldwide")}</h2></header>`;
-    let numero = 0;
-    const renumera = (h) => h.replace(/(<span class="eyebrow">)\d+( · )/, (m, x, y) => x + (++numero) + y);
     html.length = 0;
-    html.push(sumario, emPortugal, ...portugal.map(renumera), noMundo, ...mundo.map(renumera));
+    html.push(sumario, emPortugal, ...portugal, noMundo, ...mundo);
     box.innerHTML = html.join("");
 
     /* «Ver também»: do capítulo para as páginas temáticas que o desenvolvem. */
