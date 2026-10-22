@@ -15,11 +15,11 @@
             let records = [], mode = "Todos";
             function phase(x) {
                 const s = x.status || "";
-                if (/^Em exploração$/i.test(s)) return "Em exploração";
-                if (/encerrad|remediação|passivo/i.test(s) || /passivo/i.test(x.id)) {
+                if (/^(Em exploração|Operating)$/i.test(s)) return "Em exploração";
+                if (/encerrad|remediação|passivo|closed|remediation|liabilit/i.test(s) || /passivo/i.test(x.id)) {
                     return "Passivos e fecho";
                 }
-                if (/não operacional/i.test(s)) return "Projetos não operacionais";
+                if (/não operacional|not operat|non-operat/i.test(s)) return "Projetos não operacionais";
                 return "Direitos e fases condicionadas";
             }
             function distance(a, b) {
@@ -43,8 +43,8 @@
                 ], [
                     "Projetos não operacionais",
                     proposed,
-                    "em avaliação, reformulação ou licenciamento",
-                ], ["Com lítio", lithium, "registos cujo mineral inclui lítio ou lepidolite"]].map(
+                    "em avaliação, licenciamento ou sem concessão",
+                ], ["Com lítio", lithium, "registos cujo mineral inclui lítio ou lepidolite"], ["Passivos e fecho", legacy, "áreas encerradas em recuperação e monitorização"]].map(
                     (x) =>
                         `<article class="stat"><small>${x[0]}</small><strong>${x[1]}</strong><span>${
                             x[2]

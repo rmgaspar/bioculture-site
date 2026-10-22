@@ -345,3 +345,26 @@
                 }
             }
         
+/* «Ler primeiro» e «Inventário»: cartões suaves, sem linhas, cada um com a sua cor. */
+html body #main .rules { counter-reset: etapa; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; margin-top: 1.6rem; }
+html body #main .rules > .rule { --tom: #6b776f; counter-increment: etapa; display: grid; align-content: start; gap: .55rem; padding: 1.5rem 1.6rem 1.7rem; border: 0; border-radius: 22px; background: color-mix(in srgb, var(--tom) 10%, #fff); transition: transform .2s ease, background .2s ease; }
+html body #main .rules > .rule:hover { transform: translateY(-2px); background: color-mix(in srgb, var(--tom) 15%, #fff); }
+html body #main .rules > .rule:nth-child(1) { --tom: #2f78b0; }
+html body #main .rules > .rule:nth-child(2) { --tom: #b88a1a; }
+html body #main .rules > .rule:nth-child(3) { --tom: #8a4f7d; }
+html body #main .rules > .rule:nth-child(4) { --tom: #3f7a3a; }
+html body #main .rules > .rule::before { content: counter(etapa, decimal-leading-zero); justify-self: start; padding: .25em .8em; border-radius: 999px; background: color-mix(in srgb, var(--tom) 16%, #fff); color: color-mix(in srgb, var(--tom) 75%, #1d2922); font: 800 .7rem/1.3 "Source Sans Pro", sans-serif; letter-spacing: .12em; }
+html body #main .rules > .rule > b { margin: 0; color: color-mix(in srgb, var(--tom) 45%, #1d2922); font: 700 1.35rem/1.2 Georgia, "Times New Roman", serif; }
+html body #main .rules > .rule > p { color: #3f4a43; font-size: 1rem; line-height: 1.6; }
+html body #main .stats { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 1rem; margin-top: 1.6rem; }
+html body #main .stats > .stat { --tom: #6b776f; display: grid; align-content: start; gap: .4rem; padding: 1.4rem 1.5rem 1.6rem; border: 0; border-radius: 22px; background: color-mix(in srgb, var(--tom) 10%, #fff); }
+html body #main .stats > .stat:nth-child(1) { --tom: #6b776f; }
+html body #main .stats > .stat:nth-child(2) { --tom: #3f7a3a; }
+html body #main .stats > .stat:nth-child(3) { --tom: #b0553a; }
+html body #main .stats > .stat:nth-child(4) { --tom: #2f78b0; }
+html body #main .stats > .stat:nth-child(5) { --tom: #8a5a2b; }
+html body #main .stats > .stat > small { justify-self: start; padding: .25em .8em; border-radius: 12px; background: color-mix(in srgb, var(--tom) 16%, #fff); color: color-mix(in srgb, var(--tom) 75%, #1d2922); font: 800 .7rem/1.3 "Source Sans Pro", sans-serif; letter-spacing: .12em; }
+html body #main .stats > .stat > strong { margin: .3rem 0 0; color: color-mix(in srgb, var(--tom) 70%, #1d2922); font: 700 3rem/1 Georgia, "Times New Roman", serif; }
+html body #main .stats > .stat > span { color: #3f4a43; font-size: 1rem; line-height: 1.5; }
+@media (max-width: 1100px) { html body #main .rules { grid-template-columns: repeat(2, minmax(0, 1fr)); } html body #main .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 640px) { html body #main .rules, html body #main .stats { grid-template-columns: minmax(0, 1fr); } }
