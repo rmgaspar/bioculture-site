@@ -287,7 +287,7 @@
                 };
                 el("criteria").innerHTML = (d.matriz_criticidade?.dimensoes || []).map((x, i) => {
                     const n = names[x.id] || [x.id.replaceAll("_", " "), x.id.replaceAll("_", " "), "#6b776f"];
-                    return `<article class="criterion criterion-vivo" style="--tom:${n[2]}"><span class="crit-n">${String(i + 1).padStart(2, "0")}</span><h3>${isEn() ? n[1] : n[0]}</h3><ul class="crit-chips">${
+                    return `<article class="criterion criterion-vivo" style="--tom:${n[2]}"><h3>${isEn() ? n[1] : n[0]}</h3><ul class="crit-chips">${
                         (x.indicadores || []).slice(0, 6).map((v) => `<li>${esc(v)}</li>`).join("")
                     }</ul></article>`;
                 }).join("");
