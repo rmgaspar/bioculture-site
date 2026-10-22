@@ -152,7 +152,7 @@
     }
     // Os seis passos da «hierarquia das decisões» (e blocos iguais): o número sai do título e vira um selo; corre depois da tradução da página.
     function passos() {
-        document.querySelectorAll(".principle-grid > article > b").forEach((b) => {
+        document.querySelectorAll(".principle-grid > article > b, .solutions-grid > article > strong").forEach((b) => {
             if (b.dataset.cvPasso) return;
             const m = b.textContent.trim().match(/^(\d{1,2})\s*[·.\-–]\s*(.+)$/);
             if (!m) return;
