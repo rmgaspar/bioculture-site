@@ -8,7 +8,7 @@
                 horticolasDB = {},
                 infoGlobal = null,
                 weatherNow = null;
-            let viewedDate = new Date(), showMorePests = false, showMoreFlora = false, catalogLimit = 12, pestCatalogLimit = 12;
+            let viewedDate = new Date(), catalogLimit = 12, pestCatalogLimit = 12;
             const PEST_GROUPS = [
                 { id: "all", pt: "Todos", en: "All" },
                 { id: "horticolas", pt: "Hortícolas", en: "Vegetable garden" },
@@ -566,36 +566,78 @@
                 }</button></div>`;
             }
 
+            /* Vigilância local: os quatro casos mais ligados à época em cartões (foto, o que procurar, época, aliados) e as restantes
+               espécies em etiquetas. Os textos das fichas só existem em português: em inglês ficam as fotos, os nomes e a ligação à ficha. */
+            const VIG_TONES = [
+                [/sugador|tripes|acaro|cochonilha|afide/, "#4c7a34"],
+                [/lagarta|besouro|traca|roscas|escaravelho|gorgulho/, "#a8730d"],
+                [/mosca|mineir/, "#a66f50"],
+                [/doenca|fungo|oomiceta|bacteri|virus|mildio|oidio/, "#2f6f9e"],
+            ];
+            const vigTone = (tipo) => (VIG_TONES.find(([re]) => re.test(window.BioCulturaSeasonal.normalize(tipo))) || [, "#3f7373"])[1];
+            function vigCorte(texto, max = 150) {
+                const t = String(texto || "").trim();
+                if (t.length <= max) return t;
+                const corte = t.slice(0, max).replace(/[\s,;:.\-–]+\S*$/, "");
+                return `${corte}…`;
+            }
+            function vigRelevancia(item, month) {
+                const t = window.BioCulturaSeasonal.normalize(`${item.sazonalidade_portugal || ""} ${item.quando || ""}`);
+                const estacao = window.BioCulturaSeasonal.seasonKey(month);
+                if (/todo o ano|sempre/.test(t)) return 1;
+                return t.includes(estacao) || window.BioCulturaSeasonal.periodMatches(t, month) ? 3 : 2;
+            }
+            function vigFoto(item) {
+                const f = item.foto || {};
+                const L = isEn();
+                const partes = [f.autor ? `${L ? "Photo" : "Foto"}: ${escapeHtml(f.autor)}` : "", f.licenca ? (f.licenca_url ? `<a href="${escapeHtml(f.licenca_url)}" target="_blank" rel="noopener">${escapeHtml(f.licenca)}</a>` : escapeHtml(f.licenca)) : "", f.pagina ? `<a href="${escapeHtml(f.pagina)}" target="_blank" rel="noopener">${escapeHtml(f.origem || "origem")}</a>` : ""].filter(Boolean);
+                const grupo = item.nivel === "grupo" ? (L ? "Image of a representative of the group. " : "Imagem de um representante do grupo. ") : "";
+                return `<figure class="vig-foto" data-no-signature><img src="${escapeHtml(item.imagem)}" alt="${escapeHtml(item.nome_comum)}" loading="lazy" onerror="this.onerror=null;this.src='/images/pragas-placeholder.svg'"><figcaption>${grupo}${partes.join(" · ")}</figcaption></figure>`;
+            }
+            function vigLinha(rotulo, texto) {
+                return texto ? `<p class="vig-linha"><b>${rotulo}</b><span>${escapeHtml(texto)}</span></p>` : "";
+            }
+            function vigCartao(item, tipo) {
+                const L = isEn();
+                const href = `/ecossistemas/especie-detalhe.html?id=${encodeURIComponent(item.id)}`;
+                const sci = (item.nome_cientifico || "").trim();
+                const etiqueta = tipo === "flora" ? [L ? "Invasive flora" : "Flora invasora", item.forma_de_vida].filter(Boolean).join(" · ") : (item.tipo || (L ? "Pest" : "Praga"));
+                const tom = tipo === "flora" ? "#8a5a2b" : vigTone(item.tipo);
+                const linhas = L ? "" : tipo === "flora"
+                    ? vigLinha("Impacto", vigCorte(item.impacto)) + vigLinha("O que fazer", vigCorte(item.combate))
+                    : vigLinha("O que procurar", vigCorte(item.sintomas)) + vigLinha("Época", vigCorte(item.sazonalidade_portugal, 110)) + vigLinha("Quem ajuda", (Array.isArray(item.aliados_naturais) ? item.aliados_naturais : []).slice(0, 4).join(", "));
+                const alerta = !L && tipo === "flora" && item.alerta_plantacao ? `<span class="vig-alerta">${escapeHtml(item.alerta_plantacao)}</span>` : "";
+                return `<article class="vig-cartao" style="--tom:${tom}">${vigFoto(item)}<small>${escapeHtml(etiqueta)}${alerta}</small><h3>${escapeHtml(item.nome_comum)}</h3>${sci && sci !== item.nome_comum ? `<p class="vig-sci">${escapeHtml(sci)}</p>` : ""}${linhas}<a class="vig-link" href="${href}">${L ? "See the record →" : "Ver a ficha →"}</a></article>`;
+            }
+            function vigBloco(lista, tipo, rotuloResto) {
+                const month = viewedDate.getMonth();
+                const comFoto = lista.filter((x) => x.imagem && x.imagem !== "-");
+                const destaque = (tipo === "pragas" ? comFoto.map((x, i) => ({ x, i, r: vigRelevancia(x, month) })).sort((a, b) => b.r - a.r || a.i - b.i).map((e) => e.x) : comFoto).slice(0, 4);
+                const resto = lista.filter((x) => !destaque.includes(x));
+                return `<div class="vig-grid" data-n="${destaque.length}">${destaque.map((x) => vigCartao(x, tipo === "pragas" ? "praga" : "flora")).join("")}</div>${resto.length ? `<p class="vig-rotulo">${rotuloResto}</p><div class="name-list">${resto.map(nameChipHTML).join("")}</div>` : ""}`;
+            }
+
             function renderPests() {
-                const button = document.getElementById("toggle-pests");
                 if (!infoGlobal) {
                     document.getElementById("pest-grid").innerHTML = chooseLocationPrompt("pests");
-                    button.style.display = "none";
                     return;
                 }
                 const all = seasonalPests(viewedDate.getMonth());
                 if (!all.length) {
-                    // No pest matches this month's keywords — the full inventory already lives in the
-                    // searchable catalogue below, so point there instead of repeating all 57 entries here.
-                    document.getElementById("pest-grid").innerHTML = `<div class="empty">${
+                    // Sem pragas assinaladas para o mês: o inventário completo está no catálogo pesquisável, mais abaixo.
+                    document.getElementById("pest-grid").innerHTML = `<p class="vig-nota">${
                         isEn()
-                            ? "No pests specifically flagged for this month. See the full catalogue further below."
-                            : "Sem pragas assinaladas especificamente para este mês. Consulta o catálogo completo mais abaixo."
-                    } <a href="#pragas-catalogo">${isEn() ? "See full catalogue →" : "Ver catálogo completo →"}</a></div>`;
-                    button.style.display = "none";
+                            ? "No pests specifically flagged for this month."
+                            : "Sem pragas assinaladas especificamente para este mês."
+                    } <a href="#pragas-catalogo">${isEn() ? "See the full catalogue →" : "Ver o catálogo completo →"}</a></p>`;
                     return;
                 }
-                const visible = all.slice(0, showMorePests ? 24 : 10);
-                document.getElementById("pest-grid").innerHTML = visible.map(nameChipHTML).join("");
-                button.style.display = all.length > 10 ? "inline-block" : "none";
-                button.textContent = showMorePests ? "Recolher" : `Ver mais pragas sazonais (${all.length} no total)`;
+                document.getElementById("pest-grid").innerHTML = vigBloco(all, "pragas", isEn() ? "Also in season" : "Também nesta época");
             }
 
             function renderFlora() {
-                const button = document.getElementById("toggle-flora");
                 if (!infoGlobal) {
                     document.getElementById("flora-grid").innerHTML = chooseLocationPrompt("flora");
-                    button.style.display = "none";
                     return;
                 }
                 const names = infoGlobal?.biomas?.flora_invasora || [];
@@ -609,22 +651,15 @@
                 }).filter(Boolean);
                 const unique = [...new Map(local.map((item) => [item.id, item])).values()];
                 if (!unique.length) {
-                    // No confirmed regional match — the full inventory already lives in the
-                    // searchable catalogue below, so point there instead of repeating all 111 entries here.
-                    document.getElementById("flora-grid").innerHTML = `<div class="empty">${
+                    // Sem correspondência regional confirmada: nota discreta e ligação ao catálogo (111 fichas), em vez de uma caixa vazia.
+                    document.getElementById("flora-grid").innerHTML = `<p class="vig-nota">${
                         isEn()
-                            ? "The regional profile has no confirmed invasive species in the local inventory yet — this may reflect a lack of records rather than a real absence. See the full catalogue further below."
-                            : "O perfil regional ainda não tem espécies invasoras confirmadas no inventário local — pode ser falta de registo, não ausência real. Consulta o catálogo completo mais abaixo."
-                    } <a href="#pragas-catalogo">${isEn() ? "See full catalogue →" : "Ver catálogo completo →"}</a></div>`;
-                    button.style.display = "none";
+                            ? "The regional profile has no confirmed invasive species in the local inventory yet; this may reflect a lack of records rather than a real absence."
+                            : "O perfil regional ainda não tem espécies invasoras confirmadas no inventário local. Pode ser falta de registo, não ausência real."
+                    } <a href="#pragas-catalogo">${isEn() ? "See the full catalogue →" : "Ver o catálogo completo →"}</a></p>`;
                     return;
                 }
-                const visible = unique.slice(0, showMoreFlora ? 24 : 10);
-                document.getElementById("flora-grid").innerHTML = visible.map(nameChipHTML).join("");
-                button.style.display = unique.length > 10 ? "inline-block" : "none";
-                button.textContent = showMoreFlora
-                    ? (isEn() ? "Collapse" : "Recolher")
-                    : (isEn() ? `See more invasive species (${unique.length} in total)` : `Ver mais espécies invasoras (${unique.length} no total)`);
+                document.getElementById("flora-grid").innerHTML = vigBloco(unique, "flora", isEn() ? "Also recorded in the region" : "Também registadas na região");
             }
 
             function pestCatalogGroupMatch(item, group) {
@@ -733,14 +768,6 @@
                     document.getElementById("next-month").onclick = () => {
                         viewedDate = new Date(viewedDate.getFullYear(), viewedDate.getMonth() + 1, 1);
                         renderCalendar();
-                    };
-                    document.getElementById("toggle-pests").onclick = () => {
-                        showMorePests = !showMorePests;
-                        renderPests();
-                    };
-                    document.getElementById("toggle-flora").onclick = () => {
-                        showMoreFlora = !showMoreFlora;
-                        renderFlora();
                     };
                     if (location.hash) {
                         const target = document.getElementById(location.hash.slice(1));

@@ -236,3 +236,42 @@ html body #main .week-plan > .week-foto figure.foto a { display: inline; padding
   html body #main .week-plan > .week-foto figure.foto img { min-height: 0; height: auto; aspect-ratio: 16 / 9; flex: none; }
 }
 @media (max-width: 700px) { html body #main #semana + .week-plan.com-foto { grid-template-columns: minmax(0, 1fr); } }
+
+/* Vigilância local: cartões com fotografia (pragas da época e flora invasora) e as restantes espécies em etiquetas. */
+html body #main .vig-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.1rem; align-items: stretch; }
+html body #main .vig-cartao { --tom: #4c7a34; display: flex; flex-direction: column; gap: .35rem; min-width: 0; padding: 1rem 1rem 1.2rem; border-radius: 22px; background: color-mix(in srgb, var(--tom) 9%, #fff); }
+html body #main .vig-foto { margin: 0 0 .5rem; }
+html body #main .vig-foto img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 14px; background: #eef0ea; }
+html body #main .vig-foto figcaption { margin-top: .4rem; color: #6b776f; font-size: .68rem; line-height: 1.35; }
+html body #main .vig-foto figcaption a { color: inherit; text-decoration: underline; }
+html body #main .vig-cartao small { display: flex; flex-wrap: wrap; align-items: center; gap: .3rem .5rem; color: var(--tom); font: 900 .7rem/1.2 "Source Sans Pro", sans-serif; letter-spacing: .12em; text-transform: uppercase; }
+html body #main .vig-alerta { padding: .15rem .5rem; border-radius: 99px; background: var(--tom); color: #fff; letter-spacing: .04em; }
+html body #main .vig-cartao h3 { margin: 0; color: #20342a; font-family: Georgia, serif; font-size: 1.3rem; line-height: 1.15; }
+html body #main .vig-cartao .vig-sci { margin: 0 0 .3rem; color: #6b776f; font-size: .85rem; font-style: italic; }
+html body #main .vig-linha { display: grid; gap: .1rem; margin: .25rem 0 0; }
+html body #main .vig-linha b { color: var(--tom); font: 800 .68rem/1.2 "Source Sans Pro", sans-serif; letter-spacing: .1em; text-transform: uppercase; }
+html body #main .vig-linha span { color: #3f4a43; font-size: .9rem; line-height: 1.45; }
+html body #main .vig-link { margin-top: auto; padding-top: .7rem; color: var(--tom) !important; font-size: .85rem; font-weight: 800; text-decoration: none !important; border: 0 !important; }
+html body #main .vig-link:hover { text-decoration: underline !important; }
+html body #main .vig-rotulo { margin: 1.6rem 0 .6rem; color: #6b776f; font: 800 .74rem/1.2 "Source Sans Pro", sans-serif; letter-spacing: .12em; text-transform: uppercase; }
+html body #main .vig-nota { margin: 0; color: #4c564f; font-size: .95rem; line-height: 1.6; }
+html body #main .vig-nota a { font-weight: 700; }
+@media (max-width: 1250px) { html body #main .vig-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 640px) { html body #main .vig-grid { grid-template-columns: minmax(0, 1fr); } }
+
+/* Poucos cartões (1 a 3): ocupam a largura toda, sem colunas vazias. Com 1 ou 2, a fotografia passa para a esquerda do texto. */
+html body #main .vig-grid[data-n="3"] { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+html body #main .vig-grid[data-n="2"], html body #main .vig-grid[data-n="1"] { grid-template-columns: repeat(var(--cols, 2), minmax(0, 1fr)); }
+html body #main .vig-grid[data-n="1"] { --cols: 1; }
+html body #main .vig-grid:is([data-n="1"], [data-n="2"]) .vig-cartao { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); column-gap: 1.4rem; align-content: start; padding: 1.2rem; }
+html body #main .vig-grid:is([data-n="1"], [data-n="2"]) .vig-cartao > .vig-foto { grid-column: 1; grid-row: 1 / span 20; align-self: start; margin: 0; }
+html body #main .vig-grid:is([data-n="1"], [data-n="2"]) .vig-cartao > :not(.vig-foto) { grid-column: 2; }
+html body #main .vig-grid:is([data-n="1"], [data-n="2"]) .vig-cartao > .vig-link { align-self: end; }
+@media (max-width: 1250px) { html body #main .vig-grid[data-n="3"] { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 900px) {
+  html body #main .vig-grid:is([data-n="1"], [data-n="2"], [data-n="3"]) { grid-template-columns: minmax(0, 1fr); }
+  html body #main .vig-grid:is([data-n="1"], [data-n="2"]) .vig-cartao { display: flex; padding: 1rem 1rem 1.2rem; }
+}
+html body #main .vig-grid:is([data-n="1"], [data-n="2"]) .vig-cartao > .vig-foto { align-self: stretch; display: flex; flex-direction: column; }
+html body #main .vig-grid:is([data-n="1"], [data-n="2"]) .vig-cartao > .vig-foto img { flex: 1 1 0; height: 0; min-height: 230px; aspect-ratio: auto; }
+@media (max-width: 900px) { html body #main .vig-grid:is([data-n="1"], [data-n="2"]) .vig-cartao > .vig-foto img { flex: none; height: auto; min-height: 0; aspect-ratio: 4 / 3; } }
