@@ -55,17 +55,79 @@
                     ...rainYears.map(rainMetric),
                 ].join("");
             }
+            /* «O teu solo e a água»: a textura do perfil (a única informação de água que o perfil local permite ler) traduzida
+               em retenção, entrada e rega. Valores de água disponível por classe: FAO, Irrigation Water Management: Training Manual No. 1,
+               cap. 2 (areia 25–100, franco 100–175, argila 175–250 mm por metro de solo). A passagem do nome da textura às três classes
+               é uma aproximação bioCulture. */
+            const tr2 = (pt, en) => (isEn() ? en : pt);
+            const norm2 = (s) => String(s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+            const CLASSES = {
+                a: { nome: ["Arenoso", "Sandy"], min: 25, max: 100 },
+                f: { nome: ["Franco", "Loam"], min: 100, max: 175 },
+                c: { nome: ["Argiloso", "Clay"], min: 175, max: 250 },
+            };
+            const LEITURA = {
+                a: { ret: ["Baixa", "Low"], inf: ["Rápida", "Fast"], rega: ["Pouca água, muitas vezes", "Little water, often"],
+                    desc: ["Solo leve: a água entra depressa e escorre abaixo das raízes em poucas horas. Cobertura do solo e matéria orgânica ajudam a guardá-la.",
+                        "Light soil: water enters quickly and drains below the roots within hours. Mulch and organic matter help to hold it."] },
+                af: { ret: ["Baixa a média", "Low to medium"], inf: ["Rápida a média", "Fast to medium"], rega: ["Regas curtas e frequentes", "Short, frequent watering"],
+                    desc: ["Drena depressa e guarda pouca água: rega pouco de cada vez e cobre o solo para a reter.",
+                        "It drains quickly and holds little water: water a little at a time and mulch the soil to keep it."] },
+                f: { ret: ["Média", "Medium"], inf: ["Média", "Medium"], rega: ["Regas moderadas", "Moderate watering"],
+                    desc: ["Solo equilibrado: guarda água suficiente e drena bem.", "A balanced soil: it holds enough water and drains well."] },
+                fc: { ret: ["Média a alta", "Medium to high"], inf: ["Média a lenta", "Medium to slow"], rega: ["Menos vezes, mais fundo", "Less often, deeper"],
+                    desc: ["Guarda bem a água, mas a entrada é mais lenta e, depois de chuva forte, pode demorar a drenar. Evita regar sobre solo ainda húmido.",
+                        "It holds water well, but it enters more slowly and, after heavy rain, may take a while to drain. Avoid watering soil that is still damp."] },
+                c: { ret: ["Alta", "High"], inf: ["Lenta", "Slow"], rega: ["Regas espaçadas e fundas", "Widely spaced, deep watering"],
+                    desc: ["Guarda muita água, mas a entrada é lenta e pode levar 2 a 3 dias a drenar: atenção ao encharcamento e à compactação.",
+                        "It holds a lot of water, but it enters slowly and may take 2 to 3 days to drain: watch for waterlogging and compaction."] },
+            };
+            const TEXTURAS_EN = {
+                "Franco-arenoso": "Sandy loam", "Franco-argiloso": "Clay loam", "Argilo-calcário": "Calcareous clay", "Franco-calcário": "Calcareous loam",
+                "Arenoso": "Sandy", "Franco-argilo-arenoso": "Sandy clay loam", "Argilo-limoso": "Silty clay", "Franco-argilo-limoso": "Silty clay loam",
+                "Franco-argilo-calcário": "Calcareous clay loam", "Areno-limoso": "Silty sand", "Franco-areno-argiloso": "Sandy clay loam",
+                "Argilo-arenoso": "Sandy clay", "Franco-arenoso-vulcânico": "Volcanic sandy loam", "Argilo-xistoso": "Schistose clay",
+                "Arenoso-limoso": "Silty sand", "Franco-areno-limoso": "Silty sandy loam", "Arenoso-vulcânico": "Volcanic sand",
+                "Limoso-argiloso": "Silty clay", "Argiloso": "Clay",
+            };
+            function classesDaTextura(t) {
+                const n = norm2(t);
+                if (/^franco-arenoso|^franco-areno-limoso/.test(n)) return ["a", "f"];
+                if (/^franco-areno-argiloso|^franco-argilo-arenoso|^franco-calcario/.test(n)) return ["f"];
+                if (/^franco-argil/.test(n)) return ["f", "c"];
+                if (/^argilo-arenoso/.test(n)) return ["f", "c"];
+                if (/^(arenoso|areno)/.test(n)) return ["a"];
+                if (/^(argil|limoso-argil)/.test(n)) return ["c"];
+                return null;
+            }
             function renderLocal(locations) {
                 const saved = localStorage.getItem("biocultura_region");
                 const info = locations.find((x) => String(x.id) === String(saved)) || locations[0];
                 if (!info) return;
                 const b = info.biomas || {};
                 $id("local-name").textContent = [info.titulo, info.concelho].filter(Boolean).join(", ");
-                $id("local-desc").textContent =
-                    "Este perfil descreve o solo e o enquadramento territorial disponível para a região selecionada.";
-                $id("local-soil").textContent = clean(b.solo);
-                $id("local-texture").textContent = clean(b.textura);
-                $id("local-ph").textContent = clean(b.ph_solo);
+                const cls = classesDaTextura(b.textura);
+                const texto = isEn() ? (TEXTURAS_EN[b.textura] || clean(b.textura)) : clean(b.textura);
+                $id("local-texture").textContent = texto;
+                const L = cls ? LEITURA[cls.join("") === "af" ? "af" : cls.join("") === "fc" ? "fc" : cls[0]] : null;
+                if (!L) {
+                    $id("local-desc").textContent = tr2("Este perfil não tem a textura do solo registada, por isso não há leitura da água.", "This profile has no recorded soil texture, so there is no reading for water.");
+                    ["local-ret", "local-inf", "local-rega"].forEach((id) => ($id(id).textContent = "—"));
+                    $id("local-chart").innerHTML = "";
+                    return;
+                }
+                const i = isEn() ? 1 : 0;
+                $id("local-desc").textContent = L.desc[i];
+                $id("local-ret").textContent = L.ret[i];
+                $id("local-inf").textContent = L.inf[i];
+                $id("local-rega").textContent = L.rega[i];
+                const linhas = Object.entries(CLASSES).map(([k, c]) =>
+                    `<div class="lc-row${cls.includes(k) ? " ativo" : ""}"><span class="lc-nome">${c.nome[i]}</span><span class="lc-pista"><i style="left:${(c.min / 250) * 100}%;width:${((c.max - c.min) / 250) * 100}%"></i></span><span class="lc-val">${c.min}–${c.max} mm/m</span></div>`
+                ).join("");
+                $id("local-chart").innerHTML = `<h4>${tr2("Água disponível para as plantas, por metro de solo", "Water available to plants, per metre of soil")}</h4>${linhas}<p class="lc-nota">${
+                    tr2("Destacado: a classe mais próxima do teu solo. Valores típicos da FAO; a passagem do nome da textura a estas três classes é uma aproximação bioCulture, e a leitura vale para o solo, não para a água da torneira.",
+                        "Highlighted: the class closest to your soil. Typical FAO values; matching the texture name to these three classes is a bioCulture approximation, and the reading applies to the soil, not to tap water.")
+                } <a href="https://www.fao.org/4/r4082e/r4082e03.htm" target="_blank" rel="noopener">${tr2("Fonte: FAO, Irrigation Water Management, cap. 2", "Source: FAO, Irrigation Water Management, ch. 2")}</a></p>`;
             }
             function renderPractices(items) {
                 const wanted = [
