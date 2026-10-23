@@ -441,7 +441,8 @@
                         ["Preparar infiltração", "Abranda a escorrência antes da época mais chuvosa."],
                     ],
                 };
-                document.getElementById("week-plan").innerHTML = seasonal[season].map((
+                document.getElementById("week-plan").classList.add("com-foto");
+                document.getElementById("week-plan").innerHTML = `<div class="week-foto" data-foto-slot="semana-${season}"></div>` + seasonal[season].map((
                     [title, text],
                     index,
                 ) => {
