@@ -4,8 +4,7 @@
 (function () {
     "use strict";
     const text = document.getElementById("participa-home-text");
-    const facts = document.getElementById("participa-home-facts");
-    if (!text || !facts) return;
+    if (!text) return;
     const isEn = () => !!window.BioCultureI18n?.isEnglish || (document.documentElement.lang || "").startsWith("en");
     const tr = (pt, en) => (isEn() ? en : pt);
     const esc = (v) => String(v ?? "").replace(/[&<>'"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" }[c]));
@@ -24,19 +23,29 @@
                     `Há ${open.length} ${open.length === 1 ? "consulta pública de renováveis aberta" : "consultas públicas de renováveis abertas"} no Participa.pt. A próxima a fechar termina a ${fmtDate(next.fim)}: <strong>${esc(next.titulo)}</strong>${where(next) ? ` (${esc(where(next))})` : ""}.`,
                     `There ${open.length === 1 ? "is 1 renewables public consultation" : `are ${open.length} renewables public consultations`} open on Participa.pt. The next one closes on ${fmtDate(next.fim)}: <strong>${esc(next.titulo)}</strong>${where(next) ? ` (${esc(where(next))})` : ""}.`,
                 );
+                if (f.consultas_projetos) {
+                    text.innerHTML += tr(
+                        ` Em ${f.ano}, ${f.ate_21_dias} de ${f.consultas_projetos} consultas de projetos tiveram 21 dias ou menos para participar.`,
+                        ` In ${f.ano}, ${f.ate_21_dias} of ${f.consultas_projetos} project consultations allowed 21 days or fewer to take part.`,
+                    );
+                }
             } else if (f.consultas_projetos) {
                 text.textContent = tr(
                     `Nenhuma consulta pública de renováveis está aberta neste momento, mas ${pending} aguardam decisão. Em ${f.ano}, ${f.ate_21_dias} de ${f.consultas_projetos} consultas de projetos tiveram 21 dias ou menos para participar e ${f.com_dias_em_agosto} decorreram em agosto.`,
                     `No renewables public consultation is open right now, but ${pending} await a decision. In ${f.ano}, ${f.ate_21_dias} of ${f.consultas_projetos} project consultations allowed 21 days or fewer to take part and ${f.com_dias_em_agosto} ran in August.`,
                 );
             }
-            const rows = [
-                [String(open.length), tr("consultas de renováveis abertas agora no Participa.pt", "renewables consultations open now on Participa.pt")],
-                [String(pending), tr("a aguardar decisão", "awaiting decision")],
-            ];
-            if (f.consultas_projetos) {
-                rows.push([`${f.ate_21_dias} ${tr("de", "of")} ${f.consultas_projetos}`, tr(`consultas de ${f.ano} com 21 dias ou menos para participar`, `${f.ano} consultations with 21 days or fewer to take part`)]);
-            }
+            const todas = [...(c.abertas || []), ...(c.em_analise || []), ...(c.encerradas || [])];
+            document.querySelectorAll(".caso-live[data-consulta]").forEach((el) => {
+                const x = todas.find((y) => y.id === el.dataset.consulta);
+                if (!x) return;
+                const n = x.participacoes != null ? String(x.participacoes).replace(/\B(?=(\d{3})+(?!\d))/g, isEn() ? "," : "\u00a0") : "";
+                const aberta = x.estado_consulta === "Aberta";
+                el.textContent = tr(
+                    `${aberta ? `Consulta aberta até ${fmtDate(x.fim)}` : `Consulta terminada a ${fmtDate(x.fim)}`}${n ? ` · ${n} participações` : ""}.`,
+                    `${aberta ? `Consultation open until ${fmtDate(x.fim)}` : `Consultation closed on ${fmtDate(x.fim)}`}${n ? ` · ${n} submissions` : ""}.`,
+                );
+            });
             const local = document.getElementById("participa-home-local");
             if (local && window.BioCultureParticipaLocal) {
                 const T = window.BioCultureParticipaLocal.title;
@@ -60,7 +69,6 @@
                     }
                 });
             }
-            facts.innerHTML = rows.map(([v, l]) => `<div><dt>${esc(v)}</dt><dd>${esc(l)}</dd></div>`).join("");
         })
         .catch(() => {});
 })();
