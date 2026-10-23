@@ -15,7 +15,7 @@
             let all = [], shown = 24, mode = "Tudo", query = "";
             const groupMap = {
                 Plantas: ["Plantae", "Flora Invasora"],
-                Aves: ["Aves"],
+                Aves: ["Aves", "Birds"], // em inglês o runtime traduz o nome do grupo nos dados
                 Insetos: ["Insecta"],
                 Mamíferos: ["Mammalia"],
                 Fungos: ["Fungi"],
@@ -80,7 +80,8 @@
             }
             function render() {
                 const list = filtered();
-                el("results-meta").textContent = `${list.length.toLocaleString("pt-PT")} resultados`;
+                const ingles = !!window.BioCultureI18n?.isEnglish;
+                el("results-meta").textContent = ingles ? `${list.length.toLocaleString("en-GB")} results` : `${list.length.toLocaleString("pt-PT")} resultados`;
                 el("species-grid").innerHTML = list.slice(0, shown).map(card).join("") ||
                     '<p class="empty">Nenhuma espécie corresponde à pesquisa.</p>';
                 el("load-more").style.display = list.length > shown ? "block" : "none";
