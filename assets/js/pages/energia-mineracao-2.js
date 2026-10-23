@@ -72,7 +72,25 @@
                     } km · ${esc(x.concelho)}</span></article>`
                 ).join("");
             }
-            function details(x) {
+            const ESTADOS = {
+                ok: "Feito",
+                curso: "Em curso",
+                parado: "Travado",
+                falta: "Por fazer",
+                nd: "Por confirmar",
+            };
+            function percurso(x) {
+                const e = x.etapas || [];
+                if (!e.length) return "";
+                return `<ol class="percurso" style="--n:${e.length}">${
+                    e.map((s) =>
+                        `<li class="et-${esc(s.estado)}"><i aria-hidden="true"></i><b>${esc(s.rotulo)}</b><em>${
+                            esc(ESTADOS[s.estado] || "")
+                        }</em><span>${esc(s.nota)}</span></li>`
+                    ).join("")
+                }</ol>`;
+            }
+            function dimensoes(x) {
                 const cells = [
                     ["Água", x.agua],
                     ["Solo e agricultura", x.solo_agricultura],
@@ -81,30 +99,32 @@
                     ["Populações", x.populacoes_saude],
                     ["Lacunas", x.lacunas],
                 ].filter(([, v]) => valid(v));
-                return `<details><summary>Ver impactos, lacunas e fontes</summary><div class="detail-grid">${
-                    cells.map(([k, v]) => `<div class="detail"><b>${k}</b><span>${esc(v)}</span></div>`)
-                        .join("")
-                }</div>${
-                    (x.fontes || []).length
-                        ? `<div class="sources">${
-                            x.fontes.map((u, i) =>
-                                `<a href="${esc(u)}" target="_blank" rel="noopener">Fonte ${i + 1}</a>`
-                            ).join("")
-                        }</div>`
-                        : ""
-                }</details>`;
+                return `<div class="detail-grid">${
+                    cells.map(([k, v]) => `<div class="detail"><b>${k}</b><span>${esc(v)}</span></div>`).join("")
+                }</div>`;
+            }
+            function fontes(x) {
+                return (x.fontes || []).length
+                    ? `<div class="sources">${
+                        x.fontes.map((u, i) =>
+                            `<a href="${esc(u)}" target="_blank" rel="noopener">Fonte ${i + 1}</a>`
+                        ).join("")
+                    }</div>`
+                    : "";
             }
             function renderProjects() {
                 const list = mode === "Todos" ? records : records.filter((x) => phase(x) === mode);
                 el("projects").innerHTML =
                     list.map((x) =>
-                        `<article class="project"><small>${esc(phase(x))}</small><h3>${
+                        `<article class="project dossie"><small>${esc(phase(x))}</small><h3>${
                             esc(x.nome)
-                        }</h3><p><strong>${esc(x.mineral)}</strong></p><p>${esc(x.status)}</p><p>${
+                        }</h3><p class="dossie-quem"><strong>${esc(x.mineral)}</strong></p><p class="dossie-onde">${
                             esc(x.concelho)
-                        } · ${esc(x.distrito)}</p>${
-                            valid(x.detalhe) ? `<p>${esc(x.detalhe)}</p>` : ""
-                        }${details(x)}</article>`
+                        } · ${esc(x.distrito)}</p>${percurso(x)}<div class="dossie-texto"><div class="dossie-situacao"><p class="dossie-estado"><strong>${
+                            esc(x.status)
+                        }</strong></p>${valid(x.fase_licenciamento) ? `<p>${esc(x.fase_licenciamento)}</p>` : ""}</div>${
+                            valid(x.detalhe) ? `<p class="dossie-nota">${esc(x.detalhe)}</p>` : ""
+                        }</div>${dimensoes(x)}${fontes(x)}</article>`
                     ).join("") || '<p class="empty">—</p>';
             }
             function setupFilters() {

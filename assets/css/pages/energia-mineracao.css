@@ -368,3 +368,52 @@ html body #main .stats > .stat > strong { margin: .3rem 0 0; color: color-mix(in
 html body #main .stats > .stat > span { color: #3f4a43; font-size: 1rem; line-height: 1.5; }
 @media (max-width: 1100px) { html body #main .rules { grid-template-columns: repeat(2, minmax(0, 1fr)); } html body #main .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 640px) { html body #main .rules, html body #main .stats { grid-template-columns: minmax(0, 1fr); } }
+
+
+/* Casos: cada registo é um dossiê aberto, sem setas: o percurso (4 etapas), o ponto da situação, as seis dimensões e as fontes. */
+html body #main #projects.cv-grelha { grid-template-columns: minmax(0, 1fr) !important; gap: 1.1rem !important; }
+html body #main .cv-grelha > .project.dossie { --tom: #806855; display: grid !important; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: .35rem clamp(1.4rem, 3vw, 3rem); align-items: start; padding: clamp(1.3rem, 2.4vw, 2rem) !important; border-radius: 22px !important; }
+html body #main .dossie > small, html body #main .dossie > h3, html body #main .dossie > .dossie-quem, html body #main .dossie > .dossie-onde, html body #main .dossie > .percurso, html body #main .dossie > .sources { grid-column: 1 / -1; }
+html body #main .dossie > h3 { font-size: clamp(1.4rem, 2.3vw, 1.9rem) !important; line-height: 1.12; letter-spacing: -.02em; margin: .15rem 0 .1rem !important; }
+html body #main .dossie .dossie-quem, html body #main .dossie .dossie-onde { margin: 0 !important; font-size: .95rem; }
+html body #main .dossie .dossie-onde { color: var(--muted); }
+html body #main .percurso { list-style: none; display: grid; grid-template-columns: repeat(var(--n, 4), minmax(0, 1fr)); gap: .6rem; margin: 1.1rem 0 1.2rem; padding: 0; }
+html body #main .percurso li { --c: #8d8780; position: relative; display: grid; align-content: start; gap: .15rem; padding: 1.7rem .5rem 0 0; margin: 0; }
+html body #main .percurso li::before { content: ""; position: absolute; left: 1.35rem; right: -.6rem; top: .55rem; height: 2px; background: color-mix(in srgb, var(--c) 35%, transparent); }
+html body #main .percurso li:last-child::before { display: none; }
+html body #main .percurso li i { position: absolute; left: 0; top: 0; display: grid; place-items: center; width: 1.1rem; height: 1.1rem; border-radius: 50%; background: var(--c); box-sizing: border-box; color: #fff; font: 800 .7rem/1 "Source Sans Pro", sans-serif; font-style: normal; }
+html body #main .percurso li b { font: 800 .72rem/1.2 "Source Sans Pro", sans-serif; letter-spacing: .1em; text-transform: uppercase; color: #3a332e; }
+html body #main .percurso li em { font: 800 .78rem/1.2 "Source Sans Pro", sans-serif; font-style: normal; color: var(--c); }
+html body #main .percurso li span { font-size: .84rem; line-height: 1.45; color: var(--muted); }
+html body #main .percurso .et-ok { --c: #3f8a4e; }
+html body #main .percurso .et-ok i::after { content: "✓"; }
+html body #main .percurso .et-curso { --c: #c28a1e; }
+html body #main .percurso .et-curso i::after { content: "…"; margin-top: -.25em; }
+html body #main .percurso .et-parado { --c: #a8473d; }
+html body #main .percurso .et-parado i::after { content: "×"; font-size: .9rem; }
+html body #main .percurso .et-falta { --c: #8d8780; }
+html body #main .percurso .et-falta i { background: #fff; border: 2px solid var(--c); }
+html body #main .percurso .et-nd { --c: #8d8780; }
+html body #main .percurso .et-nd i { background: #fff; border: 2px dashed var(--c); }
+html body #main .dossie .dossie-texto { grid-column: 1 / -1; min-width: 0; display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); gap: 1rem clamp(1.4rem, 3vw, 3rem); align-items: start; margin-bottom: .4rem; }
+html body #main .dossie .dossie-texto p { margin: 0 0 .7rem; font-size: .92rem; line-height: 1.6; color: var(--muted); }
+html body #main .dossie .dossie-texto .dossie-estado { color: #3a332e; }
+html body #main .dossie .dossie-texto .dossie-nota { padding: .7rem .9rem; border-radius: 12px; background: rgba(255, 255, 255, .6); font-size: .86rem; }
+html body #main .dossie .detail-grid { grid-column: 1 / -1; margin: 0; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+html body #main .dossie .dossie-situacao p:last-child, html body #main .dossie .dossie-nota { margin-bottom: 0; }
+html body #main .dossie .sources { display: flex; flex-wrap: wrap; gap: .4rem .8rem; }
+html body #main .dossie .detail { background: rgba(255, 255, 255, .7); }
+html body #main .dossie .sources { grid-column: 1 / -1; margin-top: .6rem; }
+html body #main .percurso-legenda { display: flex; flex-wrap: wrap; gap: .4rem 1.2rem; margin: -.2rem 0 1.2rem; color: var(--muted); font-size: .8rem; }
+html body #main .percurso-legenda span::before { content: ""; display: inline-block; width: .7rem; height: .7rem; margin-right: .4rem; border-radius: 50%; background: var(--c); vertical-align: -.05em; box-sizing: border-box; }
+html body #main .percurso-legenda .l-ok { --c: #3f8a4e; } .percurso-legenda .l-curso { --c: #c28a1e; } .percurso-legenda .l-parado { --c: #a8473d; }
+html body #main .percurso-legenda .l-falta::before { background: #fff; border: 2px solid #8d8780; } .percurso-legenda .l-nd::before { background: #fff; border: 2px dashed #8d8780; }
+@media (max-width: 1100px) { html body #main .dossie .detail-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 900px) {
+  html body #main .cv-grelha > .project.dossie { grid-template-columns: minmax(0, 1fr); }
+  html body #main .dossie .dossie-texto { grid-template-columns: minmax(0, 1fr); }
+  html body #main .dossie .detail-grid { grid-template-columns: minmax(0, 1fr); margin-top: .8rem; }
+  html body #main .percurso { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  html body #main .percurso li { padding: 0 0 1rem 1.9rem; }
+  html body #main .percurso li::before { left: .5rem; right: auto; top: 1.1rem; bottom: -.1rem; width: 2px; height: auto; }
+}
