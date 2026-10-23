@@ -26,10 +26,11 @@
   }
   fetch("/sidebar-content.html?v=28").then((r) => (r.ok ? r.text() : "")).then((h) => { const sb = document.getElementById("sidebar"); if (h && sb) sb.innerHTML = h; }).catch(() => {});
   const barraFixa = () => { const el = document.createElement("script"); el.src = "/assets/js/biocultura-sticky-nav.js?v=20"; document.body.appendChild(el); };
+  let EXCLUIDOS = []; // países retirados das listas (config/paises-excluidos.json); os totais continuam a usar todas as rotas
   const get = (u) => fetch(u).then((r) => { if (!r.ok) throw new Error(u + " " + r.status); return r.json(); });
 
-  Promise.all([get("/data/aviacao.json?v=4"), get("/data/aviacao-portugal.json?v=1"), get("/data/aeroportos.json?v=1"), get("/data/noticias.json").catch(() => []), get("/data/aviacao-rotas-portugal.json?v=1"), get("/data/aviacao-tempo.json?v=1"), get("/data/aviacao-recursos.json?v=1")])
-    .then(([D, PT, AE, NEWS, RT, TM, RC]) => { build(D, PT, AE, RT, TM, RC); atualidade(NEWS); barraFixa(); irParaHash(); })
+  Promise.all([get("/data/aviacao.json?v=4"), get("/data/aviacao-portugal.json?v=1"), get("/data/aeroportos.json?v=1"), get("/data/noticias.json").catch(() => []), get("/data/aviacao-rotas-portugal.json?v=1"), get("/data/aviacao-tempo.json?v=1"), get("/data/aviacao-recursos.json?v=1"), get("/config/paises-excluidos.json").catch(() => ({ iso2: [] }))])
+    .then(([D, PT, AE, NEWS, RT, TM, RC, EX]) => { EXCLUIDOS = EX.iso2 || []; build(D, PT, AE, RT, TM, RC); atualidade(NEWS); barraFixa(); irParaHash(); })
     .catch((e) => { console.error(e); barraFixa(); box.innerHTML = `<p class="prose">${tr("Não foi possível carregar os dados desta página.", "The data for this page could not be loaded.")}</p>`; });
 
   const irParaHash = () => {
@@ -294,6 +295,7 @@
 
     /* ---------- voos reais por rota (Eurostat) ---------- */
     const CB = D.combustivel, MED = CL.media, ROT = RT.rotas;
+    const ROTV = ROT.filter((r) => !EXCLUIDOS.includes(r.pais_b)); // rotas que aparecem nas listas e nos gráficos
     const KWH_TJ = 277777.78;
     const casaMWh = (AQ.tj * KWH_TJ) / (AQ.casas_milhares * 1000) / 1000; // MWh de aquecimento por casa e por ano
     const aqTotalMWh = (AQ.tj * KWH_TJ) / 1000;
@@ -317,7 +319,7 @@
       [ton(TODAS.total), tr("CO₂e por ano", "CO₂e a year"), tr("com efeitos não-CO₂", "with non-CO₂ effects"), tr(`só emissões diretas: ${ton(TODAS.direto)}`, `direct emissions only: ${ton(TODAS.direto)}`)],
       [fmt(TODAS.mwh / casaMWh / 1e6, 1), tr("milhões de casas", "million homes"), tr("é quantas casas portuguesas se aqueceriam um ano com a energia deste combustível", "is how many Portuguese homes could be heated for a year with the energy in this fuel"), tr(`${(TODAS.mwh / aqTotalMWh).toLocaleString("pt-PT", { maximumFractionDigits: 1 })}× o aquecimento de todas as casas`, `${(TODAS.mwh / aqTotalMWh).toLocaleString("en-GB", { maximumFractionDigits: 1 })}× the heating of all homes`)]
     ]);
-    document.getElementById("rt-lista").innerHTML = ROT.map((r) => `<option value="${esc(rotuloRota(r))}"></option>`).join("");
+    document.getElementById("rt-lista").innerHTML = ROTV.map((r) => `<option value="${esc(rotuloRota(r))}"></option>`).join("");
     const achaRota = (txt) => {
       const m = (txt || "").match(/\(([A-Z0-9]{3,4})\)\s*⇄\s*.*\(([A-Z0-9]{3,4})\)/);
       return m ? ROT.find((r) => r.a === m[1] && r.b === m[2]) : null;
@@ -343,10 +345,10 @@
     };
     rtIn.addEventListener("input", rtCalc);
     const rtChips = document.getElementById("rt-chips");
-    ROT.slice(0, 8).forEach((r) => { const bt = document.createElement("button"); bt.type = "button"; bt.textContent = nomeRota(r); bt.addEventListener("click", () => { rtIn.value = rotuloRota(r); rtCalc(); }); rtChips.appendChild(bt); });
-    rtIn.value = rotuloRota(ROT.find((r) => r.a === "LIS" && r.b === "LHR") || ROT[0]); rtCalc();
+    ROTV.slice(0, 8).forEach((r) => { const bt = document.createElement("button"); bt.type = "button"; bt.textContent = nomeRota(r); bt.addEventListener("click", () => { rtIn.value = rotuloRota(r); rtCalc(); }); rtChips.appendChild(bt); });
+    rtIn.value = rotuloRota(ROTV.find((r) => r.a === "LIS" && r.b === "LHR") || ROTV[0]); rtCalc();
     legPilhas("rt-leg");
-    const topo = ROT.map((r) => ({ r, t: TT(r) })).sort((a, b) => b.t.total - a.t.total).slice(0, 15);
+    const topo = ROTV.map((r) => ({ r, t: TT(r) })).sort((a, b) => b.t.total - a.t.total).slice(0, 15);
     pilhas(document.getElementById("rt-graf"), topo.map(({ r, t }) => ({ l: nomeRota(r), direto: t.direto / 1000, total: t.total / 1000, t: fmt(t.total / 1000, 0) + " kt", td: fmt(t.direto / 1000, 0) + " kt", tt: fmt(t.total / 1000, 0) + " kt",
       tip: `<div class="r"><span>${tr("Voos por dia", "Flights per day")}</span><b>${fmt(t.voos / 365, 1)}</b></div><div class="r"><span>${tr("Passageiros", "Passengers")}</span><b>${num(t.pax)}</b></div><div class="r"><span>${tr("Combustível", "Fuel")}</span><b>${ton(t.comb)}</b></div><div class="r"><span>${tr("Só diretas", "Direct only")}</span><b>${ton(t.direto)}</b></div><div class="r"><span>${tr("Com não-CO₂", "With non-CO₂")}</span><b>${ton(t.total)}</b></div>` })), "kt");
 

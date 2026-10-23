@@ -14,6 +14,8 @@ import urllib.request
 from datetime import date
 from pathlib import Path
 
+import excluidos
+
 RAIZ = Path(__file__).resolve().parents[2]
 SECO = False  # --dry-run: indica o que mudaria sem escrever
 DADOS = RAIZ / "data"
@@ -57,6 +59,7 @@ def escrever_se_mudou(nome, novo, compacto=None, campos_data=()):
 
     Devolve True se escreveu.
     """
+    novo = excluidos.aplicar(nome, novo)  # países retirados das listas (config/paises-excluidos.json)
     caminho = DADOS / nome
     texto_antigo = caminho.read_text(encoding="utf-8") if caminho.exists() else None
     antigo = json.loads(texto_antigo) if texto_antigo is not None else None

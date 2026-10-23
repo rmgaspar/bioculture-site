@@ -19,6 +19,9 @@ Fluxo: `.github/workflows/atualizar-dados.yml` (quartas-feiras, 05:43 UTC, e man
 | `validar.py` | — | valida estrutura, intervalos e valor mundial antes de publicar |
 | `../noticias/arquivar.py` | — | retira das listagens as notícias com prazo terminado |
 
+## Países retirados das listas
+`config/paises-excluidos.json` (decisão editorial, 2026-10-23) diz que países não entram nas listas do site: seletores, tabelas, séries por país, aeroportos. `comum.escrever_se_mudou` aplica o filtro (`excluidos.py`) a cada ficheiro listado, por isso as atualizações semanais não os repõem; `python3 scripts/dados/excluir_paises.py` aplica-o à mão. Textos (notícias, distribuição de espécies, origem de castas) e agregados mundiais das fontes não se alteram; na página Aviação as rotas continuam nos totais mas saem das listas e dos gráficos.
+
 ## Regras
 - Nunca se inventa, interpola ou preenche um valor em falta.
 - Só observações, últimos valores, sínteses mundiais, períodos e datas são reescritos. Textos
