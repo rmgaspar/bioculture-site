@@ -551,7 +551,8 @@
         if (lang !== "en") return;
         root.querySelectorAll?.("a[href]").forEach((link) => {
             const raw = link.getAttribute("href");
-            if (!raw || raw.startsWith("#") || raw.startsWith("mailto:") || raw.startsWith("tel:")) return;
+            // /cdn-cgi/ é do Cloudflare (o endereço de email protegido vive aqui): acrescentar ?lang=en parte a ligação e o Google rastreia-a como 404.
+            if (!raw || raw.startsWith("#") || raw.startsWith("mailto:") || raw.startsWith("tel:") || raw.includes("/cdn-cgi/")) return;
             try {
                 const url = new URL(raw, window.location.href);
                 if (url.origin !== window.location.origin) return;
