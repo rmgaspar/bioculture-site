@@ -167,7 +167,9 @@
                         }
 
                     } else {
+                        // Notícia que já não existe (retirada ou arquivada): vai para a listagem, em vez de ficar uma página «não encontrada» com código 200 (soft 404 no Google).
                         semIndexar();
+                        window.location.replace("/observatorio/noticias"+(window.BioCultureLanguageStore?.read() === "en" ? "?lang=en" : ""));
                         document.getElementById("loading").classList.add("error-state");
                         document.getElementById("loading").innerHTML = 
                             lang === "en" ? "<strong>News item not found.</strong>" : "<strong>Notícia não encontrada.</strong>";

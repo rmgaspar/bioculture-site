@@ -387,6 +387,8 @@
                     }
                 } catch (e) {
                     semIndexar();
+                    // Espécie que já não existe: vai para o catálogo (evita uma página «não encontrada» com código 200, soft 404 no Google).
+                    if (e && e.message === "not-found") window.location.replace("/ecossistemas/biodiversidade"+(window.BioCultureLanguageStore?.read() === "en" ? "?lang=en" : "")+"#catalogo");
                     document.getElementById("species").innerHTML =
                         '<div class="error"><strong>Espécie não encontrada.</strong><br><a href="biodiversidade.html">Voltar</a></div>';
                 }

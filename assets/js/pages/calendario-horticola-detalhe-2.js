@@ -292,7 +292,9 @@
                     const item = master[id];
 
                     if (!item) {
+                        // Cultura que já não existe: vai para o catálogo (evita uma página «não encontrada» com código 200, soft 404 no Google).
                         semIndexar();
+                        window.location.replace("/calendario/calendario"+(window.BioCultureLanguageStore?.read() === "en" ? "?lang=en" : "")+"#catalogo");
                         document.getElementById("render-horta").innerHTML =
                             "<p>Produto não encontrado.</p>";
                         return;
