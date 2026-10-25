@@ -131,7 +131,9 @@
             }
             async function load() {
                 const id = new URLSearchParams(location.search).get("id");
+                const semIndexar = () => { if (document.querySelector('meta[name="robots"]')) return; const m = document.createElement("meta"); m.name = "robots"; m.content = "noindex"; document.head.appendChild(m); };
                 if (!id) {
+                    semIndexar();
                     document.getElementById("product").innerHTML =
                         `<div class="error">${tr("Produto não indicado.", "Product not specified.")}</div>`;
                     return;
@@ -144,9 +146,13 @@
                     const solucao = data.solucoes.find((s) => (s.produtos || []).some((p) => p.id === id));
                     const product = solucao?.produtos.find((p) => p.id === id);
                     if (!product) throw Error("not-found");
+                    window.BioCulturaCanonica?.definir(id);
                     const categoria = data.categorias.find((c) => c.id === solucao.categoria_id);
                     render(product, solucao, categoria ? localized(categoria.nome) : "");
                 } catch (e) {
+                    semIndexar();
+                    // Produto que já não existe: vai para o catálogo (evita uma página «não encontrada» com código 200, soft 404 no Google).
+                    if (e && e.message === "not-found") window.location.replace("/services/produtos"+(window.BioCultureLanguageStore?.read() === "en" ? "?lang=en" : ""));
                     document.getElementById("product").innerHTML =
                         `<div class="error"><strong>${
                             tr("Produto não encontrado.", "Product not found.")

@@ -299,6 +299,7 @@
                             "<p>Produto não encontrado.</p>";
                         return;
                     }
+                    window.BioCulturaCanonica?.definir(id);
 
                     const image = valid(item.imagem)
                         ? `<img src="${esc(item.imagem)}" alt="${

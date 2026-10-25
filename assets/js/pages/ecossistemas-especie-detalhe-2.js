@@ -377,6 +377,7 @@
                     const record = await window.BioCulturaSpecies.record(id).catch(() => undefined);
                     const esp = resolveSpecies(id, { [id]: record }, pests, invasives, faunas);
                     if (!esp) throw Error("not-found");
+                    window.BioCulturaCanonica?.definir(id);
                     render(esp, master, guidance, horticolas, solucoesCatalogo, problemas, teia);
                     const stickyNav = document.createElement("script");
                     stickyNav.src = "/assets/js/biocultura-sticky-nav.js?v=20";

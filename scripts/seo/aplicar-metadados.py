@@ -10,6 +10,7 @@ Uso: python3 scripts/seo/aplicar-metadados.py
 import html
 import json
 import re
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -27,20 +28,24 @@ def block(site: str, page: str, meta: dict) -> str:
     a = lambda v: html.escape(v, quote=True)
     og_title = meta["pt"].removesuffix(" — bioCulture")
     image = f"{site}/images/partilha/{slug(page)}.jpg"
+    # Páginas de ficha (?id=…): o canónico, os hreflang e o og:url são escritos por assets/js/biocultura-canonica.js, com o id da ficha.
+    dinamica = bool(meta.get("canonica_dinamica"))
     lines = [
         BEGIN,
         f'<meta name="description" content="{a(meta["desc"])}">',
-        f'<link rel="canonical" href="{url}">',
-        f'<link rel="alternate" hreflang="pt-PT" href="{url}">',
-        f'<link rel="alternate" hreflang="en" href="{url}?lang=en">',
-        f'<link rel="alternate" hreflang="x-default" href="{url}">',
+        *([] if dinamica else [
+            f'<link rel="canonical" href="{url}">',
+            f'<link rel="alternate" hreflang="pt-PT" href="{url}">',
+            f'<link rel="alternate" hreflang="en" href="{url}?lang=en">',
+            f'<link rel="alternate" hreflang="x-default" href="{url}">',
+        ]),
         '<meta property="og:type" content="website">',
         '<meta property="og:site_name" content="bioCulture">',
         '<meta property="og:locale" content="pt_PT">',
         '<meta property="og:locale:alternate" content="en_GB">',
         f'<meta property="og:title" content="{a(og_title)}">',
         f'<meta property="og:description" content="{a(meta["desc"])}">',
-        f'<meta property="og:url" content="{url}">',
+        *([] if dinamica else [f'<meta property="og:url" content="{url}">']),
         f'<meta property="og:image" content="{image}">',
         '<meta property="og:image:width" content="1200">',
         '<meta property="og:image:height" content="630">',
@@ -72,7 +77,10 @@ def apply(page: str, meta: dict, site: str) -> None:
 def main() -> None:
     config = json.loads((ROOT / "config" / "paginas.json").read_text())
     site = config["site"]
+    so = set(sys.argv[1:])  # opcional: só estas páginas
     for page, meta in config["paginas"].items():
+        if so and page not in so:
+            continue
         apply(page, meta, site)
     # Títulos em inglês: o runtime traduz o <title> pelo dicionário automático.
     auto = ROOT / "assets" / "lang" / "auto" / "en.json"

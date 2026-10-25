@@ -38,6 +38,7 @@
                     const n = noticias.find((item) => item.id === noticiaId);
 
                     if (n) {
+                        window.BioCulturaCanonica?.definir(noticiaId);
                         const content = window.BioCultureI18n?.content(n) || n[lang] || n["pt"] || n;
 
                         document.getElementById("loading").style.display = "none";
