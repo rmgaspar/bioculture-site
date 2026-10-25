@@ -392,3 +392,17 @@ html.bio-kb #sidebar a:focus-visible, html.bio-kb #sidebar button:focus-visible,
 /* O mesmo em todo o site: sem teclado, nenhum link ou botão mostra contorno de foco (ex.: ao voltar atrás). */
 html:not(.bio-kb) a:focus, html:not(.bio-kb) button:focus, html:not(.bio-kb) summary:focus { outline: none; }
 html.bio-kb a:focus-visible, html.bio-kb button:focus-visible { outline: 2px solid #2f6b4b; outline-offset: 2px; }
+
+/* Passagem entre páginas sem piscar: o navegador mantém a página anterior até a nova estar pronta e faz uma transição suave;
+   a barra lateral (já escrita no HTML de cada página) fica no mesmo sítio, sem animação, e só o conteúdo faz a transição.
+   Sem suporte (ou com «reduzir movimento») a navegação é a normal. */
+@media (prefers-reduced-motion: no-preference) {
+    @view-transition { navigation: auto; }
+}
+@media (min-width: 1281px) {
+    #sidebar { view-transition-name: bio-sidebar; }
+}
+::view-transition-old(bio-sidebar) { display: none; }
+::view-transition-new(bio-sidebar) { animation: none; mix-blend-mode: normal; }
+::view-transition-group(bio-sidebar) { animation: none; }
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: .16s; animation-timing-function: ease; }

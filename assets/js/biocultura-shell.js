@@ -144,6 +144,7 @@ function choose(item) {
     }
     closeResults();
 
+    try { localStorage.setItem("biocultura_region_nome", String(item.titulo || "")); } catch (_) {}
     const input = get("loc-search-input");
     if (input) input.value = item.titulo;
 
@@ -414,6 +415,7 @@ function scheduleRefresh() {
                 : (await regions()).filter((x) => String(x.id) === String(saved));
             const item = rows && rows[0];
             const input = get("loc-search-input");
+            if (item) { try { localStorage.setItem("biocultura_region_nome", String(item.titulo || "")); } catch (_) {} }
             if (item && input && !input.value) input.value = item.titulo;
         } catch (_) {}
     });
