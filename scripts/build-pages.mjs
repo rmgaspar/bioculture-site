@@ -2,6 +2,7 @@ import { cp, mkdir, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
 import { prerenderSidebar } from "./prerender-sidebar.mjs";
+import { limparEnderecos } from "./clean-urls.mjs";
 
 // Research must validate before preparing any public output.
 execFileSync("python3", ["scripts/catalogo/validar.py"], { stdio: "inherit" });
@@ -76,6 +77,7 @@ for (const entry of publicEntries) {
 await writeFile(path.join(output, ".nojekyll"), "");
 await writeFile(path.join(output, "sitemap.xml"), await sitemap());
 await prerenderSidebar(output);
+await limparEnderecos(output);
 await transformDirectory(output);
 if ((await readdir(output)).includes("catalogo")) {
   throw new Error("A pesquisa do catálogo não pode fazer parte do site público.");

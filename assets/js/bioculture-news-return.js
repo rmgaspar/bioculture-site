@@ -9,7 +9,7 @@
     window.__bioNewsReturn = true;
 
     const KEY = "bio-news-return";
-    const LINKS = 'a[href*="noticia-detalhe.html"]';
+    const LINKS = 'a[href*="noticia-detalhe"]';
 
     document.addEventListener("click", (event) => {
         const link = event.target.closest && event.target.closest(LINKS);
