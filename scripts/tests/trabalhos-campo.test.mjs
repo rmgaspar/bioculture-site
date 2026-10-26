@@ -42,7 +42,7 @@ test("Cada trabalho de campo tem meses válidos, texto nas duas línguas e desti
 
 test("As imagens das técnicas existem, têm texto nas duas línguas e licença aberta com crédito (ou são esquemas próprios)", () => {
   const comImagens = dicas.filter((d) => d.imagens);
-  assert.ok(comImagens.length >= 40, "quase todas as técnicas têm imagem própria");
+  assert.equal(comImagens.length, dicas.length, "todas as técnicas têm imagem própria");
   for (const d of comImagens) {
     assert.ok(d.imagens.length >= 1, `${d.id}: imagens`);
     for (const im of d.imagens) {
