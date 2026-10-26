@@ -63,8 +63,9 @@ test("Todas as técnicas tem página própria com barra fixa por área, e a pág
   const guia = readFileSync("services/servicos.html", "utf8");
   const areas = [...new Set(dicas.map((d) => d.categoria))];
   assert.equal(areas.length, 9);
-  assert.match(pagina, /class="reading-nav tecnicas-nav"/);
-  for (const area of areas) assert.ok(pagina.includes(`>${area}</a>`), `barra sem ${area}`);
+  assert.match(pagina, /class="reading-nav"/);
+  assert.match(pagina, /<body class="[^"]*reading-header-compact/, "barra igual às outras páginas");
+  for (const area of areas) assert.ok(pagina.includes(`>${area} ↓</a>`), `barra sem ${area}`);
   assert.equal((pagina.match(/href="#area-/g) || []).length, 9);
   assert.match(guia, /href="\/services\/tecnicas\.html"/);
   assert.ok(!guia.includes('id="technique-grid"'), "o catálogo já não fica na página de técnicas");
