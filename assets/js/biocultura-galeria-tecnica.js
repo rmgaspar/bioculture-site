@@ -4,9 +4,9 @@
 
     function figura(imagem, L, amplo) {
         const en = L === "en";
-        const credito = imagem.tipo === "esquema"
+        const credito = imagem.tipo === "esquema" && !imagem.pagina
             ? `${en ? "Diagram" : "Esquema"}: ${esc(imagem.autor)}`
-            : `${en ? "Photo" : "Foto"}: ${esc(imagem.autor)} · ${
+            : `${imagem.tipo === "esquema" ? (en ? "Diagram" : "Esquema") : (en ? "Photo" : "Foto")}: ${esc(imagem.autor)} · ${
                 imagem.licenca_url
                     ? `<a href="${esc(imagem.licenca_url)}" target="_blank" rel="noopener noreferrer">${esc(en && imagem.licenca_en ? imagem.licenca_en : imagem.licenca)}</a>`
                     : esc(en && imagem.licenca_en ? imagem.licenca_en : imagem.licenca)

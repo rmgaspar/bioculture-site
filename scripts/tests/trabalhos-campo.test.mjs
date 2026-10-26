@@ -48,7 +48,7 @@ test("As imagens das técnicas existem, têm texto nas duas línguas e licença 
     for (const im of d.imagens) {
       assert.ok(existsSync(`images/${im.ficheiro}`), `${d.id}: falta ${im.ficheiro}`);
       for (const k of ["legenda", "alt"]) assert.ok(im[k]?.pt && im[k]?.en, `${d.id}: ${k} nas duas línguas`);
-      if (im.tipo === "esquema") assert.equal(im.autor, "bioCulture");
+      if (im.tipo === "esquema" && !im.pagina) assert.equal(im.autor, "bioCulture");
       else {
         assert.match(im.licenca, /^(CC0|CC BY( 4\.0| 3\.0| 2\.5| 2\.0)?|CC BY-SA( 4\.0| 3\.0| 2\.5| 2\.0)?|Public domain)/, `${d.id}: licença ${im.licenca}`);
         assert.match(im.pagina, /^https:\/\/commons\.wikimedia\.org\/wiki\/File:/, `${d.id}: página de origem`);
