@@ -47,9 +47,43 @@ def planta(x, base, alto=80, cor=VERDE):
             f'<ellipse cx="{x+26}" cy="{base-alto*.7-28:.0f}" rx="11" ry="6" transform="rotate(40 {x+26} {base-alto*.7-28:.0f})"/><ellipse cx="{x}" cy="{base-alto-4}" rx="6" ry="9"/></g>')
 
 
+DEFS = (
+    '<defs>'
+    '<linearGradient id="gBg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbf9f1"/><stop offset="1" stop-color="#ece7d6"/></linearGradient>'
+    '<linearGradient id="gSolo" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d9bb91"/><stop offset="1" stop-color="#b99468"/></linearGradient>'
+    '<linearGradient id="gMadeira" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#7a5c3d"/><stop offset=".5" stop-color="#977654"/><stop offset="1" stop-color="#6f5236"/></linearGradient>'
+    '<linearGradient id="gComp" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5d4731"/><stop offset="1" stop-color="#3b2d1f"/></linearGradient>'
+    '<linearGradient id="gFolha" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#a6d474"/><stop offset="1" stop-color="#4d8a37"/></linearGradient>'
+    '<pattern id="gTex" width="22" height="22" patternUnits="userSpaceOnUse"><circle cx="4" cy="5" r="1.3" fill="#fff" opacity=".16"/><circle cx="15" cy="11" r="1.6" fill="#5a3f26" opacity=".12"/><circle cx="9" cy="18" r="1.1" fill="#fff" opacity=".12"/><circle cx="19" cy="3" r="1" fill="#5a3f26" opacity=".10"/></pattern>'
+    '<filter id="sombra" x="-10%" y="-10%" width="125%" height="135%"><feDropShadow dx="0" dy="3" stdDeviation="3.2" flood-color="#2f2a1c" flood-opacity=".20"/></filter>'
+    '</defs>'
+)
+
+
+def _folha(m):
+    cx, cy, rx, ang = float(m.group(1)), float(m.group(2)), float(m.group(3)), m.group(4)
+    L = rx * 2.1
+    return (f'<g transform="translate({cx:g} {cy:g}) rotate({ang})"><path d="M{-L/2:.1f} 0C{-L/4:.1f} {-L*.34:.1f} {L/4:.1f} {-L*.34:.1f} {L/2:.1f} 0C{L/4:.1f} {L*.34:.1f} {-L/4:.1f} {L*.34:.1f} {-L/2:.1f} 0Z" fill="url(#gFolha)"/>'
+            f'<path d="M{-L/2:.1f} 0H{L/2:.1f}" stroke="#3d7a2e" stroke-width="1.2" opacity=".55"/></g>')
+
+
 def svg(corpo):
-    return (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400" role="img" font-family="Georgia, serif">'
-            f'<rect width="600" height="400" fill="{BG}"/>{corpo}</svg>')
+    import re
+    c = corpo
+    # terra, madeira e composto com degradé; folhas com forma de folha; blocos de terra com sombra e textura
+    c = c.replace(f'fill="{ARG}"', 'fill="url(#gSolo)"').replace(f'fill="{SOLO2}"', 'fill="url(#gComp)"').replace(f'fill="{SOLO}"', 'fill="url(#gMadeira)"')
+    c = re.sub(r'<ellipse cx="(-?[\d.]+)" cy="(-?[\d.]+)" rx="(1[0-2])" ry="[67]" transform="rotate\((-?\d+) [-\d.]+ [-\d.]+\)"/>', _folha, c)
+    def bloco(m):
+        r = m.group(0)
+        if 'rx="1' not in r and 'rx="8"' not in r and 'rx="12"' not in r and 'rx="10"' not in r:
+            return r
+        w = re.search(r'width="(\d+)"', r); h = re.search(r'height="(\d+)"', r)
+        if not w or not h or int(w.group(1)) < 120 or int(h.group(1)) < 60:
+            return r
+        return r.replace('/>', ' filter="url(#sombra)"/>', 1) + r.replace('fill="url(#gSolo)"', 'fill="url(#gTex)"')
+    c = re.sub(r'<rect [^>]*fill="url\(#gSolo\)"[^>]*/>', bloco, c)
+    return (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400" role="img" font-family="Georgia, serif">{DEFS}'
+            f'<rect width="600" height="400" fill="url(#gBg)"/>{c}</svg>')
 
 
 # 1 ───────────────────────────────────────────────────────── onde cortar na poda
@@ -59,23 +93,25 @@ def corte_poda(L):
          "en": dict(a=("Too far", ["leaves a stub", "that dies back"]), b=("Right", ["just above the bud,", "sloping away from it"]),
                     c=("Too close", ["and sloping towards the bud:", "water runs onto it"]), g="bud", d="stub")}[L]
     o = []
-    def ramo(cx, ye, yd, gy):
-        return (f'<polygon points="{cx-17},312 {cx-17},{ye} {cx+17},{yd} {cx+17},312" fill="{SOLO}"/>'
-                f'<ellipse cx="{cx+24}" cy="{gy}" rx="10" ry="17" fill="#6f9a4a"/>')
-    o.append(ramo(100, 96, 96, 262))
-    o.append(f'<path d="M62 96h76M62 262h76" stroke="{VERM}" stroke-width="2.5" stroke-dasharray="6 5"/>')
-    o.append(seta(150, 130, 150, 100, VERM, 2.5) + seta(150, 228, 150, 258, VERM, 2.5))
-    o.append(t(150, 184, S["d"], 15, 700, VERM))
-    o.append(ramo(300, 226, 196, 262) + f'<path d="M283 226L317 196" stroke="{VERDE}" stroke-width="5"/>')
-    o.append(f'<path d="M270 214c-8 10-14 18-18 28" fill="none" stroke="{AZUL}" stroke-width="3.5" stroke-dasharray="1 7" stroke-linecap="round"/>')
-    o.append(ramo(500, 196, 232, 262) + f'<path d="M483 196L517 232" stroke="{VERM}" stroke-width="5"/>')
-    o.append(f'<path d="M538 212c-6 8-9 12-9 17a9 9 0 0 0 18 0c0-5-3-9-9-17z" fill="{AZUL}" opacity=".9"/>')
     for cx in (100, 300, 500):
-        o.append(guia(cx + 58, 296, cx + 31, 270) + t(cx + 62, 302, S["g"], 14, 600, MUTE, "start"))
-    o.append(errado(100, 38) + certo(300, 38) + errado(500, 38))
+        o.append(f'<rect x="{cx-88}" y="14" width="176" height="372" rx="18" fill="#fffdf6" filter="url(#sombra)"/>')
+        o.append(f'<path d="M{cx-88} 296H{cx+88}V312H{cx-88}Z" fill="{ARG}"/>')
+    def ramo(cx, ye, yd, gy):
+        return (f'<polygon points="{cx-17},300 {cx-17},{ye} {cx+17},{yd} {cx+17},300" fill="{SOLO}"/>'
+                f'<ellipse cx="{cx+24}" cy="{gy}" rx="10" ry="17" fill="#6f9a4a"/>')
+    o.append(ramo(100, 96, 96, 258))
+    o.append(f'<path d="M64 96h72M64 258h72" stroke="{VERM}" stroke-width="2.5" stroke-dasharray="6 5"/>')
+    o.append(seta(152, 130, 152, 100, VERM, 2.5) + seta(152, 224, 152, 254, VERM, 2.5))
+    o.append(t(152, 180, S["d"], 15, 700, VERM))
+    o.append(ramo(300, 224, 194, 258) + f'<path d="M283 224L317 194" stroke="{VERDE}" stroke-width="5"/>')
+    o.append(f'<path d="M270 212c-8 10-14 18-18 28" fill="none" stroke="{AZUL}" stroke-width="3.5" stroke-dasharray="1 7" stroke-linecap="round"/>')
+    o.append(ramo(500, 194, 230, 258) + f'<path d="M483 194L517 230" stroke="{VERM}" stroke-width="5"/>')
+    o.append(f'<path d="M540 210c-6 8-9 12-9 17a9 9 0 0 0 18 0c0-5-3-9-9-17z" fill="{AZUL}" opacity=".9"/>')
+    for cx in (100, 300, 500):
+        o.append(guia(cx + 50, 282, cx + 32, 268) + t(cx + 54, 288, S["g"], 13, 600, MUTE, "start"))
+    o.append(errado(100, 44) + certo(300, 44) + errado(500, 44))
     for cx, (tit, ls), cor in ((100, S["a"], VERM), (300, S["b"], VERDE), (500, S["c"], VERM)):
-        o.append(t(cx, 346, tit, 17, 700, cor) + linhas(cx, 367, ls, 14, 400, MUTE, "middle", 17))
-    o.append('<rect y="312" width="600" height="8" fill="#c9a77f"/>')
+        o.append(t(cx, 342, tit, 17, 700, cor) + linhas(cx, 363, ls, 13, 400, MUTE, "middle", 17))
     return svg("".join(o))
 
 
