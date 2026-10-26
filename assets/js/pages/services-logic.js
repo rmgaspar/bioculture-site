@@ -96,8 +96,16 @@
                     (selected === "all" || d.categoria === selected) &&
                     (!term || normalize(`${d.titulo} ${d.categoria} ${d.resumo}`).includes(term))
                 );
-                const card = (item) =>
-                    `<article class="technique-card" id="tecnica-${esc(item.id)}">${window.BioCulturaGaleria ? window.BioCulturaGaleria.html(item, L) : ""}<span class="technique-meta">${esc(item.nivel)}</span><h3>${esc(item.titulo)}</h3><p>${esc(item.resumo)}</p>${
+                // Imagens da própria técnica; sem elas, a fotografia da área (para nenhum cartão ficar sem imagem).
+                const imagensDe = (item) => {
+                    if (item.imagens?.length) return item.imagens;
+                    const f = fotoDe(item.categoria);
+                    return f ? [{ ...f, tipo: "foto" }] : [];
+                };
+                const card = (item) => {
+                    const imagens = imagensDe(item), destaque = imagens.length > 1;
+                    const galeria = window.BioCulturaGaleria ? window.BioCulturaGaleria.html({ imagens }, L) : "";
+                    return `<article class="technique-card${destaque ? " technique-card--destaque" : ""}" id="tecnica-${esc(item.id)}">${galeria}<div class="technique-body"><span class="technique-meta">${esc(item.nivel)}</span><h3>${esc(item.titulo)}</h3><p>${esc(item.resumo)}</p>${
                         item.fontes?.length && item.quando ? `<p class="technique-quando"><b>${tr("Quando", "When")}</b> ${esc(item.quando)}</p>` : ""
                     }${
                         item.passos?.length
@@ -107,15 +115,12 @@
                         item.fontes?.length
                             ? `<p class="technique-fontes">${tr("Fontes", "Sources")}: ${item.fontes.map((s) => `<a href="${esc(s.url)}" target="_blank" rel="noopener noreferrer">${esc(s.nome)}</a>`).join(" · ")}</p>`
                             : ""
-                    }</article>`;
-                // Uma fotografia por área (não por cartão): evita repetir a mesma imagem 47 vezes.
+                    }</div></article>`;
+                };
+                // Cada área é uma faixa com o seu título e os cartões em grelha, cada um com a sua imagem.
                 const groups = [...new Set(found.map((d) => d.categoria))].map((cat) => {
-                    const f = fotoDe(cat), items = found.filter((d) => d.categoria === cat);
-                    return `<div class="technique-group" data-tom="${esc(SLUG[cat] || "")}"><div class="technique-group-head">${
-                        f
-                            ? `<figure class="technique-foto" data-no-signature><img src="/images/${esc(f.ficheiro)}" alt="${esc(f.alt[L])}" width="1200" height="800" loading="lazy"><figcaption>${tr("Foto", "Photo")}: <a href="${esc(f.pagina)}" target="_blank" rel="noopener noreferrer" title="${esc(f.legenda[L])}">${esc(f.autor)} · ${esc(L === "en" && f.licenca_en ? f.licenca_en : f.licenca)}</a></figcaption></figure>`
-                            : ""
-                    }<h3>${esc(cat)}</h3><span class="technique-group-count">${items.length} ${tr(items.length === 1 ? "técnica" : "técnicas", items.length === 1 ? "technique" : "techniques")}</span></div><div class="technique-group-cards">${items.map(card).join("")}</div></div>`;
+                    const items = found.filter((d) => d.categoria === cat);
+                    return `<div class="technique-group" data-tom="${esc(SLUG[cat] || "")}"><div class="technique-group-head"><h3>${esc(cat)}</h3><span class="technique-group-count">${items.length} ${tr(items.length === 1 ? "técnica" : "técnicas", items.length === 1 ? "technique" : "techniques")}</span></div><div class="technique-group-cards">${items.map(card).join("")}</div></div>`;
                 });
                 byId("technique-grid").innerHTML = groups.join("") || `<p class="empty">${tr("Nenhuma técnica encontrada para essa pesquisa.", "No technique found for this search.")}</p>`;
                 byId("technique-count").textContent = tr(`${found.length} de ${dicas.length} técnicas`, `${found.length} of ${dicas.length} techniques`);

@@ -8,8 +8,8 @@
             ? `${en ? "Diagram" : "Esquema"}: ${esc(imagem.autor)}`
             : `${en ? "Photo" : "Foto"}: ${esc(imagem.autor)} · ${
                 imagem.licenca_url
-                    ? `<a href="${esc(imagem.licenca_url)}" target="_blank" rel="noopener noreferrer">${esc(imagem.licenca)}</a>`
-                    : esc(imagem.licenca)
+                    ? `<a href="${esc(imagem.licenca_url)}" target="_blank" rel="noopener noreferrer">${esc(en && imagem.licenca_en ? imagem.licenca_en : imagem.licenca)}</a>`
+                    : esc(en && imagem.licenca_en ? imagem.licenca_en : imagem.licenca)
             } · <a href="${esc(imagem.pagina)}" target="_blank" rel="noopener noreferrer">Wikimedia Commons</a>`;
         return `<figure class="tec-fig tec-fig--${esc(imagem.tipo)}${amplo ? " tec-fig--ampla" : ""}"><img src="/images/${esc(imagem.ficheiro)}" alt="${esc(imagem.alt[L])}" width="1200" height="800" loading="lazy" decoding="async"><figcaption>${esc(imagem.legenda[L])}<span class="tec-credito">${credito}</span></figcaption></figure>`;
     }
@@ -20,7 +20,7 @@
             if (!imagens.length) return "";
             // O esquema ocupa a largura toda; uma fotografia sozinha ao lado dele também.
             const fotos = imagens.filter((imagem) => imagem.tipo !== "esquema").length, esquemas = imagens.length - fotos;
-            return `<div class="tec-galeria" data-no-signature>${imagens.map((imagem) => figura(imagem, L, imagem.tipo !== "esquema" && esquemas && fotos === 1)).join("")}</div>`;
+            return `<div class="tec-galeria${imagens.length === 1 ? " tec-galeria--um" : ""}" data-no-signature>${imagens.map((imagem) => figura(imagem, L, imagem.tipo !== "esquema" && esquemas && fotos === 1)).join("")}</div>`;
         },
     };
 })();

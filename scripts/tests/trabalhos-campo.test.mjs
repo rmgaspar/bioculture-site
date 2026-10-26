@@ -42,9 +42,9 @@ test("Cada trabalho de campo tem meses válidos, texto nas duas línguas e desti
 
 test("As imagens das técnicas existem, têm texto nas duas línguas e licença aberta com crédito (ou são esquemas próprios)", () => {
   const comImagens = dicas.filter((d) => d.imagens);
-  assert.ok(comImagens.length >= 6);
+  assert.ok(comImagens.length >= 40, "quase todas as técnicas têm imagem própria");
   for (const d of comImagens) {
-    assert.ok(d.imagens.length >= 2, `${d.id}: pelo menos uma foto e um esquema, ou duas fotos`);
+    assert.ok(d.imagens.length >= 1, `${d.id}: imagens`);
     for (const im of d.imagens) {
       assert.ok(existsSync(`images/${im.ficheiro}`), `${d.id}: falta ${im.ficheiro}`);
       for (const k of ["legenda", "alt"]) assert.ok(im[k]?.pt && im[k]?.en, `${d.id}: ${k} nas duas línguas`);
