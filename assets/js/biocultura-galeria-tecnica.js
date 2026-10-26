@@ -11,7 +11,7 @@
                     ? `<a href="${esc(imagem.licenca_url)}" target="_blank" rel="noopener noreferrer">${esc(en && imagem.licenca_en ? imagem.licenca_en : imagem.licenca)}</a>`
                     : esc(en && imagem.licenca_en ? imagem.licenca_en : imagem.licenca)
             } · <a href="${esc(imagem.pagina)}" target="_blank" rel="noopener noreferrer">Wikimedia Commons</a>`;
-        return `<figure class="tec-fig tec-fig--${esc(imagem.tipo)}${amplo ? " tec-fig--ampla" : ""}"><img src="/images/${esc(en && imagem.ficheiro_en ? imagem.ficheiro_en : imagem.ficheiro)}" alt="${esc(imagem.alt[L])}" width="1200" height="800" loading="lazy" decoding="async"><figcaption>${esc(imagem.legenda[L])}<span class="tec-credito">${credito}</span></figcaption></figure>`;
+        return `<figure class="tec-fig tec-fig--${esc(imagem.tipo)}${amplo ? " tec-fig--ampla" : ""}"><img src="/images/${esc(en && imagem.ficheiro_en ? imagem.ficheiro_en : imagem.ficheiro)}${/\.svg$/.test(imagem.ficheiro) ? "?v=3" : ""}" alt="${esc(imagem.alt[L])}" width="1200" height="800" loading="lazy" decoding="async"><figcaption>${esc(imagem.legenda[L])}<span class="tec-credito">${credito}</span></figcaption></figure>`;
     }
 
     window.BioCulturaGaleria = {
