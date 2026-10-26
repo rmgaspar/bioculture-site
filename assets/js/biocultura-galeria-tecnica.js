@@ -20,7 +20,7 @@
             if (!imagens.length) return "";
             // O esquema ocupa a largura toda; uma fotografia sozinha ao lado dele também.
             const fotos = imagens.filter((imagem) => imagem.tipo !== "esquema").length, esquemas = imagens.length - fotos;
-            return `<div class="tec-galeria${imagens.length === 1 ? " tec-galeria--um" : ""}" data-no-signature>${imagens.map((imagem) => figura(imagem, L, imagem.tipo !== "esquema" && esquemas && fotos === 1)).join("")}</div>`;
+            return `<div class="tec-galeria tec-galeria--n${imagens.length}${imagens.length === 1 ? " tec-galeria--um" : ""}" data-no-signature>${imagens.map((imagem) => figura(imagem, L, imagem.tipo !== "esquema" && esquemas && fotos === 1)).join("")}</div>`;
         },
     };
 })();
