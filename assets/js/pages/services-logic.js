@@ -79,4 +79,21 @@
         byId("solar-results-area").hidden = false;
     });
 
+
+    // Cada guia de projeto remete para as fichas de técnicas relacionadas (catálogo «Todas as técnicas»).
+    if (document.querySelector("section.blueprint")) {
+        fetch("/data/dicas.json").then((r) => (r.ok ? r.json() : [])).then((dicas) => {
+            const tr = (pt, en) => (isEnglish ? en : pt);
+            const esc = (v) => String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+            const AREA = { solo: "solo", compostagem: "compostagem", chuva: "agua", agrofloresta: "perenes", hortas: "planeamento", apicultura: "biodiversidade", pragas: "prevencao" };
+            document.querySelectorAll("section.blueprint[id]").forEach((secao) => {
+                const fichas = dicas.filter((d) => d.guia === secao.id);
+                if (!fichas.length) return;
+                const bloco = document.createElement("div");
+                bloco.className = "guia-fichas";
+                bloco.innerHTML = `<span class="guia-fichas-titulo">${tr("Fichas de técnicas relacionadas", "Related technique sheets")}</span><ul>${fichas.map((d) => `<li><a href="/services/tecnicas.html#tecnica-${esc(d.id)}">${esc(d.titulo)}</a></li>`).join("")}</ul><a class="guia-fichas-todas" href="/services/tecnicas.html#area-${AREA[secao.id] || ""}">${tr("Ver todas as fichas →", "See all sheets →")}</a>`;
+                secao.appendChild(bloco);
+            });
+        }).catch(() => {});
+    }
 })();

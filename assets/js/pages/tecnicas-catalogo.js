@@ -10,6 +10,16 @@
     // O texto chega traduzido em inglês, por isso a categoria é reconhecida nas duas línguas.
     const SLUG = {"Solo e cobertura":"solo","Soil and cover":"solo","Compostagem e húmus":"compostagem","Composting and humus":"compostagem","Planeamento e fertilidade":"planeamento","Planning and fertility":"planeamento","Água e irrigação":"agua","Water and irrigation":"agua","Sementeiras e propagação":"sementeiras","Sowing and propagation":"sementeiras","Sementes e diversidade genética":"sementes","Seeds and genetic diversity":"sementes","Biodiversidade funcional":"biodiversidade","Functional biodiversity":"biodiversidade","Prevenção sem pesticidas":"prevencao","Prevention without pesticides":"prevencao","Árvores e sistemas perenes":"perenes","Trees and perennial systems":"perenes"};
 
+    const GUIAS = {
+        solo: ["Mulching como sistema, não decoração", "Mulching as a system, not decoration"],
+        compostagem: ["Compostagem como ciclo, não como resíduo", "Composting as a cycle, not as waste"],
+        chuva: ["Captação de água da chuva", "Rainwater harvesting"],
+        agrofloresta: ["Agrofloresta como desenho de sistema", "Agroforestry as system design"],
+        hortas: ["Cultivar em pouco espaço, com princípios de permacultura", "Growing in little space, with permaculture principles"],
+        apicultura: ["Apoiar polinizadores, com ou sem colmeias", "Supporting pollinators, with or without hives"],
+        pragas: ["Prevenir antes de combater", "Prevent before you fight"],
+    };
+
     Promise.all([
         fetch("/data/dicas.json").then((r) => { if (!r.ok) throw Error("HTTP " + r.status); return r.json(); }),
         fetch("/data/dicas-fotos.json").then((r) => (r.ok ? r.json() : {})).catch(() => ({})),
@@ -66,7 +76,8 @@
             const fontes = item.fontes?.length
                 ? `<p class="tfiche-fontes">${tr("Fontes", "Sources")}: ${item.fontes.map((s) => `<a href="${esc(s.url)}" target="_blank" rel="noopener noreferrer">${esc(s.nome)}</a>`).join(" · ")}</p>` : "";
             const nav = (t, rotulo, seta) => t ? `<a class="tfiche-nav" href="#tecnica-${esc(t.id)}" rel="${seta === "←" ? "prev" : "next"}">${seta === "←" ? "← " : ""}<span><small>${rotulo}</small>${esc(t.titulo)}</span>${seta === "→" ? " →" : ""}</a>` : "<span></span>";
-            const html = `<div class="tfiche-fundo" data-fechar></div><article class="tfiche" role="dialog" aria-modal="true" aria-labelledby="tfiche-titulo" data-tom="${esc(SLUG[item.categoria] || "")}"><button type="button" class="tfiche-fechar" data-fechar aria-label="${tr("Fechar", "Close")}">×</button><div class="tfiche-grelha"><div class="tfiche-imagens">${galeria}</div><div class="tfiche-texto"><span class="tfiche-meta">${esc(item.categoria)} · ${esc(item.nivel)}</span><h2 id="tfiche-titulo">${esc(item.titulo)}</h2><p class="tfiche-resumo">${esc(item.resumo)}</p>${quando}${passos}${fontes}</div></div><div class="tfiche-rodape">${nav(ant, tr("Anterior", "Previous"), "←")}${nav(seg, tr("Seguinte", "Next"), "→")}</div></article>`;
+            const guia = GUIAS[item.guia] ? `<a class="tfiche-guia" href="/services/servicos.html#${esc(item.guia)}"><small>${tr("Guia de projeto", "Project guide")}</small>${esc(tr(...GUIAS[item.guia]))} →</a>` : "";
+            const html = `<div class="tfiche-fundo" data-fechar></div><article class="tfiche" role="dialog" aria-modal="true" aria-labelledby="tfiche-titulo" data-tom="${esc(SLUG[item.categoria] || "")}"><button type="button" class="tfiche-fechar" data-fechar aria-label="${tr("Fechar", "Close")}">×</button><div class="tfiche-grelha"><div class="tfiche-imagens">${galeria}</div><div class="tfiche-texto"><span class="tfiche-meta">${esc(item.categoria)} · ${esc(item.nivel)}</span><h2 id="tfiche-titulo">${esc(item.titulo)}</h2><p class="tfiche-resumo">${esc(item.resumo)}</p>${quando}${passos}${fontes}${guia}</div></div><div class="tfiche-rodape">${nav(ant, tr("Anterior", "Previous"), "←")}${nav(seg, tr("Seguinte", "Next"), "→")}</div></article>`;
             if (!janela) {
                 ultimoFoco = document.activeElement;
                 janela = document.createElement("div");

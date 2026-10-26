@@ -71,3 +71,11 @@ test("Todas as técnicas tem página própria com barra fixa por área, e a pág
   assert.ok(!guia.includes('id="technique-grid"'), "o catálogo já não fica na página de técnicas");
   assert.ok(JSON.parse(readFileSync("config/paginas.json", "utf8")).paginas["services/tecnicas.html"]);
 });
+
+test("Cada ficha de técnica pertence a um guia de projeto que existe na página de guias", () => {
+  const guias = readFileSync("services/servicos.html", "utf8");
+  for (const d of dicas) {
+    assert.ok(d.guia, `${d.id}: sem guia`);
+    assert.ok(guias.includes(`id="${d.guia}"`), `${d.id}: guia ${d.guia} não existe`);
+  }
+});
