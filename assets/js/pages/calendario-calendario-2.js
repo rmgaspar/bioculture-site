@@ -506,7 +506,9 @@
                     const color = PRACTICE_COLORS[item.categoria] || PRACTICE_COLOR_OF[slug] || "#4c7a34";
                     const foto = Object.values(dicasFotos).find((f) => f.ficheiro === `dicas/${slug}.webp`);
                     const L = isEn() ? "en" : "pt";
-                    const image = foto
+                    const image = item.imagens?.length
+                        ? window.BioCulturaGaleria.html(item, L)
+                        : foto
                         ? `<div class="practice-media" data-no-signature><img src="/images/${escapeHtml(foto.ficheiro)}" alt="${escapeHtml(foto.alt[L])}" width="1000" height="667" loading="lazy"><p class="practice-credito">${escapeHtml(foto.legenda[L])} <span>${isEn() ? "Photo" : "Foto"}: ${escapeHtml(foto.autor)} · ${foto.licenca_url ? `<a href="${escapeHtml(foto.licenca_url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(isEn() && foto.licenca_en ? foto.licenca_en : foto.licenca)}</a>` : escapeHtml(isEn() && foto.licenca_en ? foto.licenca_en : foto.licenca)} · <a href="${escapeHtml(foto.pagina)}" target="_blank" rel="noopener noreferrer">Wikimedia Commons</a></span></p></div>`
                         : item.imagem?.src
                         ? `<div class="practice-media"><img src="/${escapeHtml(item.imagem.src)}" alt="${

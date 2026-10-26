@@ -97,7 +97,7 @@
                     (!term || normalize(`${d.titulo} ${d.categoria} ${d.resumo}`).includes(term))
                 );
                 const card = (item) =>
-                    `<article class="technique-card" id="tecnica-${esc(item.id)}"><span class="technique-meta">${esc(item.nivel)}</span><h3>${esc(item.titulo)}</h3><p>${esc(item.resumo)}</p>${
+                    `<article class="technique-card" id="tecnica-${esc(item.id)}">${window.BioCulturaGaleria ? window.BioCulturaGaleria.html(item, L) : ""}<span class="technique-meta">${esc(item.nivel)}</span><h3>${esc(item.titulo)}</h3><p>${esc(item.resumo)}</p>${
                         item.fontes?.length && item.quando ? `<p class="technique-quando"><b>${tr("Quando", "When")}</b> ${esc(item.quando)}</p>` : ""
                     }${
                         item.passos?.length

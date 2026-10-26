@@ -39,3 +39,21 @@ test("Cada trabalho de campo tem meses válidos, texto nas duas línguas e desti
   const meses = new Set(campo.flatMap((t) => t.meses));
   assert.ok([0, 1, 2, 3, 8, 9, 10, 11].every((m) => meses.has(m)), "meses de poda, enxertia, vindima e azeitona cobertos");
 });
+
+test("As imagens das técnicas existem, têm texto nas duas línguas e licença aberta com crédito (ou são esquemas próprios)", () => {
+  const comImagens = dicas.filter((d) => d.imagens);
+  assert.ok(comImagens.length >= 6);
+  for (const d of comImagens) {
+    assert.ok(d.imagens.length >= 2, `${d.id}: pelo menos uma foto e um esquema, ou duas fotos`);
+    for (const im of d.imagens) {
+      assert.ok(existsSync(`images/${im.ficheiro}`), `${d.id}: falta ${im.ficheiro}`);
+      for (const k of ["legenda", "alt"]) assert.ok(im[k]?.pt && im[k]?.en, `${d.id}: ${k} nas duas línguas`);
+      if (im.tipo === "esquema") assert.equal(im.autor, "bioCulture");
+      else {
+        assert.match(im.licenca, /^(CC0|CC BY( 4\.0| 3\.0| 2\.5| 2\.0)?|CC BY-SA( 4\.0| 3\.0| 2\.5| 2\.0)?|Public domain)/, `${d.id}: licença ${im.licenca}`);
+        assert.match(im.pagina, /^https:\/\/commons\.wikimedia\.org\/wiki\/File:/, `${d.id}: página de origem`);
+        assert.ok(im.autor, `${d.id}: autor`);
+      }
+    }
+  }
+});
