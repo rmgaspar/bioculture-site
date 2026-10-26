@@ -55,7 +55,7 @@ CARDS = {
     "calendario/calendario.html": ("Calendário de", "Regeneração."),
     "calendario/enologia.html": ("Vinha viva,", "vinho com lugar."),
     "calendario/horticola-detalhe.html": ("Hortícolas.", "Semear no tempo certo."),
-    "services/services.html": ("Cuidar começa", "por uma boa escolha."),
+    "services/services.html": ("Escolher bem.", "Cuidar melhor."),
     "services/servicos.html": ("Conhecer o lugar.", "Preparar a solução."),
     "services/tecnicas.html": ("Todas as técnicas,", "num só lugar."),
     "services/produtos.html": ("Escolhas para", "um lugar mais vivo."),
