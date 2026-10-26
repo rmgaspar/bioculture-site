@@ -47,6 +47,7 @@ test("As imagens das técnicas existem, têm texto nas duas línguas e licença 
     assert.ok(d.imagens.length >= 1, `${d.id}: imagens`);
     for (const im of d.imagens) {
       assert.ok(existsSync(`images/${im.ficheiro}`), `${d.id}: falta ${im.ficheiro}`);
+      if (im.ficheiro_en) assert.ok(existsSync(`images/${im.ficheiro_en}`), `${d.id}: falta ${im.ficheiro_en}`);
       for (const k of ["legenda", "alt"]) assert.ok(im[k]?.pt && im[k]?.en, `${d.id}: ${k} nas duas línguas`);
       if (im.tipo === "esquema" && !im.pagina) assert.equal(im.autor, "bioCulture");
       else {
