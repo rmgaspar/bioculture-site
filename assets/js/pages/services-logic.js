@@ -98,8 +98,14 @@
                 );
                 const card = (item) =>
                     `<article class="technique-card" id="tecnica-${esc(item.id)}"><span class="technique-meta">${esc(item.nivel)}</span><h3>${esc(item.titulo)}</h3><p>${esc(item.resumo)}</p>${
+                        item.fontes?.length && item.quando ? `<p class="technique-quando"><b>${tr("Quando", "When")}</b> ${esc(item.quando)}</p>` : ""
+                    }${
                         item.passos?.length
                             ? `<details><summary>${tr("Passos essenciais", "Key steps")}</summary><ol>${item.passos.map((s) => `<li>${esc(s)}</li>`).join("")}</ol></details>`
+                            : ""
+                    }${
+                        item.fontes?.length
+                            ? `<p class="technique-fontes">${tr("Fontes", "Sources")}: ${item.fontes.map((s) => `<a href="${esc(s.url)}" target="_blank" rel="noopener noreferrer">${esc(s.nome)}</a>`).join(" · ")}</p>`
                             : ""
                     }</article>`;
                 // Uma fotografia por área (não por cartão): evita repetir a mesma imagem 47 vezes.

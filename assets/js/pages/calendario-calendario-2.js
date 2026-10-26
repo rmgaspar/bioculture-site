@@ -4,6 +4,7 @@
                 floraDB = [],
                 faunaDB = [],
                 dicasDB = [],
+                campoDB = [],
                 dicasFotos = {},
                 horticolasDB = {},
                 infoGlobal = null,
@@ -43,6 +44,9 @@
                 cover: '<path d="M3 20.5h18"/><path d="M6 20.5c0-4 .5-7 2.2-10"/><path d="M12 20.5V7"/><path d="M18 20.5c0-4-.5-7-2.2-10"/><path d="M9 20.5c-.2-2.5-1-4.5-2.2-6"/><path d="M15 20.5c.2-2.5 1-4.5 2.2-6"/>',
                 compost: '<path d="M5 8h14l-1.4 12.5H6.4Z"/><path d="M4 8h16"/><path d="M8.3 12h7.4"/><path d="M8 16h8"/><path d="M12 5.2c-1.8 0-3-1.2-3-2.7 1.8 0 3 1.2 3 2.7Z"/>',
                 infiltrate: '<path d="M7 3.5s-1.7 2-1.7 3.2a1.7 1.7 0 0 0 3.4 0C8.7 5.5 7 3.5 7 3.5Z"/><path d="M12 2s-1.7 2-1.7 3.2a1.7 1.7 0 0 0 3.4 0C13.7 4 12 2 12 2Z"/><path d="M17 3.5s-1.7 2-1.7 3.2a1.7 1.7 0 0 0 3.4 0C18.7 5.5 17 3.5 17 3.5Z"/><path d="M3 13h5l2.5 6h3L16 13h5"/>',
+                prune: '<circle cx="7" cy="18" r="2.5"/><circle cx="17" cy="18" r="2.5"/><path d="M8.7 16.2 17 4"/><path d="M15.3 16.2 7 4"/>',
+                graft: '<path d="M12 21v-8"/><path d="M12 13 6.5 5"/><path d="M12 13l5.5-8"/><path d="M9.5 13h5"/><path d="M5 5c1.8-.2 2.8.5 3.2 1.6"/>',
+                weed: '<path d="M4 21 13.5 8.5"/><path d="M13 5.5l5.5 4 2-2.5-5.5-4Z"/><path d="M3 21h8"/>',
             };
             /* A cor segue o assunto: azul para a água, verde para o que cresce, argila para solo e materiais, âmbar para a vida útil e a colheita, verde-azulado para observar e planear. */
             const WEEK_TONES = {
@@ -52,7 +56,10 @@
                 amber: { color: "#a8730d", bg: "#fbf2dc" },
                 teal: { color: "#3f7373", bg: "#e9f3f2" },
             };
-            const WEEK_TONE_OF = { observe: "teal", cycle: "teal", habitat: "amber", tools: "clay", stages: "green", cloche: "green", bee: "amber", can: "blue", moisture: "blue", mulch: "clay", basket: "amber", shade: "amber", packet: "amber", cover: "green", compost: "clay", infiltrate: "blue" };
+            const WEEK_TONE_OF = { observe: "teal", cycle: "teal", habitat: "amber", tools: "clay", stages: "green", cloche: "green", bee: "amber", can: "blue", moisture: "blue", mulch: "clay", basket: "amber", shade: "amber", packet: "amber", cover: "green", compost: "clay", infiltrate: "blue", prune: "green", graft: "green", weed: "clay" };
+            /* Trabalhos de campo (data/trabalhos-campo.json): o desenho vem do tipo de trabalho, não do título. */
+            const CAMPO_ICON = { "podar-vinha": "prune", "podar-fruto-inverno": "prune", "podar-oliveira": "prune", "podar-ameixeira": "prune", "poda-verde-amendoeira": "prune", "desladroar-vinha": "prune", "colher-garfos": "graft", "enxertar-garfo": "graft", "enxertar-borbulha": "graft", "cortar-infestantes": "weed", "mobilizar-solo-outono": "tools", "apanhar-azeitona": "basket", "preparar-vindima": "basket", "vindimar": "basket" };
+            const campoHref = (task) => task.href || (task.tecnica ? `/services/servicos.html#tecnica-${encodeURIComponent(task.tecnica)}` : "");
             function weekKey(title) {
                 const t = normalize(title);
                 if (/observar/.test(t)) return "observe";
@@ -333,6 +340,7 @@
                         cropMarkup(cropsFor(field, month), field)
                     }</div></article>`
                 ).join("");
+                renderCampoMes(month);
                 const sowing = new Map(cropsFor("sementeira", month).map(([id, item]) => [normalize(item.nome || id), item.nome || id]));
                 const harvesting = new Set(cropsFor("colheita", month).map(([id, item]) => normalize(item.nome || id)));
                 const overlap = [...sowing].filter(([key]) => harvesting.has(key)).map(([, name]) => name);
@@ -351,6 +359,24 @@
                     note.textContent = "";
                     note.classList.remove("visible");
                 }
+            }
+
+            /* Poda, enxertia, azeitona, vindima e terra: o que cabe neste mês (data/trabalhos-campo.json). */
+            function renderCampoMes(month) {
+                const tasks = window.BioCulturaSeasonal.fieldTasks(campoDB, month),
+                    box = document.getElementById("campo-mes");
+                if (!box) return;
+                box.hidden = !tasks.length;
+                document.getElementById("campo-mes-titulo").textContent = isEn()
+                    ? `Trees, vineyard and soil in ${monthsEn[month]}`
+                    : `Árvores, vinha e terra em ${months[month]}`;
+                document.getElementById("campo-mes-lista").innerHTML = tasks.map((task) => {
+                    const key = CAMPO_ICON[task.id] || "tools", tone = WEEK_TONES[WEEK_TONE_OF[key]], href = campoHref(task);
+                    const title = escapeHtml(isEn() ? task.titulo_en : task.titulo);
+                    return `<article class="campo-item" style="--tom:${tone.color};--tom-suave:${tone.bg}"><span class="campo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${WEEK_ICONS[key]}</svg></span><div><h4>${
+                        href ? `<a href="${escapeHtml(href)}">${title}</a>` : title
+                    }</h4><p>${escapeHtml(isEn() ? task.curto_en : task.curto)}</p></div></article>`;
+                }).join("");
             }
 
             function catalogKind(item) {
@@ -441,25 +467,36 @@
                         ["Preparar infiltração", "Abranda a escorrência antes da época mais chuvosa."],
                     ],
                 };
+                /* Podar, enxertar, vindimar… quando for a altura, ocupam os dois últimos cartões (enxertar primeiro). */
+                const campo = window.BioCulturaSeasonal.fieldTasks(campoDB, month)
+                    .sort((a, b) => (b.tecnica === "enxertia") - (a.tecnica === "enxertia")).slice(0, 2);
+                const cards = seasonal[season].slice(0, 4 - campo.length).map(([title, text]) => ({ title, text, key: weekKey(title) }))
+                    .concat(campo.map((task) => ({
+                        title: escapeHtml(isEn() ? task.titulo_en : task.titulo),
+                        text: escapeHtml(isEn() ? task.curto_en : task.curto),
+                        key: CAMPO_ICON[task.id] || "tools",
+                        href: campoHref(task),
+                    })));
                 document.getElementById("week-plan").classList.add("com-foto");
-                document.getElementById("week-plan").innerHTML = `<div class="week-foto" data-foto-slot="semana-${season}"></div>` + seasonal[season].map((
-                    [title, text],
+                document.getElementById("week-plan").innerHTML = `<div class="week-foto" data-foto-slot="semana-${season}"></div>` + cards.map((
+                    { title: rawTitle, text, key, href },
                     index,
                 ) => {
-                    const palette = WEEK_TONES[WEEK_TONE_OF[weekKey(title)]] || WEEK_PALETTE[index % WEEK_PALETTE.length];
+                    const title = href ? `<a href="${escapeHtml(href)}">${rawTitle}</a>` : rawTitle;
+                    const palette = WEEK_TONES[WEEK_TONE_OF[key]] || WEEK_PALETTE[index % WEEK_PALETTE.length];
                     return `<article class="week-task" style="--tom:${palette.color};--tom-suave:${palette.bg}"><span class="week-icon" style="color:${
                         palette.color
                     };background:${
                         palette.bg
                     }"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${
-                        weekIcon(title)
+                        WEEK_ICONS[key]
                     }</svg></span><span class="task-number">0${
                         index + 1
                     }</span><h3>${title}</h3><p>${text}</p></article>`;
                 }).join("");
             }
 
-            const practiceIdsFor = (month) => window.BioCulturaSeasonal.practiceIds(month);
+            const practiceIdsFor = (month) => window.BioCulturaSeasonal.practiceIds(month, campoDB);
             function renderPractices() {
                 const selected = practiceIdsFor(viewedDate.getMonth()).map((id) =>
                     dicasDB.find((item) => item.id === id)
@@ -482,9 +519,19 @@
                         escapeHtml(item.titulo)
                     }</h3><p>${
                         escapeHtml(item.resumo)
-                    }</p><p class="practice-steps-label">Passos essenciais</p><ol class="practice-steps">${
+                    }</p>${
+                        item.fontes?.length && item.quando
+                            ? `<p class="practice-quando"><b>${isEn() ? "When" : "Quando"}</b> ${escapeHtml(item.quando)}</p>`
+                            : ""
+                    }<p class="practice-steps-label">Passos essenciais</p><ol class="practice-steps">${
                         (item.passos || []).map((step) => `<li>${escapeHtml(step)}</li>`).join("")
-                    }</ol></div></article>`;
+                    }</ol>${
+                        item.fontes?.length
+                            ? `<p class="practice-fontes">${isEn() ? "Sources" : "Fontes"}: ${
+                                item.fontes.map((s) => `<a href="${escapeHtml(s.url)}" target="_blank" rel="noopener">${escapeHtml(s.nome)}</a>`).join(" · ")
+                            }</p>`
+                            : ""
+                    }</div></article>`;
                 }).join("");
             }
 
@@ -723,6 +770,7 @@
                         "/data/horticolas_master.json",
                         "/data/dicas.json",
                         "/data/dicas-fotos.json",
+                        "/data/trabalhos-campo.json",
                     ];
                     const data = await Promise.all(
                         urls.map((url) =>
@@ -734,7 +782,9 @@
                                 })
                         ),
                     );
-                    [locationsDB, pragasDB, floraDB, faunaDB, horticolasDB, dicasDB, dicasFotos] = data;
+                    let campoDoc;
+                    [locationsDB, pragasDB, floraDB, faunaDB, horticolasDB, dicasDB, dicasFotos, campoDoc] = data;
+                    campoDB = campoDoc?.trabalhos || [];
                     const saved = localStorage.getItem("biocultura_region");
                     infoGlobal = locationsDB.find((item) => String(item.id) === String(saved)) || null;
                     renderLocalProfile();

@@ -61,12 +61,20 @@
         return [...unique.values()].slice(0, limit);
     }
 
-    // Identificadores das técnicas (data/dicas.json) sugeridas para cada fase do ano.
-    function practiceIds(month) {
-        if ([11, 0, 1].includes(month)) return ["rotacao-culturas", "teste-germinacao", "sebe-viva", "abrigo-insetos", "higiene-ferramentas", "composto-frio"];
-        if ([2, 3, 4].includes(month)) return ["sementeira-direta", "sementeira-sucessiva", "consociacao", "corredor-floral", "monitorizacao-pragas", "rega-gota-a-gota"];
-        if ([5, 6, 7].includes(month)) return ["mulching-organico", "rega-profunda", "olla", "guardar-sementes", "faixa-nao-cortada", "registos-horta"];
-        return ["adubo-verde", "solo-sempre-com-raiz", "folhas-molde", "captacao-chuva", "composto-superficie", "zonas-tampao"];
+    // Trabalhos de campo do mês (data/trabalhos-campo.json): poda, enxertia, apanha da azeitona, vindima, lavoura…
+    function fieldTasks(tasks, month) {
+        return (tasks || []).filter((task) => (task.meses || []).includes(month));
+    }
+
+    // Identificadores das técnicas (data/dicas.json) sugeridas para cada fase do ano; as dos trabalhos de campo do mês vão à frente.
+    function practiceIds(month, tasks) {
+        let base;
+        if ([11, 0, 1].includes(month)) base = ["rotacao-culturas", "teste-germinacao", "sebe-viva", "abrigo-insetos", "higiene-ferramentas", "composto-frio"];
+        else if ([2, 3, 4].includes(month)) base = ["sementeira-direta", "sementeira-sucessiva", "consociacao", "corredor-floral", "monitorizacao-pragas", "rega-gota-a-gota"];
+        else if ([5, 6, 7].includes(month)) base = ["mulching-organico", "rega-profunda", "olla", "guardar-sementes", "faixa-nao-cortada", "registos-horta"];
+        else base = ["adubo-verde", "solo-sempre-com-raiz", "folhas-molde", "captacao-chuva", "composto-superficie", "zonas-tampao"];
+        const campo = fieldTasks(tasks, month).map((task) => task.tecnica).filter(Boolean);
+        return [...new Set([...campo, ...base])].slice(0, 6);
     }
 
     function seasonalPests(pests, month, day = 15) {
@@ -82,5 +90,5 @@
         });
     }
 
-    window.BioCulturaSeasonal = Object.freeze({ months, normalize, seasonKey, periodMatches, phMatches, cropsFor, practiceIds, seasonalPests });
+    window.BioCulturaSeasonal = Object.freeze({ months, normalize, seasonKey, periodMatches, phMatches, cropsFor, practiceIds, fieldTasks, seasonalPests });
 })();
