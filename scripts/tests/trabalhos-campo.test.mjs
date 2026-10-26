@@ -57,3 +57,16 @@ test("As imagens das técnicas existem, têm texto nas duas línguas e licença 
     }
   }
 });
+
+test("Todas as técnicas tem página própria com barra fixa por área, e a página de técnicas aponta para ela", () => {
+  const pagina = readFileSync("services/tecnicas.html", "utf8");
+  const guia = readFileSync("services/servicos.html", "utf8");
+  const areas = [...new Set(dicas.map((d) => d.categoria))];
+  assert.equal(areas.length, 9);
+  assert.match(pagina, /class="reading-nav tecnicas-nav"/);
+  for (const area of areas) assert.ok(pagina.includes(`>${area}</a>`), `barra sem ${area}`);
+  assert.equal((pagina.match(/href="#area-/g) || []).length, 9);
+  assert.match(guia, /href="\/services\/tecnicas\.html"/);
+  assert.ok(!guia.includes('id="technique-grid"'), "o catálogo já não fica na página de técnicas");
+  assert.ok(JSON.parse(readFileSync("config/paginas.json", "utf8")).paginas["services/tecnicas.html"]);
+});

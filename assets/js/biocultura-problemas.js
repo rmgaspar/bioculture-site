@@ -8,7 +8,7 @@
     const esc = (value) => String(value ?? "").replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch]);
     const LINKS = {
         cultura: (id) => `/calendario/horticola-detalhe.html?id=${encodeURIComponent(id)}`,
-        tecnica: (id) => `/services/servicos.html#tecnica-${encodeURIComponent(id)}`,
+        tecnica: (id) => `/services/tecnicas.html#tecnica-${encodeURIComponent(id)}`,
         praga: (id) => `/ecossistemas/especie-detalhe.html?id=${encodeURIComponent(id)}`,
     };
     const KIND = { cultura: ["Ficha da cultura", "Crop guide"], tecnica: ["Técnica", "Technique"], praga: ["Ficha completa", "Full guide"] };

@@ -725,11 +725,11 @@
         // «Continuar no bioCulture»: páginas de leitura e de ação (técnicas, calendário) ligadas ao tema de cada notícia.
         // [href, título PT, título EN]
         relatedPages: {
-            agua: { read: [["/recursos/agua.html", "Água no mundo e em Portugal", "Water in the world and in Portugal"]], act: [["/services/servicos.html#chuva", "Captar a água da chuva", "Harvest rainwater"], ["/services/servicos.html?categoria=%C3%81gua%20e%20irriga%C3%A7%C3%A3o#catalogo-tecnicas", "Técnicas de água e irrigação", "Water and irrigation techniques"]] },
+            agua: { read: [["/recursos/agua.html", "Água no mundo e em Portugal", "Water in the world and in Portugal"]], act: [["/services/servicos.html#chuva", "Captar a água da chuva", "Harvest rainwater"], ["/services/tecnicas.html?categoria=%C3%81gua%20e%20irriga%C3%A7%C3%A3o", "Técnicas de água e irrigação", "Water and irrigation techniques"]] },
             solo: { read: [["/recursos/solo.html", "Solo no mundo e em Portugal", "Soil in the world and in Portugal"]], act: [["/services/servicos.html#compostagem", "Compostagem como ciclo", "Composting as a cycle"], ["/services/servicos.html#solo", "Cobrir o solo (mulching)", "Covering the soil (mulching)"]] },
             ar: { read: [["/recursos/ar.html", "Qualidade do ar no mundo e em Portugal", "Air quality in the world and in Portugal"], ["/energia/energia.html", "Energia consciente", "Conscious energy"]], act: [] },
-            biodiversidade: { read: [["/ecossistemas/biodiversidade.html", "Biodiversidade no mundo e em Portugal", "Biodiversity in the world and in Portugal"]], act: [["/services/servicos.html?categoria=Biodiversidade%20funcional#catalogo-tecnicas", "Biodiversidade funcional: técnicas", "Functional biodiversity: techniques"], ["/services/servicos.html#agrofloresta", "Agrofloresta", "Agroforestry"]] },
-            agricultura: { read: [["/calendario/conhecimento-cuidar.html", "Conhecimento para cuidar", "Knowledge to care"]], act: [["/calendario/calendario.html", "Calendário de regeneração: o que fazer agora", "Regeneration calendar: what to do now"], ["/services/servicos.html?categoria=Preven%C3%A7%C3%A3o%20sem%20pesticidas#catalogo-tecnicas", "Prevenção sem pesticidas", "Prevention without pesticides"]] },
+            biodiversidade: { read: [["/ecossistemas/biodiversidade.html", "Biodiversidade no mundo e em Portugal", "Biodiversity in the world and in Portugal"]], act: [["/services/tecnicas.html?categoria=Biodiversidade%20funcional", "Biodiversidade funcional: técnicas", "Functional biodiversity: techniques"], ["/services/servicos.html#agrofloresta", "Agrofloresta", "Agroforestry"]] },
+            agricultura: { read: [["/calendario/conhecimento-cuidar.html", "Conhecimento para cuidar", "Knowledge to care"]], act: [["/calendario/calendario.html", "Calendário de regeneração: o que fazer agora", "Regeneration calendar: what to do now"], ["/services/tecnicas.html?categoria=Preven%C3%A7%C3%A3o%20sem%20pesticidas", "Prevenção sem pesticidas", "Prevention without pesticides"]] },
             energia: { read: [["/energia/energia.html", "Energia consciente", "Conscious energy"], ["/energia/renewables-and-territory.html", "Renováveis e território", "Renewables and territory"]], act: [["/services/servicos.html#solar", "Fotovoltaico para autoconsumo", "Solar PV for self-consumption"]] },
             mineracao: { read: [["/energia/mineracao.html", "Mineração no mundo e em Portugal", "Mining in the world and in Portugal"]], act: [] },
             "impacto-digital": { read: [["/energia/digital.html", "Impacto digital e IA", "Digital impact and AI"]], act: [] },
@@ -953,7 +953,7 @@
                 .then((response) => response.ok ? response.json() : {})
                 .catch(() => ({}));
             fullLoading = Promise.all([
-                read(`/assets/lang/auto/${lang}.json?v=128`),
+                read(`/assets/lang/auto/${lang}.json?v=129`),
                 read(`/assets/lang/${lang}.json?v=27`),
                 read(`/assets/lang/display/${lang}.json?v=38`),
             ]).then(([auto, structured, display]) => {

@@ -243,7 +243,7 @@
                 for (const { match, id } of TECHNIQUE_KEYWORDS) {
                     if (match.test(html)) {
                         html = html.replace(match, (m) =>
-                            `<a href="/services/servicos.html#tecnica-${encodeURIComponent(id)}">${m}</a>`);
+                            `<a href="/services/tecnicas.html#tecnica-${encodeURIComponent(id)}">${m}</a>`);
                     }
                 }
                 return html;

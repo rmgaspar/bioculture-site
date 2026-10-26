@@ -1,0 +1,52 @@
+/* Todas as técnicas: faixas por área, cartões que enchem a linha (sem espaços vazios) e imagem em cada ficha. */
+html body #main .technique-catalog { padding-top: 0.4rem; }
+html body #main .technique-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem 1.2rem; padding: 1.2rem 0 0.4rem; }
+html body #main .technique-toolbar label { position: absolute; width: 1px; height: 1px; margin: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+html body #main .technique-toolbar input { flex: 0 1 26rem; max-width: 26rem; height: 3rem; padding: 0 1.2rem; border: 0; border-radius: 999px; background: #f4f1ea; color: #20342a; font-size: 1rem; box-shadow: none; }
+html body #main .technique-toolbar input:focus { outline: 2px solid #c9d6c3; outline-offset: 2px; }
+html body #main .technique-count { margin: 0; color: #6d7a70; font-size: 0.9rem; }
+html body #main .technique-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2.8rem; margin-top: 1.4rem; }
+html body #main .technique-group { --tom: #4c7a34; scroll-margin-top: 6.5rem; }
+html body #main .technique-group-head { display: flex; align-items: baseline; flex-wrap: wrap; gap: 0.2rem 0.9rem; margin: 0 0 1rem; }
+html body #main .technique-group-head h2 { display: flex; align-items: center; gap: 0.6rem; margin: 0; color: #20342a; font-family: Georgia, serif; font-size: 1.6rem; line-height: 1.15; }
+html body #main .technique-group-head h2::before { content: ""; flex: 0 0 auto; width: 0.7rem; height: 0.7rem; border-radius: 50%; background: var(--tom); }
+html body #main .technique-group-count { color: #6d7a70; font-size: 0.9rem; }
+html body #main .technique-group-cards { display: flex; flex-wrap: wrap; gap: 1.1rem; }
+/* Cada cartão cresce para ocupar o resto da linha; quando fica largo, imagem à esquerda e texto à direita. */
+html body #main .technique-card { flex: 1 1 19rem; min-width: 0; container-type: inline-size; padding: 0.8rem 0.8rem 1.3rem; border: 0 !important; border-radius: 20px; background: color-mix(in srgb, var(--tom) 6%, #fff); box-shadow: none; scroll-margin-top: 7rem; transition: background 0.2s ease; }
+html body #main .technique-card--destaque { flex-basis: 100%; }
+html body #main .technique-card:hover { transform: none; box-shadow: none; background: color-mix(in srgb, var(--tom) 11%, #fff); }
+html body #main .technique-card-in { display: flex; flex-direction: column; gap: 0.9rem; height: 100%; }
+html body #main .technique-card .tec-galeria { margin: 0; }
+html body #main .technique-body { display: flex; flex: 1 1 auto; flex-direction: column; padding: 0 0.6rem; }
+html body #main .technique-body details { margin-top: auto; padding-top: 0.8rem; border: 0; }
+@container (min-width: 34rem) {
+    html body #main .technique-card-in { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; gap: 1.4rem; height: auto; }
+    html body #main .technique-card--destaque .technique-card-in { grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); }
+    html body #main .technique-card--destaque .tec-galeria { position: sticky; top: 6.5rem; }
+    html body #main .technique-card .technique-body { padding: 0.4rem 0.6rem 0 0; }
+    html body #main .technique-body details { margin-top: 0.8rem; }
+}
+html body #main .technique-meta { display: block; color: var(--tom); font-size: 0.74rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; }
+html body #main .technique-card h3 { margin: 0.4rem 0 0.4rem; color: #20342a; font-size: 1.25rem; line-height: 1.2; }
+html body #main .technique-card p { margin: 0; color: #4a554e; font-size: 1rem; line-height: 1.6; }
+html body #main .technique-card .technique-quando { margin: 0.6rem 0 0; font-size: 0.92rem; line-height: 1.5; color: #3f4a43; }
+html body #main .technique-card .technique-fontes { margin: 0.8rem 0 0; font-size: 0.78rem; line-height: 1.5; color: #5a6560; }
+html body #main .technique-card .technique-fontes a { color: inherit; text-decoration: underline; }
+html body #main .technique-card summary { display: inline-block; color: var(--tom); font-size: 0.92rem; font-weight: 700; cursor: pointer; list-style: none; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; }
+html body #main .technique-card summary::-webkit-details-marker { display: none; }
+html body #main .technique-card ol { counter-reset: passo; margin: 0.8rem 0 0; padding: 0; list-style: none; }
+html body #main .technique-card ol li { counter-increment: passo; position: relative; margin: 0 0 0.55rem; padding: 0.1rem 0 0 2rem; color: #3f4a43; font-size: 1rem; line-height: 1.5; }
+html body #main .technique-card ol li::before { content: counter(passo); position: absolute; left: 0; top: 0; display: grid; place-items: center; width: 1.4rem; height: 1.4rem; border-radius: 50%; background: color-mix(in srgb, var(--tom) 18%, #fff); color: var(--tom); font-size: 0.78rem; font-weight: 800; }
+html body #main .technique-grid .empty { padding: 1.4rem; border: 0; border-radius: 16px; background: #f4f1ea; color: #55605a; font-size: 1rem; }
+html body #main .topic-back-links { margin-top: 2.4rem; color: #6d7a70; font-size: 0.9rem; }
+html body #main .technique-group[data-tom="solo"] { --tom: #6b8f47; }
+html body #main .technique-group[data-tom="compostagem"] { --tom: #8a5a3c; }
+html body #main .technique-group[data-tom="planeamento"] { --tom: #a66f50; }
+html body #main .technique-group[data-tom="agua"] { --tom: #2f6f9e; }
+html body #main .technique-group[data-tom="sementeiras"] { --tom: #3f8a4a; }
+html body #main .technique-group[data-tom="sementes"] { --tom: #7d3350; }
+html body #main .technique-group[data-tom="biodiversidade"] { --tom: #1e8449; }
+html body #main .technique-group[data-tom="prevencao"] { --tom: #c9762f; }
+html body #main .technique-group[data-tom="perenes"] { --tom: #3f7373; }
+@media (max-width: 700px) { html body #main .technique-toolbar input { flex-basis: 100%; max-width: none; } }

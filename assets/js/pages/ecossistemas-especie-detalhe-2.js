@@ -60,7 +60,7 @@
                 const solucao = solucoesCatalogo?.solucoes?.find((s) => s.id === option.solucao_id);
                 if (!solucao) return null;
                 if (solucao.tipo === "pratica" && valid(solucao.tecnica_id)) {
-                    return { href: `/services/servicos.html#tecnica-${encodeURIComponent(solucao.tecnica_id)}`,
+                    return { href: `/services/tecnicas.html#tecnica-${encodeURIComponent(solucao.tecnica_id)}`,
                         label: tr("Ver técnica →", "See technique →") };
                 }
                 const produto = arr(solucao.produtos)[0];

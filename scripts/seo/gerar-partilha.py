@@ -57,6 +57,7 @@ CARDS = {
     "calendario/horticola-detalhe.html": ("Hortícolas.", "Semear no tempo certo."),
     "services/services.html": ("Cuidar começa", "por uma boa escolha."),
     "services/servicos.html": ("Conhecer o lugar.", "Preparar a solução."),
+    "services/tecnicas.html": ("Todas as técnicas,", "num só lugar."),
     "services/produtos.html": ("Escolhas para", "um lugar mais vivo."),
     "services/produto-detalhe.html": ("Escolhas para", "um lugar mais vivo."),
     "manifesto.html": ("Não basta medir o mundo.", "É preciso voltar a pertencer-lhe."),

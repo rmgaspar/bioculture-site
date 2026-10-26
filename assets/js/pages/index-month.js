@@ -42,13 +42,13 @@
         const invasive = (region?.biomas?.flora_invasora || []).slice(0, 3);
         // Podar, enxertar, vindimar… quando for a altura vêm primeiro; as práticas gerais do mês completam a lista.
         const trabalhos = seasonal.fieldTasks(campo, month).slice(0, 2).map((task) => ({
-            href: task.href || `/services/servicos.html#tecnica-${encodeURIComponent(task.tecnica)}`,
+            href: task.href || `/services/tecnicas.html#tecnica-${encodeURIComponent(task.tecnica)}`,
             titulo: tr(task.titulo, task.titulo_en),
             categoria: tr("Trabalho de campo", "Field work"),
         }));
         const usados = new Set(seasonal.fieldTasks(campo, month).map((task) => task.tecnica));
         const gerais = seasonal.practiceIds(month, campo).filter((id) => !usados.has(id)).map((id) => practices.find((item) => item.id === id)).filter(Boolean)
-            .map((item) => ({ href: `/services/servicos.html#tecnica-${encodeURIComponent(item.id)}`, titulo: item.titulo, categoria: item.categoria }));
+            .map((item) => ({ href: `/services/tecnicas.html#tecnica-${encodeURIComponent(item.id)}`, titulo: item.titulo, categoria: item.categoria }));
         const tips = [...trabalhos, ...gerais].slice(0, 3);
         const place = region?.titulo
             ? tr(`Janelas indicativas para Portugal continental, ordenadas pelo pH do solo de ${region.titulo}${Number.isFinite(ph) ? ` (${String(region.biomas.ph_solo).replace(".", ",")})` : ""}. O microclima, a altitude e a exposição da tua parcela mandam.`,

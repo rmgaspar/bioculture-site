@@ -1,6 +1,14 @@
 (function () {
     const byId = (id) => document.getElementById(id);
     const isEnglish = document.documentElement.lang === "en";
+    // O catálogo de técnicas mudou para a sua própria página: as ligações antigas seguem para lá.
+    const antigo = new URLSearchParams(location.search).get("categoria"), idioma = new URLSearchParams(location.search).get("lang");
+    if (location.hash.startsWith("#tecnica-") || location.hash === "#catalogo-tecnicas" && antigo) {
+        const params = new URLSearchParams();
+        if (antigo) params.set("categoria", antigo);
+        if (idioma) params.set("lang", idioma);
+        location.replace(`/services/tecnicas.html${params.toString() ? `?${params}` : ""}${location.hash.startsWith("#tecnica-") ? location.hash : ""}`);
+    }
     fetch("/sidebar-content.html?v=28").then((r) => r.text()).then((html) => { byId("sidebar").innerHTML = html; });
 
     // Como nas restantes técnicas: título, logo a imagem, e depois vantagens e calculadora.
@@ -71,75 +79,4 @@
         byId("solar-results-area").hidden = false;
     });
 
-    const esc = (v) => String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-    const normalize = (v) => String(v).normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
-    if (byId("technique-grid")) {
-        const tr = (pt, en) => (isEnglish ? en : pt);
-        // O texto chega traduzido em inglês, por isso a categoria é reconhecida nas duas línguas.
-        const SLUG = {"Solo e cobertura":"solo","Soil and cover":"solo","Compostagem e húmus":"compostagem","Composting and humus":"compostagem","Planeamento e fertilidade":"planeamento","Planning and fertility":"planeamento","Água e irrigação":"agua","Water and irrigation":"agua","Sementeiras e propagação":"sementeiras","Sowing and propagation":"sementeiras","Sementes e diversidade genética":"sementes","Seeds and genetic diversity":"sementes","Biodiversidade funcional":"biodiversidade","Functional biodiversity":"biodiversidade","Prevenção sem pesticidas":"prevencao","Prevention without pesticides":"prevencao","Árvores e sistemas perenes":"perenes","Trees and perennial systems":"perenes"};
-        const fotosPromise = fetch("/data/dicas-fotos.json").then((r) => (r.ok ? r.json() : {})).catch(() => ({}));
-        Promise.all([fetch("/data/dicas.json").then((r) => {
-            if (!r.ok) throw Error("HTTP " + r.status);
-            return r.json();
-        }), fotosPromise]).then(([dicas, fotos]) => {
-            const fotoDe = (cat) => Object.values(fotos).find((f) => f.ficheiro === `dicas/${SLUG[cat]}.webp`);
-            const L = isEnglish ? "en" : "pt";
-            const categories = [...new Set(dicas.map((d) => d.categoria))];
-            const requestedCategory = new URLSearchParams(location.search).get("categoria");
-            let selected = categories.includes(requestedCategory) ? requestedCategory : "all", query = "";
-            byId("technique-filters").innerHTML = ["all", ...categories].map((c) =>
-                `<button type="button" data-category="${esc(c)}" data-tom="${esc(SLUG[c] || "")}" aria-pressed="${c === selected}">${c === "all" ? tr("Todas", "All") : esc(c)}</button>`
-            ).join("");
-            const render = () => {
-                const term = normalize(query);
-                const found = dicas.filter((d) =>
-                    (selected === "all" || d.categoria === selected) &&
-                    (!term || normalize(`${d.titulo} ${d.categoria} ${d.resumo}`).includes(term))
-                );
-                // Imagens da própria técnica; sem elas, a fotografia da área (para nenhum cartão ficar sem imagem).
-                const imagensDe = (item) => {
-                    if (item.imagens?.length) return item.imagens;
-                    const f = fotoDe(item.categoria);
-                    return f ? [{ ...f, tipo: "foto" }] : [];
-                };
-                const card = (item) => {
-                    const imagens = imagensDe(item), destaque = imagens.length > 1;
-                    const galeria = window.BioCulturaGaleria ? window.BioCulturaGaleria.html({ imagens }, L) : "";
-                    return `<article class="technique-card${destaque ? " technique-card--destaque" : ""}" id="tecnica-${esc(item.id)}">${galeria}<div class="technique-body"><span class="technique-meta">${esc(item.nivel)}</span><h3>${esc(item.titulo)}</h3><p>${esc(item.resumo)}</p>${
-                        item.fontes?.length && item.quando ? `<p class="technique-quando"><b>${tr("Quando", "When")}</b> ${esc(item.quando)}</p>` : ""
-                    }${
-                        item.passos?.length
-                            ? `<details><summary>${tr("Passos essenciais", "Key steps")}</summary><ol>${item.passos.map((s) => `<li>${esc(s)}</li>`).join("")}</ol></details>`
-                            : ""
-                    }${
-                        item.fontes?.length
-                            ? `<p class="technique-fontes">${tr("Fontes", "Sources")}: ${item.fontes.map((s) => `<a href="${esc(s.url)}" target="_blank" rel="noopener noreferrer">${esc(s.nome)}</a>`).join(" · ")}</p>`
-                            : ""
-                    }</div></article>`;
-                };
-                // Cada área é uma faixa com o seu título e os cartões em grelha, cada um com a sua imagem.
-                const groups = [...new Set(found.map((d) => d.categoria))].map((cat) => {
-                    const items = found.filter((d) => d.categoria === cat);
-                    return `<div class="technique-group" data-tom="${esc(SLUG[cat] || "")}"><div class="technique-group-head"><h3>${esc(cat)}</h3><span class="technique-group-count">${items.length} ${tr(items.length === 1 ? "técnica" : "técnicas", items.length === 1 ? "technique" : "techniques")}</span></div><div class="technique-group-cards">${items.map(card).join("")}</div></div>`;
-                });
-                byId("technique-grid").innerHTML = groups.join("") || `<p class="empty">${tr("Nenhuma técnica encontrada para essa pesquisa.", "No technique found for this search.")}</p>`;
-                byId("technique-count").textContent = tr(`${found.length} de ${dicas.length} técnicas`, `${found.length} of ${dicas.length} techniques`);
-                byId("technique-filters").querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.category === selected)));
-            };
-            byId("technique-filters").addEventListener("click", (e) => {
-                const b = e.target.closest("button[data-category]");
-                if (b) { selected = b.dataset.category; render(); }
-            });
-            byId("technique-search").addEventListener("input", (e) => { query = e.target.value; render(); });
-            render();
-            const hashId = location.hash.slice(1);
-            if (hashId.startsWith("tecnica-") && dicas.some((d) => `tecnica-${d.id}` === hashId)) {
-                const entry = byId(hashId);
-                entry?.querySelector("details")?.setAttribute("open", "");
-                entry?.scrollIntoView({ block: "center" });
-            }
-        }).catch(() => {
-            byId("technique-grid").innerHTML = `<p class="empty">${tr("Não foi possível carregar o catálogo de técnicas.", "The technique catalogue could not be loaded.")}</p>`;
-        });
-    }
 })();

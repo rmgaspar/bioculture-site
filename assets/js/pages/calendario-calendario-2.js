@@ -59,7 +59,7 @@
             const WEEK_TONE_OF = { observe: "teal", cycle: "teal", habitat: "amber", tools: "clay", stages: "green", cloche: "green", bee: "amber", can: "blue", moisture: "blue", mulch: "clay", basket: "amber", shade: "amber", packet: "amber", cover: "green", compost: "clay", infiltrate: "blue", prune: "green", graft: "green", weed: "clay" };
             /* Trabalhos de campo (data/trabalhos-campo.json): o desenho vem do tipo de trabalho, não do título. */
             const CAMPO_ICON = { "podar-vinha": "prune", "podar-fruto-inverno": "prune", "podar-oliveira": "prune", "podar-ameixeira": "prune", "poda-verde-amendoeira": "prune", "desladroar-vinha": "prune", "colher-garfos": "graft", "enxertar-garfo": "graft", "enxertar-borbulha": "graft", "cortar-infestantes": "weed", "mobilizar-solo-outono": "tools", "apanhar-azeitona": "basket", "preparar-vindima": "basket", "vindimar": "basket" };
-            const campoHref = (task) => task.href || (task.tecnica ? `/services/servicos.html#tecnica-${encodeURIComponent(task.tecnica)}` : "");
+            const campoHref = (task) => task.href || (task.tecnica ? `/services/tecnicas.html#tecnica-${encodeURIComponent(task.tecnica)}` : "");
             function weekKey(title) {
                 const t = normalize(title);
                 if (/observar/.test(t)) return "observe";
