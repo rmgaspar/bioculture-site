@@ -9,6 +9,8 @@ Fluxo: `.github/workflows/atualizar-dados.yml` (quartas-feiras, 05:43 UTC, e man
 | `ods_onu.py` | API dos Indicadores ODS da ONU (UNSD) | `water-*`, `soil-*`, `biodiversity-*` |
 | `ipma_clima.py` | IPMA — Boletim Climatológico Anual | `observatorio_terra.json` (temperatura, desvio e precipitação de Portugal continental; acrescenta o ano novo quando o boletim sai, normalmente em janeiro ou fevereiro) |
 | `apa_rea.py` | APA — Relatório do Estado do Ambiente (fichas) | `observatorio_terra.json` e `solo_stats.json`: emissões de gases com efeito de estufa, erosão costeira e suscetibilidade à desertificação (ISD) |
+
+O portal da APA demora ou corta a ligação com frequência. `apa_rea.py` tenta até 3 vezes e, se continuar sem responder, **mantém o valor anterior e termina sem erro** (aviso nos registos); só falha (código 2) quando a ficha respondeu mas o texto mudou de formato, porque isso pede revisão humana.
 | `relatorio_terra.py` | os ficheiros acima (não chama APIs) | `observatorio-terra-relatorio.json`: séries compactas por país (ISO3) e por agregado para o relatório «Observatório da Terra»; só reorganiza valores oficiais, sem interpolar nem calcular médias |
 | `bioweb.py` | Banco Mundial (clima), Eurostat (aves, vendas e risco de pesticidas), FAOSTAT (pesticidas), FirstRecords/Zenodo (espécies não nativas) | `bioweb.json`: séries da página «A teia». Corre sem argumentos com as fontes leves; as espécies não nativas (30 MB, mudam raramente) só com `--only invasoras` |
 | `paises_iso.py` | API do Banco Mundial + tabela ISO 3166-1 (datasets/country-codes) | `paises-iso.json`: países reais (sem agregados) com ISO3, ISO2, código M49, região, rendimento e se é Estado independente. Tabela de referência, corre-se à mão |

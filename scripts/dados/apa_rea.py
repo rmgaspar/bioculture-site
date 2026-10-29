@@ -20,6 +20,7 @@ import argparse
 import html
 import re
 import sys
+import time
 import urllib.error
 import urllib.request
 from urllib.parse import quote
@@ -37,13 +38,29 @@ NOME_FONTE_DESERT = "APA — Relatório do Estado do Ambiente: suscetibilidade �
 PERIODO_EROSAO = (1958, 2023)  # os nomes dos campos e os textos da página usam estes anos
 
 
+class FonteIndisponivel(ErroDados):
+    """O portal da APA não respondeu (timeout, ligação cortada). Não é uma mudança de formato: mantém-se o valor anterior."""
+
+
+ESPERAS = (5, 20)  # segundos entre tentativas; o portal da APA demora ou corta a ligação por vezes
+PORTAL_EM_BAIXO = False  # depois de uma ficha indisponível, as seguintes tentam só uma vez (o portal costuma estar em baixo para todas)
+
+
 def ler_ficha(url):
     pedido = urllib.request.Request(url + "?language=pt-pt", headers={"User-Agent": USER_AGENT})
-    try:
-        with urllib.request.urlopen(pedido, timeout=60) as resposta:
-            bruto = resposta.read().decode("utf-8", errors="ignore")
-    except (urllib.error.URLError, OSError) as erro:
-        raise ErroDados(f"Não foi possível ler {url}: {erro}")
+    global PORTAL_EM_BAIXO
+    bruto = None
+    tentativas = 1 if PORTAL_EM_BAIXO else len(ESPERAS) + 1
+    for tentativa in range(tentativas):
+        try:
+            with urllib.request.urlopen(pedido, timeout=30 if PORTAL_EM_BAIXO else 60) as resposta:
+                bruto = resposta.read().decode("utf-8", errors="ignore")
+            break
+        except (urllib.error.URLError, OSError) as erro:
+            if tentativa == tentativas - 1:
+                PORTAL_EM_BAIXO = True
+                raise FonteIndisponivel(f"Não foi possível ler {url} ({tentativas} tentativa(s)): {erro}")
+            time.sleep(ESPERAS[tentativa])
     bruto = re.sub(r"<script.*?</script>|<style.*?</style>", "", bruto, flags=re.S)
     return re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", " ", bruto))).replace("\xa0", " ")
 
@@ -210,7 +227,7 @@ def main():
     argumentos.add_argument("--dry-run", action="store_true")
     comum.SECO = argumentos.parse_args().dry_run
     dados = ler("observatorio_terra.json")
-    falhas, alterou = [], False
+    falhas, indisponiveis, alterou = [], [], False
 
     try:
         ano, valor = extrair_gee(ler_ficha(FICHA_GEE))
@@ -227,6 +244,9 @@ def main():
         definir_fonte(serie["fontes"], NOME_FONTE_GEE, FICHA_GEE)
         print(f"GEE {ano}: {valor} Mt CO₂e" + (" (já estava)" if anterior == valor else ""))
         alterou = True
+    except FonteIndisponivel as erro:
+        print(f"::warning::{erro} — fica o valor anterior até à próxima execução.")
+        indisponiveis.append("gee")
     except ErroDados as erro:
         print(f"::warning::{erro}")
         falhas.append("gee")
@@ -241,6 +261,9 @@ def main():
         definir_fonte(costa["fontes"], NOME_FONTE_EROSAO, FICHA_EROSAO)
         print(f"Erosão costeira: {percentagem}% ({em_erosao} de {total} km), perda {perda} ha")
         alterou = True
+    except FonteIndisponivel as erro:
+        print(f"::warning::{erro} — fica o valor anterior até à próxima execução.")
+        indisponiveis.append("erosao")
     except ErroDados as erro:
         print(f"::warning::{erro}")
         falhas.append("erosao")
@@ -249,6 +272,9 @@ def main():
         ano, valor, mudou_solo = atualizar_desertificacao(dados)
         print(f"Desertificação (ISD {ano}): {valor}% com suscetibilidade alta ou muito elevada; solo_stats.json: {'atualizado' if mudou_solo else 'sem alterações'}")
         alterou = True
+    except FonteIndisponivel as erro:
+        print(f"::warning::{erro} — fica o valor anterior até à próxima execução.")
+        indisponiveis.append("desertificacao")
     except ErroDados as erro:
         print(f"::warning::{erro}")
         falhas.append("desertificacao")
@@ -257,7 +283,9 @@ def main():
         dados["metadados"]["ultima_atualizacao"] = hoje()
         mudou = escrever_se_mudou("observatorio_terra.json", dados, None, ("ultima_atualizacao",))
         print("observatorio_terra.json:", "atualizado" if mudou else "sem alterações")
-    if falhas:
+    if indisponiveis:
+        print(f"APA indisponível para: {', '.join(indisponiveis)} (mantém-se o valor anterior; não conta como falha).")
+    if falhas:  # o formato da ficha mudou: pede revisão humana
         sys.exit(2)
 
 
