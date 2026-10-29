@@ -20,31 +20,60 @@
             function renderStats(d) {
                 const p = d.pszaer || {},
                     a = p.areas_mapeadas || {},
-                    solar = a.solar?.proposta_menos_10km_subestacao || {},
-                    wind = a.eolica_terrestre?.proposta_poligonos_maiores_20ha || {},
-                    c = p.consulta_publica || {};
-                el("stats").innerHTML = [["Estado", c.estado_portal || "—", "consulta PSZAER"], [
-                    "Participações",
-                    Number(c.participacoes || 0).toLocaleString("pt-PT"),
-                    "registadas no portal",
-                ], [
-                    "Solar proposto",
-                    Number(solar.area_ha || 0).toLocaleString("pt-PT") + " ha",
-                    isEn()
-                        ? `${solar.poligonos || "—"} polygons within 10 km of a substation`
-                        : `${solar.poligonos || "—"} polígonos a menos de 10 km de subestação`,
-                ], [
-                    "Eólica proposta",
-                    Number(wind.area_ha || 0).toLocaleString("pt-PT") + " ha",
-                    isEn()
-                        ? `${wind.poligonos || "—"} polygons larger than 20 ha`
-                        : `${wind.poligonos || "—"} polígonos superiores a 20 ha`,
-                ]].map((x) =>
-                    `<article class="stat"><small>${x[0]}</small><strong>${x[1]}</strong><span>${
-                        x[2]
-                    }</span></article>`
-                ).join("");
-                el("zaer-warning").textContent = (a.leitura || []).join(" ");
+                    S = a.solar || {},
+                    W = a.eolica_terrestre || {},
+                    solar = S.proposta_menos_10km_subestacao || {},
+                    wind = W.proposta_poligonos_maiores_20ha || {},
+                    c = p.consulta_publica || {},
+                    rf = c.relatorio_final || {},
+                    tr = (pt, en) => (isEn() ? en : pt),
+                    nf = (v) => Number(v || 0).toLocaleString(isEn() ? "en-GB" : "pt-PT"),
+                    SOL = "#eda100", WIN = "#2a78d6", PAR = "#eb6834";
+                const hero = [
+                    [SOL, tr("Solar proposto", "Proposed solar"), `${nf(solar.area_ha)} ha`,
+                        tr(`${nf(solar.poligonos)} polígonos de 100 ha ou mais, a menos de 10 km de uma subestação`, `${nf(solar.poligonos)} polygons of 100 ha or more, within 10 km of a substation`)],
+                    [WIN, tr("Eólica proposta", "Proposed wind"), `${nf(wind.area_ha)} ha`,
+                        tr(`${nf(wind.poligonos)} polígonos de 20 ha ou mais`, `${nf(wind.poligonos)} polygons of 20 ha or more`)],
+                    [PAR, tr("Participações", "Submissions"), nf(rf.participacoes || c.participacoes),
+                        rf.tipologia_pct ? tr(`${rf.tipologia_pct.discordancia} % classificadas como discordância (${nf(c.participacoes)} no portal)`, `${rf.tipologia_pct.discordancia}% classified as disagreement (${nf(c.participacoes)} on the portal)`) : tr("registadas no portal", "registered on the portal")],
+                ];
+                el("stats").innerHTML = hero.map((x) => `<article class="stat zhero" style="--tom:${x[0]}"><small>${x[1]}</small><strong>${x[2]}</strong><span>${x[3]}</span></article>`).join("");
+                // Percurso da consulta
+                const dm = (v) => new Date(v + "T12:00:00").toLocaleDateString(isEn() ? "en-GB" : "pt-PT", { day: "numeric", month: "short" }),
+                    span = c.inicio && c.fim ? Math.round((new Date(c.fim + "T12:00:00") - new Date(c.inicio + "T12:00:00")) / 864e5) + 1 : null,
+                    steps = [
+                        [tr("Proposta", "Proposal"), tr("maio de 2026", "May 2026"), "done"],
+                        [tr("Consulta pública", "Public consultation"), c.inicio ? `${dm(c.inicio)} – ${dm(c.fim)}${span ? ` · ${span} ${tr("dias", "days")}` : ""}` : "", "done"],
+                        [tr("Em análise", "Under review"), c.fim ? tr(`desde ${dm(c.fim)}`, `since ${dm(c.fim)}`) : "", "now"],
+                        [tr("Versão final", "Final version"), tr("por concluir", "yet to come"), "next"],
+                    ];
+                el("zaer-flow").innerHTML = `<ol>${steps.map((x) => `<li class="${x[2]}"><b>${esc(x[0])}</b><span>${esc(x[1])}</span></li>`).join("")}</ol>${
+                    rf.url ? `<a href="${esc(rf.url)}" target="_blank" rel="noopener">${tr("Relatório final da consulta", "Final consultation report")} →</a>` : ""}`;
+                // Gráficos
+                const bar = (label, v, max, color, note) => `<div class="zb"><span class="zb-l">${esc(label)}</span><span class="zb-t"><i style="width:${Math.max(v / max * 100, 1)}%;background:${color}"></i></span><span class="zb-v">${nf(v)}<em>${note ? esc(note) : ""}</em></span></div>`,
+                    maxA = Math.max(S.sem_condicionantes_exclusao?.area_ha || 0, W.sem_limite_minimo?.area_ha || 0, 1),
+                    funnel = `<article class="zc"><small>${tr("Do possível à proposta", "From possible to proposed")}</small><h3>${tr("A área vai encolhendo à medida que se aplicam critérios", "The area shrinks as criteria are applied")}</h3><h4 style="--tom:${SOL}">${tr("Solar fotovoltaica", "Solar photovoltaic")}</h4>${
+                        bar(tr("Sem condicionantes de exclusão", "No exclusion constraints"), S.sem_condicionantes_exclusao?.area_ha, maxA, "#f3d88a")
+                    }${bar(tr("A menos de 20 km de subestação", "Within 20 km of a substation"), S.menos_20km_subestacao?.area_ha, maxA, "#eda100", `${S.menos_20km_subestacao?.percentagem_area_base} %`)
+                    }${bar(tr("Proposta: a menos de 10 km", "Proposal: within 10 km"), solar.area_ha, maxA, "#b87f00", `${solar.percentagem_area_base} %`)
+                    }<h4 style="--tom:${WIN}">${tr("Eólica terrestre", "Onshore wind")}</h4>${
+                        bar(tr("Sem limite mínimo de área", "No minimum area"), W.sem_limite_minimo?.area_ha, maxA, "#a9c8ee")
+                    }${bar(tr("Proposta (20 ha ou mais)", "Proposal (20 ha or more)"), wind.area_ha, maxA, WIN)
+                    }${bar(tr("A menos de 10 km de subestação", "Within 10 km of a substation"), W.menos_10km_subestacao?.area_ha, maxA, "#1c4f94", `${W.menos_10km_subestacao?.percentagem_area_base} %`)
+                    }<p>${tr(S.capacidade_rede || "", "These totals do not take available grid connection capacity into account. Taking it into account, the estimated area falls sharply.")} ${
+                        tr(`Na eólica proposta, ${(W.criterio_rede || "").charAt(0).toLowerCase() + (W.criterio_rede || "").slice(1)}`, "For the proposed wind areas, distance to a substation was not applied.")
+                    }</p><span class="zc-unit">${tr("Hectares (ha). A percentagem compara com a área-base de cada tecnologia.", "Hectares (ha). The percentage compares with each technology's base area.")}</span></article>`;
+                const classShare = (list, total) => (list || []).map((r) => ({ ...r, pct: total ? r.area_ha / total * 100 : 0 })),
+                    sc = classShare(S.distribuicao_dimensao_menos_10km, solar.area_ha),
+                    wc = classShare(W.distribuicao_dimensao, wind.area_ha),
+                    tones = ["#7a4d00", "#c98a00", "#f0c04a", "#f6dc93", "#fbefc9"],
+                    tonesW = ["#16406f", "#2a78d6", "#6ea4e3", "#a9c8ee", "#d8e6f6"],
+                    stack = (rows, ts) => `<div class="zs">${rows.map((r, i) => `<span style="width:${r.pct}%;background:${ts[i]}" title="${esc(r.classe)}: ${nf(Math.round(r.pct))} % · ${nf(r.poligonos)} ${tr("polígonos", "polygons")}"><b>${r.pct >= 9 ? Math.round(r.pct) + " %" : ""}</b></span>`).join("")}</div><ul class="zs-leg">${
+                        rows.map((r, i) => `<li><i style="background:${ts[i]}"></i>${esc(r.classe)} <em>${nf(r.poligonos)} ${tr("polígonos", "polygons")}</em></li>`).join("")}</ul>`,
+                    big = (rows, total) => rows[0] ? tr(`${nf(rows[0].poligonos)} polígonos de ${rows[0].classe} concentram ${Math.round(rows[0].pct)} % da área.`, `${nf(rows[0].poligonos)} polygons of ${rows[0].classe} hold ${Math.round(rows[0].pct)}% of the area.`) : "",
+                    concentration = `<article class="zc"><small>${tr("Escala", "Scale")}</small><h3>${tr("Poucos polígonos grandes pesam muito", "A few large polygons weigh heavily")}</h3><h4 style="--tom:${SOL}">${tr("Solar proposto, por dimensão do polígono", "Proposed solar, by polygon size")}</h4>${stack(sc, tones)}<p class="zc-big">${big(sc)}</p><h4 style="--tom:${WIN}">${tr("Eólica proposta, por dimensão do polígono", "Proposed wind, by polygon size")}</h4>${stack(wc, tonesW)}<p class="zc-big">${big(wc)}</p><span class="zc-unit">${tr("Percentagem da área proposta em cada classe de dimensão.", "Share of the proposed area in each size class.")}</span></article>`;
+                el("zaer-charts").innerHTML = funnel + concentration;
+                el("zaer-warning").innerHTML = `<strong>${tr("Como ler estes números", "How to read these numbers")}</strong><ul>${(a.leitura || []).map((t) => `<li>${esc(isEn() ? READ_EN[t] || t : t)}</li>`).join("")}</ul>`;
                 el("snapshot-copy").textContent += isEn()
                     ? ` Snapshot observed on ${date(c.observado_em)}.`
                     : ` Instantâneo observado em ${date(c.observado_em)}.`;
@@ -52,6 +81,12 @@
                 el("art-gw").textContent = `${art.total_capacidade_gw ?? "—"} GW`;
                 el("art-twh").textContent = `${art.total_geracao_twh_ano ?? "—"} TWh/ano`;
             }
+            const READ_EN = {
+                "As áreas solar e eólica podem sobrepor-se e não devem ser somadas como ocupação total.": "Solar and wind areas can overlap and must not be added up as total occupation.",
+                "As manchas indicam potencial após critérios nacionais; o desenho final depende do projeto e do licenciamento.": "The patches show potential after national criteria; the final layout depends on the project and licensing.",
+                "A ligação à rede pode exigir linhas e subestações fora da mancha, com impactos próprios.": "Grid connection may need lines and substations outside the patch, with impacts of their own.",
+                "Os dados espaciais considerados na proposta estavam atualizados até março de 2026.": "The spatial data used in the proposal were current to March 2026.",
+            };
             const STATE_EN = { "Aberta": "Open", "Em análise": "Under review", "Encerrada": "Closed" };
             const ALERT_EN = {
                 "Estado sem atualização visível desde 2019; confirmar decisão na autoridade competente antes de inferir situação do projeto.":
@@ -238,33 +273,59 @@
                             "Short deadlines and holiday periods reduce the real chance to take part. Official notice is given mainly on the portal and through public notices.")
                     }</p><span class="now-date">${esc(isEn() ? "Projects subject to environmental assessment; excludes national programmes and strategies. Duration in calendar days, including the first and last day." : f.nota)}</span>${shortest}`
                     : "";
-                const lp = c.leitura_participacoes;
+                const lp = c.leitura_participacoes,
+                    rf = d.pszaer?.consulta_publica?.relatorio_final;
                 if (el("participa-leitura") && f && lp) {
                     const top1 = f.participacoes_maxima || 0,
                         topRec = withParts.find((x) => x.participacoes === top1),
                         share = f.participacoes_total ? Math.round(f.participacoes_maxima / f.participacoes_total * 100) : 0,
                         times = f.participacoes_mediana ? Math.round(f.participacoes_maxima / f.participacoes_mediana) : 0,
-                        nf = (v) => Number(v).toLocaleString(isEn() ? "en-GB" : "pt-PT");
+                        nf = (v) => Number(v).toLocaleString(isEn() ? "en-GB" : "pt-PT"),
+                        TONE = { concordancia: "#1baf7a", discordancia: "#eb6834", outros: "#c3c8bd" },
+                        TONE_L = { concordancia: tr("Concordância", "Agreement"), discordancia: tr("Discordância", "Disagreement"), outros: tr("Outras", "Other") },
+                        compare = miniBars([
+                            { l: tr("Mediana dos projetos", "Median of projects"), v: f.participacoes_mediana, c: PALETTE[2] },
+                            { l: tr("Média dos projetos", "Mean of projects"), v: f.participacoes_media, c: PALETTE[3] },
+                            { l: esc(shortTitle(topRec?.titulo)), v: top1, c: PALETTE[1] },
+                        ]),
+                        rows = (lp.posicoes || []).map((r) => {
+                            const parts = (isEn() && r.partes_en ? r.partes_en : r.partes),
+                                tot = parts.reduce((acc, x) => acc + x[1], 0) || 1;
+                            return `<div class="vs-row"><div class="vs-h"><strong>${esc(isEn() ? r.titulo_en || r.titulo : r.titulo)}</strong><em>${esc(isEn() ? r.total_en || r.total : r.total)} ${tr("participações", "submissions")}</em></div><div class="vs-bar">${
+                                parts.map((x) => `<span style="width:${x[1] / tot * 100}%;background:${TONE[x[0]]}" title="${esc(TONE_L[x[0]])}${x[2] ? ": " + esc(x[2]) : ""}"><b>${x[1] / tot > 0.12 ? esc(x[2]) : ""}</b></span>`).join("")
+                            }</div><p>${esc(isEn() ? r.nota_en || r.nota : r.nota)} <a href="${esc(r.url)}" target="_blank" rel="noopener">${tr("Relatório", "Report")}</a></p></div>`;
+                        }).join(""),
+                        legend = `<div class="vs-leg">${["concordancia", "discordancia", "outros"].map((k) => `<span><i style="background:${TONE[k]}"></i>${TONE_L[k]}</span>`).join("")}</div>`,
+                        tip = rf?.tipologia_pct || {},
+                        tipRows = [
+                            ["discordancia", tr("Discordância", "Disagreement"), "#eb6834"], ["reclamacao", tr("Reclamação", "Complaint"), "#eda100"],
+                            ["sugestao", tr("Sugestão", "Suggestion"), "#2a78d6"], ["concordancia", tr("Concordância", "Agreement"), "#1baf7a"], ["geral", tr("Geral", "General"), "#8f98a3"],
+                        ].filter((x) => tip[x[0]] !== undefined),
+                        maxT = Math.max(...(rf?.temas || []).map((t) => t.n), 1),
+                        pszaer = rf ? `<article class="voz"><small>${tr("Quando a APA conta tudo", "When APA counts everything")}</small><h3>${
+                            tr(`O que disseram as ${nf(rf.participacoes)} participações do PSZAER`, `What the ${nf(rf.participacoes)} PSZAER submissions said`)
+                        }</h3><div class="voz-grid"><div><h4>${tr("Que tipo de participação", "What kind of submission")}</h4><div class="vs-bar vs-tall">${
+                            tipRows.map((x) => `<span style="width:${Math.max(tip[x[0]], 0.8)}%;background:${x[2]}" title="${esc(x[1])}: ${tip[x[0]]} %"><b>${tip[x[0]] >= 8 ? tip[x[0]] + " %" : ""}</b></span>`).join("")
+                        }</div><ul class="vs-key">${tipRows.map((x) => `<li><i style="background:${x[2]}"></i>${esc(x[1])} <em>${tip[x[0]]} %</em></li>`).join("")}</ul><p>${
+                            tr(`<strong>${String(rf.modelo_pct).replace(".", ",")} %</strong> eram participações-modelo, com texto repetido na íntegra. O concelho mais mencionado foi a <strong>${esc(rf.concelho_mais_mencionado?.nome)}</strong>, com ${nf(rf.concelho_mais_mencionado?.mencoes)} menções (${String(rf.concelho_mais_mencionado?.pct).replace(".", ",")} %).`,
+                                `<strong>${rf.modelo_pct}%</strong> were template submissions with identical text. The most-mentioned municipality was <strong>${esc(rf.concelho_mais_mencionado?.nome)}</strong>, with ${nf(rf.concelho_mais_mencionado?.mencoes)} mentions (${rf.concelho_mais_mencionado?.pct}%).`)
+                        }</p></div><div><h4>${tr("De que falaram (número de participações por tema)", "What they talked about (submissions per theme)")}</h4>${
+                            (rf.temas || []).map((t, i) => `<div class="zb"><span class="zb-l">${esc(isEn() ? t.en : t.pt)}</span><span class="zb-t"><i style="width:${t.n / maxT * 100}%;background:${i < 2 ? "#3f7a3a" : i < 6 ? "#7fae6e" : "#b7d2ac"}"></i></span><span class="zb-v">${nf(t.n)}</span></div>`).join("")
+                        }<span class="zc-unit">${esc(isEn() ? rf.nota_en || rf.nota : rf.nota)} <a href="${esc(rf.url)}" target="_blank" rel="noopener">${tr("Relatório final", "Final report")}</a></span></div></div></article>` : "";
                     el("participa-leitura").innerHTML = `<small>${tr("Como ler os números", "How to read the numbers")}</small><h3>${
                         tr(`O que significam ${nf(top1)} participações?`, `What do ${nf(top1)} submissions mean?`)
-                    }</h3><div class="leitura-grid"><article><h4>${tr("É muito ou pouco?", "Is it a lot?")}</h4><p>${
-                        tr(`A mediana dos projetos de ${f.ano} é de <strong>${nf(f.participacoes_mediana)}</strong> participações por consulta. ${esc(shortTitle(topRec?.titulo))} tem <strong>${nf(top1)}</strong>, cerca de ${times} vezes mais, e sozinha pesa ${share} % de todas as participações destes projetos (${nf(f.participacoes_total)}).`,
-                            `The median for ${f.ano} projects is <strong>${nf(f.participacoes_mediana)}</strong> submissions per consultation. ${esc(shortTitle(topRec?.titulo))} has <strong>${nf(top1)}</strong>, about ${times} times more, and alone makes up ${share}% of all submissions on these projects (${nf(f.participacoes_total)}).`)
-                    }</p><p>${
-                        tr(`<strong>Média ou mediana?</strong> A média é de ${nf(f.participacoes_media)}, mas só porque esse único projeto a puxa para cima; sem ele, desce para ${nf(f.participacoes_media_sem_maxima)}. Para o caso típico, a mediana é mais honesta.`,
-                            `<strong>Mean or median?</strong> The mean is ${nf(f.participacoes_media)}, but only because that single project pulls it up; without it, it falls to ${nf(f.participacoes_media_sem_maxima)}. For the typical case, the median is more honest.`)
+                    }</h3><div class="leitura-grid"><article><h4>${tr("É muito ou pouco?", "Is it a lot?")}</h4>${compare}<p>${
+                        tr(`A mediana dos projetos de ${f.ano} é de <strong>${nf(f.participacoes_mediana)}</strong> participações. ${esc(shortTitle(topRec?.titulo))} tem cerca de ${times} vezes mais e sozinha pesa ${share} % do total (${nf(f.participacoes_total)}). Sem ela, a média desce de ${nf(f.participacoes_media)} para ${nf(f.participacoes_media_sem_maxima)}, por isso a mediana descreve melhor o caso típico.`,
+                            `The median for ${f.ano} projects is <strong>${nf(f.participacoes_mediana)}</strong> submissions. ${esc(shortTitle(topRec?.titulo))} has about ${times} times more and alone makes up ${share}% of the total (${nf(f.participacoes_total)}). Without it the mean falls from ${nf(f.participacoes_media)} to ${nf(f.participacoes_media_sem_maxima)}, so the median describes the typical case better.`)
                     }</p><p>${
                         tr("Uma participação é um comentário submetido no portal. O número mede mobilização, não decide o resultado, e o Participa não diz se vêm de pessoas diferentes.",
                             "A submission is a comment filed on the portal. The number measures mobilisation, it does not decide the outcome, and Participa does not say whether they come from different people.")
-                    }</p></article><article><h4>${tr("São todas contra?", "Are they all against?")}</h4><p>${
-                        tr(`Não necessariamente. Quem participa escolhe um classificador (${(lp.classificadores || []).join(", ")}), mas a ficha pública não mostra quantas há de cada. Essa divisão só aparece, quando aparece, no relatório de encerramento da APA: às vezes em contagem, outras em percentagem, nos casos maiores só por palavras.`,
-                            `Not necessarily. Participants pick a classifier (Agreement, Disagreement, General, Competing proposal, Complaint, Suggestion), but the public page does not show how many there are of each. That split only appears, if at all, in APA's closing report: sometimes as a count, sometimes as a percentage, and in the largest cases only in words.`)
-                    }</p><p>${
-                        tr("Enquanto a APA não publica o relatório, a divisão não se sabe e não a estimamos. Em 2026 já o fez para o Paiva, que o portal ainda mostra «em análise». O que existe publicado:",
-                            "Until APA publishes its report the split is unknown and we do not estimate it. In 2026 it already did so for Paiva, which the portal still shows as “under review”. What has been published:")
-                    }</p><ul class="leitura-casos">${
+                    }</p></article><article><h4>${tr("São todas contra?", "Are they all against?")}</h4>${rows}${legend}<p>${
+                        tr(`Quem participa escolhe um classificador (${(lp.classificadores || []).join(", ")}), mas a ficha pública não mostra quantas há de cada. A divisão só aparece no relatório de encerramento da APA, e só nas consultas que já o têm. As restantes não as estimamos.`,
+                            "Participants pick a classifier (Agreement, Disagreement, General, Competing proposal, Complaint, Suggestion), but the public page does not show how many there are of each. The split only appears in APA's closing report, and only for consultations that have one. We do not estimate the others.")
+                    }</p></article></div>${pszaer}<details class="leitura-rel"><summary>${tr("Ler o que dizem os relatórios", "Read what the reports say")}</summary><ul class="leitura-casos">${
                         (lp.exemplos || []).map((e) => `<li><strong>${esc(isEn() ? e.titulo_en || e.titulo : e.titulo)}</strong> <em>${esc(isEn() ? e.numero_en || e.numero : e.numero)}</em><span>${esc(isEn() ? e.texto_en || e.texto : e.texto)}</span> <a href="${esc(e.url)}" target="_blank" rel="noopener">${tr("Relatório da APA", "APA report")}</a></li>`).join("")
-                    }</ul></article></div><p class="leitura-nota">${
+                    }</ul></details><p class="leitura-nota">${
                         tr("Prioridade: aqui só se ordena o que se pode medir, o prazo (as abertas primeiro, por data de fecho). Não há pontuação de impacto, porque exigiria as geometrias oficiais de cada projeto (ver «O que deve entrar numa decisão»). As fichas de território dos casos maiores resumem o que consta dos documentos oficiais e dizem quem os escreveu.",
                             "Priority: only what can be measured is ranked here, the deadline (open ones first, by closing date). There is no impact score, because it would need each project's official geometries (see “What should go into a decision”). The land fiches for the larger cases summarise what the official documents say and who wrote them.")
                     }</p>`;
