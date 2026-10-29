@@ -145,6 +145,10 @@ def facts(records: list[dict], year: int) -> dict:
         "maioria_em_agosto": sum(1 for r, x in zip(rows, dur) if aug_days(r) * 2 > x),
         "participacoes_mediana": int(statistics.median(parts)) if parts else None,
         "participacoes_abaixo_50": sum(1 for p in parts if p < 50),
+        "participacoes_media": round(statistics.mean(parts)) if parts else None,
+        "participacoes_total": sum(parts) if parts else None,
+        "participacoes_maxima": max(parts) if parts else None,
+        "participacoes_media_sem_maxima": round(statistics.mean(sorted(parts)[:-1])) if len(parts) > 2 else None,
         "nota": "Projetos sujeitos a avaliação ambiental; exclui programas e estratégias nacionais. Duração em dias de calendário, incluindo o primeiro e o último dia.",
     }
 

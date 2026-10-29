@@ -170,6 +170,14 @@
                                 ? `<p>${esc(isEn() ? x.resumo_projeto_en || x.resumo_projeto : x.resumo_projeto)}</p>`
                                 : ""
                         }${
+                            x.territorio
+                                ? `<details class="territorio"><summary>${tr("Território, ecossistemas e espécies", "Land, ecosystems and species")}</summary><dl>${
+                                    (x.territorio.linhas || []).map((l) => `<div><dt>${esc(isEn() ? l.rotulo_en || l.rotulo : l.rotulo)}</dt><dd>${esc(isEn() ? l.texto_en || l.texto : l.texto)}</dd></div>`).join("")
+                                }</dl><p class="territorio-nota">${esc(isEn() ? x.territorio.nota_en || x.territorio.nota : x.territorio.nota)}</p><p class="territorio-fonte">${tr("Fonte:", "Source:")} <a href="${esc(x.territorio.url)}" target="_blank" rel="noopener">${esc(isEn() ? x.territorio.fonte_en || x.territorio.fonte : x.territorio.fonte)}</a>${
+                                    x.territorio.url2 ? ` · <a href="${esc(x.territorio.url2)}" target="_blank" rel="noopener">${tr("relatório da consulta", "consultation report")}</a>` : ""
+                                }</p></details>`
+                                : ""
+                        }${
                             x.alerta_qualidade
                                 ? `<p><strong>${tr("Atenção:", "Note:")}</strong> ${esc(isEn() ? ALERT_EN[x.alerta_qualidade] || x.alerta_qualidade : x.alerta_qualidade)}</p>`
                                 : ""
@@ -230,6 +238,37 @@
                             "Short deadlines and holiday periods reduce the real chance to take part. Official notice is given mainly on the portal and through public notices.")
                     }</p><span class="now-date">${esc(isEn() ? "Projects subject to environmental assessment; excludes national programmes and strategies. Duration in calendar days, including the first and last day." : f.nota)}</span>${shortest}`
                     : "";
+                const lp = c.leitura_participacoes;
+                if (el("participa-leitura") && f && lp) {
+                    const top1 = f.participacoes_maxima || 0,
+                        topRec = withParts.find((x) => x.participacoes === top1),
+                        share = f.participacoes_total ? Math.round(f.participacoes_maxima / f.participacoes_total * 100) : 0,
+                        times = f.participacoes_mediana ? Math.round(f.participacoes_maxima / f.participacoes_mediana) : 0,
+                        nf = (v) => Number(v).toLocaleString(isEn() ? "en-GB" : "pt-PT");
+                    el("participa-leitura").innerHTML = `<small>${tr("Como ler os números", "How to read the numbers")}</small><h3>${
+                        tr(`O que significam ${nf(top1)} participações?`, `What do ${nf(top1)} submissions mean?`)
+                    }</h3><div class="leitura-grid"><article><h4>${tr("É muito ou pouco?", "Is it a lot?")}</h4><p>${
+                        tr(`A mediana dos projetos de ${f.ano} é de <strong>${nf(f.participacoes_mediana)}</strong> participações por consulta. ${esc(shortTitle(topRec?.titulo))} tem <strong>${nf(top1)}</strong>, cerca de ${times} vezes mais, e sozinha pesa ${share} % de todas as participações destes projetos (${nf(f.participacoes_total)}).`,
+                            `The median for ${f.ano} projects is <strong>${nf(f.participacoes_mediana)}</strong> submissions per consultation. ${esc(shortTitle(topRec?.titulo))} has <strong>${nf(top1)}</strong>, about ${times} times more, and alone makes up ${share}% of all submissions on these projects (${nf(f.participacoes_total)}).`)
+                    }</p><p>${
+                        tr(`<strong>Média ou mediana?</strong> A média é de ${nf(f.participacoes_media)}, mas só porque esse único projeto a puxa para cima; sem ele, desce para ${nf(f.participacoes_media_sem_maxima)}. Para o caso típico, a mediana é mais honesta.`,
+                            `<strong>Mean or median?</strong> The mean is ${nf(f.participacoes_media)}, but only because that single project pulls it up; without it, it falls to ${nf(f.participacoes_media_sem_maxima)}. For the typical case, the median is more honest.`)
+                    }</p><p>${
+                        tr("Uma participação é um comentário submetido no portal. O número mede mobilização, não decide o resultado, e o Participa não diz se vêm de pessoas diferentes.",
+                            "A submission is a comment filed on the portal. The number measures mobilisation, it does not decide the outcome, and Participa does not say whether they come from different people.")
+                    }</p></article><article><h4>${tr("São todas contra?", "Are they all against?")}</h4><p>${
+                        tr(`Não necessariamente. Quem participa escolhe um classificador (${(lp.classificadores || []).join(", ")}), mas a ficha pública não mostra quantas há de cada. Essa divisão só aparece, quando aparece, no relatório de encerramento da APA, e nos casos grandes é qualitativa.`,
+                            `Not necessarily. Participants pick a classifier (Agreement, Disagreement, General, Competing proposal, Complaint, Suggestion), but the public page does not show how many there are of each. That split only appears, if at all, in APA's closing report, and in large cases it is qualitative.`)
+                    }</p><p>${
+                        tr("Para as consultas abertas ou em análise não é possível saber a divisão, por isso não a estimamos. Nas que já têm relatório publicado:",
+                            "For consultations that are open or under review the split cannot be known, so we do not estimate it. For those with a published report:")
+                    }</p><ul class="leitura-casos">${
+                        (lp.exemplos || []).map((e) => `<li><strong>${esc(isEn() ? e.titulo_en || e.titulo : e.titulo)}</strong> <em>${esc(isEn() ? e.numero_en || e.numero : e.numero)}</em><span>${esc(isEn() ? e.texto_en || e.texto : e.texto)}</span> <a href="${esc(e.url)}" target="_blank" rel="noopener">${tr("Relatório da APA", "APA report")}</a></li>`).join("")
+                    }</ul></article></div><p class="leitura-nota">${
+                        tr("Prioridade: aqui só se ordena o que se pode medir, o prazo (as abertas primeiro, por data de fecho). Não há pontuação de impacto, porque exigiria as geometrias oficiais de cada projeto (ver «O que deve entrar numa decisão»). As fichas de território dos casos maiores resumem o que consta dos documentos oficiais e dizem quem os escreveu.",
+                            "Priority: only what can be measured is ranked here, the deadline (open ones first, by closing date). There is no impact score, because it would need each project's official geometries (see “What should go into a decision”). The land fiches for the larger cases summarise what the official documents say and who wrote them.")
+                    }</p>`;
+                }
             }
             function renderLocal(d) {
                 const box = el("participa-local");
