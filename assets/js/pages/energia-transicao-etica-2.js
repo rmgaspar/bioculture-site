@@ -257,11 +257,11 @@
                         tr("Uma participação é um comentário submetido no portal. O número mede mobilização, não decide o resultado, e o Participa não diz se vêm de pessoas diferentes.",
                             "A submission is a comment filed on the portal. The number measures mobilisation, it does not decide the outcome, and Participa does not say whether they come from different people.")
                     }</p></article><article><h4>${tr("São todas contra?", "Are they all against?")}</h4><p>${
-                        tr(`Não necessariamente. Quem participa escolhe um classificador (${(lp.classificadores || []).join(", ")}), mas a ficha pública não mostra quantas há de cada. Essa divisão só aparece, quando aparece, no relatório de encerramento da APA, e nos casos grandes é qualitativa.`,
-                            `Not necessarily. Participants pick a classifier (Agreement, Disagreement, General, Competing proposal, Complaint, Suggestion), but the public page does not show how many there are of each. That split only appears, if at all, in APA's closing report, and in large cases it is qualitative.`)
+                        tr(`Não necessariamente. Quem participa escolhe um classificador (${(lp.classificadores || []).join(", ")}), mas a ficha pública não mostra quantas há de cada. Essa divisão só aparece, quando aparece, no relatório de encerramento da APA: às vezes em contagem, outras em percentagem, nos casos maiores só por palavras.`,
+                            `Not necessarily. Participants pick a classifier (Agreement, Disagreement, General, Competing proposal, Complaint, Suggestion), but the public page does not show how many there are of each. That split only appears, if at all, in APA's closing report: sometimes as a count, sometimes as a percentage, and in the largest cases only in words.`)
                     }</p><p>${
-                        tr("Para as consultas abertas ou em análise não é possível saber a divisão, por isso não a estimamos. Nas que já têm relatório publicado:",
-                            "For consultations that are open or under review the split cannot be known, so we do not estimate it. For those with a published report:")
+                        tr("Enquanto a APA não publica o relatório, a divisão não se sabe e não a estimamos. Em 2026 já o fez para o Paiva, que o portal ainda mostra «em análise». O que existe publicado:",
+                            "Until APA publishes its report the split is unknown and we do not estimate it. In 2026 it already did so for Paiva, which the portal still shows as “under review”. What has been published:")
                     }</p><ul class="leitura-casos">${
                         (lp.exemplos || []).map((e) => `<li><strong>${esc(isEn() ? e.titulo_en || e.titulo : e.titulo)}</strong> <em>${esc(isEn() ? e.numero_en || e.numero : e.numero)}</em><span>${esc(isEn() ? e.texto_en || e.texto : e.texto)}</span> <a href="${esc(e.url)}" target="_blank" rel="noopener">${tr("Relatório da APA", "APA report")}</a></li>`).join("")
                     }</ul></article></div><p class="leitura-nota">${
