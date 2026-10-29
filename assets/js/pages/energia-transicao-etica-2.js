@@ -29,15 +29,20 @@
                     tr = (pt, en) => (isEn() ? en : pt),
                     nf = (v) => Number(v || 0).toLocaleString(isEn() ? "en-GB" : "pt-PT"),
                     SOL = "#eda100", WIN = "#2a78d6", PAR = "#eb6834";
-                const hero = [
+                const chip = (t) => `<i>${esc(t)}</i>`,
+                    dshort = (v) => new Date(v + "T12:00:00").toLocaleDateString(isEn() ? "en-GB" : "pt-PT", { day: "numeric", month: "short" }),
+                    hero = [
                     [SOL, tr("Solar proposto", "Proposed solar"), `${nf(solar.area_ha)} ha`,
-                        tr(`${nf(solar.poligonos)} polígonos de 100 ha ou mais, a menos de 10 km de uma subestação`, `${nf(solar.poligonos)} polygons of 100 ha or more, within 10 km of a substation`)],
+                        tr(`${nf(solar.poligonos)} polígonos de 100 ha ou mais, a menos de 10 km de uma subestação`, `${nf(solar.poligonos)} polygons of 100 ha or more, within 10 km of a substation`),
+                        [S.recurso_minimo && tr(`Recurso: ${S.recurso_minimo}`, `Resource: ${S.recurso_minimo}`), S.area_minima_poligono_ha && tr(`Polígono mínimo: ${S.area_minima_poligono_ha} ha`, `Minimum polygon: ${S.area_minima_poligono_ha} ha`)]],
                     [WIN, tr("Eólica proposta", "Proposed wind"), `${nf(wind.area_ha)} ha`,
-                        tr(`${nf(wind.poligonos)} polígonos de 20 ha ou mais`, `${nf(wind.poligonos)} polygons of 20 ha or more`)],
+                        tr(`${nf(wind.poligonos)} polígonos de 20 ha ou mais`, `${nf(wind.poligonos)} polygons of 20 ha or more`),
+                        [W.recurso_minimo && tr(`Recurso: ${W.recurso_minimo}`, `Resource: ${W.recurso_minimo}`), W.area_minima_poligono_ha && tr(`Polígono mínimo: ${W.area_minima_poligono_ha} ha`, `Minimum polygon: ${W.area_minima_poligono_ha} ha`)]],
                     [PAR, tr("Participações", "Submissions"), nf(rf.participacoes || c.participacoes),
-                        rf.tipologia_pct ? tr(`${rf.tipologia_pct.discordancia} % classificadas como discordância (${nf(c.participacoes)} no portal)`, `${rf.tipologia_pct.discordancia}% classified as disagreement (${nf(c.participacoes)} on the portal)`) : tr("registadas no portal", "registered on the portal")],
+                        rf.tipologia_pct ? tr(`${rf.tipologia_pct.discordancia} % classificadas como discordância (${nf(c.participacoes)} no portal)`, `${rf.tipologia_pct.discordancia}% classified as disagreement (${nf(c.participacoes)} on the portal)`) : tr("registadas no portal", "registered on the portal"),
+                        [c.inicio && c.fim && `${dshort(c.inicio)} – ${dshort(c.fim)}`, rf.modelo_pct && tr(`${String(rf.modelo_pct).replace(".", ",")} % modelo`, `${rf.modelo_pct}% template`)]],
                 ];
-                el("stats").innerHTML = hero.map((x) => `<article class="stat zhero" style="--tom:${x[0]}"><small>${x[1]}</small><strong>${x[2]}</strong><span>${x[3]}</span></article>`).join("");
+                el("stats").innerHTML = hero.map((x) => `<article class="stat zhero" style="--tom:${x[0]}"><small>${x[1]}</small><strong>${x[2]}</strong><span>${x[3]}</span><div class="zchips">${x[4].filter(Boolean).map(chip).join("")}</div></article>`).join("");
                 // Percurso da consulta
                 const dm = (v) => new Date(v + "T12:00:00").toLocaleDateString(isEn() ? "en-GB" : "pt-PT", { day: "numeric", month: "short" }),
                     span = c.inicio && c.fim ? Math.round((new Date(c.fim + "T12:00:00") - new Date(c.inicio + "T12:00:00")) / 864e5) + 1 : null,
