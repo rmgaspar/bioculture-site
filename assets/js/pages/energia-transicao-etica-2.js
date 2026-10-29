@@ -114,6 +114,18 @@
                 if (!isEn()) return;
                 document.querySelectorAll("#consultas [data-en]").forEach((n) => { n.innerHTML = n.dataset.en; });
             }
+            let GEO = null;
+            const norm = (v) => String(v || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+            const TYPE_EN = { "Avaliação de Impacte Ambiental": "Environmental Impact Assessment", "Licenciamento Único de Ambiente": "Single Environmental Licence", "Programas": "Programmes", "Estratégias": "Strategies", "Avaliação de Incidências Ambientais": "Environmental Incidence Assessment" };
+            /* Mini-mapa de Portugal continental (contorno em data/participa-geo.json); pontos em unidades do desenho. */
+            const mapSvg = (dots, o = {}) => {
+                if (!GEO) return "";
+                const pad = 4, W = GEO.largura, H = GEO.altura,
+                    path = "M" + GEO.contorno.map((q) => q.join(",")).join("L") + "Z";
+                return `<svg viewBox="${-pad} ${-pad} ${W + 2 * pad} ${H + 2 * pad}" ${o.w ? `width="${o.w}"` : ""} xmlns="http://www.w3.org/2000/svg" focusable="false" aria-hidden="true"><path d="${path}" fill="${o.fill ? o.fill : "#eef1e8"}" fill-opacity="${o.fill ? 0.22 : 1}" stroke="${o.fill || "#c9d1bd"}" stroke-width="0.9" stroke-linejoin="round"/>${
+                    dots.map((d) => `${o.halo ? `<circle cx="${d.q[0]}" cy="${d.q[1]}" r="${d.r * 2.1}" fill="${d.c}" fill-opacity=".18"/>` : ""}<circle cx="${d.q[0]}" cy="${d.q[1]}" r="${d.r}" fill="${d.c}" stroke="#fff" stroke-width=".7">${d.t ? `<title>${esc(d.t)}</title>` : ""}</circle>`).join("")
+                }</svg>`;
+            };
             function renderConsults(d) {
                 applyEnglishBlocks();
                 const c = d.consultas_participa || {},
@@ -181,49 +193,86 @@
                         )}</p>`
                         : ""
                 }<span class="now-date">${tr("Verificado no Participa.pt em", "Checked on Participa.pt on")} ${date(meta.instantaneo_em)}</span>`;
-                el("consults").innerHTML =
-                    current.map((x) => {
-                        const tags = signals(x);
-                        return `<article class="consult ${/aberta/i.test(x.estado_consulta) ? "consult-open" : "consult-analysis"}"><small class="${
-                            /aberta/i.test(x.estado_consulta) ? "status-open" : "status-analysis"
-                        }">${esc(stateTxt(x.estado_consulta))} · ${date(x.fim)}</small><h3>${
-                            esc(x.titulo)
-                        }</h3>${
-                            tags.length
-                                ? `<div class="signals">${tags.map(([k, t]) => `<span class="signal signal-${k}">${esc(t)}</span>`).join("")}</div>`
-                                : ""
-                        }<p>${
-                            esc((x.municipios || []).join(" · ") || (isEn() ? SCOPE_EN[x.ambito] || x.ambito : x.ambito) || x.tipologia)
-                        }</p>${
+                const open$ = (x) => /aberta/i.test(x.estado_consulta),
+                    dmShort = (v) => (v ? new Date(v + "T12:00:00").toLocaleDateString(isEn() ? "en-GB" : "pt-PT", { day: "numeric", month: "short" }) : ""),
+                    nPos = (n) => Math.min(100, Math.max(1, Math.log10(Math.max(n, 1)) / 4 * 100)),
+                    medPos = nPos(c.factos_participacao?.participacoes_mediana || 149),
+                    spanDays = (x) => (x.inicio && x.fim ? Math.round((new Date(x.fim + "T12:00:00") - new Date(x.inicio + "T12:00:00")) / 864e5) + 1 : 0),
+                    ptsOf = (x) => (x.municipios || []).map((m) => GEO?.concelhos?.[norm(m)]).filter(Boolean),
+                    cardMap = (x) => {
+                        if (!GEO) return "";
+                        const pts = ptsOf(x),
+                            col = open$(x) ? "#17795a" : "#b87f00";
+                        if (pts.length) return `<div class="c-map" role="img" aria-label="${esc((x.municipios || []).join(", "))}">${mapSvg(pts.map((q) => ({ q, r: 3.6, c: col })), { w: 92, halo: true })}</div>`;
+                        if (x.ambito && /Nacional/i.test(x.ambito)) return `<div class="c-map c-map-nacional" role="img" aria-label="${tr("Âmbito nacional", "National scope")}">${mapSvg([], { w: 92, fill: col })}<span>${tr("Nacional", "National")}</span></div>`;
+                        if (/Espanha|Spain|Zamora/i.test(x.titulo || "") || /Transfronteiri/i.test(x.ambito || "")) return `<div class="c-map c-map-nacional" role="img" aria-label="${tr("Espanha, junto à fronteira", "Spain, near the border")}">${mapSvg([], { w: 92, fill: "#8f98a3" })}<span>${tr("Espanha", "Spain")}</span></div>`;
+                        return `<div class="c-map c-map-nacional" role="img" aria-label="${tr("Localização não indicada", "Location not stated")}">${mapSvg([], { w: 92, fill: "#c3c8bd" })}<span>${tr("Local por indicar", "Location n/a")}</span></div>`;
+                    },
+                    periodBar = (x) => {
+                        const n = spanDays(x);
+                        if (!n) return "";
+                        const cap = 45, w = Math.min(n / cap * 100, 100), short = n <= 21;
+                        return `<div class="c-days${short ? " is-short" : ""}"><div class="c-days-t"><span>${tr(`Prazo de ${n} dias`, `${n}-day period`)}</span><em>${dmShort(x.inicio)} – ${dmShort(x.fim)}</em></div><div class="c-days-bar" title="${tr("A linha marca 21 dias", "The line marks 21 days")}"><i style="width:${w}%"></i><b style="left:${21 / cap * 100}%"></b></div></div>`;
+                    },
+                    cardHtml = (x) => {
+                        const tags = signals(x).filter(([k]) => k !== "urgent"),
+                            isOpen = open$(x),
+                            n = x.fim ? days(x.fim) : null,
+                            when = isOpen && n !== null ? (n <= 0 ? tr("Último dia", "Last day") : tr(`Fecha em ${n} dias`, `Closes in ${n} days`)) : tr(`Fechou a ${dmShort(x.fim)}`, `Closed ${dmShort(x.fim)}`),
+                            where = (x.municipios || []).join(" · ") || (isEn() ? SCOPE_EN[x.ambito] || x.ambito : x.ambito) || x.tipologia,
+                            who = [x.tipologia && (isEn() ? TYPE_EN[x.tipologia] || x.tipologia : x.tipologia), x.promotor_projeto].filter(Boolean).join(" · "),
+                            map = cardMap(x),
+                            ref = x.territorio?.url2;
+                        return `<article class="consult ${isOpen ? "consult-open" : "consult-analysis"}" data-state="${x.alerta_qualidade ? "archive" : isOpen ? "open" : "analysis"}"><header class="c-top"><span class="c-badge">${esc(stateTxt(x.estado_consulta))}</span><span class="c-when">${esc(when)}</span></header><h3>${esc(x.titulo)}</h3>${
+                            who ? `<p class="c-meta">${esc(who)}</p>` : ""
+                        }<div class="c-main${map ? " has-map" : ""}">${map}<div class="c-fig">${
                             x.participacoes !== undefined
-                                ? `<div class="part"><strong>${
-                                    Number(x.participacoes).toLocaleString(isEn() ? "en-GB" : "pt-PT")
-                                }</strong><span>${x.participacoes === 1 ? tr("participação", "submission") : tr("participações", "submissions")}</span></div>`
+                                ? `<div class="part"><strong>${Number(x.participacoes).toLocaleString(isEn() ? "en-GB" : "pt-PT")}</strong><span>${x.participacoes === 1 ? tr("participação", "submission") : tr("participações", "submissions")}</span></div><div class="c-scale" title="${tr("Escala logarítmica; a linha marca a mediana de 2026", "Logarithmic scale; the line marks the 2026 median")}"><i style="width:${nPos(x.participacoes)}%"></i><b style="left:${medPos}%"></b></div><small class="c-scale-l">${tr("a linha é a mediana de 2026", "the line is the 2026 median")}</small>`
                                 : ""
+                        }<p class="c-where">${esc(where)}</p></div></div>${periodBar(x)}${
+                            tags.length ? `<div class="signals">${tags.map(([k, t]) => `<span class="signal signal-${k}">${esc(t)}</span>`).join("")}</div>` : ""
                         }${
-                            x.resumo_projeto
-                                ? `<p>${esc(isEn() ? x.resumo_projeto_en || x.resumo_projeto : x.resumo_projeto)}</p>`
-                                : ""
+                            x.resumo_projeto ? `<p class="c-resumo">${esc(isEn() ? x.resumo_projeto_en || x.resumo_projeto : x.resumo_projeto)}</p>` : ""
                         }${
                             x.territorio
                                 ? `<details class="territorio"><summary>${tr("Território, ecossistemas e espécies", "Land, ecosystems and species")}</summary><dl>${
                                     (x.territorio.linhas || []).map((l) => `<div><dt>${esc(isEn() ? l.rotulo_en || l.rotulo : l.rotulo)}</dt><dd>${esc(isEn() ? l.texto_en || l.texto : l.texto)}</dd></div>`).join("")
                                 }</dl><p class="territorio-nota">${esc(isEn() ? x.territorio.nota_en || x.territorio.nota : x.territorio.nota)}</p><p class="territorio-fonte">${tr("Fonte:", "Source:")} <a href="${esc(x.territorio.url)}" target="_blank" rel="noopener">${esc(isEn() ? x.territorio.fonte_en || x.territorio.fonte : x.territorio.fonte)}</a>${
-                                    x.territorio.url2 ? ` · <a href="${esc(x.territorio.url2)}" target="_blank" rel="noopener">${tr("relatório da consulta", "consultation report")}</a>` : ""
+                                    ref ? ` · <a href="${esc(ref)}" target="_blank" rel="noopener">${tr("relatório da consulta", "consultation report")}</a>` : ""
                                 }</p></details>`
                                 : ""
                         }${
-                            x.alerta_qualidade
-                                ? `<p><strong>${tr("Atenção:", "Note:")}</strong> ${esc(isEn() ? ALERT_EN[x.alerta_qualidade] || x.alerta_qualidade : x.alerta_qualidade)}</p>`
-                                : ""
+                            x.alerta_qualidade ? `<p class="c-alert"><strong>${tr("Atenção:", "Note:")}</strong> ${esc(isEn() ? ALERT_EN[x.alerta_qualidade] || x.alerta_qualidade : x.alerta_qualidade)}</p>` : ""
                         }${
-                            x.url
-                                ? `<a href="${
-                                    esc(x.url)
-                                }" target="_blank" rel="noopener">${tr("Abrir ficha original", "Open original page")}</a>`
-                                : ""
+                            x.url ? `<footer class="c-foot"><a href="${esc(x.url)}" target="_blank" rel="noopener">${tr("Abrir ficha no Participa", "Open on Participa")} ↗</a></footer>` : ""
                         }</article>`;
-                    }).join("") || '<p class="empty">—</p>';
+                    };
+                el("consults").innerHTML = current.map(cardHtml).join("") || '<p class="empty">—</p>';
+                // Panorama: mapa com todas as consultas, concelhos mais visados e filtro por estado.
+                if (el("consults-top") && GEO) {
+                    const per = {};
+                    recent.forEach((x) => (x.municipios || []).forEach((m) => {
+                        const k = norm(m), o = (per[k] ||= { name: m, n: 0, open: 0, parts: 0 });
+                        o.n += 1; o.parts += x.participacoes || 0; if (open$(x)) o.open += 1;
+                    }));
+                    const dots = Object.entries(per).filter(([k]) => GEO.concelhos[k]).map(([k, o]) => ({ q: GEO.concelhos[k], r: 1.9 + o.n * 0.9, c: o.open ? "#17795a" : "#b87f00", t: `${o.name}: ${o.n} ${o.n === 1 ? tr("consulta", "consultation") : tr("consultas", "consultations")}` })),
+                        top = Object.values(per).sort((p, q) => q.n - p.n || q.parts - p.parts).slice(0, 8),
+                        maxN = Math.max(...top.map((t) => t.n), 1),
+                        nOpen = recent.filter(open$).length,
+                        nAn = recent.length - nOpen,
+                        chip = (k, label, n, on) => `<button type="button" class="c-chip${on ? " is-on" : ""}" data-f="${k}">${label} <b>${n}</b></button>`;
+                    el("consults-top").innerHTML = `<div class="ct-map">${mapSvg(dots, { w: 230, halo: true })}<div class="ct-leg"><span><i style="background:#17795a"></i>${tr("Com consulta aberta", "With an open consultation")}</span><span><i style="background:#b87f00"></i>${tr("Só em análise", "Under review only")}</span></div></div><div class="ct-side"><small>${tr("Onde estão", "Where they are")}</small><h3>${
+                        tr(`${Object.keys(per).length} concelhos com consultas de renováveis abertas ou em análise`, `${Object.keys(per).length} municipalities with open or under-review renewables consultations`)
+                    }</h3><h4>${tr("Concelhos mais visados", "Most affected municipalities")}</h4>${
+                        top.map((t) => `<div class="zb"><span class="zb-l">${esc(t.name)}</span><span class="zb-t"><i style="width:${t.n / maxN * 100}%;background:${t.open ? "#17795a" : "#b87f00"}"></i></span><span class="zb-v">${t.n}<em>${tr("consultas", "consultations")}</em></span></div>`).join("")
+                    }<p class="zc-unit">${tr("O ponto de cada concelho é indicativo. Os projetos que abrangem vários concelhos contam em cada um; as consultas nacionais e as de Espanha não entram.", "Each municipality's dot is indicative. Projects spanning several municipalities count in each; national and Spanish consultations are left out.")}</p><div class="c-chips" role="group" aria-label="${tr("Filtrar por estado", "Filter by state")}">${
+                        chip("all", tr("Todas", "All"), recent.length, true)}${chip("open", tr("Abertas", "Open"), nOpen, false)}${chip("analysis", tr("Em análise", "Under review"), nAn, false)
+                    }</div></div>`;
+                    el("consults-top").querySelectorAll(".c-chip").forEach((btn) => btn.addEventListener("click", () => {
+                        el("consults-top").querySelectorAll(".c-chip").forEach((b2) => b2.classList.toggle("is-on", b2 === btn));
+                        el("consults").querySelectorAll(".consult").forEach((card) => { card.hidden = btn.dataset.f !== "all" && card.dataset.state !== btn.dataset.f; });
+                    }));
+                }
                 const dm = (v) => new Date(v + "T12:00:00").toLocaleDateString(isEn() ? "en-GB" : "pt-PT", { day: "numeric", month: "short" }),
                     nameOf = (x) => String(x.titulo || "").replace(/\s+-\s+projeto reformulado$/i, ""),
                     closing = (c.abertas || []).filter((x) => x.fim).slice().sort((x, y) => String(x.fim).localeCompare(String(y.fim))),
@@ -435,6 +484,7 @@
                             })
                         ),
                     );
+                    try { GEO = await fetch("/data/participa-geo.json").then((r) => (r.ok ? r.json() : null)); } catch (_) { GEO = null; }
                     renderStats(d);
                     renderConsults(d);
                     renderLocal(d);
