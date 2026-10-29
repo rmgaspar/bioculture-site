@@ -168,30 +168,40 @@
                     shortTitle = (t) => String(t || "").replace(/^(Central Solar Fotovoltaica|Projeto Solar Fotovoltaico|Projeto|Parque Solar|Parque Eólico)\s+(de|do|da|dos|das)?\s*/i, "").replace(/\s+e\s+LMAT associadas.*$/i, "").slice(0, 60),
                     total = meta.resumo_pesquisa?.consultas_renovaveis,
                     closed = meta.resumo_pesquisa?.encerradas;
-                el("participa-now").innerHTML = `<div class="now-figures"><span class="is-open"><strong>${open}</strong>${
-                    tr(open === 1 ? "consulta aberta agora" : "consultas abertas agora", open === 1 ? "consultation open now" : "consultations open now")
-                }</span><span class="is-analysis"><strong>${pending}</strong>${tr("em análise: prazo terminado, a aguardar decisão (2026)", "under review: closed, awaiting decision (2026)")}</span>${
-                    partSum ? `<span class="is-parts"><strong>${num(partSum)}</strong>${tr("participações nestas consultas", "submissions in these consultations")}</span>` : ""
-                }</div>${
-                    top.length
-                        ? `<div class="part-chart"><h4>${tr("Participações por consulta", "Submissions per consultation")}</h4>${miniBars(top.map((x) => ({
-                            l: shortTitle(x.titulo), v: x.participacoes, c: /aberta/i.test(x.estado_consulta) ? PALETTE[2] : PALETTE[3],
-                        })))}<div class="mlegend"><span><i style="background:${PALETTE[2]}"></i>${tr("Abertas", "Open")}</span><span><i style="background:${PALETTE[3]}"></i>${tr("Em análise", "Under review")}</span></div></div>`
-                        : ""
-                }<p>${
-                    open
-                        ? tr("Ainda é possível participar nas consultas assinaladas como abertas.", "You can still take part in the consultations marked as open.")
-                        : tr(
-                            "Não há nenhuma consulta de renováveis aberta neste momento. As que estão em análise aguardam decisão e, nas PDA, virá ainda a consulta do Estudo de Impacte Ambiental. Usa «Seguir» na ficha do projeto no Participa.pt para seres avisado.",
-                            "No renewables consultation is open right now. Those under review await a decision, and scoping procedures will be followed by an EIA consultation. Use “Follow” on the Participa page to be notified."
-                        )
-                }</p>${
-                    total
-                        ? `<p class="now-note">${tr(
-                            `O portal tem ${num(total)} consultas de renováveis${closed ? `, das quais ${num(closed)} encerradas, quase todas de anos anteriores`: ""}; aqui seguem-se as abertas e as de 2026.`,
-                            `The portal lists ${num(total)} renewables consultations${closed ? `, ${num(closed)} of them closed, almost all from earlier years` : ""}; here we follow the open ones and those from 2026.`
-                        )}</p>`
-                        : ""
+                const nowNf = (v) => Number(v || 0).toLocaleString(isEn() ? "en-GB" : "pt-PT"),
+                    nowDm = (v) => new Date(v + "T12:00:00").toLocaleDateString(isEn() ? "en-GB" : "pt-PT", { day: "numeric", month: "short" }),
+                    cut = (t, n) => (String(t).length > n ? String(t).slice(0, String(t).lastIndexOf(" ", n)) + "…" : String(t)),
+                    openList = (c.abertas || []).filter((x) => x.fim).slice().sort(byEnd(1)),
+                    next = openList[0],
+                    fNow = c.factos_participacao || {},
+                    topTwo = [...top].sort((x, y) => y.participacoes - x.participacoes).slice(0, 2),
+                    topShare = partSum ? Math.round(topTwo.reduce((acc, x) => acc + x.participacoes, 0) / partSum * 100) : 0,
+                    lead = open && next
+                        ? tr(`${open === 1 ? "Há 1 consulta aberta" : `Há ${open} consultas abertas`}. A próxima a fechar é «${shortTitle(next.titulo)}», a ${nowDm(next.fim)} (daqui a ${Math.max(days(next.fim), 0)} dias).`,
+                            `${open === 1 ? "1 consultation is open" : `${open} consultations are open`}. The next to close is “${shortTitle(next.titulo)}”, on ${nowDm(next.fim)} (in ${Math.max(days(next.fim), 0)} days).`)
+                        : tr("Não há nenhuma consulta de renováveis aberta neste momento.", "No renewables consultation is open right now."),
+                    cards = [
+                        ["#1baf7a", nowNf(open), tr(open === 1 ? "consulta aberta agora" : "consultas abertas agora", open === 1 ? "consultation open now" : "consultations open now"),
+                            next ? tr(`A próxima fecha em ${Math.max(days(next.fim), 0)} dias`, `The next closes in ${Math.max(days(next.fim), 0)} days`) : tr("A seguir pelo «Seguir» do Participa", "Follow them with Participa's “Follow”")],
+                        ["#eda100", nowNf(pending), tr("em análise", "under review"), tr("Prazo terminado, a aguardar decisão (2026)", "Closed, awaiting decision (2026)")],
+                        ["#eb6834", nowNf(partSum), tr("participações nestas consultas", "submissions in these consultations"),
+                            fNow.participacoes_mediana ? tr(`Mediana de ${nowNf(fNow.participacoes_mediana)} por projeto em ${fNow.ano}`, `Median of ${nowNf(fNow.participacoes_mediana)} per project in ${fNow.ano}`) : ""],
+                    ],
+                    barMax = Math.max(...top.map((x) => x.participacoes), 1),
+                    chartRows = top.map((x) => `<div class="zb"><span class="zb-l" title="${esc(x.titulo)}">${esc(cut(shortTitle(x.titulo), 60))}</span><span class="zb-t"><i style="width:${Math.max(x.participacoes / barMax * 100, 1)}%;background:${/aberta/i.test(x.estado_consulta) ? "#1baf7a" : "#eda100"}"></i></span><span class="zb-v">${nowNf(x.participacoes)}</span></div>`).join(""),
+                    openRows = openList.map((x) => {
+                        const start = new Date(x.inicio + "T12:00:00"), end = new Date(x.fim + "T12:00:00"),
+                            done = Math.min(Math.max((today - start) / Math.max(end - start, 1), 0), 1) * 100, left = Math.max(days(x.fim), 0);
+                        return `<li><a href="${esc(x.url || "#")}" target="_blank" rel="noopener">${esc(cut(shortTitle(x.titulo), 52))}</a><div class="nowbar"><i style="width:${done}%"></i></div><span><b>${tr(`${left} dias`, `${left} days`)}</b> ${tr("para fechar", "to close")} · ${nowDm(x.fim)}${typeof x.participacoes === "number" ? ` · ${nowNf(x.participacoes)} ${tr("participações", "submissions")}` : ""}</span></li>`;
+                    }).join("");
+                el("participa-now").innerHTML = `<div class="now-head"><small>${tr("Estado das consultas", "State of the consultations")}</small><h3>${esc(lead)}</h3></div><div class="now-figures nf3">${
+                    cards.map((x) => `<span class="nowcard" style="--tom:${x[0]}"><strong>${x[1]}</strong><b>${x[2]}</b><em>${x[3]}</em></span>`).join("")
+                }</div><div class="now-grid"><div class="part-chart"><h4>${tr("Participações por consulta", "Submissions per consultation")}</h4>${chartRows}<div class="mlegend"><span><i style="background:#1baf7a"></i>${tr("Abertas", "Open")}</span><span><i style="background:#eda100"></i>${tr("Em análise", "Under review")}</span></div>${
+                    topTwo.length === 2 && topShare ? `<p class="now-insight">${tr(`Só duas consultas, «${shortTitle(topTwo[0].titulo)}» e «${shortTitle(topTwo[1].titulo)}», reúnem ${topShare} % de todas as participações.`, `Just two consultations, “${shortTitle(topTwo[0].titulo)}” and “${shortTitle(topTwo[1].titulo)}”, account for ${topShare}% of all submissions.`)}</p>` : ""
+                }</div><div class="now-open"><h4>${tr("Prazos a decorrer", "Deadlines running")}</h4>${
+                    openRows ? `<ul>${openRows}</ul><p class="now-hint">${tr("A barra mostra quanto do prazo já passou.", "The bar shows how much of the period has passed.")}</p>` : `<p>${tr("Nenhuma consulta aberta. Usa «Seguir» na ficha do projeto no Participa.pt para seres avisado quando abrir outra.", "None open. Use “Follow” on the project's Participa page to be told when another opens.")}</p>`
+                }</div></div>${
+                    total ? `<p class="now-note">${tr(`O portal tem ${nowNf(total)} consultas de renováveis${closed ? `, das quais ${nowNf(closed)} encerradas, quase todas de anos anteriores`: ""}; aqui seguem-se as abertas e as de 2026.`, `The portal lists ${nowNf(total)} renewables consultations${closed ? `, ${nowNf(closed)} of them closed, almost all from earlier years` : ""}; here we follow the open ones and those from 2026.`)}</p>` : ""
                 }<span class="now-date">${tr("Verificado no Participa.pt em", "Checked on Participa.pt on")} ${date(meta.instantaneo_em)}</span>`;
                 const open$ = (x) => /aberta/i.test(x.estado_consulta),
                     dmShort = (v) => (v ? new Date(v + "T12:00:00").toLocaleDateString(isEn() ? "en-GB" : "pt-PT", { day: "numeric", month: "short" }) : ""),
