@@ -126,7 +126,7 @@
             /* Mini-mapa de Portugal continental (contorno em data/participa-geo.json); pontos em unidades do desenho. */
             const mapSvg = (dots, o = {}) => {
                 if (!GEO) return "";
-                const pad = 4, W = GEO.largura, H = GEO.altura,
+                const pad = o.pad ?? 4, W = GEO.largura, H = GEO.altura,
                     path = "M" + GEO.contorno.map((q) => q.join(",")).join("L") + "Z";
                 return `<svg viewBox="${-pad} ${-pad} ${W + 2 * pad} ${H + 2 * pad}" ${o.w ? `width="${o.w}"` : ""} xmlns="http://www.w3.org/2000/svg" focusable="false" aria-hidden="true"><path d="${path}" fill="${o.fill ? o.fill : "#eef1e8"}" fill-opacity="${o.fill ? 0.22 : 1}" stroke="${o.fill || "#c9d1bd"}" stroke-width="0.9" stroke-linejoin="round"/>${
                     dots.map((d) => `<g${d.k ? ` class="ct-dot" data-k="${esc(d.k)}" data-n="${esc(d.n)}"` : ""}>${o.halo ? `<circle cx="${d.q[0]}" cy="${d.q[1]}" r="${d.r * 2.1}" fill="${d.c}" fill-opacity=".18"/>` : ""}<circle cx="${d.q[0]}" cy="${d.q[1]}" r="${d.r}" fill="${d.c}" stroke="#fff" stroke-width=".7">${d.t ? `<title>${esc(d.t)}</title>` : ""}</circle></g>`).join("")
@@ -277,11 +277,11 @@
                         nOpen = recent.filter(open$).length,
                         nAn = recent.length - nOpen,
                         chip = (k, label, n, on) => `<button type="button" class="c-chip${on ? " is-on" : ""}" data-f="${k}">${label} <b>${n}</b></button>`;
-                    el("consults-top").innerHTML = `<div class="ct-map">${mapSvg(dots, { w: 290, halo: true })}<div class="ct-leg"><span><i style="background:#17795a"></i>${tr("Com consulta aberta", "With an open consultation")}</span><span><i style="background:#b87f00"></i>${tr("Só em análise", "Under review only")}</span></div></div><div class="ct-side"><small>${tr("Onde estão", "Where they are")}</small><h3>${
+                    el("consults-top").innerHTML = `<div class="ct-map">${mapSvg(dots, { w: 290, halo: true, pad: 0 })}</div><div class="ct-leg"><span><i style="background:#17795a"></i>${tr("Com consulta aberta", "With an open consultation")}</span><span><i style="background:#b87f00"></i>${tr("Só em análise", "Under review only")}</span></div><div class="ct-side"><div class="ct-head"><small>${tr("Onde estão", "Where they are")}</small><h3>${
                         tr(`${Object.keys(per).length} concelhos com consultas abertas ou em análise sobre renováveis e outros temas do território`, `${Object.keys(per).length} municipalities with open or under-review consultations on renewables and other land-use topics`)
-                    }</h3><h4>${tr("Concelhos mais visados", "Most affected municipalities")}</h4>${
+                    }</h3></div><div class="ct-list"><h4>${tr("Concelhos mais visados", "Most affected municipalities")}</h4>${
                         top.map((t) => `<div class="zb" data-k="${esc(norm(t.name))}"><span class="zb-l">${esc(t.name)}</span><span class="zb-t"><i style="width:${t.n / maxN * 100}%;background:${t.open ? "#17795a" : "#b87f00"}"></i></span><span class="zb-v">${t.n}<em>${tr("consultas", "consultations")}</em></span></div>`).join("")
-                    }<p class="zc-unit">${tr("O ponto de cada concelho é indicativo. Os projetos que abrangem vários concelhos contam em cada um; as consultas nacionais e as de Espanha não entram.", "Each municipality's dot is indicative. Projects spanning several municipalities count in each; national and Spanish consultations are left out.")}</p><div class="c-chips" role="group" aria-label="${tr("Filtrar por estado", "Filter by state")}">${
+                    }<p class="zc-unit">${tr("O ponto de cada concelho é indicativo. Os projetos que abrangem vários concelhos contam em cada um; as consultas nacionais e as de Espanha não entram.", "Each municipality's dot is indicative. Projects spanning several municipalities count in each; national and Spanish consultations are left out.")}</p></div><div class="c-chips" role="group" aria-label="${tr("Filtrar por estado", "Filter by state")}">${
                         chip("all", tr("Todas", "All"), recent.length, true)}${chip("open", tr("Abertas", "Open"), nOpen, false)}${chip("analysis", tr("Em análise", "Under review"), nAn, false)
                     }</div></div>`;
                     // Ligar pontos e linhas: ao passar o rato num, realça o outro e o mapa mostra o nome do concelho.
