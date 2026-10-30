@@ -129,7 +129,7 @@
                 const pad = 4, W = GEO.largura, H = GEO.altura,
                     path = "M" + GEO.contorno.map((q) => q.join(",")).join("L") + "Z";
                 return `<svg viewBox="${-pad} ${-pad} ${W + 2 * pad} ${H + 2 * pad}" ${o.w ? `width="${o.w}"` : ""} xmlns="http://www.w3.org/2000/svg" focusable="false" aria-hidden="true"><path d="${path}" fill="${o.fill ? o.fill : "#eef1e8"}" fill-opacity="${o.fill ? 0.22 : 1}" stroke="${o.fill || "#c9d1bd"}" stroke-width="0.9" stroke-linejoin="round"/>${
-                    dots.map((d) => `${o.halo ? `<circle cx="${d.q[0]}" cy="${d.q[1]}" r="${d.r * 2.1}" fill="${d.c}" fill-opacity=".18"/>` : ""}<circle cx="${d.q[0]}" cy="${d.q[1]}" r="${d.r}" fill="${d.c}" stroke="#fff" stroke-width=".7">${d.t ? `<title>${esc(d.t)}</title>` : ""}</circle>`).join("")
+                    dots.map((d) => `<g${d.k ? ` class="ct-dot" data-k="${esc(d.k)}" data-n="${esc(d.n)}"` : ""}>${o.halo ? `<circle cx="${d.q[0]}" cy="${d.q[1]}" r="${d.r * 2.1}" fill="${d.c}" fill-opacity=".18"/>` : ""}<circle cx="${d.q[0]}" cy="${d.q[1]}" r="${d.r}" fill="${d.c}" stroke="#fff" stroke-width=".7">${d.t ? `<title>${esc(d.t)}</title>` : ""}</circle></g>`).join("")
                 }</svg>`;
             };
             function renderConsults(d) {
@@ -271,19 +271,43 @@
                         const k = norm(m), o = (per[k] ||= { name: m, n: 0, open: 0, parts: 0 });
                         o.n += 1; o.parts += x.participacoes || 0; if (open$(x)) o.open += 1;
                     }));
-                    const dots = Object.entries(per).filter(([k]) => GEO.concelhos[k]).map(([k, o]) => ({ q: GEO.concelhos[k], r: 1.9 + o.n * 0.9, c: o.open ? "#17795a" : "#b87f00", t: `${o.name}: ${o.n} ${o.n === 1 ? tr("consulta", "consultation") : tr("consultas", "consultations")}` })),
+                    const dots = Object.entries(per).filter(([k]) => GEO.concelhos[k]).map(([k, o]) => ({ k, n: o.name, q: GEO.concelhos[k], r: 1.9 + o.n * 0.9, c: o.open ? "#17795a" : "#b87f00", t: `${o.name}: ${o.n} ${o.n === 1 ? tr("consulta", "consultation") : tr("consultas", "consultations")}` })),
                         top = Object.values(per).sort((p, q) => q.n - p.n || q.parts - p.parts).slice(0, 8),
                         maxN = Math.max(...top.map((t) => t.n), 1),
                         nOpen = recent.filter(open$).length,
                         nAn = recent.length - nOpen,
                         chip = (k, label, n, on) => `<button type="button" class="c-chip${on ? " is-on" : ""}" data-f="${k}">${label} <b>${n}</b></button>`;
-                    el("consults-top").innerHTML = `<div class="ct-map">${mapSvg(dots, { w: 230, halo: true })}<div class="ct-leg"><span><i style="background:#17795a"></i>${tr("Com consulta aberta", "With an open consultation")}</span><span><i style="background:#b87f00"></i>${tr("Só em análise", "Under review only")}</span></div></div><div class="ct-side"><small>${tr("Onde estão", "Where they are")}</small><h3>${
+                    el("consults-top").innerHTML = `<div class="ct-map">${mapSvg(dots, { w: 290, halo: true })}<div class="ct-leg"><span><i style="background:#17795a"></i>${tr("Com consulta aberta", "With an open consultation")}</span><span><i style="background:#b87f00"></i>${tr("Só em análise", "Under review only")}</span></div></div><div class="ct-side"><small>${tr("Onde estão", "Where they are")}</small><h3>${
                         tr(`${Object.keys(per).length} concelhos com consultas abertas ou em análise sobre renováveis e outros temas do território`, `${Object.keys(per).length} municipalities with open or under-review consultations on renewables and other land-use topics`)
                     }</h3><h4>${tr("Concelhos mais visados", "Most affected municipalities")}</h4>${
-                        top.map((t) => `<div class="zb"><span class="zb-l">${esc(t.name)}</span><span class="zb-t"><i style="width:${t.n / maxN * 100}%;background:${t.open ? "#17795a" : "#b87f00"}"></i></span><span class="zb-v">${t.n}<em>${tr("consultas", "consultations")}</em></span></div>`).join("")
+                        top.map((t) => `<div class="zb" data-k="${esc(norm(t.name))}"><span class="zb-l">${esc(t.name)}</span><span class="zb-t"><i style="width:${t.n / maxN * 100}%;background:${t.open ? "#17795a" : "#b87f00"}"></i></span><span class="zb-v">${t.n}<em>${tr("consultas", "consultations")}</em></span></div>`).join("")
                     }<p class="zc-unit">${tr("O ponto de cada concelho é indicativo. Os projetos que abrangem vários concelhos contam em cada um; as consultas nacionais e as de Espanha não entram.", "Each municipality's dot is indicative. Projects spanning several municipalities count in each; national and Spanish consultations are left out.")}</p><div class="c-chips" role="group" aria-label="${tr("Filtrar por estado", "Filter by state")}">${
                         chip("all", tr("Todas", "All"), recent.length, true)}${chip("open", tr("Abertas", "Open"), nOpen, false)}${chip("analysis", tr("Em análise", "Under review"), nAn, false)
                     }</div></div>`;
+                    // Ligar pontos e linhas: ao passar o rato num, realça o outro e o mapa mostra o nome do concelho.
+                    const ct = el("consults-top"), svg = ct.querySelector("svg"), dotOf = (k) => [...ct.querySelectorAll(".ct-dot")].find((g) => g.dataset.k === k);
+                    let lab = null;
+                    const hl = (k, on) => {
+                        const g = dotOf(k);
+                        ct.querySelectorAll(`.zb[data-k="${k}"]`).forEach((r) => r.classList.toggle("is-hl", on));
+                        if (g) g.classList.toggle("is-hl", on);
+                        if (lab) { lab.remove(); lab = null; }
+                        if (!on || !g || !svg) return;
+                        const c0 = g.querySelector("circle:last-of-type"), vb = svg.viewBox.baseVal, cx = +c0.getAttribute("cx"), cy = +c0.getAttribute("cy"), r = +c0.getAttribute("r"),
+                            k2 = vb.width / (svg.getBoundingClientRect().width || vb.width), left = cx > vb.x + vb.width * 0.55;
+                        lab = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                        lab.setAttribute("class", "ct-lab");
+                        lab.setAttribute("x", cx + (left ? -1 : 1) * (r * 2.1 + 1.5));
+                        lab.setAttribute("y", cy + 4 * k2);
+                        lab.setAttribute("text-anchor", left ? "end" : "start");
+                        lab.setAttribute("font-size", 12 * k2);
+                        lab.textContent = g.dataset.n;
+                        svg.appendChild(lab);
+                    };
+                    ct.querySelectorAll(".ct-dot, .zb[data-k]").forEach((n) => {
+                        n.addEventListener("pointerenter", () => hl(n.dataset.k, true));
+                        n.addEventListener("pointerleave", () => hl(n.dataset.k, false));
+                    });
                     el("consults-top").querySelectorAll(".c-chip").forEach((btn) => btn.addEventListener("click", () => {
                         el("consults-top").querySelectorAll(".c-chip").forEach((b2) => b2.classList.toggle("is-on", b2 === btn));
                         el("consults").querySelectorAll(".consult").forEach((card) => { card.hidden = btn.dataset.f !== "all" && card.dataset.state !== btn.dataset.f; });
