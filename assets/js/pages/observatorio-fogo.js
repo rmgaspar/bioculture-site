@@ -17,7 +17,9 @@
         },
         EMBER = "#c4552b",
         cache = {};
-    let geo, indice, ano;
+    const ZAER = { solar: ["PSZAER solar", "PSZAER solar", "#e0a800"], eolica: ["PSZAER eólica", "PSZAER wind", "#2f7fd1"] },
+        zon = { solar: false, eolica: false };
+    let geo, indice, ano, zmeta;
 
     const get = (url) => cache[url] || (cache[url] = fetch(url).then((r) => { if (!r.ok) throw new Error(url); return r.json(); }));
     const dia = (d) => (d ? new Date(d + "T12:00:00").toLocaleDateString(isEn() ? "en-GB" : "pt-PT", { day: "numeric", month: "short", year: "numeric" }) : "");
@@ -36,7 +38,9 @@
             tr(`${num(oficial || d.ha)} hectares ardidos em ${d.ano}`, `${num(oficial || d.ha)} hectares burned in ${d.ano}`)
         }</h3><div class="fg-years" role="group" aria-label="${tr("Ano", "Year")}">${
             Object.keys(indice.anos).map((y) => `<button type="button" class="fg-year${+y === d.ano ? " is-on" : ""}" data-y="${y}">${y}</button>`).join("")
-        }</div><h4>${tr("Causa apurada pelo ICNF", "Cause as classified by ICNF")}</h4><div class="fg-bar" role="img" aria-label="${tr("Área ardida por causa", "Burned area by cause")}">${
+        }</div><div class="fg-layers" role="group" aria-label="${tr("Camadas", "Layers")}"><span>${tr("Camadas", "Layers")}</span>${
+            Object.entries(ZAER).map(([k, v]) => `<button type="button" class="fg-layer${zon[k] ? " is-on" : ""}" data-z="${k}"><i style="background:${v[2]}"></i>${v[isEn() ? 1 : 0]} · ${tr("aprox.", "approx.")}</button>`).join("")
+        }</div><p class="fg-zaer-note" hidden></p><h4>${tr("Causa apurada pelo ICNF", "Cause as classified by ICNF")}</h4><div class="fg-bar" role="img" aria-label="${tr("Área ardida por causa", "Burned area by cause")}">${
             Object.entries(d.causas_ha).map(([k, v]) => `<i data-t="${k}" style="width:${v / total * 100}%;background:${CAUSAS[k][2]}" title="${esc(CAUSAS[k][isEn() ? 1 : 0])}: ${num(v)} ha"></i>`).join("")
         }</div><ul class="fg-leg">${
             Object.entries(d.causas_ha).map(([k, v]) => `<li data-t="${k}" tabindex="0"><i style="background:${CAUSAS[k][2]}"></i><span>${CAUSAS[k][isEn() ? 1 : 0]}</span><b>${v / total < 0.01 ? "<1" : Math.round(v / total * 100)} %</b></li>`).join("")
@@ -87,6 +91,27 @@
         rows.forEach((r) => { ["pointerenter", "focus"].forEach((e) => r.addEventListener(e, () => hl(r.dataset.i, true))); ["pointerleave", "blur"].forEach((e) => r.addEventListener(e, () => hl(r.dataset.i, false))); });
         root.querySelectorAll(".fg-leg li, .fg-bar i").forEach((n) => { ["pointerenter", "focus"].forEach((e) => n.addEventListener(e, () => cause(n.dataset.t, true))); ["pointerleave", "blur"].forEach((e) => n.addEventListener(e, () => cause(n.dataset.t, false))); });
         root.querySelectorAll(".fg-year").forEach((b) => b.addEventListener("click", () => show(+b.dataset.y)));
+        const aplicar = () => {
+            svg.querySelectorAll(".fg-zaer").forEach((n) => n.remove());
+            if (zmeta) Object.keys(ZAER).filter((k) => zon[k]).forEach((k) => {
+                const im = document.createElementNS("http://www.w3.org/2000/svg", "image");
+                im.setAttribute("class", "fg-zaer");
+                im.setAttribute("href", `/data/fogo/zaer-${k}.png?v=1`);
+                im.setAttribute("width", zmeta.largura);
+                im.setAttribute("height", zmeta.altura);
+                im.setAttribute("preserveAspectRatio", "none");
+                im.setAttribute("transform", `matrix(${zmeta.matriz.join(" ")})`);
+                svg.appendChild(im);
+            });
+            root.querySelectorAll(".fg-layer").forEach((b) => b.classList.toggle("is-on", zon[b.dataset.z]));
+            const nota = root.querySelector(".fg-zaer-note"), alguma = Object.values(zon).some(Boolean);
+            nota.hidden = !alguma;
+            if (alguma) nota.textContent = tr(
+                `Camada aproximada: reconstituída a partir dos mapas em imagem do portal do PSZAER, porque os polígonos oficiais não estão publicados. Serve para ver a mancha geral, não para medir áreas nem sobreposições. As zonas são potenciais, não são projetos, e os fogos de ${d.ano} são anteriores à proposta (maio de 2026).`,
+                `Approximate layer: rebuilt from the image maps on the PSZAER portal, because the official polygons are not published. It shows the general pattern; it cannot measure areas or overlaps. The zones are potential, not projects, and the ${d.ano} fires predate the proposal (May 2026).`);
+        };
+        root.querySelectorAll(".fg-layer").forEach((b) => b.addEventListener("click", () => { zon[b.dataset.z] = !zon[b.dataset.z]; aplicar(); }));
+        aplicar();
     }
 
     function show(y) {
@@ -94,8 +119,8 @@
         get(`/data/fogo/${y}.json`).then((d) => { if (ano === y) render(d); }).catch(() => { root.innerHTML = `<p class="prose">${tr("Não foi possível carregar os dados deste ano.", "This year's data could not be loaded.")}</p>`; });
     }
 
-    Promise.all([get("/data/participa-geo.json"), get("/data/fogo/indice.json")]).then(([g, i]) => {
-        geo = g; indice = i;
+    Promise.all([get("/data/participa-geo.json"), get("/data/fogo/indice.json"), get("/data/fogo/zaer-aprox.json").catch(() => null)]).then(([g, i, z]) => {
+        geo = g; indice = i; zmeta = z;
         const anos = Object.keys(i.anos).map(Number), q = new URLSearchParams(location.search).get("ano");
         show(anos.includes(+q) ? +q : Math.max(...anos));
     }).catch(() => { root.innerHTML = `<p class="prose">${tr("Não foi possível carregar o mapa.", "The map could not be loaded.")}</p>`; });
