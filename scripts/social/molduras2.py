@@ -56,7 +56,7 @@ def em_foco(destino, nome, pilula, titulo, sub, factos, foto, credito, link, enq
     im, d = fundo(NAVY)
     foto_cheia(im, foto, H, enq)
     sombra(im, 0, 260, (8, 16, 12), 170, 0, 0.6)
-    sombra(im, 330, H, (8, 16, 12), 0, 245, 1.6)
+    sombra(im, 200, H, (6, 12, 9), 0, 250, 1.35)
     d = ImageDraw.Draw(im)
     logo(im, M, 60, cor_texto=BRANCO, cor_sub=acento)
     pill(d, W - M - 270, 62, "EM FOCO", f("avenir", "heavy", 24), acento, INK, pad=26, alt=56)
@@ -103,7 +103,8 @@ def em_foco(destino, nome, pilula, titulo, sub, factos, foto, credito, link, enq
 # ---------- Dados: azul-ardósia, gráfico em destaque ----------
 def cabecalho_dados(d, im, pilula):
     logo(im, M, 60, cor_texto=BRANCO, cor_sub=SKY)
-    pill(d, W - M - 330, 62, pilula, f("avenir", "heavy", 24), SKY, NAVY, pad=26, alt=56)
+    larg = int(d.textlength(pilula, font=f("avenir", "heavy", 24))) + 52
+    pill(d, W - M - larg, 62, pilula, f("avenir", "heavy", 24), SKY, NAVY, pad=26, alt=56)
 
 
 def titulo_dados(d, y, t, tam=80):
@@ -128,26 +129,31 @@ def dados_barras(destino, nome, pilula, titulo, linhas, fonte, link, sub=None, n
             y += 42
         y += 8
     y += 14
-    d.rounded_rectangle((M - 20, y, W - M + 20, y + 120 + len(linhas) * 118), radius=30, fill=CARD)
-    y += 34
+    disponivel = H - 150 - y - (190 if nota else 40)
+    linha_h = max(118, min(200, disponivel // max(len(linhas), 1)))
+    espessura = 40 if linha_h < 150 else 56
+    d.rounded_rectangle((M - 20, y, W - M + 20, y + 60 + len(linhas) * linha_h), radius=30, fill=CARD)
+    y += 38
     mx = max(v for _, v, _ in linhas)
     for rot, v, cor in linhas:
+        y0 = y
         ls = quebrar(d, rot, f("avenir", "demi", 28), W - 2 * M - 60)
         for l in ls:
             d.text((M + 10, y), l, font=f("avenir", "demi", 28), fill=BRANCO)
             y += 34
         largura = max(16, int((W - 2 * M - 20) * v / mx))
-        d.rounded_rectangle((M + 10, y + 4, W - M - 10, y + 40), radius=12, fill=(34, 64, 88))
-        d.rounded_rectangle((M + 10, y + 4, M + 10 + largura, y + 40), radius=12, fill=cor)
+        d.rounded_rectangle((M + 10, y + 4, W - M - 10, y + 4 + espessura), radius=14, fill=(34, 64, 88))
+        d.rounded_rectangle((M + 10, y + 4, M + 10 + largura, y + 4 + espessura), radius=14, fill=cor)
         et = fmt(v)
-        fe = f("avenir", "heavy", 26)
+        fe = f("avenir", "heavy", 28)
         wt = d.textlength(et, font=fe)
+        ty = y + 4 + (espessura - 28) // 2 - 2
         if largura > wt + 36:
-            d.text((M + 10 + largura - wt - 14, y + 9), et, font=fe, fill=NAVY)
+            d.text((M + 10 + largura - wt - 14, ty), et, font=fe, fill=NAVY)
         else:
-            d.text((M + 10 + largura + 12, y + 9), et, font=fe, fill=BRANCO)
-        y += 40 + 34
-    y += 34
+            d.text((M + 10 + largura + 12, ty), et, font=fe, fill=BRANCO)
+        y = y0 + linha_h
+    y += 30
     if nota:
         for l in quebrar(d, nota, f("avenir", "medium", 30), W - 2 * M):
             d.text((M, y), l, font=f("avenir", "medium", 30), fill=(220, 230, 238))
@@ -196,10 +202,10 @@ def dados_empilhadas(destino, nome, pilula, titulo, linhas, fonte, link, nota=No
     im.save(destino / nome)
 
 
-def dados_lista(destino, nome, pilula, titulo, itens, fonte, link, tam=72, corpo=32):
+def dados_lista(destino, nome, pilula, titulo, itens, fonte, link, tam=72, corpo=36):
     im, d = fundo(NAVY)
     cabecalho_dados(d, im, pilula)
-    y = titulo_dados(d, 180, titulo, tam) + 20
+    y = titulo_dados(d, 180, titulo, tam) + 40
     for i, (cab, txt) in enumerate(itens, 1):
         d.rounded_rectangle((M - 20, y, W - M + 20, y + 40), radius=1, fill=NAVY)
         d.ellipse((M, y + 4, M + 66, y + 70), fill=SKY)
@@ -211,7 +217,7 @@ def dados_lista(destino, nome, pilula, titulo, itens, fonte, link, tam=72, corpo
         for l in quebrar(d, txt, f("avenir", "medium", corpo), W - x - M):
             d.text((x, yy), l, font=f("avenir", "medium", corpo), fill=(190, 206, 218))
             yy += int(corpo * 1.3)
-        y = yy + 34
+        y = yy + 52
     rodape_dados(d, link, fonte)
     im.save(destino / nome)
 
@@ -284,15 +290,15 @@ def catalogo(destino, nome, pilula, titulo, itens, link, fonte=""):
     y += 24
     gap = 24
     w = (W - 2 * M - gap) // 2
-    h = 330
+    h = 380
     for i, (num, nom, desc) in enumerate(itens[:4]):
         x = M + (i % 2) * (w + gap)
         yy = y + (i // 2) * (h + gap)
         d.rounded_rectangle((x, yy, x + w, yy + h), radius=30, fill=BRANCO)
         d.text((x + 30, yy + 14), num, font=f("cond", "heavy", 140), fill=VINHO if i % 2 == 0 else TERRA)
-        d.text((x + 30, yy + 168), nom, font=f("bodoni", "bold", 40), fill=INK)
-        for j, l in enumerate(quebrar(d, desc, f("avenir", "medium", 26), w - 60)[:3]):
-            d.text((x + 30, yy + 224 + j * 32), l, font=f("avenir", "medium", 26), fill=(80, 90, 84))
+        d.text((x + 30, yy + 180), nom, font=f("bodoni", "bold", 42), fill=INK)
+        for j, l in enumerate(quebrar(d, desc, f("avenir", "medium", 28), w - 60)[:3]):
+            d.text((x + 30, yy + 246 + j * 36), l, font=f("avenir", "medium", 28), fill=(80, 90, 84))
     d.text((M, H - 104), link, font=f("avenir", "heavy", 44), fill=INK)
     if fonte:
         d.text((M, H - 48), fonte, font=f("avenir", "regular", 20), fill=(120, 128, 122))
@@ -355,7 +361,7 @@ def main(destino):
                 [("Sophia (projeto inicial)", "1 541 sobreiros e azinheiras a cortar ou arrancar e 24 aves ameaçadas, entre elas a águia-imperial-ibérica."),
                  ("Alcoutim", "Indícios de 13 territórios de águia-de-Bonelli e de 1 a 2 de águia-imperial-ibérica num raio de 10 km."),
                  ("Paiva", "Impactes muito significativos no lobo-ibérico, dentro da área da alcateia da Lapa.")],
-                "Fonte: pareceres das Comissões de Avaliação (APA)", "bioculture.pt/consultas", tam=66, corpo=32)
+                "Fonte: pareceres das Comissões de Avaliação (APA)", "bioculture.pt/consultas", tam=66, corpo=36)
 
     # 07-09 · Em foco
     f1, c1 = cred("foco-finlandia", "Corte raso no sul da Finlândia (ilustrativa; não é um dos locais da Google).")
@@ -381,8 +387,8 @@ def main(destino):
             [("1,8 °C", "no cenário mais otimista"), ("1,5 °C", "o limite do Acordo de Paris")], "destaques/clima-degelo.webp",
             "Foto: NASA · domínio público · Wikimedia Commons", "bioculture.pt/clima", (0.5, 0.5), tam=84)
     em_foco(destino, "10-destaques-3.png", "DESTAQUE · VETORES DE PRESSÃO", "Aviação: o peso de cada viagem.",
-            "Escolhe uma rota ou dois aeroportos e vê o que um voo gasta e afeta: CO₂, combustível, óxidos de azoto e ruído.",
-            [("CO₂", "emissões da rota"), ("NOx", "óxidos de azoto"), ("Ruído", "à volta dos aeroportos")], "aviacao/miniatura.webp",
+            "Escolhe uma rota ou dois aeroportos e vê o que um voo gasta e afeta: CO2, combustível, óxidos de azoto e ruído.",
+            [("CO2", "emissões da rota"), ("NOx", "óxidos de azoto"), ("Ruído", "à volta dos aeroportos")], "aviacao/miniatura.webp",
             "Foto: NASA Earth Observatory · domínio público · Wikimedia Commons", "bioculture.pt/aviacao", (0.5, 0.5), tam=84)
 
     # 13 · ferramentas
