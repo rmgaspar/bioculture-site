@@ -116,7 +116,7 @@
                 const list = mode === "Todos" ? records : records.filter((x) => phase(x) === mode);
                 el("projects").innerHTML =
                     list.map((x) =>
-                        `<article class="project dossie"><small>${esc(phase(x))}</small><h3>${
+                        `<article class="project dossie" id="caso-${esc(x.id)}"><small>${esc(phase(x))}</small><h3>${
                             esc(x.nome)
                         }</h3><p class="dossie-quem"><strong>${esc(x.mineral)}</strong></p><p class="dossie-onde">${
                             esc(x.concelho)
@@ -126,6 +126,13 @@
                             valid(x.detalhe) ? `<p class="dossie-nota">${esc(x.detalhe)}</p>` : ""
                         }</div>${dimensoes(x)}${fontes(x)}</article>`
                     ).join("") || '<p class="empty">—</p>';
+            }
+            // Ligação direta a um dossiê (#caso-<id>), por exemplo a partir do mapa de fogo e mineração.
+            function irParaCaso() {
+                const alvo = /^#caso-[\w-]+$/.test(location.hash) && document.getElementById(location.hash.slice(1));
+                if (!alvo) return;
+                alvo.classList.add("is-alvo");
+                setTimeout(() => alvo.scrollIntoView({ block: "start" }), 350);
             }
             function setupFilters() {
                 const phases = [
@@ -180,6 +187,7 @@
                     renderLocal(locations);
                     setupFilters();
                     renderProjects();
+                    irParaCaso();
                     renderNews(news);
                 } catch (e) {
                     console.error("Não foi possível carregar os dados mineiros:", e);

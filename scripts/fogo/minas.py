@@ -24,6 +24,13 @@ CAMADAS = {
     "concessoes": ("CMDP", "CMDP:Concessao_mineira", "Concessionário"),
     "pesquisa": ("PPDP", "ProspPesquisa:Prospeção_e_pesquisa_de_depósitos_minerais", "Titular_"),
 }
+# Concessões com dossiê na página de Mineração (energia/mineracao.html): número de cadastro da DGEG -> (id do caso, nome curto).
+# Só entram as que coincidem pelo número de concessão e pela empresa; a Mina de Alvarrões fica de fora (a empresa não coincide).
+CASOS = {
+    "MNC000100": ("litio-barroso", "Barroso"), "MNC000152": ("litio-romano", "Romano"), "MNC000166": ("mina-argemela", "Argemela"),
+    "MNC000190": ("litio-canedo-covas", "Canedo-Covas"), "MNC000168": ("lagoa-salgada", "Lagoa Salgada"), "MNC000041": ("neves-corvo", "Neves-Corvo"),
+    "MNC000009": ("aljustrel", "Aljustrel"), "MNC000018": ("panasqueira", "Panasqueira"),
+}
 ESTADOS = {"Concedido": "C", "Pedido": "P", "EmPublicacao": "B", "Reservada": "R"}
 TOL = 0.02
 
@@ -67,7 +74,12 @@ def main():
             d = caminho(f["geometry"])
             if d:
                 itens.append({"n": nome(p.get("Denominação")), "s": (p.get("Substância") or "").strip(), "e": ESTADOS.get(p.get("Situação_Atual"), "?"), "p": d})
+                caso = CASOS.get(p.get("N_Cadastro"))
+                if caso and chave == "concessoes":
+                    itens[-1]["caso"] = caso[0]
         saida[chave] = itens
+        if chave == "concessoes":
+            saida["casos"] = {c[0]: c[1] for c in CASOS.values() if any(i.get("caso") == c[0] for i in itens)}
         print(chave, len(itens), {e: sum(1 for i in itens if i["e"] == e) for e in set(i["e"] for i in itens)})
     out = ROOT / "data" / "fogo" / "minas.json"
     out.write_text(json.dumps(saida, ensure_ascii=False, separators=(",", ":")) + "\n", encoding="utf-8")

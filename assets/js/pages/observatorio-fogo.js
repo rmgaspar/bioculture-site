@@ -112,7 +112,8 @@
                 const atr = m.e === "C" || m.e === "?", li = /lítio/i.test(m.s);
                 const el = mk("path", { class: "fg-mina" + (li ? " is-li" : ""), d: m.p, fill: MINAS[k][2], "fill-opacity": k === "pesquisa" ? (atr ? 0.35 : 0.12) : (atr ? 0.9 : 0.35), stroke: MINAS[k][2], "stroke-width": 0.55, "stroke-linejoin": "round" });
                 if (k === "pesquisa") el.setAttribute("stroke-dasharray", "1.6 1");
-                el.addEventListener("pointerenter", () => { el.classList.add("is-hl"); label(el, [`${m.n}${ESTADO[m.e][isEn() ? 1 : 0] ? " · " + ESTADO[m.e][isEn() ? 1 : 0] : ""}`, m.s, MINAS[k][isEn() ? 1 : 0]]); });
+                if (m.caso) { el.classList.add("tem-caso"); el.addEventListener("click", () => { location.href = `/energia/mineracao#caso-${m.caso}`; }); }
+                el.addEventListener("pointerenter", () => { el.classList.add("is-hl"); label(el, [`${m.n}${ESTADO[m.e][isEn() ? 1 : 0] ? " · " + ESTADO[m.e][isEn() ? 1 : 0] : ""}`, m.s, m.caso ? tr("Clica para ver o dossiê →", "Click for the case file →") : MINAS[k][isEn() ? 1 : 0]]); });
                 el.addEventListener("pointerleave", () => { el.classList.remove("is-hl"); label(null, []); });
                 svg.appendChild(el);
             }));
@@ -125,14 +126,14 @@
                 `PSZAER zones, approximate layer: rebuilt from the image maps on the PSZAER portal, because the official polygons are not published. It shows the general pattern; it cannot measure areas or overlaps. The zones are potential, not projects, and the ${d.ano} fires predate the proposal (May 2026).`)}</p>` : "") +
                 (min && minas ? `<p>${tr(
                     `Mineração: áreas atribuídas, requeridas ou em publicação, em vigor, em Portugal continental (DGEG, consultado em ${dia(minas.consultado)}). Mostram onde há direitos ou pedidos, não minas em atividade; as de prospeção e pesquisa são áreas de estudo e não de exploração. Linha cheia: atribuída; mais clara: requerida ou em publicação.`,
-                    `Mining: areas granted, requested or being published, in force, in mainland Portugal (DGEG, consulted ${dia(minas.consultado)}). They show where rights or applications exist, not active mines; prospecting and exploration areas are for study, not extraction. Solid: granted; lighter: requested or being published.`)}</p>` : "");
+                    `Mining: areas granted, requested or being published, in force, in mainland Portugal (DGEG, consulted ${dia(minas.consultado)}). They show where rights or applications exist, not active mines; prospecting and exploration areas are for study, not extraction. Solid: granted; lighter: requested or being published.`)}</p>` + (zon.concessoes && Object.keys(minas.casos || {}).length ? `<p>${tr("Dossiês na página de Mineração:", "Case files on the Mining page:")} ${Object.entries(minas.casos).map(([id, n]) => `<a href="/energia/mineracao#caso-${esc(id)}">${esc(n)}</a>`).join(" · ")}.</p>` : "") : "");
         };
         root.querySelectorAll(".fg-layer").forEach((b) => b.addEventListener("click", () => {
             zon[b.dataset.z] = !zon[b.dataset.z];
-            if ((zon.concessoes || zon.pesquisa) && !minas) get("/data/fogo/minas.json").then((m) => { minas = m; aplicar(); }).catch(() => {});
+            if ((zon.concessoes || zon.pesquisa) && !minas) get("/data/fogo/minas.json?v=2").then((m) => { minas = m; aplicar(); }).catch(() => {});
             aplicar();
         }));
-        if ((zon.concessoes || zon.pesquisa) && !minas) get("/data/fogo/minas.json").then((m) => { minas = m; aplicar(); }).catch(() => {});
+        if ((zon.concessoes || zon.pesquisa) && !minas) get("/data/fogo/minas.json?v=2").then((m) => { minas = m; aplicar(); }).catch(() => {});
         aplicar();
     }
 
