@@ -92,6 +92,7 @@
                 "A ligação à rede pode exigir linhas e subestações fora da mancha, com impactos próprios.": "Grid connection may need lines and substations outside the patch, with impacts of their own.",
                 "Os dados espaciais considerados na proposta estavam atualizados até março de 2026.": "The spatial data used in the proposal were current to March 2026.",
             };
+            const TEMA_EN = { "Mineração": "Mining", "Biometano": "Biomethane", "Desflorestação": "Deforestation" };
             const STATE_EN = { "Aberta": "Open", "Em análise": "Under review", "Encerrada": "Closed" };
             const ALERT_EN = {
                 "Estado sem atualização visível desde 2019; confirmar decisão na autoridade competente antes de inferir situação do projeto.":
@@ -206,7 +207,7 @@
                 }</div><div class="now-open"><h4>${tr("Prazos a decorrer", "Deadlines running")}</h4>${
                     openRows ? `<ul>${openRows}</ul><p class="now-hint">${tr("A barra mostra quanto do prazo já passou.", "The bar shows how much of the period has passed.")}</p>` : `<p>${tr("Nenhuma consulta aberta. Usa «Seguir» na ficha do projeto no Participa.pt para seres avisado quando abrir outra.", "None open. Use “Follow” on the project's Participa page to be told when another opens.")}</p>`
                 }</div></div>${
-                    total ? `<p class="now-note">${tr(`O portal tem ${nowNf(total)} consultas de renováveis${closed ? `, das quais ${nowNf(closed)} encerradas, quase todas de anos anteriores`: ""}; aqui seguem-se as abertas e as de 2026.`, `The portal lists ${nowNf(total)} renewables consultations${closed ? `, ${nowNf(closed)} of them closed, almost all from earlier years` : ""}; here we follow the open ones and those from 2026.`)}</p>` : ""
+                    total ? `<p class="now-note">${tr(`O portal tem ${nowNf(total)} consultas de renováveis${closed ? `, das quais ${nowNf(closed)} encerradas, quase todas de anos anteriores`: ""}; aqui seguem-se as abertas e as de 2026. Seguimos também mineração, biometano e desflorestação.`, `The portal lists ${nowNf(total)} renewables consultations${closed ? `, ${nowNf(closed)} of them closed, almost all from earlier years` : ""}; here we follow the open ones and those from 2026. We also follow mining, biomethane and deforestation.`)}</p>` : ""
                 }<span class="now-date">${tr("Verificado no Participa.pt em", "Checked on Participa.pt on")} ${date(meta.instantaneo_em)}</span>`;
                 const open$ = (x) => /aberta/i.test(x.estado_consulta),
                     dmShort = (v) => (v ? new Date(v + "T12:00:00").toLocaleDateString(isEn() ? "en-GB" : "pt-PT", { day: "numeric", month: "short" }) : ""),
@@ -238,7 +239,7 @@
                             who = [x.tipologia && (isEn() ? TYPE_EN[x.tipologia] || x.tipologia : x.tipologia), x.promotor_projeto].filter(Boolean).join(" · "),
                             map = cardMap(x),
                             ref = x.territorio?.url2;
-                        return `<article class="consult ${isOpen ? "consult-open" : "consult-analysis"}" data-state="${x.alerta_qualidade ? "archive" : isOpen ? "open" : "analysis"}"><header class="c-top"><span class="c-badge">${esc(stateTxt(x.estado_consulta))}</span><span class="c-when">${esc(when)}</span></header><h3>${esc(x.titulo)}</h3>${
+                        return `<article class="consult ${isOpen ? "consult-open" : "consult-analysis"}" data-state="${x.alerta_qualidade ? "archive" : isOpen ? "open" : "analysis"}"><header class="c-top"><span class="c-badge">${esc(stateTxt(x.estado_consulta))}</span>${x.tema ? `<span class="c-tema">${esc(isEn() ? TEMA_EN[x.tema] || x.tema : x.tema)}</span>` : ""}<span class="c-when">${esc(when)}</span></header><h3>${esc(x.titulo)}</h3>${
                             who ? `<p class="c-meta">${esc(who)}</p>` : ""
                         }<div class="c-main${map ? " has-map" : ""}">${map}<div class="c-fig">${
                             x.participacoes !== undefined
@@ -277,7 +278,7 @@
                         nAn = recent.length - nOpen,
                         chip = (k, label, n, on) => `<button type="button" class="c-chip${on ? " is-on" : ""}" data-f="${k}">${label} <b>${n}</b></button>`;
                     el("consults-top").innerHTML = `<div class="ct-map">${mapSvg(dots, { w: 230, halo: true })}<div class="ct-leg"><span><i style="background:#17795a"></i>${tr("Com consulta aberta", "With an open consultation")}</span><span><i style="background:#b87f00"></i>${tr("Só em análise", "Under review only")}</span></div></div><div class="ct-side"><small>${tr("Onde estão", "Where they are")}</small><h3>${
-                        tr(`${Object.keys(per).length} concelhos com consultas de renováveis abertas ou em análise`, `${Object.keys(per).length} municipalities with open or under-review renewables consultations`)
+                        tr(`${Object.keys(per).length} concelhos com consultas abertas ou em análise sobre renováveis e outros temas do território`, `${Object.keys(per).length} municipalities with open or under-review consultations on renewables and other land-use topics`)
                     }</h3><h4>${tr("Concelhos mais visados", "Most affected municipalities")}</h4>${
                         top.map((t) => `<div class="zb"><span class="zb-l">${esc(t.name)}</span><span class="zb-t"><i style="width:${t.n / maxN * 100}%;background:${t.open ? "#17795a" : "#b87f00"}"></i></span><span class="zb-v">${t.n}<em>${tr("consultas", "consultations")}</em></span></div>`).join("")
                     }<p class="zc-unit">${tr("O ponto de cada concelho é indicativo. Os projetos que abrangem vários concelhos contam em cada um; as consultas nacionais e as de Espanha não entram.", "Each municipality's dot is indicative. Projects spanning several municipalities count in each; national and Spanish consultations are left out.")}</p><div class="c-chips" role="group" aria-label="${tr("Filtrar por estado", "Filter by state")}">${

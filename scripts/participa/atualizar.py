@@ -35,6 +35,9 @@ SEARCH = BASE + "/requests/get_consultations.php"
 UA = "Mozilla/5.0 (compatible; bioCulture-observatorio; +https://www.bioculture.pt)"
 TERMS = ["Central Solar", "fotovoltaica", "solar", "eólico", "eólica", "hibridização", "ZAER", "energias renováveis"]
 RELEVANT = re.compile(r"solar|fotovolt|e[óo]lic|hibridiz|ZAER|renov[áa]v|armazenamento de energia", re.I)
+# Temas ligados ao território que o site também segue (não entram nas contas das renováveis): mineração, biometano e desflorestação.
+TERMS_EXTRA = ["concessão mineira", "mineira", "biometano", "biogás", "desflorestação"]
+EXTRA_TEMAS = [("Mineração", re.compile(r"mineir|pedreira", re.I)), ("Biometano", re.compile(r"biometano|biog[áa]s", re.I)), ("Desflorestação", re.compile(r"desfloresta", re.I))]
 PSZAER_URL = BASE + "/pt/consulta/programa-setorial-das-zonas-de-aceleracao-da-implantacao-de-energias-renovaveis-pszaer"
 MONTHS = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"]
 LABELS = {"Designação completa", "Período de consulta", "Estado", "Área temática", "Tipologia", "Sub-Tipologia",
@@ -126,7 +129,7 @@ def date_pt(iso: str) -> str:
 
 
 def facts(records: list[dict], year: int) -> dict:
-    rows = [r for r in records if r.get("fim", "") >= f"{year}-01-01" and r.get("tipologia") not in ("Programas", "Estratégias")]
+    rows = [r for r in records if r.get("fim", "") >= f"{year}-01-01" and r.get("tipologia") not in ("Programas", "Estratégias") and not r.get("tema")]
     if not rows:
         return {}
     day = dt.date.fromisoformat
@@ -163,20 +166,34 @@ def main() -> int:
         for row in search(term):
             cards.setdefault(row["url"], row)
     relevant = {u: c for u, c in cards.items() if RELEVANT.search(c.get("titulo") or "")}
+    extra_cards: dict[str, dict] = {}
+    for term in TERMS_EXTRA:
+        for row in search(term):
+            extra_cards.setdefault(row["url"], row)
+    extras = {}
+    for u, c in extra_cards.items():
+        if u in relevant:
+            continue
+        tema = next((t for t, rx in EXTRA_TEMAS if rx.search(c.get("titulo") or "")), None)
+        if tema:
+            extras[u] = (c, tema)
     if len(relevant) < 20:
         raise SystemExit(f"Pesquisa suspeita: só {len(relevant)} consultas de renováveis. Nada foi alterado.")
 
     year = TODAY.year
     keep = {u for u, c in relevant.items() if c["estado"] == "Aberta" or (c["estado"] != "Encerrada" and c["fim"] >= f"{year}-01-01")}
-    keep |= {u for u, r in previous.items() if r.get("alerta_qualidade")}
+    keep |= {u for u, (c, _) in extras.items() if c["estado"] == "Aberta" or (c["estado"] != "Encerrada" and c["fim"] >= f"{year}-01-01")}
+    keep |= {u for u, r in previous.items() if r.get("alerta_qualidade") or r.get("tema")}
     keep.add(PSZAER_URL)
 
     records = []
     for url in sorted(keep):
         x = detail(url)
         time.sleep(0.4)
-        card = relevant.get(url, {})
+        card = relevant.get(url) or (extras.get(url) or ({}, None))[0]
         rec = dict(previous.get(url, {}))
+        if url in extras:
+            rec["tema"] = extras[url][1]
         period = (x.get("Período de consulta") or "").split(" a ")
         title = rec.get("titulo") or (card.get("titulo") or x.get("Designação completa") or "").replace("–", "—")
         title = re.sub(r"^Consulta Pública\s+", "", title)
@@ -220,7 +237,7 @@ def main() -> int:
     meta.update({
         "instantaneo_em": TODAY.isoformat(),
         "cobertura": "Pesquisa no portal por " + ", ".join(f"“{t}”" for t in TERMS) + ", filtrada pelo título. Mostram-se as consultas abertas e as do ano corrente, mais registos antigos com alerta de qualidade; não é uma exportação integral.",
-        "resumo_pesquisa": {"consultas_renovaveis": len(relevant), "abertas": counts["Aberta"], "em_analise": counts["Em análise"], "encerradas": counts["Encerrada"]},
+        "resumo_pesquisa": {"outros_temas_abertos": sum(1 for u in extras if extras[u][0]["estado"] == "Aberta"), "consultas_renovaveis": len(relevant), "abertas": counts["Aberta"], "em_analise": counts["Em análise"], "encerradas": counts["Encerrada"]},
         "gerado_por": "scripts/participa/atualizar.py",
     })
     block["abertas"] = [r for r in current if r["estado_consulta"] == "Aberta"]
@@ -252,7 +269,7 @@ def main() -> int:
     proposals = json.loads(PROPOSALS.read_text(encoding="utf-8")) if PROPOSALS.exists() else []
     new = []
     for r in block["abertas"]:
-        if r["url"] in known:
+        if r["url"] in known or r.get("tema"):
             continue
         where = " · ".join(r.get("municipios") or []) or r.get("ambito") or "Portugal"
         days = (dt.date.fromisoformat(r["fim"]) - TODAY).days
