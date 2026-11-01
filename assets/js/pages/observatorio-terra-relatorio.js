@@ -232,6 +232,11 @@
     html.push(sumario, emPortugal, ...portugal, noMundo, ...mundo);
     box.innerHTML = html.join("");
 
+    /* Cor própria de cada página de destino (as do ar, da água e do solo seguem a cor do capítulo). */
+    const COR_PAGINA = {
+      "/ecossistemas/biodiversidade.html": "#4a7a43", "/observatorio/limitar-ultrapassagem-1-5.html": "#a43a32", "/energia/transicao-etica.html": "#2f6f5f",
+      "/energia/mineracao.html": "#7a5238", "/energia/pecuaria.html": "#6e6a3a", "/energia/digital.html": "#3e6070"
+    };
     /* «Ver também»: do capítulo para as páginas temáticas que o desenvolvem. */
     const VER = {
       clima: [["/observatorio/limitar-ultrapassagem-1-5.html", tr("Depois de 1,5 °C: limitar a ultrapassagem", "After 1.5°C: limiting the overshoot")]],
@@ -244,7 +249,7 @@
     Object.entries(VER).forEach(([id, links]) => {
       const sec_ = box.querySelector("#" + id);
       if (!sec_) return;
-      sec_.insertAdjacentHTML("beforeend", `<p class="vermais"><span>${tr("Ver também", "See also")}</span>${links.map(([h, t]) => `<a href="${h}">${esc(t)} ↗</a>`).join("")}</p>`);
+      sec_.insertAdjacentHTML("beforeend", `<p class="vermais"><span>${tr("Ver também", "See also")}</span>${links.map(([h, t]) => `<a href="${h}"${COR_PAGINA[h.split("#")[0]] ? ` style="--cap:${COR_PAGINA[h.split("#")[0]]}"` : ""}>${esc(t)} ↗</a>`).join("")}</p>`);
     });
 
     /* ================= preencher ================= */
