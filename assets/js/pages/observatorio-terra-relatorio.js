@@ -244,7 +244,7 @@
     Object.entries(VER).forEach(([id, links]) => {
       const sec_ = box.querySelector("#" + id);
       if (!sec_) return;
-      sec_.insertAdjacentHTML("beforeend", `<p class="vermais"><span>${tr("Ver também", "See also")}</span>${links.map(([h, t]) => `<a href="${h}">${esc(t)} →</a>`).join("")}</p>`);
+      sec_.insertAdjacentHTML("beforeend", `<p class="vermais"><span>${tr("Ver também", "See also")}</span>${links.map(([h, t]) => `<a href="${h}">${esc(t)} ↗</a>`).join("")}</p>`);
     });
 
     /* ================= preencher ================= */

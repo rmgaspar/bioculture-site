@@ -73,7 +73,7 @@
     const sec = (id, ordem, eyebrow, titulo, corpo) => `<section id="${id}"><div class="sec-head"><span class="eyebrow">${eyebrow}</span><h2>${titulo}</h2></div>${corpo}</section>`;
     const fig = (id, titulo, desc, src, extra = "") => `<figure><figcaption><span class="t">${titulo}</span><span class="d">${desc}</span></figcaption>${legendaHtml(id)}<div class="chart ${extra}" id="${id}"></div><span class="src">${tr("Fonte", "Source")}: ${src}</span></figure>`;
     const legendaHtml = (id) => `<div class="legend" id="lg-${id}"></div>`;
-    const vermais = (links) => `<div class="vermais"><span>${tr("Ver também", "See also")}</span>${links.map(([a, h]) => `<a href="${h}">${a} →</a>`).join("")}</div>`;
+    const vermais = (links) => `<div class="vermais"><span>${tr("Ver também", "See also")}</span>${links.map(([a, h]) => `<a href="${h}">${a} ↗</a>`).join("")}</div>`;
     const prose = (...ps) => `<div class="prose">${ps.map((p) => `<p>${p}</p>`).join("")}</div>`;
 
     /* ---------- sumário ---------- */
