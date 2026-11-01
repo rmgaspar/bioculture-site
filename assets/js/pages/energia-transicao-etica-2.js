@@ -147,11 +147,17 @@
                 recent.forEach((x) => (x.municipios || []).forEach((m) => {
                     byMunicipality[m] = (byMunicipality[m] || 0) + 1;
                 }));
+                // A data de fecho vem do Participa; os dados não se atualizam todos os dias, por isso não se contam «dias que faltam».
+                const closeDm = (v) => new Date(v + "T12:00:00").toLocaleDateString(isEn() ? "en-GB" : "pt-PT", { day: "numeric", month: "short" }),
+                    closeTag = (x) => {
+                        const n = days(x.fim);
+                        if (n < 0) return tr(`Prazo: ${closeDm(x.fim)} · a confirmar`, `Deadline: ${closeDm(x.fim)} · to be confirmed`);
+                        return n === 0 ? tr("Fecha hoje", "Closes today") : tr(`Fecha a ${closeDm(x.fim)}`, `Closes ${closeDm(x.fim)}`);
+                    };
                 const signals = (x) => {
                     const out = [];
                     if (/aberta/i.test(x.estado_consulta) && x.fim) {
-                        const n = days(x.fim);
-                        out.push(["urgent", n <= 0 ? tr("Último dia", "Last day") : tr(`Fecha em ${n} dias`, `Closes in ${n} days`)]);
+                        out.push(["urgent", closeTag(x)]);
                     }
                     if (x.subtipologia === "Proposta de definição de âmbito" || /\bPDA\b/.test(x.titulo || "")) {
                         out.push(["phase", tr("PDA: haverá nova consulta do EIA", "Scoping: an EIA consultation will follow")]);
@@ -171,24 +177,25 @@
                     withParts = pool.filter((x) => typeof x.participacoes === "number"),
                     partSum = withParts.reduce((acc, x) => acc + x.participacoes, 0),
                     top = [...withParts.filter((x) => /aberta/i.test(x.estado_consulta)), ...withParts.filter((x) => !/aberta/i.test(x.estado_consulta)).sort((x, y) => y.participacoes - x.participacoes)].slice(0, 8).sort((x, y) => y.participacoes - x.participacoes),
-                    shortTitle = (t) => String(t || "").replace(/^(Central Solar Fotovoltaica|Projeto Solar Fotovoltaico|Projeto|Parque Solar|Parque Eólico)\s+(de|do|da|dos|das)?\s*/i, "").replace(/\s+e\s+LMAT associadas.*$/i, "").slice(0, 60),
+                    shortTitle = (t) => String(t || "").replace(/^(Central Solar Fotovoltaica|Projeto Solar Fotovoltaico|Projeto|Parque Solar|Parque Eólico)\s+(de|do|da|dos|das)?\s*/i, "").replace(/\s+e\s+LMAT associadas.*$/i, "").slice(0, 60).trim(),
                     total = meta.resumo_pesquisa?.consultas_renovaveis,
                     closed = meta.resumo_pesquisa?.encerradas;
                 const nowNf = (v) => Number(v || 0).toLocaleString(isEn() ? "en-GB" : "pt-PT"),
                     nowDm = (v) => new Date(v + "T12:00:00").toLocaleDateString(isEn() ? "en-GB" : "pt-PT", { day: "numeric", month: "short" }),
                     cut = (t, n) => (String(t).length > n ? String(t).slice(0, String(t).lastIndexOf(" ", n)) + "…" : String(t)),
                     openList = (c.abertas || []).filter((x) => x.fim).slice().sort(byEnd(1)),
-                    next = openList[0],
+                    next = openList.find((x) => days(x.fim) >= 0),
                     fNow = c.factos_participacao || {},
                     topTwo = [...top].sort((x, y) => y.participacoes - x.participacoes).slice(0, 2),
                     topShare = partSum ? Math.round(topTwo.reduce((acc, x) => acc + x.participacoes, 0) / partSum * 100) : 0,
                     lead = open && next
-                        ? tr(`${open === 1 ? "Há 1 consulta aberta" : `Há ${open} consultas abertas`}. A próxima a fechar é «${shortTitle(next.titulo)}», a ${nowDm(next.fim)} (daqui a ${Math.max(days(next.fim), 0)} dias).`,
-                            `${open === 1 ? "1 consultation is open" : `${open} consultations are open`}. The next to close is “${shortTitle(next.titulo)}”, on ${nowDm(next.fim)} (in ${Math.max(days(next.fim), 0)} days).`)
+                        ? tr(`${open === 1 ? "Há 1 consulta aberta" : `Há ${open} consultas abertas`}. A próxima a fechar é «${shortTitle(next.titulo)}», a ${nowDm(next.fim)}.`,
+                            `${open === 1 ? "1 consultation is open" : `${open} consultations are open`}. The next to close is “${shortTitle(next.titulo)}”, on ${nowDm(next.fim)}.`)
+                        : open ? tr(`Há ${open} ${open === 1 ? "consulta aberta" : "consultas abertas"} nos nossos dados, mas os prazos já passaram: confirmar no Participa.pt.`, `${open} ${open === 1 ? "consultation is" : "consultations are"} open in our data, but the deadlines have passed: check Participa.pt.`)
                         : tr("Não há nenhuma consulta de renováveis aberta neste momento.", "No renewables consultation is open right now."),
                     cards = [
                         ["#1baf7a", nowNf(open), tr(open === 1 ? "consulta aberta agora" : "consultas abertas agora", open === 1 ? "consultation open now" : "consultations open now"),
-                            next ? tr(`A próxima fecha em ${Math.max(days(next.fim), 0)} dias`, `The next closes in ${Math.max(days(next.fim), 0)} days`) : tr("A seguir pelo «Seguir» do Participa", "Follow them with Participa's “Follow”")],
+                            next ? tr(`A próxima fecha a ${nowDm(next.fim)}`, `The next closes ${nowDm(next.fim)}`) : tr("A seguir pelo «Seguir» do Participa", "Follow them with Participa's “Follow”")],
                         ["#eda100", nowNf(pending), tr("em análise", "under review"), tr("Prazo terminado, a aguardar decisão (2026)", "Closed, awaiting decision (2026)")],
                         ["#eb6834", nowNf(partSum), tr("participações nestas consultas", "submissions in these consultations"),
                             fNow.participacoes_mediana ? tr(`Mediana de ${nowNf(fNow.participacoes_mediana)} por projeto em ${fNow.ano}`, `Median of ${nowNf(fNow.participacoes_mediana)} per project in ${fNow.ano}`) : ""],
@@ -198,9 +205,9 @@
                     openRows = openList.map((x) => {
                         const start = new Date(x.inicio + "T12:00:00"), end = new Date(x.fim + "T12:00:00"),
                             done = Math.min(Math.max((today - start) / Math.max(end - start, 1), 0), 1) * 100, left = Math.max(days(x.fim), 0);
-                        return `<li><a href="${esc(x.url || "#")}" target="_blank" rel="noopener">${esc(cut(shortTitle(x.titulo), 52))}</a><div class="nowbar"><i style="width:${done}%"></i></div><span><b>${tr(`${left} dias`, `${left} days`)}</b> ${tr("para fechar", "to close")} · ${nowDm(x.fim)}${typeof x.participacoes === "number" ? ` · ${nowNf(x.participacoes)} ${tr("participações", "submissions")}` : ""}</span></li>`;
+                        return `<li><a href="${esc(x.url || "#")}" target="_blank" rel="noopener">${esc(cut(shortTitle(x.titulo), 52))}</a><div class="nowbar"><i style="width:${done}%"></i></div><span><b>${tr("Fecha a", "Closes")} ${nowDm(x.fim)}</b>${typeof x.participacoes === "number" ? ` · ${nowNf(x.participacoes)} ${tr("participações", "submissions")}` : ""}${days(x.fim) < 0 ? ` · ${tr("prazo ultrapassado, a confirmar", "deadline passed, to be confirmed")}` : ""}</span></li>`;
                     }).join("");
-                el("participa-now").innerHTML = `<div class="now-head"><small>${tr("Estado das consultas", "State of the consultations")}</small><h3>${esc(lead)}</h3></div><div class="now-figures nf3">${
+                el("participa-now").innerHTML = `<div class="now-head"><small>${tr("Estado das consultas", "State of the consultations")}${meta.instantaneo_em ? ` · ${tr("dados do Participa.pt a", "Participa.pt data as of")} ${nowDm(meta.instantaneo_em)}` : ""}</small><h3>${esc(lead)}</h3></div><div class="now-figures nf3">${
                     cards.map((x) => `<span class="nowcard" style="--tom:${x[0]}"><strong>${x[1]}</strong><b>${x[2]}</b><em>${x[3]}</em></span>`).join("")
                 }</div><div class="now-grid"><div class="part-chart"><h4>${tr("Participações por consulta", "Submissions per consultation")}</h4>${chartRows}<div class="mlegend"><span><i style="background:#1baf7a"></i>${tr("Abertas", "Open")}</span><span><i style="background:#eda100"></i>${tr("Em análise", "Under review")}</span></div>${
                     topTwo.length === 2 && topShare ? `<p class="now-insight">${tr(`Só duas consultas, «${shortTitle(topTwo[0].titulo)}» e «${shortTitle(topTwo[1].titulo)}», reúnem ${topShare} % de todas as participações.`, `Just two consultations, “${shortTitle(topTwo[0].titulo)}” and “${shortTitle(topTwo[1].titulo)}”, account for ${topShare}% of all submissions.`)}</p>` : ""
@@ -234,7 +241,7 @@
                         const tags = signals(x).filter(([k]) => k !== "urgent"),
                             isOpen = open$(x),
                             n = x.fim ? days(x.fim) : null,
-                            when = isOpen && n !== null ? (n <= 0 ? tr("Último dia", "Last day") : tr(`Fecha em ${n} dias`, `Closes in ${n} days`)) : tr(`Fechou a ${dmShort(x.fim)}`, `Closed ${dmShort(x.fim)}`),
+                            when = isOpen && n !== null ? closeTag(x) : tr(`Fechou a ${dmShort(x.fim)}`, `Closed ${dmShort(x.fim)}`),
                             where = (x.municipios || []).join(" · ") || (isEn() ? SCOPE_EN[x.ambito] || x.ambito : x.ambito) || x.tipologia,
                             who = [x.tipologia && (isEn() ? TYPE_EN[x.tipologia] || x.tipologia : x.tipologia), x.promotor_projeto].filter(Boolean).join(" · "),
                             map = cardMap(x),
@@ -322,7 +329,7 @@
                     }</li>`;
                 if (el("participa-prazos")) {
                     el("participa-prazos").innerHTML = (closing.length || justClosed.length) ? `${
-                        closing.length ? `<h4>${tr("Fecham em breve", "Closing soon")}</h4><ul>${closing.map((x) => { const n = days(x.fim); return row(x, n <= 0 ? tr("Hoje", "Today") : tr(`${dm(x.fim)} · ${n} dias`, `${dm(x.fim)} · ${n} days`), "pz-open"); }).join("")}</ul>` : ""
+                        closing.length ? `<h4>${tr("Fecham em breve", "Closing soon")}</h4><ul>${closing.map((x) => { const n = days(x.fim); return row(x, n < 0 ? tr(`Prazo: ${dm(x.fim)} · a confirmar`, `Deadline: ${dm(x.fim)} · to be confirmed`) : tr(`Fecha a ${dm(x.fim)}`, `Closes ${dm(x.fim)}`), "pz-open"); }).join("")}</ul>` : ""
                     }${
                         justClosed.length ? `<h4>${tr("Terminaram há pouco, a aguardar decisão", "Recently closed, awaiting decision")}</h4><ul>${justClosed.map((x) => row(x, tr(`Fechou a ${dm(x.fim)}`, `Closed ${dm(x.fim)}`), "pz-analysis")).join("")}</ul>` : ""
                     }` : "";
