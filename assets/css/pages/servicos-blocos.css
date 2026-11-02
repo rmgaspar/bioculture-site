@@ -1,0 +1,118 @@
+/* Técnicas: cada bloco tem o tom do seu tema principal (água, solo, biodiversidade…) e componentes de leitura fácil
+   (resumo, «qual é o teu caso?», fluxo, passos e fontes). */
+.blueprint[data-tom] { --tom: #2f6b3a; --tom-suave: #e6f0e3; border-top: 0 !important; position: relative; }
+.blueprint[data-tom="agua"] { --tom: #1f6f8b; --tom-suave: #e2eff4; }
+.blueprint[data-tom="solo"] { --tom: #7a4d2b; --tom-suave: #f1e7de; }
+.blueprint[data-tom="biodiversidade"] { --tom: #55731f; --tom-suave: #edf1dc; }
+.blueprint[data-tom="horta"] { --tom: #2f6b3a; --tom-suave: #e6f0e3; }
+.blueprint[data-tom="energia"] { --tom: #9a6a00; --tom-suave: #f8eed2; }
+.blueprint[data-tom="polinizadores"] { --tom: #8a6a0e; --tom-suave: #f6efd3; }
+.blueprint[data-tom="pragas"] { --tom: #a3472f; --tom-suave: #f6e5df; }
+.blueprint[data-tom] .blueprint-heading::before { content: ""; display: block; width: 3.4rem; height: 4px; border-radius: 4px; background: var(--tom); grid-column: 1 / -1; margin-bottom: -.6rem; }
+.blueprint[data-tom] .blueprint-heading .eyebrow { color: var(--tom); }
+.blueprint[data-tom] .blueprint-benefits small { color: var(--tom); }
+.blueprint[data-tom] .blueprint-benefits article { border-color: color-mix(in srgb, var(--tom) 20%, #e3e8e1); }
+.blueprint[data-tom] .blueprint-steps strong { color: var(--tom); }
+.blueprint[data-tom] .blueprint-steps li { border-color: color-mix(in srgb, var(--tom) 20%, #e3e8e1); }
+.blueprint[data-tom] .blueprint-figure { border-color: color-mix(in srgb, var(--tom) 25%, #e3e8e1); }
+.blueprint[data-tom] .blueprint-note { background: var(--tom-suave); border: 0; }
+.blueprint[data-tom] .blueprint-note > strong { color: var(--tom); }
+.blueprint[data-tom] .blueprint-steps { counter-reset: passo; }
+.blueprint[data-tom] .blueprint-steps li { counter-increment: passo; }
+.blueprint[data-tom] .blueprint-steps li > strong::before { content: counter(passo); display: inline-grid; place-items: center; width: 1.6rem; height: 1.6rem; margin-right: .55rem; border-radius: 50%; background: var(--tom); color: #fff; font: 800 .8rem/1 var(--f-body, sans-serif); vertical-align: .05em; }
+.blueprint .bp-cinco { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+@media (max-width: 1100px) { .blueprint .bp-cinco { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 640px) { .blueprint .bp-cinco { grid-template-columns: minmax(0, 1fr); } }
+
+.bp-h3 { margin: 2.4rem 0 1rem; font-family: Georgia, "Times New Roman", serif; font-size: 1.5rem; line-height: 1.15; letter-spacing: -.02em; color: var(--ink); }
+.bp-resumo { margin-top: 1.8rem; padding: 1.2rem 1.4rem; border-radius: 16px; background: var(--tom-suave); }
+.bp-resumo > strong { display: block; margin-bottom: .5rem; color: var(--tom); font-size: .72rem; font-weight: 900; letter-spacing: .12em; text-transform: uppercase; }
+.bp-resumo ul { margin: 0; padding-left: 1.15rem; display: grid; gap: .45rem; }
+.bp-resumo li { color: var(--ink); font-size: .95rem; line-height: 1.6; }
+.bp-cartoes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+@media (max-width: 900px) { .bp-cartoes { grid-template-columns: minmax(0, 1fr); } }
+.bp-cartoes article { display: grid; gap: .5rem; align-content: start; padding: 1.3rem; border: 1px solid color-mix(in srgb, var(--tom) 25%, #e3e8e1); border-radius: 16px; background: #fff; }
+.bp-cartoes small { color: var(--tom); font-size: .7rem; font-weight: 900; letter-spacing: .12em; text-transform: uppercase; }
+.bp-cartoes h4 { margin: 0; font-family: Georgia, serif; font-size: 1.2rem; line-height: 1.15; color: var(--ink); }
+.bp-cartoes p { margin: 0; color: var(--muted); font-size: .88rem; line-height: 1.6; }
+.bp-etiqueta { justify-self: start; padding: .2rem .7rem; border-radius: 999px; background: var(--tom-suave); color: var(--tom); font-size: .72rem; font-weight: 800; }
+.bp-fluxo { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr); gap: .8rem; align-items: stretch; margin: 0; padding: 0; list-style: none; }
+.bp-fluxo li { padding: 1.1rem 1.2rem; border-radius: 16px; background: var(--tom-suave); display: grid; gap: .3rem; align-content: start; }
+.bp-fluxo li strong { color: var(--tom); font-family: Georgia, serif; font-size: 1.1rem; }
+.bp-fluxo li span { color: var(--ink); font-size: .86rem; line-height: 1.55; }
+.bp-fluxo .bp-seta { align-self: center; color: var(--tom); font-size: 1.5rem; background: none; padding: 0; }
+@media (max-width: 900px) { .bp-fluxo { grid-template-columns: minmax(0, 1fr); } .bp-fluxo .bp-seta { transform: rotate(90deg); justify-self: center; } }
+.bp-fontes { margin: 1.6rem 0 0; padding-top: 1rem; border-top: 1px dashed color-mix(in srgb, var(--tom) 35%, #dfe5dc); color: var(--muted); font-size: .8rem; line-height: 1.65; }
+.bp-fontes b { color: var(--tom); font-weight: 900; letter-spacing: .08em; text-transform: uppercase; font-size: .7rem; }
+.bp-fontes a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+.bp-fontes em { display: block; margin-top: .4rem; font-style: normal; }
+.blueprint-heading .bp-termo { margin-top: .9rem; padding: .7rem 1rem; border-radius: 14px; background: var(--tom-suave, #e6f0e3); font-size: .86rem; line-height: 1.6; color: var(--ink); }
+
+/* A barra fixa acompanha o tom do bloco. */
+html body #main .reading-nav a[href$="#biofossa"] { --hero-accent: #1f6f8b; }
+html body #main .reading-nav a[href$="#chuva"] { --hero-accent: #1f6f8b; }
+html body #main .reading-nav a[href$="#solar"] { --hero-accent: #9a6a00; }
+html body #main .reading-nav a[href$="#solo"] { --hero-accent: #7a4d2b; }
+html body #main .reading-nav a[href$="#compostagem"] { --hero-accent: #7a4d2b; }
+html body #main .reading-nav a[href$="#agrofloresta"] { --hero-accent: #55731f; }
+html body #main .reading-nav a[href$="#hortas"] { --hero-accent: #2f6b3a; }
+html body #main .reading-nav a[href$="#apicultura"] { --hero-accent: #8a6a0e; }
+html body #main .reading-nav a[href$="#aguascinzentas"] { --hero-accent: #1f6f8b; }
+html body #main .reading-nav a[href$="#pragas"] { --hero-accent: #a3472f; }
+
+/* Duas colunas: o esquema com o fluxo à esquerda, o resumo e a fotografia à direita, na mesma altura (sem brancos). */
+.blueprint .bp-duo { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); gap: 1.6rem; align-items: stretch; margin-top: 1.8rem; }
+.blueprint .bp-col { display: flex; flex-direction: column; gap: 1.2rem; min-width: 0; }
+.blueprint .bp-duo .bp-resumo { margin: 0; }
+.blueprint .bp-duo .bp-h3 { margin: .4rem 0 0; font-size: 1.25rem; }
+html body #main .blueprint .bp-duo .blueprint-figure { width: 100% !important; max-width: 100% !important; margin: 0 !important; }
+html body #main .blueprint .bp-duo .blueprint-figure img { width: 100% !important; max-height: none !important; }
+.blueprint .bp-duo .bp-fluxo { grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr); gap: .5rem; }
+.blueprint .bp-duo .bp-fluxo li { padding: .8rem .9rem; }
+.blueprint .bp-duo .bp-fluxo li strong { font-size: .98rem; }
+.blueprint .bp-duo .bp-fluxo li span { font-size: .8rem; }
+.blueprint .bp-foto { margin: 0; flex: 1; display: flex; flex-direction: column; gap: .5rem; min-height: 0; }
+.blueprint .bp-foto img { display: block; width: 100%; flex: 1; min-height: 240px; object-fit: cover; border-radius: 18px; box-shadow: 0 16px 32px -24px var(--tom); }
+.blueprint .bp-foto figcaption { font-size: .78rem; line-height: 1.55; color: var(--muted); }
+.blueprint .bp-foto figcaption span { display: block; font-size: .72rem; }
+.blueprint .bp-foto figcaption a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+@media (max-width: 980px) {
+  .blueprint .bp-duo { grid-template-columns: minmax(0, 1fr); }
+  .blueprint .bp-duo .bp-fluxo { grid-template-columns: minmax(0, 1fr); }
+  .blueprint .bp-duo .bp-fluxo .bp-seta { transform: rotate(90deg); justify-self: center; }
+  .blueprint .bp-foto img { flex: none; height: auto; min-height: 0; aspect-ratio: 4 / 3; }
+}
+.blueprint .bp-cartoes article, .blueprint .blueprint-benefits article { align-content: start; }
+.blueprint .bp-col:first-child .bp-fluxo { flex: 1; }
+.blueprint .bp-duo .bp-fluxo li { align-content: center; }
+
+/* Blocos ainda por rever (esquema + 3 vantagens): o esquema à esquerda e as vantagens empilhadas à direita, na mesma altura. */
+@media (min-width: 981px) {
+  .blueprint:has(> .blueprint-figure):has(> .blueprint-benefits):not(:has(.bp-duo)) { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); column-gap: 1.6rem; align-items: stretch; }
+  .blueprint:has(> .blueprint-figure):has(> .blueprint-benefits):not(:has(.bp-duo)) > * { grid-column: 1 / -1; }
+  .blueprint:has(> .blueprint-figure):has(> .blueprint-benefits):not(:has(.bp-duo)) > .blueprint-figure { grid-column: 1; margin: 1.8rem 0 0 !important; align-self: start; }
+  .blueprint:has(> .blueprint-figure):has(> .blueprint-benefits):not(:has(.bp-duo)) > .blueprint-benefits { grid-column: 2; grid-template-columns: minmax(0, 1fr); margin-top: 1.8rem; align-content: stretch; }
+  .blueprint:has(> .blueprint-figure):has(> .blueprint-benefits):not(:has(.bp-duo)) > .blueprint-benefits article { display: grid; align-content: center; }
+  html body #main .blueprint:has(> .blueprint-benefits):not(:has(.bp-duo)) > .blueprint-figure { width: 100% !important; max-width: 100% !important; }
+  html body #main .blueprint:has(> .blueprint-benefits):not(:has(.bp-duo)) > .blueprint-figure img { width: 100% !important; max-height: none !important; }
+  .blueprint:has(> .blueprint-figure):has(> .blueprint-benefits):not(:has(.bp-duo)) > :is(.blueprint-steps, .blueprint-note, .solar-tool, .bp-fontes, .soil-blueprint) { margin-top: 1.4rem; }
+}
+@media (min-width: 981px) {
+  html body #main :is(#chuva) .blueprint-figure { max-width: 100% !important; width: 100% !important; }
+  .blueprint:has(> .blueprint-figure):has(> .blueprint-benefits):not(:has(.bp-duo)) > .blueprint-figure { align-self: center; margin-top: 1.8rem !important; }
+}
+
+/* Cartões das áreas no topo da página: cada um com o tom do seu tema (o mesmo dos blocos). */
+.service-areas .path-card[data-tom] { --tom: #2f6b3a; --tom-suave: #e6f0e3; background: var(--tom-suave); border: 1px solid color-mix(in srgb, var(--tom) 22%, transparent); }
+.service-areas .path-card[data-tom] .eyebrow { color: var(--tom); }
+.service-areas .path-card[data-tom] .card-action { color: var(--tom); font-weight: 800; }
+.service-areas .path-card[data-tom]:hover { box-shadow: 0 18px 34px -26px var(--tom); }
+.service-areas .path-card[data-tom="hidrica"] { --tom: #1f6f8b; --tom-suave: #e2eff4; }
+.service-areas .path-card[data-tom="energia"] { --tom: #9a6a00; --tom-suave: #f8eed2; }
+.service-areas .path-card[data-tom="solo"] { --tom: #7a4d2b; --tom-suave: #f1e7de; }
+.service-areas .path-card[data-tom="compostagem"] { --tom: #6f5d1f; --tom-suave: #f1ecd6; }
+.service-areas .path-card[data-tom="agrofloresta"] { --tom: #55731f; --tom-suave: #edf1dc; }
+.service-areas .path-card[data-tom="hortas"] { --tom: #2f6b3a; --tom-suave: #e6f0e3; }
+.service-areas .path-card[data-tom="apicultura"] { --tom: #8a6a0e; --tom-suave: #f6efd3; }
+.service-areas .path-card[data-tom="aguascinzentas"] { --tom: #2a7473; --tom-suave: #e1f0ef; }
+.service-areas .path-card[data-tom="pragas"] { --tom: #a3472f; --tom-suave: #f6e5df; }

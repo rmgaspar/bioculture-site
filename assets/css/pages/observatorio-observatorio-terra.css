@@ -8,20 +8,7 @@
                 box-shadow: none !important;
                 padding: 0 !important;
             }
-            #sidebar {
-                position: fixed !important;
-                top: 0;
-                left: 0;
-                height: 100vh !important;
-                width: 18em !important;
-                overflow: hidden !important;
-                z-index: 10000;
-                background: #fff;
-                border-right: 1px solid #f2f2f2 !important;
-            }
-            #wrapper {
-                padding-left: 18em !important;
-            }
+
             .inner {
                 padding: 2.2em 5em 0 !important;
                 max-width: 1600px !important;
@@ -43,7 +30,7 @@
                 margin: 10px 0 !important;
             }
             .category-label {
-                font-size: 0.65em;
+                font-size: max(11px, 0.65em);
                 font-weight: 900;
                 text-transform: uppercase;
                 letter-spacing: 4px;
@@ -56,7 +43,7 @@
                 margin-top: 20px;
             }
             .context-switcher a {
-                font-size: 0.7em;
+                font-size: max(11px, 0.7em);
                 font-weight: 900;
                 text-transform: uppercase;
                 letter-spacing: 1px;
@@ -73,7 +60,7 @@
                 transition: color 0.3s;
             }
             .context-inactive:hover {
-                color: #2e7d32 !important;
+                color: #2d7b31 !important;
             }
             .hero-guide {
                 max-width: 610px;
@@ -115,7 +102,7 @@
                 font-size: 1em;
                 text-transform: uppercase;
                 letter-spacing: 1px;
-                color: #2e7d32;
+                color: #2d7b31;
             }
             .overview p {
                 margin: 0;
@@ -126,8 +113,8 @@
             .scope-note {
                 display: block;
                 margin-top: 12px;
-                color: #738577;
-                font-size: 0.7em;
+                color: #617065;
+                font-size: max(11px, 0.7em);
             }
 
             .summary-grid {
@@ -143,10 +130,10 @@
                 background: #fff;
             }
             .summary-card h3 {
-                font-size: 0.68em;
+                font-size: max(11px, 0.68em);
                 text-transform: uppercase;
                 margin: 0 0 12px;
-                color: #777;
+                color: #6c6c6c;
             }
             .summary-value {
                 display: block;
@@ -172,7 +159,7 @@
             }
             .section-heading p {
                 margin: 0;
-                color: #777;
+                color: #6c6c6c;
                 font-size: 0.86em;
             }
             .chart-grid {
@@ -197,8 +184,8 @@
                 margin: 0 0 5px;
             }
             .chart-meta {
-                font-size: 0.62em;
-                color: #999;
+                font-size: max(11px, 0.62em);
+                color: #6c6c6c;
                 margin-bottom: 14px;
             }
             .chart-container {
@@ -215,9 +202,9 @@
                 padding-top: 11px;
             }
             .source-link {
-                font-size: 0.6em;
+                font-size: max(11px, 0.6em);
                 font-weight: 800;
-                color: #2e7d32;
+                color: #2d7b31;
                 text-transform: uppercase;
                 margin-top: 8px;
                 text-decoration: none;
@@ -242,7 +229,7 @@
             .territory-value {
                 font-size: 1.45em;
                 font-weight: 900;
-                color: #2e7d32;
+                color: #2d7b31;
                 display: block;
                 margin-bottom: 8px;
             }
@@ -259,21 +246,20 @@
             }
             .conclusion-card summary {
                 cursor: pointer;
-                color: #2e7d32;
-                font-size: 0.66em;
+                color: #2d7b31;
+                font-size: max(11px, 0.66em);
                 font-weight: 900;
                 text-transform: uppercase;
             }
             .conclusion-card details p {
-                font-size: 0.7em;
-                color: #777;
+                font-size: max(11px, 0.7em);
+                color: #6c6c6c;
             }
             .reading-box {
                 margin-top: 2.5em;
                 padding: 2em;
-                border-left: 4px solid #2e7d32;
                 background: #f7faf8;
-                border-radius: 0 12px 12px 0;
+                border-radius: 12px;
             }
             .reading-box h3 {
                 font-size: 0.8em;
@@ -304,40 +290,6 @@
                 opacity: 0.4;
                 text-align: right;
                 box-sizing: border-box;
-            }
-
-            .footer-wordmark {
-                display: flex;
-                justify-content: flex-end;
-            }
-
-            .bio-wordmark {
-                display: inline-block;
-                text-align: center;
-                line-height: 1;
-                font-family: "Georgia", "Times New Roman", serif;
-            }
-
-            .bio-wordmark strong {
-                display: block;
-                font-size: 1.15em;
-                font-weight: 400;
-                letter-spacing: -0.4px;
-                color: #81966e;
-                line-height: 1;
-                font-family: inherit;
-            }
-
-            .bio-wordmark small {
-                display: block;
-                margin-top: 2px;
-                font-size: 0.43em;
-                font-weight: 700;
-                letter-spacing: 1.8px;
-                text-transform: uppercase;
-                color: #a66f50;
-                line-height: 1;
-                font-family: inherit;
             }
 
             @media screen and (max-width: 1280px) {
@@ -378,3 +330,105 @@
                     grid-template-columns: 1fr;
                 }
             }
+
+/* Barra «Nesta página» do relatório: sempre numa linha; se não couber, desliza na horizontal e o «↑ Topo» fica preso à direita. */
+html body #main nav.reading-nav.terra-nav {
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    scrollbar-width: none;
+}
+html body #main nav.reading-nav.terra-nav::-webkit-scrollbar {
+    display: none;
+}
+html body #main nav.reading-nav.terra-nav > a,
+html body #main nav.reading-nav.terra-nav > span {
+    flex: 0 0 auto !important;
+}
+html body #main nav.reading-nav.terra-nav.bio-nav-pinned .bio-nav-top {
+    position: sticky;
+    right: 0;
+    z-index: 1;
+    padding-left: 14px !important;
+    background: #fff !important;
+    box-shadow: -16px 0 12px -6px #fff, 16px 0 0 0 #fff !important;
+}
+
+/* Cada tema tem a sua cor: na barra fixa (ponto e, ao estar ativo, fundo) e no título do capítulo. */
+html body #main nav.reading-nav.terra-nav a { --hero-accent: #2b6a7c; }
+html body #main nav.reading-nav.terra-nav a.hub-back::before { display: none; }
+html body #main nav.reading-nav.terra-nav a::before {
+    content: "";
+    display: inline-block;
+    width: 0.55em;
+    height: 0.55em;
+    margin-right: 0.55em;
+    border-radius: 50%;
+    background: var(--hero-accent);
+    vertical-align: 0.05em;
+}
+html body #main nav.reading-nav.terra-nav a:is(:hover, .bio-nav-active)::before { background: #fff; }
+html body #main nav.reading-nav.terra-nav a.nav-outra::before { display: none; }
+html body #main nav.reading-nav.terra-nav a[href="#clima"] { --hero-accent: #b4472f; }
+html body #main nav.reading-nav.terra-nav a[href="#energia"] { --hero-accent: #b87a0c; }
+html body #main nav.reading-nav.terra-nav a[href="#ar"] { --hero-accent: #5b8aa6; }
+html body #main nav.reading-nav.terra-nav a[href="#agua"] { --hero-accent: #2a6fb0; }
+html body #main nav.reading-nav.terra-nav a[href="#terra-vida"] { --hero-accent: #7d5a36; }
+html body #main nav.reading-nav.terra-nav a[href="#portugal-mundo"],
+html body #main nav.reading-nav.terra-nav a[href="#leitura-local"] { --hero-accent: #8f3b3b; }
+html body #main nav.reading-nav.terra-nav a[href="#em-portugal"] { --hero-accent: #8f3b3b; }
+html body #main nav.reading-nav.terra-nav a[href="#materia"] { --hero-accent: #7a6a5a; }
+html body #main nav.reading-nav.terra-nav a[href="#fontes"] { --hero-accent: #6b776f; }
+html body #main nav.reading-nav.terra-nav a[href="#pressure-systems"] { --hero-accent: #5d4c8d; }
+html body #main nav.reading-nav.terra-nav a[href="#pressure-news"] { --hero-accent: #2f7a78; }
+html body #main nav.reading-nav.terra-nav a[href="/observatorio/producao-agricola.html"] { --hero-accent: #6b7a24; }
+
+#relatorio-terra #clima { --cap: #b4472f; }
+#relatorio-terra #energia { --cap: #b87a0c; }
+#relatorio-terra #ar { --cap: #4f7f9e; }
+#relatorio-terra #agua { --cap: #2a6fb0; }
+#relatorio-terra #terra-vida { --cap: #7d5a36; }
+#relatorio-terra #materia { --cap: #7a6a5a; }
+#relatorio-terra :is(#portugal-mundo, #leitura-local) { --cap: #8f3b3b; }
+#relatorio-terra :is(#clima, #energia, #ar, #agua, #terra-vida, #materia, #portugal-mundo, #leitura-local) .sec-head .eyebrow { color: var(--cap); }
+#relatorio-terra :is(#clima, #energia, #ar, #agua, #terra-vida, #materia, #portugal-mundo, #leitura-local) .sec-head .eyebrow::before {
+    content: "";
+    display: inline-block;
+    width: 0.6em;
+    height: 0.6em;
+    margin-right: 0.6em;
+    border-radius: 50%;
+    background: var(--cap);
+}
+
+/* Os destinos fora do relatório também ficam por baixo da barra fixa, não escondidos atrás dela. */
+html body #main :is(#sistemas, #pressure-systems, #pressure-news, #panorama-global) { scroll-margin-top: 6.5rem; }
+html body #main nav.reading-nav.terra-nav a.bio-nav-top::before { display: none; }
+
+/* «Ver também» no fim de cada capítulo: ligações às páginas temáticas. */
+#relatorio-terra .vermais { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; max-width: none; margin: 0; }
+#relatorio-terra .vermais span { font-size: max(11px, 0.7rem); font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin-right: 4px; }
+#relatorio-terra .vermais a { font-size: 11px; font-weight: 900; letter-spacing: 0.04em; text-transform: uppercase; text-decoration: none; padding: 0.35em 0.5em; border: 1px solid color-mix(in srgb, var(--cap, var(--brand)) 45%, #fff); border-radius: 999px; background: color-mix(in srgb, var(--cap, var(--brand)) 7%, #fff); color: var(--cap, var(--brand)); line-height: 1.65; transition: background 0.15s, color 0.15s, border-color 0.15s; }
+#relatorio-terra .vermais a:hover, #relatorio-terra .vermais a:focus-visible { background: var(--cap, var(--brand)); border-color: var(--cap, var(--brand)); color: #fff; }
+
+/* Outras páginas (Produção agrícola, A teia): à direita, separadas por um traço e com contorno, para não parecerem capítulos desta página. */
+html body #main nav.reading-nav.terra-nav a.nav-outra { border: 1px solid color-mix(in srgb, var(--outra, #2b6a7c) 45%, #fff) !important; border-radius: 999px; color: var(--outra, #3f5a50) !important; background: color-mix(in srgb, var(--outra, #2b6a7c) 7%, #fff) !important; }
+html body #main nav.reading-nav.terra-nav a.nav-outra:hover { background: var(--outra, #2b6a7c) !important; border-color: var(--outra, #2b6a7c) !important; color: #fff !important; }
+html body #main nav.reading-nav.terra-nav a.nav-outra-1 { position: relative; margin-left: 1.6rem; }
+html body #main nav.reading-nav.terra-nav a.nav-outra-1::after { content: ""; position: absolute; left: -1rem; top: 18%; bottom: 18%; width: 1px; background: #cfd8d3; }
+/* Barra do Observatório: ligações mais juntas para caberem todas sem deslizar */
+html body #main nav.reading-nav.terra-nav { gap: 0.15em !important; }
+html body #main nav.reading-nav.terra-nav a { padding: 0.5em 0.55em !important; letter-spacing: 0.08em !important; }
+html body #main nav.reading-nav.terra-nav a::before { margin-right: 0.4em; }
+html body #main nav.reading-nav.terra-nav a.nav-outra { padding: 0.4em 0.75em !important; }
+html body #main nav.reading-nav.terra-nav a.nav-outra-1 { margin-left: 1.2rem; }
+html body #main nav.reading-nav.terra-nav { gap: 0 !important; }
+html body #main nav.reading-nav.terra-nav a { padding: 0.5em 0.42em !important; letter-spacing: 0.05em !important; }
+html body #main nav.reading-nav.terra-nav a.nav-outra { padding: 0.35em 0.6em !important; margin-left: 0.3rem; }
+html body #main nav.reading-nav.terra-nav a.nav-outra-1 { margin-left: 1rem; }
+html body #main nav.reading-nav.terra-nav a.nav-outra-1::after { left: -0.65rem; }
+html body #main nav.reading-nav.terra-nav a.hub-back { padding-right: 0.9em !important; margin-right: 0.3em; }
+html body #main nav.reading-nav.terra-nav a { padding: 0.5em 0.34em !important; letter-spacing: 0.04em !important; }
+html body #main nav.reading-nav.terra-nav a.hub-back { padding-right: 0.6em !important; margin-right: 0.15em; }
+html body #main nav.reading-nav.terra-nav a.nav-outra { padding: 0.35em 0.5em !important; }
+html body #main nav.reading-nav.terra-nav a.nav-outra-1 { margin-left: 0.8rem; }

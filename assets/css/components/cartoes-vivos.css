@@ -1,0 +1,126 @@
+/* Cartões vivos (assets/js/cartoes-vivos.js): listas longas dos vetores de pressão com cor por categoria, estado em etiqueta,
+   bandeiras e uma faixa de gráfico e fotografia por cima. Sem traços nem contornos: só cor suave e espaço. */
+html body #main .cv-grelha { display: grid !important; grid-template-columns: repeat(auto-fill, minmax(min(100%, 330px), 1fr)) !important; gap: 1rem !important; align-items: stretch; }
+html body #main .cv-grelha > .cv { --tom: #6b776f; display: flex; flex-direction: column; gap: .55rem; margin: 0 !important; padding: 1.15rem 1.25rem 1.2rem !important; border: 0 !important; border-radius: 18px !important; background: color-mix(in srgb, var(--tom) 8%, #fff) !important; box-shadow: none !important; min-width: 0; }
+html body #main .cv-grelha > .cv h3 { margin: 0 !important; font-size: 1.2rem; line-height: 1.2; color: color-mix(in srgb, var(--tom) 35%, #1d2922) !important; }
+html body #main .cv-grelha > .cv p, html body #main .cv-grelha > .cv dd, html body #main .cv-grelha > .cv span.place { margin: 0; font-size: .95rem; line-height: 1.55; color: #3f4a43; }
+html body #main .cv-grelha > .cv dl { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem .9rem; margin: .2rem 0 0; }
+html body #main .cv-grelha > .cv dt { margin: 0; color: var(--tom); font: 800 .68rem/1.2 "Source Sans Pro", sans-serif; letter-spacing: .12em; text-transform: uppercase; }
+html body #main .cv-grelha > .cv > a { margin-top: auto; padding-top: .4rem; color: var(--tom) !important; font-weight: 700; font-size: .9rem; text-decoration: none; border: 0 !important; }
+html body #main .cv-grelha > .cv > a:hover { text-decoration: underline; text-underline-offset: 3px; }
+html body #main .cv-grelha > .cv > small { display: flex; flex-wrap: wrap; align-items: center; gap: .35rem .5rem; margin: 0; padding: 0; background: none; color: var(--tom); font-size: .8rem; letter-spacing: 0; text-transform: none; }
+.cv-cat { color: var(--tom); font: 900 .72rem/1.2 "Source Sans Pro", sans-serif; letter-spacing: .14em; text-transform: uppercase; }
+.cv-metodo { color: #5b665f; font-size: .85rem; }
+.cv-estado { display: inline-flex; align-items: center; gap: .4em; padding: .22em .7em; border-radius: 999px; background: color-mix(in srgb, var(--cv-estado, #6b776f) 14%, #fff); color: color-mix(in srgb, var(--cv-estado, #6b776f) 70%, #1d2922); font: 700 .8rem/1.2 "Source Sans Pro", sans-serif; letter-spacing: 0; text-transform: none; }
+.cv-estado::before { content: ""; width: .5em; height: .5em; border-radius: 50%; background: var(--cv-estado, #6b776f); }
+.cv-lugares { display: flex !important; flex-wrap: wrap; gap: .3rem .9rem; }
+.cv-pais { display: inline-flex; align-items: center; gap: .35em; }
+.cv-pais i { font-style: normal; font-size: 1.25em; line-height: 1; }
+
+/* Faixa por cima da lista: gráfico de barras à esquerda e, quando há, a fotografia da categoria à direita. */
+.cv-faixa { --tom: #4f6b57; display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.1rem; align-items: stretch; margin: 0 0 1.2rem; }
+.cv-faixa[hidden] { display: none; }
+.cv-faixa.com-foto { grid-template-columns: minmax(0, 1fr) minmax(260px, 44%); align-items: center; }
+.cv-dados { padding: 1.2rem 1.4rem 1.3rem; border-radius: 18px; background: color-mix(in srgb, var(--tom) 8%, #fff); }
+.cv-dados h3 { margin: 0; font-size: 1.15rem; line-height: 1.2; color: color-mix(in srgb, var(--tom) 40%, #1d2922); }
+.cv-total { margin: .15rem 0 .9rem; color: #5b665f; font-size: .9rem; }
+.cv-barras { list-style: none; margin: 0; padding: 0; display: grid; gap: .5rem; }
+.cv-barras li { display: grid; grid-template-columns: minmax(7rem, 15rem) minmax(0, 1fr) auto; align-items: center; gap: .8rem; font-size: .92rem; }
+.cv-rotulo { display: inline-flex; align-items: center; gap: .4em; color: #2f3a33; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cv-rotulo i { font-style: normal; font-size: 1.15em; }
+.cv-pista { height: .7rem; border-radius: 999px; background: color-mix(in srgb, var(--tom) 14%, #fff); overflow: hidden; }
+.cv-pista b { display: block; height: 100%; border-radius: 999px; background: var(--tom); }
+.cv-barras em { font-style: normal; font-weight: 700; font-variant-numeric: tabular-nums; color: #2f3a33; min-width: 2.2ch; text-align: right; }
+.cv-foto { min-width: 0; }
+.cv-foto:empty { display: none; }
+.cv-foto figure.foto { height: 100%; display: flex; flex-direction: column; }
+.cv-foto figure.foto img { aspect-ratio: 16 / 10; width: 100%; height: auto; max-height: 17rem; object-fit: cover; border-radius: 18px; }
+@media (max-width: 900px) { .cv-faixa.com-foto { grid-template-columns: minmax(0, 1fr); } .cv-barras li { grid-template-columns: minmax(6rem, 9rem) minmax(0, 1fr) auto; } html body #main .cv-grelha > .cv dl { grid-template-columns: 1fr; } }
+
+/* Passos numerados («A hierarquia das decisões»): cartões suaves, selo com o número e título em serifa, sem traços. */
+html body #main :is(.principle-grid, .solutions-grid):has(> .pr-passo) { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.1rem; }
+@media (max-width: 1100px) { html body #main :is(.principle-grid, .solutions-grid):has(> .pr-passo) { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 640px) { html body #main :is(.principle-grid, .solutions-grid):has(> .pr-passo) { grid-template-columns: minmax(0, 1fr); } }
+html body #main :is(.principle-grid, .solutions-grid) > .pr-passo { --tom: #2f6b3a; display: grid; grid-template-columns: auto 1fr; column-gap: 1rem; row-gap: .45rem; align-items: start; margin: 0; padding: 1.35rem 1.5rem 1.5rem; border: 0 !important; border-top: 0 !important; border-radius: 20px; background: color-mix(in srgb, var(--tom) 13%, #fff) !important; box-shadow: none; transition: transform .2s ease, background .2s ease; }
+html body #main :is(.principle-grid, .solutions-grid) > .pr-passo:hover { transform: translateY(-2px); background: color-mix(in srgb, var(--tom) 19%, #fff) !important; }
+html body #main :is(.principle-grid, .solutions-grid) > .pr-passo:nth-child(1) { --tom: #2f6b3a; }
+html body #main :is(.principle-grid, .solutions-grid) > .pr-passo:nth-child(2) { --tom: #4e7d3a; }
+html body #main :is(.principle-grid, .solutions-grid) > .pr-passo:nth-child(3) { --tom: #7a8a2c; }
+html body #main :is(.principle-grid, .solutions-grid) > .pr-passo:nth-child(4) { --tom: #2f7f6a; }
+html body #main :is(.principle-grid, .solutions-grid) > .pr-passo:nth-child(5) { --tom: #3f7089; }
+html body #main :is(.principle-grid, .solutions-grid) > .pr-passo:nth-child(6) { --tom: #5b6fa3; }
+html body #main :is(.principle-grid, .solutions-grid) > .pr-passo > :is(b, strong) { display: contents; }
+.pr-n { grid-row: 1 / span 2; display: grid; place-items: center; width: 2.6rem; height: 2.6rem; border-radius: 50%; background: var(--tom); color: #fff; font: 800 .95rem/1 "Source Sans Pro", sans-serif; letter-spacing: .04em; }
+.pr-t { align-self: center; color: color-mix(in srgb, var(--tom) 45%, #1d2922); font: 700 1.4rem/1.2 Georgia, "Times New Roman", serif; letter-spacing: -.01em; }
+html body #main :is(.principle-grid, .solutions-grid) > .pr-passo > p { grid-column: 2; margin: 0; color: #3f4a43; font-size: 1rem; line-height: 1.6; }
+
+/* «Caminhos para uma transição consciente»: o mesmo desenho dos passos, sem linhas à volta e com as fontes em letra pequena. */
+html body #main .proactive-section { border-top: 0 !important; margin-top: 2.4rem; padding-top: 0; }
+html body #main .proactive-section .grey-label { display: block; margin-bottom: 1.2rem !important; color: #2f6b3a !important; }
+html body #main .solutions-grid:has(> .pr-passo) { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+html body #main .sources-footer { margin-top: 1.6rem; padding-top: 0; border-top: 0 !important; }
+html body #main .sources-footer p { color: #66716a; font-size: .8rem !important; line-height: 1.5; }
+
+/* Quadros de «o que medir» (principle-grid sem números): mosaicos suaves, cada um com a sua cor e um ponto, com espaço a separar da legenda da fotografia. */
+html body #main .global-reading .principle-grid:not(:has(> .pr-passo)) { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); gap: 1rem; margin: 2rem 0 .4rem; padding: 0; counter-reset: none; }
+html body #main .global-reading .principle-grid:not(:has(> .pr-passo)) > article { --tom: #6b776f; display: grid; align-content: start; gap: .55rem; margin: 0; padding: 1.4rem 1.5rem 1.55rem; border: 0 !important; border-radius: 22px; background: color-mix(in srgb, var(--tom) 10%, #fff) !important; box-shadow: none; transition: transform .2s ease, background .2s ease; }
+html body #main .global-reading .principle-grid:not(:has(> .pr-passo)) > article:hover { transform: translateY(-2px); background: color-mix(in srgb, var(--tom) 15%, #fff) !important; }
+html body #main .global-reading .principle-grid:not(:has(> .pr-passo)) > article:nth-child(6n+1) { --tom: #2f78b0; }
+html body #main .global-reading .principle-grid:not(:has(> .pr-passo)) > article:nth-child(6n+2) { --tom: #8a5a2b; }
+html body #main .global-reading .principle-grid:not(:has(> .pr-passo)) > article:nth-child(6n+3) { --tom: #3f7a3a; }
+html body #main .global-reading .principle-grid:not(:has(> .pr-passo)) > article:nth-child(6n+4) { --tom: #b88a1a; }
+html body #main .global-reading .principle-grid:not(:has(> .pr-passo)) > article:nth-child(6n+5) { --tom: #b0553a; }
+html body #main .global-reading .principle-grid:not(:has(> .pr-passo)) > article:nth-child(6n) { --tom: #5b6f86; }
+html body #main .global-reading .principle-grid:not(:has(> .pr-passo)) > article > b { display: flex; align-items: center; gap: .6rem; color: color-mix(in srgb, var(--tom) 45%, #1d2922); font: 700 1.3rem/1.2 Georgia, "Times New Roman", serif; letter-spacing: -.01em; }
+html body #main .global-reading .principle-grid:not(:has(> .pr-passo)) > article > b::before { content: ""; flex: 0 0 auto; width: .85rem; height: .85rem; border-radius: 50%; background: var(--tom); box-shadow: 0 0 0 .3rem color-mix(in srgb, var(--tom) 18%, transparent); }
+html body #main .global-reading .principle-grid:not(:has(> .pr-passo)) > article > p { margin: 0; color: #3f4a43; font-size: 1rem; line-height: 1.6; }
+@media (min-width: 900px) { html body #main .global-reading .principle-grid:not(:has(> .pr-passo)):has(> article:nth-child(6):last-child) { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (min-width: 900px) { html body #main .global-reading .principle-grid:not(:has(> .pr-passo)):has(> article:nth-child(4):last-child) { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+@media (min-width: 900px) { html body #main .global-reading .lista-com-fotos > .principle-grid:not(:has(> .pr-passo)):not(#u), html body #main .global-reading .lista-com-fotos > .principle-grid:not(:has(> .pr-passo)):has(> article:nth-child(6):last-child) { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 0; } }
+
+/* Impactos (Mineração e Pecuária): seis dimensões em cartões suaves, cada um com a sua cor; a etiqueta passa a pílula e o título fica em serifa. */
+html body #main .dimensions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin: 2rem 0 .4rem; }
+html body #main .dimensions > .dimension { --tom: #6b776f; display: grid; align-content: start; gap: .55rem; margin: 0; padding: 1.5rem 1.6rem 1.65rem; border: 0 !important; border-radius: 22px; background: color-mix(in srgb, var(--tom) 10%, #fff) !important; box-shadow: none; transition: transform .2s ease, background .2s ease; }
+html body #main .dimensions > .dimension:hover { transform: translateY(-2px); background: color-mix(in srgb, var(--tom) 15%, #fff) !important; }
+html body #main .dimensions > .dimension:nth-child(6n+1) { --tom: #2f78b0; }
+html body #main .dimensions > .dimension:nth-child(6n+2) { --tom: #8a5a2b; }
+html body #main .dimensions > .dimension:nth-child(6n+3) { --tom: #3f7a3a; }
+html body #main .dimensions > .dimension:nth-child(6n+4) { --tom: #b88a1a; }
+html body #main .dimensions > .dimension:nth-child(6n+5) { --tom: #b0553a; }
+html body #main .dimensions > .dimension:nth-child(6n) { --tom: #5b6f86; }
+html body #main .dimensions > .dimension > small { justify-self: start; padding: .25em .85em; border-radius: 999px; background: color-mix(in srgb, var(--tom) 16%, #fff); color: color-mix(in srgb, var(--tom) 75%, #1d2922); font: 800 .72rem/1.3 "Source Sans Pro", sans-serif; letter-spacing: .12em; text-transform: uppercase; }
+html body #main .dimensions > .dimension > h3 { margin: .15rem 0 0; color: color-mix(in srgb, var(--tom) 45%, #1d2922); font: 700 1.35rem/1.2 Georgia, "Times New Roman", serif; letter-spacing: -.01em; }
+html body #main .dimensions > .dimension > p { margin: 0; color: #3f4a43; font-size: 1rem; line-height: 1.6; }
+@media (max-width: 1100px) { html body #main .dimensions { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 640px) { html body #main .dimensions { grid-template-columns: minmax(0, 1fr); } }
+
+/* Garantias: antes / durante / depois em cartões suaves, com a cor de cada momento. */
+html body #main .monitoring { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin: 2rem 0 .4rem; }
+html body #main .monitoring > .monitor { --tom: #6b776f; display: grid; align-content: start; gap: .55rem; padding: 1.5rem 1.6rem 1.65rem; border: 0 !important; border-radius: 22px; background: color-mix(in srgb, var(--tom) 10%, #fff) !important; transition: transform .2s ease, background .2s ease; }
+html body #main .monitoring > .monitor:hover { transform: translateY(-2px); background: color-mix(in srgb, var(--tom) 15%, #fff) !important; }
+html body #main .monitoring > .monitor:nth-child(1) { --tom: #2f78b0; }
+html body #main .monitoring > .monitor:nth-child(2) { --tom: #b88a1a; }
+html body #main .monitoring > .monitor:nth-child(3) { --tom: #3f7a3a; }
+html body #main .monitoring > .monitor > small { justify-self: start; padding: .25em .8em; border-radius: 999px; background: color-mix(in srgb, var(--tom) 16%, #fff); color: color-mix(in srgb, var(--tom) 75%, #1d2922) !important; font: 800 .7rem/1.3 "Source Sans Pro", sans-serif; letter-spacing: .12em; text-transform: uppercase; }
+html body #main .monitoring > .monitor > h3 { margin: 0; color: color-mix(in srgb, var(--tom) 45%, #1d2922); font: 700 1.35rem/1.2 Georgia, "Times New Roman", serif; }
+html body #main .monitoring > .monitor > p { margin: 0; color: #3f4a43; font-size: 1rem; line-height: 1.6; }
+@media (max-width: 1100px) { html body #main .monitoring { grid-template-columns: minmax(0, 1fr); } }
+
+/* Percurso: os vetores em cartões com fotografia e a cor de cada um (como em Renováveis e Energia). */
+.chapter[data-tom="renovaveis"] { --tom: #9a6a00; --tom-suave: #f8eed2; }
+.chapter[data-tom="energia"] { --tom: #3f7a3a; --tom-suave: #e5efdf; }
+.chapter[data-tom="mineracao"] { --tom: #8a4b32; --tom-suave: #f3e5de; }
+.chapter[data-tom="digital"] { --tom: #44529a; --tom-suave: #e8eaf6; }
+.chapter[data-tom="pecuaria"] { --tom: #a3472f; --tom-suave: #f6e5df; }
+html body #main .chapters:has(> a.chapter) { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.2rem; margin-top: 1.4rem; flex-wrap: initial; }
+html body #main .chapters a.chapter { display: flex !important; flex-direction: column; align-items: stretch !important; justify-content: flex-start !important; padding: .7rem .7rem 0 !important; border: 0 !important; border-radius: 20px !important; background: var(--tom-suave) !important; color: inherit !important; font-family: inherit !important; font-size: 1rem !important; text-align: left; transition: transform .2s ease, box-shadow .2s ease; }
+html body #main .chapters a.chapter:hover { transform: translateY(-3px); box-shadow: 0 18px 34px -24px var(--tom); }
+html body #main .chapters .chapter img { display: block; width: 100%; height: auto; aspect-ratio: 3 / 2; object-fit: cover; border-radius: 14px; background: #e6e1d5; }
+html body #main .chapters .chapter-credito { display: block; margin: .6rem .8rem 0; }
+html body #main .chapters .chapter-corpo { display: block; padding: .9rem .8rem 1.5rem; }
+html body #main .chapters .chapter small { display: block; color: var(--tom); font: 800 .78rem/1.2 "Source Sans Pro", sans-serif; letter-spacing: .08em; text-transform: uppercase; }
+html body #main .chapters .chapter h3 { margin: .5rem 0 .6rem; color: #20342a; font: 700 1.4rem/1.15 Georgia, serif; }
+html body #main .chapters .chapter p { margin: 0; color: #3f4a43; font-size: 1rem; line-height: 1.6; }
+html body #main .chapters-creditos { margin: .9rem 0 0; color: #6a746d; line-height: 1.6; }
+@media (max-width: 1100px) { html body #main .chapters:has(> a.chapter) { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 640px) { html body #main .chapters:has(> a.chapter) { grid-template-columns: minmax(0, 1fr); } }

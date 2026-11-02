@@ -45,15 +45,15 @@ for (const [cid, crop] of Object.entries(horticolas)) {
 // Técnicas: o próprio termo usado na ficha (rega, cobertura do solo, composto, rotação) vira
 // o link, mantendo a palavra inteira (regressão: "Rotaç" cortado antes de "ão").
 const melaoRega = context.linkifyTechniques(melao.metodo_rega_recomendado);
-assert(melaoRega.includes('/services/servicos.html#tecnica-rega-gota-a-gota'));
+assert(melaoRega.includes('/services/tecnicas.html#tecnica-rega-gota-a-gota'));
 assert(melaoRega.includes('>Gota-a-gota</a>'));
 const melaoManutencao = context.linkifyTechniques(melao.manutencao);
-assert(melaoManutencao.includes('/services/servicos.html#tecnica-mulching-organico'));
+assert(melaoManutencao.includes('/services/tecnicas.html#tecnica-mulching-organico'));
 const melaoFert = context.linkifyTechniques(melao.fertilizacao_organica);
-assert(melaoFert.includes('/services/servicos.html#tecnica-composto-superficie'));
+assert(melaoFert.includes('/services/tecnicas.html#tecnica-composto-superficie'));
 const melaoPrevencao = context.linkifyPestsAndTechniques(melao.prevencao_sem_pesticidas, pestIndex, 'melao', melao.nome);
 assert(melaoPrevencao.includes('>Rotação</a>'), 'a palavra completa "Rotação" deve ficar dentro do link, não só "Rotaç"');
-assert(melaoPrevencao.includes('/services/servicos.html#tecnica-mulching-organico'));
+assert(melaoPrevencao.includes('/services/tecnicas.html#tecnica-mulching-organico'));
 
 // Sem termo reconhecido no texto, não há ligação nenhuma (não inventa técnica).
 assert.equal(context.linkifyTechniques('Um texto qualquer sem termos técnicos.').includes('<a '), false);

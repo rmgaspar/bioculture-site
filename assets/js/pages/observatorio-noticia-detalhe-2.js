@@ -9,6 +9,7 @@
                 "Energia Ética": "#f1c40f",
             };
 
+           const semIndexar = () => { if (document.querySelector('meta[name="robots"]')) return; const m = document.createElement("meta"); m.name = "robots"; m.content = "noindex"; document.head.appendChild(m); };
            async function carregarNoticia() {
                 const urlParams = new URLSearchParams(window.location.search);
                 const noticiaId = urlParams.get("id");
@@ -17,6 +18,7 @@
                 if (!lang || lang === "undefined" || lang === "null") lang = "pt";
 
                 if (!noticiaId) {
+                    semIndexar();
                     window.location.href = "../index.html";
                     return;
                 }
@@ -24,18 +26,19 @@
                 try {
                     const previewProposal = urlParams.get("preview") === "proposal";
                     const [ativas, arquivo, propostas] = await Promise.all([
-                        fetch("/data/noticias.json?v=" + Date.now()).then((r) => r.json()),
-                        fetch("/data/noticias_arquivo.json?v=" + Date.now()).then((r) =>
+                        fetch("/data/noticias.json").then((r) => r.json()),
+                        fetch("/data/noticias_arquivo.json").then((r) =>
                             r.ok ? r.json() : []
                         ),
                         previewProposal
-                            ? fetch("/data/noticias_propostas.json?v=" + Date.now()).then((r) => r.ok ? r.json() : [])
+                            ? fetch("/data/noticias_propostas.json").then((r) => r.ok ? r.json() : [])
                             : Promise.resolve([]),
                     ]);
                     const noticias = [...ativas, ...arquivo, ...propostas];
                     const n = noticias.find((item) => item.id === noticiaId);
 
                     if (n) {
+                        window.BioCulturaCanonica?.definir(noticiaId);
                         const content = window.BioCultureI18n?.content(n) || n[lang] || n["pt"] || n;
 
                         document.getElementById("loading").style.display = "none";
@@ -43,11 +46,15 @@
 
                         document.getElementById("titulo").innerText = content.titulo || "Sem título";
                         document.getElementById("corpo").innerHTML = content.corpo || "Conteúdo não disponível.";
-                        document.title = (content.titulo || "bioCultura") + " - bioCultura";
+                        document.title = (content.titulo || "bioCulture") + " — bioCulture";
 
-                        const bioTxt = content.resumo_biocultura || "";
+                        // «O que importa para o território»: excerto próprio (`importa`) ou, nas notícias à mão, o resumo.
+                        // Se não houver texto próprio e o corpo só repetir o resumo, a caixa esconde-se para não duplicar.
+                        const plain = (html) => String(html || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+                        const bioTxt = content.importa || content.resumo_biocultura || "";
+                        const repeatsBody = !content.importa && plain(content.corpo).startsWith(plain(bioTxt).slice(0, 120));
                         const bioBox = document.getElementById("biocultura-box");
-                        if (bioTxt) {
+                        if (bioTxt && !repeatsBody) {
                             bioBox.style.display = "block";
                             document.getElementById("biocultura-txt").innerHTML = bioTxt;
                         } else {
@@ -77,6 +84,12 @@
                                 isBioCultureImage
                             );
                             caption.innerText = isBioCultureImage ? editorialCredit : sourceCredit;
+                            // Foto de contexto (a fonte não tem imagem): legenda do que mostra + ligação à página da foto.
+                            if (n.imagem_contexto && n.imagem_pagina && /^https:\/\/commons\.wikimedia\.org\//.test(n.imagem_pagina)) {
+                                const esc = (v) => String(v).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+                                const what = lang === "en" ? n.imagem_contexto.en : n.imagem_contexto.pt;
+                                caption.innerHTML = `${esc(what)} <a href="${esc(n.imagem_pagina)}" target="_blank" rel="noopener" style="color:inherit">${esc(sourceCredit)}</a>`;
+                            }
                             image.addEventListener("error", () => {
                                 if (image.dataset.fallbackApplied === "true") {
                                     figure.hidden = true;
@@ -97,6 +110,29 @@
                         }
 
                         document.getElementById("data").innerText = window.BioCultureI18n?.date(n.data) || n.data || "";
+                        // Selo do tipo de conteúdo (notícia, comunicado, artigo científico, opinião…).
+                        const tipoEl = document.getElementById("tipo");
+                        const tipoLabel = window.BioCultureNews?.typeLabel(n) || "";
+                        tipoEl.textContent = tipoLabel;
+                        tipoEl.hidden = !tipoLabel;
+
+                        // «Continuar no bioCulture»: leitura do tema e passos práticos ligados a esta notícia.
+                        const english = lang === "en";
+                        const links = window.BioCultureNews?.related(n) || [];
+                        const nextBox = document.getElementById("news-next");
+                        if (links.length) {
+                            document.getElementById("news-next-title").textContent = english ? "Continue on bioCulture" : "Continuar no bioCulture";
+                            const kinds = { read: english ? "Read the territory" : "Ler o território", act: english ? "Take action" : "Passar à ação" };
+                            const safe = (text) => String(text).replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch]);
+                            document.getElementById("news-next-list").innerHTML = links.map((link) =>
+                                `<li><a href="${safe(link.href)}" data-kind="${link.kind}"><small>${kinds[link.kind]}</small><span>${safe(link.title)}</span></a></li>`
+                            ).join("");
+                            nextBox.hidden = false;
+                        } else {
+                            nextBox.hidden = true;
+                        }
+
+
                         document.getElementById("source-name-top").innerText = n.fonte || "";
                         
                         const catEl = document.getElementById("cat");
@@ -132,11 +168,15 @@
                         }
 
                     } else {
+                        // Notícia que já não existe (retirada ou arquivada): vai para a listagem, em vez de ficar uma página «não encontrada» com código 200 (soft 404 no Google).
+                        semIndexar();
+                        window.location.replace("/observatorio/noticias"+(window.BioCultureLanguageStore?.read() === "en" ? "?lang=en" : ""));
                         document.getElementById("loading").classList.add("error-state");
                         document.getElementById("loading").innerHTML = 
-                            window.BioCultureI18n?.t('news_not_found') || "<strong>Notícia não encontrada.</strong>";
+                            lang === "en" ? "<strong>News item not found.</strong>" : "<strong>Notícia não encontrada.</strong>";
                     }
                 } catch (e) {
+                    semIndexar();
                     console.error("Erro técnico:", e);
                     document.getElementById("loading").classList.add("error-state");
                     document.getElementById("loading").innerHTML = "<strong>Erro ao carregar.</strong>";

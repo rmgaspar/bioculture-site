@@ -20,7 +20,7 @@ for (const [page,alias,control] of pairs) {
  assert(html.includes('Açores')&&html.includes('Madeira'));
  const script=html.match(/data-global-script="([^"]+)"/)[1].split('?')[0];
  assert(existsSync('.'+script)); new vm.Script(read('.'+script));
- assert(html.includes('src="'+script+'?v=1"'), 'Global controller must load directly without opening a panel');
+ assert(new RegExp('src="'+script.replace(/[.*+?^${}()|[\]\\\/]/g,'\\$&')+'\\?v=\\d+"').test(html), 'Global controller must load directly without opening a panel');
  assert(!read('.'+script).includes("fetch('/sidebar-content.html')"), 'Global panels must not replace the shared sidebar');
  const fallback=read(alias).match(/id="unified-destination" href="([^"]+)"/) || read(alias).match(/href="([^"]+)" id="unified-destination"/);
  assert(fallback,`Alias ${alias} needs a non-JS fallback`);
@@ -44,6 +44,7 @@ for (const [page] of pairs) {
 const hub = read('recursos/vida-e-recursos.html');
 assert(!hub.includes('life-puzzle'), 'No SVG puzzle dependency');
 assert(!hub.includes('life-element') && !hub.includes('life-web') && !hub.includes('life-connections'), 'Mosaic pattern must not return — the four systems use the shared hub-card grid instead');
-assert.equal((hub.match(/class="hub-card"/g)||[]).length,4, 'Four systems must use the shared hub-card grid, matching other hubs');
-assert(read('assets/js/pages/hub-pages.js').includes('class="news-media"'));
+assert.equal((hub.match(/class="hub-tools-grid/g)||[]).length,4, 'Four systems use the shared photo-and-links blocks, like the other hubs');
+assert(read('assets/js/pages/hub-pages.js').includes('cardHtml'), 'Hub news use the shared news card');
+assert(read('assets/js/biocultura-i18n-runtime.js').includes('class="news-media"'), 'The shared news card keeps the hub markup (image, date, title, excerpt, source)');
 console.log('Eight unified topics: unique IDs, retained controls, aliases with language/hash and base path, no redirect loops, four systems on the shared hub-card grid and continuous visible reading.');

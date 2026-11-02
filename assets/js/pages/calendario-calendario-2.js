@@ -4,17 +4,18 @@
                 floraDB = [],
                 faunaDB = [],
                 dicasDB = [],
+                campoDB = [],
+                dicasFotos = {},
                 horticolasDB = {},
                 infoGlobal = null,
                 weatherNow = null;
-            let viewedDate = new Date(), showMorePests = false, showMoreFlora = false, catalogLimit = 12, pestCatalogLimit = 12;
+            let viewedDate = new Date(), catalogLimit = 12, pestCatalogLimit = 12;
             const PEST_GROUPS = [
                 { id: "all", pt: "Todos", en: "All" },
                 { id: "horticolas", pt: "Hortícolas", en: "Vegetable garden" },
                 { id: "pomares", pt: "Pomares e fruta", en: "Orchards and fruit" },
                 { id: "vinha", pt: "Vinha", en: "Vineyard" },
                 { id: "ornamentais", pt: "Plantas ornamentais e floresta", en: "Ornamentals and forestry" },
-                { id: "vertebrados", pt: "Vertebrados e outros", en: "Vertebrates and other" },
                 { id: "flora-invasora", pt: "Flora invasora", en: "Invasive flora" },
                 { id: "fauna-invasora", pt: "Fauna invasora", en: "Invasive fauna" },
             ];
@@ -24,34 +25,62 @@
                 { color: "#a66f50", bg: "#f7ede4" },
                 { color: "#3f7373", bg: "#e9f3f2" },
             ];
+            /* Um desenho por tarefa (24×24, traço): lupa com rebento, rotação, abrigo, pá, rebentos em etapas, campânula, abelha,
+               regador, gota sobre o solo, palha sobre a terra, cesto, sombrinha, pacote de sementes, erva de cobertura, compostor, vala com chuva. */
             const WEEK_ICONS = {
-                eye: '<path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="3"/>',
+                observe: '<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/><path d="M10.5 13.8V9.6"/><path d="M10.5 11.2c-1.7 0-2.8-1.1-2.8-2.5 1.7 0 2.8 1.1 2.8 2.5Z"/>',
                 cycle: '<path d="M5 12a7 7 0 0 1 12-4.9"/><path d="M19 12a7 7 0 0 1-12 4.9"/><path d="M17 3.5v3.6h-3.6"/><path d="M7 20.5v-3.6h3.6"/>',
-                nest: '<path d="M4 11 12 4l8 7"/><path d="M6.5 10v8.5a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1V10"/>',
-                tool: '<path d="M15.5 6.5a3.8 3.8 0 0 0-5 5L5 17l2 2 5.5-5.5a3.8 3.8 0 0 0 5-5l-2.5 2.5-2-2Z"/>',
-                seed: '<path d="M12 21v-7"/><path d="M12 14c0-4 3-6.5 6.5-6.5C18.5 11.5 16 14 12 14Z"/><path d="M12 14c0-3-2.3-5-5.5-5C6.5 12 8.8 14 12 14Z"/>',
-                shield: '<path d="M12 3 5 5.5V11c0 4.6 3 8.3 7 9.7 4-1.4 7-5.1 7-9.7V5.5L12 3Z"/>',
-                drop: '<path d="M12 3C12 3 5.5 10.8 5.5 15A6.5 6.5 0 0 0 12 21.5 6.5 6.5 0 0 0 18.5 15C18.5 10.8 12 3 12 3Z"/>',
-                mulch: '<path d="M4 8c2.5-1.3 5 1.3 8 0s5.5-1.3 8 0"/><path d="M4 13c2.5-1.3 5 1.3 8 0s5.5-1.3 8 0"/><path d="M4 18c2.5-1.3 5 1.3 8 0s5.5-1.3 8 0"/>',
-                basket: '<path d="M5.5 10h13l-1.4 8.6a2 2 0 0 1-2 1.7H8.9a2 2 0 0 1-2-1.7L5.5 10Z"/><path d="M8.5 10V7.5a3.5 3.5 0 0 1 7 0V10"/>',
-                shade: '<path d="M4 12a8 8 0 0 1 16 0Z"/><path d="M12 12v7.5a1.8 1.8 0 0 1-3.4.8"/><path d="M12 4.5V3"/>',
-                compost: '<path d="M4.5 19c0-4.7 3.4-8 7.5-8s7.5 3.3 7.5 8"/><path d="M12 11V4"/><path d="M12 5.2c-1.8 0-3 1.4-2.8 3"/>',
+                habitat: '<path d="M4 11 12 4l8 7"/><path d="M6 10v9.5h12V10"/><circle cx="12" cy="14.2" r="2"/><path d="M8 21.5h8"/>',
+                tools: '<path d="M12 3v8"/><path d="M9 3h6"/><path d="M8 11h8v4.5c0 3-2 5-4 5.5-2-.5-4-2.5-4-5.5Z"/>',
+                stages: '<path d="M3 20.5h18"/><path d="M6 20.5v-4"/><circle cx="6" cy="14.8" r="1.6"/><path d="M12 20.5v-8"/><path d="M12 12.5c-2.3 0-3.7-1.5-3.7-3.5 2.3 0 3.7 1.5 3.7 3.5Z"/><path d="M18 20.5V8"/><path d="M18 8c-2.5 0-4-1.7-4-3.7 2.5 0 4 1.7 4 3.7Z"/><path d="M18 11c2.3 0 3.4-1.4 3.4-3.2-2.3 0-3.4 1.4-3.4 3.2Z"/>',
+                cloche: '<path d="M3 20.5h18"/><path d="M5 20.5a7 7 0 0 1 14 0"/><path d="M12 20.5v-5"/><path d="M12 15.5c-2 0-3.2-1.3-3.2-3 2 0 3.2 1.3 3.2 3Z"/><path d="M12 14.5c1.8 0 2.8-1.1 2.8-2.6-1.8 0-2.8 1.1-2.8 2.6Z"/>',
+                bee: '<ellipse cx="12" cy="14" rx="4.5" ry="3.5"/><path d="M10 10.7v6.6"/><path d="M14 10.7v6.6"/><path d="M9.5 10.5c-2.5-1.5-2.5-5 .5-5.5 1 1.5.8 3.8-.5 5.5Z"/><path d="M14.5 10.5c2.5-1.5 2.5-5-.5-5.5-1 1.5-.8 3.8.5 5.5Z"/>',
+                can: '<path d="M4.5 10.5h9.5v7.5a1.5 1.5 0 0 1-1.5 1.5H6a1.5 1.5 0 0 1-1.5-1.5Z"/><path d="M6.5 10.5c0-3 1.7-4.3 3.7-4.3s3.3 1.3 3.3 4.3"/><path d="M14 14l5.5-4"/><path d="M18.3 7.6l3 3"/><path d="M20 14.5v1.5"/><path d="M22 13v1.2"/>',
+                moisture: '<path d="M12 3s-4 4.6-4 7.2a4 4 0 0 0 8 0C16 7.6 12 3 12 3Z"/><path d="M3 15h18v6H3Z"/><circle cx="7" cy="18" r=".6"/><circle cx="12" cy="18.8" r=".6"/><circle cx="17" cy="18" r=".6"/>',
+                mulch: '<path d="M3 15.5h18V21H3Z"/><path d="M4.5 13l3-2.2M9.5 13l3-2.2M14.5 13l3-2.2M19 12.2l1.5-1.2"/><path d="M5 8l3-2.2M10 8l3-2.2M15 8l3-2.2"/>',
+                basket: '<path d="M4 11h16l-1.6 8.2a2 2 0 0 1-2 1.6H7.6a2 2 0 0 1-2-1.6Z"/><circle cx="9.5" cy="7.8" r="2.2"/><circle cx="14.8" cy="7.2" r="2.2"/><path d="M5 15.2h14"/>',
+                shade: '<path d="M3.5 13a8.5 8.5 0 0 1 17 0Z"/><path d="M12 13v6.5a2 2 0 0 1-4 0"/><path d="M12 4.5V3"/>',
+                packet: '<path d="M6.5 3.5h11v17h-11Z"/><path d="M6.5 8h11"/><path d="M12 11.2c2.2 1.6 2.2 5 0 6.6-2.2-1.6-2.2-5 0-6.6Z"/>',
+                cover: '<path d="M3 20.5h18"/><path d="M6 20.5c0-4 .5-7 2.2-10"/><path d="M12 20.5V7"/><path d="M18 20.5c0-4-.5-7-2.2-10"/><path d="M9 20.5c-.2-2.5-1-4.5-2.2-6"/><path d="M15 20.5c.2-2.5 1-4.5 2.2-6"/>',
+                compost: '<path d="M5 8h14l-1.4 12.5H6.4Z"/><path d="M4 8h16"/><path d="M8.3 12h7.4"/><path d="M8 16h8"/><path d="M12 5.2c-1.8 0-3-1.2-3-2.7 1.8 0 3 1.2 3 2.7Z"/>',
+                infiltrate: '<path d="M7 3.5s-1.7 2-1.7 3.2a1.7 1.7 0 0 0 3.4 0C8.7 5.5 7 3.5 7 3.5Z"/><path d="M12 2s-1.7 2-1.7 3.2a1.7 1.7 0 0 0 3.4 0C13.7 4 12 2 12 2Z"/><path d="M17 3.5s-1.7 2-1.7 3.2a1.7 1.7 0 0 0 3.4 0C18.7 5.5 17 3.5 17 3.5Z"/><path d="M3 13h5l2.5 6h3L16 13h5"/>',
+                prune: '<circle cx="7" cy="18" r="2.5"/><circle cx="17" cy="18" r="2.5"/><path d="M8.7 16.2 17 4"/><path d="M15.3 16.2 7 4"/>',
+                graft: '<path d="M12 21v-8"/><path d="M12 13 6.5 5"/><path d="M12 13l5.5-8"/><path d="M9.5 13h5"/><path d="M5 5c1.8-.2 2.8.5 3.2 1.6"/>',
+                weed: '<path d="M4 21 13.5 8.5"/><path d="M13 5.5l5.5 4 2-2.5-5.5-4Z"/><path d="M3 21h8"/>',
             };
-            function weekIcon(title) {
+            /* A cor segue o assunto: azul para a água, verde para o que cresce, argila para solo e materiais, âmbar para a vida útil e a colheita, verde-azulado para observar e planear. */
+            const WEEK_TONES = {
+                blue: { color: "#2f6f9e", bg: "#eaf4fb" },
+                green: { color: "#4c7a34", bg: "#eef4e9" },
+                clay: { color: "#a66f50", bg: "#f7ede4" },
+                amber: { color: "#a8730d", bg: "#fbf2dc" },
+                teal: { color: "#3f7373", bg: "#e9f3f2" },
+            };
+            const WEEK_TONE_OF = { observe: "teal", cycle: "teal", habitat: "amber", tools: "clay", stages: "green", cloche: "green", bee: "amber", can: "blue", moisture: "blue", mulch: "clay", basket: "amber", shade: "amber", packet: "amber", cover: "green", compost: "clay", infiltrate: "blue", prune: "green", graft: "green", weed: "clay" };
+            /* Trabalhos de campo (data/trabalhos-campo.json): o desenho vem do tipo de trabalho, não do título. */
+            const CAMPO_ICON = { "podar-vinha": "prune", "podar-fruto-inverno": "prune", "podar-oliveira": "prune", "podar-ameixeira": "prune", "poda-verde-amendoeira": "prune", "desladroar-vinha": "prune", "colher-garfos": "graft", "enxertar-garfo": "graft", "enxertar-borbulha": "graft", "cortar-infestantes": "weed", "mobilizar-solo-outono": "tools", "apanhar-azeitona": "basket", "preparar-vindima": "basket", "vindimar": "basket" };
+            const campoHref = (task) => task.href || (task.tecnica ? `/services/tecnicas.html#tecnica-${encodeURIComponent(task.tecnica)}` : "");
+            function weekKey(title) {
                 const t = normalize(title);
-                if (/observar/.test(t)) return WEEK_ICONS.eye;
-                if (/rotac|planear/.test(t)) return WEEK_ICONS.cycle;
-                if (/habitat|abrigo|acolher|auxiliar/.test(t)) return WEEK_ICONS.nest;
-                if (/ferramenta/.test(t)) return WEEK_ICONS.tool;
-                if (/seme(ar|nte)/.test(t)) return WEEK_ICONS.seed;
-                if (/proteger/.test(t)) return WEEK_ICONS.shield;
-                if (/rega|humidade|agua|infiltra/.test(t)) return WEEK_ICONS.drop;
-                if (/cobrir|cobertura/.test(t)) return WEEK_ICONS.mulch;
-                if (/colher/.test(t)) return WEEK_ICONS.basket;
-                if (/sombra/.test(t)) return WEEK_ICONS.shade;
-                if (/compost/.test(t)) return WEEK_ICONS.compost;
-                return WEEK_ICONS.seed;
+                if (/observar/.test(t)) return "observe";
+                if (/rotac|planear/.test(t)) return "cycle";
+                if (/habitat/.test(t)) return "habitat";
+                if (/ferramenta/.test(t)) return "tools";
+                if (/por etapas/.test(t)) return "stages";
+                if (/proteger/.test(t)) return "cloche";
+                if (/acolher|auxiliar/.test(t)) return "bee";
+                if (/verificar rega/.test(t)) return "can";
+                if (/humidade/.test(t)) return "moisture";
+                if (/infiltra/.test(t)) return "infiltrate";
+                if (/guardar sement/.test(t)) return "packet";
+                if (/coberturas/.test(t)) return "cover";
+                if (/cobrir/.test(t)) return "mulch";
+                if (/colher/.test(t)) return "basket";
+                if (/sombra/.test(t)) return "shade";
+                if (/compost/.test(t)) return "compost";
+                return "stages";
             }
+            const weekIcon = (title) => WEEK_ICONS[weekKey(title)];
             const PRACTICE_COLORS = {
                 "Solo e cobertura": "#6b8f47",
                 "Compostagem e húmus": "#8a5a3c",
@@ -63,6 +92,9 @@
                 "Prevenção sem pesticidas": "#c9762f",
                 "Árvores e sistemas perenes": "#3f7373",
             };
+            // O texto vem traduzido em inglês, por isso a categoria é reconhecida nas duas línguas.
+            const PRACTICE_SLUG = { "Solo e cobertura": "solo", "Soil and cover": "solo","Compostagem e húmus": "compostagem", "Composting and humus": "compostagem","Planeamento e fertilidade": "planeamento", "Planning and fertility": "planeamento","Água e irrigação": "agua", "Water and irrigation": "agua","Sementeiras e propagação": "sementeiras", "Sowing and propagation": "sementeiras","Sementes e diversidade genética": "sementes", "Seeds and genetic diversity": "sementes","Biodiversidade funcional": "biodiversidade", "Functional biodiversity": "biodiversidade","Prevenção sem pesticidas": "prevencao", "Prevention without pesticides": "prevencao","Árvores e sistemas perenes": "perenes", "Trees and perennial systems": "perenes" };
+            const PRACTICE_COLOR_OF = { solo: "#6b8f47", compostagem: "#8a5a3c", planeamento: "#a66f50", agua: "#2f6f9e", sementeiras: "#4c7a34", sementes: "#7d3350", biodiversidade: "#1e8449", prevencao: "#c9762f", perenes: "#3f7373" };
             const months = [
                 "janeiro",
                 "fevereiro",
@@ -97,40 +129,24 @@
                 "July", "August", "September", "October", "November", "December",
             ];
 
-            // Fronteiras astronómicas aproximadas (equinócios/solstícios, hemisfério norte).
+            // A chave da estação vem do módulo partilhado (assets/js/biocultura-seasonal.js); aqui só ficam os textos.
             function seasonFor(month, day = 15) {
                 const en = isEn();
-                const md = month * 100 + day;
-                const SPRING = 2 * 100 + 20; // 20 março
-                const SUMMER = 5 * 100 + 21; // 21 junho
-                const AUTUMN = 8 * 100 + 23; // 23 setembro
-                const WINTER = 11 * 100 + 21; // 21 dezembro
-                if (md >= WINTER || md < SPRING) {
-                    return en
-                        ? { key: "inverno", name: "Winter", emoji: "❄️", cue: "typically cold",
-                            note: "Plan, protect the soil and make the most of the right windows for woody plantings." }
-                        : { key: "inverno", name: "Inverno", emoji: "❄️", cue: "tipicamente frio",
-                            note: "Planear, proteger o solo e aproveitar os períodos adequados para plantações lenhosas." };
-                }
-                if (md < SUMMER) {
-                    return en
-                        ? { key: "primavera", name: "Spring", emoji: "🌱", cue: "temperatures rising",
-                            note: "Fast growth season: sow in stages, watch young plants and support pollinators." }
-                        : { key: "primavera", name: "Primavera", emoji: "🌱", cue: "temperaturas a subir",
-                            note: "Época de crescimento rápido: semear por etapas, vigiar jovens plantas e favorecer polinizadores." };
-                }
-                if (md < AUTUMN) {
-                    return en
-                        ? { key: "verao", name: "Summer", emoji: "☀️", cue: "typically hot and dry",
-                            note: "Manage water, shade and cover; harvest often and watch for signs of stress." }
-                        : { key: "verao", name: "Verão", emoji: "☀️", cue: "tipicamente quente e seco",
-                            note: "Gerir água, sombra e cobertura; colher com frequência e observar sinais de stress." };
-                }
-                return en
-                    ? { key: "outono", name: "Autumn", emoji: "🍂", cue: "temperatures falling",
-                        note: "Harvest, save seeds, start cover crops and prepare the soil without leaving it bare." }
-                    : { key: "outono", name: "Outono", emoji: "🍂", cue: "temperaturas a descer",
-                        note: "Colher, guardar sementes, iniciar coberturas e preparar o solo sem o deixar exposto." };
+                const key = window.BioCulturaSeasonal.seasonKey(month, day);
+                const texts = en
+                    ? {
+                        inverno: { name: "Winter", emoji: "❄️", cue: "typically cold", note: "Plan, protect the soil and make the most of the right windows for woody plantings." },
+                        primavera: { name: "Spring", emoji: "🌱", cue: "temperatures rising", note: "Fast growth season: sow in stages, watch young plants and support pollinators." },
+                        verao: { name: "Summer", emoji: "☀️", cue: "typically hot and dry", note: "Manage water, shade and cover; harvest often and watch for signs of stress." },
+                        outono: { name: "Autumn", emoji: "🍂", cue: "temperatures falling", note: "Harvest, save seeds, start cover crops and prepare the soil without leaving it bare." },
+                    }
+                    : {
+                        inverno: { name: "Inverno", emoji: "❄️", cue: "tipicamente frio", note: "Planear, proteger o solo e aproveitar os períodos adequados para plantações lenhosas." },
+                        primavera: { name: "Primavera", emoji: "🌱", cue: "temperaturas a subir", note: "Época de crescimento rápido: semear por etapas, vigiar jovens plantas e favorecer polinizadores." },
+                        verao: { name: "Verão", emoji: "☀️", cue: "tipicamente quente e seco", note: "Gerir água, sombra e cobertura; colher com frequência e observar sinais de stress." },
+                        outono: { name: "Outono", emoji: "🍂", cue: "temperaturas a descer", note: "Colher, guardar sementes, iniciar coberturas e preparar o solo sem o deixar exposto." },
+                    };
+                return { key, ...texts[key] };
             }
 
             function moonInfo(date) {
@@ -219,10 +235,8 @@
                         <span class="condition-icon" aria-hidden="true">🌡️</span>
                         <span><strong>${en ? "Weather now" : "Tempo agora"}</strong><small>${en ? "loading…" : "a carregar…"}</small></span>
                     </div>`;
-                document.getElementById("calendar-conditions").innerHTML = `<div class="condition-chip">
-                        <span class="condition-icon" aria-hidden="true">${season.emoji}</span>
-                        <span><strong>${season.name}</strong><small>${en ? monthsEn[month] : months[month]}</small></span>
-                    </div>${weatherChip}<div class="condition-chip">
+                document.getElementById("calendar-season").textContent = `${season.emoji} ${season.name}`;
+                document.getElementById("calendar-conditions").innerHTML = `${weatherChip}<div class="condition-chip">
                         <span class="condition-icon" aria-hidden="true">${selectedMoon.emoji}</span>
                         <span><strong>${selectedMoon.name}</strong><small>${en ? "moon phase today" : "fase da lua hoje"}</small></span>
                     </div>`;
@@ -237,7 +251,14 @@
                     last = new Date(year, month + 1, 0),
                     start = (first.getDay() + 6) % 7;
                 const cells = [];
+                // Vista compacta: a semana atual, a anterior e a seguinte (noutros meses, as semanas do meio); «Ver o mês completo» mostra todas.
+                const semanas = Math.ceil((start + last.getDate()) / 7);
+                const hojeNoMes = today.getFullYear() === year && today.getMonth() === month;
+                const centro = hojeNoMes ? Math.floor((start + today.getDate() - 1) / 7) : Math.floor((start + 14) / 7);
+                const ini = Math.max(0, Math.min(centro - 1, semanas - 3));
                 for (let i = 0; i < 42; i++) {
+                    const semana = Math.floor(i / 7),
+                        fora = semana >= semanas ? "sobra" : semana < ini || semana > ini + 2 ? "fora" : "";
                     const day = i - start + 1,
                         date = new Date(year, month, day),
                         outside = date.getMonth() !== month,
@@ -249,10 +270,23 @@
                     cells.push(
                         `<div class="calendar-day ${outside ? "outside" : ""} ${
                             isToday ? "today" : ""
-                        }">${date.getDate()}${marker}</div>`,
+                        } ${fora}">${date.getDate()}${marker}</div>`,
                     );
                 }
-                document.getElementById("calendar-days").innerHTML = cells.join("");
+                const dias = document.getElementById("calendar-days");
+                dias.innerHTML = cells.join("");
+                let alternar = document.getElementById("toggle-month");
+                if (!alternar) {
+                    alternar = document.createElement("button");
+                    alternar.type = "button";
+                    alternar.id = "toggle-month";
+                    alternar.className = "calendar-toggle";
+                    alternar.onclick = () => { dias.classList.toggle("mes"); renderCalendar(); };
+                    dias.after(alternar);
+                }
+                const completo = dias.classList.contains("mes");
+                alternar.textContent = isEn() ? (completo ? "Show fewer weeks" : "Show the whole month") : (completo ? "Ver menos semanas" : "Ver o mês completo");
+                alternar.setAttribute("aria-expanded", String(completo));
                 renderConditions();
                 const sowing = cropsFor("sementeira", month).slice(0, 3);
                 document.getElementById("calendar-suggestion").innerHTML = sowing.length
@@ -270,47 +304,9 @@
                 renderPests();
             }
 
-            function periodMatches(text, month) {
-                const source = normalize(text).replace(/[–—]/g, "-");
-                if (!source) return false;
-                if (/todo o ano|durante todo o ano|sempre/.test(source)) return true;
-                const normalizedMonths = months.map(normalize);
-                return source.split(/\s+e\s+|;/).some((segment) => {
-                    const found = normalizedMonths.map((name, index) =>
-                        segment.includes(name) ? index : -1
-                    ).filter((index) => index >= 0);
-                    if (!found.length) return false;
-                    if (found.includes(month)) return true;
-                    if (found.length >= 2) {
-                        const start = found[0], end = found.at(-1);
-                        return start <= end
-                            ? month >= start && month <= end
-                            : month >= start || month <= end;
-                    }
-                    return false;
-                });
-            }
-
-            function phMatches(item) {
-                const local = parseFloat(infoGlobal?.biomas?.ph_solo);
-                if (!Number.isFinite(local)) return true;
-                const nums =
-                    String(item.ph_solo || "").replace(",", ".").match(/\d+(?:\.\d+)?/g)?.map(Number) ||
-                    [];
-                return nums.length < 2 || local >= nums[0] - .3 && local <= nums[1] + .3;
-            }
-
-            function cropsFor(field, month) {
-                const matching = Object.entries(horticolasDB).filter(([, item]) =>
-                    periodMatches(item[field], month)
-                ).sort((a, b) => Number(phMatches(b[1])) - Number(phMatches(a[1])));
-                const unique = new Map();
-                matching.forEach((entry) => {
-                    const key = normalize(entry[1].nome || entry[0]);
-                    if (key && !unique.has(key)) unique.set(key, entry);
-                });
-                return [...unique.values()].slice(0, 6);
-            }
+            const periodMatches = (text, month) => window.BioCulturaSeasonal.periodMatches(text, month);
+            const localPh = () => parseFloat(infoGlobal?.biomas?.ph_solo);
+            const cropsFor = (field, month) => window.BioCulturaSeasonal.cropsFor(horticolasDB, field, month, localPh());
             function cropMarkup(entries, field) {
                 return entries.length
                     ? entries.map(([id, item]) =>
@@ -324,7 +320,7 @@
                             escapeHtml(item[field] || item.categoria || "")
                         }</span></span></a>`
                     ).join("")
-                    : '<div class="empty">Não existem entradas suficientemente claras para este mês. Consulte as condições locais antes de decidir.</div>';
+                    : '<div class="empty">Não existem entradas suficientemente claras para este mês. Consulta as condições locais antes de decidir.</div>';
             }
 
             function renderActions() {
@@ -344,6 +340,7 @@
                         cropMarkup(cropsFor(field, month), field)
                     }</div></article>`
                 ).join("");
+                renderCampoMes(month);
                 const sowing = new Map(cropsFor("sementeira", month).map(([id, item]) => [normalize(item.nome || id), item.nome || id]));
                 const harvesting = new Set(cropsFor("colheita", month).map(([id, item]) => normalize(item.nome || id)));
                 const overlap = [...sowing].filter(([key]) => harvesting.has(key)).map(([, name]) => name);
@@ -356,12 +353,30 @@
                         } ${overlap.length > 4 ? "and others" : ""} can be sown and harvested this month. Generally, one already-developed generation is harvested while another is started, or staggered varieties and dates are used. Always confirm the variety, soil temperature and microclimate.`
                         : `<strong>Porque aparece a mesma cultura em fases diferentes?</strong> ${
                             escapeHtml(overlap.slice(0, 4).join(", "))
-                        } ${overlap.length > 4 ? "e outras" : ""} podem ser semeadas e colhidas neste mês. Em geral, colhe-se uma geração já desenvolvida enquanto se inicia outra, ou usam-se variedades e datas escalonadas. Confirme sempre a variedade, a temperatura do solo e o microclima.`;
+                        } ${overlap.length > 4 ? "e outras" : ""} podem ser semeadas e colhidas neste mês. Em geral, colhe-se uma geração já desenvolvida enquanto se inicia outra, ou usam-se variedades e datas escalonadas. Confirma sempre a variedade, a temperatura do solo e o microclima.`;
                     note.classList.add("visible");
                 } else {
                     note.textContent = "";
                     note.classList.remove("visible");
                 }
+            }
+
+            /* Poda, enxertia, azeitona, vindima e terra: o que cabe neste mês (data/trabalhos-campo.json). */
+            function renderCampoMes(month) {
+                const tasks = window.BioCulturaSeasonal.fieldTasks(campoDB, month),
+                    box = document.getElementById("campo-mes");
+                if (!box) return;
+                box.hidden = !tasks.length;
+                document.getElementById("campo-mes-titulo").textContent = isEn()
+                    ? `Trees, vineyard and soil in ${monthsEn[month]}`
+                    : `Árvores, vinha e terra em ${months[month]}`;
+                document.getElementById("campo-mes-lista").innerHTML = tasks.map((task) => {
+                    const key = CAMPO_ICON[task.id] || "tools", tone = WEEK_TONES[WEEK_TONE_OF[key]], href = campoHref(task);
+                    const title = escapeHtml(isEn() ? task.titulo_en : task.titulo);
+                    return `<article class="campo-item" style="--tom:${tone.color};--tom-suave:${tone.bg}"><span class="campo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${WEEK_ICONS[key]}</svg></span><div><h4>${
+                        href ? `<a href="${escapeHtml(href)}">${title}</a>` : title
+                    }</h4><p>${escapeHtml(isEn() ? task.curto_en : task.curto)}</p></div></article>`;
+                }).join("");
             }
 
             function catalogKind(item) {
@@ -380,7 +395,12 @@
                     const kind = catalogKind(item);
                     const filterMatch = filter === "all" || filter === kind || filter === "perenes" && normalize(item.ciclo).includes("perene");
                     return filterMatch && (!query || haystack.includes(query));
-                }).sort((a, b) => String(a[1].nome || a[0]).localeCompare(String(b[1].nome || b[0]), "pt"));
+                }).sort((a, b) => {
+                    const label = (entry) => String(isEn() && window.BioCultureDisplayTranslate
+                        ? window.BioCultureDisplayTranslate(entry[1].nome || entry[0])
+                        : entry[1].nome || entry[0]);
+                    return label(a).localeCompare(label(b), isEn() ? "en" : "pt");
+                });
                 document.getElementById("catalog-summary").textContent = isEn()
                     ? `${format(entries.length)} crops found · ${format(Object.keys(horticolasDB).length)} complete records in the catalogue`
                     : `${format(entries.length)} culturas encontradas · ${format(Object.keys(horticolasDB).length)} fichas completas no catálogo`;
@@ -402,115 +422,95 @@
                 const month = viewedDate.getMonth(), season = seasonFor(month).key;
                 const seasonal = {
                     inverno: [
-                        ["Observar o solo", "Evite trabalhar solo saturado e proteja zonas nuas."],
+                        ["Observar o solo", "Evita trabalhar solo saturado e protege zonas nuas."],
                         [
                             "Planear rotações",
-                            "Reveja famílias, necessidades e registos da campanha anterior.",
+                            "Revê famílias, necessidades e registos da campanha anterior.",
                         ],
                         [
                             "Criar habitat",
-                            "Instale sebes ou abrigos sem perturbar refúgios existentes.",
+                            "Instala sebes ou abrigos sem perturbar refúgios existentes.",
                         ],
                         [
                             "Rever ferramentas",
-                            "Limpe e repare ferramentas antes da época de crescimento.",
+                            "Limpa e repara ferramentas antes da época de crescimento.",
                         ],
                     ],
                     primavera: [
-                        ["Semear por etapas", "Evite concentrar toda a produção numa única data."],
+                        ["Semear por etapas", "Evita concentrar toda a produção numa única data."],
                         [
                             "Proteger plantas jovens",
-                            "Use barreiras físicas apenas quando existe risco identificado.",
+                            "Usa barreiras físicas apenas quando existe risco identificado.",
                         ],
-                        ["Acolher auxiliares", "Mantenha flores e água rasa com saída segura."],
-                        ["Verificar rega", "Teste linhas e emissores antes do calor."],
+                        ["Acolher auxiliares", "Mantém flores e água rasa com saída segura."],
+                        ["Verificar rega", "Testa linhas e emissores antes do calor."],
                     ],
                     verao: [
                         [
                             "Verificar humidade",
-                            "Observe a zona radicular antes de regar profundamente.",
+                            "Observa a zona radicular antes de regar profundamente.",
                         ],
-                        ["Cobrir o solo", "Reponha cobertura sem a encostar aos caules."],
-                        ["Colher regularmente", "Retire frutos maduros e observe sinais de doença."],
-                        ["Criar sombra seletiva", "Proteja culturas sensíveis sem impedir ventilação."],
+                        ["Cobrir o solo", "Repõe cobertura sem a encostar aos caules."],
+                        ["Colher regularmente", "Retira frutos maduros e observa sinais de doença."],
+                        ["Criar sombra seletiva", "Protege culturas sensíveis sem impedir ventilação."],
                     ],
                     outono: [
                         [
                             "Guardar sementes",
-                            "Escolha plantas saudáveis e deixe maturar completamente.",
+                            "Escolhe plantas saudáveis e deixa maturar completamente.",
                         ],
-                        ["Semear coberturas", "Mantenha raízes vivas entre culturas."],
+                        ["Semear coberturas", "Mantém raízes vivas entre culturas."],
                         [
                             "Compostar materiais",
-                            "Equilibre materiais secos e verdes sem enterrar resíduos.",
+                            "Equilibra materiais secos e verdes sem enterrar resíduos.",
                         ],
-                        ["Preparar infiltração", "Abrande escorrência antes da época mais chuvosa."],
+                        ["Preparar infiltração", "Abranda a escorrência antes da época mais chuvosa."],
                     ],
                 };
-                document.getElementById("week-plan").innerHTML = seasonal[season].map((
-                    [title, text],
+                /* Podar, enxertar, vindimar… quando for a altura, ocupam os dois últimos cartões (enxertar primeiro). */
+                const campo = window.BioCulturaSeasonal.fieldTasks(campoDB, month)
+                    .sort((a, b) => (b.tecnica === "enxertia") - (a.tecnica === "enxertia")).slice(0, 2);
+                const cards = seasonal[season].slice(0, 4 - campo.length).map(([title, text]) => ({ title, text, key: weekKey(title) }))
+                    .concat(campo.map((task) => ({
+                        title: escapeHtml(isEn() ? task.titulo_en : task.titulo),
+                        text: escapeHtml(isEn() ? task.curto_en : task.curto),
+                        key: CAMPO_ICON[task.id] || "tools",
+                        href: campoHref(task),
+                    })));
+                document.getElementById("week-plan").classList.add("com-foto");
+                document.getElementById("week-plan").innerHTML = `<div class="week-foto" data-foto-slot="semana-${season}"></div>` + cards.map((
+                    { title: rawTitle, text, key, href },
                     index,
                 ) => {
-                    const palette = WEEK_PALETTE[index % WEEK_PALETTE.length];
-                    return `<article class="week-task"><span class="week-icon" style="color:${
+                    const title = href ? `<a href="${escapeHtml(href)}">${rawTitle}</a>` : rawTitle;
+                    const palette = WEEK_TONES[WEEK_TONE_OF[key]] || WEEK_PALETTE[index % WEEK_PALETTE.length];
+                    return `<article class="week-task" style="--tom:${palette.color};--tom-suave:${palette.bg}"><span class="week-icon" style="color:${
                         palette.color
                     };background:${
                         palette.bg
-                    }"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${
-                        weekIcon(title)
+                    }"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${
+                        WEEK_ICONS[key]
                     }</svg></span><span class="task-number">0${
                         index + 1
                     }</span><h3>${title}</h3><p>${text}</p></article>`;
                 }).join("");
             }
 
-            function practiceIdsFor(month) {
-                if ([11, 0, 1].includes(month)) {
-                    return [
-                        "rotacao-culturas",
-                        "teste-germinacao",
-                        "sebe-viva",
-                        "abrigo-insetos",
-                        "higiene-ferramentas",
-                        "composto-frio",
-                    ];
-                }
-                if ([2, 3, 4].includes(month)) {
-                    return [
-                        "sementeira-direta",
-                        "sementeira-sucessiva",
-                        "consociacao",
-                        "corredor-floral",
-                        "monitorizacao-pragas",
-                        "rega-gota-a-gota",
-                    ];
-                }
-                if ([5, 6, 7].includes(month)) {
-                    return [
-                        "mulching-organico",
-                        "rega-profunda",
-                        "olla",
-                        "guardar-sementes",
-                        "faixa-nao-cortada",
-                        "registos-horta",
-                    ];
-                }
-                return [
-                    "adubo-verde",
-                    "solo-sempre-com-raiz",
-                    "folhas-molde",
-                    "captacao-chuva",
-                    "composto-superficie",
-                    "zonas-tampao",
-                ];
-            }
+            const practiceIdsFor = (month) => window.BioCulturaSeasonal.practiceIds(month, campoDB);
             function renderPractices() {
                 const selected = practiceIdsFor(viewedDate.getMonth()).map((id) =>
                     dicasDB.find((item) => item.id === id)
                 ).filter(Boolean);
                 document.getElementById("practice-grid").innerHTML = selected.map((item) => {
-                    const color = PRACTICE_COLORS[item.categoria] || "#4c7a34";
-                    const image = item.imagem?.src
+                    const slug = PRACTICE_SLUG[item.categoria];
+                    const color = PRACTICE_COLORS[item.categoria] || PRACTICE_COLOR_OF[slug] || "#4c7a34";
+                    const foto = Object.values(dicasFotos).find((f) => f.ficheiro === `dicas/${slug}.webp`);
+                    const L = isEn() ? "en" : "pt";
+                    const image = item.imagens?.length
+                        ? window.BioCulturaGaleria.html(item, L)
+                        : foto
+                        ? `<div class="practice-media" data-no-signature><img src="/images/${escapeHtml(foto.ficheiro)}" alt="${escapeHtml(foto.alt[L])}" width="1000" height="667" loading="lazy"><p class="practice-credito">${escapeHtml(foto.legenda[L])} <span>${isEn() ? "Photo" : "Foto"}: ${escapeHtml(foto.autor)} · ${foto.licenca_url ? `<a href="${escapeHtml(foto.licenca_url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(isEn() && foto.licenca_en ? foto.licenca_en : foto.licenca)}</a>` : escapeHtml(isEn() && foto.licenca_en ? foto.licenca_en : foto.licenca)} · <a href="${escapeHtml(foto.pagina)}" target="_blank" rel="noopener noreferrer">Wikimedia Commons</a></span></p></div>`
+                        : item.imagem?.src
                         ? `<div class="practice-media"><img src="/${escapeHtml(item.imagem.src)}" alt="${
                             escapeHtml(item.imagem.alt || item.titulo)
                         }" loading="lazy"></div>`
@@ -521,24 +521,31 @@
                         escapeHtml(item.titulo)
                     }</h3><p>${
                         escapeHtml(item.resumo)
-                    }</p><p class="practice-steps-label">Passos essenciais</p><ol class="practice-steps">${
+                    }</p>${
+                        item.fontes?.length && item.quando
+                            ? `<p class="practice-quando"><b>${isEn() ? "When" : "Quando"}</b> ${escapeHtml(item.quando)}</p>`
+                            : ""
+                    }<p class="practice-steps-label">Passos essenciais</p><ol class="practice-steps">${
                         (item.passos || []).map((step) => `<li>${escapeHtml(step)}</li>`).join("")
-                    }</ol></div></article>`;
+                    }</ol>${
+                        item.fontes?.length
+                            ? `<p class="practice-fontes">${isEn() ? "Sources" : "Fontes"}: ${
+                                item.fontes.map((s) => `<a href="${escapeHtml(s.url)}" target="_blank" rel="noopener">${escapeHtml(s.nome)}</a>`).join(" · ")
+                            }</p>`
+                            : ""
+                    }</div></article>`;
                 }).join("");
             }
 
-            function seasonalPests(month) {
-                const season = seasonFor(month).key,
-                    keywords = {
-                        inverno: ["inverno", "todo o ano", "protegidas"],
-                        primavera: ["primavera", "tempo ameno", "rebentos"],
-                        verao: ["verao", "tempo quente", "calor", "seco"],
-                        outono: ["outono", "humidade", "chuva"],
-                    }[season].map(normalize);
-                return pragasDB.filter((item) => {
-                    const text = normalize(`${item.sazonalidade_portugal || ""} ${item.quando || ""}`);
-                    return keywords.some((key) => text.includes(key)) || periodMatches(text, month);
-                });
+            const seasonalPests = (month) => window.BioCulturaSeasonal.seasonalPests(pragasDB, month);
+            // Etiqueta do cartão: o que é (praga, flora ou fauna invasora) e, a seguir, o subtipo.
+            function tagHTML(base, sub) {
+                return sub && sub !== base ? `<span>${escapeHtml(base)}</span> · <span>${escapeHtml(sub)}</span>` : escapeHtml(base);
+            }
+            // Nome científico por baixo do título, só quando acrescenta alguma coisa.
+            function sciLineHTML(item) {
+                const sci = (item.nome_cientifico || "").trim();
+                return sci && sci !== item.nome_comum ? `<p>${escapeHtml(sci)}</p>` : "";
             }
             function pestCardHTML(item) {
                 return `<a class="catalog-card" href="/ecossistemas/especie-detalhe.html?id=${
@@ -548,12 +555,12 @@
                 }" alt="${
                     escapeHtml(item.nome_comum)
                 }" loading="lazy" onerror="this.onerror=null;this.src='/images/pragas-placeholder.svg'"><div class="catalog-card-body"><small>${
-                    escapeHtml(item.tipo || "Praga ou doença")
+                    item.nivel === "grupo" ? tagHTML("Grupo", item.tipo) : /^(Praga|Doença|Doenças|Organismo|Pest|Disease|Soil-borne|Nursery|Palm|Forestry|Quarantine|Regulated)/.test(item.tipo || "") ? escapeHtml(item.tipo) : tagHTML("Praga", item.tipo)
                 }</small><h3>${
                     escapeHtml(item.nome_comum)
-                }</h3><p>${
-                    escapeHtml(item.nome_cientifico || "Consultar ficha completa")
-                }</p></div></a>`;
+                }</h3>${
+                    sciLineHTML(item)
+                }</div></a>`;
             }
 
             function floraCardHTML(item) {
@@ -564,12 +571,12 @@
                 }" alt="${
                     escapeHtml(item.nome_comum)
                 }" loading="lazy" onerror="this.onerror=null;this.src='/images/pragas-placeholder.svg'"><div class="catalog-card-body"><small>${
-                    escapeHtml(item.forma_de_vida || "Flora invasora")
+                    tagHTML("Flora invasora", item.forma_de_vida)
                 }</small><h3>${
                     escapeHtml(item.nome_comum)
-                }</h3><p>${
-                    escapeHtml(item.nome_cientifico || "Consultar ficha completa")
-                }</p></div></a>`;
+                }</h3>${
+                    sciLineHTML(item)
+                }</div></a>`;
             }
 
             function faunaCardHTML(item) {
@@ -580,12 +587,12 @@
                 }" alt="${
                     escapeHtml(item.nome_comum)
                 }" loading="lazy" onerror="this.onerror=null;this.src='/images/pragas-placeholder.svg'"><div class="catalog-card-body"><small>${
-                    escapeHtml(item.grupo_taxonomico || "Fauna invasora")
+                    tagHTML("Fauna invasora", item.grupo_taxonomico)
                 }</small><h3>${
                     escapeHtml(item.nome_comum)
-                }</h3><p>${
-                    escapeHtml(item.nome_cientifico || "Consultar ficha completa")
-                }</p></div></a>`;
+                }</h3>${
+                    sciLineHTML(item)
+                }</div></a>`;
             }
 
             function nameChipHTML(item) {
@@ -602,42 +609,84 @@
             function chooseLocationPrompt(kind) {
                 const message = isEn()
                     ? `Choose a location at the bottom of the side menu to see the ${kind} recorded for your region.`
-                    : `Escolha uma localização na base do menu lateral para ver ${kind === "pests" ? "as pragas sazonais" : "a flora invasora"} registada${kind === "pests" ? "s" : ""} para a sua região.`;
-                return `<div class="empty">${message} <button type="button" class="link-button" onclick="document.getElementById('guide-location-button')?.click()">${
+                    : `Escolhe uma localização na base do menu lateral para ver ${kind === "pests" ? "as pragas sazonais" : "a flora invasora"} registada${kind === "pests" ? "s" : ""} para a tua região.`;
+                return `<div class="empty">${message} <button type="button" class="link-button" onclick="window.bioFocarLocalizacao && window.bioFocarLocalizacao()">${
                     isEn() ? "Choose location →" : "Escolher localização →"
                 }</button></div>`;
             }
 
+            /* Vigilância local: os quatro casos mais ligados à época em cartões (foto, o que procurar, época, aliados) e as restantes
+               espécies em etiquetas. Os textos das fichas só existem em português: em inglês ficam as fotos, os nomes e a ligação à ficha. */
+            const VIG_TONES = [
+                [/sugador|tripes|acaro|cochonilha|afide/, "#4c7a34"],
+                [/lagarta|besouro|traca|roscas|escaravelho|gorgulho/, "#a8730d"],
+                [/mosca|mineir/, "#a66f50"],
+                [/doenca|fungo|oomiceta|bacteri|virus|mildio|oidio/, "#2f6f9e"],
+            ];
+            const vigTone = (tipo) => (VIG_TONES.find(([re]) => re.test(window.BioCulturaSeasonal.normalize(tipo))) || [, "#3f7373"])[1];
+            function vigCorte(texto, max = 150) {
+                const t = String(texto || "").trim();
+                if (t.length <= max) return t;
+                const corte = t.slice(0, max).replace(/[\s,;:.\-–]+\S*$/, "");
+                return `${corte}…`;
+            }
+            function vigRelevancia(item, month) {
+                const t = window.BioCulturaSeasonal.normalize(`${item.sazonalidade_portugal || ""} ${item.quando || ""}`);
+                const estacao = window.BioCulturaSeasonal.seasonKey(month);
+                if (/todo o ano|sempre/.test(t)) return 1;
+                return t.includes(estacao) || window.BioCulturaSeasonal.periodMatches(t, month) ? 3 : 2;
+            }
+            function vigFoto(item) {
+                const f = item.foto || {};
+                const L = isEn();
+                const partes = [f.autor ? `${L ? "Photo" : "Foto"}: ${escapeHtml(f.autor)}` : "", f.licenca ? (f.licenca_url ? `<a href="${escapeHtml(f.licenca_url)}" target="_blank" rel="noopener">${escapeHtml(f.licenca)}</a>` : escapeHtml(f.licenca)) : "", f.pagina ? `<a href="${escapeHtml(f.pagina)}" target="_blank" rel="noopener">${escapeHtml(f.origem || "origem")}</a>` : ""].filter(Boolean);
+                const grupo = item.nivel === "grupo" ? (L ? "Image of a representative of the group. " : "Imagem de um representante do grupo. ") : "";
+                return `<figure class="vig-foto" data-no-signature><img src="${escapeHtml(item.imagem)}" alt="${escapeHtml(item.nome_comum)}" loading="lazy" onerror="this.onerror=null;this.src='/images/pragas-placeholder.svg'"><figcaption>${grupo}${partes.join(" · ")}</figcaption></figure>`;
+            }
+            function vigLinha(rotulo, texto) {
+                return texto ? `<p class="vig-linha"><b>${rotulo}</b><span>${escapeHtml(texto)}</span></p>` : "";
+            }
+            function vigCartao(item, tipo) {
+                const L = isEn();
+                const href = `/ecossistemas/especie-detalhe.html?id=${encodeURIComponent(item.id)}`;
+                const sci = (item.nome_cientifico || "").trim();
+                const etiqueta = tipo === "flora" ? [L ? "Invasive flora" : "Flora invasora", item.forma_de_vida].filter(Boolean).join(" · ") : (item.tipo || (L ? "Pest" : "Praga"));
+                const tom = tipo === "flora" ? "#8a5a2b" : vigTone(item.tipo);
+                const linhas = L ? "" : tipo === "flora"
+                    ? vigLinha("Impacto", vigCorte(item.impacto)) + vigLinha("O que fazer", vigCorte(item.combate))
+                    : vigLinha("O que procurar", vigCorte(item.sintomas)) + vigLinha("Época", vigCorte(item.sazonalidade_portugal, 110)) + vigLinha("Quem ajuda", (Array.isArray(item.aliados_naturais) ? item.aliados_naturais : []).slice(0, 4).join(", "));
+                const alerta = !L && tipo === "flora" && item.alerta_plantacao ? `<span class="vig-alerta">${escapeHtml(item.alerta_plantacao)}</span>` : "";
+                return `<article class="vig-cartao" style="--tom:${tom}">${vigFoto(item)}<small>${escapeHtml(etiqueta)}${alerta}</small><h3>${escapeHtml(item.nome_comum)}</h3>${sci && sci !== item.nome_comum ? `<p class="vig-sci">${escapeHtml(sci)}</p>` : ""}${linhas}<a class="vig-link" href="${href}">${L ? "See the record →" : "Ver a ficha →"}</a></article>`;
+            }
+            function vigBloco(lista, tipo, rotuloResto) {
+                const month = viewedDate.getMonth();
+                const comFoto = lista.filter((x) => x.imagem && x.imagem !== "-");
+                const destaque = (tipo === "pragas" ? comFoto.map((x, i) => ({ x, i, r: vigRelevancia(x, month) })).sort((a, b) => b.r - a.r || a.i - b.i).map((e) => e.x) : comFoto).slice(0, 4);
+                const resto = lista.filter((x) => !destaque.includes(x));
+                return `<div class="vig-grid" data-n="${destaque.length}">${destaque.map((x) => vigCartao(x, tipo === "pragas" ? "praga" : "flora")).join("")}</div>${resto.length ? `<p class="vig-rotulo">${rotuloResto}</p><div class="name-list">${resto.map(nameChipHTML).join("")}</div>` : ""}`;
+            }
+
             function renderPests() {
-                const button = document.getElementById("toggle-pests");
                 if (!infoGlobal) {
                     document.getElementById("pest-grid").innerHTML = chooseLocationPrompt("pests");
-                    button.style.display = "none";
                     return;
                 }
                 const all = seasonalPests(viewedDate.getMonth());
                 if (!all.length) {
-                    // No pest matches this month's keywords — the full inventory already lives in the
-                    // searchable catalogue below, so point there instead of repeating all 57 entries here.
-                    document.getElementById("pest-grid").innerHTML = `<div class="empty">${
+                    // Sem pragas assinaladas para o mês: o inventário completo está no catálogo pesquisável, mais abaixo.
+                    document.getElementById("pest-grid").innerHTML = `<p class="vig-nota">${
                         isEn()
-                            ? "No pests specifically flagged for this month. See the full catalogue further below."
-                            : "Sem pragas assinaladas especificamente para este mês. Consulte o catálogo completo mais abaixo."
-                    } <a href="#pragas-catalogo">${isEn() ? "See full catalogue →" : "Ver catálogo completo →"}</a></div>`;
-                    button.style.display = "none";
+                            ? "No pests specifically flagged for this month."
+                            : "Sem pragas assinaladas especificamente para este mês."
+                    } <a href="#pragas-catalogo">${isEn() ? "See the full catalogue →" : "Ver o catálogo completo →"}</a></p>`;
                     return;
                 }
-                const visible = all.slice(0, showMorePests ? 24 : 10);
-                document.getElementById("pest-grid").innerHTML = visible.map(nameChipHTML).join("");
-                button.style.display = all.length > 10 ? "inline-block" : "none";
-                button.textContent = showMorePests ? "Recolher" : `Ver mais pragas sazonais (${all.length} no total)`;
+                document.getElementById("pest-grid").innerHTML = vigBloco(all, "pragas", isEn() ? "Also in season" : "Também nesta época");
             }
 
             function renderFlora() {
-                const button = document.getElementById("toggle-flora");
                 if (!infoGlobal) {
                     document.getElementById("flora-grid").innerHTML = chooseLocationPrompt("flora");
-                    button.style.display = "none";
                     return;
                 }
                 const names = infoGlobal?.biomas?.flora_invasora || [];
@@ -651,22 +700,15 @@
                 }).filter(Boolean);
                 const unique = [...new Map(local.map((item) => [item.id, item])).values()];
                 if (!unique.length) {
-                    // No confirmed regional match — the full inventory already lives in the
-                    // searchable catalogue below, so point there instead of repeating all 111 entries here.
-                    document.getElementById("flora-grid").innerHTML = `<div class="empty">${
+                    // Sem correspondência regional confirmada: nota discreta e ligação ao catálogo (111 fichas), em vez de uma caixa vazia.
+                    document.getElementById("flora-grid").innerHTML = `<p class="vig-nota">${
                         isEn()
-                            ? "The regional profile has no confirmed invasive species in the local inventory yet — this may reflect a lack of records rather than a real absence. See the full catalogue further below."
-                            : "O perfil regional ainda não tem espécies invasoras confirmadas no inventário local — pode ser falta de registo, não ausência real. Consulte o catálogo completo mais abaixo."
-                    } <a href="#pragas-catalogo">${isEn() ? "See full catalogue →" : "Ver catálogo completo →"}</a></div>`;
-                    button.style.display = "none";
+                            ? "The regional profile has no confirmed invasive species in the local inventory yet; this may reflect a lack of records rather than a real absence."
+                            : "O perfil regional ainda não tem espécies invasoras confirmadas no inventário local. Pode ser falta de registo, não ausência real."
+                    } <a href="#pragas-catalogo">${isEn() ? "See the full catalogue →" : "Ver o catálogo completo →"}</a></p>`;
                     return;
                 }
-                const visible = unique.slice(0, showMoreFlora ? 24 : 10);
-                document.getElementById("flora-grid").innerHTML = visible.map(nameChipHTML).join("");
-                button.style.display = unique.length > 10 ? "inline-block" : "none";
-                button.textContent = showMoreFlora
-                    ? (isEn() ? "Collapse" : "Recolher")
-                    : (isEn() ? `See more invasive species (${unique.length} in total)` : `Ver mais espécies invasoras (${unique.length} no total)`);
+                document.getElementById("flora-grid").innerHTML = vigBloco(unique, "flora", isEn() ? "Also recorded in the region" : "Também registadas na região");
             }
 
             function pestCatalogGroupMatch(item, group) {
@@ -729,16 +771,22 @@
                         "/data/fauna_invasora.json",
                         "/data/horticolas_master.json",
                         "/data/dicas.json",
+                        "/data/dicas-fotos.json",
+                        "/data/trabalhos-campo.json",
                     ];
                     const data = await Promise.all(
                         urls.map((url) =>
-                            fetch(url + "?v=" + Date.now()).then((response) => {
-                                if (!response.ok) throw new Error(url);
-                                return response.json();
-                            })
+                            url === "/data/bioregioes.json"
+                                ? window.BioCultureRegion.load({ fallback: false })
+                                : fetch(url).then((response) => {
+                                    if (!response.ok) throw new Error(url);
+                                    return response.json();
+                                })
                         ),
                     );
-                    [locationsDB, pragasDB, floraDB, faunaDB, horticolasDB, dicasDB] = data;
+                    let campoDoc;
+                    [locationsDB, pragasDB, floraDB, faunaDB, horticolasDB, dicasDB, dicasFotos, campoDoc] = data;
+                    campoDB = campoDoc?.trabalhos || [];
                     const saved = localStorage.getItem("biocultura_region");
                     infoGlobal = locationsDB.find((item) => String(item.id) === String(saved)) || null;
                     renderLocalProfile();
@@ -757,7 +805,7 @@
                     document.getElementById("catalog-filter").addEventListener("change", () => renderCatalog(true));
                     document.getElementById("pest-catalog-search").addEventListener("input", () => renderPestCatalog(true));
                     pestFilter.addEventListener("change", () => renderPestCatalog(true));
-                    document.getElementById("guide-location-button").onclick = () => {
+                    window.bioFocarLocalizacao = () => {
                         const input = document.getElementById("loc-search-input");
                         if (input) {
                             input.focus();
@@ -773,14 +821,10 @@
                         viewedDate = new Date(viewedDate.getFullYear(), viewedDate.getMonth() + 1, 1);
                         renderCalendar();
                     };
-                    document.getElementById("toggle-pests").onclick = () => {
-                        showMorePests = !showMorePests;
-                        renderPests();
-                    };
-                    document.getElementById("toggle-flora").onclick = () => {
-                        showMoreFlora = !showMoreFlora;
-                        renderFlora();
-                    };
+                    if (location.hash) {
+                        const target = document.getElementById(location.hash.slice(1));
+                        if (target) target.scrollIntoView();
+                    }
                 } catch (error) {
                     console.error("Erro ao carregar o calendário:", error);
                     document.getElementById("action-grid").innerHTML =

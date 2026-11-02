@@ -17,7 +17,22 @@
     found:'accessions found', more:'Show more accessions', source:'View record', loading:'Loading the world catalogue…',
     empty:'No accession matches this search.', crop:'Crop', origin:'Origin', unknown:'not stated'
   };
-  let data = null, filtered = [], limit = 30, loadPromise = null, timer = null;
+  let data = null, filtered = [], limit = 30, loadPromise = null, timer = null, paises = {};
+  // Origem: nome do país no idioma da página e a sua bandeira (a partir do código ISO 3166 de três letras do registo).
+  const extra = { TWN: ['TW'], REU: ['RE'], GUF: ['GF'], GLP: ['GP'], MTQ: ['MQ'], COK: ['CK'], SUN: [null, 'União Soviética', 'Soviet Union'], CSK: [null, 'Checoslováquia', 'Czechoslovakia'], YUG: [null, 'Jugoslávia', 'Yugoslavia'] };
+  let nomes = null;
+  try { nomes = new Intl.DisplayNames([lang], { type: 'region' }); } catch (_) { nomes = null; }
+  const bandeira = iso2 => iso2 && /^[A-Z]{2}$/.test(iso2) ? String.fromCodePoint(...[...iso2].map(ch => 0x1f1e6 + ch.charCodeAt(0) - 65)) : '';
+  function origem(code) {
+    if (!code) return { flag: '', name: text.unknown };
+    const e = extra[code], iso2 = e ? e[0] : (paises[code] && paises[code].iso2);
+    let name = e && e[1] ? (lang === 'pt' ? e[1] : e[2]) : '';
+    if (!name && iso2 && nomes) { try { name = nomes.of(iso2) || ''; } catch (_) { name = ''; } }
+    return { flag: bandeira(iso2), name: name || code };
+  }
+  // Cada cultura tem sempre a mesma cor.
+  const paleta = [['#2f6b3a', '#e6f0e3'], ['#a3472f', '#f6e5df'], ['#9a6a00', '#f8eed2'], ['#1f6f8b', '#e2eff4'], ['#7b2c4e', '#f4e7ee'], ['#55731f', '#edf1dc'], ['#2a7473', '#e1f0ef'], ['#7a4d2b', '#f1e7de']];
+  const corDe = nome => { let h = 0; for (const ch of String(nome || '')) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return paleta[h % paleta.length]; };
   const profiles = document.getElementById('atlas-profiles');
   const world = document.getElementById('atlas-world');
   const buttons = [...document.querySelectorAll('[data-atlas-mode]')];
@@ -36,7 +51,10 @@
       if (!response.ok) throw new Error('catalogue');
       return response.json();
     });
+    const paisesPromise = fetch('/data/paises-iso.json').then(r => (r.ok ? r.json() : null)).catch(() => null);
     data = await loadPromise;
+    const iso = await paisesPromise;
+    if (iso && iso.paises) paises = iso.paises;
     document.getElementById('world-proof').innerHTML = [
       [data.meta.accession_count,text.accessions],[data.meta.named_accession_count,text.named],
       [data.meta.taxon_count,text.taxa],[data.meta.origin_count,text.origins]
@@ -61,7 +79,8 @@
     grid.innerHTML = filtered.slice(0, limit).map(row => {
       const [name,taxon,crop,origin,accession,doi] = row;
       const href = doi ? `https://doi.org/${encodeURIComponent(doi)}` : `https://genebank.worldveg.org/#/accession/${encodeURIComponent(accession)}`;
-      return `<article class="world-card"><small>${esc(crop || text.unknown)} · ${esc(origin || text.unknown)}</small><h3>${esc(name)}</h3><p><i>${esc(taxon || text.unknown)}</i></p><p>${esc(accession)}</p><a href="${href}" target="_blank" rel="noopener">${text.source} ↗</a></article>`;
+      const [tom, suave] = corDe(crop), o = origem(origin);
+      return `<article class="world-card" style="--tom:${tom};--tom-suave:${suave}"><div class="world-topo"><span class="world-cultura">${esc(crop || text.unknown)}</span><span class="world-origem" title="${esc(origin || '')}">${o.flag ? `<i aria-hidden="true">${o.flag}</i>` : ''}${esc(o.name)}</span></div><h3>${esc(name)}</h3><p class="world-taxon"><i>${esc(taxon || text.unknown)}</i></p><p class="world-acesso">${esc(accession)}</p><a href="${href}" target="_blank" rel="noopener">${text.source} ↗</a></article>`;
     }).join('') || `<p>${text.empty}</p>`;
     document.getElementById('world-more').hidden = filtered.length <= limit;
   }

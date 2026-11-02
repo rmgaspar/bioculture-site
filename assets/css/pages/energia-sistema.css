@@ -1,0 +1,157 @@
+/* Energia · «Do acesso à suficiência» e «O que as instituições observam»: passos e relatórios em cartões suaves, com cor e ícone,
+   sem bordas nem linhas e com texto de leitura confortável. */
+.energy-sistema .passo[data-passo="1"] { --tom: #9a6a00; --tom-suave: #f8eed2; }
+.energy-sistema .passo[data-passo="2"] { --tom: #2a7473; --tom-suave: #e1f0ef; }
+.energy-sistema .passo[data-passo="3"] { --tom: #2f6b3a; --tom-suave: #e6f0e3; }
+.energy-sistema .passo[data-passo="4"] { --tom: #7a4d2b; --tom-suave: #f1e7de; }
+.energy-relatorios .report-card[data-fonte="iea"]   { --tom: #4a6178; --tom-suave: #e6ecf1; }
+.energy-relatorios .report-card[data-fonte="irena"] { --tom: #b25a1e; --tom-suave: #f7e8dc; }
+.energy-relatorios .report-card[data-fonte="onu"]   { --tom: #1f6f8b; --tom-suave: #e2eff4; }
+
+/* Quatro passos, em sequência: uma seta entre cartões. */
+html body .energy-sistema .journey { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.4rem; margin-top: 2rem; border: 0; }
+html body .energy-sistema .journey .passo { position: relative; display: flex; flex-direction: column; min-height: 0; padding: 1.6rem 1.5rem 1.8rem; border: 0 !important; border-radius: 20px; background: var(--tom-suave); }
+html body .energy-sistema .journey .passo:not(:last-child)::after { content: "→"; position: absolute; top: 2.3rem; right: -1.15rem; z-index: 2; width: 0.9rem; color: #8d978f; font-size: 1.1rem; line-height: 1; text-align: center; }
+html body .energy-sistema .passo-icone { display: grid; place-items: center; width: 3.6rem; height: 3.6rem; margin-bottom: 1.1rem; border-radius: 50%; background: rgba(255, 255, 255, 0.82); color: var(--tom); }
+html body .energy-sistema .journey .passo b { display: block; margin: 0 0 0.55rem; color: var(--tom); font-family: Georgia, serif; font-size: 1.45rem; font-weight: 700; line-height: 1.15; letter-spacing: 0; text-transform: none; }
+html body .energy-sistema .journey .passo p { margin: 0; color: #3f4a43; font-size: 1rem; line-height: 1.6; }
+
+/* Relatórios: um cartão por instituição, com o seu tom, sem linha por baixo da etiqueta. */
+html body .energy-relatorios .report-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.4rem; margin-top: 2rem; }
+html body .energy-relatorios .report-card { display: flex; flex-direction: column; padding: 1.7rem 1.6rem 1.8rem; border: 0 !important; border-radius: 20px; background: var(--tom-suave, #f1efe9); transition: transform 0.2s ease, box-shadow 0.2s ease; }
+html body .energy-relatorios .report-card:hover { transform: translateY(-3px); box-shadow: 0 18px 34px -26px var(--tom); }
+html body .energy-relatorios .report-brand { margin: 0 0 1rem; padding: 0; border: 0 !important; }
+html body .energy-relatorios .report-brand .tag { display: inline-block; padding: 0.35rem 0.9rem; border-radius: 999px; background: var(--tom); color: #fff; font-size: 0.8rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; }
+html body .energy-relatorios .report-card strong { display: block; margin: 0 0 0.6rem; color: #20342a; font-family: Georgia, serif; font-size: 1.55rem; font-weight: 700; line-height: 1.15; }
+html body .energy-relatorios .report-card p { margin: 0 0 1.4rem; color: #3f4a43; font-size: 1rem; line-height: 1.6; }
+html body .energy-relatorios .report-card a { margin-top: auto; align-self: flex-start; padding: 0.6rem 1.1rem; border: 0 !important; border-radius: 999px; background: rgba(255, 255, 255, 0.85); color: var(--tom) !important; font-size: 0.8rem; font-weight: 800; letter-spacing: 0.06em; text-decoration: none; text-transform: uppercase; }
+html body .energy-relatorios .report-card a:hover { background: var(--tom); color: #fff !important; }
+
+@media (max-width: 1100px) {
+  html body .energy-sistema .journey { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  html body .energy-sistema .journey .passo:nth-child(2)::after { display: none; }
+  html body .energy-relatorios .report-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 700px) {
+  html body .energy-sistema .journey, html body .energy-relatorios .report-grid { grid-template-columns: minmax(0, 1fr); }
+  html body .energy-sistema .journey .passo:not(:last-child)::after { display: none; }
+}
+
+/* Sem a linha de separação por cima destes dois blocos. */
+html body #main .energy-sistema, html body #main .energy-relatorios { border-top: 0 !important; }
+
+/* Transparência · «Como ler estes dados»: quatro avisos em cartões coloridos com ícone e as fontes em etiquetas legíveis. */
+.energy-metodo .metodo[data-metodo="1"] { --tom: #9a6a00; --tom-suave: #f8eed2; }
+.energy-metodo .metodo[data-metodo="2"] { --tom: #2a7473; --tom-suave: #e1f0ef; }
+.energy-metodo .metodo[data-metodo="3"] { --tom: #2f6b3a; --tom-suave: #e6f0e3; }
+.energy-metodo .metodo[data-metodo="4"] { --tom: #7a4d2b; --tom-suave: #f1e7de; }
+html body .energy-metodo { border: 0 !important; }
+html body .energy-metodo h2 { font-size: clamp(1.9rem, 3vw, 2.6rem); line-height: 1.1; }
+html body .energy-metodo .method-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.2rem; margin-top: 1.8rem; border: 0; }
+html body .energy-metodo .method-grid .metodo { padding: 1.5rem 1.4rem 1.6rem !important; border: 0 !important; border-radius: 18px; background: var(--tom-suave) !important; }
+html body .energy-metodo .metodo-icone { display: grid; place-items: center; width: 3.4rem; height: 3.4rem; margin-bottom: 1rem; border-radius: 50%; background: rgba(255, 255, 255, 0.82); color: var(--tom); }
+html body .energy-metodo .method-grid .metodo b { display: block; margin: 0 0 0.5rem; color: var(--tom); font-family: Georgia, serif; font-size: 1.3rem; font-weight: 700; line-height: 1.2; letter-spacing: 0; text-transform: none; }
+html body .energy-metodo .method-grid .metodo p { margin: 0; color: #3f4a43; font-size: 1rem; line-height: 1.6; }
+html body .energy-metodo .source-links { display: flex; flex-wrap: wrap; gap: 0.5rem 0.6rem; margin-top: 1.8rem; padding-top: 0; border-top: 0; }
+html body .energy-metodo .source-links a { padding: 0.45rem 0.95rem; border: 0 !important; border-radius: 999px; background: rgba(255, 255, 255, 0.85); color: #3f5646 !important; font-size: 0.85rem; font-weight: 700; letter-spacing: 0; text-decoration: none; text-transform: none; }
+html body .energy-metodo .source-links a:hover { background: #fff; color: #20342a !important; }
+@media (max-width: 1100px) { html body .energy-metodo .method-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 700px) { html body .energy-metodo .method-grid { grid-template-columns: minmax(0, 1fr); } }
+
+/* ===== Energia: do «Quatro critérios» ao «Continuar» =====
+   Cartões suaves com cor própria, sem bordas nem linhas, ícones nos critérios, texto de 16 px. */
+html body #main .section-block { border-top: 0 !important; }
+.ico-cartao { display: grid; place-items: center; width: 3.4rem; height: 3.4rem; margin-bottom: 1rem; border-radius: 50%; background: rgba(255, 255, 255, 0.82); color: var(--tom); font-style: normal; }
+
+/* Quatro critérios. */
+.principle[data-p="1"] { --tom: #a3472f; --tom-suave: #f6e5df; }
+.principle[data-p="2"] { --tom: #2a7473; --tom-suave: #e1f0ef; }
+.principle[data-p="3"] { --tom: #9a6a00; --tom-suave: #f8eed2; }
+.principle[data-p="4"] { --tom: #2f6b3a; --tom-suave: #e6f0e3; }
+html body #main .principles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.2rem; margin-top: 2rem; }
+html body #main .principles .principle { padding: 1.5rem 1.4rem 1.7rem !important; border: 0 !important; border-radius: 20px; background: var(--tom-suave) !important; }
+html body #main .principles .principle b { display: block; margin: 0 0 0.5rem; color: var(--tom); font-family: Georgia, serif; font-size: 1.4rem; font-weight: 700; line-height: 1.15; letter-spacing: 0; text-transform: none; }
+html body #main .principles .principle p { margin: 0; color: #3f4a43; font-size: 1rem; line-height: 1.6; }
+
+/* Inventário: quatro números em cartões coloridos e o mix por tipo com uma barra da sua proporção. */
+html body #main .stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.2rem; margin-top: 2rem; }
+html body #main .stats .stat { padding: 1.6rem 1.5rem 1.7rem !important; border: 0 !important; border-radius: 20px; background: var(--tom-suave, #eef1ec) !important; }
+html body #main .stats .stat:nth-child(1) { --tom: #4a6178; --tom-suave: #e6ecf1; }
+html body #main .stats .stat:nth-child(2) { --tom: #9a6a00; --tom-suave: #f8eed2; }
+html body #main .stats .stat:nth-child(3) { --tom: #2f6b3a; --tom-suave: #e6f0e3; }
+html body #main .stats .stat:nth-child(4) { --tom: #1f6f8b; --tom-suave: #e2eff4; }
+html body #main .stats .stat small { display: block; margin: 0 0 0.6rem; color: var(--tom); font-size: 0.8rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; }
+html body #main .stats .stat strong { display: block; margin: 0 0 0.5rem; color: var(--tom); font-family: Georgia, serif; font-size: clamp(1.8rem, 2.5vw, 2.3rem); line-height: 1; letter-spacing: -0.02em; white-space: nowrap; }
+html body #main .stats .stat span { color: #47524b; font-size: 0.95rem; line-height: 1.45; }
+html body #main .mix { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 1.2rem; }
+html body #main .mix .mix-item { --tom: #6b6f78; position: relative; flex: 1 1 11rem; overflow: hidden; padding: 1rem 1.2rem 1.25rem !important; border: 0 !important; border-radius: 16px; background: color-mix(in srgb, var(--tom) 9%, #fff) !important; }
+html body #main .mix .mix-item[data-tipo="Eólica"] { --tom: #4a6178; }
+html body #main .mix .mix-item[data-tipo="Solar"] { --tom: #9a6a00; }
+html body #main .mix .mix-item[data-tipo="Hídrica"] { --tom: #1f6f8b; }
+html body #main .mix .mix-item[data-tipo="Biomassa"] { --tom: #4f7a2b; }
+html body #main .mix .mix-item[data-tipo="Gás Natural"] { --tom: #6b6f78; }
+html body #main .mix .mix-item b { display: block; color: var(--tom); font-family: Georgia, serif; font-size: 1.25rem; font-weight: 700; }
+html body #main .mix .mix-item span { display: block; margin-top: 0.2rem; color: #47524b; font-size: 0.9rem; }
+html body #main .mix .mix-item::after { content: ""; position: absolute; left: 1.2rem; bottom: 0.7rem; width: calc((100% - 2.4rem) * var(--p, 0) / 100); max-width: calc(100% - 2.4rem); min-width: 6px; height: 5px; border-radius: 3px; background: var(--tom); }
+
+/* Perto de ti: painel claro, cada instalação com a cor do seu tipo. */
+html body #main .local-card { padding: clamp(1.5rem, 3vw, 2.4rem) !important; border: 0 !important; border-radius: 24px; background: #edf1e8 !important; color: #20342a !important; }
+html body #main .local-card h3 { margin: 0 0 0.4rem; color: #20342a !important; font-family: Georgia, serif; font-size: clamp(1.6rem, 2.6vw, 2.2rem); }
+html body #main .local-card > p { color: #4d5a52 !important; font-size: 1rem; line-height: 1.6; }
+html body #main .plants { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin-top: 1.4rem; }
+html body #main .plants .plant { --tom: #6b6f78; padding: 1.2rem 1.3rem 1.3rem !important; border: 0 !important; border-radius: 16px; background: rgba(255, 255, 255, 0.78) !important; }
+html body #main .plants .plant[data-tipo="Eólica"] { --tom: #4a6178; }
+html body #main .plants .plant[data-tipo="Solar"] { --tom: #9a6a00; }
+html body #main .plants .plant[data-tipo="Hídrica"] { --tom: #1f6f8b; }
+html body #main .plants .plant[data-tipo="Biomassa"] { --tom: #4f7a2b; }
+html body #main .plants .plant[data-tipo="Gás Natural"] { --tom: #6b6f78; }
+html body #main .plants .plant small { display: inline-block; margin: 0 0 0.6rem; padding: 0.22rem 0.7rem; border-radius: 999px; background: var(--tom); color: #fff !important; font-size: 0.74rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
+html body #main .plants .plant b { display: block; margin: 0 0 0.4rem; color: #20342a !important; font-family: Georgia, serif; font-size: 1.2rem; font-weight: 700; line-height: 1.2; }
+html body #main .plants .plant span { color: var(--tom) !important; font-size: 0.95rem; font-weight: 700; }
+html body #main .local-card .honesty { margin-top: 1.2rem; color: #5a655e !important; font-size: 0.85rem; }
+
+/* Na prática: seis passos em sequência, cartões com o número num círculo. */
+html body #main .steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.2rem; margin-top: 2rem; }
+html body #main .steps .step { --tom: #4a6178; --tom-suave: #e6ecf1; padding: 1.5rem 1.5rem 1.7rem !important; border: 0 !important; border-radius: 20px; background: var(--tom-suave) !important; }
+html body #main .steps .step:nth-child(1) { --tom: #4a6178; --tom-suave: #e6ecf1; }
+html body #main .steps .step:nth-child(2) { --tom: #2a7473; --tom-suave: #e1f0ef; }
+html body #main .steps .step:nth-child(3) { --tom: #8a2f55; --tom-suave: #f3e4e9; }
+html body #main .steps .step:nth-child(4) { --tom: #9a6a00; --tom-suave: #f8eed2; }
+html body #main .steps .step:nth-child(5) { --tom: #1f6f8b; --tom-suave: #e2eff4; }
+html body #main .steps .step:nth-child(6) { --tom: #2f6b3a; --tom-suave: #e6f0e3; }
+html body #main .steps .step strong { display: grid; place-items: center; width: 3rem; height: 3rem; margin-bottom: 1rem; border-radius: 50%; background: var(--tom); color: #fff; font-family: Georgia, serif; font-size: 1.15rem; font-weight: 700; }
+html body #main .steps .step h3 { margin: 0 0 0.5rem; color: var(--tom); font-family: Georgia, serif; font-size: 1.45rem; line-height: 1.15; }
+html body #main .steps .step p { margin: 0; color: #3f4a43; font-size: 1rem; line-height: 1.6; }
+
+/* Simulador: cartão âmbar com o botão. */
+html body #main .project-reference { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1.2rem 2rem; padding: clamp(1.5rem, 3vw, 2.4rem) !important; border: 0 !important; border-radius: 24px; background: #f8eed2 !important; }
+html body #main .project-reference .eyebrow { color: #9a6a00 !important; }
+html body #main .project-reference p { color: #4d5a52 !important; font-size: 1rem; line-height: 1.65; }
+html body #main .project-reference .project-reference-link { display: inline-block; padding: 0.8em 1.4em; border: 0 !important; border-radius: 999px; background: #9a6a00; color: #fff !important; font-size: 0.9rem; font-weight: 800; text-decoration: none; white-space: nowrap; transition: filter 0.15s, transform 0.15s; }
+html body #main .project-reference .project-reference-link:hover { filter: brightness(1.1); transform: translateY(-1px); }
+
+/* Continuar: quatro cartões com fotografia e a cor do vetor (as mesmas dos hubs). */
+.chapter[data-tom="renovaveis"] { --tom: #9a6a00; --tom-suave: #f8eed2; }
+.chapter[data-tom="mineracao"] { --tom: #8a4b32; --tom-suave: #f3e5de; }
+.chapter[data-tom="digital"] { --tom: #44529a; --tom-suave: #e8eaf6; }
+.chapter[data-tom="pecuaria"] { --tom: #a3472f; --tom-suave: #f6e5df; }
+html body #main .chapters { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.2rem; margin-top: 2rem; }
+html body #main .chapters .chapter { display: flex; flex-direction: column; padding: 0.7rem 0.7rem 0 !important; border: 0 !important; border-radius: 20px; background: var(--tom-suave) !important; text-decoration: none; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+html body #main .chapters .chapter:hover { transform: translateY(-3px); box-shadow: 0 18px 34px -24px var(--tom); }
+html body #main .chapters .chapter img { display: block; width: 100%; height: auto; aspect-ratio: 3 / 2; object-fit: cover; border-radius: 14px; background: #e6e1d5; }
+html body #main .chapters .chapter-corpo { display: block; padding: 1.1rem 0.8rem 1.5rem; }
+html body #main .chapters .chapter small { display: block; color: var(--tom); font-size: 0.78rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
+html body #main .chapters .chapter h3 { margin: 0.5rem 0 0.6rem; color: #20342a; font-family: Georgia, serif; font-size: 1.45rem; line-height: 1.15; }
+html body #main .chapters .chapter p { margin: 0; color: #3f4a43; font-size: 1rem; line-height: 1.6; }
+html body #main .chapters .chapter .chapter-credito { display: block; margin: 0.6rem 0.8rem 0; }
+html body #main .chapters-creditos { margin: 0.9rem 0 0; color: #6a746d; font-size: 0.72rem; line-height: 1.6; }
+html body #main .chapters-creditos a { color: inherit; text-decoration: underline; }
+
+@media (max-width: 1100px) {
+  html body #main .principles, html body #main .stats, html body #main .chapters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  html body #main .plants, html body #main .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 700px) {
+  html body #main .principles, html body #main .stats, html body #main .chapters, html body #main .plants, html body #main .steps { grid-template-columns: minmax(0, 1fr); }
+  html body #main .project-reference { flex-direction: column; align-items: flex-start; }
+}

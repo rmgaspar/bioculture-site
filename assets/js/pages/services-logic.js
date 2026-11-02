@@ -1,17 +1,37 @@
 (function () {
     const byId = (id) => document.getElementById(id);
     const isEnglish = document.documentElement.lang === "en";
-    fetch("/sidebar-content.html?v=24").then((r) => r.text()).then((html) => { byId("sidebar").innerHTML = html; });
+    // O catálogo de técnicas mudou para a sua própria página: as ligações antigas seguem para lá.
+    const antigo = new URLSearchParams(location.search).get("categoria"), idioma = new URLSearchParams(location.search).get("lang");
+    if (location.hash.startsWith("#tecnica-") || location.hash === "#catalogo-tecnicas" && antigo) {
+        const params = new URLSearchParams();
+        if (antigo) params.set("categoria", antigo);
+        if (idioma) params.set("lang", idioma);
+        location.replace(`/services/tecnicas.html${params.toString() ? `?${params}` : ""}${location.hash.startsWith("#tecnica-") ? location.hash : ""}`);
+    }
+    fetch("/sidebar-content.html?v=28").then((r) => r.text()).then((html) => { byId("sidebar").innerHTML = html; });
 
+    // Como nas restantes técnicas: título, logo a imagem, e depois vantagens e calculadora.
     const solarTool = document.querySelector(".solar-tool");
-    if (solarTool && !document.querySelector(".solar-layout")) {
-        const layout = document.createElement("div");
-        layout.className = "solar-layout";
+    if (solarTool && !document.querySelector(".solar-figure")) {
         const figure = document.createElement("figure");
         figure.className = "blueprint-figure solar-figure";
-        figure.innerHTML = `<img src="/images/solar-home-battery-v1.png" alt="${isEnglish ? "Domestic photovoltaic system with hybrid inverter, battery and essential loads" : "Sistema fotovoltaico doméstico com inversor híbrido, bateria e cargas essenciais"}"><figcaption>${isEnglish ? "bioCulture concept — panels, inverter, battery and grid must be sized and protected by qualified professionals." : "Esquema conceptual bioCulture — painéis, inversor, bateria e rede devem ser dimensionados e protegidos por profissionais habilitados."}</figcaption>`;
-        solarTool.before(layout);
-        layout.append(figure, solarTool);
+        figure.innerHTML = `<img src="/images/solar-home-battery-v1.webp" alt="${isEnglish ? "Domestic photovoltaic system with hybrid inverter, battery and essential loads" : "Sistema fotovoltaico doméstico com inversor híbrido, bateria e cargas essenciais"}"><figcaption>${isEnglish ? "bioCulture concept — panels, inverter, battery and grid must be sized and protected by qualified professionals." : "Esquema conceptual bioCulture — painéis, inversor, bateria e rede devem ser dimensionados e protegidos por profissionais habilitados."}</figcaption>`;
+        const benefits = solarTool.closest("section")?.querySelector(".blueprint-benefits");
+        (benefits || solarTool).before(figure);
+    }
+
+    // Imagem de cada técnica dimensionada para caber no ecrã com o título (ver services.css, --bp-head).
+    const headings = [...document.querySelectorAll(".blueprint .blueprint-heading")];
+    const measureHeadings = () => headings.forEach((heading) => {
+        heading.closest(".blueprint").style.setProperty("--bp-head", `${Math.ceil(heading.getBoundingClientRect().height)}px`);
+    });
+    measureHeadings();
+    if ("ResizeObserver" in window) {
+        const observer = new ResizeObserver(measureHeadings);
+        headings.forEach((heading) => observer.observe(heading));
+    } else {
+        window.addEventListener("resize", measureHeadings, { passive: true });
     }
 
     const backupInput = byId("in-backup");
@@ -59,52 +79,21 @@
         byId("solar-results-area").hidden = false;
     });
 
-    const esc = (v) => String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-    const normalize = (v) => String(v).normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
-    if (byId("technique-grid")) {
-        const tr = (pt, en) => (isEnglish ? en : pt);
-        fetch("/data/dicas.json").then((r) => {
-            if (!r.ok) throw Error("HTTP " + r.status);
-            return r.json();
-        }).then((dicas) => {
-            const categories = [...new Set(dicas.map((d) => d.categoria))];
-            const requestedCategory = new URLSearchParams(location.search).get("categoria");
-            let selected = categories.includes(requestedCategory) ? requestedCategory : "all", query = "";
-            byId("technique-filters").innerHTML = ["all", ...categories].map((c) =>
-                `<button type="button" data-category="${esc(c)}" aria-pressed="${c === selected}">${c === "all" ? tr("Todas", "All") : esc(c)}</button>`
-            ).join("");
-            const render = () => {
-                const term = normalize(query);
-                const found = dicas.filter((d) =>
-                    (selected === "all" || d.categoria === selected) &&
-                    (!term || normalize(`${d.titulo} ${d.categoria} ${d.resumo}`).includes(term))
-                );
-                byId("technique-grid").innerHTML = found.map((item) =>
-                    `<article class="technique-card" id="tecnica-${esc(item.id)}">${
-                        item.imagem?.src ? `<img src="/${esc(item.imagem.src)}" alt="${esc(item.imagem.alt || "")}" loading="lazy">` : ""
-                    }<div class="technique-card-body"><span class="technique-meta">${esc(item.categoria)} · ${esc(item.nivel)}</span><h3>${esc(item.titulo)}</h3><p>${esc(item.resumo)}</p>${
-                        item.passos?.length
-                            ? `<details><summary>${tr("Passos essenciais", "Key steps")}</summary><ol>${item.passos.map((s) => `<li>${esc(s)}</li>`).join("")}</ol></details>`
-                            : ""
-                    }</div></article>`
-                ).join("") || `<p class="empty">${tr("Nenhuma técnica encontrada para essa pesquisa.", "No technique found for this search.")}</p>`;
-                byId("technique-count").textContent = tr(`${found.length} de ${dicas.length} técnicas`, `${found.length} of ${dicas.length} techniques`);
-                byId("technique-filters").querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.category === selected)));
-            };
-            byId("technique-filters").addEventListener("click", (e) => {
-                const b = e.target.closest("button[data-category]");
-                if (b) { selected = b.dataset.category; render(); }
+
+    // Cada guia de projeto remete para as fichas de técnicas relacionadas (catálogo «Todas as técnicas»).
+    if (document.querySelector("section.blueprint")) {
+        fetch("/data/dicas.json").then((r) => (r.ok ? r.json() : [])).then((dicas) => {
+            const tr = (pt, en) => (isEnglish ? en : pt);
+            const esc = (v) => String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+            const AREA = { solo: "solo", compostagem: "compostagem", chuva: "agua", agrofloresta: "perenes", hortas: "planeamento", apicultura: "biodiversidade", pragas: "prevencao" };
+            document.querySelectorAll("section.blueprint[id]").forEach((secao) => {
+                const fichas = dicas.filter((d) => d.guia === secao.id);
+                if (!fichas.length) return;
+                const bloco = document.createElement("div");
+                bloco.className = "guia-fichas";
+                bloco.innerHTML = `<span class="guia-fichas-titulo">${tr("Fichas de técnicas relacionadas", "Related technique sheets")}</span><ul>${fichas.map((d) => `<li><a href="/services/tecnicas.html#tecnica-${esc(d.id)}">${esc(d.titulo)}</a></li>`).join("")}</ul><a class="guia-fichas-todas" href="/services/tecnicas.html#area-${AREA[secao.id] || ""}">${tr("Ver todas as fichas →", "See all sheets →")}</a>`;
+                secao.appendChild(bloco);
             });
-            byId("technique-search").addEventListener("input", (e) => { query = e.target.value; render(); });
-            render();
-            const hashId = location.hash.slice(1);
-            if (hashId.startsWith("tecnica-") && dicas.some((d) => `tecnica-${d.id}` === hashId)) {
-                const entry = byId(hashId);
-                entry?.querySelector("details")?.setAttribute("open", "");
-                entry?.scrollIntoView({ block: "center" });
-            }
-        }).catch(() => {
-            byId("technique-grid").innerHTML = `<p class="empty">${tr("Não foi possível carregar o catálogo de técnicas.", "The technique catalogue could not be loaded.")}</p>`;
-        });
+        }).catch(() => {});
     }
 })();

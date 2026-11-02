@@ -58,15 +58,13 @@
                 const embalagem = product.embalagem
                     ? `${product.embalagem.quantidade} ${esc(product.embalagem.unidade || "")}`
                     : "—";
-                const order = `mailto:geral@bioculture.net?subject=${
+                const order = `mailto:geral@bioculture.pt?subject=${
                     encodeURIComponent(tr("Encomenda — ", "Order — ") + localized(product.nome))
                 }`;
                 const beneficios = listPanel(tr("Benefícios", "Benefits"),
                     arr(product.beneficios).map((b) => localized(b)));
-                const backLink = `<a class="back" href="${
-                    esc(link("/services/produtos.html#" + (solucao?.id || "")))
-                }">← ${tr("Voltar ao catálogo", "Back to the catalogue")}</a>`;
-                document.getElementById("product").innerHTML = `<div class="hero"><div><span class="eyebrow">${
+                const hub = link("/services/produtos.html#" + (solucao?.id || ""));
+                let html = `<div class="hero"><div><span class="eyebrow">${
                     esc(categoriaNome || tr("Produto", "Product"))
                 }</span><h1>${esc(localized(product.nome))}</h1>${
                     valid(product.marca) ? `<h2 class="scientific">${esc(product.marca)}</h2>` : ""
@@ -86,7 +84,7 @@
                     esc(categoriaNome || "—")
                 }</b></div></div></div><div class="hero-image" data-initial="${
                     esc(String(localized(product.nome) || "?").charAt(0))
-                }">${image}</div></div>${backLink}${
+                }">${image}</div></div><!--ficha-nav-->${
                     valid(product.descricao)
                         ? `<div class="section-block" id="descricao"><div class="section-head"><span class="eyebrow">${
                             tr("Sobre este produto", "About this product")
@@ -118,11 +116,24 @@
                         }</p><a class="order-cta" href="${esc(order)}">${tr("Contactar para encomendar →", "Contact to order →")}</a>`
                         : `<h3>${tr("Brevemente", "Coming soon")}</h3>`
                 }</div></div>`;
+                // Barra fixa: «← Voltar» (regressa ao sítio exato, ver biocultura-voltar.js) e as secções que o produto tem.
+                const secoes = [["descricao", tr("Sobre", "About")], ["aplicacao", tr("Aplicação", "Application")], ["solucoes", tr("Ligações", "Connections")], ["encomendar", tr("Encomendar", "Order")]];
+                const nav = `<nav class="management-nav" aria-label="${tr("Nesta ficha", "On this page")}"><a class="hub-back" href="${esc(hub)}" onclick="if(!this.dataset.bioHub&&history.length>1&&document.referrer.startsWith(location.origin)){event.preventDefault();history.back();}">${tr("← Voltar", "← Back")}</a>${
+                    secoes.filter(([id]) => html.includes(`id="${id}"`)).map(([id, label]) => `<a href="#${id}">${label}</a>`).join("")
+                }</nav>`;
+                document.getElementById("product").innerHTML = html.replace("<!--ficha-nav-->", nav);
+                if (!document.querySelector('script[src*="biocultura-sticky-nav"]')) {
+                    const stickyNav = document.createElement("script");
+                    stickyNav.src = "/assets/js/biocultura-sticky-nav.js?v=20";
+                    document.body.appendChild(stickyNav);
+                }
                 document.title = `${localized(product.nome)} — bioCulture`;
             }
             async function load() {
                 const id = new URLSearchParams(location.search).get("id");
+                const semIndexar = () => { if (document.querySelector('meta[name="robots"]')) return; const m = document.createElement("meta"); m.name = "robots"; m.content = "noindex"; document.head.appendChild(m); };
                 if (!id) {
+                    semIndexar();
                     document.getElementById("product").innerHTML =
                         `<div class="error">${tr("Produto não indicado.", "Product not specified.")}</div>`;
                     return;
@@ -135,9 +146,13 @@
                     const solucao = data.solucoes.find((s) => (s.produtos || []).some((p) => p.id === id));
                     const product = solucao?.produtos.find((p) => p.id === id);
                     if (!product) throw Error("not-found");
+                    window.BioCulturaCanonica?.definir(id);
                     const categoria = data.categorias.find((c) => c.id === solucao.categoria_id);
                     render(product, solucao, categoria ? localized(categoria.nome) : "");
                 } catch (e) {
+                    semIndexar();
+                    // Produto que já não existe: vai para o catálogo (evita uma página «não encontrada» com código 200, soft 404 no Google).
+                    if (e && e.message === "not-found") window.location.replace("/services/produtos"+(window.BioCultureLanguageStore?.read() === "en" ? "?lang=en" : ""));
                     document.getElementById("product").innerHTML =
                         `<div class="error"><strong>${
                             tr("Produto não encontrado.", "Product not found.")

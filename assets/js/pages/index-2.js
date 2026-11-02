@@ -32,8 +32,9 @@
                     [isEnglish ? "Cultivated taxa" : "Táxones cultivados · Mundo", Number(cropMeta.taxon_count) || 0, isEnglish ? "taxa represented in the global catalogue" : "táxones representados no catálogo global", cropSourceLabel, cropMeta.genesys_dataset || cropMeta.source_url, "#81966e"],
                     [isEnglish ? "Grapevines" : "Castas · Mundo", grapeCount, isEnglish ? "varieties in the global grapevine catalogue" : "variedades no catálogo mundial de videira", grapeSourceLabel, grapeSource.url, "#7d3350"],
                 ];
-                el("pulse").innerHTML = rows.map((x) =>
-                    `<article class="number" style="--accent:${x[5]}"><small>${x[0]}</small><strong>${
+                const fotoDe = ["pulse-biodiversidade", "pulse-acessos", "pulse-taxones", "pulse-castas"];
+                el("pulse").innerHTML = rows.map((x, i) =>
+                    `<article class="number" style="--accent:${x[5]}"><div class="number-foto" data-foto-slot="${fotoDe[i]}"></div><small>${x[0]}</small><strong>${
                         x[1].toLocaleString(isEnglish ? "en-GB" : "pt-PT")
                     }</strong><span>${x[2]}</span>${
                         x[3] && x[4] ? `<a class="source" href="${esc(x[4])}" target="_blank" rel="noopener">${isEnglish ? "Source" : "Fonte"}: ${esc(x[3])} →</a>` : ""
@@ -41,399 +42,150 @@
                 ).join("");
             }
 
-            function showToday(regions, species) {
-                const months = isEnglish ? ["January","February","March","April","May","June","July","August","September","October","November","December"] : [
-                        "janeiro",
-                        "fevereiro",
-                        "março",
-                        "abril",
-                        "maio",
-                        "junho",
-                        "julho",
-                        "agosto",
-                        "setembro",
-                        "outubro",
-                        "novembro",
-                        "dezembro",
-                    ],
-                    now = new Date();
-                el("month").textContent = months[now.getMonth()];
+            function showToday(species) {
+                const now = new Date();
 
-                const saved = localStorage.getItem("biocultura_region"),
-                    region = regions.find((x) => String(x.id) === String(saved));
-
-                if (region) {
-                    el("place").firstChild.textContent = `${region.titulo} · `;
-                    el("place-copy").textContent =
-                        `${isEnglish ? "A starting point for connecting calendars, species and pressures with" : "Um ponto de entrada para relacionar calendário, espécies e pressões com"} ${
-                            region.concelho || region.regiao || (isEnglish ? "the selected territory" : "o território selecionado")
-                        }.`;
-                }
-
-                // Só entra no sorteio diário quem tem uma síntese real: sem isto, quase
-                // metade do inventário devolve frases que só repetem o nome ("é uma planta
-                // da família X"), o que transforma "um motivo para voltar" em palha.
-                const dashTitle = /—| - /,
-                    englishHint = /\b(the|is a|species of|found in|native to|belongs to)\b/i,
-                    ptAccent = /[àáâãçéêíóôõú]/i;
-                const entries = Object.entries(species || {}).filter(([, x]) => {
-                    const nome = String(x.nome || ""), sintese = String(x.sintese || "").trim();
-                    if (dashTitle.test(nome)) return false;
-                    if (!sintese || sintese === "-" || sintese.length < 100) return false;
-                    if (sintese.startsWith(nome)) return false;
-                    const looksEnglish = englishHint.test(sintese) && !ptAccent.test(sintese);
-                    return isEnglish ? looksEnglish : !looksEnglish;
-                });
-                if (!entries.length) return;
-
-                const day = Math.floor(now.getTime() / 86400000),
-                    [id, x] = entries[Math.abs(day) % entries.length],
-                    image = x.imagem && x.imagem !== "-"
-                        ? `<img class="species-image" src="${esc(x.imagem)}" alt="${esc(x.nome)}" loading="lazy" onerror="this.style.display='none'">`
-                        : "";
-
-                el("encounter").innerHTML = `<div><small>${isEnglish ? "Today's encounter" : "Encontro do dia"}</small><h3>${esc(x.nome)}</h3><em>${esc(x.nome_cientifico)}</em><p>${
-                    esc(x.sintese || x.origem || (isEnglish ? "A species from the bioCulture inventory." : "Uma espécie do inventário bioCultura."))
-                }</p><a href="/ecossistemas/especie-detalhe.html?id=${
-                    encodeURIComponent(id)
-                }">${isEnglish ? "Meet this species" : "Conhecer esta espécie"} →</a></div>${image}`;
+                // Só entra no sorteio diário quem tem uma síntese real (lista pré-calculada em
+                // scripts/gerar-especies.mjs). Em inglês, a ficha só serve se já estiver traduzida.
+                const eligible = (isEnglish ? species?.en : species?.pt) || [];
+                if (!eligible.length) return;
+                const day = Math.floor(now.getTime() / 86400000);
+                (async () => {
+                    for (let attempt = 0; attempt < 3; attempt++) {
+                        const id = eligible[(Math.abs(day) + attempt) % eligible.length];
+                        const x = await window.BioCulturaSpecies.record(id).catch(() => null);
+                        if (!x) continue;
+                        const image = x.imagem && x.imagem !== "-"
+                            ? `<img class="species-image" src="${esc(x.imagem)}" alt="${esc(x.nome)}" loading="lazy" onerror="this.style.display='none'">`
+                            : "";
+                        el("encounter").innerHTML = `<div><small>${isEnglish ? "Today's encounter" : "Encontro do dia"}</small><h3>${esc(x.nome)}</h3><em>${esc(x.nome_cientifico)}</em><p>${
+                            esc(x.sintese || x.origem || (isEnglish ? "A species from the bioCulture inventory." : "Uma espécie do inventário bioCulture."))
+                        }</p><a href="/ecossistemas/especie-detalhe.html?id=${
+                            encodeURIComponent(id)
+                        }">${isEnglish ? "Meet this species" : "Conhecer esta espécie"} →</a></div>${image}`;
+                        return;
+                    }
+                })();
             }
 
             function showNews(items) {
-                const rows = window.BioCultureNews?.select(items, { context: "all", limit: Number.MAX_SAFE_INTEGER }) || [...items]
+                const rows = window.BioCultureNews?.select(items, { context: "all", limit: Number.MAX_SAFE_INTEGER, order: "relevance" }) || [...items]
                     .sort((a, b) => window.BioCultureNews?.compare(a, b) ?? (Date.parse(b.data || "") - Date.parse(a.data || "")));
-                let expanded = false;
-                const render = () => {
-                    const visible = expanded ? rows : rows.slice(0, 6);
-                    el("news").innerHTML = visible.map((n) => {
+                // Primeiro as principais; «Ver mais» acrescenta mais um bloco de cada vez, «Ver menos» volta ao início.
+                const INITIAL = 9, STEP = 8;
+                let shown = INITIAL;
+                const SEM_IMAGEM = "/images/noticias-sem-imagem.webp";
+                const ficha = (n) => {
                     const c = window.BioCultureI18n?.content(n) || n.pt || n;
                     const scope = n.ambito === "portugal"
-                        ? (isEnglish ? "Portugal · territorial case" : "Portugal · caso territorial")
+                        ? "Portugal"
                         : n.ambito === "regional" ? "Regional" : (isEnglish ? "World" : "Mundo");
-                    return `<a href="/observatorio/noticia-detalhe.html?id=${
-                        encodeURIComponent(n.id)
-                    }"><small>${esc(scope)} · ${esc(window.BioCultureI18n?.date(n.data) || n.data)}</small><h3>${esc(c.titulo)}</h3><span>${
-                        esc(n.fonte)
-                    } →</span></a>`;
-                    }).join("") || `<p class="empty">${isEnglish ? "No news available at this time." : "Sem notícias disponíveis neste momento."}</p>`;
-                    const toggle = el("news-toggle");
-                    if (toggle) {
-                        toggle.hidden = rows.length <= 6;
-                        toggle.textContent = expanded
-                            ? (isEnglish ? "Show less" : "Recolher")
-                            : (isEnglish ? `Show all (${rows.length})` : `Ver mais (${rows.length})`);
-                        toggle.setAttribute("aria-expanded", String(expanded));
+                    const real = typeof n.imagem === "string" && (/^https?:\/\//i.test(n.imagem) || n.imagem.startsWith("/")) && !/(\/metatag\/|logo|sem-imagem)/i.test(n.imagem) && !(/^https?:/i.test(n.imagem) && /\.png(\?|$)/i.test(n.imagem)); // logótipos, gráficos (PNG remotos) e marcadores não valem como fotografia
+                    const tipo = window.BioCultureNews?.typeLabel(n);
+                    return {
+                        href: `/observatorio/noticia-detalhe.html?id=${encodeURIComponent(n.id)}`,
+                        meta: `${scope} · ${window.BioCultureI18n?.date(n.data) || n.data} · ${n.fonte}${tipo ? ` · ${tipo}` : ""}`,
+                        titulo: c.titulo,
+                        resumo: c.resumo_biocultura || c.resumo || "",
+                        imagem: real ? n.imagem : SEM_IMAGEM,
+                        real,
+                    };
+                };
+                const img = (f, cls) => !f.real ? "" : `<img class="${cls}" src="${esc(f.imagem)}" alt="${esc(f.real ? "" : (isEnglish ? "bioCulture editorial illustration" : "Ilustração editorial bioCulture"))}" loading="lazy" onerror="this.src='${SEM_IMAGEM}'">`;
+                const render = () => {
+                    const visible = rows.slice(0, shown);
+                    if (!visible.length) {
+                        el("news").innerHTML = `<p class="empty">${isEnglish ? "No news available at this time." : "Sem notícias disponíveis neste momento."}</p>`;
+                    } else {
+                        // A principal é a primeira das primeiras com fotografia verdadeira; ao lado, três só de texto; por baixo, cartões.
+                        const fichas = visible.map(ficha);
+                        let fi = fichas.slice(0, INITIAL).findIndex((f) => f.real);
+                        if (fi < 0) fi = 0;
+                        const feat = fichas.splice(fi, 1)[0];
+                        const lado = fichas.splice(0, 4);
+                        const featHtml = `<a class="news-feat" href="${esc(feat.href)}">${img(feat, "news-feat-img")}<small>${esc(feat.meta)}</small><h3>${esc(feat.titulo)}</h3>${feat.resumo ? `<p>${esc(feat.resumo)}</p>` : ""}</a>`;
+                        const ladoHtml = lado.map((f) => `<a class="news-line${f.real ? " com-foto" : ""}" href="${esc(f.href)}">${img(f, "news-line-img")}<span class="news-line-txt"><small>${esc(f.meta)}</small><h3>${esc(f.titulo)}</h3></span></a>`).join("");
+                        const cardsHtml = fichas.map((f) => `<a class="news-card" href="${esc(f.href)}">${img(f, "news-card-img")}<small>${esc(f.meta)}</small><h3>${esc(f.titulo)}</h3>${f.resumo ? `<p>${esc(f.resumo)}</p>` : ""}</a>`).join("");
+                        el("news").innerHTML = `<div class="news-top">${featHtml}<div class="news-side">${ladoHtml}</div></div>${cardsHtml ? `<div class="news-cards">${cardsHtml}</div>` : ""}`;
+                    }
+                    const left = rows.length - visible.length;
+                    const more = el("news-toggle"), less = el("news-collapse");
+                    if (more) {
+                        more.hidden = left <= 0;
+                        more.textContent = isEnglish ? `Show more (${left} left)` : `Ver mais (${left} restantes)`;
+                    }
+                    if (less) {
+                        less.hidden = shown <= INITIAL;
+                        less.textContent = isEnglish ? "Show less" : "Ver menos";
                     }
                 };
-                const toggle = el("news-toggle");
-                if (toggle) toggle.onclick = () => { expanded = !expanded; render(); };
+                const more = el("news-toggle"), less = el("news-collapse");
+                if (more) more.onclick = () => { shown = Math.min(rows.length, shown + STEP); render(); };
+                if (less) less.onclick = () => {
+                    shown = INITIAL;
+                    render();
+                    el("news-block")?.scrollIntoView({ block: "start" });
+                };
                 render();
             }
 
-            function getPortalMarkImage(title) {
-                const imageMap = {
-                    "Planeta e pressões": "/images/observatorio-planeta-v2.webp",
-                    "Recursos vitais": "/images/recursos.jpg",
-                    "Biodiversidade": "/images/biodiversidade-teia-viva.webp",
-                    "Pressões humanas": "/images/energia_pressao.jpg",
-                    "Portugal em detalhe": "/images/pressoes-portugal.webp",
-                    "Conhecimento para cuidar": "/images/calendario_regeneracao.jpg",
-                    "Pragas e invasoras": "/images/categoria-pragas-v1.jpg",
-                    "Soluções naturais": "/images/controlo-biologico-pragas-v1.png",
-                };
-                const src = imageMap[title] || "/images/placeholder.jpg";
-                return `<img src="${src}" alt="${title}" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;">`;
-            }
+            const PASSOS = {
+                // Ícones de traço (24×24): lupa (observar), gráfico de linha (compreender), rebento (agir).
+                observar: { n: "01", tit_pt: "Ver o que está a mudar", tit_en: "See what is changing", txt_pt: "Dados de organizações de referência (NASA, NOAA, FAO, Banco Mundial, ONU, OMS, IPMA, APA) sobre clima, ar, água, solo, biodiversidade e energia, país a país.", txt_en: "Data from reference organisations (NASA, NOAA, FAO, World Bank, UN, WHO, IPMA, APA) on climate, air, water, soil, biodiversity and energy, country by country.", c: "#6b8f47", pt: "Observar", en: "Observe", icon: '<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/>' },
+                compreender: { n: "02", tit_pt: "Ler a evolução e as pressões", tit_en: "Read the trends and the pressures", txt_pt: "Séries de décadas, comparações entre países e as pressões por trás dos números (energia, alimentação, mineração, tecnologia, pecuária, aviação, construção e moda) para perceber o que cada mudança representa.", txt_en: "Decades-long series, comparisons between countries and the pressures behind the numbers (energy, food, mining, technology, livestock, aviation, construction and fashion) to see what each change represents.", c: "#a66f50", pt: "Compreender", en: "Understand", icon: '<path d="M4 4v16h16"/><path d="m7.5 15 4-5 3 3 5-7"/>' },
+                agir: { n: "03", tit_pt: "Cruzar os dados e cuidar da terra", tit_en: "Combine the data and care for the land", txt_pt: "Clima, água, solo, floresta e vida cruzados com os ciclos do ano: calendários, problemas na horta e práticas regenerativas que respondem ao que os números mostram.", txt_en: "Climate, water, soil, forests and life combined with the cycles of the year: calendars, garden problems and regenerative practices that answer what the numbers show.", c: "#3f7373", pt: "Agir", en: "Act", icon: '<path d="M12 21v-8"/><path d="M12 13c0-4-3-6.5-7-6.5 0 4 2.8 6.5 7 6.5z"/><path d="M12 15c0-3.2 2.4-5.5 6-5.5 0 3.4-2.3 5.5-6 5.5z"/><path d="M7 21h10"/>' },
+            };
 
-            const fmt = (v, digits = 1) =>
-                new Intl.NumberFormat(isEnglish ? "en-GB" : "pt-PT", { maximumFractionDigits: digits }).format(v);
-
-            function stackChart(items, note) {
-                const total = items.reduce((sum, item) => sum + item.val, 0) || 1;
-                const track = items.map((item) =>
-                    `<span style="width:${(item.val / total * 100).toFixed(2)}%;background:${item.color}"></span>`
-                ).join("");
-                const legend = items.map((item) =>
-                    `<span class="chart-legend-item"><i class="dot" style="background:${item.color}"></i>${
-                        esc(item.label)
-                    } <b>${fmt(item.val, 0)}</b></span>`
-                ).join("");
-                return `<div class="portal-chart"><div class="stack-track">${track}</div><div class="chart-legend">${legend}</div>${
-                    note ? `<p class="chart-note">${esc(note)}</p>` : ""
-                }</div>`;
-            }
-
-            function percentBars(items, badges) {
-                const rows = items.map((item) =>
-                    `<div class="percent-row"><span class="percent-label" style="color:${item.color}">${
-                        esc(item.label)
-                    }</span><span class="bar-row"><span class="bar-track"><span class="bar-fill" style="width:${
-                        Math.min(item.val, 100).toFixed(1)
-                    }%;background:${item.color}"></span></span><span class="bar-value"><b>${
-                        fmt(item.val, item.digits ?? 1)
-                    }${item.suffix || "%"}</b></span></span>${
-                        item.note ? `<span class="percent-note">${esc(item.note)}</span>` : ""
-                    }</div>`
-                ).join("");
-                const badgeHTML = (badges || []).map((b) => `<p class="chart-note">${esc(b)}</p>`).join("");
-                return `<div class="portal-chart percent-chart">${rows}${badgeHTML}</div>`;
-            }
-
-            function countBars(items, note) {
-                const max = Math.max(...items.map((i) => i.val)) * 1.05 || 1;
-                const rows = items.map((item) =>
-                    `<div class="percent-row"><span class="percent-label" style="color:${item.color}">${
-                        esc(item.label)
-                    }</span><span class="bar-row"><span class="bar-track"><span class="bar-fill" style="width:${
-                        (item.val / max * 100).toFixed(1)
-                    }%;background:${item.color}"></span></span><span class="bar-value"><b>${
-                        fmt(item.val, item.digits ?? 0)
-                    }</b></span></span>${
-                        item.note ? `<span class="percent-note">${esc(item.note)}</span>` : ""
-                    }</div>`
-                ).join("");
-                return `<div class="portal-chart percent-chart">${rows}${note ? `<p class="chart-note">${esc(note)}</p>` : ""}</div>`;
-            }
-
-            function conhecimentoChartHTML(pragas) {
-                const vinhaPests = (pragas || []).filter((p) => (p.grupos || []).includes("vinha")).length;
-                const items = [
-                    { label: isEnglish ? "Growing guides (crops)" : "Fichas de cultivo (hortícolas)", val: 94, color: "#81966e" },
-                    { label: isEnglish ? "Grape varieties documented" : "Castas de videira documentadas", val: 60, color: "#7d3350" },
+            // Mapa de entrada: três passos, uma linha por entrada (título e uma frase), sem gráficos nem filtros.
+            function atlasContent() {
+                const t = (pt, en) => (isEnglish ? en : pt);
+                const u = (path) => { const [p, h] = path.split("#"); return `${p}?lang=${isEnglish ? "en" : "pt"}${h ? "#" + h : ""}`; };
+                const OBS = "/observatorio/observatorio-terra.html";
+                const entradas = [
+                    ["observar", t("Observatório da Terra", "Earth Observatory"), t("Dez conclusões, com séries por país.", "Ten findings, with country series."), OBS],
+                    ["observar", t("Recursos vitais", "Vital resources"), t("Água, ar e solo sob stress.", "Water, air and soil under stress."), "/recursos/vida-e-recursos.html"],
+                    ["observar", t("Biodiversidade", "Biodiversity"), t("Espécies, habitats e risco de extinção.", "Species, habitats and extinction risk."), "/ecossistemas/biodiversidade.html"],
+                    ["compreender", t("Pressões e sistemas", "Pressures and systems"), t("Extração, energia e consumo que empurram os indicadores.", "Extraction, energy and consumption driving the indicators."), "/observatorio/vetores-pressao-global.html"],
+                    ["compreender", t("Pressões humanas", "Human pressures"), t("Energia, IA, pecuária, aviação, construção e moda.", "Energy, AI, livestock, aviation, construction and fashion."), "/observatorio/pressoes-humanas.html"],
+                    ["compreender", t("Produção agrícola", "Agricultural production"), t("O que o mundo produz e o que Portugal produz.", "What the world produces and what Portugal produces."), "/observatorio/producao-agricola.html"],
+                    ["compreender", t("A teia", "The web"), t("Clima, aves, invasoras e pesticidas lado a lado.", "Climate, birds, invasives and pesticides side by side."), "/observatorio/bioweb.html"],
+                    ["compreender", t("Portugal em detalhe", "Portugal in detail"), t("Continente, Açores e Madeira.", "Mainland, Azores and Madeira."), OBS + "#leitura-local"],
+                    ["agir", t("Conhecimento para cuidar", "Knowledge for care"), t("Problemas na horta, calendário e vinha viva.", "Garden problems, calendar and living vineyard."), "/calendario/conhecimento-cuidar.html"],
+                    ["agir", t("Pragas e invasoras", "Pests and invasive species"), t("Catálogo de pragas, doenças e invasoras.", "Catalogue of pests, diseases and invasives."), "/calendario/calendario.html#pragas-catalogo"],
+                    ["agir", t("Soluções naturais", "Natural solutions"), t("Práticas e produtos biológicos por função.", "Biological practices and products by function."), "/services/services.html"],
                 ];
-                if (vinhaPests) items.push({
-                    label: isEnglish ? "Vineyard pests mapped" : "Pragas de videira mapeadas",
-                    val: vinhaPests, color: "#c9762f",
-                });
-                return countBars(items);
-            }
-
-            function growthChart(items) {
-                const rows = items.map((item) => {
-                    const max = Math.max(item.from.v, item.to.v) * 1.05;
-                    return `<div class="growth-row"><span class="growth-label" style="color:${item.color}">${esc(item.label)}</span>` +
-                        `<span class="bar-row"><span class="bar-year">${esc(item.from.y)}</span><span class="bar-track"><span class="bar-fill" style="width:${
-                            (item.from.v / max * 100).toFixed(1)
-                        }%;background:${item.color};opacity:.45"></span></span><span class="bar-value">${fmt(item.from.v, item.digits)}</span></span>` +
-                        `<span class="bar-row"><span class="bar-year">${esc(item.to.y)}</span><span class="bar-track"><span class="bar-fill" style="width:${
-                            (item.to.v / max * 100).toFixed(1)
-                        }%;background:${item.color}"></span></span><span class="bar-value"><b>${fmt(item.to.v, item.digits)}</b></span></span>` +
-                        `<span class="growth-unit">${esc(item.unit)}</span></div>`;
+                return Object.keys(PASSOS).map((k) => {
+                    const passo = PASSOS[k];
+                    const linhas = entradas.filter((e) => e[0] === k).map(([, titulo, frase, caminho]) =>
+                        `<li><a href="${esc(u(caminho))}"><strong>${esc(titulo)}</strong><span>${esc(frase)}</span></a></li>`).join("");
+                    return `<section class="atlas-passo" style="--c:${passo.c}"><h3><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">${passo.icon}</svg>${esc(isEnglish ? passo.en : passo.pt)}</h3><p class="atlas-titulo">${esc(isEnglish ? passo.tit_en : passo.tit_pt)}</p><p class="atlas-texto">${esc(isEnglish ? passo.txt_en : passo.txt_pt)}</p><ul>${linhas}</ul><div data-foto-slot="explorar-${k}"></div></section>`;
                 }).join("");
-                return `<div class="portal-chart growth-chart">${rows}</div>`;
             }
 
-            function pragasChartHTML(pragas, flora, fauna) {
-                const groupMeta = isEnglish ? [
-                        ["horticolas", "Vegetables", "#6b8f47"],
-                        ["pomares", "Orchards", "#c17f3e"],
-                        ["ornamentais", "Ornamentals", "#9b6bb5"],
-                        ["vinha", "Vineyard", "#7d3350"],
-                        ["vertebrados", "Vertebrates", "#4a4a4a"],
-                    ] : [
-                        ["horticolas", "Hortícolas", "#6b8f47"],
-                        ["pomares", "Pomares", "#c17f3e"],
-                        ["ornamentais", "Ornamentais", "#9b6bb5"],
-                        ["vinha", "Vinha", "#7d3350"],
-                        ["vertebrados", "Vertebrados", "#4a4a4a"],
-                    ];
-                const counts = {};
-                (pragas || []).forEach((p) => (p.grupos || []).forEach((g) => { counts[g] = (counts[g] || 0) + 1; }));
-                const items = groupMeta.filter(([id]) => counts[id]).map(([id, label, color]) => ({ label, val: counts[id], color }));
-                const note = isEnglish
-                    ? `${(pragas || []).length} pests and diseases mapped by affected crop group (one pest can affect more than one group), plus ${(flora || []).length} invasive plant species and ${(fauna || []).length} invasive animal species.`
-                    : `${(pragas || []).length} pragas e doenças mapeadas por grupo de cultura afetado (uma praga pode afetar mais do que um grupo), mais ${(flora || []).length} espécies de flora invasora e ${(fauna || []).length} espécies de fauna invasora.`;
-                return items.length ? stackChart(items, note) : "";
-            }
-
-            function solucoesChartHTML(solucoes) {
-                const list = solucoes?.solucoes || [];
-                const protectionIds = new Set(["pragas", "doencas", "prevencao"]);
-                let soil = 0, protection = 0;
-                list.forEach((s) => { if (protectionIds.has(s.categoria_id)) protection++; else soil++; });
-                const items = [
-                    { label: isEnglish ? "Soil and resources" : "Solo e recursos", val: soil, color: "#5c7a4a" },
-                    { label: isEnglish ? "Protection and prevention" : "Proteção e prevenção", val: protection, color: "#c9762f" },
-                ].filter((i) => i.val);
-                const note = isEnglish
-                    ? `${list.length} biological practices and products: from soil fertility and beneficial microorganisms to integrated pest and disease prevention.`
-                    : `${list.length} práticas e produtos biológicos: da fertilidade do solo e microrganismos benéficos à prevenção integrada de pragas e doenças.`;
-                return items.length ? stackChart(items, note) : "";
-            }
-
-            function vetoresChartHTML(vetores) {
-                const find = (id) => (vetores?.destaques || []).find((d) => d.id === id);
-                const materiais = find("materiais"), nivelMar = find("nivel_mar"), ewaste = find("ewaste");
-                if (!materiais || !nivelMar || !ewaste) return "";
-                return growthChart([
-                    {
-                        label: isEnglish ? "Material extraction" : "Extração de materiais",
-                        from: { y: String(materiais.referencia.ano), v: materiais.referencia.valor },
-                        to: { y: String(materiais.ano), v: materiais.valor },
-                        unit: isEnglish ? "billion t/year" : "mil M t/ano",
-                        color: "#8a5a3c",
-                        digits: 1,
-                    },
-                    {
-                        label: isEnglish ? "Sea-level rise rate" : "Subida do nível do mar",
-                        from: { y: nivelMar.referencia.periodo, v: nivelMar.referencia.valor },
-                        to: { y: nivelMar.periodo, v: nivelMar.valor },
-                        unit: isEnglish ? "mm/year" : "mm/ano",
-                        color: "#2b6cb0",
-                        digits: 2,
-                    },
-                    {
-                        label: isEnglish ? "Electronic waste (2022)" : "Resíduos eletrónicos (2022)",
-                        from: { y: isEnglish ? "generated" : "gerados", v: ewaste.valor },
-                        to: { y: isEnglish ? "recycled (22.3%)" : "reciclados (22,3%)", v: Math.round(ewaste.valor * 0.223 * 10) / 10 },
-                        unit: isEnglish ? "million t" : "milhões t",
-                        color: "#7b1fa2",
-                        digits: 1,
-                    },
-                ]);
-            }
-
-            function recursosChartHTML(water, air, soil) {
-                const waterStress = water?.headline_metrics?.find((m) => m.indicator_id === "sdg_6_4_2_water_stress");
-                const airExposed = air?.contextual_findings?.find((f) => f.unit === "percent");
-                const soilRecent = soil?.headline_metrics?.find((m) => m.year === 2019);
-                const soilPrior = soil?.headline_metrics?.find((m) => m.year === 2015);
-                const items = [];
-                if (waterStress) items.push({
-                    label: isEnglish ? "Water · stress level" : "Água · stress hídrico",
-                    val: waterStress.value, color: "#3498db",
-                    note: isEnglish ? `${waterStress.year}, freshwater withdrawn vs. renewable supply` : `${waterStress.year}, água doce retirada face ao disponível renovável`,
-                });
-                if (airExposed) items.push({
-                    label: isEnglish ? "Air · population above WHO limits" : "Ar · população acima dos limites da OMS",
-                    val: airExposed.value, color: "#95a5a6",
-                });
-                if (soilRecent) items.push({
-                    label: isEnglish ? "Soil · degraded land" : "Solo · terra degradada",
-                    val: soilRecent.value, color: "#e67e22",
-                    note: soilPrior
-                        ? (isEnglish ? `${soilRecent.year}, up from ${fmt(soilPrior.value)}% in ${soilPrior.year}` : `${soilRecent.year}, subiu de ${fmt(soilPrior.value)}% em ${soilPrior.year}`)
-                        : String(soilRecent.year),
-                });
-                return items.length ? percentBars(items) : "";
-            }
-
-            function biodiversidadeChartHTML(bio) {
-                const rli = (bio?.headline_metrics || []).filter((m) => m.indicator_id === "sdg_15_5_1_red_list_index");
-                const first = rli.find((m) => m.year === 1993), last = rli.slice().sort((a, b) => b.year - a.year)[0];
-                if (!first || !last) return "";
-                const species = bio?.contextual_findings?.find((f) => f.unit === "species_assessed");
-                return growthChart([{
-                    label: isEnglish ? "Red List Index (1 = no extinction risk)" : "Índice da Lista Vermelha (1 = sem risco de extinção)",
-                    from: { y: String(first.year), v: first.value },
-                    to: { y: String(last.year), v: last.value },
-                    unit: species ? (isEnglish ? `index · ${fmt(species.value, 0)} species assessed` : `índice · ${fmt(species.value, 0)} espécies avaliadas`) : "index",
-                    color: "#1e8449",
-                    digits: 3,
-                }]);
-            }
-
-            function pressoesHumanasChartHTML(ai, energy, livestock) {
-                const html = [];
-                const series = (ai?.electricity_series || []).filter((s) => s.kind === "historical" || s.kind === "estimate");
-                const first = series[0], last = series[series.length - 1];
-                if (first && last) html.push(growthChart([{
-                    label: isEnglish ? "AI data-centre electricity" : "Eletricidade em centros de dados (IA)",
-                    from: { y: String(first.year), v: first.twh },
-                    to: { y: String(last.year), v: last.twh },
-                    unit: isEnglish ? "TWh/year" : "TWh/ano",
-                    color: "#7b1fa2",
-                    digits: 0,
-                }]));
-                const renewable = energy?.headline_metrics?.renewable_final_energy_pct;
-                const items = [];
-                if (renewable) items.push({
-                    label: isEnglish ? "Renewables in final energy use" : "Renováveis no consumo final de energia",
-                    val: renewable.value, color: "#b8860b",
-                    note: String(renewable.year),
-                });
-                const livestockShare = livestock?.headline?.find((h) => (h.label_pt || "").includes("antropogénicas"));
-                if (livestockShare) items.push({
-                    label: isEnglish ? "Livestock share of human-caused emissions" : "Pecuária nas emissões antropogénicas",
-                    val: parseFloat(livestockShare.value), color: "#a66f50",
-                    note: livestockShare.context,
-                });
-                if (items.length) html.push(percentBars(items));
-                return html.join("");
-            }
-
-            function portugalChartHTML(terra) {
-                const ind = terra?.indicadores_territoriais;
-                if (!ind) return "";
-                const items = [];
-                if (ind.suscetibilidade_desertificacao) items.push({
-                    label: isEnglish ? "Mainland territory at desertification risk" : "Território continental suscetível a desertificação",
-                    val: ind.suscetibilidade_desertificacao.valor, color: "#c17f3e",
-                    note: isEnglish ? "up 22% since the 1960–1990 climate normal" : "subiu 22% desde a normal climatológica 1960–1990",
-                });
-                if (ind.erosao_costeira) items.push({
-                    label: isEnglish ? "Sandy coastline in erosion" : "Costa arenosa baixa em erosão",
-                    val: ind.erosao_costeira.costa_baixa_arenosa_em_erosao_percent, color: "#6d8992",
-                    note: isEnglish
-                        ? `${fmt(ind.erosao_costeira.extensao_em_erosao_aproximada_km, 0)} of ${fmt(ind.erosao_costeira.extensao_monitorizada_km, 0)} km monitored`
-                        : `${fmt(ind.erosao_costeira.extensao_em_erosao_aproximada_km, 0)} km de ${fmt(ind.erosao_costeira.extensao_monitorizada_km, 0)} km monitorizados`,
-                });
-                const badges = [];
-                if (ind.areas_risco_inundacao) {
-                    const years = (ind.areas_risco_inundacao.periodo || "").replace(/^ciclo\s*/i, "");
-                    badges.push(
-                        isEnglish
-                            ? `${ind.areas_risco_inundacao.valor} significant flood-risk areas identified (${years} cycle)`
-                            : `${ind.areas_risco_inundacao.valor} áreas de risco de inundação identificadas (ciclo ${years})`
-                    );
+            // Destaques: poucos (3 ou 4), escolhidos à mão em /data/destaques.json; para os mudar basta editar esse ficheiro.
+            async function showDestaques() {
+                const lista = el("destaques-lista");
+                if (!lista) return;
+                const L = isEnglish ? "en" : "pt";
+                el("destaques-label").textContent = isEnglish ? "Featured" : "Em destaque";
+                el("destaques-titulo").textContent = isEnglish ? "What deserves your attention" : "O que merece a tua atenção";
+                try {
+                    const itens = await fetch("/data/destaques.json?v=3").then((r) => { if (!r.ok) throw Error("destaques"); return r.json(); });
+                    const u = (path) => { const [p, h] = path.split("#"); return `${p}?lang=${L}${h ? "#" + h : ""}`; };
+                    lista.innerHTML = itens.slice(0, 4).map((d) => `<li><a href="${esc(u(d.href))}"><img src="${esc(d.imagem)}"${d.semMarca ? " data-no-signature" : ""} alt="${esc(d.alt[L] || d.alt.pt)}" loading="lazy"><small>${esc(d.tag[L] || d.tag.pt)}</small><h3>${esc(d.titulo[L] || d.titulo.pt)}</h3><p>${esc(d.texto[L] || d.texto.pt)}</p><span>${isEnglish ? "Read" : "Ler"} →</span></a><p class="destaque-credito">${d.credito ? `${isEnglish ? "Photo" : "Foto"}: <a href="${esc(d.credito.pagina)}" target="_blank" rel="noopener noreferrer" title="${esc(d.credito.legenda[L] || d.credito.legenda.pt)}">${esc(d.credito.autor)} · ${esc(isEnglish ? d.credito.licenca_en : d.credito.licenca)}</a>` : ""}</p></li>`).join("");
+                } catch (e) {
+                    console.error("Destaques:", e);
+                    lista.innerHTML = "";
                 }
-                return items.length ? percentBars(items, badges) : "";
-            }
-
-            function atlasContent(pragas, flora, fauna, solucoes, vetores, water, air, soil, bio, ai, energy, livestock, terra) {
-                const portals = isEnglish ? [
-                        ["Planet and pressures","Planeta e pressões","Global pressure indicators are not standing still — material extraction, sea levels and e-waste keep climbing.",[["Planetary state","/observatorio/vetores-pressao-global.html?lang=en#planetary-state"],["Pressure systems","/observatorio/vetores-pressao-global.html?lang=en#pressure-systems"],["Method","/observatorio/vetores-pressao-global.html?lang=en#method"]]],
-                        ["Vital resources","Recursos vitais","The three material foundations of life are already under measurable stress — water, air and soil, read without separating their relationships.",[["Water","/recursos/agua.html?lang=en"],["Air","/recursos/ar.html?lang=en"],["Soil","/recursos/solo.html?lang=en"]]],
-                        ["Biodiversity","Biodiversidade","Species, habitats, extinction risk and ecological relationships — the Red List Index has been falling for three decades.",[["Global","/ecossistemas/biodiversidade.html?lang=en"],["Portugal","/ecossistemas/biodiversidade.html?lang=en"]]],
-                        ["Human pressures","Pressões humanas","Energy, AI infrastructure and livestock systems keep expanding the chains of extraction and production that transform territory.",[["Energy","/energia/energy.html?lang=en"],["Territory","/energia/transicao-etica.html?lang=en"],["AI","/energia/digital.html?lang=en"],["Mining","/energia/mineracao.html?lang=en"],["Livestock","/energia/pecuaria.html?lang=en"]]],
-                        ["Pests and invasive species","Pragas e invasoras","A searchable catalogue of pests, diseases and invasive flora and fauna threatening crops and ecosystems — with identification and prevention sheets.",[["Open the catalogue","/calendario/calendario.html?lang=en#pragas-catalogo"]]],
-                        ["Natural solutions","Soluções naturais","Biological practices and products organised by function, from soil fertility to integrated pest prevention.",[["Explore solutions","/services/produtos.html?lang=en"]]],
-                        ["Portugal in detail","Portugal em detalhe","Mainland Portugal, the Azores and Madeira through national, regional and local evidence — from desertification risk to coastal erosion.",[["Observatory","/observatorio/observatorio-terra.html?lang=en"],["Species","/ecossistemas/biodiversidade.html?lang=en"],["Local calendar","/calendario/calendario.html?lang=en"]]],
-                        ["Knowledge for care","Conhecimento para cuidar","Global organic practice translated into seasonal decisions for soil, water, plants and vines.",[["Regeneration calendar","/calendario/regeneration-calendar.html?lang=en"],["Living vineyard","/calendario/living-vineyard.html?lang=en"]]]
-                    ] : [
-                        ["Planeta e pressões","Planeta e pressões","Os indicadores globais de pressão não estão parados — extração de materiais, nível do mar e resíduos eletrónicos continuam a subir.",[["Estado planetário","/observatorio/vetores-pressao-global.html?lang=pt#planetary-state"],["Sistemas de pressão","/observatorio/vetores-pressao-global.html?lang=pt#pressure-systems"],["Método","/observatorio/vetores-pressao-global.html?lang=pt#method"]]],
-                        ["Recursos vitais","Recursos vitais","As três bases materiais da vida já mostram sinais mensuráveis de stress — água, ar e solo, sem separar as suas relações.",[["Água","/recursos/agua.html?lang=pt"],["Ar","/recursos/ar.html?lang=pt"],["Solo","/recursos/solo.html?lang=pt"]]],
-                        ["Biodiversidade","Biodiversidade","Espécies, habitats, risco de extinção e relações ecológicas — o Índice da Lista Vermelha está a cair há três décadas.",[["Mundo","/ecossistemas/biodiversidade.html?lang=pt"],["Portugal","/ecossistemas/biodiversidade.html?lang=pt"]]],
-                        ["Pressões humanas","Pressões humanas","Energia, infraestrutura de IA e sistemas pecuários continuam a expandir as cadeias de extração e produção que transformam o território.",[["Energia","/energia/energy.html?lang=pt"],["Território","/energia/transicao-etica.html?lang=pt"],["IA","/energia/digital.html?lang=pt"],["Mineração","/energia/mineracao.html?lang=pt"],["Pecuária","/energia/pecuaria.html?lang=pt"]]],
-                        ["Pragas e invasoras","Pragas e invasoras","Um catálogo pesquisável de pragas, doenças e flora e fauna invasoras que ameaçam culturas e ecossistemas — com fichas de identificação e prevenção.",[["Abrir o catálogo","/calendario/calendario.html?lang=pt#pragas-catalogo"]]],
-                        ["Soluções naturais","Soluções naturais","Práticas e produtos biológicos organizados por função, da fertilidade do solo à prevenção integrada de pragas.",[["Explorar soluções","/services/produtos.html?lang=pt"]]],
-                        ["Portugal em detalhe","Portugal em detalhe","Portugal Continental, Açores e Madeira através de evidência nacional, regional e local — do risco de desertificação à erosão costeira.",[["Observatório","/observatorio/observatorio-terra.html?lang=pt"],["Espécies","/ecossistemas/biodiversidade.html?lang=pt"],["Calendário local","/calendario/calendario.html?lang=pt"]]],
-                        ["Conhecimento para cuidar","Conhecimento para cuidar","Prática biológica global traduzida em decisões sazonais para solo, água, plantas e vinha.",[["Calendário de regeneração","/calendario/regeneration-calendar.html?lang=pt"],["Vinha viva","/calendario/living-vineyard.html?lang=pt"]]]
-                    ];
-                const charts = {
-                    "Planeta e pressões": vetoresChartHTML(vetores),
-                    "Recursos vitais": recursosChartHTML(water, air, soil),
-                    "Biodiversidade": biodiversidadeChartHTML(bio),
-                    "Pressões humanas": pressoesHumanasChartHTML(ai, energy, livestock),
-                    "Pragas e invasoras": pragasChartHTML(pragas, flora, fauna),
-                    "Soluções naturais": solucoesChartHTML(solucoes),
-                    "Portugal em detalhe": portugalChartHTML(terra),
-                    "Conhecimento para cuidar": conhecimentoChartHTML(pragas),
-                };
-                return portals.map(function(p){
-                    const chart = charts[p[1]] || "";
-                    return `<article class="portal"><a class="portal-mark" href="${p[3][0][1]}" aria-label="${esc(p[0])}">${getPortalMarkImage(p[1])}</a><div><h3>${esc(p[0])}</h3><p>${esc(p[2])}</p>${chart}<nav class="portal-links" aria-label="${esc(p[0])}">${p[3].map(function(link){return `<a href="${link[1]}">${esc(link[0])} →</a>`}).join("")}</nav></div></article>`;
-                }).join("");
             }
 
             async function start() {
                 try {
                     const names = [
-                            "especies_master",
+                            "especies-encontro",
                             "biodiversity-global-catalogue",
-                            "crops-global-catalogue",
+                            "crops-global-summary",
                             "grape-varieties-global",
-                            "bioregioes",
                             "noticias",
                         ],
                         data = await Promise.all(names.map((n) =>
@@ -444,25 +196,18 @@
                         ));
 
                     showPulse(data[1], data[2], data[3]);
-                    showToday(data[4], data[0]);
-                    showNews(data[5]);
+                    showToday(data[0]);
+                    showNews(data[4]);
 
-                    const atlasNames = [
-                        "pragas", "flora_invasora", "fauna_invasora", "solucoes-catalogo", "vetores_pressao_global",
-                        "water-overview", "air-overview", "soil-overview", "biodiversity-overview",
-                        "ai-data-centres-overview", "energy-overview", "livestock-global", "observatorio_terra",
-                    ];
-                    const atlasExtras = await Promise.all(atlasNames.map((n) =>
-                        fetch(`/data/${n}.json`).then((r) => (r.ok ? r.json() : null)).catch(() => null)
-                    ));
-                    el("atlas-container").innerHTML = atlasContent(...atlasExtras);
+                    el("atlas-container").innerHTML = atlasContent();
+                    showDestaques();
                 } catch (e) {
                     console.error("Não foi possível carregar a entrada do observatório:", e);
                     el("pulse").innerHTML = '<p class="empty">—</p>';
                 }
             }
 
-            fetch("/sidebar-content.html?v=24").then((r) => r.text()).then((h) => {
+            fetch("/sidebar-content.html?v=28").then((r) => r.text()).then((h) => {
                 el("sidebar").innerHTML = h;
                 start();
             }).catch(() => start());

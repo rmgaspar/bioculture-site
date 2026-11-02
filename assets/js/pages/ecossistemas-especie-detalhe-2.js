@@ -54,11 +54,35 @@
                         return `<li><a href="${esc(x.url)}" target="_blank" rel="noopener noreferrer">${esc(name)} ↗</a></li>`;
                     }).join("")}</ul>`) : "";
             }
-            function practicalSections(esp, guidance) {
+            // Só liga a um produto/técnica quando a orientação já indica um solucao_id concreto;
+            // nunca inferimos por categoria ou palavra-chave (evitaria uma recomendação errada).
+            function solutionLink(option, solucoesCatalogo) {
+                const solucao = solucoesCatalogo?.solucoes?.find((s) => s.id === option.solucao_id);
+                if (!solucao) return null;
+                if (solucao.tipo === "pratica" && valid(solucao.tecnica_id)) {
+                    return { href: `/services/tecnicas.html#tecnica-${encodeURIComponent(solucao.tecnica_id)}`,
+                        label: tr("Ver técnica →", "See technique →") };
+                }
+                const produto = arr(solucao.produtos)[0];
+                return produto
+                    ? { href: `/services/produto-detalhe.html?id=${encodeURIComponent(produto.id)}`,
+                        label: tr("Ver produto →", "See product →") }
+                    : { href: `/services/produtos.html#${encodeURIComponent(solucao.id)}`,
+                        label: tr("Ver no catálogo →", "See in catalogue →") };
+            }
+            function optionPanel(option, solucoesCatalogo) {
+                const text = localized(option.condicao);
+                if (!valid(text)) return "";
+                const link = option.solucao_id ? solutionLink(option, solucoesCatalogo) : null;
+                return panel(esc(localized(option.nome)), `<p>${esc(text)}</p>${
+                    link ? `<a class="panel-link" href="${esc(link.href)}">${esc(link.label)}</a>` : ""
+                }`);
+            }
+            function practicalSections(esp, guidance, solucoesCatalogo) {
                 const profile = guidance?.perfis?.find((p) => p.alvos.includes(esp.id));
                 if (!profile) return "";
-                const options = profile.opcoes.map((option) =>
-                    textPanel(esc(localized(option.nome)), localized(option.condicao))).join("");
+                const options = profile.opcoes.map((option) => optionPanel(option, solucoesCatalogo))
+                    .join("");
                 const hasProduct = profile.opcoes.some((option) => option.solucao_id);
                 return `<div class="section-block" id="solucoes"><div class="section-head"><span class="eyebrow">${tr("Na prática", "In practice")}</span><div><h2>${tr("Soluções para este problema", "Solutions for this problem")}</h2><p>${esc(localized(profile.contexto))}</p></div></div>
                     <div class="grid">${panel(tr("Por onde começar", "Where to start"),
@@ -143,7 +167,7 @@
                 const prevention = esp.prevencao_biologica || {};
                 const solution = esp.solucao_biologica || {};
                 const techniques = esp.tecnicas || {};
-                return `<div class="section-block" id="diagnostico"><div class="section-head"><span class="eyebrow">Diagnóstico</span><div><h2>Reconhecer antes de intervir</h2><p>Sintomas semelhantes podem ter causas diferentes. Confirme o organismo, a extensão do dano e os auxiliares já presentes.</p></div></div><div class="grid">${
+                return `<div class="section-block" id="diagnostico"><div class="section-head"><span class="eyebrow">Diagnóstico</span><div><h2>Reconhecer antes de intervir</h2><p>Sintomas semelhantes podem ter causas diferentes. Confirma o organismo, a extensão do dano e os auxiliares já presentes.</p></div></div><div class="grid">${
                     plantasAfetadasPanel(esp, horticolas)
                 }${textPanel("Sinais e sintomas", esp.sintomas || diagnosis.sintomas_principais)}${
                     textPanel("Quando observar", esp.sazonalidade_portugal)
@@ -160,7 +184,7 @@
                     )
                 }${
                     listPanel("Infraestrutura ecológica", esp.infraestrutura_ecologica)
-                }</div></div><div class="section-block" id="intervencao"><div class="section-head"><span class="eyebrow">Intervenção</span><div><h2>Agir apenas quando necessário</h2><p>Comece pela medida menos perturbadora, registe o resultado e reavalie antes de repetir.</p></div></div><div class="grid">${
+                }</div></div><div class="section-block" id="intervencao"><div class="section-head"><span class="eyebrow">Intervenção</span><div><h2>Agir apenas quando necessário</h2><p>Começa pela medida menos perturbadora, regista o resultado e reavalia antes de repetir.</p></div></div><div class="grid">${
                     textPanel("Resposta recomendada", esp.combate || solution.metodo)
                 }${textPanel("Intervenção seletiva", techniques.intervencao)}${
                     textPanel("Avaliação", techniques.avaliacao)
@@ -185,9 +209,36 @@
                         }</i></a>`
                         : `<span>${esc(x.nome)} <i>${esc(x.nome_cientifico)}</i></span>`;
                 }).join("");
-                return `<div class="section-block"><div class="section-head"><span class="eyebrow">Comparar</span><div><h2>Espécies semelhantes</h2><p>A semelhança visual não confirma uma identificação. Observe forma, habitat, época e caracteres distintivos.</p></div></div><div class="similar">${links}</div></div>`;
+                return `<div class="section-block" id="semelhantes"><div class="section-head"><span class="eyebrow">Comparar</span><div><h2>Espécies semelhantes</h2><p>A semelhança visual não confirma uma identificação. Observa forma, habitat, época e caracteres distintivos.</p></div></div><div class="similar">${links}</div></div>`;
             }
-            function render(esp, master, guidance, horticolas) {
+            // «Resposta rápida»: o essencial de data/problemas-horta.json antes das secções longas da ficha.
+            function quickAnswer(esp, problemas) {
+                const rows = (problemas || []).filter((row) => ["pragas", "doencas"].includes(row.grupo) && (row.ver || []).some(([kind, id]) => kind === "praga" && id === esp.id)).slice(0, 2);
+                if (!rows.length) return "";
+                const pick = (row) => (english() ? row.en : row.pt) || row.pt;
+                return rows.map((row) => {
+                    const c = pick(row);
+                    return `<section class="quick-answer" id="resposta-rapida-${esc(row.id)}"><span class="eyebrow">${tr("Resposta rápida", "Quick answer")}</span><h2>${esc(c.titulo)}</h2><p>${esc(c.resumo)}</p><ol>${c.fazer.slice(0, 4).map((step) => `<li>${esc(step)}</li>`).join("")}</ol><a href="/calendario/conhecimento-cuidar.html#problema-${encodeURIComponent(row.id)}">${tr("Ver a resposta completa →", "See the full answer →")}</a></section>`;
+                }).join("");
+            }
+            // «Na teia do jardim»: quem come quem à volta deste elo, de data/teia-jardim.json (só nas fichas dos elos do mapa).
+            function teiaPanel(esp, teia) {
+                const fichaId = new URLSearchParams(location.search).get("id"),
+                    no = fichaId && teia?.nos?.find((n) => n.ficha === fichaId || n.praga === fichaId);
+                if (!no) return "";
+                const L = english() ? "en" : "pt", txt = (o) => o[L] || o.pt, byId = (id) => teia.nos.find((n) => n.id === id);
+                const rel = (rows, other) => rows.map((l) => `<li><b>${esc(txt(byId(l[other])).nome)}</b>: ${esc(txt(l))}</li>`).join("");
+                const come = teia.ligacoes.filter((l) => l.de === no.id), comido = teia.ligacoes.filter((l) => l.para === no.id);
+                const refs = [...new Set([...no.refs, ...come.flatMap((l) => l.refs), ...comido.flatMap((l) => l.refs)])].map((r) => teia.referencias[r]).filter(Boolean);
+                const ver = (no.ver || []).filter((v) => v.t === "prob").map((v) => `<a href="/calendario/conhecimento-cuidar.html#problema-${encodeURIComponent(v.id)}">${tr("Ver a resposta na horta →", "See the garden answer →")}</a>`);
+                const inner = panel(tr("Em resumo", "In short"), `<p>${esc(txt(no).resumo)}</p>${no.latim ? `<p class="source">${tr("Grupo", "Group")}: ${esc(txt(no).nome)} (<i>${esc(no.latim)}</i>)</p>` : ""}`) +
+                    (come.length ? panel(tr("Alimenta-se de", "Feeds on"), `<ul class="list">${rel(come, "para")}</ul>`) : "") +
+                    (comido.length ? panel(tr("É alimento de", "Is food for"), `<ul class="list">${rel(comido, "de")}</ul>`) : "") +
+                    panel(tr("Como ajudar", "How to help"), `<ul class="list">${txt(no).ajudar.map((a) => `<li>${esc(a)}</li>`).join("")}</ul>${ver.length ? `<p>${ver.join(" ")}</p>` : ""}`) +
+                    panel(tr("Fontes da teia", "Web sources"), `<ul class="list">${refs.map((r) => `<li><a href="${esc(r.url)}" target="_blank" rel="noopener noreferrer">${esc(r.citacao)} ↗</a></li>`).join("")}</ul>`);
+                return `<div class="section-block" id="teia-jardim"><div class="section-head"><span class="eyebrow">${tr("Na teia do jardim", "In the garden web")}</span><div><h2>${tr("Quem come quem à volta deste elo", "Who eats whom around this link")}</h2><p>${tr("Relações descritas na literatura, em esquema simplificado; não são medições do teu jardim.", "Relationships described in the literature, in a simplified scheme; not measurements of your garden.")}</p></div></div><div class="grid">${inner}</div></div>`;
+            }
+            function render(esp, master, guidance, horticolas, solucoesCatalogo, problemas, teia) {
                 const isPest = esp.grupo === "Sanidade Vegetal";
                 const isInvasive = esp.grupo === "Flora Invasora" || esp.grupo === "Fauna Invasora";
                 const tax = arr(esp.taxonomia_completa).join(" › ");
@@ -197,19 +248,20 @@
                     valid(esp.protegida_portugal) ? `Proteção: ${esp.protegida_portugal}` : "",
                 ].filter(Boolean);
                 const image = valid(esp.imagem)
-                    ? `<img src="${esc(esp.imagem.replace("/medium.", "/large."))}" alt="${
+                    ? `<img src="${esc((esp.foto && esp.foto.grande) || esp.imagem.replace("/medium.", "/large."))}" alt="${
                         esc(esp.nome)
-                    }" onerror="this.style.display='none'">`
+                    }" data-fallback="${esc(esp.imagem)}" onerror="if(this.dataset.fallback&&this.src!==this.dataset.fallback){this.src=this.dataset.fallback}else{this.style.display='none'}">`
+                    : "";
+                const credit = valid(esp.imagem) && esp.foto && esp.foto.autor
+                    ? `<p class="photo-credit">${tr("Foto", "Photo")}: ${esp.foto.autor && esp.foto.autor !== "iNaturalist" ? `${esc(esp.foto.autor)} · ` : ""}<a href="${esc(esp.foto.licenca_url)}" target="_blank" rel="noopener noreferrer">${esc(esp.foto.licenca)}</a> · <a href="${esc(esp.foto.pagina)}" target="_blank" rel="noopener noreferrer">${esc(esp.foto.origem || "iNaturalist")}</a>${esp.foto.da_especie ? ` · ${tr("imagem da espécie, não da variedade", "image of the species, not the cultivar")}` : ""}</p>`
                     : "";
                 const ecology = textPanel("Origem", esp.origem) +
                     textPanel("Distribuição", esp.distribuicao) +
                     listPanel("Habitats", esp.habitats) +
                     textPanel("Função ecológica", esp.funcao_ecologica) +
                     (tax ? textPanel("Taxonomia", tax) : "");
-                const backLink = `<a class="back" href="${
-                    isPest ? "/calendario/calendario.html#vigilancia" : "biodiversidade.html"
-                }" onclick="if(window.history.length>1){event.preventDefault();history.back();}">← Voltar</a>`;
-                document.getElementById("species").innerHTML = `<div class="hero"><div><span class="eyebrow">${
+                const hub = isPest ? "/calendario/calendario.html#vigilancia" : "biodiversidade.html";
+                let html = `<div class="hero"><div><span class="eyebrow">${
                     esc(esp.grupo || "Inventário biológico")
                 }</span><h1>${esc(esp.nome)}</h1>${
                     valid(esp.nome_cientifico)
@@ -233,27 +285,31 @@
                     )
                 }</b></div><div class="fact"><small>Invasora</small><b>${
                     esp.invasora === true ? "Sim" : "Não identificada como invasora"
-                }</b></div></div></div><div class="hero-image" data-initial="${
+                }</b></div></div></div><div class="hero-figure"><div class="hero-image" data-initial="${
                     esc(String(esp.nome || "?").charAt(0))
-                }">${image}</div></div>${backLink}${
+                }">${image}</div>${credit}</div></div><!--ficha-nav-->${
+                    quickAnswer(esp, problemas)
+                }${pestSections(esp, horticolas)}${invasiveSections(esp)}${
+                    practicalSections(esp, guidance, solucoesCatalogo)
+                }${
+                    !isPest && !isInvasive && (valid(esp.prevencao) || valid(esp.combate))
+                        ? `<div class="section-block" id="gestao"><div class="section-head"><span class="eyebrow">Gestão</span><div><h2>Prevenção e controlo responsável</h2><p>Aplicável sobretudo a invasoras e organismos de sanidade vegetal. Confirmar identificação e regras locais antes de intervir.</p></div></div><div class="grid">${
+                            textPanel("Prevenção", esp.prevencao)
+                        }${textPanel("Controlo", esp.combate)}</div></div>`
+                        : ""
+                }${
                     ecology
-                        ? `<div class="section-block"><div class="section-head"><span class="eyebrow">Ecologia</span><div><h2>Onde vive e que papel desempenha</h2><p>São apresentados apenas os campos preenchidos no inventário; informação ausente não é substituída por generalizações.</p></div></div><div class="grid">${ecology}</div></div>`
+                        ? `<div class="section-block" id="ecologia"><div class="section-head"><span class="eyebrow">Ecologia</span><div><h2>Onde vive e que papel desempenha</h2><p>São apresentados apenas os campos preenchidos no inventário; informação ausente não é substituída por generalizações.</p></div></div><div class="grid">${ecology}</div></div>`
                         : ""
                 }${
                     conservation.length || arr(esp.ameacas).length || arr(esp.protecao_legal).length
-                        ? `<div class="section-block"><div class="section-head"><span class="eyebrow">Conservação</span><div><h2>Estado, proteção e ameaças</h2><p>O estado global e a avaliação nacional não são equivalentes. Um traço significa que o inventário ainda não possui esse dado.</p></div></div><div class="grid">${
+                        ? `<div class="section-block" id="conservacao"><div class="section-head"><span class="eyebrow">Conservação</span><div><h2>Estado, proteção e ameaças</h2><p>O estado global e a avaliação nacional não são equivalentes. Um traço significa que o inventário ainda não possui esse dado.</p></div></div><div class="grid">${
                             listPanel("Estado disponível", conservation)
                         }${listPanel("Proteção legal", esp.protecao_legal)}${
                             listPanel("Ameaças", esp.ameacas)
                         }</div></div>`
                         : ""
-                }${
-                    !isPest && !isInvasive && (valid(esp.prevencao) || valid(esp.combate))
-                        ? `<div class="section-block"><div class="section-head"><span class="eyebrow">Gestão</span><div><h2>Prevenção e controlo responsável</h2><p>Aplicável sobretudo a invasoras e organismos de sanidade vegetal. Confirmar identificação e regras locais antes de intervir.</p></div></div><div class="grid">${
-                            textPanel("Prevenção", esp.prevencao)
-                        }${textPanel("Controlo", esp.combate)}</div></div>`
-                        : ""
-                }${managementNav(esp, guidance)}${pestSections(esp, horticolas)}${invasiveSections(esp)}${practicalSections(esp, guidance)}${similarPanel(esp.especies_semelhantes, master)}${
+                }${teiaPanel(esp, teia)}${similarPanel(esp.especies_semelhantes, master)}${
                     valid(esp.observacao_responsavel)
                         ? `<div class="section-block"><div class="responsible"><h3>Observar sem perturbar</h3><p>${
                             esc(esp.observacao_responsavel)
@@ -264,15 +320,16 @@
                         }</div>`
                         : ""
                 }`;
-                document.title = `${esp.nome} — bioCultura`;
+                document.getElementById("species").innerHTML = html.replace("<!--ficha-nav-->", fichaNav(html, hub));
+                document.title = `${esp.nome} — bioCulture`;
             }
-            function managementNav(esp, guidance) {
-                const pest = esp.grupo === "Sanidade Vegetal";
-                if (!pest && esp.grupo !== "Flora Invasora" && esp.grupo !== "Fauna Invasora") return "";
-                const items = pest ? [["diagnostico", tr("Diagnóstico", "Diagnosis")]] : [];
-                items.push(["prevencao", tr("Prevenção", "Prevention")], ["intervencao", tr("Intervenção", "Intervention")]);
-                if (guidance?.perfis?.some((p) => p.alvos.includes(esp.id))) items.push(["solucoes", tr("Soluções práticas", "Practical solutions")]);
-                return `<nav class="management-nav" aria-label="${tr("Nesta ficha", "On this page")}">${items.map(([id, label]) => `<a href="#${id}">${label}</a>`).join("")}</nav>`;
+            // Barra fixa da ficha: «← Voltar» (regressa ao sítio exato, ver biocultura-voltar.js) e as secções que a ficha tem.
+            function fichaNav(html, hub) {
+                const secoes = [["diagnostico", tr("Diagnóstico", "Diagnosis")], ["prevencao", tr("Prevenção", "Prevention")], ["intervencao", tr("Intervenção", "Intervention")],
+                    ["solucoes", tr("Soluções práticas", "Practical solutions")], ["gestao", tr("Gestão", "Management")], ["ecologia", tr("Ecologia", "Ecology")],
+                    ["conservacao", tr("Conservação", "Conservation")], ["teia-jardim", tr("Na teia do jardim", "Garden web")], ["semelhantes", tr("Semelhantes", "Similar")]];
+                const links = secoes.filter(([id]) => html.includes(`id="${id}"`)).map(([id, label]) => `<a href="#${id}">${label}</a>`).join("");
+                return `<nav class="management-nav" aria-label="${tr("Nesta ficha", "On this page")}"><a class="hub-back" href="${hub}" onclick="if(!this.dataset.bioHub&&history.length>1&&document.referrer.startsWith(location.origin)){event.preventDefault();history.back();}">${tr("← Voltar", "← Back")}</a>${links}</nav>`;
             }
             function resolveSpecies(id, master, pests, invasives, faunas) {
                 const base = master[id];
@@ -292,16 +349,18 @@
                     sintese: fauna.descricao || fauna.impacto };
                 return base;
             }
+            const semIndexar = () => { if (document.querySelector('meta[name="robots"]')) return; const m = document.createElement("meta"); m.name = "robots"; m.content = "noindex"; document.head.appendChild(m); };
             async function load() {
                 const id = new URLSearchParams(location.search).get("id");
                 if (!id) {
+                    semIndexar();
                     document.getElementById("species").innerHTML =
                         '<div class="error">Espécie não indicada.</div>';
                     return;
                 }
                 try {
-                    const [master, pests, invasives, faunas, guidance, horticolas] = await Promise.all([
-                        ...["especies_master", "pragas", "flora_invasora", "fauna_invasora"].map((f) =>
+                    const [master, pests, invasives, faunas, guidance, horticolas, solucoesCatalogo, problemas, teia] = await Promise.all([
+                        ...["especies-indice", "pragas", "flora_invasora", "fauna_invasora"].map((f) =>
                             fetch(`/data/${f}.json`).then((r) => {
                                 if (!r.ok) throw Error(`HTTP ${r.status}`);
                                 return r.json();
@@ -311,11 +370,26 @@
                             return r.json();
                         }).catch(() => null),
                         fetch("/data/horticolas_master.json").then((r) => r.json()).catch(() => null),
+                        fetch("/data/solucoes-catalogo.json").then((r) => r.json()).catch(() => null),
+                        fetch("/data/problemas-horta.json").then((r) => r.json()).then((data) => data.problemas).catch(() => []),
+                        fetch("/data/teia-jardim.json?v=6").then((r) => r.json()).catch(() => null),
                     ]);
-                    const esp = resolveSpecies(id, master, pests, invasives, faunas);
+                    const record = await window.BioCulturaSpecies.record(id).catch(() => undefined);
+                    const esp = resolveSpecies(id, { [id]: record }, pests, invasives, faunas);
                     if (!esp) throw Error("not-found");
-                    render(esp, master, guidance, horticolas);
+                    window.BioCulturaCanonica?.definir(id);
+                    render(esp, master, guidance, horticolas, solucoesCatalogo, problemas, teia);
+                    const stickyNav = document.createElement("script");
+                    stickyNav.src = "/assets/js/biocultura-sticky-nav.js?v=20";
+                    document.body.appendChild(stickyNav);
+                    if (location.hash) {
+                        const target = document.getElementById(location.hash.slice(1));
+                        if (target) requestAnimationFrame(() => target.scrollIntoView({ block: "start" }));
+                    }
                 } catch (e) {
+                    semIndexar();
+                    // Espécie que já não existe: vai para o catálogo (evita uma página «não encontrada» com código 200, soft 404 no Google).
+                    if (e && e.message === "not-found") window.location.replace("/ecossistemas/biodiversidade"+(window.BioCultureLanguageStore?.read() === "en" ? "?lang=en" : "")+"#catalogo");
                     document.getElementById("species").innerHTML =
                         '<div class="error"><strong>Espécie não encontrada.</strong><br><a href="biodiversidade.html">Voltar</a></div>';
                 }

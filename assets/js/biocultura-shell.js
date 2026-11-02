@@ -24,9 +24,8 @@ const BioCultureLanguageStore = (() => {
     function write(value) {
         const lang = valid.has(value) ? value : "pt";
         try { window.localStorage.setItem(key, lang); } catch (_) {}
-        const domain = /(^|\.)bioculture\.net$/i.test(location.hostname)
-            ? "; Domain=.bioculture.net"
-            : "";
+        const rootDomainMatch = /(?:^|\.)(bioculture\.(?:net|pt))$/i.exec(location.hostname);
+        const domain = rootDomainMatch ? `; Domain=.${rootDomainMatch[1]}` : "";
         document.cookie = `bioculture_lang_v2=${encodeURIComponent(lang)}; Path=/; Max-Age=31536000; SameSite=Lax${domain}${location.protocol === "https:" ? "; Secure" : ""}`;
         document.documentElement.lang = lang;
         return lang;
@@ -81,7 +80,7 @@ async function applyLanguage(lang) {
     }
 
     try {
-        const r = await fetch("/assets/lang/" + state.lang + ".json?v=7", { cache: "no-cache" });
+        const r = await fetch("/assets/lang/" + state.lang + ".json?v=14", { cache: "no-cache" });
         if (!r.ok) throw Error("lang");
 
         const t = await r.json();
@@ -145,6 +144,7 @@ function choose(item) {
     }
     closeResults();
 
+    try { localStorage.setItem("biocultura_region_nome", String(item.titulo || "")); } catch (_) {}
     const input = get("loc-search-input");
     if (input) input.value = item.titulo;
 
@@ -292,7 +292,7 @@ async function locate(button) {
 
     status(
         state.lang === "pt"
-            ? "A obter a sua localização…"
+            ? "A obter a tua localização…"
             : "Getting your location…"
     );
 
@@ -311,7 +311,7 @@ async function locate(button) {
                 );
 
                 if (nearest && distance(point, nearest) > 50) {
-                    status(state.lang === "pt" ? "Sem localidade próxima no inventário português. Pesquise uma localidade manualmente." : "No nearby location in the Portuguese inventory. Search manually.");
+                    status(state.lang === "pt" ? "Sem localidade próxima no inventário português. Pesquisa uma localidade manualmente." : "No nearby location in the Portuguese inventory. Search manually.");
                 } else if (nearest) {
                     status(
                         state.lang === "pt"
@@ -340,7 +340,7 @@ async function locate(button) {
                 ? {
                     1: "Autorize a localização nas definições deste site.",
                     2: "O dispositivo não conseguiu determinar a localização. Pode pesquisar a localidade manualmente.",
-                    3: "A localização demorou demasiado. Tente novamente ou pesquise a localidade.",
+                    3: "A localização demorou demasiado. Tente novamente ou pesquisa a localidade.",
                 }
                 : {
                     1: "Allow location access in this site's settings.",
@@ -362,7 +362,7 @@ async function locate(button) {
         }
     );
     } catch (_) {
-        status(state.lang === "pt" ? "Não foi possível iniciar o GPS. Pesquise a localidade ou verifique a permissão do navegador." : "GPS could not start. Search manually or check browser permission.");
+        status(state.lang === "pt" ? "Não foi possível iniciar o GPS. Pesquisa a localidade ou verifica a permissão do navegador." : "GPS could not start. Search manually or check browser permission.");
         if (trigger) { trigger.disabled = false; trigger.removeAttribute("aria-busy"); }
     }
 }
@@ -386,7 +386,7 @@ function alignment() {
 
     const link = document.createElement("link");
     link.rel = "stylesheet";
-    link.href = "/assets/css/biocultura-alignment.css?v=4";
+    link.href = "/assets/css/biocultura-alignment.css?v=15";
     link.dataset.bioculturaAlignment = "true";
     document.head.appendChild(link);
 }
@@ -408,8 +408,14 @@ function scheduleRefresh() {
         try { saved = localStorage.getItem("biocultura_region") || ""; } catch (_) {}
         if (!saved) return;
         try {
-            const item = (await regions()).find((x) => String(x.id) === String(saved));
+            // Só o nome da localidade: lê o ficheiro pequeno da região (o mesmo que as páginas usam)
+            // em vez do inventário completo de localidades (~540 KB), que fica para a pesquisa e o GPS.
+            const rows = window.BioCultureRegion
+                ? await window.BioCultureRegion.load({ fallback: false })
+                : (await regions()).filter((x) => String(x.id) === String(saved));
+            const item = rows && rows[0];
             const input = get("loc-search-input");
+            if (item) { try { localStorage.setItem("biocultura_region_nome", String(item.titulo || "")); } catch (_) {} }
             if (item && input && !input.value) input.value = item.titulo;
         } catch (_) {}
     });
@@ -454,6 +460,36 @@ function bindInteractions() {
         event.stopImmediatePropagation();
         search(event.target.value);
     }, true);
+
+    // Ao clicar na barra, o nome da localidade guardada desaparece e fica a indicação para escolher outra;
+    // se sais sem escolher, o nome volta. Enquanto não clicas, o nome fica como está.
+    let carregaNaLista = false;
+    document.addEventListener("pointerdown", (event) => {
+        if (event.target.closest?.(".bio-dropdown")) carregaNaLista = true;
+    }, true);
+    document.addEventListener("pointerup", () => { setTimeout(() => { carregaNaLista = false; }, 600); }, true);
+    document.addEventListener("focusin", (event) => {
+        const input = event.target;
+        if (input?.id !== "loc-search-input" || input.dataset.editar || !input.value) return;
+        input.dataset.guardado = input.value;
+        input.dataset.pergunta = input.placeholder;
+        input.dataset.editar = "1";
+        input.value = "";
+        input.placeholder = state.lang === "pt" ? "Escolher outra localidade…" : "Choose another place…";
+        closeResults();
+    });
+    document.addEventListener("focusout", (event) => {
+        const input = event.target;
+        if (input?.id !== "loc-search-input" || !input.dataset.editar) return;
+        setTimeout(() => {
+            if (carregaNaLista || document.activeElement?.closest?.(".bio-location")) return;
+            input.value = input.dataset.guardado;
+            input.placeholder = input.dataset.pergunta;
+            delete input.dataset.editar; delete input.dataset.guardado; delete input.dataset.pergunta;
+            closeResults();
+            status("");
+        }, 180);
+    });
 }
 
 function observeSidebar() {

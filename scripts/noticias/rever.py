@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import datetime as dt
 import json
 from pathlib import Path
 
@@ -11,6 +12,7 @@ ROOT = Path(__file__).resolve().parents[2]
 PROPOSALS = ROOT / "data" / "noticias_propostas.json"
 PUBLISHED = ROOT / "data" / "noticias.json"
 REJECTED = ROOT / "data" / "noticias_rejeitadas.json"
+MIN_DAYS_ONLINE = 30
 
 
 def read(path: Path) -> list[dict]:
@@ -21,23 +23,22 @@ def write(path: Path, rows: list[dict]) -> None:
     path.write_text(json.dumps(rows, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
-def main() -> int:
-    parser = argparse.ArgumentParser()
-    parser.add_argument("action", choices=("aprovar", "recusar"))
-    parser.add_argument("news_id")
-    args = parser.parse_args()
-
+def decide(action: str, news_id: str) -> bool:
+    """Aplica uma decisão; devolve False se a proposta já não está na fila."""
     proposals = read(PROPOSALS)
-    selected = next((row for row in proposals if row.get("id") == args.news_id), None)
+    selected = next((row for row in proposals if row.get("id") == news_id), None)
     if not selected:
-        raise SystemExit(f"Proposta não encontrada: {args.news_id}")
+        return False
 
-    proposals = [row for row in proposals if row.get("id") != args.news_id]
-    write(PROPOSALS, proposals)
+    write(PROPOSALS, [row for row in proposals if row.get("id") != news_id])
 
-    if args.action == "aprovar":
+    if action == "aprovar":
         selected["estado"] = "publicada"
-        published = [row for row in read(PUBLISHED) if row.get("id") != args.news_id]
+        # O prazo conta desde a publicação original; uma notícia aprovada dias depois não pode sair logo a seguir.
+        minimum = (dt.date.today() + dt.timedelta(days=MIN_DAYS_ONLINE)).isoformat()
+        if not selected.get("permanente") and selected.get("expira_em", "") < minimum:
+            selected["expira_em"] = minimum
+        published = [row for row in read(PUBLISHED) if row.get("id") != news_id]
         published.append(selected)
         published.sort(
             key=lambda row: (int(row.get("prioridade", row.get("relevancia", 0))), row.get("publicado_em", row.get("data", ""))),
@@ -48,6 +49,33 @@ def main() -> int:
         rejected = read(REJECTED)
         rejected.insert(0, {"id": selected["id"], "url": selected["url"]})
         write(REJECTED, rejected)
+    return True
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("action", choices=("aprovar", "recusar", "lote"))
+    parser.add_argument("news_id", help="identificador da notícia; em «lote», uma lista «id:aprovar,id:recusar»")
+    args = parser.parse_args()
+
+    if args.action != "lote":
+        if not decide(args.action, args.news_id):
+            raise SystemExit(f"Proposta não encontrada: {args.news_id}")
+        return 0
+
+    # Lote vindo da página de revisão: uma decisão repetida ou já tomada não bloqueia as restantes.
+    done = skipped = 0
+    for pair in args.news_id.split(","):
+        news_id, _, action = pair.partition(":")
+        if action not in ("aprovar", "recusar") or not news_id:
+            raise SystemExit(f"Decisão inválida: {pair!r}")
+        if decide(action, news_id):
+            done += 1
+            print(f"{action}: {news_id}")
+        else:
+            skipped += 1
+            print(f"já não estava na fila: {news_id}")
+    print(f"{done} decisão(ões) aplicada(s), {skipped} ignorada(s).")
     return 0
 
 

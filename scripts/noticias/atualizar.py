@@ -17,6 +17,7 @@ import json
 import re
 import sys
 import unicodedata
+import urllib.error
 import urllib.parse
 import urllib.request
 import xml.etree.ElementTree as ET
@@ -24,29 +25,36 @@ from pathlib import Path
 from difflib import SequenceMatcher
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 NEWS_PATH = ROOT / "data" / "noticias.json"
+ARCHIVE_PATH = ROOT / "data" / "noticias_arquivo.json"
 PROPOSALS_PATH = ROOT / "data" / "noticias_propostas.json"
 REJECTED_PATH = ROOT / "data" / "noticias_rejeitadas.json"
 CONFIG_PATH = ROOT / "config" / "noticias_fontes.json"
 
+import foto_contexto  # noqa: E402  (mesma pasta; sys.path acima)
+
+IMAGES = json.loads((Path(__file__).resolve().parents[2] / "config" / "noticias_imagens.json").read_text(encoding="utf-8"))
+
 CATEGORIES = {
     "clima": ("Clima", ["clima", "climate", "aquecimento", "warming", "temperatura", "heatwave"]),
-    "agua": ("Água", ["agua", "water", "seca", "drought", "cheia", "flood", "oceano", "rio", "barragem"]),
+    "agua": ("Água", ["agua", "water", "seca", "drought", "cheia", "flood", "oceano", "rios", "barragem"]),
     "solo": ("Solo", ["solo", "soil", "erosao", "desertificacao", "compost", "agricultura", "pesticida"]),
-    "biodiversidade": ("Biodiversidade", ["biodivers", "species", "especie", "habitat", "floresta", "forest", "invasora", "polinizador"]),
-    "ar": ("Ar", ["qualidade do ar", "air quality", "poluicao", "pollution", "emissoes", "emissions", "incendio", "wildfire"]),
-    "energia": ("Energia", ["energia", "energy", "renovavel", "renewable", "solar", "eolica", "wind power"]),
-    "mineracao": ("Mineração", ["mineracao", "mining", "litio", "lithium", "mina ", "extracao mineral"]),
+    "biodiversidade": ("Biodiversidade", ["biodivers*", "species", "especie", "habitat", "floresta", "forest", "invasora", "polinizador"]),
+    "ar": ("Ar", ["qualidade do ar", "air quality", "poluicao", "pollution", "emissoes", "emissions", "incendio", "incendio florestal", "fogo florestal", "wildfire"]),
+    "energia": ("Energia", ["energia", "energy", "renovavel", "renewable", "solar", "eolica", "wind power", "nuclear", "central nuclear", "hidroeletric*"]),
+    "mineracao": ("Mineração", ["mineracao", "mining", "litio", "lithium", "minas", "extracao mineral"]),
     "impacto-digital": ("Impacto Digital & IA", ["inteligencia artificial", "artificial intelligence", "data center", "centro de dados", "digitalizacao"]),
     "pecuaria": ("Pecuária", ["pecuaria", "livestock", "suinicultura", "aviario", "gado", "metano"]),
+    "aviacao": ("Aviação", ["aviacao", "aviation", "aeroporto*", "airport*", "airline*", "companhia aerea", "companhias aereas", "voo*", "flight", "combustivel de aviacao", "jet fuel", "sustainable aviation fuel", "contrail*", "rastos de condensacao", "refueleu", "corsia", "trafego aereo", "air traffic", "viagem aerea", "viagens aereas", "air travel"]),
     "enologia": ("Enologia", ["vinha", "vinho", "viticultura", "vineyard", "wine"]),
-    "agricultura": ("Agricultura biológica", ["agricultura", "agriculture", "organic farming", "agroecolog", "crop", "semente", "seed"]),
-    "oceanos": ("Oceanos", ["oceano", "ocean", "marinho", "marine", "sea", "algal", "eutrofiza"]),
+    "agricultura": ("Agricultura biológica", ["agricultura", "agriculture", "organic farming", "agroecolog*", "crop", "semente", "seed"]),
+    "oceanos": ("Oceanos", ["oceano", "ocean", "marinho", "marine", "sea level", "algal", "eutrofiza*"]),
     "territorio": ("Território", ["territorio", "territory", "land use", "ordenamento", "protected area"]),
 }
 
 IMPACT = ["recorde", "emergencia", "risco", "crise", "proibicao", "lei", "relatorio", "estudo", "milhoes", "extincao", "contaminacao"]
-PORTUGAL = ["portugal", "portugues", "acores", "madeira", "algarve", "alentejo", "lisboa", "porto"]
+PORTUGAL = ["portugal", "portugues*", "acores", "madeira", "algarve", "alentejo", "lisboa", "porto"]
 MONTHS = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"]
 
 
@@ -93,10 +101,24 @@ def parse_date(value: str) -> dt.datetime:
             return dt.datetime.now(dt.timezone.utc)
 
 
+def clean_title(title: str, source: str) -> str:
+    """Tira o «- Fonte» que o Google Notícias acrescenta ao fim dos títulos (também «| X - X»)."""
+    if not source:
+        return title
+    suffix = r"\s*[-–|]\s*" + re.escape(source) + r"\s*$"
+    previous = None
+    while previous != title:
+        previous, title = title, re.sub(suffix, "", title, flags=re.I).strip()
+    return title
+
+
 def fetch_feed(url: str) -> list[dict]:
     request = urllib.request.Request(url, headers={"User-Agent": "bioCultura-news/1.0 (+https://biocultura.net)"})
     with urllib.request.urlopen(request, timeout=25) as response:
         payload = response.read(2_000_000)
+    # Alguns feeds (p. ex. o da NASA) vêm sem espaço entre atributos do cabeçalho e não são XML válido.
+    head, rest = payload[:3000], payload[3000:]
+    payload = re.sub(rb'"(?=xmlns[:=])', b'" ', head) + rest
     root = ET.fromstring(payload)
     nodes = [n for n in root.iter() if n.tag.rsplit("}", 1)[-1].lower() in ("item", "entry")]
     result = []
@@ -106,18 +128,66 @@ def fetch_feed(url: str) -> list[dict]:
         summary = plain(child_text(node, ("description", "summary", "content")))
         published = child_text(node, ("pubdate", "published", "updated", "date"))
         source = plain(child_text(node, ("source",)))
+        title = clean_title(title, source)
         if title and link:
             result.append({"title": title, "url": link, "summary": summary, "published": parse_date(published), "source": source})
     return result
 
 
-def classify(text: str) -> list[tuple[str, str, int]]:
+def has_word(word: str, value: str) -> bool:
+    """Palavra inteira (com plural simples); "raiz*" aceita qualquer terminação.
+
+    Procurar texto solto fazia "rio" casar com "Rio Ave" e "lei" com "leilão".
+    """
+    stem = word.endswith("*")
+    pattern = r"(?<![a-z0-9])" + re.escape(folded(word.rstrip("*"))) + (r"[a-z]*" if stem else r"s?(?![a-z0-9])")
+    return re.search(pattern, value) is not None
+
+
+def fetch_source(source: dict) -> list[dict]:
+    """RSS/Atom, ou um leitor de HTML (leitores_html.py) para organismos sem feed."""
+    if source.get("leitor"):
+        import leitores_html
+        items = leitores_html.LEITORES[source["leitor"]]()
+        if not items:
+            raise RuntimeError("o leitor não encontrou notícias (o site pode ter mudado)")
+        return items
+    return fetch_feed(source["url"])
+
+
+def classify(text: str) -> list[tuple[int, str, str]]:
     value = folded(text)
     matches = []
     for category_id, (label, words) in CATEGORIES.items():
-        count = sum(1 for word in words if folded(word) in value)
+        count = sum(1 for word in words if has_word(word, value))
         matches.append((count, category_id, label))
-    return sorted((m for m in matches if m[0] > 0), reverse=True)
+    # Em caso de empate, a aviação ganha às categorias gerais («contrails» e «aquecimento» não são só clima).
+    return sorted((m for m in matches if m[0] > 0), key=lambda m: (m[0], m[1] == "aviacao", m[1]), reverse=True)
+
+
+def distinct_terms(text: str) -> int:
+    """Termos temáticos diferentes encontrados no texto, somando todas as categorias."""
+    value = folded(text)
+    return len({w for _, words in CATEGORIES.values() for w in words if has_word(w, value)})
+
+
+def blocked(item: dict, source_cfg: dict, config: dict) -> str:
+    """Motivo pelo qual a notícia nunca chega à fila de revisão, ou "" se pode seguir."""
+    text = folded(item["title"])
+    source = folded(item["source"] or source_cfg["nome"])
+    path = urllib.parse.urlsplit(item["url"]).path.strip("/").split("/")
+    for pattern in config.get("bloquear_titulos", []):
+        if re.search(pattern, text, re.I):
+            return "título fora do âmbito"
+    if any(folded(name) in source for name in config.get("bloquear_fontes", [])):
+        return "fonte excluída"
+    sections = source_cfg.get("secoes_url")
+    if sections and (len(path) < 2 or path[1] not in sections):
+        return "secção fora do âmbito"
+    minimum = int(source_cfg.get("termos_minimos", 1))
+    if distinct_terms(item["title"] + " " + item["summary"]) < minimum:
+        return "pouca ligação ao tema"
+    return ""
 
 
 def geographic_scope(text: str, source_cfg: dict) -> tuple[str, list[str]]:
@@ -125,9 +195,78 @@ def geographic_scope(text: str, source_cfg: dict) -> tuple[str, list[str]]:
     configured = source_cfg.get("ambito")
     if configured:
         return configured, ["PT"] if configured == "portugal" else []
-    if any(word in value for word in PORTUGAL):
+    if any(has_word(word, value) for word in PORTUGAL):
         return "portugal", ["PT"]
     return "global", []
+
+
+# Imagens do modelo do site (logótipo, banner genérico), não da notícia: contam como «a fonte não tem imagem».
+GENERIC_IMAGE = re.compile(r"/themes/|/dist/images/|open_graph|opengraph|logo|favicon|placeholder|default[_.-]|_default|/assets/front/", re.I)
+
+
+def page_image(url: str, page: str) -> str:
+    """Imagem da própria notícia na página da fonte, por ordem de fiabilidade."""
+
+    def meta(prop: str) -> str:
+        match = (re.search(rf'<meta[^>]+(?:property|name)=["\']{prop}["\'][^>]+content=["\']([^"\']+)', page, re.I)
+                 or re.search(rf'<meta[^>]+content=["\']([^"\']+)["\'][^>]+(?:property|name)=["\']{prop}["\']', page, re.I))
+        return html.unescape(match.group(1)).strip() if match else ""
+
+    candidates = [meta("og:image"), meta("twitter:image")]
+    for block in re.findall(r'<script[^>]+application/ld\+json[^>]*>(.*?)</script>', page, re.S | re.I):
+        for found in re.findall(r'"image"\s*:\s*(?:\[\s*)?(?:\{[^}]*?"url"\s*:\s*)?"(https?:[^"]+)"', block):
+            candidates.append(found.replace("\\/", "/"))
+    host = urllib.parse.urlsplit(url).netloc
+    if host.endswith("ipma.pt"):
+        candidates += re.findall(r"href='(/opencms/pt/media/noticias/imagens/[^']+)'", page)[:1] + re.findall(r"src='(/opencms/pt/media/noticias/imagens/[^']+)' alt='' style='border", page)[:1]
+    elif host.endswith("dgeg.gov.pt"):
+        candidates += re.findall(r'<img src="(/media/[^"]+)" class="w-100"', page)[:1]
+    elif host.endswith("apambiente.pt"):
+        candidates += re.findall(r'<img[^>]+src="(/sites/default/files/[^"]+)"', page)[:1]
+    for found in candidates:
+        found = urllib.parse.urljoin(url, found) if found else ""
+        if found.startswith("//"):
+            found = "https:" + found
+        if found.startswith("http") and not GENERIC_IMAGE.search(found):
+            return found
+    return ""
+
+
+def source_page(url: str) -> tuple[str, str]:
+    """Imagem e descrição (og:description) que a fonte original publica; "" se não houver."""
+    page = ""
+    for agent in ("Mozilla/5.0 (compatible; bioCultura-news/1.0)", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36"):
+        try:
+            request = urllib.request.Request(url, headers={"User-Agent": agent})
+            with urllib.request.urlopen(request, timeout=15) as response:
+                page = response.read(900_000).decode("utf-8", "ignore")
+            break
+        except urllib.error.HTTPError as exc:
+            if exc.code not in (401, 403):
+                break
+        except Exception:
+            break
+    if not page:
+        return "", ""
+
+    def meta(prop: str) -> str:
+        match = (re.search(rf'<meta[^>]+(?:property|name)=["\']{prop}["\'][^>]+content=["\']([^"\']+)', page, re.I)
+                 or re.search(rf'<meta[^>]+content=["\']([^"\']+)["\'][^>]+(?:property|name)=["\']{prop}["\']', page, re.I))
+        return html.unescape(match.group(1)).strip() if match else ""
+
+    description = plain(meta("og:description") or meta("description") or meta("twitter:description"))
+    return page_image(url, page), description
+
+
+def source_image(url: str) -> str:
+    return source_page(url)[0]
+
+
+def is_title_only(summary: str, title: str, source: str) -> bool:
+    """O Google Notícias devolve como «resumo» o próprio título (por vezes seguido da fonte)."""
+    text = folded(summary).strip(" .")
+    base = folded(title).strip(" .")
+    return not text or text == base or text == f"{base} {folded(source)}".strip() or text.startswith(base) and len(text) <= len(base) + len(source) + 4
 
 
 def resolve_google_news_url(url: str) -> str:
@@ -191,10 +330,10 @@ def score(item: dict, authority: int, keyword_hits: int, now: dt.datetime) -> tu
     topic = min(25, 9 + keyword_hits * 5)
     points += topic
     reasons.append(f"relação temática: {topic}/25")
-    geo = 15 if any(word in text for word in PORTUGAL) else 7
+    geo = 15 if any(has_word(word, text) for word in PORTUGAL) else 7
     points += geo
     reasons.append(f"relevância geográfica: {geo}/15")
-    impact = min(15, 5 + 3 * sum(1 for word in IMPACT if word in text))
+    impact = min(15, 5 + 3 * sum(1 for word in IMPACT if has_word(word, text)))
     points += impact
     reasons.append(f"impacto potencial: {impact}/15")
     age = max(0, (now - item["published"]).days)
@@ -218,9 +357,11 @@ def is_duplicate(item: dict, existing: list[dict]) -> bool:
     for news in existing:
         if canonical_url(news.get("url", "")) == url:
             return True
-        old_title = folded((news.get("pt") or {}).get("titulo", news.get("titulo", "")))
-        if old_title and SequenceMatcher(None, title, old_title).ratio() >= 0.88:
-            return True
+        # Compara com o título nas duas línguas: as notícias aprovadas têm o original e a tradução.
+        for old in ((news.get("pt") or {}).get("titulo", news.get("titulo", "")), (news.get("en") or {}).get("titulo", "")):
+            old_title = folded(old)
+            if old_title and SequenceMatcher(None, title, old_title).ratio() >= 0.88:
+                return True
     return False
 
 
@@ -230,7 +371,11 @@ def make_news(item: dict, source_cfg: dict, matches: list[tuple[str, str, int]],
     source = item["source"] or source_cfg["nome"]
     resolved_url = resolve_google_news_url(item["url"])
     summary = item["summary"][:480].rstrip(" .")
-    if not summary or folded(summary) == folded(item["title"]):
+    image, page_summary = source_page(resolved_url)
+    image = image or item.get("image", "")
+    if is_title_only(summary, item["title"], source):
+        summary = page_summary[:480].rstrip(" .") if page_summary and not is_title_only(page_summary, item["title"], source) else ""
+    if not summary:
         summary = f"A fonte {source} publicou esta atualização. O conteúdo integral e os dados que a sustentam devem ser confirmados na ligação original antes da aprovação."
     body = f"<p>{html.escape(summary)}</p><p><strong>Fonte original:</strong> <a href=\"{html.escape(resolved_url, quote=True)}\" rel=\"noopener noreferrer\">{html.escape(source)}</a>.</p>"
     retention = 365 if points >= 85 else 180 if points >= 75 else 60
@@ -252,9 +397,13 @@ def make_news(item: dict, source_cfg: dict, matches: list[tuple[str, str, int]],
         "capturado_em": captured.isoformat().replace("+00:00", "Z"),
         "expira_em": (published.date() + dt.timedelta(days=retention)).isoformat(),
         "permanente": False,
-        "imagem": f"/images/{'digital_ia' if category_id == 'impacto-digital' else 'calendario' if category_id == 'enologia' else category_id}.jpg",
+        # Regra editorial: imagem da fonte original; a imagem-tipo da categoria só se a fonte não tiver.
+        "imagem": image or IMAGES["por_categoria"].get(category_id, IMAGES["predefinida"]),
+        "imagem_credito_pt": source if image else IMAGES["credito_pt"],
+        "imagem_credito_en": source if image else IMAGES["credito_en"],
         "fonte": source,
         "tipo_fonte": source_cfg.get("tipo", "desconhecida"),
+        "tipo_conteudo": content_type(item["title"], resolved_url, source_cfg.get("tipo", ""), source),
         "logo": "",
         "url": canonical_url(resolved_url),
         "tags": categories,
@@ -263,29 +412,123 @@ def make_news(item: dict, source_cfg: dict, matches: list[tuple[str, str, int]],
     }
 
 
+def content_type(title: str, url: str, source_type: str, source: str) -> str:
+    """Tipo de conteúdo mostrado ao leitor (selo): distingue facto noticiado, estudo, comunicado e opinião."""
+    low = f"{title} {url}".lower()
+    if re.search(r"/commentisfree/|/opinion/|/opiniao/|\bop-ed\b|\(comentário\)|\(commentary\)|\(opinion\)", low):
+        return "opiniao"
+    if re.search(r"\bexplainer\b|\bexplicador\b", low):
+        return "explicador"
+    if source_type == "ciencia":
+        return "estudo"
+    if source_type == "fonte-primaria":
+        return "observacao-da-terra" if "nasa" in source.lower() else "fonte-primaria"
+    if source_type in ("organizacao-internacional", "agencia-publica") and source != "UN News":
+        return "comunicado"
+    return "noticia"
+
+
+def reassess(pending: list[dict], config: dict, today: dt.date) -> tuple[list[dict], list[tuple[dict, str]]]:
+    """Aplica os critérios atuais à fila já existente: tira o que expirou ou não passa no filtro."""
+    sources = {s["nome"]: s for s in config["fontes"]}
+    keep, dropped = [], []
+    for row in pending:
+        if row.get("pt"):
+            row["pt"]["titulo"] = clean_title(row["pt"].get("titulo", ""), row.get("fonte", ""))
+        title = (row.get("pt") or {}).get("titulo", "")
+        summary = (row.get("pt") or {}).get("resumo_biocultura", "")
+        if row.get("expira_em") and row["expira_em"] < today.isoformat():
+            dropped.append((row, "prazo terminado"))
+            continue
+        cfg = sources.get(row.get("fonte", ""), {"nome": row.get("fonte", "")})
+        item = {"title": title, "summary": summary, "url": row.get("url", ""), "source": row.get("fonte", "")}
+        reason = blocked(item, cfg, config)
+        # Itens vindos de pesquisas do Google já não trazem a secção da fonte original: só se aplicam os filtros de texto.
+        if reason == "secção fora do âmbito" and "news.google.com" in row.get("url", ""):
+            reason = ""
+        (dropped.append((row, reason)) if reason else keep.append(row))
+    return keep, dropped
+
+
+def fotos_de_contexto(noticias: list[dict], descarregar: bool = True) -> int:
+    """Regra editorial: se a fonte não deu imagem, foto de contexto da Wikimedia Commons (ver foto_contexto.py) e só se
+    nada servir fica a ilustração bioCulture. Corre depois do corte por relevância, para só descarregar o que fica."""
+    feitas = 0
+    for noticia in noticias:
+        if noticia.get("imagem_credito_pt") != IMAGES["credito_pt"]:
+            continue
+        if foto_contexto.aplicar(noticia, descarregar):
+            feitas += 1
+            print(f"  foto de contexto: {noticia['pt']['titulo'][:60]} → {noticia['imagem_contexto']['pt']}")
+        else:
+            print(f"  sem foto de contexto (fica a ilustração): {noticia['pt']['titulo'][:60]}")
+    return feitas
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--reparar-resumos", action="store_true", help="vai buscar à fonte o resumo das propostas cujo resumo é só o título")
+    parser.add_argument("--reavaliar", action="store_true", help="só reaplica os critérios à fila existente, sem ir às fontes")
+    parser.add_argument("--fotos", action="store_true", help="põe foto de contexto nas propostas da fila que ainda têm a ilustração bioCulture")
     parser.add_argument("--config", type=Path, default=CONFIG_PATH)
     args = parser.parse_args()
     config = json.loads(args.config.read_text(encoding="utf-8"))
     news = json.loads(NEWS_PATH.read_text(encoding="utf-8"))
+    if ARCHIVE_PATH.exists():  # o que foi arquivado (expirado ou retirado) não volta a ser proposto
+        news += json.loads(ARCHIVE_PATH.read_text(encoding="utf-8"))
     pending = json.loads(PROPOSALS_PATH.read_text(encoding="utf-8")) if PROPOSALS_PATH.exists() else []
     rejected = json.loads(REJECTED_PATH.read_text(encoding="utf-8")) if REJECTED_PATH.exists() else []
     now = dt.datetime.now(dt.timezone.utc)
+    pending, dropped = reassess(pending, config, now.date())
+    for row, reason in dropped:
+        print(f"- retirada da fila ({reason}): {row['pt']['titulo'][:80]}")
+    if args.reparar_resumos:
+        fixed = 0
+        for row in pending:
+            pt = row["pt"]
+            if not is_title_only(pt.get("resumo_biocultura", ""), pt["titulo"], row.get("fonte", "")) and not pt.get("resumo_biocultura", "").startswith("A fonte "):
+                continue
+            _, description = source_page(row["url"])
+            if description and not is_title_only(description, pt["titulo"], row.get("fonte", "")):
+                description = description[:480].rstrip(" .")
+                pt["resumo_biocultura"] = description
+                pt["corpo"] = re.sub(r"^<p>.*?</p>", "<p>" + html.escape(description) + "</p>", pt["corpo"], count=1, flags=re.S)
+                fixed += 1
+        print(f"Resumos reparados: {fixed}.")
+        if not args.dry_run:
+            PROPOSALS_PATH.write_text(json.dumps(pending, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        return 0
+    if args.fotos:
+        feitas = fotos_de_contexto(pending, descarregar=not args.dry_run)
+        if not args.dry_run:
+            PROPOSALS_PATH.write_text(json.dumps(pending, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        print(f"Fotos de contexto: {feitas}.")
+        return 0
+    if args.reavaliar:
+        print(f"Fila: {len(pending)} proposta(s) mantida(s), {len(dropped)} retirada(s).")
+        if not args.dry_run:
+            PROPOSALS_PATH.write_text(json.dumps(pending, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        return 0
     proposals = []
     failures = []
+    skipped = {}
     for source in config["fontes"]:
         if not source.get("ativa", True):
             continue
         try:
-            items = fetch_feed(source["url"])
+            items = fetch_source(source)
         except Exception as exc:  # Uma fonte indisponível não bloqueia as restantes.
             failures.append(f"{source['id']}: {exc}")
             continue
+        from_source = []
         for item in items:
             age = (now - item["published"]).days
-            if age < -1 or age > 45 or is_duplicate(item, news + pending + rejected + proposals):
+            if age < -1 or age > 45 or is_duplicate(item, news + pending + rejected + proposals + from_source):
+                continue
+            reason = blocked(item, source, config)
+            if reason:
+                skipped[reason] = skipped.get(reason, 0) + 1
                 continue
             matches = classify(item["title"] + " " + item["summary"])
             if not matches:
@@ -294,12 +537,23 @@ def main() -> int:
             points, reasons = score(item, int(source.get("autoridade", 15)), hits, now)
             if points < int(config["pontuacao_minima"]):
                 continue
-            proposals.append(make_news(item, source, matches, points, reasons))
+            # Só agora, com a candidata aprovada nos filtros, se resolve a ligação do Google Notícias
+            # para a da publicação original: é ela que se compara com as notícias já publicadas ou arquivadas.
+            item["url"] = resolve_google_news_url(item["url"])
+            if is_duplicate(item, news + pending + rejected + proposals + from_source):
+                skipped["já publicada, arquivada ou proposta"] = skipped.get("já publicada, arquivada ou proposta", 0) + 1
+                continue
+            from_source.append(make_news(item, source, matches, points, reasons))
+        from_source.sort(key=lambda n: (n["relevancia"], n["publicado_em"]), reverse=True)
+        proposals.extend(from_source[: int(source.get("limite_por_execucao", config.get("limite_por_fonte", 3)))])
     proposals.sort(key=lambda n: (n["relevancia"], n["publicado_em"]), reverse=True)
     proposals = proposals[: int(config["limite_por_execucao"])]
+    fotos_de_contexto(proposals, descarregar=not args.dry_run)
     if failures:
         print("Fontes temporariamente indisponíveis:", *failures, sep="\n- ", file=sys.stderr)
-    if not proposals:
+    if skipped:
+        print("Descartadas pelo filtro:", ", ".join(f"{k} ({v})" for k, v in sorted(skipped.items())))
+    if not proposals and not dropped:
         print("Nenhuma proposta nova cumpre os critérios.")
         return 0
     print(f"{len(proposals)} proposta(s) preparada(s) para revisão:")

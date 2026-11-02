@@ -25,6 +25,26 @@
                     Math.cos(Number(a.lat) * r) * Math.cos(Number(b.lat) * r) * Math.sin(dLon / 2) ** 2;
                 return R * 2 * Math.atan2(Math.sqrt(q), Math.sqrt(1 - q));
             }
+            // Créditos das fotografias dos cartões «Continuar» (os cartões são ligações, por isso o crédito vai numa linha por baixo).
+            function renderCreditos() {
+                const nav = document.querySelector(".chapters");
+                if (!nav || document.querySelector(".chapters-creditos")) return;
+                const lic = { "CC BY-SA 4.0": "https://creativecommons.org/licenses/by-sa/4.0/", "CC BY-SA 3.0": "https://creativecommons.org/licenses/by-sa/3.0/", "CC BY 4.0": "https://creativecommons.org/licenses/by/4.0/" };
+                const fotos = [
+                    ["Bextrel", "CC BY-SA 4.0", "Paineis_solares_-_Bensafrim,_Lagos,_Algarve_-_Portugal_-_29.03.2023.jpg"],
+                    ["MarcoMileu", "CC BY-SA 3.0", "Nas_pedreiras_de_Estremoz_-_panoramio_(3).jpg"],
+                    ["BalticServers.com", "CC BY-SA 3.0", "BalticServers_data_center.jpg"],
+                    ["Quintin Soloviev", "CC BY 4.0", "Cattle_feedlot_south_of_Portales,_New_Mexico.jpg"],
+                ];
+                const itens = fotos.map(([autor, licenca, ficheiro]) => `${esc(autor)} · <a href="${lic[licenca]}" target="_blank" rel="noopener noreferrer">${licenca}</a> · <a href="https://commons.wikimedia.org/wiki/File:${encodeURIComponent(ficheiro).replace(/%2C/g, ",").replace(/%28/g, "(").replace(/%29/g, ")")}" target="_blank" rel="noopener noreferrer">Commons</a>`);
+                // Cada cartão leva o crédito (só texto, o cartão é uma ligação) logo por baixo da sua fotografia; as ligações ficam na linha de baixo.
+                nav.querySelectorAll(".chapter").forEach((cartao, i) => {
+                    const foto = fotos[i], img = cartao.querySelector("img");
+                    if (!foto || !img || cartao.querySelector(".chapter-credito")) return;
+                    img.insertAdjacentHTML("afterend", `<span class="chapter-credito" data-no-signature>${isEn() ? "Photo" : "Foto"}: ${esc(foto[0])} · ${esc(foto[1])}</span>`);
+                });
+                nav.insertAdjacentHTML("afterend", `<p class="chapters-creditos" data-no-signature>${isEn() ? "Photos" : "Fotos"}: ${itens.join(" &nbsp;|&nbsp; ")}</p>`);
+            }
             function renderStats(plants) {
                 const renewable = plants.filter((x) => x.renovavel === true),
                     capacity = plants.reduce((s, x) => s + num(x.potencia_mw), 0),
@@ -46,7 +66,7 @@
                 const types = {};
                 for (const x of plants) types[x.tipo] = (types[x.tipo] || 0) + 1;
                 el("mix").innerHTML = Object.entries(types).sort((a, b) => b[1] - a[1]).map(([k, v]) =>
-                    `<article class="mix-item"><b>${esc(k)}</b><span>${v} ${isEn() ? "plants" : "instalações"}</span></article>`
+                    `<article class="mix-item" data-tipo="${esc(k)}" style="--p:${(100 * v / plants.length).toFixed(1)}"><b>${esc(k)}</b><span>${v} ${isEn() ? "plants" : "instalações"}</span></article>`
                 ).join("");
             }
             function renderLocal(locations, plants) {
@@ -70,7 +90,7 @@
                     : `As seis instalações mais próximas entre os ${plants.length} registos do inventário.`;
                 el("plants").innerHTML =
                     near.map((x) =>
-                        `<article class="plant"><small>${esc(x.tipo)}</small><b>${
+                        `<article class="plant" data-tipo="${esc(x.tipo)}"><small>${esc(x.tipo)}</small><b>${
                             esc(x.nome)
                         }</b><span>${Math.round(x.distance)} km · ${
                             esc(x.potencia || `${x.potencia_mw} MW`)
@@ -78,35 +98,32 @@
                     ).join("") || "<p>—</p>";
             }
             function renderNews(items) {
-                const selected = items.filter((n) => {
-                    const c = window.BioCultureI18n?.content(n) || n.pt || n;
-                    return /energia|renov|solar|eólic|eletric|autoconsumo|eficiên|comunidade energ/i
-                        .test(
-                            [n.categoria, n.categoria_id, c.categoria, c.titulo, c.resumo].filter(
-                                Boolean,
-                            ).join(" "),
-                        );
-                }).slice(0, 6);
-                el("news").innerHTML = selected.map((n) => {
-                    const c = window.BioCultureI18n?.content(n) || n.pt || n;
-                    return `<a class="news-item" href="/observatorio/noticia-detalhe.html?id=${
-                        encodeURIComponent(n.id)
-                    }"><span>${esc(window.BioCultureI18n?.date(n.data) || n.data)}</span><h3>${esc(c.titulo)}</h3><span>${
-                        esc(n.fonte)
-                    }</span></a>`;
-                }).join("") || '<p class="empty">Sem notícias desta categoria neste momento.</p>';
+                const words = ["energia", "energy", "renovável*", "renováveis", "renewable*", "solar", "eólic*", "wind", "elétric*", "eletric*", "electric*", "eficiência", "efficiency", "rede elétrica", "grid", "autoconsumo", "self-consumption", "nuclear", "hidroelétric*", "fotovolta*", "photovoltaic*", "bateria*", "battery", "armazenamento", "storage"];
+                const selected = window.BioCultureNews.rank(items)
+                    .filter((n) => window.BioCultureNews.about(n, words, ["energia"]))
+                    .slice(6, 12);
+                el("news").innerHTML = selected.map((n) => window.BioCultureNews.cardHtml(n)).join("") ||
+                    '<p class="empty">Sem notícias desta categoria neste momento.</p>';
+                // O bloco «Atualidade» do fim da página mostra as notícias a seguir às do bloco «em foco» (não as mesmas);
+                // sem mais notícias, esconde-se com a ligação que lhe aponta.
+                const section = el("news").closest("section");
+                if (section && !selected.length) {
+                    section.hidden = true;
+                    if (section.id) document.querySelectorAll(`a[href="#${section.id}"]`).forEach((link) => (link.hidden = true));
+                }
             }
             async function start() {
                 try {
                     const [plants, locations, news] = await Promise.all(
                         ["centrais_full", "bioregioes", "noticias"].map((f) =>
-                            fetch(`/data/${f}.json`).then((r) => {
+                            f === "bioregioes" ? window.BioCultureRegion.load() : fetch(`/data/${f}.json`).then((r) => {
                                 if (!r.ok) throw Error(f);
                                 return r.json();
                             })
                         ),
                     );
                     renderStats(plants);
+                    renderCreditos();
                     renderLocal(locations, plants);
                     renderNews(news);
                 } catch (e) {

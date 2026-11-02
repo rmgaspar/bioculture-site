@@ -6,7 +6,7 @@
 
   const copy = {
     pt: {
-      static: ['Dimensão global','Uma cultura, milhares de lugares','O atlas combina perfis climáticos, operações, castas e princípios de proteção biológica sem transformar diversidade local numa receita universal.','Clima e terroir','Começar pelo lugar','Escolha o contexto mais próximo. Solo, exposição e microclima da parcela continuam a prevalecer.','Calendário vivo','Do repouso à revisão anual','Os meses são referências aproximadas; a fenologia observada manda sempre.','Manual técnico','A precisão está nos pequenos gestos','Explore cada núcleo de decisão, do solo à vindima.','Castas','Dos quatro cantos da vinha','Do património local às variedades viajantes: fichas técnicas aprofundadas e um catálogo mundial verificável não são a mesma coisa — aqui pode explorar ambos.','Proteção biológica','Diagnosticar antes de tratar','Clima, sintomas, histórico e monitorização definem o risco. Qualquer produto precisa de autorização local para vinha e finalidade.','Princípios','Uma vinha verdadeiramente viva'],
+      static: ['Dimensão global','Uma cultura, milhares de lugares','O atlas combina perfis climáticos, operações, castas e princípios de proteção biológica sem transformar diversidade local numa receita universal.','Clima e terroir','Começar pelo lugar','Escolhe o contexto mais próximo. Solo, exposição e microclima da parcela continuam a prevalecer.','Calendário vivo','Do repouso à revisão anual','Os meses são referências aproximadas; a fenologia observada manda sempre.','Manual técnico','A precisão está nos pequenos gestos','Explora cada núcleo de decisão, do solo à vindima.','Castas','Dos quatro cantos da vinha','Do património local às variedades viajantes: fichas técnicas aprofundadas e um catálogo mundial verificável não são a mesma coisa — aqui pode explorar ambos.','Proteção biológica','Diagnosticar antes de tratar','Clima, sintomas, histórico e monitorização definem o risco. Qualquer produto precisa de autorização local para vinha e finalidade.','Princípios','Uma vinha verdadeiramente viva'],
       metrics: ['variedades no catálogo mundial','fichas agronómicas profundas','países de cultivo','perfis climáticos'],
       water: 'Água e solo', canopy: 'Copa', risks: 'Riscos dominantes', flora: 'Flora a vigiar',
       north: 'Hemisfério norte', south: 'Hemisfério sul', months: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],
@@ -48,7 +48,7 @@
     canopy: {
       title: ['Poda e copa','Pruning and canopy'], intro: ['Equilibrar fruto, folhas, luz e longevidade.','Balance fruit, leaves, light and longevity.'],
       cards: [
-        ['Poda de inverno','Adaptar carga ao vigor e às reservas; respeitar o fluxo de seiva, reduzir cortes grandes e podar plantas doentes por último, desinfetando ferramentas entre focos.','Winter pruning','Match bud load to vigour and reserves; respect sap flow, limit large cuts and prune diseased vines last, sanitising tools between hotspots.'],
+        ['Poda de inverno','Adaptar carga ao vigor e às reservas; respeitar o fluxo de seiva, reduzir cortes grandes e podar plantas doentes por último, desinfetando ferramentas entre focos. Todas as feridas de poda em repouso podem ser infetadas pelos fungos do lenho; na Califórnia, adiar a poda para fevereiro ou mais tarde reduz o risco. Em zonas com geadas tardias, o atraso tem custos: ajusta ao teu clima.','Winter pruning','Match bud load to vigour and reserves; respect sap flow, limit large cuts and prune diseased vines last, sanitising tools between hotspots. Every dormant-season pruning wound can be infected by trunk-disease fungi; in California, delaying pruning to February or later lowers the risk. Where late frosts occur, delay has costs: adjust to your climate.'],
         ['Desladroamento','Retirar cedo ladrões do tronco e rebentos mal posicionados, conservando os necessários à renovação. Trabalhar por zonas de vigor evita despir plantas fracas ou fechar as fortes.','Shoot thinning','Remove trunk suckers and poorly placed shoots early, retaining those needed for renewal. Work by vigour zone to avoid stripping weak vines or crowding strong ones.'],
         ['Orientação e desfolha','Posicionar rebentos antes de quebrarem. Abrir a zona dos cachos gradualmente, primeiro no lado mais fresco; em calor extremo conservar sombra funcional contra escaldão.','Positioning and leaf removal','Position shoots before they become brittle. Open the fruit zone gradually, first on the cooler side; in extreme heat retain functional shade against sunburn.'],
         ['Carga e arquitetura','Contar cachos e rebentos por metro, comparar com vigor e capacidade de maturação. Ajustar cedo e por zona, preservando estrutura para a poda e produção do ano seguinte.','Crop load and architecture','Count bunches and shoots per metre, comparing them with vigour and ripening capacity. Adjust early by zone, preserving structure for next year’s pruning and crop.']
@@ -76,7 +76,7 @@
       title: ['Maturação e vindima','Ripening and harvest'], intro: ['Colher uma parcela, não uma média.','Harvest a site, not an average.'],
       cards: [
         ['Amostragem representativa','Separar castas, solos, exposições e vigor. Combinar açúcar, acidez, pH, peso do bago, sanidade e prova de película, polpa e grainha.','Representative sampling','Separate varieties, soils, exposure and vigour. Combine sugar, acidity, pH, berry weight, health and tasting of skin, pulp and seed.'],
-        ['Decisão de colheita','Integrar estilo, previsão meteorológica, risco de doença, capacidade da adega e janela de mão de obra. Uma única data raramente serve toda a vinha.','Harvest decision','Integrate style, forecast, disease risk, winery capacity and labour window. One date rarely suits the entire vineyard.'],
+        ['Decisão de colheita','Integrar estilo, previsão meteorológica, risco de doença, capacidade da adega e janela de mão de obra. Uma única data raramente serve toda a vinha. Antes: tesouras, caixas e transporte limpos e equipas combinadas. Durante: colher nas horas mais frescas, em caixas pouco fundas para não esmagar, deixando de fora cachos podres ou queimados.','Harvest decision','Integrate style, forecast, disease risk, winery capacity and labour window. One date rarely suits the entire vineyard. Before: clean secateurs, bins and transport, and agreed crews. During: pick in the coolest hours, into shallow bins so bunches are not crushed, leaving out rotten or sunburnt bunches.'],
         ['Depois da vindima','Manter folha funcional para repor reservas, corrigir apenas deficiências confirmadas, reparar rega e drenagem e registar rendimento, qualidade e anomalias por zona.','After harvest','Keep functional leaves to replenish reserves, correct only confirmed deficiencies, repair irrigation and drainage, and record yield, quality and anomalies by zone.'],
         ['Rastreabilidade e aprendizagem','Ligar cada lote à parcela, hora, equipa, estado sanitário e condições de transporte. Comparar vinho e uva com decisões de campo fecha o ciclo de aprendizagem.','Traceability and learning','Link every lot to site, time, crew, health status and transport conditions. Comparing wine and fruit with field decisions closes the learning loop.']
       ]
@@ -105,7 +105,7 @@
     selectors.forEach((selector,i) => { const el=$(selector); if(el && copy.static[i] != null) el.innerHTML=copy.static[i]; });
     document.querySelector('[data-hemi="north"]').textContent=copy.north;
     document.querySelector('[data-hemi="south"]').textContent=copy.south;
-    $('.portugal-link').textContent=copy.viewAtlas;
+    const portugalLink=$('.portugal-link'); if(portugalLink) portugalLink.textContent=copy.viewAtlas;
     $('#catalogue-title').textContent=copy.catalogueTitle;
     $('.grape-search span').textContent=copy.search;
     $('#grape-search').placeholder=copy.placeholder;
@@ -119,20 +119,32 @@
   function renderClimate(data, id) {
     document.querySelectorAll('#climate-filters button').forEach(b=>{const active=b.dataset.id===id;b.classList.toggle('active',active);b.setAttribute('aria-pressed',active)});
     const c=data.climates.find(x=>x.id===id) || data.climates[0];
-    $('#climate-panel').innerHTML=`<div class="climate-intro"><span>${esc(c.regions)}</span><h3>${esc(c[`name_${lang}`])}</h3><p>${lang==='pt'?'Perfil orientador; confirme-o com dados da parcela e conhecimento local.':'An indicative profile; verify it with site data and local knowledge.'}</p></div><div class="climate-details"><article><b>${copy.water}</b><p>${esc(c[`water_${lang}`])}</p></article><article><b>${copy.canopy}</b><p>${esc(c[`canopy_${lang}`])}</p></article><article><b>${copy.risks}</b><p>${esc(c[`risks_${lang}`])}</p></article><article><b>${copy.flora}</b><p>${esc(c[`flora_${lang}`])}</p></article></div>`;
+    const regions=String(c.regions).split(' · ').map((r)=>`<li>${esc(r)}</li>`).join('');
+    $('#climate-panel').dataset.clima=c.id;
+    $('#climate-panel').innerHTML=`<div class="climate-intro"><span>${lang==='pt'?'Perfil climático':'Climate profile'}</span><h3>${esc(c[`name_${lang}`])}</h3><ul class="climate-regions">${regions}</ul><p>${lang==='pt'?'Perfil orientador; confirma-o com dados da parcela e conhecimento local.':'An indicative profile; verify it with site data and local knowledge.'}</p></div><div class="climate-details"><article><b>${copy.water}</b><p>${esc(c[`water_${lang}`])}</p></article><article><b>${copy.canopy}</b><p>${esc(c[`canopy_${lang}`])}</p></article><article><b>${copy.risks}</b><p>${esc(c[`risks_${lang}`])}</p></article><article><b>${copy.flora}</b><p>${esc(c[`flora_${lang}`])}</p></article></div>`;
   }
 
   function renderCalendar(data, hemi='north') {
     const shift=hemi==='south'?6:0;
-    $('#vine-calendar').innerHTML=data.operations.map((op,i)=>{
-      const months=ranges[i].map(m=>copy.months[(m+shift)%12]).join(' · ');
-      return `<article><div class="calendar-top"><span>${String(i+1).padStart(2,'0')} · ${copy.phase}</span><b>${months}</b></div><h3>${esc(op[`phase_${lang}`])}</h3><p>${esc(op[`work_${lang}`])}</p></article>`;
+    const stages=[
+      {slot:'cal-repouso',title:['Do repouso à rebentação','From dormancy to budburst'],phases:[0,1,2]},
+      {slot:'cal-flor',title:['Flor e vingamento','Flowering and fruit set'],phases:[3,4,5]},
+      {slot:'cal-pintor',title:['Copa, pintor e maturação','Canopy, veraison and ripening'],phases:[6,7,8]},
+      {slot:'cal-vindima',title:['Vindima e balanço','Harvest and review'],phases:[9,10,11]}
+    ];
+    const label=(i)=>ranges[i].map(m=>copy.months[(m+shift)%12]);
+    $('#vine-calendar').innerHTML=stages.map((s,n)=>{
+      const all=[...new Set(s.phases.flatMap(label))];
+      const span=all.length>1?`${all[0]} – ${all[all.length-1]}`:all[0];
+      const items=s.phases.map(i=>{const op=data.operations[i];return `<li class="fase" data-n="${i+1}"><div class="fase-top"><h4>${esc(op[`phase_${lang}`])}</h4><b>${label(i).join(' · ')}</b></div><p>${esc(op[`work_${lang}`])}</p></li>`;}).join('');
+      return `<div class="etapa" data-n="${n+1}"><div class="etapa-foto" data-foto-slot="${s.slot}"></div><div class="etapa-corpo"><span class="etapa-num">${lang==='pt'?'Etapa':'Stage'} ${n+1} · ${span}</span><h3>${esc(lang==='pt'?s.title[0]:s.title[1])}</h3><ul class="fases">${items}</ul></div></div>`;
     }).join('');
   }
 
   function renderManual(key) {
     document.querySelectorAll('#manual-nav button').forEach(b=>{const active=b.dataset.key===key;b.classList.toggle('active',active);b.setAttribute('aria-pressed',active)});
     const m=manual[key];
+    $('#manual-panel').dataset.key=key;
     $('#manual-panel').innerHTML=`<header><span>${tr(m.intro)}</span><h3>${tr(m.title)}</h3></header><div class="manual-cards">${m.cards.map(c=>`<article><h4>${esc(lang==='pt'?c[0]:c[2])}</h4><p>${esc(lang==='pt'?c[1]:c[3])}</p></article>`).join('')}</div>`;
   }
 
@@ -141,10 +153,14 @@
     const country = s => ({'França':'France','Alemanha':'Germany','Itália':'Italy','Grécia':'Greece','Espanha':'Spain'}[s]||s);
     const maturity = s => ({'Precoce':'Early','Média':'Mid-season','Tardia':'Late','Muito tardia':'Very late','Média a tardia':'Mid to late'}[s]||'Site-dependent');
     const vigour = s => ({'Baixo':'Low','Médio':'Moderate','Elevado':'High','Muito elevado':'Very high'}[s]||'Site-dependent');
-    $('#grape-showcase').innerHTML=selected.map(g=>{const english=lang==='en';const colour=english?(g.cor==='Tinto'?'Red':'White'):g.cor;const history=english?`${g.nome} is represented in the atlas across ${g.paises.length} growing countries; expression and performance depend on site, rootstock and farming choices.`:g.historia;const climate=english?'Match heat, season length, water availability and exposure to the site before planting.':g.tecnico?.clima;const watch=english?'Verify local disease, heat and water risks through field monitoring.':(g.sensibilidades||[]).join(' · ');return `<article><div class="grape-top"><span>${esc(colour)}</span><b>${esc(g.nome)}</b></div><p>${esc(history)}</p><dl><div><dt>${copy.grapeLabels[0]}</dt><dd>${esc(english?country(g.origem):g.origem)}</dd></div><div><dt>${copy.grapeLabels[1]}</dt><dd>${esc(climate)}</dd></div><div><dt>${copy.grapeLabels[2]}</dt><dd>${esc(english?maturity(g.maturacao):g.maturacao)}</dd></div><div><dt>${copy.grapeLabels[3]}</dt><dd>${esc(english?vigour(g.vigor):g.vigor)}</dd></div><div><dt>${copy.grapeLabels[4]}</dt><dd>${esc(watch)}</dd></div></dl></article>`}).join('');
+    $('#grape-showcase').innerHTML=selected.map(g=>{const english=lang==='en';const colour=english?(g.cor==='Tinto'?'Red':'White'):g.cor;const history=english?`${g.nome} is represented in the atlas across ${g.paises.length} growing countries; expression and performance depend on site, rootstock and farming choices.`:g.historia;const climate=english?'Match heat, season length, water availability and exposure to the site before planting.':g.tecnico?.clima;const watch=english?'Verify local disease, heat and water risks through field monitoring.':(g.sensibilidades||[]).join(' · ');return `<article data-cor="${g.cor==='Tinto'?'tinto':'branco'}"><div class="grape-top"><span>${esc(colour)}</span><b>${esc(g.nome)}</b></div><p>${esc(history)}</p><dl><div><dt>${copy.grapeLabels[0]}</dt><dd>${esc(english?country(g.origem):g.origem)}</dd></div><div><dt>${copy.grapeLabels[1]}</dt><dd>${esc(climate)}</dd></div><div><dt>${copy.grapeLabels[2]}</dt><dd>${esc(english?maturity(g.maturacao):g.maturacao)}</dd></div><div><dt>${copy.grapeLabels[3]}</dt><dd>${esc(english?vigour(g.vigor):g.vigor)}</dd></div><div><dt>${copy.grapeLabels[4]}</dt><dd>${esc(watch)}</dd></div></dl></article>`}).join('');
   }
 
-  function setupGlobalCatalogue(catalogue) {
+  const corKey = (s) => { const t=String(s||'').toLowerCase(); if(!t) return ''; if(/pink|rose|grey|gris/.test(t)) return 'rosa'; if(/white/.test(t)) return 'branco'; return 'tinto'; };
+
+  const ptTermo = (s) => lang==='pt' ? ({Black:'Tinta',White:'Branca',Red:'Vermelha',Grey:'Cinzenta',Pink:'Rosada',Rose:'Rosada',Rouge:'Vermelha','Blue-Black':'Azul-escura','Purple/Black':'Roxa-escura',Wine:'Vinho',Table:'Mesa',Raisin:'Passa',Rootstock:'Porta-enxerto',Juice:'Sumo',Breeding:'Melhoramento',Jelly:'Compota','Table Grape':'Mesa',Winemaking:'Vinho',Canning:'Conserva',Concentrate:'Concentrado','8-Raisin':'Passa','Purple':'Roxa',Blue:'Azul'}[s]||s) : s;
+
+  function setupGlobalCatalogue(catalogue, grapes) {
     let active='All', limit=48;
     const normalise=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
     const labels={All:copy.catalogue[0],Wine:copy.catalogue[1],Table:copy.catalogue[2],Raisin:copy.catalogue[3],Rootstock:copy.catalogue[4]};
@@ -155,13 +171,70 @@
       const query=normalise($('#grape-search').value);
       const filtered=catalogue.varieties.filter(v=>(active==='All'||v.uses.includes(active))&&normalise(v.name).includes(query));
       $('#catalogue-results').textContent=`${filtered.length.toLocaleString(lang==='pt'?'pt-PT':'en')} ${copy.results}`;
-      $('#global-grape-grid').innerHTML=filtered.slice(0,limit).map(v=>`<a href="${esc(v.profile_url)}" target="_blank" rel="noopener"><b>${esc(v.name)}</b><span>${esc([v.berry_color,...v.uses].filter(Boolean).join(' · ')||(lang==='pt'?'Registo de identificação':'Identification record'))}</span></a>`).join('')||`<p>${copy.noResults}</p>`;
+      $('#global-grape-grid').innerHTML=filtered.slice(0,limit).map(v=>`<a data-cor="${corKey(v.berry_color)}" data-global="${esc(v.id)}" href="${esc(v.profile_url)}" target="_blank" rel="noopener"><b>${esc(v.name)}</b><span>${esc([v.berry_color,...v.uses].filter(Boolean).map(ptTermo).join(' · ')||(lang==='pt'?'Registo de identificação':'Identification record'))}</span></a>`).join('')||`<p>${copy.noResults}</p>`;
       $('#catalogue-more').hidden=limit>=filtered.length;
     };
     $('#catalogue-filters').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;active=b.dataset.use;limit=48;document.querySelectorAll('#catalogue-filters button').forEach(x=>{const on=x===b;x.classList.toggle('active',on);x.setAttribute('aria-pressed',on)});draw()});
     $('#grape-search').addEventListener('input',()=>{limit=48;draw()});
     $('#catalogue-more').addEventListener('click',()=>{limit+=48;draw()});
+    $('#global-grape-grid').addEventListener('click',e=>{
+      const a=e.target.closest('a[data-global]');
+      if(!a||e.metaKey||e.ctrlKey||e.shiftKey||e.button===1)return;
+      e.preventDefault();
+      showGlobalDetail(catalogue.varieties.find(v=>v.id===a.dataset.global),catalogue,grapes);
+    });
     draw();
+  }
+
+  const paisAlias = {'Republic of Georgia':'Georgia','United States of America':'United States','Great Britain':'United Kingdom','Czechslovakia':'Czechoslovakia','former USSR':'former Soviet Union','USSR':'Soviet Union'};
+  const pais = (s) => { const k=paisAlias[s]||s; return lang==='pt' ? (paisesPt[k]||k) : k; };
+  const originText = (list) => {
+    const raw=(list||[]).join(', ');
+    if(!raw) return {text:'',short:''};
+    if(/\b(some|say|probably|perhaps|most|commonly|associated|but|region|origin|tyrol|middle|eastern)\b/i.test(raw)) return {text:lang==='pt'?'Origem discutida (ver o registo FPS)':'Origin disputed (see the FPS record)',short:lang==='pt'?'Discutida':'Disputed'};
+    const seps=/(\/\s*|\s+or\s+|\s+to\s+)/;
+    const one=(t)=>t.split(seps).map(x=>{ if(!x) return x; if(x.trim()==='or') return x.replace('or',lang==='pt'?'ou':'or'); if(x.trim()==='to') return x.replace('to',lang==='pt'?'a':'to'); if(/^\//.test(x)) return x; return pais(x.trim()); }).join('');
+    const text=(list||[]).map(one).join(', ').replace(/\s*\/\s*/g,' / ');
+    return {text,short:text.length<=24?text:pais(list[0])};
+  };
+  const speciesText = (s) => { if(!s) return ''; const t=s.replace(/^V\. vinifera$/,'Vitis vinifera'); if(lang!=='pt') return t; return t.replace(/^Interspecific cross/,'Cruzamento interespecífico').replace(/^Interspecific hybrid/,'Híbrido interespecífico'); };
+  const paisesPt = {Portugal:'Portugal',France:'França',Italy:'Itália',Spain:'Espanha',Germany:'Alemanha',Greece:'Grécia',Austria:'Áustria',Switzerland:'Suíça',Hungary:'Hungria',Romania:'Roménia',Croatia:'Croácia',Georgia:'Geórgia','United States':'Estados Unidos',USA:'Estados Unidos',Argentina:'Argentina',Chile:'Chile',Australia:'Austrália','South Africa':'África do Sul',Brazil:'Brasil',Uruguay:'Uruguai',Israel:'Israel',Lebanon:'Líbano',Turkey:'Turquia',Armenia:'Arménia',Bulgaria:'Bulgária',Serbia:'Sérvia',Slovenia:'Eslovénia',Cyprus:'Chipre',Morocco:'Marrocos',Algeria:'Argélia',Tunisia:'Tunísia',Egypt:'Egito',Syria:'Síria',Iran:'Irão',Iraq:'Iraque',Russia:'Rússia',Ukraine:'Ucrânia',Moldova:'Moldávia','Czech Republic':'Chéquia',Slovakia:'Eslováquia',Belgium:'Bélgica',Luxembourg:'Luxemburgo','United Kingdom':'Reino Unido',England:'Inglaterra',Canada:'Canadá',Mexico:'México',Peru:'Peru',Japan:'Japão',China:'China',India:'Índia',Afghanistan:'Afeganistão',Uzbekistan:'Usbequistão',Azerbaijan:'Azerbaijão',Albania:'Albânia','North Macedonia':'Macedónia do Norte',Macedonia:'Macedónia','Bosnia and Herzegovina':'Bósnia e Herzegovina',Montenegro:'Montenegro',Malta:'Malta',Jordan:'Jordânia',Palestine:'Palestina',Poland:'Polónia',Netherlands:'Países Baixos',Denmark:'Dinamarca',Sweden:'Suécia',Norway:'Noruega',Finland:'Finlândia',Ireland:'Irlanda','New Zealand':'Nova Zelândia',Kazakhstan:'Cazaquistão',Turkmenistan:'Turquemenistão',Tajikistan:'Tajiquistão',Libya:'Líbia',Kosovo:'Kosovo',Belarus:'Bielorrússia'};
+  const normalise2 = (s) => String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[’']/g,'').trim();
+  let fpsPromise = null;
+  const loadFps = () => fpsPromise || (fpsPromise = fetch('/data/grape-varieties-fps.json').then(r=>r.ok?r.json():{}).catch(()=>({})));
+
+  function deepProfileFor(v, grapes) {
+    const key=normalise2(v.name);
+    return grapes.find(g=>{
+      const full=normalise2(g.nome);
+      const parts=[full,...full.replace(/\)/g,'').split('(').map(s=>s.trim())];
+      return parts.includes(key);
+    });
+  }
+
+  async function showGlobalDetail(v, catalogue, grapes) {
+    if(!v) return;
+    const fps=(await loadFps())[v.id]||{};
+    const pt=lang==='pt';
+    const colourName=(s)=>pt?ptTermo(s):s;
+    const colourLabel=v.berry_color?colourName(v.berry_color):(pt?'Cor não registada':'Colour not recorded');
+    const uses=(v.uses||[]).map(ptTermo);
+    const usesLabel=uses.join(' · ')||(pt?'Não registada':'Not recorded');
+    const origin=originText(fps.origem);const origins=origin.text?[origin.text]:[];
+    const deep=deepProfileFor(v,grapes);
+    const key=corKey(v.berry_color);
+    const related=grapes.filter(g=>g!==deep&&((key==='tinto'&&g.cor==='Tinto')||(key==='branco'&&g.cor==='Branco')||!key)&&(origins.length?(fps.origem||[]).some(o=>pais(o)===g.origem||o===g.origem||paisesPt[o]===g.origem):true)).slice(0,4);
+    const relatedFallback=related.length?related:grapes.filter(g=>g!==deep&&((key==='tinto'&&g.cor==='Tinto')||(key==='branco'&&g.cor==='Branco'))).slice(0,4);
+    const t=(a,b)=>pt?a:b;
+    const row=(label,value)=>`<p><strong>${label}:</strong> ${esc(value||'—')}</p>`;
+    const detail=$('#casta-detail-view');
+    detail.innerHTML=`<div class="detail-hero" data-cor="${key}"><div><span class="category-label">${esc(colourLabel)} · ${esc(usesLabel)}</span><h1>${esc(v.name)}</h1><p class="detail-intro">${esc(origins.length?t(`Variedade registada no FPS Grape Registry (UC Davis), com origem indicada: ${origins.join(', ')}. Este é um esboço de identificação: reúne apenas o que a fonte regista.`,`Variety recorded in the FPS Grape Registry (UC Davis), with origin given as: ${origins.join(', ')}. This is an identification sketch: it holds only what the source records.`):t('Variedade registada no FPS Grape Registry (UC Davis). Este é um esboço de identificação: reúne apenas o que a fonte regista.','Variety recorded in the FPS Grape Registry (UC Davis). This is an identification sketch: it holds only what the source records.'))}</p><div class="profile-grid">${[[t('Cor','Colour'),colourLabel],[t('Utilização','Use'),usesLabel],[t('Origem','Origin'),origin.short||'—'],[t('Registo FPS','FPS record'),'#'+v.id]].map(([l,x])=>`<div class="profile-cell"><span>${esc(l)}</span><strong>${esc(x)}</strong></div>`).join('')}</div>${deep?`<p class="detail-deep"><button type="button" class="btn-clean" data-casta="${esc(deep.id)}">${t('Abrir a ficha aprofundada','Open the in-depth profile')}</button></p>`:''}</div><aside class="detail-panel"><h3>${t('Identidade','Identity')}</h3>${row(t('Origem','Origin'),origins.join(', '))}${row(t('Sinónimos','Synonyms'),(fps.sinonimos||[]).slice(0,14).join(', '))}${row(t('Espécie','Species'),speciesText(fps.especie))}</aside></div><span class="detail-back" id="detail-back">${t('← voltar ao catálogo','← back to the catalogue')}</span><div class="detail-columns"><article class="detail-box"><h3>${t('O que falta confirmar','Still to confirm')}</h3><p>${t('Solo, clima, exposição, rega, compasso, maturação, vigor e sensibilidades ainda não têm dados verificados para esta variedade. O atlas prefere deixar em branco a estimar.','Soil, climate, exposure, irrigation, spacing, ripening, vigour and sensitivities do not yet have verified data for this variety. The atlas prefers leaving them blank to estimating.')}</p><p>${t('Antes de plantar, confirma com um viveirista, a estação de avisos e ensaios locais.','Before planting, check with a nursery, the local advisory service and local trials.')}</p></article><article class="detail-box"><h3>${t('Como usar esta ficha','How to use this sketch')}</h3><p>${t('Começa pelo lugar: escolhe em «Começar pelo lugar» o perfil climático mais próximo da tua parcela e compara com as castas aprofundadas.','Start with place: pick the climate profile closest to your plot under “Begin with place” and compare with the in-depth profiles.')}</p></article><article class="detail-box"><h3>${t('Fichas aprofundadas para comparar','In-depth profiles to compare')}</h3><div class="card-tags">${relatedFallback.map(g=>`<button type="button" class="btn-clean related-casta" data-casta="${esc(g.id)}">${esc(g.nome)}</button>`).join('')||'—'}</div></article><article class="detail-box"><h3>${t('Fonte','Source')}</h3><p>${t('Identificação, cor, utilização, sinónimos e origem: FPS Grape Registry, UC Davis.','Identification, colour, use, synonyms and origin: FPS Grape Registry, UC Davis.')}</p><p><a href="${esc(v.profile_url)}" target="_blank" rel="noopener">${copy.source} ↗</a></p></article></div>`;
+    const list=document.getElementById('enologia-list-view');
+    const scrollBack=window.scrollY;
+    if(list) list.style.display='none';
+    detail.style.display='block';
+    window.scrollTo({top:0});
+    document.getElementById('detail-back').onclick=()=>{detail.style.display='none';if(list)list.style.display='block';window.scrollTo({top:scrollBack});};
   }
 
   function renderDiagnostics() {
@@ -174,14 +247,14 @@
       const [data,grapes,catalogue]=await Promise.all([fetch('/data/living-vineyard-global.json').then(r=>r.json()),fetch('/data/castas.json').then(r=>r.json()),fetch('/data/grape-varieties-global.json').then(r=>r.json())]);
       const values=[catalogue.count,grapes.length,data.coverage.countries,data.coverage.climate_profiles];
       $('#vine-metrics').innerHTML=values.map((v,i)=>`<article><strong>${v}</strong> <span>${copy.metrics[i]}</span></article>`).join('');
-      $('#climate-filters').innerHTML=data.climates.map((c,i)=>`<button type="button" class="${i?'':'active'}" aria-pressed="${i?'false':'true'}" data-id="${c.id}">${esc(c[`name_${lang}`])}</button>`).join('');
+      $('#climate-filters').innerHTML=data.climates.map((c,i)=>`<button type="button" data-clima="${c.id}" class="${i?'':'active'}" aria-pressed="${i?'false':'true'}" data-id="${c.id}">${esc(c[`name_${lang}`])}</button>`).join('');
       $('#climate-filters').addEventListener('click',e=>{const b=e.target.closest('button');if(b)renderClimate(data,b.dataset.id)});
       renderClimate(data,data.climates[0].id);
       renderCalendar(data);
       document.querySelectorAll('.hemi-controls button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.hemi-controls button').forEach(x=>{const active=x===b;x.classList.toggle('active',active);x.setAttribute('aria-pressed',active)});renderCalendar(data,b.dataset.hemi)}));
       $('#manual-nav').innerHTML=Object.entries(manual).map(([key,m],i)=>`<button type="button" class="${i?'':'active'}" aria-pressed="${i?'false':'true'}" data-key="${key}">${esc(tr(m.title))}</button>`).join('');
       $('#manual-nav').addEventListener('click',e=>{const b=e.target.closest('button');if(b)renderManual(b.dataset.key)});
-      renderManual('soil'); renderGrapes(grapes); setupGlobalCatalogue(catalogue); renderDiagnostics();
+      renderManual('soil'); renderGrapes(grapes); setupGlobalCatalogue(catalogue, grapes); renderDiagnostics();
       $('#source-links').innerHTML=data.sources.map(s=>`<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.organisation)} · ${copy.source}</a>`).join('');
     } catch(err) {
       document.querySelectorAll('#vine-metrics,#climate-panel,#vine-calendar').forEach(el=>el.innerHTML=`<p>${lang==='pt'?'Não foi possível carregar os dados.':'Data could not be loaded.'}</p>`);

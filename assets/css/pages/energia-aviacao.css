@@ -1,0 +1,72 @@
+/* Vetores de pressão · Aviação.
+   Mesma cor (âmbar) das restantes páginas de Energia consciente; o resto vem de relatorio-dados.css (.agri-report). */
+body[data-hero-theme="aviation"] { --hero-accent: #98650f; --bio-banner-panel: #393224; --bio-banner-panel-end: #62563c; --bio-banner-em: #aa9970; }
+
+.agri-report .src-line { margin: 0; font-size: max(11px, 0.8rem); color: var(--muted); }
+.agri-report .src-line a { color: var(--brand); }
+
+/* Calculadora */
+.agri-report .calc-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 16px; align-items: end; }
+.agri-report .calc-form label { display: grid; gap: 4px; margin: 0; font-size: 0.84rem; font-weight: 700; color: var(--ink-2); min-width: 0; }
+.agri-report .calc-form input,
+.agri-report .calc-form select {
+    display: block; width: 100%; min-width: 0; max-width: 100%; height: 2.7rem; margin: 0; padding: 0 0.8rem;
+    font: inherit; font-size: 0.95rem; font-weight: 400; color: var(--ink); background: #fff;
+    border: 1px solid var(--line); border-radius: 8px; box-shadow: none; appearance: auto;
+}
+.agri-report .calc-form input:focus-visible, .agri-report .calc-form select:focus-visible { outline: 2px solid var(--hero-accent, var(--brand)); outline-offset: 1px; }
+.agri-report .calc-form .seg { align-self: end; }
+@media (max-width: 640px) { .agri-report .calc-form { grid-template-columns: minmax(0, 1fr); } }
+
+.agri-report .chips { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 0.8rem; color: var(--muted); }
+.agri-report .chips button {
+    font: inherit; font-size: 0.8rem; line-height: 1.2; height: auto; padding: 0.35rem 0.7rem; color: var(--ink-2);
+    background: #fff; border: 1px solid var(--line); border-radius: 999px; cursor: pointer; text-transform: none; letter-spacing: 0; box-shadow: none;
+}
+.agri-report .chips button:hover { border-color: var(--hero-accent, var(--brand)); color: var(--ink); }
+
+.agri-report .av-rota { display: grid; gap: 2px; }
+.agri-report .av-rota strong { font-family: var(--f-display); font-size: 1.1rem; color: var(--ink); }
+.agri-report .av-rota span { font-size: 0.84rem; color: var(--muted); }
+.agri-report .av-vazio { padding: 1rem 0; color: var(--muted); font-size: 0.92rem; }
+.agri-report .av-nota { font-size: 0.82rem; color: var(--muted); line-height: 1.55; }
+.agri-report #av-res { display: grid; gap: 14px; }
+
+/* Barras empilhadas: parte direta e acréscimo dos efeitos não-CO₂ */
+.agri-report .stk2 .hb .b:first-child { border-radius: 0; }
+.agri-report .stk2 .hb .b:nth-child(2) { border-radius: 0 4px 4px 0; }
+.agri-report .stk2 .hb { grid-template-columns: minmax(110px, 32%) minmax(0, 1fr) 4.6em; }
+@media (max-width: 560px) { .agri-report .stk2 .hb { grid-template-columns: minmax(84px, 36%) minmax(0, 1fr) 4.4em; } }
+
+/* Resultado da calculadora: 3 ou 4 cartões, sem espaço vazio */
+.agri-report #av-res .tiles { grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); }
+
+/* Voos reais: campo de rota a toda a largura, tabela por período e quadro «O que significa» */
+.agri-report .calc-form .full { grid-column: 1 / -1; }
+.agri-report #rt-res { display: grid; gap: 14px; }
+.agri-report #rt-res .tiles { grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); }
+.agri-report .tscroll.full table { width: 100%; border-collapse: collapse; font-size: 0.84rem; font-variant-numeric: tabular-nums; }
+.agri-report .tscroll.full th, .agri-report .tscroll.full td { padding: 6px 10px; text-align: right; border-bottom: 1px solid var(--line-2); white-space: nowrap; }
+.agri-report .tscroll.full thead th { color: var(--muted); font-weight: 700; font-size: 0.76rem; background: var(--surface); position: sticky; top: 0; }
+.agri-report .tscroll.full tbody th { text-align: left; color: var(--ink); font-weight: 700; }
+.agri-report .av-signif { display: grid; gap: 6px; padding: 14px 16px; border-radius: 12px; background: var(--brand-soft); }
+.agri-report .av-signif strong { font-family: var(--f-display); color: var(--ink); }
+.agri-report .av-signif p { max-width: none; }
+
+/* Todos os recursos: uma caixa por dimensão, cada uma na sua unidade; tracejada quando falta o dado */
+.agri-report .rec-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
+.agri-report .rec { display: grid; gap: 6px; align-content: start; padding: 16px 18px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; min-width: 0; }
+.agri-report .rec > small { font-size: max(11px, 0.72rem); font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--hero-accent, var(--brand)); }
+.agri-report .rec > strong { font-family: var(--f-display); font-size: clamp(1.5rem, 2.6vw, 2rem); line-height: 1.1; color: var(--ink); font-variant-numeric: tabular-nums; }
+.agri-report .rec > strong em { font-family: var(--f-body); font-style: normal; font-size: 0.82rem; font-weight: 400; color: var(--muted); margin-left: 0.35em; }
+.agri-report .rec p { margin: 0; font-size: 0.9rem; line-height: 1.55; color: var(--ink-2); }
+.agri-report .rec .rec-nota { font-size: 0.82rem; color: var(--muted); }
+.agri-report .rec .rec-fonte { font-size: max(11px, 0.74rem); color: var(--muted); }
+.agri-report .rec .rec-fonte a { color: var(--brand); }
+.agri-report .rec.lacuna { background: transparent; border-style: dashed; }
+.agri-report .rec.lacuna > strong { font-size: 1.15rem; color: var(--muted); }
+
+/* Os 6 cartões dos recursos: 3 por linha (2 linhas completas), sem espaço vazio no fim. */
+.agri-report #av-rec { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+@media (max-width: 1000px) { .agri-report #av-rec { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 620px) { .agri-report #av-rec { grid-template-columns: minmax(0, 1fr); } }

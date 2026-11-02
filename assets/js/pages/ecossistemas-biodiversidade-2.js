@@ -15,7 +15,7 @@
             let all = [], shown = 24, mode = "Tudo", query = "";
             const groupMap = {
                 Plantas: ["Plantae", "Flora Invasora"],
-                Aves: ["Aves"],
+                Aves: ["Aves", "Birds"], // em inglês o runtime traduz o nome do grupo nos dados
                 Insetos: ["Insecta"],
                 Mamíferos: ["Mammalia"],
                 Fungos: ["Fungi"],
@@ -80,7 +80,8 @@
             }
             function render() {
                 const list = filtered();
-                el("results-meta").textContent = `${list.length.toLocaleString("pt-PT")} resultados`;
+                const ingles = !!window.BioCultureI18n?.isEnglish;
+                el("results-meta").textContent = ingles ? `${list.length.toLocaleString("en-GB")} results` : `${list.length.toLocaleString("pt-PT")} resultados`;
                 el("species-grid").innerHTML = list.slice(0, shown).map(card).join("") ||
                     '<p class="empty">Nenhuma espécie corresponde à pesquisa.</p>';
                 el("load-more").style.display = list.length > shown ? "block" : "none";
@@ -128,45 +129,63 @@
                 if (!info) return;
                 el("local-name").textContent = [info.titulo, info.concelho].filter(Boolean).join(", ");
                 const raw = [
+                    ...(info.biomas?.especies_ids || []),
                     ...(info.especies_ids || []),
                     ...(info.extensao_biocultura?.especies_ids || []),
                 ];
                 const ids = [...new Set(raw)].filter((id) => master[id]);
                 el("local-count").innerHTML = `${ids.length}<small>espécies associadas</small>`;
                 el("local-note").textContent = ids.length
-                    ? "Seleção territorial disponível no perfil bioCultura."
+                    ? "Seleção territorial disponível no perfil bioCulture."
                     : "Ainda não existem associações de espécies para este perfil.";
-                el("local-species").innerHTML = ids.slice(0, 18).map((id) => {
-                    const x = master[id];
-                    return `<a class="local-chip" href="especie-detalhe.html?id=${
-                        encodeURIComponent(id)
-                    }">${valid(x.imagem) ? `<img src="${esc(x.imagem)}" alt="" loading="lazy">` : ""}${
-                        esc(x.nome)
-                    }</a>`;
-                }).join("");
+                const INITIAL = 12, STEP = 24;
+                let shown = INITIAL;
+                const more = el("local-more"), less = el("local-less"), progress = el("local-progress");
+                const paint = () => {
+                    el("local-species").innerHTML = ids.slice(0, shown).map((id) => {
+                        const x = master[id];
+                        return `<a class="local-chip" href="especie-detalhe.html?id=${
+                            encodeURIComponent(id)
+                        }">${valid(x.imagem) ? `<img src="${esc(x.imagem)}" alt="" loading="lazy">` : ""}${
+                            esc(x.nome)
+                        }</a>`;
+                    }).join("");
+                    el("local-actions").hidden = ids.length <= INITIAL;
+                    progress.textContent = `${Math.min(shown, ids.length)} / ${ids.length}`;
+                    more.hidden = shown >= ids.length;
+                    less.hidden = shown <= INITIAL;
+                };
+                more.onclick = () => {
+                    shown = Math.min(ids.length, shown + STEP);
+                    paint();
+                };
+                less.onclick = () => {
+                    shown = INITIAL;
+                    paint();
+                    el("local-species").scrollIntoView({ block: "center", behavior: "smooth" });
+                };
+                paint();
             }
             function renderNews(items) {
-                const selected = items.filter((n) => {
-                    const c = window.BioCultureI18n?.content(n) || n.pt || n;
-                    return /biodiv|espéc|habitat|conserva|invasor|ecossistema|restauro/i.test(
-                        [n.categoria, n.categoria_id, c.categoria, c.titulo, c.resumo].filter(Boolean)
-                            .join(" "),
-                    );
-                }).slice(0, 6);
-                el("news").innerHTML = selected.map((n) => {
-                    const c = window.BioCultureI18n?.content(n) || n.pt || n;
-                    return `<a class="news-item" href="/observatorio/noticia-detalhe.html?id=${
-                        encodeURIComponent(n.id)
-                    }"><span>${esc(window.BioCultureI18n?.date(n.data) || n.data)}</span><h3>${esc(c.titulo)}</h3><span>${
-                        esc(n.fonte)
-                    }</span></a>`;
-                }).join("") || '<p class="empty">Sem notícias desta categoria neste momento.</p>';
+                const words = ["biodivers*", "espécies ameaçadas", "threatened species", "endangered species", "invasor*", "invasive", "habitat*", "wildlife", "vida selvagem", "extinção", "extinction", "conservação", "conservation", "ecossistema*", "ecosystem*", "floresta*", "forest*", "polinizador*", "pollinator*", "orangotango*", "orangutan*", "tartaruga*", "turtle*", "aves", "birds", "gannet*", "alcatraz*"];
+                const selected = window.BioCultureNews.rank(items)
+                    .filter((n) => window.BioCultureNews.about(n, words, ["biodiversidade", "conservacao"]))
+                    .slice(6, 12);
+                el("news").innerHTML = selected.map((n) => window.BioCultureNews.cardHtml(n)).join("") ||
+                    '<p class="empty">Sem notícias desta categoria neste momento.</p>';
+                // O bloco «Atualidade» do fim da página mostra as notícias a seguir às do bloco «em foco» (não as mesmas);
+                // sem mais notícias, esconde-se com a ligação que lhe aponta.
+                const section = el("news").closest("section");
+                if (section && !selected.length) {
+                    section.hidden = true;
+                    if (section.id) document.querySelectorAll(`a[href="#${section.id}"]`).forEach((link) => (link.hidden = true));
+                }
             }
             async function start() {
                 try {
                     const [master, locations, news] = await Promise.all(
-                        ["especies_master", "bioregioes", "noticias"].map((f) =>
-                            fetch(`/data/${f}.json`).then((r) => {
+                        ["especies-indice", "bioregioes", "noticias"].map((f) =>
+                            f === "bioregioes" ? window.BioCultureRegion.load() : fetch(`/data/${f}.json`).then((r) => {
                                 if (!r.ok) throw Error(f);
                                 return r.json();
                             })

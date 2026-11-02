@@ -28,14 +28,64 @@
                     }</ul></article>`
                     : "";
             }
-            function section(label, title, note, content) {
+            /* «Semente»: o que o quadro da página Sementes diz desta cultura (só as que o quadro cobre). */
+            function sementePanel(sementes, id) {
+                const R = window.BioCulturaSementesResumo, g = R && sementes ? R.porCultura(sementes, id) : null;
+                if (!g) return "";
+                const en = !!window.BioCultureI18n?.isEnglish, lang = en ? "?lang=en" : "";
+                return `<article class="detail-panel"><h3>${en ? "Seed" : "Semente"}</h3><ul>${R.resumo(g, en).map((x) => `<li>${esc(x)}</li>`).join("")}</ul><p><a href="/calendario/sementes.html${lang}#g-${encodeURIComponent(g.id)}">${en ? "Saving seed: the full chart →" : "Guardar semente: o quadro completo →"}</a></p></article>`;
+            }
+            function section(label, title, note, content, id) {
                 return content
-                    ? `<div class="detail-section"><div class="section-head"><span>${
+                    ? `<div class="detail-section"${id ? ` id="${esc(id)}"` : ""}><div class="section-head"><span>${
                         esc(label)
                     }</span><div><h2>${esc(title)}</h2><p>${
                         esc(note)
                     }</p></div></div><div class="detail-grid">${content}</div></div>`
                     : "";
+            }
+            // «Problemas frequentes» desta cultura: respostas curtas de data/problemas-horta.json (as mesmas do hub
+            // Conhecimento para cuidar), só as primeiras e «Ver mais» para as restantes.
+            function mountProblems(cropId, cropName) {
+                const shared = window.BioCulturaProblemas;
+                const box = document.getElementById("problemas");
+                if (!shared || !box) return;
+                const english = !!window.BioCultureI18n?.isEnglish;
+                const tr = (pt, en) => (english ? en : pt);
+                shared.load().then(({ rows, names }) => {
+                    const mine = rows.filter((row) => (row.culturas || []).includes(cropId));
+                    if (!mine.length) return;
+                    const INITIAL = 3;
+                    const wanted = location.hash.startsWith("#problema-") ? decodeURIComponent(location.hash.slice(10)) : "";
+                    const position = mine.findIndex((row) => row.id === wanted);
+                    let shownCount = Math.max(INITIAL, position >= 0 ? Math.ceil((position + 1) / INITIAL) * INITIAL : 0);
+                    const draw = () => {
+                        const shown = mine.slice(0, shownCount);
+                        const remaining = mine.length - shown.length;
+                        box.innerHTML = `<div class="crop-problemas-head"><span>${tr("Problemas frequentes", "Common problems")}</span><h2>${esc(cropName)}: ${tr("o que fazer quando algo corre mal", "what to do when something goes wrong")}</h2><p>${tr("Respostas curtas, de agricultura biológica, sem pesticidas.", "Short answers, organic, no pesticides.")}</p></div><div class="crop-problemas-lista">${
+                            shown.map((row) => shared.card(row, names, { open: row.id === wanted, skipKind: "cultura", skipId: cropId })).join("")
+                        }</div><div class="problemas-controls">${
+                            remaining > 0 ? `<button class="problemas-mais" data-act="more" type="button">${tr(`Ver mais respostas (${remaining} restantes)`, `Show more answers (${remaining} more)`)}</button>` : ""
+                        }${shownCount > INITIAL ? `<button class="problemas-mais" data-act="less" type="button">${tr("Ver menos", "Show fewer")}</button>` : ""}</div>`;
+                        box.hidden = false;
+                        box.querySelector('[data-act="more"]')?.addEventListener("click", () => { shownCount += INITIAL; draw(); });
+                        box.querySelector('[data-act="less"]')?.addEventListener("click", () => { shownCount = INITIAL; draw(); box.scrollIntoView({ block: "start" }); });
+                    };
+                    draw();
+                    const nav = document.querySelector(".crop-nav");
+                    if (nav && !nav.querySelector('a[href="#problemas"]')) {
+                        const link = `<a href="#problemas">${window.BioCultureI18n?.isEnglish ? "Problems" : "Problemas"}</a>`, back = nav.querySelector(".hub-back");
+                        if (back) back.insertAdjacentHTML("afterend", link); else nav.insertAdjacentHTML("afterbegin", link);
+                    }
+                    if (wanted) document.getElementById(`problema-${wanted}`)?.scrollIntoView({ block: "start" });
+                }).catch(() => {});
+            }
+            function cropNav(sections) {
+                const items = sections.filter(([, , content]) => content);
+                // «← Voltar» regressa ao sítio exato de onde vieste (biocultura-voltar.js); sem registo, segue para o calendário.
+                return `<nav class="crop-nav" aria-label="Nesta ficha"><a class="hub-back" href="calendario.html">${window.BioCultureI18n?.isEnglish ? "← Back" : "← Voltar"}</a>${
+                    items.map(([id, label]) => `<a href="#${id}">${esc(label)}</a>`).join("")
+                }</nav>`;
             }
             const normalize = (value) =>
                 String(value ?? "").normalize("NFD").replace(/[̀-ͯ]/g, "")
@@ -141,70 +191,123 @@
                 return html;
             }
             function linkifyPests(text, pestIndex, cropId, cropNome) {
-                return valid(text) ? linkifyPestsHtml(esc(text), pestIndex, cropId, cropNome) : "";
+                if (!valid(text)) return "";
+                if (inEnglish()) return esc(displayText(text));
+                return linkifyPestsHtml(esc(text), pestIndex, cropId, cropNome);
+            }
+            // Mesma correspondência wikipedia-style que linkifyPestsHtml (praga confirmada em
+            // plantas_afetadas, nunca por família ambígua), mas devolve as pragas em vez do HTML —
+            // usado só para saber quais já têm produto/solução associado, sem tocar no texto.
+            function pestsMentionedIn(text, pestIndex, cropId, cropNome) {
+                if (!valid(text)) return [];
+                const html = esc(text);
+                const found = new Map();
+                for (const { original, list, genericFamily } of pestIndex.values()) {
+                    if (!original || genericFamily) continue;
+                    const matches = list.filter((p) => cropMatchesPest(cropId, cropNome, p));
+                    if (matches.length !== 1 || found.has(matches[0].id)) continue;
+                    const pattern = escapeRegExp(original).replace(/ /g, "[ -]");
+                    const re = new RegExp(`(${pattern}s?)(?![^<]*>)`, "i");
+                    if (re.test(html)) found.set(matches[0].id, matches[0]);
+                }
+                return [...found.values()];
+            }
+            function relatedProductsPanel(pests, solutionIds) {
+                const withSolutions = pests.filter((p) => solutionIds.has(p.id));
+                return withSolutions.length
+                    ? `<article class="detail-panel"><h3>Produtos relacionados</h3><div class="related">${
+                        withSolutions.map((p) =>
+                            `<a href="/ecossistemas/especie-detalhe.html?id=${
+                                encodeURIComponent(p.id)
+                            }#solucoes">${esc(p.nome_comum)} →</a>`
+                        ).join("")
+                    }</div></article>`
+                    : "";
             }
             // Só liga a uma técnica quando o próprio texto da ficha a nomeia; termos
             // genéricos ("solo", "água") não geram correspondência para evitar ligações forçadas.
             const TECHNIQUE_KEYWORDS = [
-                { match: /gota[\s-]a[\s-]gota/i, id: "rega-gota-a-gota" },
-                { match: /rega profunda/i, id: "rega-profunda" },
+                { match: /gota[\s-]a[\s-]gota|drip irrigation|\bdrip\b/i, id: "rega-gota-a-gota" },
+                { match: /rega profunda|deep watering/i, id: "rega-profunda" },
                 { match: /\bolla\b/i, id: "olla" },
-                { match: /água da chuva/i, id: "captacao-chuva" },
-                { match: /solo coberto|cobertura morta/i, id: "mulching-organico" },
-                { match: /composto (bem amadurecido|maduro)/i, id: "composto-superficie" },
-                { match: /rotaç[a-zà-ÿ]*/i, id: "rotacao-culturas" },
-                { match: /consociaç[a-zà-ÿ]*/i, id: "consociacao" },
-                { match: /adubação verde/i, id: "adubo-verde" },
-                { match: /rede anti-?insetos?/i, id: "rede-anti-inseto" },
-                { match: /remoção manual/i, id: "remocao-manual" },
+                { match: /água da chuva|rainwater/i, id: "captacao-chuva" },
+                { match: /solo coberto|cobertura morta|keep the soil covered|mulch/i, id: "mulching-organico" },
+                { match: /composto (bem amadurecido|maduro)|(well-matured|mature) compost/i, id: "composto-superficie" },
+                { match: /rotaç[a-zà-ÿ]*|rotation/i, id: "rotacao-culturas" },
+                { match: /consociaç[a-zà-ÿ]*|companion planting|intercropping/i, id: "consociacao" },
+                { match: /adubação verde|green manure/i, id: "adubo-verde" },
+                { match: /rede anti-?insetos?|insect netting/i, id: "rede-anti-inseto" },
+                { match: /remoção manual|manual removal/i, id: "remocao-manual" },
             ];
             function linkifyTechniquesHtml(html) {
                 for (const { match, id } of TECHNIQUE_KEYWORDS) {
                     if (match.test(html)) {
                         html = html.replace(match, (m) =>
-                            `<a href="/services/servicos.html#tecnica-${encodeURIComponent(id)}">${m}</a>`);
+                            `<a href="/services/tecnicas.html#tecnica-${encodeURIComponent(id)}">${m}</a>`);
                     }
                 }
                 return html;
             }
+            // Em inglês a frase é traduzida antes de ligar as técnicas (o texto da ficha
+            // chega em português e as ligações dividem-no em fragmentos que já não se
+            // conseguem traduzir); as ligações às pragas dependem dos nomes em português.
+            const inEnglish = () =>
+                typeof window !== "undefined" && !!window.BioCultureI18n?.isEnglish && !!window.BioCultureDisplayTranslate;
+            const displayText = (text) => (inEnglish() ? window.BioCultureDisplayTranslate(text) : text);
             function linkifyTechniques(text) {
-                return valid(text) ? linkifyTechniquesHtml(esc(text)) : "";
+                return valid(text) ? linkifyTechniquesHtml(esc(displayText(text))) : "";
             }
             function linkifyPestsAndTechniques(text, pestIndex, cropId, cropNome) {
-                return valid(text)
-                    ? linkifyTechniquesHtml(linkifyPestsHtml(esc(text), pestIndex, cropId, cropNome))
-                    : "";
+                if (!valid(text)) return "";
+                if (inEnglish()) return linkifyTechniquesHtml(esc(displayText(text)));
+                return linkifyTechniquesHtml(linkifyPestsHtml(esc(text), pestIndex, cropId, cropNome));
             }
             function textPanelHtml(title, value, html) {
                 return valid(value)
                     ? `<article class="detail-panel"><h3>${esc(title)}</h3><p>${html}</p></article>`
                     : "";
             }
+            const semIndexar = () => { if (document.querySelector('meta[name="robots"]')) return; const m = document.createElement("meta"); m.name = "robots"; m.content = "noindex"; document.head.appendChild(m); };
             async function carregar() {
                 const id = new URLSearchParams(window.location.search).get("id");
                 if (!id) {
+                    semIndexar();
                     window.location.href = "calendario.html";
                     return;
                 }
 
                 try {
-                    const [master, pragas] = await Promise.all([
-                        fetch("/data/horticolas_master.json?v=" + Date.now()).then((r) => r.json()),
+                    const [master, pragas, solucoesCatalogo, planeador, sementes] = await Promise.all([
+                        fetch("/data/horticolas_master.json").then((r) => r.json()),
                         fetch("/data/pragas.json").then((r) => r.json()).catch(() => []),
+                        fetch("/data/solucoes-catalogo.json").then((r) => r.json()).catch(() => null),
+                        fetch("/data/planeador-horta.json?v=1").then((r) => r.json()).catch(() => null),
+                        fetch("/data/sementes.json?v=3").then((r) => r.json()).catch(() => null),
                     ]);
+                    const planeavel = new Set((planeador?.culturas || []).map((c) => c.id));
                     const pestIndex = buildPestIndex(pragas);
+                    const solutionIds = new Set(
+                        (solucoesCatalogo?.solucoes || []).flatMap((s) => (s.fichas || []).map((f) => f.id)),
+                    );
                     const item = master[id];
 
                     if (!item) {
+                        // Cultura que já não existe: vai para o catálogo (evita uma página «não encontrada» com código 200, soft 404 no Google).
+                        semIndexar();
+                        window.location.replace("/calendario/calendario"+(window.BioCultureLanguageStore?.read() === "en" ? "?lang=en" : "")+"#catalogo");
                         document.getElementById("render-horta").innerHTML =
                             "<p>Produto não encontrado.</p>";
                         return;
                     }
+                    window.BioCulturaCanonica?.definir(id);
 
                     const image = valid(item.imagem)
                         ? `<img src="${esc(item.imagem)}" alt="${
                             esc(item.nome)
                         }" onerror="this.remove()">`
+                        : "";
+                    const credit = valid(item.imagem) && item.foto && item.foto.licenca
+                        ? `<p class="photo-credit">${window.BioCultureI18n?.isEnglish ? "Photo" : "Foto"}: ${item.foto.autor && item.foto.autor !== "iNaturalist" ? `${esc(item.foto.autor)} · ` : ""}<a href="${esc(item.foto.licenca_url)}" target="_blank" rel="noopener noreferrer">${esc(item.foto.licenca)}</a> · <a href="${esc(item.foto.pagina)}" target="_blank" rel="noopener noreferrer">${esc(item.foto.origem || "iNaturalist")}</a></p>`
                         : "";
                     const facts = [
                         ["Categoria", item.categoria || item.grupo],
@@ -228,12 +331,22 @@
                     const ecology = listPanel("Consociações favoráveis", item.consociacoes_favoraveis) +
                         listPanel("Evitar consociar", item.evitar_consociar) +
                         textPanelHtml("Rotação", item.rotacao, linkifyTechniques(item.rotacao)) +
+                        (planeavel.has(id)
+                            ? `<article class="detail-panel"><h3>Planear</h3><p><a href="/calendario/planeador-horta.html?c=${encodeURIComponent(id)}">Ver as épocas e a rotação desta cultura no Planeador de horta →</a></p></article>`
+                            : "") +
+                        sementePanel(sementes, id) +
                         listPanel("Culturas semelhantes", item.culturas_semelhantes);
+                    const mentionedPests = [
+                        ...pestsMentionedIn(item.problemas_comuns, pestIndex, id, item.nome),
+                        ...pestsMentionedIn(item.prevencao_sem_pesticidas, pestIndex, id, item.nome),
+                    ];
+                    const uniqueMentionedPests = [...new Map(mentionedPests.map((p) => [p.id, p])).values()];
                     const protection = textPanelHtml("Problemas comuns", item.problemas_comuns,
                             linkifyPests(item.problemas_comuns, pestIndex, id, item.nome)) +
                         textPanelHtml("Prevenção sem pesticidas", item.prevencao_sem_pesticidas,
                             linkifyPestsAndTechniques(item.prevencao_sem_pesticidas, pestIndex, id, item.nome)) +
-                        textPanel("Notas para Portugal", item.notas_portugal);
+                        textPanel("Notas para Portugal", item.notas_portugal) +
+                        relatedProductsPanel(uniqueMentionedPests, solutionIds);
                     const related = values(item.culturas_semelhantes).map((name) => {
                         const found = Object.entries(master).find(([, value]) =>
                             String(value.nome).toLocaleLowerCase("pt") ===
@@ -251,7 +364,7 @@
                             <h2>${esc(item.nome_cientifico || "")}</h2>
                             ${
                         valid(item.descricao)
-                            ? `<p style="font-size:1.05em;line-height:1.7;color:#718078">${
+                            ? `<p style="font-size:1.05em;line-height:1.7;color:#616e67">${
                                 esc(item.descricao)
                             }</p>`
                             : ""
@@ -271,15 +384,24 @@
                     }">
                                 ${image}
                             </div>
+                            ${credit}
                         </div>
                     </div>
-                    <a href="calendario.html" class="btn-voltar-base" style="margin:0 0 2em" onclick="if(window.history.length>1){event.preventDefault();history.back();}">← VOLTAR AO CALENDÁRIO</a>
+                    ${
+                        cropNav([
+                            ["lugar", "Lugar", place], ["calendario", "Calendário", calendar],
+                            ["cuidado", "Cuidado", care], ["ecologia", "Ecologia", ecology],
+                            ["vigilancia", "Vigilância", protection],
+                        ])
+                    }
+                    <section class="crop-problemas" id="problemas" hidden></section>
                     ${
                         section(
                             "Lugar",
                             "Origem, solo e clima",
                             "Condições de referência; adapte sempre à variedade, exposição e microclima.",
                             place,
+                            "lugar",
                         )
                     }
                     ${
@@ -288,6 +410,7 @@
                             "Do início à colheita",
                             "As épocas são orientativas e devem acompanhar a temperatura do solo e o risco de geada.",
                             calendar,
+                            "calendario",
                         )
                     }
                     ${
@@ -296,6 +419,7 @@
                             "Água, nutrição e manutenção",
                             "Regue segundo a humidade real do solo e favoreça matéria orgânica bem amadurecida.",
                             care,
+                            "cuidado",
                         )
                     }
                     ${
@@ -304,19 +428,21 @@
                             "Consociações e rotação",
                             "Diversidade e rotação ajudam a reduzir desequilíbrios sem recorrer a pesticidas.",
                             ecology,
+                            "ecologia",
                         )
                     }
                     ${
                         section(
                             "Vigilância",
                             "Problemas e prevenção",
-                            "Confirme sempre a causa dos sintomas antes de intervir.",
+                            "Confirma sempre a causa dos sintomas antes de intervir.",
                             protection,
+                            "vigilancia",
                         )
                     }
                     ${
                         related
-                            ? `<div class="detail-section"><div class="section-head"><span>Explorar</span><div><h2>Culturas semelhantes</h2><p>Compare necessidades e épocas antes de escolher alternativas.</p></div></div><div class="related">${related}</div></div>`
+                            ? `<div class="detail-section"><div class="section-head"><span>Explorar</span><div><h2>Culturas semelhantes</h2><p>Compara necessidades e épocas antes de escolher alternativas.</p></div></div><div class="related">${related}</div></div>`
                             : ""
                     }
                     ${
@@ -329,7 +455,15 @@
                             : ""
                     }
                 `;
-                    document.title = item.nome + " - bioCultura";
+                    document.title = item.nome + " — bioCulture";
+                    mountProblems(id, item.nome);
+                    const stickyNav = document.createElement("script");
+                    stickyNav.src = "/assets/js/biocultura-sticky-nav.js?v=20";
+                    document.body.appendChild(stickyNav);
+                    if (location.hash) {
+                        const target = document.getElementById(location.hash.slice(1));
+                        if (target) requestAnimationFrame(() => target.scrollIntoView({ block: "start" }));
+                    }
                 } catch (e) {
                     console.error("Erro ao carregar detalhe:", e);
                 }

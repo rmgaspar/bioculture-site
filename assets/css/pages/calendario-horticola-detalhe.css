@@ -13,20 +13,6 @@
                 display: flex;
                 flex-direction: column;
             }
-            #sidebar {
-                position: fixed !important;
-                top: 0;
-                left: 0;
-                height: 100vh !important;
-                width: 18em !important;
-                overflow: hidden !important;
-                z-index: 10000;
-                background: #fff;
-                border-right: 1px solid #f2f2f2 !important;
-            }
-            #wrapper {
-                padding-left: 18em !important;
-            }
 
             /* Alinhamento de Precisão bioCultura */
             .inner {
@@ -38,11 +24,11 @@
             }
 
             .category-label {
-                font-size: 0.65em;
+                font-size: max(11px, 0.65em);
                 font-weight: 900;
                 text-transform: uppercase;
                 letter-spacing: 4px;
-                color: #bbb;
+                color: #8d9991;
                 margin-bottom: 15px;
                 display: block;
             }
@@ -71,17 +57,20 @@
             }
             .hero-text h2 {
                 font-size: 1.4em;
-                color: #bbb;
+                color: #96a098;
                 font-style: italic;
                 margin-bottom: 2em;
                 font-weight: 400;
             }
 
             /* A RODINHA (HERO GLOBE) - PARIDADE TOTAL */
+            .photo-credit { margin: 0.9em 0 0; width: 480px; max-width: 100%; text-align: center; color: #6b776f; font-size: 0.78em; line-height: 1.45; }
+            .photo-credit a { color: inherit; }
             .hero-visual {
                 flex: 1;
                 display: flex;
-                justify-content: flex-end;
+                flex-direction: column;
+                align-items: flex-end;
             }
             .hero-globe {
                 position: relative;
@@ -120,10 +109,10 @@
             }
             .data-item b {
                 display: block;
-                font-size: 0.65em;
+                font-size: max(11px, 0.65em);
                 text-transform: uppercase;
                 letter-spacing: 2px;
-                color: #2e7d32;
+                color: #2d7b31;
                 margin-bottom: 8px;
             }
             .data-item p {
@@ -141,11 +130,91 @@
                 text-transform: uppercase;
                 letter-spacing: 2px;
                 text-decoration: none;
-                color: #bbb !important;
+                color: #8f624a !important;
                 transition: 0.3s;
             }
             .btn-voltar-base:hover {
-                color: #1a1a1a !important;
+                color: #7a5038 !important;
+            }
+
+            /* Barra de navegação interna, fixa ao rolar (mesmo estilo leve e translúcido do
+               calendário: tiras de texto sem botões, sem "saltar" ao fixar). */
+            .crop-nav {
+                position: sticky;
+                top: 1.75rem;
+                z-index: 40;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 24px;
+                margin: 0 0 2em;
+                padding: 13px 0;
+                background: rgba(255, 255, 255, 0.94);
+                backdrop-filter: blur(10px);
+                border-top: 1px solid #e7ece8;
+                border-bottom: 1px solid #e7ece8;
+                transition: background 0.2s ease, border-color 0.2s ease;
+            }
+            .crop-nav a {
+                white-space: nowrap;
+                border: 0 !important;
+                text-decoration: none !important;
+                color: #6c6c6c;
+                font-size: 0.78em;
+                font-weight: 900;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                transition: color 0.18s ease;
+            }
+            .crop-nav a:hover, .crop-nav a:focus-visible, .crop-nav a.bio-nav-active {
+                color: #4f755c;
+            }
+            .crop-nav .bio-nav-anchor { width: 100%; height: 0; }
+            /* «← Voltar» à esquerda da barra, como nas outras páginas com barra fixa. */
+            .crop-nav .hub-back {
+                display: inline-flex;
+                flex: none;
+                align-self: auto;
+                margin: 0 !important;
+                padding: 0 24px;
+                border-right: 1px solid #dde5dc !important;
+                color: #8f624a !important;
+                -webkit-text-fill-color: #9b6a50 !important;
+                font-size: 0.78em;
+                font-weight: 900;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+            }
+            .crop-nav .hub-back:hover, .crop-nav .hub-back:focus-visible {
+                color: #7a5038 !important;
+                -webkit-text-fill-color: #7a5038 !important;
+                transform: translateX(-3px);
+            }
+            .crop-nav .bio-nav-progress {
+                position: absolute;
+                left: 0;
+                bottom: 0;
+                height: 2px;
+                width: 0;
+                background: linear-gradient(90deg, #527a60, #a66f50);
+                pointer-events: none;
+                transition: width 0.12s linear;
+            }
+            .crop-nav.bio-nav-pinned {
+                position: fixed;
+                top: 1.75rem;
+                left: calc(var(--bio-nav-left) - 0.75rem);
+                width: calc(var(--bio-nav-width) + 1.5rem);
+                margin: 0;
+                border-color: #dfe5df;
+                background: rgba(255, 255, 255, 0.97);
+            }
+            .detail-section[id] { scroll-margin-top: 6.5rem; }
+            @media (max-width: 760px) {
+                .crop-nav, .crop-nav.bio-nav-pinned { top: 0.65rem; }
+                /* Uma só linha que desliza na horizontal (com as setas ‹ ›), como as outras barras fixas. */
+                .crop-nav { flex-wrap: nowrap; overflow-x: auto; gap: 18px; scrollbar-width: none; }
+                .crop-nav::-webkit-scrollbar { display: none; }
+                .crop-nav .hub-back { padding: 0 18px; }
             }
 
             .sintese-box {
@@ -180,11 +249,11 @@
                 margin-bottom: 1.7em;
             }
             .section-head span {
-                font-size: 0.65em;
+                font-size: max(11px, 0.65em);
                 font-weight: 900;
                 text-transform: uppercase;
                 letter-spacing: 4px;
-                color: #9fa9a1;
+                color: #646f66;
             }
             .section-head h2 {
                 margin: 0;
@@ -193,7 +262,7 @@
             }
             .section-head p {
                 margin: 0.4em 0 0;
-                color: #718078;
+                color: #616e67;
                 line-height: 1.65;
             }
             .detail-grid {
@@ -210,10 +279,10 @@
                 background: #f6f2e9;
             }
             .detail-panel h3 {
-                font-size: 0.72em;
+                font-size: max(11px, 0.72em);
                 text-transform: uppercase;
                 letter-spacing: 1.4px;
-                color: #527a60;
+                color: #4f755c;
                 margin: 0 0 0.7em;
             }
             .detail-panel p, .detail-panel li {
@@ -241,7 +310,7 @@
                 border: 1px solid #dfe7df;
                 border-radius: 999px;
                 text-decoration: none;
-                color: #527a60;
+                color: #4f755c;
                 font-weight: 700;
                 font-size: 0.78em;
             }
@@ -253,7 +322,7 @@
             }
 
             .source-footer {
-                font-size: 0.65em;
+                font-size: max(11px, 0.65em);
                 color: #bbb !important;
                 text-transform: uppercase;
                 margin-top: 4em;
@@ -269,48 +338,25 @@
                 text-align: right;
             }
 
-            .footer-wordmark {
-                display: flex;
-                justify-content: flex-end;
-            }
-
-            .bio-wordmark {
-                display: inline-block;
-                text-align: center;
-                line-height: 1;
-                font-family: "Georgia", "Times New Roman", serif;
-            }
-
-            .bio-wordmark strong {
-                display: block;
-                font-size: 1.15em;
-                font-weight: 400;
-                letter-spacing: -0.4px;
-                color: #81966e;
-                line-height: 1;
-                font-family: inherit;
-            }
-
-            .bio-wordmark small {
-                display: block;
-                margin-top: 2px;
-                font-size: 0.43em;
-                font-weight: 700;
-                letter-spacing: 1.8px;
-                text-transform: uppercase;
-                color: #a66f50;
-                line-height: 1;
-                font-family: inherit;
-            }
-
             @media screen and (max-width: 1280px) {
+                #sidebar {
+                    position: relative !important;
+                    width: 100% !important;
+                    height: auto !important;
+                }
+                #wrapper {
+                    padding-left: 0 !important;
+                }
                 .hero-split {
                     flex-direction: column-reverse;
                     align-items: center;
                 }
                 .hero-visual {
-                    justify-content: center;
+                    align-items: center;
                     margin-bottom: 2em;
+                }
+                .photo-credit {
+                    width: 350px;
                 }
                 .hero-globe {
                     width: 350px;

@@ -1,0 +1,76 @@
+name: Atualizar consultas públicas (Participa.pt)
+
+# Atualiza data/zaer_critico.json com as consultas de renováveis do Participa.pt.
+# Os dados factuais (estado, prazos, participações) são publicados diretamente.
+# Cada consulta aberta nova gera apenas uma PROPOSTA de notícia, que segue o
+# circuito editorial habitual (/aprovar ou /recusar na notificação).
+on:
+  schedule:
+    - cron: "17 6 * * 1,4"   # segundas e quintas, 06:17 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: noticias-editorial
+  cancel-in-progress: false
+
+jobs:
+  atualizar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Ler o Participa.pt
+        run: python3 scripts/participa/atualizar.py
+
+      - name: Validar dados
+        run: |
+          python3 -m json.tool data/zaer_critico.json >/dev/null
+          python3 -m json.tool data/noticias_propostas.json >/dev/null
+
+      - name: Guardar atualização
+        run: |
+          if git diff --quiet -- data/zaer_critico.json data/noticias_propostas.json; then
+            echo "Sem alterações no Participa.pt."
+            exit 0
+          fi
+          git config user.name "bioCultura Participa"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/zaer_critico.json data/noticias_propostas.json
+          git commit -m "Participa.pt: atualizar consultas públicas de renováveis"
+          git pull --rebase origin main
+          git push origin HEAD:main
+
+      - name: Pedir decisão editorial para consultas abertas novas
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          test -s .participa-novas.txt || { echo "Nenhuma consulta aberta nova."; exit 0; }
+          gh label create "noticia:pendente" --color "D4A373" --force
+          gh label create "noticia:aprovada" --color "2E6B4C" --force
+          gh label create "noticia:recusada" --color "8B3A3A" --force
+          while read -r ID; do
+            [ -n "$ID" ] || continue
+            ITEM="$(jq -c --arg id "$ID" '.[] | select(.id == $id)' data/noticias_propostas.json)"
+            TITLE="$(jq -r '.pt.titulo' <<<"$ITEM")"
+            URL="$(jq -r '.url' <<<"$ITEM")"
+            SUMMARY="$(jq -r '.pt.resumo_biocultura' <<<"$ITEM")"
+            if [ "$(gh issue list --state all --search "$ID in:body" --json number --jq length)" = "0" ]; then
+              {
+                printf '## Consulta pública aberta\n\n'
+                printf '**Fonte:** Participa.pt  \n**Categoria:** Energia\n\n'
+                printf '%s\n\n' "$SUMMARY"
+                printf '[Abrir pré-visualização bioCulture](https://www.bioculture.pt/observatorio/noticia-detalhe.html?id=%s&preview=proposal)\n\n' "$ID"
+                printf '[Abrir a consulta no Participa.pt](%s)\n\n' "$URL"
+                printf 'Para publicar no feed de notícias, comenta com `/aprovar`; para ignorar, `/recusar`.\n\n'
+                printf '<!-- news-id: %s -->' "$ID"
+              } > "$RUNNER_TEMP/body.md"
+              gh issue create --title "$TITLE" --body-file "$RUNNER_TEMP/body.md" --label "noticia:pendente"
+            fi
+          done < .participa-novas.txt

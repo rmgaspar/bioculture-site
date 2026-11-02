@@ -27,8 +27,18 @@ html body[data-hero-theme="calendar"] #main .hero.calendar-local-hero::before {
     position: absolute;
     z-index: 0;
     top: 4.6875rem;
-    left: calc(clamp(-52px, -3.2vw, -28px) - 28px);
-    right: clamp(-64px, -4vw, -32px);
+    /* .inner tem max-width:1600px e fica centrada dentro de #main (janela menos
+       os 18em da barra lateral); em ecrãs largos isso cria um vão de cada lado
+       antes da margem real da janela, que cresce com a largura do ecrã — por
+       isso o excesso é calculado (não fixo), para acompanhar esse vão em vez
+       de ficar "curto" em monitores largos. Soma-se ainda uma margem fixa
+       generosa, que também absorve a diferença entre uma barra de scroll
+       reservada (comum no Firefox/Windows) e uma barra em overlay
+       (Safari/macOS). O excesso é sempre cortado pelo overflow-x:hidden
+       partilhado do body, por isso nunca é visível para lá da janela. */
+    --calendar-ribbon-gap: max(0px, (100vw - 18em - 1600px) / 2);
+    left: calc(-1 * var(--calendar-ribbon-gap) - 5rem);
+    right: calc(-1 * var(--calendar-ribbon-gap) - 5rem);
     height: 21.25rem;
     border-radius: 2rem 0 0 2rem;
     background: #174732;
@@ -75,7 +85,7 @@ html body[data-hero-theme="calendar"] #main .calendar-local-hero .category-label
     display: block !important;
     margin: 0 !important;
     color: #6f8276 !important;
-    font-size: 0.68rem !important;
+    font-size: max(11px, 0.68rem) !important;
     letter-spacing: 0.36em !important;
     white-space: nowrap;
 }
@@ -170,113 +180,112 @@ html body #main .section-nav.bio-nav-pinned {
     background: #f6f2e9 !important;
 }
 
-html body #main :is(#acoes, #catalogo, #semana, #praticas, #vigilancia, #pragas-catalogo, #principios, #mundo) {
+/* Barra de secções sempre numa só linha: se não couber, desliza na horizontal e o «↑ Topo» fica
+   preso à direita, visível. Espaçamento ligeiramente menor para caber inteira a partir de ~1440 px. */
+html body #main .section-nav {
+    flex-wrap: nowrap !important;
+    gap: 14px !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    scrollbar-width: none;
+}
+html body #main .section-nav::-webkit-scrollbar {
+    display: none;
+}
+html body #main .section-nav > a {
+    flex: 0 0 auto !important;
+}
+html body #main .section-nav.bio-nav-pinned .bio-nav-top {
+    position: sticky;
+    right: 0;
+    z-index: 1;
+    padding-left: 14px !important;
+    background: #f6f2e9 !important;
+    box-shadow: -16px 0 12px -6px #f6f2e9, 16px 0 0 0 #f6f2e9 !important; /* cobre também a margem interior à direita */
+}
+
+html body #main :is(#acoes, #catalogo, #semana, #praticas, #vigilancia, #pragas-catalogo, #fatores, #principios, #mundo, #news) {
     scroll-margin-top: 6.5rem;
 }
 
 html body #main .principles .moon-note {
     border-color: rgba(255, 255, 255, 0.58) !important;
     background: rgba(255, 255, 255, 0.045) !important;
+    gap: 28px !important;
+    padding: 2.3em !important;
 }
 
-html body #main .principles .moon-large {
-    width: 180px;
-    height: 180px;
-    flex: 0 0 auto;
-    border: 1px solid rgba(255, 255, 255, 0.5);
-    border-radius: 50%;
-    display: grid;
-    place-items: center;
+/* Os dois ícones (lua e meteorologia) partilham exatamente a mesma caixa,
+   para ficarem no mesmo tamanho e alinhados um com o outro. */
+html body #main .principles :is(.moon-large, .weather-badge) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 110px;
+    height: 110px;
 }
 
 html body #main .principles .moon-large span {
     position: relative;
-    width: 92px;
-    height: 92px;
+    width: 100px;
+    height: 100px;
     overflow: hidden;
     border-radius: 50%;
     background:
         radial-gradient(circle at 32% 32%, rgba(255, 255, 255, 0.28) 0 4%, transparent 5%),
         radial-gradient(circle at 42% 68%, rgba(151, 151, 130, 0.2) 0 5%, transparent 6%),
         linear-gradient(145deg, #f0edcf, #c7c5ab) !important;
-    box-shadow: 0 0 34px rgba(232, 229, 197, 0.2);
 }
 
 html body #main .principles .moon-large span::after {
     content: "";
     position: absolute;
-    inset: -7px -20px -7px 31px;
+    inset: -8px -22px -8px 34px;
     border-radius: 50%;
     background: #17271f;
-    box-shadow: -5px 0 10px rgba(23, 39, 31, 0.4);
+}
+
+html body #main .principles .weather-icon {
+    width: 100px;
+    height: 100px;
+    filter: drop-shadow(0 6px 14px rgba(180, 120, 30, 0.35));
 }
 
 @media (max-width: 736px) {
-    html body #main .principles .moon-large {
-        width: 140px;
-        height: 140px;
+    html body #main .principles :is(.moon-large, .weather-badge) {
+        width: 86px;
+        height: 86px;
     }
 
     html body #main .principles .moon-large span {
-        width: 72px;
-        height: 72px;
+        width: 78px;
+        height: 78px;
     }
 
     html body #main .principles .moon-large span::after {
-        inset: -6px -16px -6px 24px;
-    }
-}
-
-html body #main .principles .water-badge {
-    position: relative;
-    width: 180px;
-    height: 180px;
-    flex: 0 0 auto;
-    border: 1px solid rgba(255, 255, 255, 0.5);
-    border-radius: 50%;
-    display: grid;
-    place-items: center;
-    background: radial-gradient(circle at 33% 30%, rgba(255, 255, 255, 0.22), rgba(95, 168, 220, 0.14) 45%, rgba(28, 90, 138, 0.06) 100%);
-    box-shadow: 0 0 34px rgba(95, 168, 220, 0.22);
-    overflow: hidden;
-}
-
-html body #main .principles .water-ripple {
-    position: absolute;
-    inset: 22px;
-    border: 1px solid rgba(255, 255, 255, 0.22);
-    border-radius: 50%;
-}
-
-html body #main .principles .water-drop {
-    position: relative;
-    width: 92px;
-    height: 92px;
-    filter: drop-shadow(0 6px 14px rgba(15, 55, 88, 0.45));
-}
-
-@media (max-width: 736px) {
-    html body #main .principles .water-badge {
-        width: 140px;
-        height: 140px;
+        inset: -6px -17px -6px 26px;
     }
 
-    html body #main .principles .water-ripple {
-        inset: 17px;
-    }
-
-    html body #main .principles .water-drop {
-        width: 72px;
-        height: 72px;
+    html body #main .principles .weather-icon {
+        width: 78px;
+        height: 78px;
     }
 }
 
 html body #main .principles .moon-note h3 {
     color: #fff !important;
+    font-size: 1.15em !important;
+    margin-bottom: 0.5em !important;
 }
 
 html body #main .principles .moon-note p {
-    color: rgba(255, 255, 255, 0.76) !important;
+    color: rgba(255, 255, 255, 0.8) !important;
+    font-size: 0.92em !important;
+    line-height: 1.7 !important;
+}
+
+html body #main .principles .moon-note p + p {
+    margin-top: 0.9em !important;
 }
 
 @media screen and (max-width: 1100px) {
@@ -344,7 +353,7 @@ html body #main .principles .moon-note p {
     html body[data-hero-theme="calendar"] #main .calendar-local-hero .category-label {
         top: -3.5rem !important;
         left: 0.25rem !important;
-        font-size: 0.6rem !important;
+        font-size: max(11px, 0.6rem) !important;
         letter-spacing: 0.28em !important;
     }
 
@@ -369,3 +378,101 @@ html body #main .principles .moon-note p {
         grid-template-columns: 1fr !important;
     }
 }
+
+/* Mesma tipografia e alinhamento dos restantes topos (Georgia, título a negrito, subtítulo leve,
+   texto à esquerda); o painel do calendário mantém-se à direita. */
+html body[data-hero-theme="calendar"] #main .hero.calendar-local-hero .calendar-banner-copy {
+    align-items: flex-start !important;
+    max-width: 44rem !important;
+    margin-left: 0 !important;
+    padding-left: clamp(1.5rem, 4vw, 4rem) !important;
+}
+
+html body[data-hero-theme="calendar"] #main .hero.calendar-local-hero h1 {
+    max-width: 100% !important;
+    margin: 0 0 1.15rem !important;
+    font-family: Georgia, "Times New Roman", serif !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.055em !important;
+    text-align: left !important;
+}
+
+html body[data-hero-theme="calendar"] #main .hero.calendar-local-hero h1 em {
+    display: block !important;
+    font-style: normal !important;
+    font-weight: 400 !important;
+}
+
+html body[data-hero-theme="calendar"] #main .hero.calendar-local-hero .hero-intro {
+    margin: 0 !important;
+    text-align: left !important;
+}
+
+/* Tablet e telemóvel: o fundo verde passa a ser o próprio bloco do título, com altura automática.
+   Com a faixa decorativa de altura fixa, o texto (que cresce ao estreitar) saía do verde e o bloco
+   seguinte ficava por cima dele. */
+@media screen and (max-width: 1100px) {
+    html body[data-hero-theme="calendar"] #main .hero.calendar-local-hero::before {
+        display: none !important;
+    }
+
+    html body[data-hero-theme="calendar"] #main .hero.calendar-local-hero .calendar-banner-copy {
+        height: auto !important;
+        min-height: 0 !important;
+        padding: 2.5rem 1.5rem !important;
+        border-radius: 1.5rem !important;
+        background: #174732 !important;
+        box-shadow: 0 1.5rem 4rem rgba(20, 61, 43, 0.1) !important;
+    }
+}
+
+@media screen and (max-width: 736px) {
+    html body[data-hero-theme="calendar"] #main .hero.calendar-local-hero .calendar-banner-copy {
+        padding: 2rem 1.1rem !important;
+    }
+
+    html body[data-hero-theme="calendar"] #main .hero.calendar-local-hero h1 {
+        max-width: 100% !important;
+        font-size: clamp(2rem, 10.5vw, 3.4rem) !important;
+        overflow-wrap: anywhere;
+    }
+}
+
+/* Ligação ao hub dentro da barra de secções, com a tipografia das restantes ligações. */
+html body #main .section-nav .hub-back {
+    flex: none;
+    align-self: center;
+    margin: 0;
+    padding: 0 1.5rem 0 0.75rem;
+    border-right: 1px solid #dde5dc !important;
+    color: #8f624a !important;
+    font-size: max(11px, 0.65em);
+    font-weight: 900;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+html body #main .section-nav .hub-back:hover {
+    color: #7a5038 !important;
+    transform: translateX(-3px);
+}
+
+/* Plano simples para esta semana: cartões maiores, texto legível e ícone mais claro. */
+html body #main .week-plan { gap: 18px; }
+html body #main .week-task {
+    display: grid;
+    align-content: start;
+    padding: 26px 26px 24px;
+    border-radius: 18px;
+}
+html body #main .week-task .week-icon { width: 58px; height: 58px; margin-bottom: 16px; }
+html body #main .week-task .week-icon svg { width: 30px; height: 30px; }
+html body #main .week-task .task-number { font-size: 12.5px; letter-spacing: 0.14em; }
+html body #main .week-task h3 { font-size: clamp(17px, 1.35vw, 20px); line-height: 1.25; margin: 8px 0 10px; }
+html body #main .week-task p { font-size: clamp(14.5px, 1.05vw, 16px); line-height: 1.6; max-width: none; }
+@media (max-width: 760px) {
+    html body #main .week-task { padding: 22px 20px 20px; }
+}
+
+/* Ligação ao Planeador de horta em «Agora no terreno» */
+html body #main .action-planner { margin: .4rem 0 0; font-size: .92rem; color: var(--muted, #5b665f); }
+html body #main .action-planner a { font-weight: 700; }

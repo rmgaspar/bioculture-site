@@ -15,11 +15,11 @@
             let records = [], mode = "Todos";
             function phase(x) {
                 const s = x.status || "";
-                if (/^Em exploração$/i.test(s)) return "Em exploração";
-                if (/encerrad|remediação|passivo/i.test(s) || /passivo/i.test(x.id)) {
+                if (/^(Em exploração|Operating)$/i.test(s)) return "Em exploração";
+                if (/encerrad|remediação|passivo|closed|remediation|liabilit/i.test(s) || /passivo/i.test(x.id)) {
                     return "Passivos e fecho";
                 }
-                if (/não operacional/i.test(s)) return "Projetos não operacionais";
+                if (/não operacional|not operat|non-operat/i.test(s)) return "Projetos não operacionais";
                 return "Direitos e fases condicionadas";
             }
             function distance(a, b) {
@@ -43,8 +43,8 @@
                 ], [
                     "Projetos não operacionais",
                     proposed,
-                    "em avaliação, reformulação ou licenciamento",
-                ], ["Com lítio", lithium, "registos cujo mineral inclui lítio ou lepidolite"]].map(
+                    "em avaliação, licenciamento ou sem concessão",
+                ], ["Com lítio", lithium, "registos cujo mineral inclui lítio ou lepidolite"], ["Passivos e fecho", legacy, "áreas encerradas em recuperação e monitorização"]].map(
                     (x) =>
                         `<article class="stat"><small>${x[0]}</small><strong>${x[1]}</strong><span>${
                             x[2]
@@ -72,7 +72,25 @@
                     } km · ${esc(x.concelho)}</span></article>`
                 ).join("");
             }
-            function details(x) {
+            const ESTADOS = {
+                ok: "Feito",
+                curso: "Em curso",
+                parado: "Travado",
+                falta: "Por fazer",
+                nd: "Por confirmar",
+            };
+            function percurso(x) {
+                const e = x.etapas || [];
+                if (!e.length) return "";
+                return `<ol class="percurso" style="--n:${e.length}">${
+                    e.map((s) =>
+                        `<li class="et-${esc(s.estado)}"><i aria-hidden="true"></i><b>${esc(s.rotulo)}</b><em>${
+                            esc(ESTADOS[s.estado] || "")
+                        }</em><span>${esc(s.nota)}</span></li>`
+                    ).join("")
+                }</ol>`;
+            }
+            function dimensoes(x) {
                 const cells = [
                     ["Água", x.agua],
                     ["Solo e agricultura", x.solo_agricultura],
@@ -81,31 +99,40 @@
                     ["Populações", x.populacoes_saude],
                     ["Lacunas", x.lacunas],
                 ].filter(([, v]) => valid(v));
-                return `<details><summary>Ver impactos, lacunas e fontes</summary><div class="detail-grid">${
-                    cells.map(([k, v]) => `<div class="detail"><b>${k}</b><span>${esc(v)}</span></div>`)
-                        .join("")
-                }</div>${
-                    (x.fontes || []).length
-                        ? `<div class="sources">${
-                            x.fontes.map((u, i) =>
-                                `<a href="${esc(u)}" target="_blank" rel="noopener">Fonte ${i + 1}</a>`
-                            ).join("")
-                        }</div>`
-                        : ""
-                }</details>`;
+                return `<div class="detail-grid">${
+                    cells.map(([k, v]) => `<div class="detail"><b>${k}</b><span>${esc(v)}</span></div>`).join("")
+                }</div>`;
+            }
+            function fontes(x) {
+                return (x.fontes || []).length
+                    ? `<div class="sources">${
+                        x.fontes.map((u, i) =>
+                            `<a href="${esc(u)}" target="_blank" rel="noopener">Fonte ${i + 1}</a>`
+                        ).join("")
+                    }</div>`
+                    : "";
             }
             function renderProjects() {
                 const list = mode === "Todos" ? records : records.filter((x) => phase(x) === mode);
                 el("projects").innerHTML =
                     list.map((x) =>
-                        `<article class="project"><small>${esc(phase(x))}</small><h3>${
+                        `<article class="project dossie" id="caso-${esc(x.id)}"><small>${esc(phase(x))}</small><h3>${
                             esc(x.nome)
-                        }</h3><p><strong>${esc(x.mineral)}</strong></p><p>${esc(x.status)}</p><p>${
+                        }</h3><p class="dossie-quem"><strong>${esc(x.mineral)}</strong></p><p class="dossie-onde">${
                             esc(x.concelho)
-                        } · ${esc(x.distrito)}</p>${
-                            valid(x.detalhe) ? `<p>${esc(x.detalhe)}</p>` : ""
-                        }${details(x)}</article>`
+                        } · ${esc(x.distrito)}</p>${percurso(x)}<div class="dossie-texto"><div class="dossie-situacao"><p class="dossie-estado"><strong>${
+                            esc(x.status)
+                        }</strong></p>${valid(x.fase_licenciamento) ? `<p>${esc(x.fase_licenciamento)}</p>` : ""}</div>${
+                            valid(x.detalhe) ? `<p class="dossie-nota">${esc(x.detalhe)}</p>` : ""
+                        }</div>${dimensoes(x)}${fontes(x)}</article>`
                     ).join("") || '<p class="empty">—</p>';
+            }
+            // Ligação direta a um dossiê (#caso-<id>), por exemplo a partir do mapa de fogo e mineração.
+            function irParaCaso() {
+                const alvo = /^#caso-[\w-]+$/.test(location.hash) && document.getElementById(location.hash.slice(1));
+                if (!alvo) return;
+                alvo.classList.add("is-alvo");
+                setTimeout(() => alvo.scrollIntoView({ block: "start" }), 350);
             }
             function setupFilters() {
                 const phases = [
@@ -131,27 +158,25 @@
                 });
             }
             function renderNews(items) {
-                const selected = items.filter((n) => {
-                    const c = window.BioCultureI18n?.content(n) || n.pt || n;
-                    return /minera|mina|lítio|metal|concessão|extração|jazida|rejeitado/i.test(
-                        [n.categoria, n.categoria_id, c.categoria, c.titulo, c.resumo].filter(Boolean)
-                            .join(" "),
-                    );
-                }).slice(0, 6);
-                el("news").innerHTML = selected.map((n) => {
-                    const c = window.BioCultureI18n?.content(n) || n.pt || n;
-                    return `<a class="news-item" href="/observatorio/noticia-detalhe.html?id=${
-                        encodeURIComponent(n.id)
-                    }"><span>${esc(window.BioCultureI18n?.date(n.data) || n.data)}</span><h3>${esc(c.titulo)}</h3><span>${
-                        esc(n.fonte)
-                    }</span></a>`;
-                }).join("") || '<p class="empty">Sem notícias desta categoria neste momento.</p>';
+                const words = ["mineração", "mineiro*", "mina", "minas", "mining", "mine", "minério*", "mineral*", "lítio", "lithium", "ouro", "gold", "cobre", "copper", "carvão", "coal", "níquel", "nickel", "cobalto", "cobalt", "caulino", "kaolin", "pedreira*", "quarry", "rejeitado*", "baldios"];
+                const selected = window.BioCultureNews.rank(items)
+                    .filter((n) => window.BioCultureNews.about(n, words, ["mineracao"]))
+                    .slice(6, 12);
+                el("news").innerHTML = selected.map((n) => window.BioCultureNews.cardHtml(n)).join("") ||
+                    '<p class="empty">Sem notícias desta categoria neste momento.</p>';
+                // O bloco «Atualidade» do fim da página mostra as notícias a seguir às do bloco «em foco» (não as mesmas);
+                // sem mais notícias, esconde-se com a ligação que lhe aponta.
+                const section = el("news").closest("section");
+                if (section && !selected.length) {
+                    section.hidden = true;
+                    if (section.id) document.querySelectorAll(`a[href="#${section.id}"]`).forEach((link) => (link.hidden = true));
+                }
             }
             async function start() {
                 try {
                     const [mines, locations, news] = await Promise.all(
                         ["mineracao", "bioregioes", "noticias"].map((f) =>
-                            fetch(`/data/${f}.json`).then((r) => {
+                            f === "bioregioes" ? window.BioCultureRegion.load() : fetch(`/data/${f}.json`).then((r) => {
                                 if (!r.ok) throw Error(f);
                                 return r.json();
                             })
@@ -162,6 +187,7 @@
                     renderLocal(locations);
                     setupFilters();
                     renderProjects();
+                    irParaCaso();
                     renderNews(news);
                 } catch (e) {
                     console.error("Não foi possível carregar os dados mineiros:", e);

@@ -1,16 +1,26 @@
 <!DOCTYPE html>
 <html>
-    <head data-biocultura-centralized="v1"><link rel="icon" type="image/png" sizes="32x32" href="/images/bioculture-favicon-32.png"><link rel="icon" type="image/png" sizes="16x16" href="/images/bioculture-favicon-16.png"><link rel="apple-touch-icon" sizes="180x180" href="/images/bioculture-apple-touch-icon-180.png">
-        <title>bioCultura - Detalhe da Notícia</title>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-        <link rel="stylesheet" href="../assets/css/main.css" />
-        <link rel="stylesheet" href="/assets/css/pages/observatorio-noticia-detalhe.css?v=22" />
-        <!-- Google tag (gtag.js) -->
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-6PV0FD8PXC"></script>
-        <script src="/assets/js/bioculture-analytics.js?v=1"></script>
-            <script src="/assets/js/biocultura-i18n-runtime.js?v=54"></script>
-            <link rel="stylesheet" href="/assets/css/biocultura-alignment.css?v=7" data-biocultura-alignment="true" />
+    <head data-biocultura-centralized="v1"><meta charset="utf-8"><link rel="icon" type="image/png" sizes="32x32" href="/images/bioculture-favicon-32.png?v=3"><link rel="icon" type="image/png" sizes="16x16" href="/images/bioculture-favicon-16.png?v=3"><link rel="apple-touch-icon" sizes="180x180" href="/images/bioculture-apple-touch-icon-180.png?v=3">
+        <title>Notícia — bioCulture</title>
+        <!-- seo:inicio -->
+        <meta name="description" content="Atualidade ambiental selecionada e contextualizada pelo observatório bioCulture, com ligação à fonte original.">
+        <meta property="og:type" content="website">
+        <meta property="og:site_name" content="bioCulture">
+        <meta property="og:locale" content="pt_PT">
+        <meta property="og:locale:alternate" content="en_GB">
+        <meta property="og:title" content="Notícia">
+        <meta property="og:description" content="Atualidade ambiental selecionada e contextualizada pelo observatório bioCulture, com ligação à fonte original.">
+        <meta property="og:image" content="https://www.bioculture.pt/images/partilha/observatorio-noticia-detalhe.jpg">
+        <meta property="og:image:width" content="1200">
+        <meta property="og:image:height" content="630">
+        <meta property="og:image:alt" content="Notícia — bioCulture">
+        <meta name="twitter:card" content="summary_large_image">
+        <!-- seo:fim -->
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="stylesheet" href="../assets/css/main.css?v=4" />
+        <link rel="stylesheet" href="/assets/css/components/footer-wordmark.css?v=1" /><link rel="stylesheet" href="/assets/css/components/sidebar-fixed.css?v=1" /><link rel="stylesheet" href="/assets/css/pages/observatorio-noticia-detalhe.css?v=32" />
+            <script src="/assets/js/biocultura-i18n-runtime.js?v=264"></script>
+            <link rel="stylesheet" href="/assets/css/biocultura-alignment.css?v=15" data-biocultura-alignment="true" />
 </head>
     <body class="is-preload">
         <div id="wrapper">
@@ -24,7 +34,10 @@
                         <!-- 1. Botão Voltar (Topo) -->
                         <div id="noticia-render" class="noticia-container" style="display: none">
                             <header class="article-header">
-                                <span class="noticia-cat" id="cat">--</span>
+                                <div class="noticia-kicker">
+                                    <span class="noticia-cat" id="cat">--</span>
+                                    <span class="noticia-tipo" id="tipo" hidden></span>
+                                </div>
                                 <h1 class="noticia-titulo" id="titulo">--</h1>
 
                                 <div class="noticia-meta">
@@ -33,7 +46,7 @@
                                     <span aria-hidden="true" style="opacity: 0.3">·</span>
                                     <span class="source-date" id="data">--</span>
                                     <span aria-hidden="true" style="opacity: 0.3">·</span>
-                                    <span data-i18n="news_reading_label">Leitura contextual bioCultura</span>
+                                    <span data-i18n="news_reading_label">Leitura contextual bioCulture</span>
                                 </div>
                             </header>
 
@@ -45,7 +58,7 @@
                                 </span>
                                 <figcaption class="image-caption">
                                     <span id="image-caption-source">Imagem disponibilizada pela fonte</span>
-                                    <span data-i18n="news_context_warning">Consulte a publicação original para contexto integral.</span>
+                                    <span data-i18n="news_context_warning">Consulta a publicação original para contexto integral.</span>
                                 </figcaption>
                             </figure>
 
@@ -58,6 +71,10 @@
                                     </div>
 
                                     <div class="noticia-corpo" id="corpo"></div>
+                                    <section class="news-next" id="news-next" aria-labelledby="news-next-title" hidden>
+                                        <h2 id="news-next-title"></h2>
+                                        <ul class="news-next-list" id="news-next-list"></ul>
+                                    </section>
                                 </main>
 
                                 <aside class="source-card" aria-label="Fonte da notícia">
@@ -70,7 +87,7 @@
                                         </div>
                                     </div>
                                     <p data-i18n="news_disclaimer">
-                                        A bioCultura contextualiza a informação. A reportagem e os factos publicados
+                                        O bioCulture contextualiza a informação. A reportagem e os factos publicados
                                         pertencem à fonte identificada.
                                     </p>
                                     <a
@@ -87,13 +104,13 @@
                             <div class="noticia-footer">
                                 <a class="article-back" href="javascript:history.back()" style="margin: 0" data-i18n="news_back">← Voltar</a>
                                 <span style="color: #99a29c; font-size: 0.74em" data-i18n="news_selected_by"
-                                >Notícia selecionada pelo Observatório bioCultura</span>
+                                >Notícia selecionada pelo Observatório bioCulture</span>
                             </div>
 
                             <footer class="footer footer-wordmark">
-                                <img class="bio-footer-mark" src="/images/bioculture-footer-mark.png" alt="bioCulture" width="44" height="44"><div class="bio-wordmark">
+                                <img class="bio-footer-mark" src="/images/bioculture-footer-mark.png?v=3" alt="bioCulture" width="44" height="44"><div class="bio-wordmark">
                                     <strong>bioCulture</strong>
-                                    <small>GLOBAL REGENERATION</small>
+                                    <small data-i18n="sidebar.sublogo">Regeneração Global</small>
                                 </div>
                             </footer>
                                 </div>
@@ -104,6 +121,7 @@
         </div>
 
         <script src="../assets/js/jquery.min.js"></script>
-        <script src="/assets/js/pages/observatorio-noticia-detalhe-2.js?v=10"></script>
+        <script src="/assets/js/biocultura-canonica.js?v=1"></script>
+        <script src="/assets/js/pages/observatorio-noticia-detalhe-2.js?v=20"></script>
     </body>
 </html>
