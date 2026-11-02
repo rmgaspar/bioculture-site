@@ -18,7 +18,7 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 RAIZ = Path(__file__).resolve().parents[2]
-UA = "bioCultura-observatorio/1.0 (+https://www.bioculture.net)"
+UA = "bioCultura-observatorio/1.0 (+https://www.bioculture.pt)"
 URL = "https://ngr.ucdavis.edu/fgrdetails.cfm?varietyid={}&showmore=yes"
 PAUSA = 0.3  # por fio; quatro fios em paralelo
 

@@ -31,7 +31,7 @@ K = 0.5  # fator de redução dos PNG de saída
 def carregar(pasta, nome):
     f = pasta / f"{nome}.jpg"
     if not f.exists():
-        req = urllib.request.Request(BASE + f.name, headers={"User-Agent": "bioCulture-site (dados abertos; contacto via bioculture.net)"})
+        req = urllib.request.Request(BASE + f.name, headers={"User-Agent": "bioCulture-site (dados abertos; contacto via bioculture.pt)"})
         f.write_bytes(urllib.request.urlopen(req, timeout=120).read())
     return np.asarray(Image.open(f).convert("RGB")).astype(int)
 

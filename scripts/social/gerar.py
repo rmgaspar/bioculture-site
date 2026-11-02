@@ -355,7 +355,7 @@ def main():
     capa("01-pszaer-1.png", "PSZAER · PROGRAMA NACIONAL", "Onde o Estado propõe acelerar as renováveis.",
          "Solar e eólica em terra. Proposta de maio de 2026.",
          [(f"{num(sol['area_ha'])} ha", f"de solar, em {sol['poligonos']} polígonos"), (f"{num(eol['area_ha'])} ha", f"de eólica, em {eol['poligonos']} polígonos"), (num(rf["participacoes"]), "participações na consulta")],
-         "bioculture.net/energia/transicao-etica · Foto: pedrik · CC BY 2.0 · Wikimedia Commons", tam=66,
+         "bioculture.pt/energia/transicao-etica · Foto: pedrik · CC BY 2.0 · Wikimedia Commons", tam=66,
          foto=("renovaveis/zaer-norte-lisboa.webp", (0.5, 0.4)))
     tip = rf["tipologia_pct"]
     barras("01-pszaer-2.png", "O QUE DISSERAM AS PARTICIPAÇÕES", f"{num(rf['participacoes'])} participações, 94% de discordância.",
@@ -369,7 +369,7 @@ def main():
           [("Não se somam.", "As áreas solar e eólica podem sobrepor-se; nunca devem ser somadas como ocupação total."),
            ("É potencial.", "As manchas indicam potencial após critérios nacionais; o desenho final depende do projeto e do licenciamento."),
            ("A rede pesa.", "A ligação à rede pode exigir linhas e subestações fora da mancha, com impactos próprios.")],
-          "bioculture.net/energia/transicao-etica", cta=("Instantâneo completo", "bioculture.net/energia/transicao-etica#zaer"), tam=64)
+          "bioculture.pt/energia/transicao-etica", cta=("Instantâneo completo", "bioculture.pt/energia/transicao-etica#zaer"), tam=64)
 
     # 02 · mediana vs média
     barras("02-participacoes.png", "PARTICIPA.PT · 2026", "8 151 participações é muito?",
@@ -400,50 +400,50 @@ def main():
         itens.append((f"{nomes[k]}", f"Até {dd(r['fim'])} · {num(r['participacoes'])} participações até agora"))
     for nome, alt in (("04-abertas-feed.png", 1350), ("04-abertas-story.png", 1920)):
         lista(nome, "CONSULTAS ABERTAS AGORA", "Ainda vais a tempo de participar.", itens,
-              f"Verificado no Participa.pt a {dt.date.today().strftime('%d/%m/%Y')} · bioculture.net/energia/transicao-etica",
+              f"Verificado no Participa.pt a {dt.date.today().strftime('%d/%m/%Y')} · bioculture.pt/energia/transicao-etica",
               cta=("Comenta em participa.pt", "Regista-te grátis e carrega em «Seguir» para receberes avisos"), altura=alt, tam=72, corpo=34)
 
     # 05 · mapa
-    mapa("05-mapa.png", "ONDE ESTÃO AS CONSULTAS", "{n} concelhos com consultas de renováveis.", "Participa.pt · pontos indicativos por concelho · bioculture.net/energia/transicao-etica")
+    mapa("05-mapa.png", "ONDE ESTÃO AS CONSULTAS", "{n} concelhos com consultas de renováveis.", "Participa.pt · pontos indicativos por concelho · bioculture.pt/energia/transicao-etica")
 
     # 06 · território
     lista("06-territorio.png", "PARECERES DAS COMISSÕES DE AVALIAÇÃO", "Por trás de cada mancha há árvores, aves e lobos.",
           [("Sophia (projeto inicial)", "1 541 sobreiros e azinheiras a cortar ou arrancar e 24 aves ameaçadas, entre elas a águia-imperial-ibérica."),
            ("Alcoutim", "Indícios de 13 territórios de águia-de-Bonelli e de 1 a 2 de águia-imperial-ibérica num raio de 10 km."),
            ("Paiva", "Impactes muito significativos no lobo-ibérico, dentro da área da alcateia da Lapa.")],
-          "Pareceres da Comissão de Avaliação (APA) · fichas em bioculture.net/energia/transicao-etica#consultas", tam=62, corpo=33)
+          "Pareceres da Comissão de Avaliação (APA) · fichas em bioculture.pt/energia/transicao-etica#consultas", tam=62, corpo=33)
 
     # 07 · Finlândia · 08 · Mongólia · 09 · Barroso
     f, c = credito("foco-finlandia", "Corte raso no sul da Finlândia (ilustrativa; não é um dos locais da Google).")
     capa("07-finlandia.png", "CENTROS DE DADOS · FINLÂNDIA", "A floresta cortada antes de avaliar.",
          "A autoridade finlandesa mandou parar as obras de dois centros de dados da Google até a avaliação de impacte estar concluída.",
          [("530 ha", "de floresta abatida, segundo a Google"), ("400 mil", "árvores abatidas (estimativa do Guardian)"), ("130 ha", "a replantar em Muhos")],
-         c + " · bioculture.net/recursos/google-finlandia-floresta", tam=64, foto=(f, (0.5, 0.45)))
+         c + " · bioculture.pt/recursos/google-finlandia-floresta", tam=64, foto=(f, (0.5, 0.45)))
     f, c = credito("foco-mongolia", "Estepe junto ao maciço Baga Gazaryn Chuluu, na Mongólia.")
     capa("08-mongolia.png", "SOLO · COP17", "O que a Mongólia revela sobre solo, clima e alimento.",
          "A crise não cabe num único número: aquecimento, aridez, pressão sobre as pastagens e o dzud de 2023–2024.",
          [("76,9%", "do território afetado por degradação"), ("+2,25 °C", "na temperatura média anual em 80 anos"), ("8,1 M", "animais perdidos no dzud")],
-         c + " · bioculture.net/recursos/mongolia-solo-cop17", tam=58, foto=(f, (0.5, 0.5)))
+         c + " · bioculture.pt/recursos/mongolia-solo-cop17", tam=58, foto=(f, (0.5, 0.5)))
     f, c = credito("foco-barroso", "Capela de Santa Maria, em Covas do Barroso (Boticas).")
     capa("09-barroso.png", "LÍTIO · BOTICAS", "Mina do Barroso: ainda não há extração.",
          "A declaração de impacte ambiental favorável condicionada é de maio de 2023. Covas do Barroso integra o sistema agrícola do Barroso reconhecido pela FAO.",
          [("5,4 km²", "de área do projeto"), ("T4 2026", "pedido de licença ambiental (promotor)"), ("fev. 2027", "decisão prevista do regulador")],
-         c + " · bioculture.net/energia/mineracao#casos", tam=60, foto=(f, (0.5, 0.5)))
+         c + " · bioculture.pt/energia/mineracao#casos", tam=60, foto=(f, (0.5, 0.5)))
 
     # 10 · destaques
     ds = dados("destaques.json")
     capa("10-destaques-1.png", "DESTAQUE · PRESSÕES HUMANAS", "Um parque solar, 568 hectares de floresta.",
          "Em Santarém e Cartaxo, 189 MWp de potência instalada custaram mais de 200 sobreiros abatidos.",
          [("189 MWp", "de potência instalada"), ("568 ha", "de floresta"), ("200+", "sobreiros abatidos")],
-         "Foto: Bextrel · CC BY-SA 4.0 (um parque solar no Algarve, para ilustrar a escala) · bioculture.net/energia/transicao-etica", tam=62,
+         "Foto: Bextrel · CC BY-SA 4.0 (um parque solar no Algarve, para ilustrar a escala) · bioculture.pt/energia/transicao-etica", tam=62,
          foto=("destaques/solar-parque.webp", (0.5, 0.5)))
     capa("10-destaques-2.png", "DESTAQUE · OBSERVATÓRIO GLOBAL", "Mesmo no cenário mais otimista, 1,8 °C.",
          "Ultrapassar 1,5 °C não torna todos os futuros iguais: cada fração de grau e cada ano acima do limite aumentam o risco.", None,
-         "Foto: NASA · domínio público · bioculture.net/observatorio/limitar-ultrapassagem-1-5", tam=66,
+         "Foto: NASA · domínio público · bioculture.pt/observatorio/limitar-ultrapassagem-1-5", tam=66,
          foto=("destaques/clima-degelo.webp", (0.5, 0.5)))
     capa("10-destaques-3.png", "DESTAQUE · VETORES DE PRESSÃO", "Aviação: o peso de cada viagem.",
          "Escolhe uma rota ou dois aeroportos e vê o que um voo gasta e afeta: CO₂, combustível, óxidos de azoto e ruído.",
-         None, "Foto: NASA Earth Observatory · domínio público · bioculture.net/energia/aviacao", tam=66,
+         None, "Foto: NASA Earth Observatory · domínio público · bioculture.pt/energia/aviacao", tam=66,
          foto=("aviacao/miniatura.webp", (0.5, 0.5)))
 
     # 11 · problemas da horta
@@ -452,25 +452,25 @@ def main():
     capa("11-horta-problemas-1.png", "PROBLEMAS NA HORTA", "O que fazer quando a horta não corre bem?",
          "Respostas curtas por sintoma, com as causas mais prováveis e o que fazer primeiro.",
          [(str(len(pr)), "problemas com resposta"), (str(grupos["doencas"]), "de doenças"), (str(grupos["pragas"]), "de pragas")],
-         "bioculture.net · Conhecimento para cuidar · Problemas na horta", tam=70)
+         "bioculture.pt · Conhecimento para cuidar · Problemas na horta", tam=70)
     for i, k in enumerate(("tomate-fundo-preto", "folhas-amarelas", "lesmas-e-caracois"), 2):
         x = pr[k]["pt"]
         lista(f"11-horta-problemas-{i}.png", "PROBLEMAS NA HORTA", x["titulo"] + "?",
               [("Porquê", x["resumo"]), ("Fazer", x["fazer"][0]), ("Fazer", x["fazer"][1])],
-              "bioculture.net · Problemas na horta", tam=58, corpo=33)
+              "bioculture.pt · Problemas na horta", tam=58, corpo=33)
 
     # 12 · técnicas
     dc = {x["id"]: x for x in dados("dicas.json")}
     capa("12-tecnicas-1.png", "TÉCNICAS DE HORTA", "Cuidar do solo e da água, sem pesticidas.",
          "Fichas práticas com materiais, passos e erros a evitar.",
          [(str(len(dc)), "técnicas"), (str(len({x["categoria"] for x in dc.values()})), "temas, do solo à biodiversidade"), ("Sem", "pesticidas, herbicidas nem adubos sintéticos")],
-         "bioculture.net · Soluções naturais · Técnicas", tam=70)
+         "bioculture.pt · Soluções naturais · Técnicas", tam=70)
     for i, (k, tit, extra) in enumerate((("folhas-molde", "Húmus de folhas: recolher no outono", None), ("captacao-chuva", "Captar a chuva: instalar antes da época chuvosa", None),
                                          ("adubo-verde", "Adubação verde: o solo nunca nu", None), ("mulching-organico", "Mulching: cobrir o solo", None)), 2):
         x = dc[k]
         passos = x["passos"]
         itens = [(None, x["resumo"])] + [(None, p) for p in passos[:3]] + [("Evitar", x["erros_evitar"][0])]
-        lista(f"12-tecnicas-{i}.png", x["nivel"].upper() + " · " + x["categoria"].upper(), tit, itens, "bioculture.net · Técnicas · " + x["titulo"], tam=56, corpo=31)
+        lista(f"12-tecnicas-{i}.png", x["nivel"].upper() + " · " + x["categoria"].upper(), tit, itens, "bioculture.pt · Técnicas · " + x["titulo"], tam=56, corpo=31)
 
     # 13 · o que mais
     ap_ = dados("apoios.json")["apoios"] if "apoios" in dados("apoios.json") else None
@@ -483,7 +483,7 @@ def main():
            ("Glossário", f"{n_gl} termos de ambiente, solo e energia, em português claro."),
            ("Apoios agrícolas (PEPAC)", f"{n_apoios} apoios do IFAP explicados, com ligação às regras oficiais."),
            ("Sementes de conservação", "8 variedades do Catálogo Nacional de Variedades de 2026, com a região de origem.")],
-          "bioculture.net", tam=64, corpo=32)
+          "bioculture.pt", tam=64, corpo=32)
 
 
 if __name__ == "__main__":

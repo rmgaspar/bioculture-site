@@ -15,7 +15,7 @@ import re
 import urllib.parse
 import urllib.request
 
-UA = "Mozilla/5.0 (compatible; bioCultura-news/1.0; +https://www.bioculture.net)"
+UA = "Mozilla/5.0 (compatible; bioCultura-news/1.0; +https://www.bioculture.pt)"
 TZ_PT = dt.timezone(dt.timedelta(hours=1))  # as datas dos sites não trazem fuso; a hora exata não importa
 
 

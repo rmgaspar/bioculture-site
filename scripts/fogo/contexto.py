@@ -27,7 +27,7 @@ from gerar import LAT, LON, centroid, path_of, proj  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / "data" / "fogo"
-UA = {"User-Agent": "bioCulture-site (dados abertos; contacto via bioculture.net)"}
+UA = {"User-Agent": "bioCulture-site (dados abertos; contacto via bioculture.pt)"}
 GML = "{http://www.opengis.net/gml}"
 BBOX = (36.9, -9.6, 42.2, -6.1)  # lat0, lon0, lat1, lon1
 COS = "https://geo2.dgterritorio.gov.pt/wms/COSc2023"
