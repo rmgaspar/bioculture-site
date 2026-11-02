@@ -44,7 +44,7 @@ def nome(v):
 
 def descarregar(servico, tipo):
     q = urllib.parse.urlencode({"service": "WFS", "version": "2.0.0", "request": "GetFeature", "typeNames": tipo, "outputFormat": "GEOJSON", "srsName": "EPSG:4326"})
-    req = urllib.request.Request(BASE.format(s=servico) + "?" + q, headers={"User-Agent": "bioCulture-site (dados abertos; contacto via bioculture.pt)"})
+    req = urllib.request.Request(BASE.format(s=servico) + "?" + q, headers={"User-Agent": "bioCulture-site (dados abertos; contacto via bioculture.net)"})
     return json.loads(urllib.request.urlopen(req, timeout=180).read())["features"]
 
 

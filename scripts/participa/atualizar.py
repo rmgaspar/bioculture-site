@@ -32,7 +32,7 @@ PROPOSALS = ROOT / "data" / "noticias_propostas.json"
 NEWS_FILES = [ROOT / "data" / f for f in ("noticias.json", "noticias_propostas.json", "noticias_rejeitadas.json", "noticias_arquivo.json")]
 BASE = "https://participa.pt"
 SEARCH = BASE + "/requests/get_consultations.php"
-UA = "Mozilla/5.0 (compatible; bioCulture-observatorio; +https://www.bioculture.pt)"
+UA = "Mozilla/5.0 (compatible; bioCulture-observatorio; +https://www.bioculture.net)"
 TERMS = ["Central Solar", "fotovoltaica", "solar", "eólico", "eólica", "hibridização", "ZAER", "energias renováveis"]
 RELEVANT = re.compile(r"solar|fotovolt|e[óo]lic|hibridiz|ZAER|renov[áa]v|armazenamento de energia", re.I)
 # Temas ligados ao território que o site também segue (não entram nas contas das renováveis): mineração, biometano e desflorestação.

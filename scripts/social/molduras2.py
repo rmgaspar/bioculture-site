@@ -323,25 +323,25 @@ def main(destino):
     em_foco(destino, "01-pszaer-1.png", "PSZAER · PROGRAMA NACIONAL", "Onde o Estado propõe acelerar as renováveis.",
             "Solar e eólica em terra. Proposta de maio de 2026.",
             [(f"{gerar.num(sol['area_ha'])} ha", f"de solar, em {sol['poligonos']} polígonos"), (f"{gerar.num(eol['area_ha'])} ha", f"de eólica, em {eol['poligonos']} polígonos"), (gerar.num(rf["participacoes"]), "participações na consulta")],
-            "renovaveis/zaer-norte-lisboa.webp", "Foto: pedrik · CC BY 2.0 · Wikimedia Commons", "bioculture.pt/pszaer", (0.5, 0.35), tam=86)
+            "renovaveis/zaer-norte-lisboa.webp", "Foto: pedrik · CC BY 2.0 · Wikimedia Commons", "bioculture.net/pszaer", (0.5, 0.35), tam=86)
     tip = rf["tipologia_pct"]
     dados_barras(destino, "01-pszaer-2.png", "O QUE DISSERAM AS PARTICIPAÇÕES", f"{gerar.num(rf['participacoes'])} participações, 94% de discordância.",
                  [("Discordância", tip["discordancia"], CORAL), ("Reclamação", tip["reclamacao"], SAND), ("Sugestão", tip["sugestao"], SKY), ("Concordância", tip["concordancia"], MINT), ("Comentário geral", tip["geral"], (150, 172, 190))],
-                 "Fonte: Relatório de Envolvimento e Consulta Pública do PSZAER", "bioculture.pt/pszaer", fmt=lambda v: f"{v}%",
+                 "Fonte: Relatório de Envolvimento e Consulta Pública do PSZAER", "bioculture.net/pszaer", fmt=lambda v: f"{v}%",
                  nota=f"{str(rf['modelo_pct']).replace('.', ',')}% eram participações-modelo, com o texto repetido. A Guarda foi o concelho mais mencionado: {rf['concelho_mais_mencionado']['mencoes']} menções.", tam=72)
     dados_barras(destino, "01-pszaer-3.png", "DE QUE FALARAM", "Biodiversidade e solos, à cabeça.",
                  [(x["pt"], x["n"], SKY) for x in rf["temas"][:5]],
-                 "Fonte: Relatório de Envolvimento e Consulta Pública do PSZAER", "bioculture.pt/pszaer", nota="Cada participação pode tratar vários temas, por isso as barras não somam o total.", tam=76)
+                 "Fonte: Relatório de Envolvimento e Consulta Pública do PSZAER", "bioculture.net/pszaer", nota="Cada participação pode tratar vários temas, por isso as barras não somam o total.", tam=76)
     dados_lista(destino, "01-pszaer-4.png", "COMO LER ESTES NÚMEROS", "Uma mancha no mapa não é um projeto.",
                 [("Não se somam.", "As áreas solar e eólica podem sobrepor-se; nunca devem ser somadas como ocupação total."),
                  ("É potencial.", "As manchas indicam potencial após critérios nacionais; o desenho final depende do projeto e do licenciamento."),
                  ("A rede pesa.", "A ligação à rede pode exigir linhas e subestações fora da mancha, com impactos próprios.")],
-                "Fonte: PSZAER, proposta de maio de 2026", "bioculture.pt/pszaer", tam=68)
+                "Fonte: PSZAER, proposta de maio de 2026", "bioculture.net/pszaer", tam=68)
 
     # 02 · mediana
     dados_barras(destino, "02-participacoes.png", "PARTICIPA.PT · 2026", "8 151 participações é muito?",
                  [("Mediana dos projetos de 2026", fa["participacoes_mediana"], MINT), ("Média dos projetos", fa["participacoes_media"], SAND), ("Central solar de Sophia", fa["participacoes_maxima"], CORAL)],
-                 "Fonte: consultas de projetos de renováveis, 2026 · Participa.pt", "bioculture.pt/consultas",
+                 "Fonte: consultas de projetos de renováveis, 2026 · Participa.pt", "bioculture.net/consultas",
                  sub="A Sophia teve cerca de 55 vezes mais do que o caso típico.",
                  nota=f"Sozinha pesa {round(fa['participacoes_maxima'] / fa['participacoes_total'] * 100)}% das participações dos projetos de 2026. Sem ela, a média desce de {fa['participacoes_media']} para {fa['participacoes_media_sem_maxima']}: a mediana descreve melhor o caso típico.", tam=80)
 
@@ -351,45 +351,45 @@ def main(destino):
                       ("Parque Eólico do Paiva", "590", [("c", 25, ""), ("d", 549, "cerca de 93%"), ("o", 16, "")], "25 concordam: emprego, contrapartidas e acessos."),
                       ("Central solar Planalto Branco", "69", [("d", 62, "62"), ("o", 7, "7")], "Cinco sugestões e dois comentários gerais. Nenhuma concordância."),
                       ("Alcoutim, 1.ª consulta (eólico)", "13", [("c", 2, "2"), ("d", 9, "9"), ("o", 2, "2")], "Uma geral e uma sugestão.")],
-                     "Fonte: relatórios de consulta pública da APA e do PSZAER", "bioculture.pt/consultas", nota="Não são todas contra, e a divisão só se conhece quando a APA publica o relatório.", tam=70)
+                     "Fonte: relatórios de consulta pública da APA e do PSZAER", "bioculture.net/consultas", nota="Não são todas contra, e a divisão só se conhece quando a APA publica o relatório.", tam=70)
 
     # 05 · mapa
-    dados_mapa(destino, "05-mapa.png", "ONDE ESTÃO AS CONSULTAS", "{n} concelhos com consultas de renováveis.", "Fonte: Participa.pt · pontos indicativos por concelho", "bioculture.pt/consultas")
+    dados_mapa(destino, "05-mapa.png", "ONDE ESTÃO AS CONSULTAS", "{n} concelhos com consultas de renováveis.", "Fonte: Participa.pt · pontos indicativos por concelho", "bioculture.net/consultas")
 
     # 06 · território
     dados_lista(destino, "06-territorio.png", "PARECERES DA APA", "Por trás de cada mancha há árvores, aves e lobos.",
                 [("Sophia (projeto inicial)", "1 541 sobreiros e azinheiras a cortar ou arrancar e 24 aves ameaçadas, entre elas a águia-imperial-ibérica."),
                  ("Alcoutim", "Indícios de 13 territórios de águia-de-Bonelli e de 1 a 2 de águia-imperial-ibérica num raio de 10 km."),
                  ("Paiva", "Impactes muito significativos no lobo-ibérico, dentro da área da alcateia da Lapa.")],
-                "Fonte: pareceres das Comissões de Avaliação (APA)", "bioculture.pt/consultas", tam=66, corpo=36)
+                "Fonte: pareceres das Comissões de Avaliação (APA)", "bioculture.net/consultas", tam=66, corpo=36)
 
     # 07-09 · Em foco
     f1, c1 = cred("foco-finlandia", "Corte raso no sul da Finlândia (ilustrativa; não é um dos locais da Google).")
     em_foco(destino, "07-finlandia.png", "CENTROS DE DADOS · FINLÂNDIA", "A floresta cortada antes de avaliar.",
             "A autoridade finlandesa mandou parar as obras de dois centros de dados da Google até a avaliação de impacte estar concluída.",
-            [("530 ha", "de floresta abatida, segundo a Google"), ("400 mil", "árvores (estimativa do Guardian)"), ("130 ha", "a replantar em Muhos")], f1, c1, "bioculture.pt/finlandia", (0.5, 0.5), tam=84, acento=SAND)
+            [("530 ha", "de floresta abatida, segundo a Google"), ("400 mil", "árvores (estimativa do Guardian)"), ("130 ha", "a replantar em Muhos")], f1, c1, "bioculture.net/finlandia", (0.5, 0.5), tam=84, acento=SAND)
     f2, c2 = cred("foco-mongolia", "Estepe junto ao maciço Baga Gazaryn Chuluu, na Mongólia.")
     em_foco(destino, "08-mongolia.png", "SOLO · COP17", "O que a Mongólia revela sobre solo, clima e alimento.",
             "A crise não cabe num único número: aquecimento, aridez, pressão sobre as pastagens e o dzud de 2023–2024.",
-            [("76,9%", "do território afetado por degradação"), ("+2,25 °C", "temperatura média anual em 80 anos"), ("8,1 M", "animais perdidos no dzud")], f2, c2, "bioculture.pt/mongolia", (0.5, 0.5), tam=78, acento=SAND)
+            [("76,9%", "do território afetado por degradação"), ("+2,25 °C", "temperatura média anual em 80 anos"), ("8,1 M", "animais perdidos no dzud")], f2, c2, "bioculture.net/mongolia", (0.5, 0.5), tam=78, acento=SAND)
     f3, c3 = cred("foco-barroso", "Capela de Santa Maria, em Covas do Barroso (Boticas).")
     em_foco(destino, "09-barroso.png", "LÍTIO · BOTICAS", "Mina do Barroso: ainda não há extração.",
             "A declaração de impacte ambiental favorável condicionada é de maio de 2023. Covas do Barroso integra o sistema agrícola do Barroso reconhecido pela FAO.",
-            [("5,4 km²", "de área do projeto"), ("T4 2026", "pedido de licença (promotor)"), ("fev. 2027", "decisão prevista do regulador")], f3, c3, "bioculture.pt/barroso", (0.5, 0.4), tam=78, acento=SAND)
+            [("5,4 km²", "de área do projeto"), ("T4 2026", "pedido de licença (promotor)"), ("fev. 2027", "decisão prevista do regulador")], f3, c3, "bioculture.net/barroso", (0.5, 0.4), tam=78, acento=SAND)
 
     # 10 · destaques
     em_foco(destino, "10-destaques-1.png", "DESTAQUE · PRESSÕES HUMANAS", "Um parque solar, 568 hectares de floresta.",
             "Em Santarém e Cartaxo, 189 MWp de potência instalada custaram mais de 200 sobreiros abatidos.",
             [("189 MWp", "de potência instalada"), ("568 ha", "de floresta"), ("200+", "sobreiros abatidos")], "destaques/solar-parque.webp",
-            "Foto: Bextrel · CC BY-SA 4.0 (parque solar no Algarve, ilustrativa) · Wikimedia Commons", "bioculture.pt/sobreiros", (0.5, 0.5), tam=80)
+            "Foto: Bextrel · CC BY-SA 4.0 (parque solar no Algarve, ilustrativa) · Wikimedia Commons", "bioculture.net/sobreiros", (0.5, 0.5), tam=80)
     em_foco(destino, "10-destaques-2.png", "DESTAQUE · OBSERVATÓRIO GLOBAL", "Mesmo no cenário mais otimista, 1,8 °C.",
             "Ultrapassar 1,5 °C não torna todos os futuros iguais: cada fração de grau e cada ano acima do limite aumentam o risco.",
             [("1,8 °C", "no cenário mais otimista"), ("1,5 °C", "o limite do Acordo de Paris")], "destaques/clima-degelo.webp",
-            "Foto: NASA · domínio público · Wikimedia Commons", "bioculture.pt/clima", (0.5, 0.5), tam=84)
+            "Foto: NASA · domínio público · Wikimedia Commons", "bioculture.net/clima", (0.5, 0.5), tam=84)
     em_foco(destino, "10-destaques-3.png", "DESTAQUE · VETORES DE PRESSÃO", "Aviação: o peso de cada viagem.",
             "Escolhe uma rota ou dois aeroportos e vê o que um voo gasta e afeta: CO2, combustível, óxidos de azoto e ruído.",
             [("CO2", "emissões da rota"), ("NOx", "óxidos de azoto"), ("Ruído", "à volta dos aeroportos")], "aviacao/miniatura.webp",
-            "Foto: NASA Earth Observatory · domínio público · Wikimedia Commons", "bioculture.pt/aviacao", (0.5, 0.5), tam=84)
+            "Foto: NASA Earth Observatory · domínio público · Wikimedia Commons", "bioculture.net/aviacao", (0.5, 0.5), tam=84)
 
     # 13 · ferramentas
     pl = gerar.dados("planeador-horta.json")
@@ -401,7 +401,7 @@ def main(destino):
               (str(n_gl), "Glossário", "Termos de ambiente, solo e energia em português claro."),
               (str(len(ap)), "Apoios agrícolas", "Apoios do IFAP no PEPAC, com ligação às regras oficiais."),
               ("8", "Sementes de conservação", "Variedades do Catálogo Nacional de 2026, com a região de origem.")],
-             "bioculture.pt", "")
+             "bioculture.net", "")
     print("ok", destino)
 
 

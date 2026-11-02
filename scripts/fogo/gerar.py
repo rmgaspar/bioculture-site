@@ -89,7 +89,7 @@ def ano(y, cache):
     if fich and fich.exists():
         data = json.loads(fich.read_text(encoding="utf-8"))
     else:
-        req = urllib.request.Request(WFS.format(ano=y), headers={"User-Agent": "bioCulture-site (dados abertos; contacto via bioculture.pt)"})
+        req = urllib.request.Request(WFS.format(ano=y), headers={"User-Agent": "bioCulture-site (dados abertos; contacto via bioculture.net)"})
         with urllib.request.urlopen(req, timeout=300) as r:
             raw = r.read()
         if fich:

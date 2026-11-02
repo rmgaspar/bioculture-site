@@ -15,7 +15,7 @@ import urllib.request
 WIDTH = 500
 API = "https://commons.wikimedia.org/w/api.php"
 URL = re.compile(r"https://upload\.wikimedia\.org/wikipedia/commons/[^\"\s]+")
-UA = {"User-Agent": "bioCulture-site/1.0 (https://www.bioculture.pt; geral@bioculture.pt)"}
+UA = {"User-Agent": "bioCulture-site/1.0 (https://www.bioculture.net; geral@bioculture.net)"}
 
 
 def filename(url: str) -> str:

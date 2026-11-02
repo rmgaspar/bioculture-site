@@ -28,7 +28,7 @@ from PIL import Image, ImageDraw
 Image.MAX_IMAGE_PIXELS = None
 ROOT = Path(__file__).resolve().parents[2]
 API = "https://commons.wikimedia.org/w/api.php"
-UA = {"User-Agent": "bioCulture-site/1.0 (https://www.bioculture.pt; geral@bioculture.pt)"}
+UA = {"User-Agent": "bioCulture-site/1.0 (https://www.bioculture.net; geral@bioculture.net)"}
 ABERTAS = re.compile(r"^(CC0|CC BY( \d\.\d)?|CC BY-SA( \d\.\d)?|Public domain)")
 
 

@@ -30,7 +30,7 @@ from datetime import date
 from pathlib import Path
 
 RAIZ = Path(__file__).resolve().parents[2]
-UA = "bioCulture-dados/1.0 (+https://www.bioculture.pt)"
+UA = "bioCulture-dados/1.0 (+https://www.bioculture.net)"
 EUROSTAT = ("https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/env_ac_ainah_r2"
             "?format=JSON&lang=EN&geo=PT&airpol=CO2&unit=THS_T&nace_r2={nace}")
 OURAIRPORTS = "https://davidmegginson.github.io/ourairports-data/airports.csv"

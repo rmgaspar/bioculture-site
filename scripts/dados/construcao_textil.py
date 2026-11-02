@@ -22,7 +22,7 @@ from pathlib import Path
 
 RAIZ = Path(__file__).resolve().parents[2]
 BASE = "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/"
-UA = "bioCulture-dados/1.0 (+https://www.bioculture.pt)"
+UA = "bioCulture-dados/1.0 (+https://www.bioculture.net)"
 
 
 def obter(dataset, **q):

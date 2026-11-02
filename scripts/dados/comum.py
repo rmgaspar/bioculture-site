@@ -19,7 +19,7 @@ import excluidos
 RAIZ = Path(__file__).resolve().parents[2]
 SECO = False  # --dry-run: indica o que mudaria sem escrever
 DADOS = RAIZ / "data"
-USER_AGENT = "bioCultura-observatorio/1.0 (+https://www.bioculture.pt)"
+USER_AGENT = "bioCultura-observatorio/1.0 (+https://www.bioculture.net)"
 
 
 class ErroDados(Exception):

@@ -55,7 +55,7 @@ jobs:
           gh label create "noticias:revisao" --color "D4A373" --force
           TEXTO="Há **$TOTAL** notícias à espera de decisão.
 
-          [Abrir a página de revisão](https://www.bioculture.pt/revisao)"
+          [Abrir a página de revisão](https://www.bioculture.net/revisao)"
           ABERTA="$(gh issue list --label noticias:revisao --state open --json number --jq '.[0].number // empty')"
           if [ -n "$ABERTA" ]; then
             gh issue comment "$ABERTA" --body "$TEXTO"

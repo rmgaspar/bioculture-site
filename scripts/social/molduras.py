@@ -109,7 +109,7 @@ def alerta_a(destino):
     d.rounded_rectangle((M, yb, W - M, yb + h), radius=30, fill=(24, 42, 33))
     d.text((M + 44, yb + 30), "participa.pt", font=f("avenir", "heavy", 54), fill=(255, 255, 255))
     d.text((M + 44, yb + 100), "Lê, comenta, carrega em «Seguir»", font=f("avenir", "medium", 28), fill=(184, 205, 190))
-    t = "bioculture.pt/consultas"
+    t = "bioculture.net/consultas"
     d.text((W - M - 44, yb + h / 2), t, font=f("avenir", "demi", 34), fill=(244, 177, 60), anchor="rm")
     im.save(destino / "alerta-A-cartaz.png")
 
@@ -156,7 +156,7 @@ def alerta_b(destino, altura=1350, nome="alerta-B-foto.png"):
             d.text((x + 28, y + 160 + j * 34), linha, font=f("avenir", "demi", 28), fill=(24, 42, 33))
         x += larg + 24
     d.text((M, y + 240 + 38), "Regista-te grátis em participa.pt, lê o resumo e comenta.", font=f("avenir", "medium", 30), fill=(60, 74, 66))
-    d.text((M, Hh - 100 - (60 if extra else 0)), "bioculture.pt/consultas", font=f("avenir", "heavy", 46), fill=(24, 42, 33))
+    d.text((M, Hh - 100 - (60 if extra else 0)), "bioculture.net/consultas", font=f("avenir", "heavy", 46), fill=(24, 42, 33))
     d.text((M, Hh - 40 - (60 if extra else 0)), "Foto: pedrik · CC BY 2.0 · Wikimedia Commons", font=f("avenir", "regular", 20), fill=(120, 128, 122))
     im.save(destino / nome)
 
@@ -208,7 +208,7 @@ def alerta_c(destino):
     d.rounded_rectangle((M, yb, W - M, yb + 200), radius=34, fill=AM)
     d.text((M + 48, yb + 38), "Comenta em participa.pt", font=f("bodoni", "bold", 54), fill=BG)
     d.text((M + 48, yb + 118), "Grátis. Lê o resumo e escolhe: concordo, discordo ou sugiro.", font=f("avenir", "demi", 28), fill=BG)
-    d.text((W / 2, H - 70), "bioculture.pt/consultas", font=f("avenir", "heavy", 40), fill=BR, anchor="mm")
+    d.text((W / 2, H - 70), "bioculture.net/consultas", font=f("avenir", "heavy", 40), fill=BR, anchor="mm")
     im.save(destino / "alerta-C-escuro.png")
 
 
@@ -221,7 +221,7 @@ def foto_commons(titulo):
     import re
     import urllib.parse
     import urllib.request
-    UA = {"User-Agent": "bioCulture-site/1.0 (https://www.bioculture.pt; geral@bioculture.pt)"}
+    UA = {"User-Agent": "bioCulture-site/1.0 (https://www.bioculture.net; geral@bioculture.net)"}
     url = "https://commons.wikimedia.org/w/api.php?" + urllib.parse.urlencode({"action": "query", "titles": titulo, "prop": "imageinfo", "iiprop": "url|extmetadata", "iiurlwidth": 1800, "format": "json"})
     ii = list(json.load(urllib.request.urlopen(urllib.request.Request(url, headers=UA)))["query"]["pages"].values())[0]["imageinfo"][0]
     meta = ii["extmetadata"]
@@ -304,7 +304,7 @@ def tecnica(id_, destino, passos_n=3, passos=None, titulo=None):
     ev = x["erros_evitar"][0]
     d.text((M, y + 310 + 30), "EVITAR", font=f("avenir", "heavy", 26), fill=(214, 74, 44))
     d.text((M + 120, y + 310 + 27), ev, font=f("avenir", "medium", 30), fill=(60, 74, 66))
-    d.text((M, H - 100), "bioculture.pt/tecnicas", font=f("avenir", "heavy", 46), fill=ESC)
+    d.text((M, H - 100), "bioculture.net/tecnicas", font=f("avenir", "heavy", 46), fill=ESC)
     d.text((M, H - 40), credito, font=f("avenir", "regular", 20), fill=(120, 128, 122))
     im.save(destino / f"tecnica-{id_}.png")
 
@@ -344,7 +344,7 @@ def problema(id_, destino, titulo_foto, enquadra=(0.5, 0.4), autor=None, titulo=
         d.ellipse((M, y + 2, M + 46, y + 48), fill=(150, 196, 98))
         d.text((M + 23, y + 25), str(i), font=f("avenir", "heavy", 28), fill=ESC, anchor="mm")
         y = centro_texto(d, (M + 68, y, W - M, y + 100), p, f("avenir", "medium", 30), (50, 62, 55), 1.25) + 16
-    d.text((M, H - 100), "bioculture.pt/problemas", font=f("avenir", "heavy", 46), fill=ESC)
+    d.text((M, H - 100), "bioculture.net/problemas", font=f("avenir", "heavy", 46), fill=ESC)
     d.text((M, H - 40), credito, font=f("avenir", "regular", 20), fill=(120, 128, 122))
     im.save(destino / f"problema-{id_}.png")
 

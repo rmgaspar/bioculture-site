@@ -11,7 +11,7 @@
     window.BioCulturaCanonica = {
         definir(id) {
             if (!id) return;
-            const origem = /(^|\.)bioculture\.pt$/.test(location.hostname) ? "https://www.bioculture.pt" : location.origin;
+            const origem = /(^|\.)bioculture\.net$/.test(location.hostname) ? "https://www.bioculture.net" : location.origin;
             const url = origem + location.pathname.replace(/\.html$/, "") + "?id=" + encodeURIComponent(id);
             const ligacao = (rel, hreflang, href) => {
                 const sel = hreflang ? `link[rel="${rel}"][hreflang="${hreflang}"]` : `link[rel="${rel}"]`;
