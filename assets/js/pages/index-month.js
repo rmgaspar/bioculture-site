@@ -69,7 +69,7 @@
             </div>
             <p class="month-plan-caption">${esc(place)}</p>
             <div class="project-reference-links">
-                <a href="/calendario/calendario.html">${tr("Ver o calendário completo ↗", "See the full calendar ↗")}</a>
+                <a href="/calendario/calendario.html" style="--cap:#2e7d32">${tr("Ver o calendário completo ↗", "See the full calendar ↗")}</a>
                 <a href="/calendario/conhecimento-cuidar.html#problemas">${tr("Problema na horta? Vê as respostas ↗", "Garden problem? See the answers ↗")}</a>
             </div>`;
         root.hidden = false;

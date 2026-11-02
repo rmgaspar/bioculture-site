@@ -62,7 +62,7 @@
                             esc(x.sintese || x.origem || (isEnglish ? "A species from the bioCulture inventory." : "Uma espécie do inventário bioCulture."))
                         }</p><a href="/ecossistemas/especie-detalhe.html?id=${
                             encodeURIComponent(id)
-                        }">${isEnglish ? "Meet this species" : "Conhecer esta espécie"} ↗</a></div>${image}`;
+                        }" style="--cap:#4a7a43">${isEnglish ? "Meet this species" : "Conhecer esta espécie"} ↗</a></div>${image}`;
                         return;
                     }
                 })();
