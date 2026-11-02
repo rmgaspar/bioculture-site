@@ -67,7 +67,11 @@
                 ${sob(tr("Vigiar", "Watch"), COR.watch, list(watch.map((item) => `<li><a href="/ecossistemas/especie-detalhe.html?id=${encodeURIComponent(item.id)}"><span><strong>${esc(item.nome_comum)}</strong><small>${esc(item.tipo || "")}</small></span></a></li>`)) + (invasive.length ? `<p class="month-plan-local">${tr("Invasoras na tua zona", "Invasive plants in your area")}: ${esc(invasive.join(", "))}</p>` : ""))}
                 ${sob(tr("Práticas do mês", "This month's practices"), COR.tips, list(tips.map((item) => `<li><a href="${esc(item.href)}"><span><strong>${esc(item.titulo)}</strong><small>${esc(item.categoria || "")}</small></span></a></li>`)))}
             </div>
-            <p class="month-plan-caption">${esc(place)} <a href="/calendario/calendario.html">${tr("Ver o calendário completo →", "See the full calendar →")}</a> <a href="/calendario/conhecimento-cuidar.html#problemas">${tr("Problema na horta? Vê as respostas →", "Garden problem? See the answers →")}</a></p>`;
+            <p class="month-plan-caption">${esc(place)}</p>
+            <div class="project-reference-links">
+                <a href="/calendario/calendario.html">${tr("Ver o calendário completo ↗", "See the full calendar ↗")}</a>
+                <a href="/calendario/conhecimento-cuidar.html#problemas">${tr("Problema na horta? Vê as respostas ↗", "Garden problem? See the answers ↗")}</a>
+            </div>`;
         root.hidden = false;
     }
 
