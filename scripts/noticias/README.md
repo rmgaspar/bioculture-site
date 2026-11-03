@@ -71,6 +71,14 @@ proposta, para que "Abrir publicação original" abra sempre a notícia real.
 Se a resolução falhar (fonte instável, formato alterado), a ligação do Google
 é mantida sem interromper o resto do processo.
 
+**Curadoria.** Além do arquivo automático por prazo (`arquivar.py`, diário), `python3 scripts/noticias/curar.py`
+faz a limpeza editorial das listagens: arquiva o que já expirou ou expira nos dois dias seguintes, o que está
+marcado `fora_do_tema`, os acontecimentos sazonais ultrapassados (lista `SAZONAIS` no próprio script: ondas de calor,
+incêndios, cheias, boletins mensais já substituídos), duas notícias antigas e pouco relevantes e os artigos científicos de
+prioridade até 66 com mais de 14 dias. Cada notícia arquivada fica com `arquivada_em` e `motivo_arquivo`; nada se apaga
+e as ligações antigas continuam a abrir. `--simular` só conta, sem escrever. Convém passar por aqui de duas em duas
+semanas e depois de cada lote de notícias aprovadas.
+
 As notícias com prazo terminado saem das listagens e passam para
 `data/noticias_arquivo.json`. As ligações antigas continuam acessíveis na página
 de detalhe; o histórico não é apagado.
