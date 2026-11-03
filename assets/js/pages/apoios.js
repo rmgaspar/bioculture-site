@@ -171,12 +171,18 @@
     const alvo = document.getElementById("ap-concursos");
     let busca = "";
     const norm = (s) => s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
-    const linha = (c) => `<li class="ap-conc"><div><a href="${c.link}" target="_blank" rel="noopener">${esc(c.titulo)}</a><span class="ap-per">${esc(c.linha)}</span></div><span class="ap-est ap-e-${c.estado}">${c.estado === "aberto" ? tr("Aberto", "Open") + (c.fim ? ` · ${tr("até", "until")} ${dmy(c.fim)}` : "") : c.estado === "abrir" ? tr("A abrir", "Opening") + ` · ${dmy(c.inicio)}` : c.estado === "encerrado" ? tr("Encerrado", "Closed") : tr("Ver o aviso", "See the call")}</span></li>`;
+    const MESES = { janeiro: "January", fevereiro: "February", "março": "March", abril: "April", maio: "May", junho: "June", julho: "July", agosto: "August", setembro: "September", outubro: "October", novembro: "November", dezembro: "December" };
+    // A linha do período vem em português do site oficial; em inglês reescreve-se pelo mesmo molde («de 9 de outubro a 9 de novembro de 2026» → «from 9 October to 9 November 2026»).
+    const periodo = (t) => !EN ? t : t
+      .replace(/^Candidaturas abertas de /, "Applications open from ").replace(/^De /, "From ").replace(/^Candidaturas no portal do IFAP$/, "Applications on the IFAP portal")
+      .replace(/(\d{1,2}) de (janeiro|fevereiro|março|abril|maio|junho|julho|agosto|setembro|outubro|novembro|dezembro)( de (\d{4}))?/g, (m, d, mes, y, ano) => `${d} ${MESES[mes]}${ano ? " " + ano : ""}`)
+      .replace(/ a (\d)/, " to $1");
+    const linha = (c) => `<li class="ap-conc"><div><a href="${c.link}" target="_blank" rel="noopener">${esc(c.titulo)}</a><span class="ap-per">${esc(periodo(c.linha))}</span></div><span class="ap-est ap-e-${c.estado}">${c.estado === "aberto" ? tr("Aberto", "Open") + (c.fim ? ` · ${tr("até", "until")} ${dmy(c.fim)}` : "") : c.estado === "abrir" ? tr("A abrir", "Opening") + ` · ${dmy(c.inicio)}` : c.estado === "encerrado" ? tr("Encerrado", "Closed") : tr("Ver o aviso", "See the call")}</span></li>`;
     const pintarConcursos = () => {
       if (!C) { alvo.innerHTML = `<p class="ap-vazio">${tr("Não foi possível ler a lista de concursos. Vê-a no site oficial.", "The list of calls could not be read. See it on the official site.")}</p>`; return; }
       const f = (arr) => arr.filter((c) => !busca || norm(c.titulo + " " + (c.tema || []).join(" ")).includes(busca));
       const a = f(abertos), b = f(aAbrir), e = f(encerrados);
-      alvo.innerHTML =
+      alvo.innerHTML = (EN ? `<p class="ap-gd">Call titles are shown as the managing authority publishes them, in Portuguese.</p>` : "") +
         `<h3 class="ap-h">${tr("Abertos hoje", "Open today")} <span>${a.length}</span></h3>` + (a.length ? `<ul class="ap-lc">${a.map(linha).join("")}</ul>` : `<p class="ap-vazio">${tr("Nenhum concurso aberto com esta pesquisa.", "No open call matches this search.")}</p>`) +
         (b.length ? `<h3 class="ap-h">${tr("A abrir", "About to open")} <span>${b.length}</span></h3><ul class="ap-lc">${b.map(linha).join("")}</ul>` : "") +
         `<details class="ap-enc"><summary>${tr("Encerrados", "Closed")} (${e.length})</summary><ul class="ap-lc">${e.map(linha).join("")}</ul></details>`;

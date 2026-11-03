@@ -79,9 +79,9 @@
                     concentration = `<article class="zc"><small>${tr("Escala", "Scale")}</small><h3>${tr("Poucos polígonos grandes pesam muito", "A few large polygons weigh heavily")}</h3><h4 style="--tom:${SOL}">${tr("Solar proposto, por dimensão do polígono", "Proposed solar, by polygon size")}</h4>${stack(sc, tones)}<p class="zc-big">${big(sc)}</p><h4 style="--tom:${WIN}">${tr("Eólica proposta, por dimensão do polígono", "Proposed wind, by polygon size")}</h4>${stack(wc, tonesW)}<p class="zc-big">${big(wc)}</p><span class="zc-unit">${tr("Percentagem da área proposta em cada classe de dimensão.", "Share of the proposed area in each size class.")}</span></article>`;
                 el("zaer-charts").innerHTML = funnel + concentration;
                 el("zaer-warning").innerHTML = `<strong>${tr("Como ler estes números", "How to read these numbers")}</strong><ul>${(a.leitura || []).map((t) => `<li>${esc(isEn() ? READ_EN[t] || t : t)}</li>`).join("")}</ul>`;
-                el("snapshot-copy").textContent += isEn()
-                    ? ` Snapshot observed on ${date(c.observado_em)}.`
-                    : ` Instantâneo observado em ${date(c.observado_em)}.`;
+                el("snapshot-copy").textContent = isEn()
+                    ? `What the national programme proposes for onshore solar and wind. Solar and wind areas can overlap and must never be added up as total occupation. Snapshot observed on ${date(c.observado_em)}.`
+                    : `O que o programa nacional propõe para solar e eólica em terra. As áreas solar e eólica podem sobrepor-se e nunca devem ser somadas como ocupação total. Instantâneo observado em ${date(c.observado_em)}.`;
                 const art = p.potencial_solar_artificializado || {};
                 el("art-gw").textContent = `${art.total_capacidade_gw ?? "—"} GW`;
                 el("art-twh").textContent = `${art.total_geracao_twh_ano ?? "—"} TWh/ano`;
@@ -242,7 +242,7 @@
                             isOpen = open$(x),
                             n = x.fim ? days(x.fim) : null,
                             when = isOpen && n !== null ? closeTag(x) : tr(`Fechou a ${dmShort(x.fim)}`, `Closed ${dmShort(x.fim)}`),
-                            where = (x.municipios || []).join(" · ") || (isEn() ? SCOPE_EN[x.ambito] || x.ambito : x.ambito) || x.tipologia,
+                            where = (x.municipios || []).join(" · ") || (isEn() ? SCOPE_EN[x.ambito] || x.ambito : x.ambito) || (isEn() ? TYPE_EN[x.tipologia] || x.tipologia : x.tipologia),
                             who = [x.tipologia && (isEn() ? TYPE_EN[x.tipologia] || x.tipologia : x.tipologia), x.promotor_projeto].filter(Boolean).join(" · "),
                             map = cardMap(x),
                             ref = x.territorio?.url2;

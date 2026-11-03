@@ -87,6 +87,11 @@
                     word.charAt(0).toUpperCase() + word.slice(1)
                 ).join(" ");
             const isEn = () => !!window.BioCultureI18n?.isEnglish;
+            // Texto dos dados das castas em inglês (data/castas-en.json: texto em português -> inglês). O que lá não estiver
+            // fica como está e, se existir, o dicionário geral do site traduz.
+            let castasEn = {};
+            const TP = (value) => (typeof window !== "undefined" && isEn() && castasEn["produtividade:" + value]) || T(value);
+            const T = (value) => (typeof window !== "undefined" && isEn() && castasEn[value]) || value;
 
            function vineVignette(c) {
                 const isBranco = c.cor === "Branco";
@@ -115,15 +120,15 @@
                 const soil = c.tecnico?.solo || "-";
                 return `<article class="casta-card" tabindex="0" role="button" data-casta="${
                     escapeHtml(c.id)
-                }" aria-label="Abrir ficha de ${escapeHtml(c.nome)}">${vineVignette(c)}<div class="casta-content"><div class="casta-top"><span class="casta-name">${
+                }" aria-label="Abrir ficha de ${escapeHtml(c.nome)}">${vineVignette(c)}<div class="casta-content"><div class="casta-top"><span class="casta-name" data-no-translate>${
                     escapeHtml(c.nome)
                 }</span><span class="color-dot ${c.cor === "Branco" ? "branco" : ""}"></span></div><span class="casta-origin">${
-                    escapeHtml(c.origem || "-")
-                } · ${escapeHtml(c.cor || "-")}</span><p><strong>Solo:</strong> ${
-                    escapeHtml(soil)
+                    escapeHtml(T(c.origem) || "-")
+                } · ${escapeHtml(T(c.cor) || "-")}</span><p><strong>Solo:</strong> ${
+                    escapeHtml(T(soil))
                 }</p><div class="card-tags"><span class="tag">${
-                    escapeHtml(c.maturacao || "-")
-                }</span><span class="tag">${escapeHtml(c.vigor || "-")}</span></div></div></article>`;
+                    escapeHtml(T(c.maturacao) || "-")
+                }</span><span class="tag">${escapeHtml(T(c.vigor) || "-")}</span></div></div></article>`;
             }
 
             function renderStats() {
@@ -180,7 +185,7 @@
                         atlasQuickFilter === "precoce" && String(c.maturacao || "").toLowerCase().includes("precoce") ||
                         atlasQuickFilter === "tardia" && String(c.maturacao || "").toLowerCase().includes("tardia");
                     return quick && (!query ||
-                        [c.nome, c.origem, c.tipo_vinho, ...(c.regioes || []), ...(c.aromas || [])]
+                        [c.nome, c.origem, c.tipo_vinho, ...(c.regioes || []), ...(c.aromas || []), ...(isEn() ? [T(c.origem), T(c.tipo_vinho), ...(c.regioes || []).map(T), ...(c.aromas || []).map(T)] : [])]
                             .join(" ").toLowerCase().includes(query)) &&
                         (!color || c.cor === color) && (!origin || c.origem === origin);
                 });
@@ -244,8 +249,8 @@
                 return pest
                     ? `<a href="/ecossistemas/especie-detalhe.html?id=${
                         encodeURIComponent(pest.id)
-                    }">${escapeHtml(text)}</a>`
-                    : escapeHtml(text);
+                    }">${escapeHtml(T(text))}</a>`
+                    : escapeHtml(T(text));
             }
             function renderPests() {
                 const all = vinePests(), visible = showAllPests ? all : all.slice(0, 6);
@@ -281,11 +286,11 @@
                 const profile = c.perfil || {}, tech = c.tecnico || {}, pests = vinePests();
                 document.getElementById("casta-detail-view").innerHTML =
                     `<div class="detail-hero" data-cor="${c.cor === "Branco" ? "branco" : "tinto"}"><div><span class="category-label">${
-                        escapeHtml(c.cor)
-                    } · ${escapeHtml(c.tipo_vinho)}</span><h1>${
+                        escapeHtml(T(c.cor))
+                    } · ${escapeHtml(T(c.tipo_vinho))}</span><h1 data-no-translate>${
                         escapeHtml(c.nome)
                     }</h1><p class="detail-intro">${
-                        escapeHtml(c.historia || "-")
+                        escapeHtml(T(c.historia) || "-")
                     }</p><div class="profile-grid">${
                         [["Acidez", profile.acidez], ["Corpo", profile.corpo], [
                             "Taninos",
@@ -296,40 +301,40 @@
                             }/10</strong></div>`
                         ).join("")
                     }</div></div><aside class="detail-panel"><h3>Identidade</h3><p><strong>Origem:</strong> ${
-                        escapeHtml(c.origem || "-")
+                        escapeHtml(T(c.origem) || "-")
                     }</p><p><strong>Regiões:</strong> ${
-                        escapeHtml((c.regioes || []).join(", ") || "-")
+                        escapeHtml((c.regioes || []).map(T).join(", ") || "-")
                     }</p><p><strong>Sinónimos:</strong> ${
                         escapeHtml((c.sinonimos || []).join(", ") || "-")
                     }</p><p><strong>Aromas:</strong> ${
-                        escapeHtml((c.aromas || []).join(" · ") || "-")
+                        escapeHtml((c.aromas || []).map(T).join(" · ") || "-")
                     }</p><p><strong>Potencial de guarda:</strong> ${
-                        escapeHtml(c.potencial_guarda || "-")
+                        escapeHtml(T(c.potencial_guarda) || "-")
                     }</p></aside></div><span class="detail-back" id="detail-back">← voltar ao atlas</span><div class="detail-columns"><article class="detail-box"><h3>Condições da vinha</h3><p><strong>Solo:</strong> ${
-                        escapeHtml(tech.solo || "-")
+                        escapeHtml(T(tech.solo) || "-")
                     }</p><p><strong>Clima:</strong> ${
-                        escapeHtml(tech.clima || "-")
+                        escapeHtml(T(tech.clima) || "-")
                     }</p><p><strong>Exposição:</strong> ${
-                        escapeHtml(tech.exposicao || "-")
+                        escapeHtml(T(tech.exposicao) || "-")
                     }</p><p><strong>Irrigação:</strong> ${
-                        escapeHtml(tech.irrigacao || "-")
+                        escapeHtml(T(tech.irrigacao) || "-")
                     }</p><p><strong>Compasso:</strong> ${
                         escapeHtml(tech.distancia || "-")
                     }</p></article><article class="detail-box"><h3>Gestão e observação</h3><p><strong>Maturação:</strong> ${
-                        escapeHtml(c.maturacao || "-")
+                        escapeHtml(T(c.maturacao) || "-")
                     }</p><p><strong>Vigor:</strong> ${
-                        escapeHtml(c.vigor || "-")
+                        escapeHtml(T(c.vigor) || "-")
                     }</p><p><strong>Produtividade:</strong> ${
-                        escapeHtml(c.produtividade || "-")
+                        escapeHtml(TP(c.produtividade) || "-")
                     }</p><p><strong>Sensibilidades:</strong> ${
                         (c.sensibilidades || []).length
                             ? c.sensibilidades.map((s) => linkifySensibilidade(s, pests)).join(", ")
                             : "-"
                     }</p><p>${
-                        escapeHtml(tech.observacao || "Confirmar sempre as decisões na parcela.")
+                        escapeHtml(T(tech.observacao) || "Confirmar sempre as decisões na parcela.")
                     }</p></article><article class="detail-box"><h3>Castas próximas</h3><div class="card-tags">${
                         related.map((item) =>
-                            `<button class="btn-clean related-casta" data-id="${escapeHtml(item.id)}">${
+                            `<button class="btn-clean related-casta" data-no-translate data-id="${escapeHtml(item.id)}">${
                                 escapeHtml(item.nome)
                             }</button>`
                         ).join("") || "-"
@@ -376,6 +381,7 @@
                         ),
                     );
                     [locationsDB, castasDB, pragasDB, dicasDB] = responses;
+                    if (isEn()) castasEn = await fetch("/data/castas-en.json?v=3").then((r) => (r.ok ? r.json() : {})).catch(() => ({}));
                     noticiasEno = (window.BioCultureNews?.rank(responses[4]) || responses[4]).filter((n) => {
                         const original = n.pt || n;
                         return `${n.categoria || ""} ${original.categoria || ""} ${original.titulo || ""}`
@@ -388,7 +394,7 @@
                     document.getElementById("origin-filter").insertAdjacentHTML(
                         "beforeend",
                         origins.map((origin) =>
-                            `<option value="${escapeHtml(origin)}">${escapeHtml(origin)}</option>`
+                            `<option value="${escapeHtml(origin)}">${escapeHtml(T(origin))}</option>`
                         ).join(""),
                     );
                     const saved = localStorage.getItem("biocultura_region");
