@@ -1157,6 +1157,17 @@
       return o;
     });
 
+    /* Cada ligação a outra página tem a cor dessa página (as mesmas dos botões «Ver também» do Observatório da Terra). */
+    const CORES_DESTINO = [
+      [/observatorio-terra(?:\.html)?#clima/, "#b4472f"], [/observatorio-terra(?:\.html)?#energia/, "#b87a0c"], [/observatorio-terra(?:\.html)?#ar$/, "#4f7f9e"], [/observatorio-terra(?:\.html)?#agua/, "#2a6fb0"],
+      [/observatorio-terra(?:\.html)?#terra-vida/, "#7d5a36"], [/observatorio-terra(?:\.html)?#materia/, "#7a6a5a"], [/observatorio-terra(?:\.html)?$/, "#2b6a7c"],
+      [/ecossistemas\/biodiversidade/, "#4a7a43"], [/recursos\/agua/, "#2a6fb0"], [/recursos\/solo/, "#7d5a36"], [/recursos\/ar(?:\.html)?/, "#4f7f9e"],
+      [/energia\/mineracao/, "#7a5238"], [/energia\/pecuaria/, "#6e6a3a"], [/energia\/digital/, "#3e6070"], [/transicao-etica/, "#2f6f5f"],
+      [/vetores-pressao|limitar-ultrapassagem/, "#a43a32"], [/producao-agricola/, "#6b7a24"], [/bioweb/, "#2f6147"],
+      [/calendario\//, "#2f8035"], [/services\//, "#9a5a3c"]
+    ];
+    const corDestino = (h) => { const c = CORES_DESTINO.find(([re]) => re.test(h)); return c ? c[1] : ""; };
+
     /* ---------- desenho ---------- */
     const ficheira = (f) => f.fig.map((g, i) => `<figure class="ft-fig"><figcaption><span class="t">${esc(g.t)}</span><span class="d">${esc(g.d)}</span></figcaption>${g.html ? `<div class="ft-mini">${g.html}</div>` : `<div class="chart" id="ft-${f.id}-${i}"></div>`}<span class="src">${tr("Fonte", "Source")}: ${esc(g.src)}</span></figure>`).join("");
     const painel = (f) => `<div class="ft-painel" style="--cap:${f.c}" role="tabpanel" id="ft-painel" aria-labelledby="ft-tab-${f.id}">
@@ -1170,7 +1181,8 @@
         <div class="ft-pratica">
           <span class="ft-rotulo">${cx.rotulo}</span>
           <ul class="ft-praticas">${f.praticas.map(([a, b]) => `<li><b>${esc(a)}.</b> ${esc(b)}</li>`).join("")}</ul>
-          <div class="ft-links">${f.links.map(([a, h]) => `<a href="${esc(h.startsWith("#") ? h : L(h))}">${esc(a)} →</a>`).join("")}</div>
+          <div class="ft-links">${f.links.map(([a, h]) => `<a href="${esc(h.startsWith("#") ? h : L(h))}"${corDestino(h) ? ` style="--cap:${corDestino(h)}"` : ""}>${esc(a)} ↗</a>`).join("")}</div>
+          ${contexto === "mineracao" ? `<div class="ft-foto" data-foto-slot="fator-${f.id}"></div>` : ""}
         </div>
       </div>
     </div>`;
