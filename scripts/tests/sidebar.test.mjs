@@ -14,7 +14,8 @@ const hrefs = [...nav.matchAll(/<a href="([^"]+)"/g)].map((m) => m[1]);
 assert.equal(hrefs.length, 9, 'seis hubs e três ligações de «Sobre o projeto»');
 assert.deepEqual(hrefs.slice(6), ['/manifesto.html', '/glossario.html', '/contactos.html']);
 // Cada ligação tem o seu ícone, escolhido pela ligação (não pela posição) e sem repetir glifos.
-const glifos = hrefs.map((h) => { const m = css.match(new RegExp(`#sidebar a\\[href="${h.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&')}"\\]::before \\{ content: "\\\\(f[0-9a-f]{3})"`)); assert(m, `sem ícone: ${h}`); return m[1]; });
+// Seletor por parte do href (sem «.html»): em inglês o menu usa ligações absolutas com ?lang=en e o seletor exato deixava de acertar.
+const glifos = hrefs.map((h) => { const m = css.match(new RegExp(`#sidebar a\\[href\\*="${h.replace(/\.html$/, '').replace(/[.*+?^${}()|[\]\\/]/g, '\\$&')}"\\]::before \\{ content: "\\\\(f[0-9a-f]{3})"`)); assert(m, `sem ícone: ${h}`); return m[1]; });
 assert.equal(new Set(glifos).size, glifos.length, 'ícones todos diferentes');
 assert(!/nth-child|nth-of-type/.test(css.slice(css.indexOf('Definição dos Ícones'), css.indexOf('Estados Hover'))), 'ícones não dependem da ordem');
 
