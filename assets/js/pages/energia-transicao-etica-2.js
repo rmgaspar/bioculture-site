@@ -328,16 +328,23 @@
                             ns = "http://www.w3.org/2000/svg", vb = svgMap.viewBox.baseVal, k = vb.width / (svgMap.getBoundingClientRect().width || vb.width),
                             g = document.createElementNS(ns, "g");
                         g.setAttribute("class", "ct-eu");
-                        g.innerHTML = `<title>${esc(tr("O teu território", "Your territory"))}: ${esc(nome)}</title><path d="M${px} ${py}c-1.3-1.8-2.4-3.2-2.4-4.5a2.4 2.4 0 1 1 4.8 0c0 1.3-1.1 2.7-2.4 4.5z" fill="#1d4d38" stroke="#fff" stroke-width=".5" stroke-linejoin="round"/><circle cx="${px}" cy="${py - 4.5}" r=".85" fill="#fff"/>`;
-                        const left = px > vb.x + vb.width * 0.55, t = document.createElementNS(ns, "text");
-                        t.setAttribute("class", "ct-lab ct-eu-nome");
-                        t.setAttribute("x", px + (left ? -3.6 : 3.6));
-                        t.setAttribute("y", py - 3.2 + 4 * k * 0.6);
-                        t.setAttribute("text-anchor", left ? "end" : "start");
-                        t.setAttribute("font-size", 11 * k);
-                        t.setAttribute("stroke-width", 3 * k);
-                        t.textContent = nome;
-                        g.appendChild(t);
+                        g.innerHTML = `<path d="M${px} ${py}c-1.3-1.8-2.4-3.2-2.4-4.5a2.4 2.4 0 1 1 4.8 0c0 1.3-1.1 2.7-2.4 4.5z" fill="#1d4d38" stroke="#fff" stroke-width=".5" stroke-linejoin="round"/><circle cx="${px}" cy="${py - 4.5}" r=".85" fill="#fff"/>`;
+                        // O nome só aparece ao passar o rato no marcador (zona de contacto um pouco maior que o desenho).
+                        const left = px > vb.x + vb.width * 0.55;
+                        let t = null;
+                        g.insertAdjacentHTML("afterbegin", `<circle cx="${px}" cy="${py - 2.5}" r="3.4" fill="transparent"/>`);
+                        g.addEventListener("pointerenter", () => {
+                            t = document.createElementNS(ns, "text");
+                            t.setAttribute("class", "ct-lab");
+                            t.setAttribute("x", px + (left ? -3.6 : 3.6));
+                            t.setAttribute("y", py - 3.2 + 4 * k * 0.6);
+                            t.setAttribute("text-anchor", left ? "end" : "start");
+                            t.setAttribute("font-size", 11 * k);
+                            t.setAttribute("stroke-width", 3 * k);
+                            t.textContent = nome;
+                            svgMap.appendChild(t);
+                        });
+                        g.addEventListener("pointerleave", () => { if (t) { t.remove(); t = null; } });
                         svgMap.appendChild(g);
                         if (leg) leg.insertAdjacentHTML("beforeend", `<span class="ct-leg-eu"><svg viewBox="0 0 10 13" width="9" height="12" aria-hidden="true"><path d="M5 13C3 10.5 1 8.5 1 5.5a4 4 0 0 1 8 0c0 3-2 5-4 7.5z" fill="#1d4d38"/><circle cx="5" cy="5.4" r="1.5" fill="#fff"/></svg>${esc(tr("O teu território", "Your territory"))}: ${esc(nome)}</span>`);
                     }).catch(() => {});
