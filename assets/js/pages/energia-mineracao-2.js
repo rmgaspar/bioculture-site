@@ -11,7 +11,9 @@
                             '"': "&quot;",
                         }[c]),
                     ),
-                valid = (v) => v !== undefined && v !== null && v !== "" && v !== "-";
+                valid = (v) => v !== undefined && v !== null && v !== "" && v !== "-",
+                // texto em inglês guardado ao lado do português (campo «x_en»), quando o dossier o tem
+                pick = (o, k) => (window.BioCultureI18n?.isEnglish && o[k + "_en"]) || o[k];
             let records = [], mode = "Todos";
             function phase(x) {
                 const s = x.status || "";
@@ -97,11 +99,24 @@
                     ["Biodiversidade", x.biodiversidade],
                     ["Resíduos", x.residuos_rejeitados],
                     ["Populações", x.populacoes_saude],
-                    ["Lacunas", x.lacunas],
+                    ["Lacunas", pick(x, "lacunas")],
                 ].filter(([, v]) => valid(v));
                 return `<div class="detail-grid">${
                     cells.map(([k, v]) => `<div class="detail"><b>${k}</b><span>${esc(v)}</span></div>`).join("")
                 }</div>`;
+            }
+            // Decisões e processos datados (quando o dossier os tem): cada linha com a sua fonte.
+            function processos(x) {
+                const l = x.processos || [];
+                if (!l.length) return "";
+                const en = !!window.BioCultureI18n?.isEnglish;
+                return `<div class="processos"><h4>${en ? "Decisions and proceedings" : "Decisões e processos"}</h4><ol>${
+                    l.map((p) =>
+                        `<li><time>${esc(pick(p, "data"))}</time><span>${esc(pick(p, "texto"))}</span>${
+                            p.url ? `<a href="${esc(p.url)}" target="_blank" rel="noopener">${esc(p.fonte)} ↗</a>` : ""
+                        }</li>`
+                    ).join("")
+                }</ol>${valid(x.processos_nota) ? `<p class="processos-nota">${esc(pick(x, "processos_nota"))}</p>` : ""}</div>`;
             }
             function fontes(x) {
                 return (x.fontes || []).length
@@ -124,7 +139,7 @@
                             esc(x.status)
                         }</strong></p>${valid(x.fase_licenciamento) ? `<p>${esc(x.fase_licenciamento)}</p>` : ""}</div>${
                             valid(x.detalhe) ? `<p class="dossie-nota">${esc(x.detalhe)}</p>` : ""
-                        }</div>${dimensoes(x)}${fontes(x)}</article>`
+                        }</div>${dimensoes(x)}${processos(x)}${fontes(x)}</article>`
                     ).join("") || '<p class="empty">—</p>';
             }
             // Ligação direta a um dossiê (#caso-<id>), por exemplo a partir do mapa de fogo e mineração.
