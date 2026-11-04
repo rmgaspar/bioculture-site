@@ -120,7 +120,7 @@
                 if (!isEn()) return;
                 document.querySelectorAll("#consultas [data-en]").forEach((n) => { n.innerHTML = n.dataset.en; });
             }
-            let GEO = null;
+            let GEO = null, MAPA = null;
             const norm = (v) => String(v || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
             const TYPE_EN = { "Avaliação de Impacte Ambiental": "Environmental Impact Assessment", "Licenciamento Único de Ambiente": "Single Environmental Licence", "Programas": "Programmes", "Estratégias": "Strategies", "Avaliação de Incidências Ambientais": "Environmental Incidence Assessment" };
             /* Mini-mapa de Portugal continental (contorno em data/participa-geo.json); pontos em unidades do desenho. */
@@ -246,7 +246,7 @@
                             who = [x.tipologia && (isEn() ? TYPE_EN[x.tipologia] || x.tipologia : x.tipologia), x.promotor_projeto].filter(Boolean).join(" · "),
                             map = cardMap(x),
                             ref = x.territorio?.url2;
-                        return `<article class="consult ${isOpen ? "consult-open" : "consult-analysis"}" data-state="${x.alerta_qualidade ? "archive" : isOpen ? "open" : "analysis"}"><header class="c-top"><span class="c-badge">${esc(stateTxt(x.estado_consulta))}</span>${x.tema ? `<span class="c-tema">${esc(isEn() ? TEMA_EN[x.tema] || x.tema : x.tema)}</span>` : ""}<span class="c-when">${esc(when)}</span></header><h3>${esc(x.titulo)}</h3>${
+                        return `<article class="consult ${isOpen ? "consult-open" : "consult-analysis"}" data-id="${esc(x.id)}" data-state="${x.alerta_qualidade ? "archive" : isOpen ? "open" : "analysis"}"><header class="c-top"><span class="c-badge">${esc(stateTxt(x.estado_consulta))}</span>${x.tema ? `<span class="c-tema">${esc(isEn() ? TEMA_EN[x.tema] || x.tema : x.tema)}</span>` : ""}<span class="c-when">${esc(when)}</span></header><h3>${esc(x.titulo)}</h3>${
                             who ? `<p class="c-meta">${esc(who)}</p>` : ""
                         }<div class="c-main${map ? " has-map" : ""}">${map}<div class="c-fig">${
                             x.participacoes !== undefined
@@ -271,83 +271,21 @@
                         }</article>`;
                     };
                 el("consults").innerHTML = current.map(cardHtml).join("") || '<p class="empty">—</p>';
-                // Panorama: mapa com todas as consultas, concelhos mais visados e filtro por estado.
-                if (el("consults-top") && GEO) {
-                    const per = {};
-                    recent.forEach((x) => (x.municipios || []).forEach((m) => {
-                        const k = norm(m), o = (per[k] ||= { name: m, n: 0, open: 0, parts: 0 });
-                        o.n += 1; o.parts += x.participacoes || 0; if (open$(x)) o.open += 1;
-                    }));
-                    const dots = Object.entries(per).filter(([k]) => GEO.concelhos[k]).map(([k, o]) => ({ k, n: o.name, q: GEO.concelhos[k], r: 1.9 + o.n * 0.9, c: o.open ? "#17795a" : "#b87f00", t: `${o.name}: ${o.n} ${o.n === 1 ? tr("consulta", "consultation") : tr("consultas", "consultations")}` })),
-                        top = Object.values(per).sort((p, q) => q.n - p.n || q.parts - p.parts).slice(0, 8),
-                        maxN = Math.max(...top.map((t) => t.n), 1),
-                        nOpen = recent.filter(open$).length,
-                        nAn = recent.length - nOpen,
-                        chip = (k, label, n, on) => `<button type="button" class="c-chip${on ? " is-on" : ""}" data-f="${k}">${label} <b>${n}</b></button>`;
-                    el("consults-top").innerHTML = `<div class="ct-map">${mapSvg(dots, { w: 290, halo: true, pad: 0 })}</div><div class="ct-leg"><span><i style="background:#17795a"></i>${tr("Com consulta aberta", "With an open consultation")}</span><span><i style="background:#b87f00"></i>${tr("Só em análise", "Under review only")}</span></div><div class="ct-side"><div class="ct-head"><small>${tr("Onde estão", "Where they are")}</small><h3>${
-                        tr(`${Object.keys(per).length} concelhos com consultas abertas ou em análise sobre renováveis e outros temas do território`, `${Object.keys(per).length} municipalities with open or under-review consultations on renewables and other land-use topics`)
-                    }</h3></div><div class="ct-list"><h4>${tr("Concelhos mais visados", "Most affected municipalities")}</h4>${
-                        top.map((t) => `<div class="zb" data-k="${esc(norm(t.name))}"><span class="zb-l">${esc(t.name)}</span><span class="zb-t"><i style="width:${t.n / maxN * 100}%;background:${t.open ? "#17795a" : "#b87f00"}"></i></span><span class="zb-v">${t.n}<em>${tr("consultas", "consultations")}</em></span></div>`).join("")
-                    }<p class="zc-unit">${tr("O ponto de cada concelho é indicativo. Os projetos que abrangem vários concelhos contam em cada um; as consultas nacionais e as de Espanha não entram.", "Each municipality's dot is indicative. Projects spanning several municipalities count in each; national and Spanish consultations are left out.")}</p></div><div class="c-chips" role="group" aria-label="${tr("Filtrar por estado", "Filter by state")}">${
-                        chip("all", tr("Todas", "All"), recent.length, true)}${chip("open", tr("Abertas", "Open"), nOpen, false)}${chip("analysis", tr("Em análise", "Under review"), nAn, false)
-                    }</div></div>`;
-                    // Ligar pontos e linhas: ao passar o rato num, realça o outro e o mapa mostra o nome do concelho.
-                    const ct = el("consults-top"), svg = ct.querySelector("svg"), dotOf = (k) => [...ct.querySelectorAll(".ct-dot")].find((g) => g.dataset.k === k);
-                    let lab = null;
-                    const hl = (k, on) => {
-                        const g = dotOf(k);
-                        ct.querySelectorAll(`.zb[data-k="${k}"]`).forEach((r) => r.classList.toggle("is-hl", on));
-                        if (g) g.classList.toggle("is-hl", on);
-                        if (lab) { lab.remove(); lab = null; }
-                        if (!on || !g || !svg) return;
-                        const c0 = g.querySelector("circle:last-of-type"), vb = svg.viewBox.baseVal, cx = +c0.getAttribute("cx"), cy = +c0.getAttribute("cy"), r = +c0.getAttribute("r"),
-                            k2 = vb.width / (svg.getBoundingClientRect().width || vb.width), left = cx > vb.x + vb.width * 0.55;
-                        lab = document.createElementNS("http://www.w3.org/2000/svg", "text");
-                        lab.setAttribute("class", "ct-lab");
-                        lab.setAttribute("x", cx + (left ? -1 : 1) * (r * 2.1 + 1.5));
-                        lab.setAttribute("y", cy + 4 * k2);
-                        lab.setAttribute("text-anchor", left ? "end" : "start");
-                        lab.setAttribute("font-size", 12 * k2);
-                        lab.textContent = g.dataset.n;
-                        svg.appendChild(lab);
-                    };
-                    ct.querySelectorAll(".ct-dot, .zb[data-k]").forEach((n) => {
-                        n.addEventListener("pointerenter", () => hl(n.dataset.k, true));
-                        n.addEventListener("pointerleave", () => hl(n.dataset.k, false));
+                // Panorama: mapa com um círculo por projeto (cor e tamanho à escolha do leitor) e filtro por estado.
+                if (el("consults-top") && GEO && window.BioCulturaConsultasMapa) {
+                    window.BioCulturaConsultasMapa.render(el("consults-top"), {
+                        GEO, items: recent.slice(), meta: MAPA || {}, tr, isEn, esc, norm, open$,
+                        region: window.BioCultureRegion ? window.BioCultureRegion.load({ fallback: false }).then((rows) => rows && rows[0]) : null,
+                        // sem filtro ativo, todos os cartões (incluindo os arquivados); com filtro, só os que passam
+                        onFilter: (ids, active) => el("consults").querySelectorAll(".consult").forEach((card) => { card.hidden = active && !ids.has(card.dataset.id); }),
+                        onPick: (id) => {
+                            const card = el("consults").querySelector(`.consult[data-id="${CSS.escape(id)}"]`);
+                            if (!card || card.hidden) return;
+                            card.scrollIntoView({ behavior: "smooth", block: "center" });
+                            card.classList.add("is-flash");
+                            setTimeout(() => card.classList.remove("is-flash"), 1800);
+                        },
                     });
-                    el("consults-top").querySelectorAll(".c-chip").forEach((btn) => btn.addEventListener("click", () => {
-                        el("consults-top").querySelectorAll(".c-chip").forEach((b2) => b2.classList.toggle("is-on", b2 === btn));
-                        el("consults").querySelectorAll(".consult").forEach((card) => { card.hidden = btn.dataset.f !== "all" && card.dataset.state !== btn.dataset.f; });
-                    }));
-                    // O teu território: se o utilizador escolheu uma localidade na barra lateral, marca-a no mapa com o mesmo símbolo de localização.
-                    (window.BioCultureRegion ? window.BioCultureRegion.load({ fallback: false }) : Promise.resolve([])).then((rows) => {
-                        const r = rows && rows[0], svgMap = el("consults-top").querySelector("svg"), leg = el("consults-top").querySelector(".ct-leg");
-                        if (!r || typeof r.lat !== "number" || typeof r.lon !== "number" || !svgMap) return;
-                        if (r.lat < 36.9 || r.lat > 42.2 || r.lon < -9.6 || r.lon > -6.1) return; // só o continente cabe neste mapa
-                        const px = 30.60722652 * r.lon + 290.14813131, py = -39.70622747 * r.lat + 1673.11751331, nome = r.titulo || r.concelho || "",
-                            ns = "http://www.w3.org/2000/svg", vb = svgMap.viewBox.baseVal, k = vb.width / (svgMap.getBoundingClientRect().width || vb.width),
-                            g = document.createElementNS(ns, "g");
-                        g.setAttribute("class", "ct-eu");
-                        g.innerHTML = `<path d="M${px} ${py}c-1.3-1.8-2.4-3.2-2.4-4.5a2.4 2.4 0 1 1 4.8 0c0 1.3-1.1 2.7-2.4 4.5z" fill="#1d4d38" stroke="#fff" stroke-width=".5" stroke-linejoin="round"/><circle cx="${px}" cy="${py - 4.5}" r=".85" fill="#fff"/>`;
-                        // O nome só aparece ao passar o rato no marcador (zona de contacto um pouco maior que o desenho).
-                        const left = px > vb.x + vb.width * 0.55;
-                        let t = null;
-                        g.insertAdjacentHTML("afterbegin", `<circle cx="${px}" cy="${py - 2.5}" r="3.4" fill="transparent"/>`);
-                        g.addEventListener("pointerenter", () => {
-                            t = document.createElementNS(ns, "text");
-                            t.setAttribute("class", "ct-lab");
-                            t.setAttribute("x", px + (left ? -3.6 : 3.6));
-                            t.setAttribute("y", py - 3.2 + 4 * k * 0.6);
-                            t.setAttribute("text-anchor", left ? "end" : "start");
-                            t.setAttribute("font-size", 11 * k);
-                            t.setAttribute("stroke-width", 3 * k);
-                            t.textContent = nome;
-                            svgMap.appendChild(t);
-                        });
-                        g.addEventListener("pointerleave", () => { if (t) { t.remove(); t = null; } });
-                        svgMap.appendChild(g);
-                        if (leg) leg.insertAdjacentHTML("beforeend", `<span class="ct-leg-eu"><svg viewBox="0 0 10 13" width="9" height="12" aria-hidden="true"><path d="M5 13C3 10.5 1 8.5 1 5.5a4 4 0 0 1 8 0c0 3-2 5-4 7.5z" fill="#1d4d38"/><circle cx="5" cy="5.4" r="1.5" fill="#fff"/></svg>${esc(tr("O teu território", "Your territory"))}: ${esc(nome)}</span>`);
-                    }).catch(() => {});
                 }
                 const dm = (v) => new Date(v + "T12:00:00").toLocaleDateString(isEn() ? "en-GB" : "pt-PT", { day: "numeric", month: "short" }),
                     nameOf = (x) => String(x.titulo || "").replace(/\s+-\s+projeto reformulado$/i, ""),
@@ -561,6 +499,7 @@
                         ),
                     );
                     try { GEO = await fetch("/data/participa-geo.json").then((r) => (r.ok ? r.json() : null)); } catch (_) { GEO = null; }
+                    try { MAPA = await fetch("/data/consultas-mapa.json?v=1").then((r) => (r.ok ? r.json() : null)); } catch (_) { MAPA = null; }
                     renderStats(d);
                     renderConsults(d);
                     renderLocal(d);

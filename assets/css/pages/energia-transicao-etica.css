@@ -1147,12 +1147,12 @@ html body #main .legal-report-box .impact-node p { grid-column: 1 / -1; color: #
 .voz .zc-unit { display: block; margin-top: .9em; font-size: max(11px, .72rem); line-height: 1.5; color: #8a8f86; }
 
 /* CONSULTAS: panorama com mapa e cartões elegantes (estado, mapa do concelho, participações na escala, prazo). */
-.consults-top { display: grid; grid-template-columns: minmax(250px, 330px) minmax(0, 1fr); grid-template-areas: "map side" "leg ."; grid-template-rows: auto auto; gap: .9em 3.4em; align-items: stretch; margin: 0 0 1.2em; padding: 2.4em 4.4em 2.2em 3em; border-radius: 18px; background: #faf8f2; }
+.consults-top { display: grid; grid-template-columns: minmax(280px, 400px) minmax(0, 1fr); grid-template-areas: "map side" "leg ."; grid-template-rows: auto auto; gap: .9em 3.4em; align-items: stretch; margin: 0 0 1.2em; padding: 2.4em 4.4em 2.2em 3em; border-radius: 18px; background: #faf8f2; }
 .consults-top > .ct-map { grid-area: map; }
 .consults-top > .ct-leg { grid-area: leg; }
 .consults-top > .ct-side { grid-area: side; }
 .ct-map { display: block; }
-.ct-map svg { display: block; width: 100%; max-width: 330px; height: auto; max-height: 600px; overflow: visible; }
+.ct-map svg { display: block; width: 100%; max-width: 400px; height: auto; max-height: 740px; overflow: visible; }
 .ct-leg { display: flex; flex-wrap: wrap; gap: 2px 14px; justify-content: flex-start; font-size: max(11px, .74rem); color: var(--muted); }
 .ct-leg i, .c-chip b { display: inline-block; }
 .ct-dot circle { transition: stroke .15s, stroke-width .15s; }
@@ -1216,7 +1216,16 @@ html body #main .legal-report-box .impact-node p { grid-column: 1 / -1; color: #
 .consult .c-foot a { display: inline-block; font-size: .78em; padding: .5em 1em; border-radius: 999px; background: rgba(255,255,255,.8); box-shadow: inset 0 0 0 1px rgba(0,0,0,.08); text-decoration: none; }
 .consult .c-foot a:hover { background: #fff; }
 @media (max-width: 900px) {
-    .consults-top { grid-template-columns: minmax(0, 1fr); grid-template-areas: "map" "leg" "side"; grid-template-rows: auto; padding: 1.1em 1em; gap: 1.2em; }
+    .consults-top { grid-template-columns: minmax(0, 1fr); grid-template-areas: none; grid-template-rows: auto; padding: 1.1em 1em; gap: 1.2em; }
+    /* no telemóvel: título e controlos primeiro, depois o mapa com a legenda, depois a lista */
+    .consults-top > .ct-map, .consults-top > .ct-leg, .consults-top > .ct-side { grid-area: auto; }
+    .consults-top > .ct-side { display: contents; }
+    .consults-top .ct-head { order: 1; }
+    .consults-top .cm-ctls { order: 2; }
+    .consults-top > .ct-map { order: 3; }
+    .consults-top > .ct-leg { order: 4; }
+    .consults-top .ct-list { order: 5; }
+    .consults-top .c-chips { order: 6; }
     .ct-map svg { max-height: 300px; }
 }
 .c-chip { text-transform: none; letter-spacing: 0; }
@@ -1277,3 +1286,47 @@ html body #main .legal-report-box .impact-node p { grid-column: 1 / -1; color: #
 .ct-eu path { filter: drop-shadow(0 .3px .4px rgba(0,0,0,.35)); }
 .ct-leg .ct-leg-eu { display: inline-flex; align-items: center; gap: 5px; font-weight: 700; color: var(--ink); }
 .ct-leg .ct-leg-eu svg { flex: none; }
+
+/* CONSULTAS: mapa com um círculo por projeto, cor e tamanho à escolha. */
+.cm-map { position: relative; }
+.cm-b { cursor: pointer; outline: none; transition: opacity .2s; }
+.cm-b circle { transition: r .35s, fill .25s, stroke .15s, stroke-width .15s, fill-opacity .2s; }
+.cm-b.is-dim { opacity: .1; pointer-events: none; }
+.cm-b.is-hl circle, .cm-b:focus-visible circle { stroke: var(--ink); stroke-width: 1.2; fill-opacity: 1; }
+.cm-tip { position: absolute; z-index: 5; padding: .8em .95em .85em; border-radius: 12px; background: #fff; color: var(--ink); box-shadow: 0 8px 28px rgba(31, 42, 36, .18), 0 0 0 1px rgba(0,0,0,.06); font-size: .74rem; line-height: 1.45; pointer-events: none; }
+.cm-tip[hidden] { display: none; }
+.cm-tip small { display: block; font-size: max(11px, .64rem); font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.cm-tip b { display: block; margin: .15em 0 .45em; font-size: .92rem; line-height: 1.25; }
+.cm-tip dl { margin: 0; }
+.cm-tip dl div { display: flex; justify-content: space-between; gap: .8em; padding: .15em 0; border-top: 1px solid rgba(0,0,0,.06); }
+.cm-tip dt { color: var(--muted); }
+.cm-tip dd { margin: 0; text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; }
+.cm-tip dd em { display: block; font-style: normal; font-weight: 400; color: #8a8f86; }
+.cm-tip dd i { display: inline-block; width: 8px; height: 8px; margin-right: 5px; border-radius: 50%; }
+.cm-tip p { margin: .55em 0 0; padding-top: .5em; border-top: 1px solid rgba(0,0,0,.06); color: #4d5750; }
+.cm-tip .cm-go { display: block; margin-top: .55em; font-weight: 700; color: #1d4d38; }
+.cm-leg { flex-direction: column; align-items: flex-start; gap: .55em; }
+.cm-keys { display: flex; flex-wrap: wrap; gap: .35em .5em; }
+.cm-key { --c: #8a8f86; appearance: none; border: 0 !important; cursor: pointer; font: inherit; font-size: max(11px, .74rem); padding: .28em .75em; border-radius: 999px; background: #fff; color: #4d5750 !important; -webkit-text-fill-color: #4d5750; box-shadow: inset 0 0 0 1px rgba(0,0,0,.08) !important; text-transform: none; letter-spacing: 0; }
+.cm-key i { display: inline-block; width: 9px; height: 9px; margin: 0 6px 0 0; border-radius: 50%; background: var(--c); vertical-align: -.05em; }
+.cm-key b { margin-left: .3em; font-weight: 600; color: #8a8f86; }
+.cm-key:hover { background: color-mix(in srgb, var(--c) 8%, #fff); }
+.cm-key.is-on { background: color-mix(in srgb, var(--c) 14%, #fff); box-shadow: inset 0 0 0 2px var(--c) !important; color: #1f2a24 !important; -webkit-text-fill-color: #1f2a24; font-weight: 700; }
+.cm-size { display: flex; flex-wrap: wrap; align-items: center; gap: .3em .8em; font-size: max(11px, .72rem); color: var(--muted); }
+.cm-size b { color: var(--ink); font-weight: 700; }
+.cm-size-svg { display: block; flex: none; }
+.cm-size-n { font-variant-numeric: tabular-nums; }
+.cm-nd { font-size: max(11px, .72rem); color: var(--muted); }
+.cm-nd i { display: inline-block; width: 9px; height: 9px; margin-right: 6px; border-radius: 50%; border: 1.5px dashed #8a8f86; background: #fff; vertical-align: -.05em; box-sizing: border-box; }
+.cm-sub { margin: .35em 0 0; font-size: .8em; color: var(--muted); }
+.cm-ctls { display: grid; gap: .8em; }
+.cm-ctl { display: flex; flex-wrap: wrap; align-items: center; gap: .4em .8em; }
+.cm-ctl-l { flex: none; min-width: 6.2em; font-size: max(11px, .66rem); font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.cm-seg { display: inline-flex; flex-wrap: wrap; gap: 3px; padding: 3px; border-radius: 999px; background: #fff; box-shadow: inset 0 0 0 1px rgba(0,0,0,.07); }
+.cm-seg-b { appearance: none; border: 0 !important; cursor: pointer; font: inherit; font-size: max(11px, .76rem); font-weight: 600; padding: .38em .95em; border-radius: 999px; background: transparent !important; color: #5d675f !important; -webkit-text-fill-color: #5d675f; text-transform: none; letter-spacing: 0; box-shadow: none !important; }
+.cm-seg-b:hover { background: #f1f3ec !important; }
+.cm-seg-b[aria-pressed="true"] { background: #1d4d38 !important; color: #fff !important; -webkit-text-fill-color: #fff; }
+.cm-row { cursor: pointer; }
+.consult.is-flash { animation: cmflash 1.8s ease-out; }
+@keyframes cmflash { 0%, 55% { box-shadow: 0 0 0 3px #1d4d38; } 100% { box-shadow: 0 0 0 3px transparent; } }
+@media (prefers-reduced-motion: reduce) { .cm-b circle { transition: none; } .consult.is-flash { animation: none; box-shadow: 0 0 0 3px #1d4d38; } }
