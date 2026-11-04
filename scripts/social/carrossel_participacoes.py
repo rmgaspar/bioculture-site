@@ -27,11 +27,11 @@ def dias(i, fim):
     return (b - a).days + 1
 
 
-def capa(destino, nome, factos):
+def capa(destino, nome, factos, pilula="PARTICIPA.PT · 2026", titulo="8 151 participações é muito?", sub="A consulta da central solar de Sophia, comparada com as outras de 2026.", tam=112, link=None, fonte=None):
     im, d = m2.fundo(m2.NAVY)
-    m2.cabecalho_dados(d, im, "PARTICIPA.PT · 2026")
-    y = m2.titulo_dados(d, 220, "8 151 participações é muito?", 112)
-    for l in quebrar(d, "A consulta da central solar de Sophia, comparada com as outras de 2026.", f("avenir", "medium", 36), W - 2 * m2.M):
+    m2.cabecalho_dados(d, im, pilula)
+    y = m2.titulo_dados(d, 220, titulo, tam)
+    for l in quebrar(d, sub, f("avenir", "medium", 36), W - 2 * m2.M):
         d.text((m2.M, y + 10), l, font=f("avenir", "medium", 36), fill=m2.MUDO)
         y += 48
     y += 110
@@ -48,7 +48,7 @@ def capa(destino, nome, factos):
     x0 = m2.M + int(d.textlength("Desliza", font=f("avenir", "heavy", 38))) + 22  # seta desenhada (a fonte não tem o glifo)
     d.line((x0, H - 199, x0 + 48, H - 199), fill=m2.SKY, width=6)
     d.polygon([(x0 + 52, H - 199), (x0 + 36, H - 213), (x0 + 36, H - 185)], fill=m2.SKY)
-    m2.rodape_dados(d, LINK, FONTE)
+    m2.rodape_dados(d, link or LINK, fonte or FONTE)
     im.save(destino / nome)
 
 
