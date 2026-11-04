@@ -1330,3 +1330,36 @@ html body #main .legal-report-box .impact-node p { grid-column: 1 / -1; color: #
 .consult.is-flash { animation: cmflash 1.8s ease-out; }
 @keyframes cmflash { 0%, 55% { box-shadow: 0 0 0 3px #1d4d38; } 100% { box-shadow: 0 0 0 3px transparent; } }
 @media (prefers-reduced-motion: reduce) { .cm-b circle { transition: none; } .consult.is-flash { animation: none; box-shadow: 0 0 0 3px #1d4d38; } }
+
+/* CONSULTAS: versão compacta para portáteis (cabe num ecrã de 14"); o mapa ajusta-se à altura disponível. */
+.cm-note summary { cursor: pointer; font-size: max(11px, .72rem); font-weight: 700; color: var(--muted); list-style: none; }
+.cm-note summary::-webkit-details-marker { display: none; }
+.cm-note summary::before { content: "+"; display: inline-block; width: 1.1em; font-weight: 800; }
+.cm-note[open] summary::before { content: "–"; }
+.cm-note .zc-unit { margin: .5em 0 0; }
+@media (min-width: 901px) {
+    /* a legenda passa para a coluna da direita, por baixo dos controlos: o mapa fica com a altura toda */
+    .consults-top { grid-template-columns: minmax(240px, 330px) minmax(0, 1fr); grid-template-areas: "map side" "map leg"; grid-template-rows: auto 1fr; gap: .7em 2.2em; padding: 1.5em 2.4em 1.3em 2em; }
+    .ct-map svg { max-height: clamp(380px, calc(100vh - 290px), 680px); margin: 0 auto; }
+    .consults-top > .ct-leg { align-self: start; }
+    .ct-side { gap: .7em; }
+    .cm-extra { display: flex; flex-wrap: wrap; align-items: center; gap: .25em 1.1em; }
+    .ct-head h3 { font-size: 1.02em; margin-top: .3em; }
+    .cm-sub { margin-top: .2em; font-size: .74em; }
+    .cm-ctls { gap: .45em; }
+    .cm-ctl { gap: .3em .6em; }
+    .cm-ctl-l { min-width: 5.6em; font-size: max(10px, .6rem); }
+    .cm-seg { padding: 2px; gap: 2px; }
+    .cm-seg-b { font-size: max(11px, .7rem); padding: .25em .72em; }
+    .ct-side h4 { margin-bottom: .3em; font-size: .68em; }
+    .ct-side .zb { margin: .32em 0; font-size: .72em; }
+    .zb-t { height: 12px; }
+    .ct-side .zc-unit { margin: .5em 0 0; }
+    .c-chip { font-size: .72em; padding: .32em .85em; }
+    .cm-leg { gap: .35em; }
+    .cm-keys { gap: .25em .35em; }
+    .cm-key { font-size: max(10.5px, .68rem); padding: .16em .6em; }
+    .cm-key i { width: 8px; height: 8px; margin-right: 5px; }
+    .cm-size, .cm-nd { font-size: max(10.5px, .66rem); }
+    .consults-top { margin-bottom: 1em; }
+}
