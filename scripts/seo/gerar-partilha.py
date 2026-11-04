@@ -36,6 +36,7 @@ CARDS = {
     "recursos/douro-apoio-vindimas.html": ("Uva por vindimar.", "O que custa ao solo."),
     "recursos/mongolia-solo-cop17.html": ("Mongólia.", "Restaurar terra, sustentar vidas."),
     "recursos/google-finlandia-floresta.html": ("Finlândia.", "Floresta cortada antes de avaliar."),
+    "recursos/bupi-registo-terrenos.html": ("BUPi.", "Registar o terreno já não é grátis."),
     "ecossistemas/biodiversidade.html": ("Biodiversidade.", "Uma teia, não uma lista."),
     "ecossistemas/especie-detalhe.html": ("Espécies.", "Quem vive no território."),
     "energia/energia.html": ("Usar melhor.", "Produzir com cuidado."),
