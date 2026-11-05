@@ -499,7 +499,7 @@
                         ),
                     );
                     try { GEO = await fetch("/data/participa-geo.json").then((r) => (r.ok ? r.json() : null)); } catch (_) { GEO = null; }
-                    try { MAPA = await fetch("/data/consultas-mapa.json?v=1").then((r) => (r.ok ? r.json() : null)); } catch (_) { MAPA = null; }
+                    try { MAPA = await fetch("/data/consultas-mapa.json?v=2").then((r) => (r.ok ? r.json() : null)); } catch (_) { MAPA = null; }
                     renderStats(d);
                     renderConsults(d);
                     renderLocal(d);
