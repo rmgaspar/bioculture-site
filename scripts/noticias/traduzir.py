@@ -149,7 +149,10 @@ def main() -> int:
     print(f"{len(todo)} notícia(s) por traduzir em {path.name}.")
     if args.probe or todo:
         if not key:
-            print("::warning::Falta o segredo ANTHROPIC_API_KEY do repositório: tradução ignorada.")
+            if not todo:
+                return 0
+            print(f"::warning title=Notícias sem tradução::{len(todo)} notícia(s) publicada(s) sem uma das línguas e sem chave para traduzir. "
+                  "Pede a tradução no Claude Code (scripts/noticias/traduzir.py --exportar / --importar).")
             return 0
         try:
             call("Reply with the single word: ok", key)

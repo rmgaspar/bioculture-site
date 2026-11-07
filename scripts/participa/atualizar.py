@@ -22,7 +22,9 @@ import json
 import re
 import statistics
 import sys
+import os
 import time
+import urllib.error
 import urllib.request
 from pathlib import Path
 
@@ -162,9 +164,18 @@ def main() -> int:
     previous = {r["url"]: r for k in ("abertas", "em_analise", "encerradas") for r in block.get(k, [])}
 
     cards: dict[str, dict] = {}
-    for term in TERMS:
-        for row in search(term):
-            cards.setdefault(row["url"], row)
+    try:
+        for term in TERMS:
+            for row in search(term):
+                cards.setdefault(row["url"], row)
+    except urllib.error.HTTPError as exc:
+        # O Participa.pt recusa os pedidos que vêm dos servidores do GitHub (403 desde 29/10/2026). Nesse caso não se
+        # inventa nada: fica o último instantâneo e o aviso diz como atualizar a partir do computador (correr_local.sh).
+        if exc.code in (401, 403, 429) and os.environ.get("GITHUB_ACTIONS"):
+            print(f"::warning title=Participa.pt bloqueou o pedido (HTTP {exc.code})::As consultas não foram atualizadas e ficam como estavam; "
+                  "corre scripts/participa/correr_local.sh no teu computador para atualizar.")
+            return 0
+        raise
     relevant = {u: c for u, c in cards.items() if RELEVANT.search(c.get("titulo") or "")}
     extra_cards: dict[str, dict] = {}
     for term in TERMS_EXTRA:

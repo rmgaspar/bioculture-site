@@ -551,6 +551,8 @@ def main() -> int:
     fotos_de_contexto(proposals, descarregar=not args.dry_run)
     if failures:
         print("Fontes temporariamente indisponíveis:", *failures, sep="\n- ", file=sys.stderr)
+        for failure in failures:  # anotação visível no resumo da execução (GitHub Actions), não só no registo
+            print(f"::warning title=Fonte de notícias indisponível::{failure}")
     if skipped:
         print("Descartadas pelo filtro:", ", ".join(f"{k} ({v})" for k, v in sorted(skipped.items())))
     if not proposals and not dropped:
