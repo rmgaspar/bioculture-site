@@ -37,6 +37,7 @@ CARDS = {
     "recursos/mongolia-solo-cop17.html": ("Mongólia.", "Restaurar terra, sustentar vidas."),
     "recursos/google-finlandia-floresta.html": ("Finlândia.", "Floresta cortada antes de avaliar."),
     "recursos/bupi-registo-terrenos.html": ("BUPi.", "Registar o terreno já não é grátis."),
+    "recursos/comporta-hotel-zec.html": ("Comporta.", "Um hotel dentro da zona protegida."),
     "ecossistemas/biodiversidade.html": ("Biodiversidade.", "Uma teia, não uma lista."),
     "ecossistemas/especie-detalhe.html": ("Espécies.", "Quem vive no território."),
     "energia/energia.html": ("Usar melhor.", "Produzir com cuidado."),
@@ -141,6 +142,9 @@ def card(page: str, image: str, title: str, subtitle: str) -> Path:
 def main():
     config = json.loads((ROOT / "config" / "paginas.json").read_text())
     for page, meta in config["paginas"].items():
+        if page not in CARDS:  # página sem cartão de partilha (por exemplo, protótipos fora dos motores de pesquisa)
+            print(f"sem cartão para {page}: ignorada")
+            continue
         title, subtitle = CARDS[page]
         target = card(page, meta["img"], title, subtitle)
         print(f"{target.relative_to(ROOT)}  {target.stat().st_size // 1024} KB")
