@@ -38,8 +38,8 @@ UA = "Mozilla/5.0 (compatible; bioCulture-observatorio; +https://www.bioculture.
 TERMS = ["Central Solar", "fotovoltaica", "solar", "eólico", "eólica", "hibridização", "ZAER", "energias renováveis"]
 RELEVANT = re.compile(r"solar|fotovolt|e[óo]lic|hibridiz|ZAER|renov[áa]v|armazenamento de energia", re.I)
 # Temas ligados ao território que o site também segue (não entram nas contas das renováveis): mineração, biometano e desflorestação.
-TERMS_EXTRA = ["concessão mineira", "mineira", "biometano", "biogás", "desflorestação"]
-EXTRA_TEMAS = [("Mineração", re.compile(r"mineir|pedreira", re.I)), ("Biometano", re.compile(r"biometano|biog[áa]s", re.I)), ("Desflorestação", re.compile(r"desfloresta", re.I))]
+TERMS_EXTRA = ["concessão mineira", "mineira", "mina", "pedreira", "lítio", "biometano", "biogás", "desflorestação"]
+EXTRA_TEMAS = [("Mineração", re.compile(r"mineir|pedreira|\bminas?\b|l[íi]tio", re.I)), ("Biometano", re.compile(r"biometano|biog[áa]s", re.I)), ("Desflorestação", re.compile(r"desfloresta", re.I))]
 PSZAER_URL = BASE + "/pt/consulta/programa-setorial-das-zonas-de-aceleracao-da-implantacao-de-energias-renovaveis-pszaer"
 MONTHS = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"]
 LABELS = {"Designação completa", "Período de consulta", "Estado", "Área temática", "Tipologia", "Sub-Tipologia",

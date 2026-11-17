@@ -18,10 +18,15 @@
             const f = c.factos_participacao || {};
             const where = (x) => (x.municipios || []).slice(0, 3).join(", ") || x.ambito || "";
             if (open.length) {
-                const next = open[0];
+                // «renováveis» são as consultas sem `tema`; as de mineração, biometano e desflorestação contam à parte.
+                const ren = open.filter((x) => !x.tema);
+                const outros = open.length - ren.length;
+                const next = ren[0] || open[0];
+                const maisPt = outros ? `, e mais ${outros} de mineração, biometano ou outros temas` : "";
+                const maisEn = outros ? `, plus ${outros} on mining, biomethane or other topics` : "";
                 text.innerHTML = tr(
-                    `Há ${open.length} ${open.length === 1 ? "consulta pública de renováveis aberta" : "consultas públicas de renováveis abertas"} no Participa.pt. A próxima a fechar termina a ${fmtDate(next.fim)}: <strong>${esc(next.titulo)}</strong>${where(next) ? ` (${esc(where(next))})` : ""}.`,
-                    `There ${open.length === 1 ? "is 1 renewables public consultation" : `are ${open.length} renewables public consultations`} open on Participa.pt. The next one closes on ${fmtDate(next.fim)}: <strong>${esc(next.titulo)}</strong>${where(next) ? ` (${esc(where(next))})` : ""}.`,
+                    `Há ${ren.length} ${ren.length === 1 ? "consulta pública de renováveis aberta" : "consultas públicas de renováveis abertas"} no Participa.pt${maisPt}. A próxima a fechar termina a ${fmtDate(next.fim)}: <strong>${esc(next.titulo)}</strong>${where(next) ? ` (${esc(where(next))})` : ""}.`,
+                    `There ${ren.length === 1 ? "is 1 renewables public consultation" : `are ${ren.length} renewables public consultations`} open on Participa.pt${maisEn}. The next one closes on ${fmtDate(next.fim)}: <strong>${esc(next.titulo)}</strong>${where(next) ? ` (${esc(where(next))})` : ""}.`,
                 );
                 if (f.consultas_projetos) {
                     text.innerHTML += tr(
