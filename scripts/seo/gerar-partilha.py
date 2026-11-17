@@ -38,6 +38,7 @@ CARDS = {
     "recursos/google-finlandia-floresta.html": ("Finlândia.", "Floresta cortada antes de avaliar."),
     "recursos/bupi-registo-terrenos.html": ("BUPi.", "Registar o terreno já não é grátis."),
     "recursos/comporta-hotel-zec.html": ("Comporta.", "Um hotel dentro da zona protegida."),
+    "recursos/barroso-recape-leitura-comparada.html": ("Barroso.", "O que mudou desde a declaração de 2023."),
     "ecossistemas/biodiversidade.html": ("Biodiversidade.", "Uma teia, não uma lista."),
     "ecossistemas/especie-detalhe.html": ("Espécies.", "Quem vive no território."),
     "energia/energia.html": ("Usar melhor.", "Produzir com cuidado."),
