@@ -10,8 +10,8 @@ for (const x of noticias) {
   if (!x.imagem?.startsWith('/media/noticias/')) continue;
   n++;
   assert(existsSync(x.imagem.slice(1)), x.id + ': ficheiro em falta');
-  assert(/^Foto de contexto: .+ · .+ · Wikimedia Commons$/.test(x.imagem_credito_pt), x.id + ': crédito PT');
-  assert(/^Context photo: .+ · .+ · Wikimedia Commons$/.test(x.imagem_credito_en), x.id + ': crédito EN');
+  assert(/^(Foto|Imagem) de contexto: .+ · .+ · Wikimedia Commons$/.test(x.imagem_credito_pt), x.id + ': crédito PT');
+  assert(/^Context (photo|image): .+ · .+ · Wikimedia Commons$/.test(x.imagem_credito_en), x.id + ': crédito EN');
   assert(PERMITIDA.test(x.imagem_credito_pt), x.id + ': licença não permitida');
   assert(/^https:\/\/commons\.wikimedia\.org\/wiki\/File:/.test(x.imagem_pagina), x.id + ': sem ligação à origem');
   assert(x.imagem_contexto?.pt && x.imagem_contexto?.en, x.id + ': falta legenda PT/EN');
