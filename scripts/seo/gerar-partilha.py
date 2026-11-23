@@ -39,6 +39,7 @@ CARDS = {
     "recursos/bupi-registo-terrenos.html": ("BUPi.", "Registar o terreno já não é grátis."),
     "recursos/comporta-hotel-zec.html": ("Comporta.", "Um hotel dentro da zona protegida."),
     "recursos/barroso-recape-leitura-comparada.html": ("Barroso.", "O que mudou desde a declaração de 2023."),
+    "recursos/cop31-antalia.html": ("COP31.", "O que ficou decidido em Antália."),
     "ecossistemas/biodiversidade.html": ("Biodiversidade.", "Uma teia, não uma lista."),
     "ecossistemas/especie-detalhe.html": ("Espécies.", "Quem vive no território."),
     "energia/energia.html": ("Usar melhor.", "Produzir com cuidado."),
