@@ -3,6 +3,7 @@ import path from "node:path";
 import { execFileSync } from "node:child_process";
 import { prerenderSidebar } from "./prerender-sidebar.mjs";
 import { limparEnderecos } from "./clean-urls.mjs";
+import { avisosDoMapa } from "./consultas-mapa-estado.mjs";
 
 // Research must validate before preparing any public output.
 execFileSync("python3", ["scripts/catalogo/validar.py"], { stdio: "inherit" });
@@ -10,6 +11,9 @@ execFileSync(process.execPath, ["scripts/validar-gestao.mjs"], { stdio: "inherit
 execFileSync(process.execPath, ["scripts/gerar-localidades.mjs"], { stdio: "inherit" });
 execFileSync(process.execPath, ["scripts/gerar-especies.mjs"], { stdio: "inherit" });
 execFileSync(process.execPath, ["scripts/catalogo/exportar-indice.mjs"], { stdio: "inherit" });
+
+// Atributos curados do mapa das consultas: avisa quando há limpeza por fazer (não trava o build).
+for (const linha of avisosDoMapa()) console.log(linha);
 
 // Cloudflare Pages sets CF_PAGES automatically and serves the custom domain from its root,
 // unlike the GitHub Pages project site, which needs the /<repo> subpath prefix.
