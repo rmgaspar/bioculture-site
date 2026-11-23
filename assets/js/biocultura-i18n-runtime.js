@@ -398,7 +398,7 @@
        antigas que ainda não declaram explicitamente esta folha de estilos. */
     const heroSystem = document.querySelector('link[href*="biocultura-hero-system.css"]') || document.createElement("link");
     heroSystem.rel = "stylesheet";
-    heroSystem.href = "/assets/css/biocultura-hero-system.css?v=43";
+    heroSystem.href = "/assets/css/biocultura-hero-system.css?v=44";
     heroSystem.dataset.bioculturaHeroSystem = "true";
     if (!heroSystem.parentNode) document.head.appendChild(heroSystem);
 
@@ -408,7 +408,7 @@
     function normalizeHeroStylesheet() {
         const links = Array.from(document.querySelectorAll('link[href*="biocultura-hero-system.css"]'));
         const canonical = links[0] || heroSystem;
-        canonical.href = "/assets/css/biocultura-hero-system.css?v=43";
+        canonical.href = "/assets/css/biocultura-hero-system.css?v=44";
         canonical.dataset.bioculturaHeroSystem = "true";
         links.slice(1).forEach((link) => link.remove());
     }
@@ -445,7 +445,7 @@
     if (consolidatedRoutes.has(location.pathname)) {
         const consolidationStyle = document.createElement("link");
         consolidationStyle.rel = "stylesheet";
-        consolidationStyle.href = "/assets/css/territorial-consolidation.css?v=9";
+        consolidationStyle.href = "/assets/css/territorial-consolidation.css?v=10";
         document.head.appendChild(consolidationStyle);
         import("/assets/js/territorial-consolidation.js?v=10").catch((error) => {
             console.error("Não foi possível carregar a leitura territorial.", error);
