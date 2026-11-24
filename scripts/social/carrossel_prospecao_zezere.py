@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-"""Carrossel «Prospeção de ouro no Zêzere» (5 imagens 1080x1350), para Facebook e Instagram.
+"""Carrossel «Prospeção de ouro no Zêzere» (6 imagens 1080x1350), para Facebook e Instagram.
 
-Estrutura: capa com a área e o prazo / o que é pedido / o que dizem as entidades / o que não se sabe / como participar.
+Estrutura: capa com a área e o prazo / o que é pedido / a água / o que dizem as entidades / o que não se sabe / como participar.
 Todos os números vêm dos documentos da consulta MNPPP518 «Vila de Rei», publicados no Participa.pt e lidos a 24/11/2026:
   - Área, blocos, minerais, prazos e investimento: memória técnica da Cazador Resources, outubro de 2026.
   - Exclusão de Pedrógão Grande e da Sertã: requerimento de reformulação da área.
   - Exclusões pedidas e espécies: parecer do ICNF; faixa de 1 km: parecer da Câmara de Ferreira do Zêzere (8/8/2025).
+  - Mineralogia (quartzo-pirite-arsenopirite-ouro), água de perfuração e aditivos: memória técnica, cap. 3 e 6.3.
   - Prazo e retificação da data: ficha da consulta (DGEG), também em data/zaer_critico.json.
 
 Uso:
@@ -49,26 +50,33 @@ def main(destino):
                     ("Quem pede", "Cazador Resources Ltd., de Peachland, Colúmbia Britânica, Canadá.")],
                    "Fonte: memória técnica do pedido (Cazador Resources, outubro de 2026), no Participa.pt", LINK, tam=76, corpo=34)
 
-    m2.dados_lista(destino, "03-prospecao-zezere.png", "O QUE DIZEM AS ENTIDADES", "O que já está escrito no processo",
+    m2.dados_lista(destino, "03-prospecao-zezere.png", "ÁGUA", "O ouro vem agarrado a sulfuretos com arsénio",
+                   [("O minério", "Filões de «quartzo-pirite-arsenopirite-ouro»: pirite e arsenopirite são sulfuretos."),
+                    ("O que lhes acontece", "Abertos ao ar e à água, oxidam, acidificam e libertam metais, entre eles arsénio."),
+                    ("A jusante", "O Zêzere, os seus afluentes e Castelo do Bode, que abastece a região de Lisboa."),
+                    ("O que falta", "Nem caracterização hidrogeológica, nem monitorização, nem localização dos furos.")],
+                   "Fonte: memória técnica do pedido (cap. 3 e 6.3) e parecer da Câmara de Ferreira do Zêzere", LINK, tam=76, corpo=34)
+
+    m2.dados_lista(destino, "04-prospecao-zezere.png", "O QUE DIZEM AS ENTIDADES", "O que já está escrito no processo",
                    [("Dois concelhos saíram", "Pedrógão Grande e a Sertã deram parecer negativo; a área foi reformulada."),
                     ("1 km à volta das casas", "A Câmara de Ferreira do Zêzere pede essa faixa em redor dos aglomerados."),
                     ("O ICNF quer exclusões", "Perímetro Florestal do Castro, dois geossítios nacionais, três árvores."),
                     ("Água e solo", "Captações, Reserva Agrícola e Ecológica Nacional, perímetros a respeitar.")],
                    "Fonte: pareceres das entidades consultadas, na ficha da consulta (DGEG)", LINK, tam=76, corpo=34)
 
-    m2.dados_lista(destino, "04-prospecao-zezere.png", "O QUE NÃO SE SABE", "Três coisas que os documentos não dizem",
+    m2.dados_lista(destino, "05-prospecao-zezere.png", "O QUE NÃO SE SABE", "Três coisas que os documentos não dizem",
                    [("Onde", "O pedido delimita a área, não os locais dos trabalhos nem o número de sondagens."),
                     ("Com que condições", "Se a faixa de 1 km e as exclusões do ICNF entram no título, decide a DGEG."),
                     ("E depois", "O pedido não diz o que acontece se confirmarem depósitos com valor económico.")],
                    "Fonte: memória técnica e pareceres da consulta MNPPP518 «Vila de Rei»", LINK, tam=76, corpo=34)
 
-    m2.dados_lista(destino, "05-prospecao-zezere.png", "COMO PARTICIPAR", "Até às 23h59 de 4 de janeiro",
+    m2.dados_lista(destino, "06-prospecao-zezere.png", "COMO PARTICIPAR", "Até às 23h59 de 4 de janeiro",
                    [("Onde", "Na ficha da consulta no Participa.pt, com conta criada no portal."),
                     ("O que pesa", "Factos verificáveis: uma captação, uma casa perto, um habitat, um caminho."),
                     ("Para ler primeiro", "O pedido, os pareceres e o que falta saber, em bioculture.pt.")],
                    "Fonte: ficha da consulta no Participa.pt (DGEG) · leitura bioCulture", LINK, tam=76, corpo=34)
 
-    print(f"5 imagens em {destino}")
+    print(f"6 imagens em {destino}")
 
 
 if __name__ == "__main__":
