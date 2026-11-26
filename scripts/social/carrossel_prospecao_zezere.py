@@ -40,7 +40,7 @@ def main(destino):
                [("297 km²", "a área pedida, em dois blocos"),
                 ("5 concelhos", "eram doze no pedido inicial"),
                 ("4 jan.", "fecho da consulta, às 23h59")],
-               "prospecao-vila-de-rei/hero.webp",
+               "prospecao-vila-de-rei/hero-castelo-do-bode.webp",
                "Foto: Vitor Oliveira · CC BY-SA 2.0 · Wikimedia Commons", LINK, enq=(0.5, 0.55), tam=86)
 
     m2.dados_lista(destino, "02-prospecao-zezere.png", "O QUE É PEDIDO", "Uma licença para procurar, não para explorar",
