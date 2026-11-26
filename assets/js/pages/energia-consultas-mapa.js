@@ -67,6 +67,7 @@
       return {
         id: x.id, x, cat: m.cat || catOf(x), ac: m.ac || "nd", mw: m.mw ?? null, ha: m.ha ?? null, haTipo: m.ha_tipo, parts: typeof x.participacoes === "number" ? x.participacoes : null,
         nome: (en ? m.nome_en : m.nome) || m.nome || x.titulo, estado: o.open$(x) ? "aberta" : "analise", muns: x.municipios || [],
+        numeros: (m.numeros || []).map((q) => ({ v: (en && q.v_en) || q.v, t: (en ? q.t_en : q.t) || q.t })),
         acTxt: ac ? (en ? ac.texto_en || ac.texto : ac.texto) : "", pts, bx: pts.length ? pts.reduce((s, q) => s + q[0], 0) / pts.length : null, by: pts.length ? pts.reduce((s, q) => s + q[1], 0) / pts.length : null,
       };
     });
@@ -115,7 +116,11 @@
       if (p.parts != null) rows.push([tr("Participações", "Responses"), nf(p.parts)]);
       rows.push([tr("Áreas classificadas", "Protected areas"), `<i style="background:${AC[p.ac].c}"></i>${esc(L(AC[p.ac]))}`]);
       const when = p.estado === "aberta" ? `${tr("Aberta até", "Open until")} ${fmtDate(p.x.fim)}` : tr("Em análise", "Under review");
-      return `<small style="color:${CATS[p.cat].c}">${esc(L(CATS[p.cat]))} · ${when}</small><b>${esc(p.nome)}</b><dl>${rows.map((r) => `<div><dt>${r[0]}</dt><dd>${r[1]}</dd></div>`).join("")}</dl>${p.acTxt ? `<p>${esc(p.acTxt)}</p>` : ""}<span class="cm-go">${tr("Clica para ver a ficha ↓", "Click for the full card ↓")}</span>`;
+      // Na etiqueta só entram os factos que as linhas abaixo não dizem já (área e potência), no máximo dois.
+      const jaDito = new Set([p.ha != null ? `${nf(p.ha, 1)} ha` : "", p.mw != null ? `${nf(p.mw, 1)} MW` : ""].filter(Boolean)),
+        esc2 = p.numeros.filter((q) => !jaDito.has(q.v)).slice(0, 2),
+        nums = esc2.length ? `<ul class="cm-nums">${esc2.map((q) => `<li><b>${esc(q.v)}</b><span>${esc(q.t)}</span></li>`).join("")}</ul>` : "";
+      return `<small style="color:${CATS[p.cat].c}">${esc(L(CATS[p.cat]))} · ${when}</small><b>${esc(p.nome)}</b>${nums}<dl>${rows.map((r) => `<div><dt>${r[0]}</dt><dd>${r[1]}</dd></div>`).join("")}</dl>${p.acTxt ? `<p>${esc(p.acTxt)}</p>` : ""}<span class="cm-go">${tr("Clica para ver a ficha ↓", "Click for the full card ↓")}</span>`;
     }
 
     function draw() {

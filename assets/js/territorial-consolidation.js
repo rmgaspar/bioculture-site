@@ -49,7 +49,7 @@
             intro: "Produção, consumo, redes e escolhas energéticas aproximadas ao contexto português."
         },
         "/energia/renewables-and-territory.html": {
-            source: "/energia/transicao-etica.html", stylesheet: "/assets/css/pages/energia-transicao-etica.css?v=5", script: "/assets/js/pages/energia-transicao-etica-2.js?v=2",
+            source: "/energia/transicao-etica.html", stylesheet: "/assets/css/pages/energia-transicao-etica.css?v=40", script: "/assets/js/pages/energia-transicao-etica-2.js?v=43",
             label: "Portugal em detalhe", title: "Renováveis e território em Portugal",
             intro: "Transição energética, implantação territorial, comunidades e critérios de justiça aplicados a Portugal."
         },

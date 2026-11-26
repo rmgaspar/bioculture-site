@@ -21,6 +21,9 @@ export function estadoDoMapa() {
     desconhecidas: ids.filter((id) => !abertas.has(id) && !encerradas.has(id)),
     // Consultas que o mapa desenha e ainda não têm atributos: entram sem tamanho.
     sem: noMapa.filter((id) => !meta[id]),
+    // Só as que estão mesmo abertas, as que vale a pena legendar com números.
+    abertasIds: (z.abertas || []).filter((x) => !x.alerta_qualidade).map((x) => x.id),
+    semNumeros: (z.abertas || []).filter((x) => !x.alerta_qualidade && !meta[x.id]?.numeros).map((x) => x.id),
   };
 }
 
@@ -31,5 +34,7 @@ export function avisosDoMapa(estado = estadoDoMapa()) {
     linhas.push(`Mapa das consultas: ${estado.fechadas.length} atributo(s) de consultas já encerradas, podem sair de data/consultas-mapa.json: ${estado.fechadas.join(', ')}`);
   if (estado.sem.length)
     linhas.push(`Mapa das consultas: ${estado.sem.length} consulta(s) em curso sem atributos, entram no mapa sem tamanho: ${estado.sem.join(', ')}`);
+  if (estado.semNumeros?.length)
+    linhas.push(`Mapa das consultas: ${estado.semNumeros.length} consulta(s) aberta(s) sem «numeros», ficam sem legenda na ficha e sem cartão: ${estado.semNumeros.join(', ')}`);
   return linhas;
 }

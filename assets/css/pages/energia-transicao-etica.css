@@ -1056,6 +1056,15 @@ html body #main .legal-report-box .impact-node p { grid-column: 1 / -1; color: #
 .participa-leitura .leitura-casos a, .participa-leitura .territorio-fonte a { font-size: .9em; font-weight: 700; color: var(--land, #4f6b3a); }
 .participa-leitura .leitura-nota { margin: 1em 0 0; font-size: .8em; }
 @media (max-width: 900px) { .participa-leitura .leitura-grid { grid-template-columns: minmax(0, 1fr); } .participa-leitura { padding: 1.2em 1.1em; } }
+.consult .c-numeros { margin: .75em 0 .4em; padding: .75em .9em; list-style: none; border-radius: 12px; background: rgba(255, 255, 255, .7); display: grid; gap: .55em; }
+.consult .c-numeros li { display: grid; gap: .1em; }
+.consult .c-numeros b { font: 700 1.5rem/1.05 Georgia, "Times New Roman", serif; letter-spacing: -.02em; color: #3f4a43; font-variant-numeric: tabular-nums; }
+.consult .c-numeros span { font-size: .84em; line-height: 1.45; color: var(--ink); }
+@media (min-width: 620px) {
+  .consult .c-numeros { grid-template-columns: repeat(3, 1fr); gap: .9em 1.1em; grid-template-rows: auto auto; }
+  /* subgrid alinha as legendas entre colunas quando um dos números ocupa duas linhas */
+  @supports (grid-template-rows: subgrid) { .consult .c-numeros li { grid-row: span 2; grid-template-rows: subgrid; } }
+}
 .consult .territorio { margin: .7em 0 .4em; border-radius: 12px; background: rgba(255, 255, 255, .7); }
 .consult .territorio summary { cursor: pointer; padding: .7em 1em; font-size: .86em; font-weight: 700; color: var(--ink); }
 .consult .territorio dl { margin: 0; padding: 0 1em .2em; display: grid; gap: .6em; }
@@ -1297,6 +1306,9 @@ html body #main .legal-report-box .impact-node p { grid-column: 1 / -1; color: #
 .cm-tip[hidden] { display: none; }
 .cm-tip small { display: block; font-size: max(11px, .64rem); font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
 .cm-tip b { display: block; margin: .15em 0 .45em; font-size: .92rem; line-height: 1.25; }
+.cm-tip .cm-nums { margin: 0 0 .55em; padding: 0 0 .5em; list-style: none; border-bottom: 1px solid rgba(0,0,0,.06); display: grid; gap: .3em; }
+.cm-tip .cm-nums b { font: 700 .95rem/1.15 Georgia, "Times New Roman", serif; color: #3f4a43; font-variant-numeric: tabular-nums; }
+.cm-tip .cm-nums span { display: block; color: #4d5750; font-size: .95em; line-height: 1.35; }
 .cm-tip dl { margin: 0; }
 .cm-tip dl div { display: flex; justify-content: space-between; gap: .8em; padding: .15em 0; border-top: 1px solid rgba(0,0,0,.06); }
 .cm-tip dt { color: var(--muted); }

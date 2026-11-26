@@ -245,7 +245,11 @@
                             where = (x.municipios || []).join(" · ") || (isEn() ? SCOPE_EN[x.ambito] || x.ambito : x.ambito) || (isEn() ? TYPE_EN[x.tipologia] || x.tipologia : x.tipologia),
                             who = [x.tipologia && (isEn() ? TYPE_EN[x.tipologia] || x.tipologia : x.tipologia), x.promotor_projeto].filter(Boolean).join(" · "),
                             map = cardMap(x),
-                            ref = x.territorio?.url2;
+                            ref = x.territorio?.url2,
+                            numeros = ((MAPA?.itens || {})[x.id]?.numeros || []),
+                            numsHtml = numeros.length
+                                ? `<ul class="c-numeros">${numeros.map((q) => `<li><b>${esc((isEn() && q.v_en) || q.v)}</b><span>${esc((isEn() ? q.t_en : q.t) || q.t)}</span></li>`).join("")}</ul>`
+                                : "";
                         return `<article class="consult ${isOpen ? "consult-open" : "consult-analysis"}" data-id="${esc(x.id)}" data-state="${x.alerta_qualidade ? "archive" : isOpen ? "open" : "analysis"}"><header class="c-top"><span class="c-badge">${esc(stateTxt(x.estado_consulta))}</span>${x.tema ? `<span class="c-tema">${esc(isEn() ? TEMA_EN[x.tema] || x.tema : x.tema)}</span>` : ""}<span class="c-when">${esc(when)}</span></header><h3>${esc(x.titulo)}</h3>${
                             who ? `<p class="c-meta">${esc(who)}</p>` : ""
                         }<div class="c-main${map ? " has-map" : ""}">${map}<div class="c-fig">${
@@ -256,7 +260,7 @@
                             tags.length ? `<div class="signals">${tags.map(([k, t]) => `<span class="signal signal-${k}">${esc(t)}</span>`).join("")}</div>` : ""
                         }${
                             x.resumo_projeto ? `<p class="c-resumo">${esc(isEn() ? x.resumo_projeto_en || x.resumo_projeto : x.resumo_projeto)}</p>` : ""
-                        }${
+                        }${numsHtml}${
                             x.territorio
                                 ? `<details class="territorio"><summary>${tr("Território, ecossistemas e espécies", "Land, ecosystems and species")}</summary><dl>${
                                     (x.territorio.linhas || []).map((l) => `<div><dt>${esc(isEn() ? l.rotulo_en || l.rotulo : l.rotulo)}</dt><dd>${esc(isEn() ? l.texto_en || l.texto : l.texto)}</dd></div>`).join("")
@@ -499,7 +503,7 @@
                         ),
                     );
                     try { GEO = await fetch("/data/participa-geo.json").then((r) => (r.ok ? r.json() : null)); } catch (_) { GEO = null; }
-                    try { MAPA = await fetch("/data/consultas-mapa.json?v=3").then((r) => (r.ok ? r.json() : null)); } catch (_) { MAPA = null; }
+                    try { MAPA = await fetch("/data/consultas-mapa.json?v=4").then((r) => (r.ok ? r.json() : null)); } catch (_) { MAPA = null; }
                     renderStats(d);
                     renderConsults(d);
                     renderLocal(d);
